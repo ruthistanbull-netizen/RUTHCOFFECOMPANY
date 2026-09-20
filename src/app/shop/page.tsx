@@ -1,0 +1,2 @@
+import { ShopGrid } from "@/components/ShopGrid";
+export default async function Shop({searchParams}:{searchParams:Promise<{category?:string}>}){const q=await searchParams;return <><section className="page-hero shop-hero"><span className="eyebrow light">RUTH COFFEE / SHOP</span><h1>Our coffee.</h1><p>Purposeful coffees for espresso, filter and daily rituals.</p></section><section className="section-pad shop-section"><ShopGrid initial={q.category||"all"}/></section></>}

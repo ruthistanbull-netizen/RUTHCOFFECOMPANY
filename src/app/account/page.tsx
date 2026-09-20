@@ -1,0 +1,1 @@
+export default function Account(){return <section className="account-shell"><span className="eyebrow">ACCOUNT</span><h1>Your Ruth account.</h1><div className="account-placeholder"><strong>Customer account frontend ready.</strong><p>Authentication, addresses and order history will connect to the new Ruth Coffee backend rather than Ruth Istanbul data.</p></div></section>}
