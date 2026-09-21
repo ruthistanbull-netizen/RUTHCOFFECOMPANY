@@ -10,7 +10,7 @@ export type HomepageHeroImages = {
 };
 
 export const ROSTA_DEFAULT_HERO_IMAGE =
-  "/home/rosta-hero-current.webp?v=20260921-visible2";
+  "/home/rosta-hero-hq?v=20260921-hq3";
 
 export function homepageHeroImages(
   _settings: ThemeCustomizerSettings,
