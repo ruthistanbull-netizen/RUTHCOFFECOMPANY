@@ -1,15 +1,12 @@
-export const SITE_NAME = "Ruth Istanbul";
-export const SITE_URL = "https://ruthistanbul.com";
+export const SITE_NAME = "Rosta Coffee Co.";
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
-export const DEFAULT_SEO_TITLE = "Ruth Istanbul | Tasarım Takı & 925 Ayar Gümüş";
+export const DEFAULT_SEO_TITLE = "Rosta Coffee Co. | Kahve, Danışmanlık & Tedarik";
 export const DEFAULT_SEO_DESCRIPTION =
-  "Ruth Istanbul tasarım kolye, yüzük, bileklik ve set koleksiyonlarını keşfet. 925 ayar gümüş ve özel tasarım takılarla stilini tamamla.";
-export const DEFAULT_OG_IMAGE = "/home/sss-desktop.webp";
+  "Rosta Coffee Co. kahve, kahve danışmanlığı ve tedarik çözümleri.";
+export const DEFAULT_OG_IMAGE = "/home/rosta-hero.webp";
 
-export const SOCIAL_PROFILES = [
-  "https://www.instagram.com/theruthistanbul/",
-  "https://www.tiktok.com/@theruthistanbul",
-] as const;
+export const SOCIAL_PROFILES = [] as const;
 
 export function absoluteUrl(value: string | null | undefined) {
   const input = String(value || "").trim();
