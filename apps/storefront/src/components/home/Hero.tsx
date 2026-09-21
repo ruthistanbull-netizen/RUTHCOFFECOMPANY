@@ -15,7 +15,11 @@ const HOME_EDITORIAL_IMAGE_ID = "home-editorial-image-2";
 
 const EDITORIAL_SLIDES = [
   {
-    kind: "blank",
+    kind: "image",
+    desktopSrc: "/home/rosta-hero.webp",
+    mobileSrc: "/home/rosta-hero.webp",
+    alt: "",
+    priority: true,
   },
   {
     kind: "image",
@@ -124,19 +128,18 @@ function EditorialMedia({
           className={wrapperClass}
           style={reduceMotion ? undefined : { y, scale, opacity, willChange: "transform, opacity" }}
         >
-          {slide.kind === "blank" ? (
-            <div className="h-full w-full bg-ivory" aria-hidden="true" />
-          ) : slide.kind === "image" ? (
+          {slide.kind === "image" ? (
             <picture className="block h-full w-full">
               <source media="(min-width: 768px)" srcSet={slide.desktopSrc} />
               <img
                 src={slide.mobileSrc}
                 alt=""
                 className="h-full w-full object-cover object-center"
-                loading="lazy"
-                fetchPriority="auto"
+                loading={index === 0 ? "eager" : "lazy"}
+                fetchPriority={index === 0 ? "high" : "auto"}
                 decoding="async"
                 draggable={false}
+                onLoad={notifyHeroMediaReady}
                 onError={(event) => { event.currentTarget.style.display = "none"; }}
                 data-home-editorial-media
                 data-theme-id={HOME_EDITORIAL_IMAGE_ID}
