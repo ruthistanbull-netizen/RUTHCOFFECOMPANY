@@ -204,10 +204,14 @@ export default async function RootLayout({
             font-family: inherit;
           }
           .site-app-shell :where(.font-heading) {
-            font-family: var(--font-body);
+            font-family: var(--font-heading);
+            font-weight: 900;
+            letter-spacing: -0.03em;
           }
           .site-app-shell :where(.font-editorial, .font-serif, .ruth-type-display, [data-ruth-text-role="display"]) {
             font-family: var(--ruth-font-display);
+            font-weight: 900;
+            letter-spacing: -0.03em;
           }
           .site-app-shell :where([data-latin-uppercase], .latin-uppercase) {
             text-transform: uppercase;
