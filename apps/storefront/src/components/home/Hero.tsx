@@ -135,7 +135,13 @@ function EditorialMedia({
       <div className="sticky top-0 h-[100svh] min-h-[560px] overflow-hidden bg-ivory lg:min-h-[700px]">
         <motion.div
           className={wrapperClass}
-          style={reduceMotion ? undefined : { y, scale, opacity, willChange: "transform, opacity" }}
+          style={
+            reduceMotion
+              ? undefined
+              : index === 0
+                ? { opacity, willChange: "opacity" }
+                : { y, scale, opacity, willChange: "transform, opacity" }
+          }
         >
           {slide.kind === "image" ? (
             <picture className="block h-full w-full">
@@ -143,7 +149,7 @@ function EditorialMedia({
               <img
                 src={slide.mobileSrc}
                 alt={slide.alt}
-                className={index === 1 ? "h-full w-full object-contain object-center" : "h-full w-full object-cover object-center"}
+                className={index === 1 ? "h-full w-full object-contain object-center" : "h-full w-full object-cover object-center [image-rendering:auto]"}
                 loading={slide.priority ? "eager" : "lazy"}
                 fetchPriority={slide.priority ? "high" : "auto"}
                 decoding="async"
