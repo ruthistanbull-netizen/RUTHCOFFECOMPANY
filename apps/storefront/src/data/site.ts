@@ -30,6 +30,7 @@ import {
   normalizeThemeCustomizerSettings,
   type ThemeCustomizerSettings,
 } from "@/lib/themeCustomizer";
+import { applyRostaStorefrontDesignSystem } from "@/lib/rostaDesignSystem";
 import { generatedProducts } from "@/data/generated-products";
 
 const fallbackProducts: Product[] = generatedProducts;
@@ -965,7 +966,7 @@ export async function getSiteSettings(): Promise<
 
 async function fetchThemeCustomizerSettings(): Promise<ThemeCustomizerSettings> {
   const client = getCatalogClient();
-  if (!client) return defaultThemeCustomizerSettings;
+  if (!client) return applyRostaStorefrontDesignSystem(defaultThemeCustomizerSettings);
 
   const { data, error } = await client
     .from("site_settings")
@@ -976,11 +977,13 @@ async function fetchThemeCustomizerSettings(): Promise<ThemeCustomizerSettings> 
 
   if (error) {
     console.error("Tema ayarları alınamadı:", error.message);
-    return defaultThemeCustomizerSettings;
+    return applyRostaStorefrontDesignSystem(defaultThemeCustomizerSettings);
   }
 
-  return normalizeThemeCustomizerSettings(
-    data?.setting_value || defaultThemeCustomizerSettings,
+  return applyRostaStorefrontDesignSystem(
+    normalizeThemeCustomizerSettings(
+      data?.setting_value || defaultThemeCustomizerSettings,
+    ),
   );
 }
 
@@ -991,13 +994,15 @@ const getCachedThemeCustomizerSettings = unstable_cache(
 );
 
 export async function getThemeCustomizerSettings(): Promise<ThemeCustomizerSettings> {
-  if (!USE_SUPABASE_CATALOG || !getCatalogClient()) return defaultThemeCustomizerSettings;
+  if (!USE_SUPABASE_CATALOG || !getCatalogClient()) {
+    return applyRostaStorefrontDesignSystem(defaultThemeCustomizerSettings);
+  }
   if (liveThemePromise) return liveThemePromise;
 
   const promise = (FORCE_LIVE_THEME_READS ? (noStore(), fetchThemeCustomizerSettings()) : getCachedThemeCustomizerSettings())
     .catch((error) => {
       console.error("Tema ayarları okunamadı:", error);
-      return defaultThemeCustomizerSettings;
+      return applyRostaStorefrontDesignSystem(defaultThemeCustomizerSettings);
     })
     .finally(() => {
       liveThemePromise = null;
