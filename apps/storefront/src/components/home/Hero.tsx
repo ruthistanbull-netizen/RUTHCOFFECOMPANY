@@ -14,7 +14,7 @@ import {
   type HomepageHeroImages,
 } from "@/lib/themeMedia";
 
-const HOME_EDITORIAL_IMAGE_ID = "home-editorial-image-2";
+const HOME_HERO_IMAGE_ID = "home-hero-image-1";\nconst HOME_EDITORIAL_IMAGE_ID = "home-editorial-image-2";
 
 type EditorialSlide =
   | {
