@@ -9,21 +9,13 @@ import {
   useTransform,
 } from "framer-motion";
 import { ROSTA_WORDMARK_SRC } from "@/components/brand/rostaWordmark";
-import {
-  HOME_HERO_DESKTOP_IMAGE_ID,
-  HOME_HERO_MOBILE_IMAGE_ID,
-  homepageHeroImages,
-  type HomepageHeroImages,
-} from "@/lib/themeMedia";
-import type { ThemeCustomizerSettings } from "@/lib/themeCustomizer";
+import type { HomepageHeroImages } from "@/lib/themeMedia";
 
 const HOME_EDITORIAL_IMAGE_ID = "home-editorial-image-2";
 
 const EDITORIAL_SLIDES = [
   {
-    kind: "hero-image",
-    alt: "",
-    priority: true,
+    kind: "blank",
   },
   {
     kind: "image",
@@ -106,11 +98,9 @@ function notifyHeroMediaReady() {
 function EditorialMedia({
   slide,
   index,
-  heroImages,
 }: {
   slide: EditorialSlide;
   index: number;
-  heroImages: HomepageHeroImages;
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const reduceMotion = useReducedMotion();
@@ -134,39 +124,8 @@ function EditorialMedia({
           className={wrapperClass}
           style={reduceMotion ? undefined : { y, scale, opacity, willChange: "transform, opacity" }}
         >
-          {slide.kind === "hero-image" ? (
-            <div className="h-full w-full">
-              <img
-                key={`hero-mobile:${heroImages.mobile}`}
-                src={heroImages.mobile}
-                alt=""
-                className="h-full w-full object-cover object-center md:hidden"
-                loading="eager"
-                fetchPriority="high"
-                decoding="async"
-                draggable={false}
-                onLoad={notifyHeroMediaReady}
-                onError={(event) => { event.currentTarget.style.display = "none"; }}
-                data-home-editorial-media
-                data-theme-id={HOME_HERO_MOBILE_IMAGE_ID}
-                data-theme-label="Ana sayfa hero görseli · Mobil"
-              />
-              <img
-                key={`hero-desktop:${heroImages.desktop}`}
-                src={heroImages.desktop}
-                alt=""
-                className="hidden h-full w-full object-cover object-center md:block"
-                loading="eager"
-                fetchPriority="high"
-                decoding="async"
-                draggable={false}
-                onLoad={notifyHeroMediaReady}
-                onError={(event) => { event.currentTarget.style.display = "none"; }}
-                data-home-editorial-media
-                data-theme-id={HOME_HERO_DESKTOP_IMAGE_ID}
-                data-theme-label="Ana sayfa hero görseli · Masaüstü"
-              />
-            </div>
+          {slide.kind === "blank" ? (
+            <div className="h-full w-full bg-ivory" aria-hidden="true" />
           ) : slide.kind === "image" ? (
             <picture className="block h-full w-full">
               <source media="(min-width: 768px)" srcSet={slide.desktopSrc} />
@@ -204,35 +163,12 @@ function EditorialMedia({
   );
 }
 
-export default function Hero({ heroImages }: { heroImages: HomepageHeroImages }) {
+export default function Hero({ heroImages: _heroImages }: { heroImages: HomepageHeroImages }) {
   const reduceMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement | null>(null);
   const wordmarkRef = useRef<HTMLDivElement | null>(null);
-  const [wordmarkColor, setWordmarkColor] = useState("#ffffff");
+  const [wordmarkColor, setWordmarkColor] = useState("#111111");
   const [wordmarkVisible, setWordmarkVisible] = useState(true);
-  const [liveHeroImages, setLiveHeroImages] = useState(heroImages);
-
-  useEffect(() => {
-    setLiveHeroImages(heroImages);
-  }, [heroImages.desktop, heroImages.mobile]);
-
-  useEffect(() => {
-    notifyHeroMediaReady();
-  }, [liveHeroImages.desktop, liveHeroImages.mobile]);
-
-  useEffect(() => {
-    if (new URLSearchParams(window.location.search).get("themeEditor") !== "1") return;
-    if (window.parent === window) return;
-
-    const onMessage = (event: MessageEvent) => {
-      if (event.source !== window.parent || !event.data || typeof event.data !== "object") return;
-      if (event.data.type !== "RUTH_THEME_EDITOR_SETTINGS" || !event.data.settings) return;
-      setLiveHeroImages(homepageHeroImages(event.data.settings as ThemeCustomizerSettings));
-    };
-
-    window.addEventListener("message", onMessage);
-    return () => window.removeEventListener("message", onMessage);
-  }, []);
 
   useEffect(() => {
     let frame = 0;
@@ -320,7 +256,6 @@ export default function Hero({ heroImages }: { heroImages: HomepageHeroImages })
           key={slide.kind === "video" ? slide.src : `${slide.kind}-${index}`}
           slide={slide}
           index={index}
-          heroImages={liveHeroImages}
         />
       ))}
     </section>
