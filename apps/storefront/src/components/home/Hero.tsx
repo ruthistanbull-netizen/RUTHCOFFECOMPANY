@@ -31,13 +31,15 @@ type EditorialSlide =
 const EDITORIAL_SLIDES: EditorialSlide[] = [
   {
     kind: "video",
-    src: "https://raw.githubusercontent.com/ruthistanbull-netizen/RUTHCOFFECOMPANY/main/PinLoad_Good_coffee_good_mood._We_had_fun_capturing_Bayt_Al-Mocha_s_cappuccino_in_s_1789952989772.mp4",
+    src: "/home/rosta-under-hero-video.mp4",
     label: "Rosta Coffee Co kahve hazırlama videosu",
   },
   {
-    kind: "video",
-    src: "/home/rosta-coffee-video-v4.mp4",
-    label: "Rosta Coffee Co kahve videosu",
+    kind: "image",
+    desktopSrc: "/home/rosta-under-hero-photo.jpg",
+    mobileSrc: "/home/rosta-under-hero-photo.jpg",
+    alt: "Rosta Coffee Co kahve hazırlama editoryali",
+    priority: false,
   },
 ];
 
@@ -120,17 +122,13 @@ function EditorialMedia({
   const opacity = useTransform(progress, [0, 0.82, 1], [1, 1, 0.96]);
   const wrapperClass = index === 0
     ? "absolute inset-0 overflow-hidden"
-    : index === 1
-      ? "absolute inset-0 overflow-hidden lg:flex lg:items-center lg:justify-center lg:px-[8vw] lg:py-[6svh]"
-      : "absolute inset-x-[8vw] inset-y-[1svh] overflow-hidden lg:bottom-[32px] lg:left-[34vw] lg:right-[34vw] lg:top-[52px]";
+    : "absolute inset-0 overflow-hidden lg:flex lg:items-center lg:justify-center lg:px-[8vw] lg:py-[6svh]";
 
   return (
     <div
       ref={ref}
       className={
-        index === 1
-          ? "home-editorial-slide relative h-[100svh] lg:-mt-[8svh] lg:h-[108svh]"
-          : `home-editorial-slide relative h-[108svh] ${index ? "-mt-[8svh]" : ""}`
+        `home-editorial-slide relative h-[108svh] ${index ? "-mt-[8svh]" : ""}`
       }
       data-editorial-kind={slide.kind}
     >
@@ -146,12 +144,12 @@ function EditorialMedia({
           }
         >
           {slide.kind === "image" ? (
-            <picture className="block h-full w-full">
+            <picture className={index === 0 ? "block h-full w-full" : "block h-full w-full lg:aspect-video lg:h-auto lg:max-w-[1440px]"}>
               <source media="(min-width: 768px)" srcSet={slide.desktopSrc} />
               <img
                 src={slide.mobileSrc}
                 alt={slide.alt}
-                className={index === 1 ? "h-full w-full object-contain object-center" : "h-full w-full object-cover object-center [image-rendering:auto]"}
+                className={index === 0 ? "h-full w-full object-cover object-center [image-rendering:auto]" : "h-full w-full object-contain object-center lg:aspect-video lg:h-auto"}
                 loading={slide.priority ? "eager" : "lazy"}
                 fetchPriority={slide.priority ? "high" : "auto"}
                 decoding="async"
@@ -178,9 +176,9 @@ function EditorialMedia({
             </picture>
           ) : (
             <video
-              className={index === 1
-                ? "h-full w-full object-cover object-center lg:h-[84svh] lg:w-auto lg:max-w-[52vw]"
-                : "h-full w-full object-cover object-center"}
+              className={index === 0
+                ? "h-full w-full object-cover object-center"
+                : "h-full w-full object-contain object-center lg:aspect-video lg:h-auto lg:max-w-[1440px]"}
               src={slide.src}
               aria-label={slide.label}
               autoPlay
