@@ -31,7 +31,7 @@ type EditorialSlide =
 const EDITORIAL_SLIDES: EditorialSlide[] = [
   {
     kind: "video",
-    src: "/home/rosta-under-video-v5?v=20260921",
+    src: "https://raw.githubusercontent.com/ruthistanbull-netizen/RUTHCOFFECOMPANY/main/PinLoad_Good_coffee_good_mood._We_had_fun_capturing_Bayt_Al-Mocha_s_cappuccino_in_s_1789952989772.mp4",
     label: "Rosta Coffee Co kahve hazırlama videosu",
   },
   {
