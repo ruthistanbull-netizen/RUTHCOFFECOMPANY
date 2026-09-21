@@ -11,7 +11,7 @@ import type {
 } from "react";
 import { useCart } from "@/components/cart/CartProvider";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { RUTH_WORDMARK_SRC } from "@/components/brand/ruthWordmark";
+const ROSTA_WORDMARK_SRC = "/rosta-logo.png";
 import {
   defaultThemeCustomizerSettings,
   type ThemeCustomizerSettings,
@@ -632,11 +632,11 @@ export function Header({
           <Link
             href="/"
             className="header-wordmark-link flex justify-center"
-            aria-label="Ruth Istanbul ana sayfa"
+            aria-label="Rosta Coffee Co ana sayfa"
           >
             <img
-              src={RUTH_WORDMARK_SRC}
-              alt="Ruth Istanbul"
+              src={ROSTA_WORDMARK_SRC}
+              alt=""
               className="header-wordmark object-contain"
             />
           </Link>
@@ -692,9 +692,9 @@ export function Header({
                 href="/"
                 onClick={closeMenu}
                 className="ruth-zara-menu-logo"
-                aria-label="Ruth Istanbul menü anasayfa"
+                aria-label="Rosta Coffee Co menü anasayfa"
               >
-                <img src={RUTH_WORDMARK_SRC} alt="Ruth Istanbul" />
+                <img src={ROSTA_WORDMARK_SRC} alt="" />
               </Link>
 
               <div className="ruth-zara-menu-actions">
