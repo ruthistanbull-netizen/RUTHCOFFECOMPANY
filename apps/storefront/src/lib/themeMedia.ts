@@ -52,6 +52,15 @@ function currentHeroSource(value: unknown) {
   return source;
 }
 
+export function homepageHeroImages(_settings: ThemeCustomizerSettings): HomepageHeroImages {
+  // Rosta lansman görselini sabitle. Eski Ruth tema kayıtları veya uzak URL'ler
+  // hero üzerinde tekrar üstünlük kuramasın.
+  return {
+    desktop: ROSTA_DEFAULT_HERO_IMAGE,
+    mobile: ROSTA_DEFAULT_HERO_IMAGE,
+  };
+}
+
 export function homepageHeroImages(settings: ThemeCustomizerSettings): HomepageHeroImages {
   const overrides = settings.editor.pages["/"]?.overrides || [];
   const desktopOverride = currentHeroSource(
