@@ -1,14 +1,12 @@
-import {
-  defaultThemeCustomizerSettings,
-  type ThemeCustomizerSettings,
-} from "@/lib/themeCustomizer";
-import { ROSTA_DEFAULT_HERO_IMAGE } from "@/lib/rostaHeroAsset";
+import type { ThemeCustomizerSettings } from "@/lib/themeCustomizer";
 
 export const HOME_HERO_IMAGE_ID = "home-hero-image-1";
 export const HOME_HERO_DESKTOP_IMAGE_ID = `${HOME_HERO_IMAGE_ID}--desktop-image`;
 export const HOME_HERO_MOBILE_IMAGE_ID = `${HOME_HERO_IMAGE_ID}--mobile-image`;
 
 export type HomepageHeroImages = { desktop: string; mobile: string };
+
+const ROSTA_DEFAULT_HERO_IMAGE = "/home/rosta-hero-current.webp";
 
 const STALE_HERO_IMAGES = new Set([
   "/home/sss-desktop.webp",
@@ -39,10 +37,7 @@ export function homepageHeroImages(settings: ThemeCustomizerSettings): HomepageH
     overrides.find((item) => item.id === HOME_HERO_IMAGE_ID)?.imageSrc,
   );
   const saved = currentHeroSource(settings.homepageImages.heroImage);
-  const fallback =
-    currentHeroSource(defaultThemeCustomizerSettings.homepageImages.heroImage) ||
-    ROSTA_DEFAULT_HERO_IMAGE;
-  const shared = sharedOverride || saved || fallback || ROSTA_DEFAULT_HERO_IMAGE;
+  const shared = sharedOverride || saved || ROSTA_DEFAULT_HERO_IMAGE;
 
   return {
     desktop: desktopOverride || shared,
