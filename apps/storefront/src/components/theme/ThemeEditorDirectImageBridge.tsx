@@ -15,6 +15,10 @@ function isHeroImageId(id: string) {
   return /^home-hero-image-\d+(?:--(?:desktop|mobile)-image)?$/.test(id);
 }
 
+function heroBaseId(id: string) {
+  return id.replace(/--(?:desktop|mobile)-image$/, "");
+}
+
 function validImageSrc(value: unknown) {
   const src = typeof value === "string" ? value.trim() : "";
   if (!src) return "";
@@ -27,11 +31,31 @@ function validImageSrc(value: unknown) {
   }
 }
 
+function setImageSource(image: HTMLImageElement, src: string) {
+  if (image.getAttribute("src") !== src) image.setAttribute("src", src);
+  if (image.getAttribute("srcset") !== src) image.setAttribute("srcset", src);
+  if (image.src !== src) image.src = src;
+  if (image.srcset !== src) image.srcset = src;
+  image.removeAttribute("sizes");
+}
+
+function setPictureSources(image: HTMLImageElement, src: string) {
+  const picture = image.closest("picture");
+  if (!picture) return;
+  for (const source of Array.from(picture.querySelectorAll("source"))) {
+    if (source.getAttribute("srcset") !== src) source.setAttribute("srcset", src);
+    if (source.srcset !== src) source.srcset = src;
+    source.removeAttribute("sizes");
+  }
+}
+
 function applyImage(id: string, src: string) {
-  if (isHeroImageId(id)) return;
+  const hero = isHeroImageId(id);
+  const targetId = hero ? heroBaseId(id) : id;
+
   let target: Element | null = null;
   try {
-    target = document.querySelector(`[data-theme-id="${CSS.escape(id)}"]`);
+    target = document.querySelector(`[data-theme-id="${CSS.escape(targetId)}"]`);
   } catch {
     return;
   }
@@ -42,20 +66,21 @@ function applyImage(id: string, src: string) {
     : target.querySelector("img");
   if (!(image instanceof HTMLImageElement)) return;
 
-  if (image.getAttribute("src") !== src) image.setAttribute("src", src);
-  if (image.getAttribute("srcset") !== src) image.setAttribute("srcset", src);
-  if (image.src !== src) image.src = src;
-  if (image.srcset !== src) image.srcset = src;
-  image.removeAttribute("sizes");
-
-  const picture = image.closest("picture");
-  if (picture) {
-    for (const source of Array.from(picture.querySelectorAll("source"))) {
-      if (source.getAttribute("srcset") !== src) source.setAttribute("srcset", src);
-      if (source.srcset !== src) source.srcset = src;
-      source.removeAttribute("sizes");
+  if (hero) {
+    if (id.endsWith("--desktop-image")) {
+      setPictureSources(image, src);
+    } else if (id.endsWith("--mobile-image")) {
+      setImageSource(image, src);
+    } else {
+      setImageSource(image, src);
+      setPictureSources(image, src);
     }
+    window.dispatchEvent(new Event("ruth:home-hero-media-changed"));
+    return;
   }
+
+  setImageSource(image, src);
+  setPictureSources(image, src);
 }
 
 function imageOverridesFromSettings(settings: unknown) {
@@ -72,7 +97,7 @@ function imageOverridesFromSettings(settings: unknown) {
     for (const item of overrides) {
       const id = typeof item?.id === "string" ? item.id.trim() : "";
       const src = validImageSrc(item?.imageSrc);
-      if (id && src && !isHeroImageId(id)) result.push([id, src]);
+      if (id && src) result.push([id, src]);
     }
   }
 
@@ -90,7 +115,14 @@ export function ThemeEditorDirectImageBridge() {
     let frame = 0;
 
     const applyAll = () => {
-      for (const [id, src] of overridesRef.current) applyImage(id, src);
+      const overrides = [...overridesRef.current.entries()];
+      const sharedHero = overrides.filter(([id]) => isHeroImageId(id) && !id.includes("--"));
+      const other = overrides.filter(([id]) => !isHeroImageId(id));
+      const deviceHero = overrides.filter(([id]) => isHeroImageId(id) && id.includes("--"));
+
+      for (const [id, src] of [...sharedHero, ...other, ...deviceHero]) {
+        applyImage(id, src);
+      }
     };
 
     const schedule = (delay = 16) => {
@@ -116,7 +148,7 @@ export function ThemeEditorDirectImageBridge() {
       if (event.data.type === "RUTH_THEME_EDITOR_IMAGE_OVERRIDE") {
         const id = typeof event.data.id === "string" ? event.data.id.trim() : "";
         const imageSrc = validImageSrc(event.data.imageSrc ?? event.data.src);
-        if (!id || !imageSrc || isHeroImageId(id)) return;
+        if (!id || !imageSrc) return;
         directIdsRef.current.add(id);
         overridesRef.current.set(id, imageSrc);
         burst();
