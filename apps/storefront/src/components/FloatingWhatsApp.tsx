@@ -27,7 +27,7 @@ export function FloatingWhatsApp({
   const [editorMode, setEditorMode] = useState(false);
   const phone = String(settings.phone || "").replace(/[^0-9]/g, "");
   const message = encodeURIComponent(
-    "Merhaba, Ruth Istanbul destek ekibinden yardım almak istiyorum.",
+    "Merhaba, Rosta Coffee Co ekibinden yardım almak istiyorum.",
   );
 
   useEffect(() => {
