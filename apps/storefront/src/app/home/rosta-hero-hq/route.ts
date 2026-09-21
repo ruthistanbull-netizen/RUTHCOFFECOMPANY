@@ -5,16 +5,38 @@ import sharp from "sharp";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-async function sourceBuffer() {
-  const candidates = [
-    path.join(process.cwd(), "public", "home", "rosta-hero-current.webp"),
-    path.join(process.cwd(), "apps", "storefront", "public", "home", "rosta-hero-current.webp"),
+function sourceCandidates() {
+  const roots = [
+    process.cwd(),
+    path.join(process.cwd(), "apps", "storefront"),
   ];
 
+  const files = [
+    "rosta-hero.webp",
+    "rosta-hero-current.webp",
+  ];
+
+  return roots.flatMap((root) =>
+    files.map((file) => path.join(root, "public", "home", file)),
+  );
+}
+
+async function renderHero() {
   let lastError: unknown;
-  for (const candidate of candidates) {
+
+  for (const candidate of sourceCandidates()) {
     try {
-      return await readFile(candidate);
+      const source = await readFile(candidate);
+      return await sharp(source)
+        .resize(1920, 1080, {
+          fit: "cover",
+          position: "centre",
+          kernel: sharp.kernel.lanczos3,
+          withoutEnlargement: false,
+        })
+        .sharpen({ sigma: 0.8, m1: 1.05, m2: 2.1 })
+        .webp({ quality: 95, smartSubsample: true })
+        .toBuffer();
     } catch (error) {
       lastError = error;
     }
@@ -25,17 +47,7 @@ async function sourceBuffer() {
 
 export async function GET() {
   try {
-    const source = await sourceBuffer();
-    const image = await sharp(source)
-      .resize(1920, 1080, {
-        fit: "cover",
-        position: "centre",
-        kernel: sharp.kernel.lanczos3,
-        withoutEnlargement: false,
-      })
-      .sharpen({ sigma: 0.85, m1: 1.05, m2: 2.2 })
-      .webp({ quality: 94, smartSubsample: true })
-      .toBuffer();
+    const image = await renderHero();
 
     return new Response(new Uint8Array(image), {
       status: 200,
