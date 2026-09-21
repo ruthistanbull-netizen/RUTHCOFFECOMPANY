@@ -53,7 +53,6 @@ export async function Footer({ categories = [], collections = [], themeSettings 
     ...categories.map((category) => ({ label: category.name, href: categoryHref(category.public_slug || category.slug) })),
     ...(collections.length ? [{ label: "Koleksiyonlar", href: "/collections" }] : []),
   ];
-  const logoSrc = resolvedThemeSettings.logo.src || "/ruth-header-logo.png";
   const supportLinks = [
     { label: "İletişim", href: "/contact" },
     { label: "S.S.S.", href: "/faq" },
@@ -72,8 +71,8 @@ export async function Footer({ categories = [], collections = [], themeSettings 
       <footer className="bg-cream px-4 pb-8 pt-14 md:px-8 md:pt-20" style={{ borderTop: "1px solid rgba(184,151,106,0.15)" }}>
         <div className="mx-auto max-w-7xl">
           <div className="mb-10 flex flex-col items-center text-center md:mb-12">
-            <Link href="/#top" aria-label="Ruth Istanbul anasayfa" className="mb-4 inline-flex"><img src={logoSrc} alt="Ruth Istanbul" className="h-[66px] w-[184px] object-contain" /></Link>
-            <p className="max-w-sm text-xs leading-relaxed sm:text-sm" style={{ color: "var(--muted-foreground)" }}>Günlük anlar için takılar. Istanbul’da tasarlandı; her gün takılsın, her zaman hatırlansın diye.</p>
+            <Link href="/#top" aria-label="Rosta Coffee Co anasayfa" className="mb-4 inline-flex"><img src="/rosta-coffee-co.png" alt="" className="h-[66px] w-[240px] object-contain sm:w-[280px]" /></Link>
+            <p className="max-w-sm text-xs leading-relaxed sm:text-sm" style={{ color: "var(--muted-foreground)" }}>Kahve, danışmanlık ve tedarik için sade, güvenilir çözümler.</p>
             <div className="mt-5 flex justify-center gap-3">
               {SOCIAL_LINKS.map((social) => <a key={social.label} href={social.href} target="_blank" rel="noreferrer" aria-label={social.label} className="flex h-10 w-10 items-center justify-center rounded-full border border-gold/20 text-ink transition-colors hover:border-gold hover:bg-ivory">{social.icon}</a>)}
               <Link href="/contact#contact-form" aria-label="Bizimle iletişime geç" className="flex h-10 w-10 items-center justify-center rounded-full border border-gold/20 text-ink transition-colors hover:border-gold hover:bg-ivory"><Mail size={18} strokeWidth={1.65} /></Link>
@@ -88,7 +87,7 @@ export async function Footer({ categories = [], collections = [], themeSettings 
               {PAYMENT_LOGOS.map((logo) => <span key={logo.label} className="flex h-8 w-[58px] shrink-0 items-center justify-center rounded-lg border border-gold/10 bg-cream p-0.5 shadow-sm md:h-10 md:w-[74px]" aria-label={logo.label} title={logo.label}><img src={logo.src} alt={logo.label} className="h-full w-full object-contain" loading="lazy" /></span>)}
             </div>
           </div>
-          <div className="flex flex-col justify-between gap-2 border-t border-gold/15 pt-6 text-[9px] sm:text-[10px] md:flex-row" style={{ color: "var(--muted-foreground)" }}><p>Copyright © 2026, RUTH ISTANBUL® Tüm Hakları Saklıdır.</p><p>Antik formlar, modern takılar.</p></div>
+          <div className="flex flex-col justify-between gap-2 border-t border-gold/15 pt-6 text-[9px] sm:text-[10px] md:flex-row" style={{ color: "var(--muted-foreground)" }}><p>Copyright © 2026, ROSTA COFFEE CO. Tüm Hakları Saklıdır.</p><p>Kahvenin her adımında.</p></div>
         </div>
       </footer>
       <ThemeEditorNativeNavigation />
