@@ -30,8 +30,8 @@ const EDITORIAL_SLIDES = [
   },
   {
     kind: "video",
-    src: "/home/img-3719.mp4",
-    label: "Rosta Coffee Co ana sayfa videosu",
+    src: "/home/rosta-coffee-video.mp4",
+    label: "Rosta Coffee Co kahve videosu",
   },
 ] as const;
 
