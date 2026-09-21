@@ -44,11 +44,11 @@ export function Phase1DHomepage({ newProducts, editorialProducts, categories, co
     <div className="phase1d-home">
       <section className="phase1d-home-hero" aria-labelledby="phase1d-home-title">
         <div className="phase1d-home-hero__media">
-          <Media src={heroImage} alt="Ruth Istanbul koleksiyonu" />
+          <Media src={heroImage} alt="" />
         </div>
         <div className="phase1d-home-hero__overlay" aria-hidden="true" />
         <div className="phase1d-home-hero__content">
-          <p>Ruth Istanbul · İstanbul</p>
+          <p>Rosta Coffee Co</p>
           <h1 id="phase1d-home-title" lang="en-US" data-latin-uppercase>Ancient forms.<br />Modern rituals.</h1>
           <span>Mitolojiden ilham alan, günlük yaşama uyarlanan zamansız takılar.</span>
           <div className="phase1d-home-hero__actions">
@@ -75,7 +75,7 @@ export function Phase1DHomepage({ newProducts, editorialProducts, categories, co
 
       <section className="phase1d-home-signature phase1d-home-section">
         <div className="phase1d-home-signature__media">
-          <Media src={storyImage} alt={editorialProducts[0]?.name || "Ruth Istanbul signature object"} />
+          <Media src={storyImage} alt={editorialProducts[0]?.name || ""} />
           <span aria-hidden="true">01</span>
         </div>
         <div className="phase1d-home-signature__copy">
@@ -117,7 +117,7 @@ export function Phase1DHomepage({ newProducts, editorialProducts, categories, co
           <ButtonLink href="/pages/about" variant="secondary">Ruth’u Tanı</ButtonLink>
         </div>
         <div className="phase1d-home-manifesto__media">
-          <Media src={objectImage} alt="Ruth Istanbul tasarım detayı" />
+          <Media src={objectImage} alt="" />
         </div>
       </section>
 
