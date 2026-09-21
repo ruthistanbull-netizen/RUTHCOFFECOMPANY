@@ -71,7 +71,7 @@ export async function Footer({ categories = [], collections = [], themeSettings 
       <footer className="bg-cream px-4 pb-8 pt-14 md:px-8 md:pt-20" style={{ borderTop: "1px solid rgba(184,151,106,0.15)" }}>
         <div className="mx-auto max-w-7xl">
           <div className="mb-10 flex flex-col items-center text-center md:mb-12">
-            <Link href="/" aria-label="Rosta Coffee Co anasayfa" className="mb-4 inline-flex"><img src="/rosta-coffee-co-v4.webp" alt="" className="h-[66px] w-[240px] object-contain sm:w-[280px]" /></Link>
+            <Link href="/" aria-label="Rosta Coffee Co anasayfa" className="mb-4 inline-flex"><img src="/rosta-coffee-co-user.svg" alt="" className="h-[66px] w-[240px] object-contain sm:w-[280px]" /></Link>
             <p className="max-w-sm text-xs leading-relaxed sm:text-sm" style={{ color: "var(--muted-foreground)" }}>Kahve, danışmanlık ve tedarik için sade, güvenilir çözümler.</p>
             <div className="mt-5 flex justify-center gap-3">
               {SOCIAL_LINKS.map((social) => <a key={social.label} href={social.href} target="_blank" rel="noreferrer" aria-label={social.label} className="flex h-10 w-10 items-center justify-center rounded-full border border-gold/20 text-ink transition-colors hover:border-gold hover:bg-ivory">{social.icon}</a>)}
