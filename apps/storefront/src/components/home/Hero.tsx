@@ -115,7 +115,9 @@ function EditorialMedia({
   const opacity = useTransform(progress, [0, 0.82, 1], [1, 1, 0.96]);
   const wrapperClass = index === 0
     ? "absolute inset-0 overflow-hidden"
-    : "absolute inset-x-[2vw] inset-y-[1svh] overflow-hidden lg:bottom-[32px] lg:left-[7vw] lg:right-[7vw] lg:top-[52px]";
+    : index === 1
+      ? "absolute inset-x-[4vw] inset-y-[1svh] overflow-hidden lg:bottom-[32px] lg:left-[18vw] lg:right-[18vw] lg:top-[52px]"
+      : "absolute inset-x-[2vw] inset-y-[1svh] overflow-hidden lg:bottom-[32px] lg:left-[7vw] lg:right-[7vw] lg:top-[52px]";
 
   return (
     <div
@@ -134,7 +136,7 @@ function EditorialMedia({
               <img
                 src={slide.mobileSrc}
                 alt=""
-                className="h-full w-full object-cover object-center"
+                className={index === 1 ? "h-full w-full object-contain object-center" : "h-full w-full object-cover object-center"}
                 loading={index === 0 ? "eager" : "lazy"}
                 fetchPriority={index === 0 ? "high" : "auto"}
                 decoding="async"
