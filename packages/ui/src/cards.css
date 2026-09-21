@@ -64,7 +64,7 @@
 .ruth-product-card--linked:hover {
   transform: translateY(-3px);
   border-color: rgba(184, 151, 106, 0.5);
-  box-shadow: 0 18px 44px rgba(23, 21, 18, 0.1);
+  box-shadow: 0 18px 44px rgba(17, 17, 17, 0.1);
 }
 
 .ruth-product-card__media {
@@ -104,7 +104,7 @@
   z-index: 3;
   padding: 6px 9px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(244, 240, 232, 0.9);
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.08em;
@@ -127,11 +127,11 @@
   place-items: center;
   width: var(--ruth-control-sm);
   height: var(--ruth-control-sm);
-  border: 1px solid rgba(23, 21, 18, 0.1);
+  border: 1px solid rgba(17, 17, 17, 0.1);
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(244, 240, 232, 0.9);
   color: var(--ruth-ink);
-  box-shadow: 0 8px 20px rgba(23, 21, 18, 0.08);
+  box-shadow: 0 8px 20px rgba(17, 17, 17, 0.08);
   cursor: pointer;
 }
 
@@ -177,7 +177,7 @@
   min-height: 420px;
   overflow: hidden;
   border-radius: var(--ruth-radius-md);
-  color: white;
+  color: var(--ruth-color-text-inverse);
   background: var(--ruth-ink);
   transition: transform var(--ruth-motion-slow) var(--ruth-easing), box-shadow var(--ruth-motion-slow) var(--ruth-easing);
 }
@@ -211,7 +211,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, transparent 28%, rgba(23, 21, 18, 0.82));
+  background: linear-gradient(180deg, transparent 28%, rgba(17, 17, 17, 0.82));
 }
 
 .ruth-editorial-card__content {
@@ -250,7 +250,7 @@
   flex: 0 0 auto;
   font-size: 24px;
   line-height: 1;
-  color: white;
+  color: var(--ruth-color-text-inverse);
   transform: translateX(0);
   transition: transform var(--ruth-motion-normal) var(--ruth-easing);
 }
@@ -263,7 +263,7 @@
   margin-top: 10px;
   font-size: 13px;
   line-height: 1.55;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(244, 240, 232, 0.8);
 }
 
 .ruth-editorial-card__content > div:last-child { position: relative; z-index: 4; margin-top: 18px; pointer-events: auto; }
