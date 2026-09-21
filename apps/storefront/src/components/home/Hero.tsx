@@ -8,7 +8,7 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
-import { ROSTA_WORDMARK_SRC } from "@/components/brand/rostaWordmark";
+import { ROSTA_HOME_WORDMARK_SRC } from "@/components/brand/rostaWordmark";
 import type { HomepageHeroImages } from "@/lib/themeMedia";
 
 const HOME_HERO_IMAGE_ID = "home-hero-image-1";
@@ -120,7 +120,9 @@ function EditorialMedia({
   const scale = useTransform(progress, [0, 1], [1.012, 0.996]);
   const y = useTransform(progress, [0, 1], ["1.5%", "-1%"]);
   const opacity = useTransform(progress, [0, 0.82, 1], [1, 1, 0.96]);
-  const wrapperClass = "absolute inset-0 overflow-hidden";
+  const wrapperClass = index === 0
+    ? "absolute inset-0 overflow-hidden"
+    : "home-editorial-secondary-frame absolute overflow-hidden";
 
   return (
     <div
@@ -237,7 +239,7 @@ export default function Hero({ heroImages }: { heroImages: HomepageHeroImages })
         if (!media) return;
         const luminance = sampleMediaTone(media, pointX, pointY);
         if (luminance == null) return;
-        setWordmarkColor(luminance > 148 ? "#111111" : "#ffffff");
+        setWordmarkColor(luminance > 148 ? "#111111" : "#F4F0E8");
       });
     };
 
@@ -273,8 +275,8 @@ export default function Hero({ heroImages }: { heroImages: HomepageHeroImages })
         data-visible={wordmarkVisible ? "true" : "false"}
         style={{
           backgroundColor: wordmarkColor,
-          WebkitMaskImage: `url(${ROSTA_WORDMARK_SRC})`,
-          maskImage: `url(${ROSTA_WORDMARK_SRC})`,
+          WebkitMaskImage: `url(${ROSTA_HOME_WORDMARK_SRC})`,
+          maskImage: `url(${ROSTA_HOME_WORDMARK_SRC})`,
           WebkitMaskRepeat: "no-repeat",
           maskRepeat: "no-repeat",
           WebkitMaskPosition: "center",

@@ -21,6 +21,12 @@
 }
 
 :root {
+  --home-editorial-inset-x-mobile: 2vw;
+  --home-editorial-inset-y-mobile: 1svh;
+  --home-editorial-inset-x-desktop: 7vw;
+  --home-editorial-inset-top-desktop: 52px;
+  --home-editorial-inset-bottom-desktop: 32px;
+
   --rosta-carbon: #111111;
   --rosta-bone: #f4f0e8;
   --rosta-espresso: #2b1b16;
@@ -312,4 +318,26 @@ body:has(.ds-page) .ruth-page-header h1 {
   transform: none !important;
   clip: auto !important;
   clip-path: none !important;
+}
+
+/* ROSTA homepage media spacing mirrors the Ruth storefront media system. */
+.home-editorial-secondary-frame {
+  inset: var(--home-editorial-inset-y-mobile) var(--home-editorial-inset-x-mobile);
+}
+@media (min-width: 1024px) {
+  .home-editorial-secondary-frame {
+    top: var(--home-editorial-inset-top-desktop);
+    right: var(--home-editorial-inset-x-desktop);
+    bottom: var(--home-editorial-inset-bottom-desktop);
+    left: var(--home-editorial-inset-x-desktop);
+  }
+}
+
+/* Typography only: layout, spacing and component structures remain untouched. */
+.site-app-shell :where(.font-heading,.font-editorial,.font-serif,.ruth-type-display,.ruth-type-page-title,.ruth-type-section-title,[data-ruth-text-role="display"],[data-ruth-text-role="page-title"],[data-ruth-text-role="section-title"]) {
+  font-family: var(--font-heading) !important;
+  font-weight: 900 !important;
+}
+.site-app-shell :where(button,input,select,textarea,p,a,span,label,small,strong,em,li,dt,dd,th,td) {
+  font-family: var(--font-body);
 }

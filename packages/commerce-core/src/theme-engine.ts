@@ -66,7 +66,7 @@ export type ThemeCustomizerSettings = {
 
 export const defaultThemeCustomizerSettings: ThemeCustomizerSettings = {
   announcement: { enabled: false, text: "2000 TL ve üzeri alışverişlerde ücretsiz kargo ✦", text2: "", href: "/products", intervalSeconds: 5 },
-  logo: { src: "/rosta-design-system-logo.svg", desktopWidth: 180, mobileWidth: 120 },
+  logo: { src: "/rosta-coffee-co.svg", desktopWidth: 180, mobileWidth: 120 },
   colors: { ivory: "#F4F0E8", cream: "#F4F0E8", ink: "#111111", gold: "#B9563D", goldDark: "#2B1B16", muted: "#6F725B" },
   header: { links: [
     { id: "home", label: "Anasayfa", path: "/", side: "left", children: [] },

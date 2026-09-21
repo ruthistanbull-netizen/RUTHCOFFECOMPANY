@@ -6,13 +6,27 @@ import {
   normalizeThemeSectionSettings,
   type ThemeSectionSettings,
 } from "@ruth-commerce/commerce-core/theme-sections";
+import { mapRostaLegacyColor } from "@/lib/rostaDesignSystem";
 
 const THEME_SECTION_REVALIDATE_SECONDS = 10;
+
+function applyRostaSectionPalette(settings: ThemeSectionSettings): ThemeSectionSettings {
+  return {
+    pages: Object.fromEntries(Object.entries(settings.pages).map(([path, page]) => [path, {
+      ...page,
+      sections: page.sections.map((section) => ({
+        ...section,
+        backgroundColor: mapRostaLegacyColor(section.backgroundColor) || section.backgroundColor,
+        textColor: mapRostaLegacyColor(section.textColor) || section.textColor,
+      })),
+    }])),
+  };
+}
 
 async function readThemeSections(): Promise<ThemeSectionSettings> {
   let client = supabase;
   try { client = getSupabaseAdmin(); } catch {}
-  if (!client) return defaultThemeSectionSettings;
+  if (!client) return applyRostaSectionPalette(defaultThemeSectionSettings);
 
   const { data, error } = await client
     .from("site_settings")
@@ -22,9 +36,9 @@ async function readThemeSections(): Promise<ThemeSectionSettings> {
 
   if (error) {
     console.error("Tema bölüm ayarları alınamadı:", error.message);
-    return defaultThemeSectionSettings;
+    return applyRostaSectionPalette(defaultThemeSectionSettings);
   }
-  return normalizeThemeSectionSettings(data?.setting_value || defaultThemeSectionSettings);
+  return applyRostaSectionPalette(normalizeThemeSectionSettings(data?.setting_value || defaultThemeSectionSettings));
 }
 
 const cachedThemeSections = unstable_cache(readThemeSections, ["ruth-theme-sections"], {
