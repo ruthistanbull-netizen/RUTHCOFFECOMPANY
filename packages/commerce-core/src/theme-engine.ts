@@ -77,7 +77,7 @@ export const defaultThemeCustomizerSettings: ThemeCustomizerSettings = {
     { id: "contact", label: "İletişim", path: "/contact", side: "right", children: [] },
   ] },
   whatsapp: { enabled: true, phone: "908503469789", label: "WhatsApp" },
-  homepageImages: { heroImage: "/hero-ring.png", scrollImages: ["/scroll-product-1.png", "/scroll-product-2.png", "/scroll-product-3.png", "/scroll-product-4.png", "/scroll-product-5.png", "/scroll-product-6.png"] },
+  homepageImages: { heroImage: "", scrollImages: ["/scroll-product-1.png", "/scroll-product-2.png", "/scroll-product-3.png", "/scroll-product-4.png", "/scroll-product-5.png", "/scroll-product-6.png"] },
   editor: { pages: {} },
 };
 
