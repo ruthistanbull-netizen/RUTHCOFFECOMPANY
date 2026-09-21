@@ -7,12 +7,12 @@
   --ruth-gold-light: #B9563D;
   --ruth-gold-dark: #2B1B16;
   --ruth-border: #AAA8A1;
-  --ruth-success: #2f6b4f;
-  --ruth-warning: #9a681e;
-  --ruth-danger: #9b3a36;
-  --ruth-info: #355c7d;
-  --ruth-font-display: "Cinzel", Georgia, serif;
-  --ruth-font-body: "Montserrat", Arial, sans-serif;
+  --ruth-success: #6F725B;
+  --ruth-warning: #B9563D;
+  --ruth-danger: #2B1B16;
+  --ruth-info: #AAA8A1;
+  --ruth-font-display: var(--font-archivo), "Arial Black", "Helvetica Neue", Arial, sans-serif;
+  --ruth-font-body: var(--font-inter), "Helvetica Neue", Arial, sans-serif;
   --ruth-radius-xs: 6px;
   --ruth-radius-sm: 10px;
   --ruth-radius-md: 16px;
@@ -110,7 +110,7 @@
 .ruth-icon-button--surface { border-color: var(--ruth-border); background: var(--ruth-paper); color: var(--ruth-ink); }
 .ruth-icon-button--ghost { background: transparent; color: var(--ruth-ink); }
 .ruth-icon-button--dark { background: var(--ruth-ink); color: var(--ruth-color-text-inverse); }
-.ruth-icon-button--danger { background: rgba(155, 58, 54, 0.1); color: var(--ruth-danger); }
+.ruth-icon-button--danger { background: rgba(43, 27, 22, 0.10); color: var(--ruth-danger); }
 
 .ruth-field { display: grid; gap: 7px; color: var(--ruth-ink); }
 .ruth-field__label { font-size: 12px; font-weight: 600; letter-spacing: 0.01em; }
