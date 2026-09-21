@@ -11,7 +11,7 @@ import type {
 } from "react";
 import { useCart } from "@/components/cart/CartProvider";
 import { useAuth } from "@/components/auth/AuthProvider";
-const ROSTA_WORDMARK_SRC = "/rosta-logo.png";
+import { ROSTA_WORDMARK_SRC } from "@/components/brand/rostaWordmark";
 import {
   defaultThemeCustomizerSettings,
   type ThemeCustomizerSettings,
