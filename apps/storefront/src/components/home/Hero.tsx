@@ -8,7 +8,7 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
-import { RUTH_WORDMARK_SRC } from "@/components/brand/ruthWordmark";
+const ROSTA_WORDMARK_SRC = "/rosta-logo.png";
 import {
   HOME_HERO_DESKTOP_IMAGE_ID,
   HOME_HERO_MOBILE_IMAGE_ID,
@@ -22,20 +22,20 @@ const HOME_EDITORIAL_IMAGE_ID = "home-editorial-image-2";
 const EDITORIAL_SLIDES = [
   {
     kind: "hero-image",
-    alt: "Ruth Istanbul yüzük koleksiyonu",
+    alt: "",
     priority: true,
   },
   {
     kind: "image",
     desktopSrc: "/home/12-desktop.webp",
     mobileSrc: "/home/img-1033-mobile.webp",
-    alt: "Ruth Istanbul tasarım yüzükleri",
+    alt: "",
     priority: false,
   },
   {
     kind: "video",
     src: "/home/img-3719.mp4",
-    label: "Ruth Istanbul takı koleksiyonu videosu",
+    label: "Rosta Coffee Co ana sayfa videosu",
   },
 ] as const;
 
@@ -139,13 +139,14 @@ function EditorialMedia({
               <img
                 key={`hero-mobile:${heroImages.mobile}`}
                 src={heroImages.mobile}
-                alt={slide.alt}
+                alt=""
                 className="h-full w-full object-cover object-center md:hidden"
                 loading="eager"
                 fetchPriority="high"
                 decoding="async"
                 draggable={false}
                 onLoad={notifyHeroMediaReady}
+                onError={(event) => { event.currentTarget.style.display = "none"; }}
                 data-home-editorial-media
                 data-theme-id={HOME_HERO_MOBILE_IMAGE_ID}
                 data-theme-label="Ana sayfa hero görseli · Mobil"
@@ -153,13 +154,14 @@ function EditorialMedia({
               <img
                 key={`hero-desktop:${heroImages.desktop}`}
                 src={heroImages.desktop}
-                alt={slide.alt}
+                alt=""
                 className="hidden h-full w-full object-cover object-center md:block"
                 loading="eager"
                 fetchPriority="high"
                 decoding="async"
                 draggable={false}
                 onLoad={notifyHeroMediaReady}
+                onError={(event) => { event.currentTarget.style.display = "none"; }}
                 data-home-editorial-media
                 data-theme-id={HOME_HERO_DESKTOP_IMAGE_ID}
                 data-theme-label="Ana sayfa hero görseli · Masaüstü"
@@ -170,12 +172,13 @@ function EditorialMedia({
               <source media="(min-width: 768px)" srcSet={slide.desktopSrc} />
               <img
                 src={slide.mobileSrc}
-                alt={slide.alt}
+                alt=""
                 className="h-full w-full object-cover object-center"
                 loading="lazy"
                 fetchPriority="auto"
                 decoding="async"
                 draggable={false}
+                onError={(event) => { event.currentTarget.style.display = "none"; }}
                 data-home-editorial-media
                 data-theme-id={HOME_EDITORIAL_IMAGE_ID}
                 data-theme-label="Ana sayfa editoryal görseli"
@@ -279,7 +282,7 @@ export default function Hero({ heroImages }: { heroImages: HomepageHeroImages })
     <section
       ref={sectionRef}
       id="home-editorial"
-      aria-label="Ruth Istanbul ana sayfa editoryali"
+      aria-label="Rosta Coffee Co ana sayfa editoryali"
       className="relative overflow-clip bg-ivory"
     >
       <style>{`
@@ -288,13 +291,13 @@ export default function Hero({ heroImages }: { heroImages: HomepageHeroImages })
       <motion.div
         ref={wordmarkRef}
         role="img"
-        aria-label="Ruth Istanbul"
+        aria-label="Rosta"
         className="home-editorial-wordmark"
         data-visible={wordmarkVisible ? "true" : "false"}
         style={{
           backgroundColor: wordmarkColor,
-          WebkitMaskImage: `url(${RUTH_WORDMARK_SRC})`,
-          maskImage: `url(${RUTH_WORDMARK_SRC})`,
+          WebkitMaskImage: `url(${ROSTA_WORDMARK_SRC})`,
+          maskImage: `url(${ROSTA_WORDMARK_SRC})`,
           WebkitMaskRepeat: "no-repeat",
           maskRepeat: "no-repeat",
           WebkitMaskPosition: "center",
