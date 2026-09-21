@@ -11,7 +11,8 @@ import { themeSectionPage } from "@ruth-commerce/commerce-core/theme-sections";
 import { SITE_URL } from "@/lib/seo";
 
 export const metadata: Metadata = { alternates: { canonical: SITE_URL } };
-export const dynamic = "force-dynamic";\nexport const revalidate = 0;
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function Home({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const query = await searchParams;
