@@ -6,16 +6,16 @@ export const HOME_HERO_MOBILE_IMAGE_ID = `${HOME_HERO_IMAGE_ID}--mobile-image`;
 
 export type HomepageHeroImages = { desktop: string; mobile: string };
 
-const ROSTA_DEFAULT_HERO_IMAGE = "/home/rosta-hero-current.webp";
+export const ROSTA_DEFAULT_HERO_IMAGE = "/home/rosta-hero-current.webp?v=20260921-rosta";
 
-const STALE_HERO_PATHS = new Set([
-  "/home/sss-desktop.webp",
-  "/home/sudem-mobile.webp",
+const LEGACY_HERO_PATH_MARKERS = [
+  "/home/sss-desktop",
+  "/home/sudem-mobile",
   "/home/rosta-hero.webp",
   "/home/rosta-hero-v4.webp",
   "/home/ruth-beach-desktop",
-  "/home/ruth-beach-desktop/",
-]);
+  "ruth-beach",
+];
 
 function clean(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
@@ -23,23 +23,32 @@ function clean(value: unknown) {
 
 function sourcePath(source: string) {
   if (source.startsWith("/") && !source.startsWith("//")) {
-    return source.split(/[?#]/, 1)[0] || "";
+    return (source.split(/[?#]/, 1)[0] || "").toLowerCase();
   }
 
   try {
-    return new URL(source).pathname;
+    return new URL(source).pathname.toLowerCase();
   } catch {
     return "";
   }
 }
 
-function currentHeroSource(value: unknown) {
-  const source = clean(value);
-  if (!source) return "";
+function isLegacyHeroSource(source: string) {
+  const lower = source.toLowerCase();
+
+  // Eski Ruth hero görseli geçmiş sürümlerde base64 data URI olarak da kaydedildi.
+  // Onu kalıcı tema ayarı olarak tekrar kullanma.
+  if (lower.startsWith("data:image/")) return true;
 
   const path = sourcePath(source);
-  if (path && STALE_HERO_PATHS.has(path)) return "";
+  return LEGACY_HERO_PATH_MARKERS.some(
+    (marker) => lower.includes(marker) || path.includes(marker),
+  );
+}
 
+function currentHeroSource(value: unknown) {
+  const source = clean(value);
+  if (!source || isLegacyHeroSource(source)) return "";
   return source;
 }
 
