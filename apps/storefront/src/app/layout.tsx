@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Cinzel, Montserrat } from "next/font/google";
+import { Archivo, Inter } from "next/font/google";
 import "@ruth-commerce/ui/styles.css";
 import "@ruth-commerce/ui/interaction.css";
 import "@ruth-commerce/ui/feedback.css";
@@ -45,17 +45,19 @@ import {
   SOCIAL_PROFILES,
 } from "@/lib/seo";
 
-const montserrat = Montserrat({
+const inter = Inter({
   subsets: ["latin", "latin-ext"],
+  weight: ["400", "500", "700"],
   display: "swap",
-  variable: "--font-montserrat",
+  variable: "--font-inter",
   preload: true,
 });
 
-const cinzel = Cinzel({
+const archivo = Archivo({
   subsets: ["latin", "latin-ext"],
+  weight: ["900"],
   display: "swap",
-  variable: "--font-cinzel",
+  variable: "--font-archivo",
   preload: true,
 });
 
@@ -65,7 +67,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#F6F0E7",
+  themeColor: "#F4F0E8",
 };
 
 export const metadata: Metadata = {
@@ -130,29 +132,32 @@ export default async function RootLayout({
 
   const colors = themeSettings.colors;
   const themeStyle = {
-    "--ivory": colors.ivory || "#F6F0E7",
-    "--cream": colors.cream || "#FAF7F1",
-    "--ink": colors.ink || "#211912",
-    "--gold": colors.gold || "#B8976A",
-    "--gold-dark": colors.goldDark || "#76552F",
-    "--muted-foreground": colors.muted || "#66594D",
-    "--background": colors.ivory || "#F6F0E7",
-    "--foreground": colors.ink || "#211912",
-    "--font-heading": 'var(--font-montserrat), "Helvetica Neue", Arial, sans-serif',
-    "--font-body": 'var(--font-montserrat), "Helvetica Neue", Arial, sans-serif',
-    "--font-editorial": 'var(--font-cinzel), Georgia, "Times New Roman", serif',
-    "--ruth-font-display": 'var(--font-cinzel), Georgia, "Times New Roman", serif',
-    "--ruth-font-body": 'var(--font-montserrat), "Helvetica Neue", Arial, sans-serif',
-    "--ruth-color-canvas": colors.ivory || "#F6F0E7",
-    "--ruth-color-surface": colors.cream || "#FAF7F1",
-    "--ruth-color-surface-muted": colors.cream || "#FAF7F1",
-    "--ruth-color-text-primary": colors.ink || "#211912",
-    "--ruth-color-text-muted": colors.muted || "#66594D",
-    "--ruth-color-accent": colors.gold || "#B8976A",
-    "--ruth-color-accent-strong": colors.goldDark || "#76552F",
-    "--ruth-color-border-subtle": "rgba(184, 151, 106, 0.20)",
-    "--ruth-color-border-strong": "rgba(118, 85, 47, 0.52)",
-    "--ruth-color-text-inverse": "#FFFFFF",
+    "--ivory": colors.ivory || "#F4F0E8",
+    "--cream": colors.cream || "#F4F0E8",
+    "--ink": colors.ink || "#111111",
+    "--gold": colors.gold || "#B9563D",
+    "--gold-dark": colors.goldDark || "#2B1B16",
+    "--muted-foreground": colors.muted || "#6F725B",
+    "--background": colors.ivory || "#F4F0E8",
+    "--foreground": colors.ink || "#111111",
+    "--font-heading": 'var(--font-archivo), "Arial Black", "Helvetica Neue", Arial, sans-serif',
+    "--font-body": 'var(--font-inter), "Helvetica Neue", Arial, sans-serif',
+    "--font-editorial": 'var(--font-archivo), "Arial Black", "Helvetica Neue", Arial, sans-serif',
+    "--ruth-font-display": 'var(--font-archivo), "Arial Black", "Helvetica Neue", Arial, sans-serif',
+    "--ruth-font-body": 'var(--font-inter), "Helvetica Neue", Arial, sans-serif',
+    "--ruth-color-canvas": colors.ivory || "#F4F0E8",
+    "--ruth-color-surface": colors.cream || "#F4F0E8",
+    "--ruth-color-surface-muted": colors.cream || "#F4F0E8",
+    "--ruth-color-text-primary": colors.ink || "#111111",
+    "--ruth-color-text-muted": colors.muted || "#6F725B",
+    "--ruth-color-accent": colors.gold || "#B9563D",
+    "--ruth-color-accent-soft": "color-mix(in srgb, #B9563D 28%, #F4F0E8)",
+    "--ruth-color-accent-strong": colors.goldDark || "#2B1B16",
+    "--ruth-color-border-subtle": "rgba(170, 168, 161, 0.48)",
+    "--ruth-color-border-strong": "#AAA8A1",
+    "--ruth-color-focus": "#B9563D",
+    "--ruth-color-overlay": "rgba(17, 17, 17, 0.44)",
+    "--ruth-color-text-inverse": "#F4F0E8",
     "--announcement-height": themeSettings.announcement.enabled ? "34px" : "0px",
   } as React.CSSProperties;
 
@@ -182,7 +187,7 @@ export default async function RootLayout({
     <html lang="tr" data-uppercase-locale="en-US">
       <body
         lang="tr"
-        className={`${montserrat.variable} ${cinzel.variable} site-app-shell`}
+        className={`${inter.variable} ${archivo.variable} site-app-shell`}
         data-ruth-typography="storefront"
         style={themeStyle}
       >
@@ -199,10 +204,14 @@ export default async function RootLayout({
             font-family: inherit;
           }
           .site-app-shell :where(.font-heading) {
-            font-family: var(--font-body);
+            font-family: var(--font-heading);
+            font-weight: 900;
+            letter-spacing: -0.03em;
           }
           .site-app-shell :where(.font-editorial, .font-serif, .ruth-type-display, [data-ruth-text-role="display"]) {
             font-family: var(--ruth-font-display);
+            font-weight: 900;
+            letter-spacing: -0.03em;
           }
           .site-app-shell :where([data-latin-uppercase], .latin-uppercase) {
             text-transform: uppercase;

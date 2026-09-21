@@ -1,39 +1,61 @@
 @import "tailwindcss";
 
 @theme {
-  --color-ivory: #f6f0e7;
-  --color-cream: #faf7f1;
-  --color-ink: #211912;
-  --color-gold: #b8976a;
-  --color-gold-dark: var(--ruth-color-accent-strong);
-  --color-bronze: var(--ruth-color-accent-strong);
-  --color-muted-ruth: var(--ruth-color-text-muted);
+  --color-carbon: #111111;
+  --color-bone: #f4f0e8;
+  --color-espresso: #2b1b16;
+  --color-oxide: #b9563d;
+  --color-dusty-olive: #6f725b;
+  --color-steel: #aaa8a1;
+
+  /* Legacy storefront aliases now resolve to the ROSTA design system. */
+  --color-white: #f4f0e8;
+  --color-black: #111111;
+  --color-ivory: #f4f0e8;
+  --color-cream: #f4f0e8;
+  --color-ink: #111111;
+  --color-gold: #b9563d;
+  --color-gold-dark: #2b1b16;
+  --color-bronze: #2b1b16;
+  --color-muted-ruth: #6f725b;
 }
 
 :root {
-  --background: #f6f0e7;
-  --foreground: #211912;
-  --ivory: #f6f0e7;
-  --cream: #faf7f1;
-  --ink: #211912;
-  --gold: #b8976a;
-  --gold-dark: var(--ruth-color-accent-strong);
-  --bronze: var(--ruth-color-accent-strong);
-  --muted-foreground: var(--ruth-color-text-muted);
-  --font-heading: var(--font-cinzel), Georgia, "Times New Roman", serif;
-  --font-body: var(--font-montserrat), "Helvetica Neue", Arial, sans-serif;
+  --rosta-carbon: #111111;
+  --rosta-bone: #f4f0e8;
+  --rosta-espresso: #2b1b16;
+  --rosta-oxide: #b9563d;
+  --rosta-olive: #6f725b;
+  --rosta-steel: #aaa8a1;
+
+  --background: var(--rosta-bone);
+  --foreground: var(--rosta-carbon);
+  --ivory: var(--rosta-bone);
+  --cream: var(--rosta-bone);
+  --ink: var(--rosta-carbon);
+  --gold: var(--rosta-oxide);
+  --gold-dark: var(--rosta-espresso);
+  --bronze: var(--rosta-espresso);
+  --muted-foreground: var(--rosta-olive);
+
+  --font-heading: var(--font-archivo), "Arial Black", "Helvetica Neue", Arial, sans-serif;
+  --font-body: var(--font-inter), "Helvetica Neue", Arial, sans-serif;
   --ruth-font-display: var(--font-heading);
   --ruth-font-body: var(--font-body);
-  --ruth-color-canvas: var(--ivory);
-  --ruth-color-surface: var(--cream);
-  --ruth-color-surface-muted: #f1eadf;
-  --ruth-color-text-primary: var(--ink);
-  --ruth-color-text-inverse: #fff;
-  --ruth-color-accent: var(--gold);
-  --ruth-color-border-subtle: rgba(184, 151, 106, 0.2);
-  --ruth-color-border-strong: rgba(118, 85, 47, 0.48);
-  --ruth-color-focus: var(--ruth-color-accent-strong);
-  --ruth-color-overlay: rgba(33, 25, 18, 0.44);
+
+  --ruth-color-canvas: var(--rosta-bone);
+  --ruth-color-surface: var(--rosta-bone);
+  --ruth-color-surface-muted: color-mix(in srgb, var(--rosta-bone) 90%, var(--rosta-steel));
+  --ruth-color-text-primary: var(--rosta-carbon);
+  --ruth-color-text-muted: var(--rosta-olive);
+  --ruth-color-text-inverse: var(--rosta-bone);
+  --ruth-color-accent: var(--rosta-oxide);
+  --ruth-color-accent-soft: color-mix(in srgb, var(--rosta-oxide) 28%, var(--rosta-bone));
+  --ruth-color-accent-strong: var(--rosta-espresso);
+  --ruth-color-border-subtle: color-mix(in srgb, var(--rosta-steel) 52%, transparent);
+  --ruth-color-border-strong: var(--rosta-steel);
+  --ruth-color-focus: var(--rosta-oxide);
+  --ruth-color-overlay: rgb(17 17 17 / 44%);
 }
 
 * {
@@ -117,11 +139,11 @@ input[type="radio"]:not(:disabled) {
 }
 
 .site-app-shell .text-gold-dark {
-  color: color-mix(in srgb, var(--ink) 72%, var(--gold)) !important;
+  color: var(--rosta-espresso) !important;
 }
 
 .site-app-shell .text-muted-ruth {
-  color: color-mix(in srgb, var(--ink) 76%, var(--ivory)) !important;
+  color: var(--rosta-olive) !important;
 }
 
 @media (min-width: 1024px) {
@@ -145,7 +167,7 @@ input[type="radio"]:not(:disabled) {
 
   .ruth-zara-header.is-contrast .ruth-zara-header-inner,
   .ruth-zara-menu-button--contrast {
-    color: #fff !important;
+    color: var(--rosta-bone) !important;
     mix-blend-mode: difference !important;
   }
 
@@ -254,12 +276,12 @@ input[type="radio"]:not(:disabled) {
 }
 
 body:has(.ds-page) {
-  --ruth-color-accent-strong: color-mix(in srgb, var(--ink) 72%, var(--gold));
-  --ruth-color-text-muted: color-mix(in srgb, var(--ink) 76%, var(--ivory));
-  --gold-dark: var(--ruth-color-accent-strong);
-  --muted-foreground: var(--ruth-color-text-muted);
-  --ruth-gold-dark: var(--ruth-color-accent-strong);
-  --ruth-ink-muted: var(--ruth-color-text-muted);
+  --ruth-color-accent-strong: var(--rosta-espresso);
+  --ruth-color-text-muted: var(--rosta-olive);
+  --gold-dark: var(--rosta-espresso);
+  --muted-foreground: var(--rosta-olive);
+  --ruth-gold-dark: var(--rosta-espresso);
+  --ruth-ink-muted: var(--rosta-olive);
 }
 
 body:has(.ds-page) .ruth-page-header {
