@@ -155,7 +155,20 @@ function EditorialMedia({
                 decoding="async"
                 draggable={false}
                 onLoad={notifyHeroMediaReady}
-                onError={(event) => { event.currentTarget.style.display = "none"; }}
+                onError={(event) => {
+                  if (index !== 0 || event.currentTarget.dataset.fallbackApplied === "1") {
+                    event.currentTarget.style.display = "none";
+                    return;
+                  }
+                  const fallback = "/home/rosta-hero-current.webp?v=20260921-visible2";
+                  event.currentTarget.dataset.fallbackApplied = "1";
+                  event.currentTarget.src = fallback;
+                  event.currentTarget.srcset = fallback;
+                  const picture = event.currentTarget.closest("picture");
+                  picture?.querySelectorAll("source").forEach((source) => {
+                    source.srcset = fallback;
+                  });
+                }}
                 data-home-editorial-media
                 data-theme-id={index === 0 ? HOME_HERO_IMAGE_ID : HOME_EDITORIAL_IMAGE_ID}
                 data-theme-label={index === 0 ? "Ana sayfa hero görseli" : "Ana sayfa editoryal görseli"}
