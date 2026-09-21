@@ -1,0 +1,230 @@
+:where([data-ruth-typography]) {
+  font-synthesis: none;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  --ruth-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/*
+ * Admin owns a consistent productivity-oriented type ramp.
+ * Touch target size is deliberately independent from text size.
+ */
+[data-ruth-typography="admin"] {
+  --ruth-font-display: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --ruth-font-body: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --ruth-font-ui: var(--ruth-font-body);
+
+  --ruth-type-display-size: 1.75rem;
+  --ruth-type-display-line: 2.125rem;
+  --ruth-type-display-weight: 650;
+  --ruth-type-page-title-size: 1.5rem;
+  --ruth-type-page-title-line: 1.875rem;
+  --ruth-type-page-title-weight: 650;
+  --ruth-type-section-title-size: 1.125rem;
+  --ruth-type-section-title-line: 1.5rem;
+  --ruth-type-section-title-weight: 600;
+  --ruth-type-card-title-size: 0.9375rem;
+  --ruth-type-card-title-line: 1.3125rem;
+  --ruth-type-card-title-weight: 600;
+  --ruth-type-body-size: 0.875rem;
+  --ruth-type-body-line: 1.25rem;
+  --ruth-type-body-weight: 400;
+  --ruth-type-label-size: 0.8125rem;
+  --ruth-type-label-line: 1.125rem;
+  --ruth-type-label-weight: 500;
+  --ruth-type-control-size: 0.875rem;
+  --ruth-type-control-line: 1.25rem;
+  --ruth-type-control-weight: 600;
+  --ruth-type-table-size: 0.8125rem;
+  --ruth-type-table-line: 1.125rem;
+  --ruth-type-table-weight: 500;
+  --ruth-type-caption-size: 0.75rem;
+  --ruth-type-caption-line: 1rem;
+  --ruth-type-caption-weight: 400;
+  --ruth-type-metric-size: 1.625rem;
+  --ruth-type-metric-line: 2rem;
+  --ruth-type-metric-weight: 650;
+  --ruth-type-price-size: 0.875rem;
+  --ruth-type-price-line: 1.25rem;
+  --ruth-type-price-weight: 600;
+  --ruth-type-code-size: 0.8125rem;
+  --ruth-type-code-line: 1.125rem;
+  --ruth-type-code-weight: 500;
+}
+
+@media (min-width: 1024px) {
+  [data-ruth-typography="admin"] {
+    --ruth-type-display-size: 2rem;
+    --ruth-type-display-line: 2.375rem;
+    --ruth-type-page-title-size: 1.75rem;
+    --ruth-type-page-title-line: 2.125rem;
+    --ruth-type-section-title-size: 1.125rem;
+    --ruth-type-section-title-line: 1.5rem;
+    --ruth-type-card-title-size: 0.9375rem;
+    --ruth-type-card-title-line: 1.3125rem;
+    --ruth-type-body-size: 0.875rem;
+    --ruth-type-body-line: 1.25rem;
+    --ruth-type-control-size: 0.875rem;
+    --ruth-type-control-line: 1.25rem;
+    --ruth-type-metric-size: 1.75rem;
+    --ruth-type-metric-line: 2.125rem;
+  }
+}
+
+/*
+ * Storefront typography roles own font family / semantics only.
+ * Visual metrics (font-size, line-height, tracking and local weight) stay with
+ * each real component owner so the Phase 3 design scale remains pixel-for-pixel
+ * identical while font loading stays centralized.
+ */
+[data-ruth-typography="storefront"] {
+  --ruth-font-display: var(--font-cinzel), Georgia, "Times New Roman", serif;
+  --ruth-font-body: var(--font-montserrat), "Helvetica Neue", Arial, sans-serif;
+  --ruth-font-ui: var(--ruth-font-body);
+}
+
+:where([data-ruth-typography="admin"]) :where(.ruth-type-display, [data-ruth-text-role="display"]) {
+  font-family: var(--ruth-font-display);
+  font-size: var(--ruth-type-display-size);
+  line-height: var(--ruth-type-display-line);
+  font-weight: var(--ruth-type-display-weight);
+  letter-spacing: -0.02em;
+}
+
+:where([data-ruth-typography="admin"]) :where(.ruth-type-page-title, [data-ruth-text-role="page-title"]) {
+  font-family: var(--ruth-font-body);
+  font-size: var(--ruth-type-page-title-size);
+  line-height: var(--ruth-type-page-title-line);
+  font-weight: var(--ruth-type-page-title-weight);
+  letter-spacing: -0.02em;
+}
+
+:where([data-ruth-typography="admin"]) :where(.ruth-type-section-title, [data-ruth-text-role="section-title"]) {
+  font-family: var(--ruth-font-body);
+  font-size: var(--ruth-type-section-title-size);
+  line-height: var(--ruth-type-section-title-line);
+  font-weight: var(--ruth-type-section-title-weight);
+  letter-spacing: -0.012em;
+}
+
+:where([data-ruth-typography="admin"]) :where(.ruth-type-card-title, [data-ruth-text-role="card-title"]) {
+  font-family: var(--ruth-font-body);
+  font-size: var(--ruth-type-card-title-size);
+  line-height: var(--ruth-type-card-title-line);
+  font-weight: var(--ruth-type-card-title-weight);
+}
+
+:where([data-ruth-typography="admin"]) :where(.ruth-type-body, [data-ruth-text-role="body"]) {
+  font-family: var(--ruth-font-body);
+  font-size: var(--ruth-type-body-size);
+  line-height: var(--ruth-type-body-line);
+  font-weight: var(--ruth-type-body-weight);
+}
+
+:where([data-ruth-typography="admin"]) :where(.ruth-type-body-strong, [data-ruth-text-role="body-strong"]) {
+  font-family: var(--ruth-font-body);
+  font-size: var(--ruth-type-body-size);
+  line-height: var(--ruth-type-body-line);
+  font-weight: 600;
+}
+
+:where([data-ruth-typography="admin"]) :where(.ruth-type-label, [data-ruth-text-role="label"]) {
+  font-family: var(--ruth-font-ui);
+  font-size: var(--ruth-type-label-size);
+  line-height: var(--ruth-type-label-line);
+  font-weight: var(--ruth-type-label-weight);
+}
+
+:where([data-ruth-typography="admin"]) :where(.ruth-type-control, [data-ruth-text-role="control"]) {
+  font-family: var(--ruth-font-ui);
+  font-size: var(--ruth-type-control-size);
+  line-height: var(--ruth-type-control-line);
+  font-weight: var(--ruth-type-control-weight);
+}
+
+:where([data-ruth-typography="admin"]) :where(.ruth-type-table, [data-ruth-text-role="table"]) {
+  font-family: var(--ruth-font-ui);
+  font-size: var(--ruth-type-table-size);
+  line-height: var(--ruth-type-table-line);
+  font-weight: var(--ruth-type-table-weight);
+}
+
+:where([data-ruth-typography="admin"]) :where(.ruth-type-caption, [data-ruth-text-role="caption"]) {
+  font-family: var(--ruth-font-ui);
+  font-size: var(--ruth-type-caption-size);
+  line-height: var(--ruth-type-caption-line);
+  font-weight: var(--ruth-type-caption-weight);
+}
+
+:where([data-ruth-typography="admin"]) :where(.ruth-type-metric, [data-ruth-text-role="metric"]) {
+  font-family: var(--ruth-font-body);
+  font-size: var(--ruth-type-metric-size);
+  line-height: var(--ruth-type-metric-line);
+  font-weight: var(--ruth-type-metric-weight);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+:where([data-ruth-typography="admin"]) :where(.ruth-type-price, [data-ruth-text-role="price"]) {
+  font-family: var(--ruth-font-ui);
+  font-size: var(--ruth-type-price-size);
+  line-height: var(--ruth-type-price-line);
+  font-weight: var(--ruth-type-price-weight);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+:where([data-ruth-typography="admin"]) :where(.ruth-type-code, [data-ruth-text-role="code"]) {
+  font-family: var(--ruth-font-mono);
+  font-size: var(--ruth-type-code-size);
+  line-height: var(--ruth-type-code-line);
+  font-weight: var(--ruth-type-code-weight);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+:where([data-ruth-typography="storefront"]) :where(.ruth-type-display, [data-ruth-text-role="display"]) {
+  font-family: var(--ruth-font-display);
+}
+
+:where([data-ruth-typography="storefront"]) :where(
+  .ruth-type-page-title,
+  .ruth-type-section-title,
+  .ruth-type-card-title,
+  .ruth-type-body,
+  .ruth-type-body-strong,
+  [data-ruth-text-role="page-title"],
+  [data-ruth-text-role="section-title"],
+  [data-ruth-text-role="card-title"],
+  [data-ruth-text-role="body"],
+  [data-ruth-text-role="body-strong"]
+) {
+  font-family: var(--ruth-font-body);
+}
+
+:where([data-ruth-typography="storefront"]) :where(
+  .ruth-type-label,
+  .ruth-type-control,
+  .ruth-type-table,
+  .ruth-type-caption,
+  .ruth-type-price,
+  [data-ruth-text-role="label"],
+  [data-ruth-text-role="control"],
+  [data-ruth-text-role="table"],
+  [data-ruth-text-role="caption"],
+  [data-ruth-text-role="price"]
+) {
+  font-family: var(--ruth-font-ui);
+}
+
+:where([data-ruth-typography="storefront"]) :where(.ruth-type-metric, [data-ruth-text-role="metric"]) {
+  font-family: var(--ruth-font-body);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+:where([data-ruth-typography="storefront"]) :where(.ruth-type-code, [data-ruth-text-role="code"]) {
+  font-family: var(--ruth-font-mono);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+:where(.ruth-type-price, .ruth-type-metric, .ruth-type-code, .ruth-type-tabular, [data-ruth-tabular="true"]) {
+  font-variant-numeric: tabular-nums lining-nums;
+}

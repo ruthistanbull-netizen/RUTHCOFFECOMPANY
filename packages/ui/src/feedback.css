@@ -1,0 +1,99 @@
+.ruth-feedback-spinner {
+  display: inline-block;
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 999px;
+  animation: ruth-feedback-spin 700ms linear infinite;
+}
+
+.ruth-feedback-spinner--sm { width: 16px; height: 16px; }
+.ruth-feedback-spinner--md { width: 20px; height: 20px; }
+.ruth-feedback-spinner--lg { width: 26px; height: 26px; border-width: 2.5px; }
+
+@keyframes ruth-feedback-spin {
+  to { transform: rotate(360deg); }
+}
+
+.ruth-feedback-stack {
+  position: fixed;
+  right: 12px;
+  bottom: 16px;
+  z-index: var(--ruth-layer-toast, 1200);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(360px, calc(100vw - 24px));
+}
+
+.ruth-feedback-progress {
+  display: grid;
+  gap: 7px;
+  width: 100%;
+}
+
+.ruth-feedback-progress__copy {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.ruth-feedback-progress__track {
+  position: relative;
+  width: 100%;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(127, 127, 127, 0.16);
+}
+
+.ruth-feedback-progress__bar {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: currentColor;
+  transition: width 180ms ease;
+}
+
+.ruth-feedback-progress--indeterminate .ruth-feedback-progress__bar {
+  position: absolute;
+  width: 38%;
+  inset-block: 0;
+  left: -38%;
+  animation: ruth-feedback-progress-indeterminate 1.15s ease-in-out infinite;
+}
+
+@keyframes ruth-feedback-progress-indeterminate {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(365%); }
+}
+
+.ruth-feedback-dismiss,
+.ruth-feedback-retry {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 1023px) {
+  .ruth-feedback-stack {
+    bottom: calc(80px + env(safe-area-inset-bottom));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ruth-feedback-spinner {
+    animation-duration: 1400ms;
+  }
+
+  .ruth-feedback-progress--indeterminate .ruth-feedback-progress__bar {
+    animation: none;
+  }
+
+  .ruth-feedback-progress__bar {
+    transition: none;
+  }
+}

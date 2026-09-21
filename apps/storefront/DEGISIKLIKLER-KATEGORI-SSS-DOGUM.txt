@@ -1,0 +1,7 @@
+- Kategori sayfasının üst açıklaması geri getirildi.
+- Kategori ürün kartlarında yalnızca ürün adı altındaki kısa açıklama gizlendi.
+- Ürün kartlarında normal ve karşılaştırma fiyatı ürün sayfasındaki gibi birlikte gösteriliyor.
+- /faq adresinde yeni S.S.S. sayfası ve footer bağlantısı eklendi.
+- Avantajlar popup'ında doğum tarihi doğrudan eklenebilir hale getirildi.
+- Doğum günü satırı tıklanabilir; uygun tarih dışında tıklanınca açıklayıcı mesaj gösterir.
+- Doğum günü alanına “Doğum gününde puan kazan” metni eklendi.

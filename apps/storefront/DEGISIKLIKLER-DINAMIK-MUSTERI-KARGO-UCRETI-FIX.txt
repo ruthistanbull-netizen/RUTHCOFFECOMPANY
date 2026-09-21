@@ -1,0 +1,7 @@
+RUTH ISTANBUL WEBSITE - DINAMIK MUSTERI KARGO UCRETI
+
+- Admin panel Kargo Yonetimi'nden kaydedilen musteri kargo ucreti checkout hesaplamasinda kullanilir.
+- Sepet tutari ucretsiz kargo limitinin altindaysa ayarlanan ucret uygulanir.
+- Limitin ustundeyse kargo ucretsizdir.
+- Mevcut environment degeri, panelde henuz ayar yoksa yedek deger olarak kullanilir.
+- Yeni SQL gerekmez.

@@ -1,0 +1,278 @@
+/* Ruth Commerce admin dropdown / popover standard.
+ * Inspired by the storefront account list: one calm rounded surface,
+ * generous touch targets and restrained typography adapted to the panel.
+ */
+
+html[data-ruth-theme="admin"] {
+  --admin-popover-bg: rgba(255, 252, 247, .985);
+  --admin-popover-border: rgba(184, 151, 106, .3);
+  --admin-popover-radius: 22px;
+  --admin-popover-item-radius: 14px;
+  --admin-popover-shadow: 0 24px 70px rgba(23, 21, 18, .2), 0 4px 18px rgba(23, 21, 18, .08);
+  --admin-popover-item-height: 54px;
+}
+
+/* All custom menus, dropdowns, combobox lists and popovers use one surface. */
+html[data-ruth-theme="admin"] :where(
+  .ruth-popover,
+  [data-ruth-overlay-surface="popover"],
+  [role="menu"],
+  [role="listbox"],
+  [role="tree"],
+  [data-state="open"][data-side],
+  [class*="popover"][class*="content"],
+  [class*="dropdown"][class*="content"],
+  [class*="menu"][class*="content"]
+) {
+  min-width: min(280px, calc(100vw - 24px));
+  max-width: min(380px, calc(100vw - 24px));
+  max-height: min(68dvh, 620px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 10px !important;
+  border: 1px solid var(--admin-popover-border) !important;
+  border-radius: var(--admin-popover-radius) !important;
+  background: var(--admin-popover-bg) !important;
+  color: var(--admin-ink, #171512) !important;
+  box-shadow: var(--admin-popover-shadow) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(1.08);
+  backdrop-filter: blur(22px) saturate(1.08);
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(118, 90, 55, .28) transparent;
+  transform-origin: var(--radix-dropdown-menu-content-transform-origin, top center);
+  animation: admin-popover-enter 190ms cubic-bezier(.22, 1, .36, 1) both;
+}
+
+/* Some menu libraries render an inner viewport. Keep it visually transparent. */
+html[data-ruth-theme="admin"] :where(
+  [data-ruth-overlay-surface="popover"],
+  [role="menu"],
+  [role="listbox"]
+) :where([data-radix-scroll-area-viewport], [data-viewport], [role="group"]) {
+  min-width: 0;
+  background: transparent !important;
+}
+
+/* Shared option row — roomy like the storefront account list. */
+html[data-ruth-theme="admin"] :where(
+  .ruth-overlay-item,
+  [data-ruth-overlay-item="true"],
+  [role="menuitem"],
+  [role="menuitemcheckbox"],
+  [role="menuitemradio"],
+  [role="option"],
+  [role="treeitem"]
+) {
+  position: relative;
+  display: flex !important;
+  width: 100% !important;
+  min-width: 0;
+  min-height: var(--admin-popover-item-height) !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 12px !important;
+  margin: 0 !important;
+  padding: 0 18px !important;
+  border: 0 !important;
+  border-radius: var(--admin-popover-item-radius) !important;
+  background: transparent !important;
+  color: var(--admin-ink, #171512) !important;
+  font-family: var(--ruth-font-body, Montserrat, Arial, sans-serif) !important;
+  font-size: .72rem !important;
+  font-weight: 600 !important;
+  line-height: 1.35 !important;
+  letter-spacing: .13em !important;
+  text-align: left !important;
+  text-decoration: none !important;
+  text-transform: uppercase !important;
+  white-space: normal !important;
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease, transform 150ms cubic-bezier(.22, 1, .36, 1), box-shadow 150ms ease !important;
+}
+
+html[data-ruth-theme="admin"] :where(
+  .ruth-overlay-item,
+  [data-ruth-overlay-item="true"],
+  [role="menuitem"],
+  [role="menuitemcheckbox"],
+  [role="menuitemradio"],
+  [role="option"],
+  [role="treeitem"]
+) :where(svg, img) {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  color: currentColor;
+  object-fit: contain;
+}
+
+/* Secondary labels keep normal casing so customer/product details stay readable. */
+html[data-ruth-theme="admin"] :where(
+  .ruth-overlay-item,
+  [data-ruth-overlay-item="true"],
+  [role="menuitem"],
+  [role="option"]
+) :where(small, p, em, [data-secondary], [data-description]) {
+  color: var(--admin-muted, #6a6056) !important;
+  font-size: .66rem !important;
+  font-style: normal !important;
+  font-weight: 500 !important;
+  letter-spacing: .015em !important;
+  line-height: 1.45 !important;
+  text-transform: none !important;
+}
+
+html[data-ruth-theme="admin"] :where(
+  .ruth-overlay-item,
+  [data-ruth-overlay-item="true"],
+  [role="menuitem"],
+  [role="menuitemcheckbox"],
+  [role="menuitemradio"],
+  [role="option"],
+  [role="treeitem"]
+):where(:hover, :focus-visible, [data-highlighted], [data-active-item]) {
+  outline: 0 !important;
+  background: rgba(184, 151, 106, .14) !important;
+  color: var(--admin-ink, #171512) !important;
+  box-shadow: inset 0 0 0 1px rgba(184, 151, 106, .14) !important;
+  transform: translateX(2px);
+}
+
+html[data-ruth-theme="admin"] :where(
+  [role="option"][aria-selected="true"],
+  [role="menuitemcheckbox"][aria-checked="true"],
+  [role="menuitemradio"][aria-checked="true"],
+  [data-ruth-overlay-item="true"][aria-current="page"],
+  [data-ruth-overlay-item="true"].is-active
+) {
+  background: var(--admin-ink, #171512) !important;
+  color: #fff !important;
+  box-shadow: 0 8px 22px rgba(23, 21, 18, .16) !important;
+}
+
+html[data-ruth-theme="admin"] :where(
+  [role="option"][aria-selected="true"],
+  [role="menuitemcheckbox"][aria-checked="true"],
+  [role="menuitemradio"][aria-checked="true"],
+  [data-ruth-overlay-item="true"][aria-current="page"],
+  [data-ruth-overlay-item="true"].is-active
+) :where(small, p, em, [data-secondary], [data-description]) {
+  color: rgba(255, 255, 255, .72) !important;
+}
+
+html[data-ruth-theme="admin"] :where(
+  .ruth-overlay-item,
+  [data-ruth-overlay-item="true"],
+  [role="menuitem"],
+  [role="option"]
+):where([disabled], [aria-disabled="true"], [data-disabled]) {
+  cursor: not-allowed !important;
+  opacity: .42 !important;
+  pointer-events: none !important;
+}
+
+/* Section labels and separators are restrained; the main surface stays clean. */
+html[data-ruth-theme="admin"] :where(
+  [role="menu"] [role="presentation"],
+  [role="listbox"] [role="presentation"],
+  [data-ruth-overlay-surface="popover"] [data-label],
+  [data-ruth-overlay-surface="popover"] [class*="label"]
+) {
+  padding: 10px 16px 6px;
+  color: var(--admin-accent-strong, #765a37);
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+html[data-ruth-theme="admin"] :where(
+  .ruth-overlay-separator,
+  [role="separator"],
+  [data-ruth-overlay-surface="popover"] hr
+) {
+  height: 1px !important;
+  margin: 7px 12px !important;
+  border: 0 !important;
+  background: rgba(184, 151, 106, .2) !important;
+}
+
+/* Search fields placed inside dropdowns use the same calm surface. */
+html[data-ruth-theme="admin"] :where(
+  [data-ruth-overlay-surface="popover"],
+  [role="listbox"],
+  [role="menu"]
+) :where(input, [role="searchbox"]) {
+  width: 100%;
+  min-height: 44px;
+  margin-bottom: 8px;
+  padding-inline: 14px;
+  border: 1px solid var(--admin-border, #e7ded2) !important;
+  border-radius: 13px !important;
+  background: rgba(255, 255, 255, .78) !important;
+  color: var(--admin-ink, #171512) !important;
+  outline: 0;
+}
+
+html[data-ruth-theme="admin"] :where(
+  [data-ruth-overlay-surface="popover"],
+  [role="listbox"],
+  [role="menu"]
+) :where(input, [role="searchbox"]):focus {
+  border-color: var(--admin-accent, #b8976a) !important;
+  box-shadow: 0 0 0 3px rgba(184, 151, 106, .16) !important;
+}
+
+@keyframes admin-popover-enter {
+  from { opacity: 0; transform: translateY(7px) scale(.975); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 767px) {
+  html[data-ruth-theme="admin"] {
+    --admin-popover-radius: 20px;
+    --admin-popover-item-height: 56px;
+  }
+
+  html[data-ruth-theme="admin"] :where(
+    .ruth-popover,
+    [data-ruth-overlay-surface="popover"],
+    [role="menu"],
+    [role="listbox"],
+    [role="tree"],
+    [data-state="open"][data-side],
+    [class*="popover"][class*="content"],
+    [class*="dropdown"][class*="content"],
+    [class*="menu"][class*="content"]
+  ) {
+    min-width: min(300px, calc(100vw - 20px));
+    max-width: calc(100vw - 20px);
+    padding: 9px !important;
+  }
+
+  html[data-ruth-theme="admin"] :where(
+    .ruth-overlay-item,
+    [data-ruth-overlay-item="true"],
+    [role="menuitem"],
+    [role="menuitemcheckbox"],
+    [role="menuitemradio"],
+    [role="option"],
+    [role="treeitem"]
+  ) {
+    padding-inline: 17px !important;
+    font-size: .73rem !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-ruth-theme="admin"] :where(
+    .ruth-popover,
+    [data-ruth-overlay-surface="popover"],
+    [role="menu"],
+    [role="listbox"],
+    [role="tree"]
+  ) {
+    animation: none !important;
+  }
+}

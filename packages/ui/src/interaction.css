@@ -1,0 +1,91 @@
+:root {
+  --ruth-motion-press: 90ms;
+  --ruth-motion-hover: 140ms;
+  --ruth-motion-toggle: 180ms;
+  --ruth-press-scale-subtle: 0.992;
+  --ruth-press-scale-standard: 0.985;
+  --ruth-press-scale-icon: 0.96;
+}
+
+.ruth-pressable {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition-property: transform, background-color, border-color, color, box-shadow, opacity;
+  transition-duration: var(--ruth-motion-hover);
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ruth-pressable:not(:disabled):not([aria-disabled="true"]) {
+  cursor: pointer;
+}
+
+.ruth-pressable:disabled,
+.ruth-pressable[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+.ruth-pressable[data-ruth-press-strength="subtle"][data-ruth-pressed="true"]:not(:disabled):not([aria-disabled="true"]) {
+  transform: translateY(0) scale(var(--ruth-press-scale-subtle)) !important;
+  transition-duration: var(--ruth-motion-press) !important;
+}
+
+.ruth-pressable[data-ruth-press-strength="standard"][data-ruth-pressed="true"]:not(:disabled):not([aria-disabled="true"]) {
+  transform: translateY(0) scale(var(--ruth-press-scale-standard)) !important;
+  transition-duration: var(--ruth-motion-press) !important;
+}
+
+.ruth-pressable[data-ruth-press-strength="icon"][data-ruth-pressed="true"]:not(:disabled):not([aria-disabled="true"]) {
+  transform: translateY(0) scale(var(--ruth-press-scale-icon)) !important;
+  transition-duration: var(--ruth-motion-press) !important;
+}
+
+/* The kernel-owned pressed state wins over legacy :active selectors. When a
+   touch turns into native scrolling, the visual press is removed immediately. */
+.ruth-pressable[data-ruth-pressed="false"]:active:not(:disabled):not([aria-disabled="true"]) {
+  transform: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ruth-pressable[data-ruth-hover-lift="true"][data-ruth-pressed="false"]:not(:disabled):not([aria-disabled="true"]):hover {
+    transform: translateY(-1px);
+    transition-duration: var(--ruth-motion-hover);
+  }
+}
+
+.ruth-choice__control,
+.ruth-choice__control::after {
+  transition-duration: var(--ruth-motion-toggle);
+}
+
+.ruth-switch,
+.ruth-switch > span {
+  transition-duration: var(--ruth-motion-toggle);
+}
+
+/* iOS Safari automatically zooms the page when a keyboard-bearing control has
+   a computed font size below 16px. Both admin and storefront import this shared
+   interaction layer, so keep every mobile text-entry surface at the safe size.
+   Manual pinch zoom remains available; only keyboard-focus auto zoom is avoided. */
+@media (max-width: 1024px) and (hover: none) and (pointer: coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="button"]):not([type="submit"]):not([type="reset"]),
+  textarea,
+  select,
+  [contenteditable="true"] {
+    font-size: max(16px, 1em) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ruth-pressable,
+  .ruth-choice__control,
+  .ruth-choice__control::after,
+  .ruth-switch,
+  .ruth-switch > span {
+    transition-duration: 1ms !important;
+  }
+
+  .ruth-pressable[data-ruth-pressed="true"]:not(:disabled):not([aria-disabled="true"]),
+  .ruth-pressable[data-ruth-hover-lift="true"]:not(:disabled):not([aria-disabled="true"]):hover {
+    transform: none !important;
+  }
+}

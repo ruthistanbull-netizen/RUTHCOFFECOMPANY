@@ -1,0 +1,30 @@
+<svg width="840" height="620" viewBox="0 0 840 620" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="840" height="620" rx="28" fill="#FAF7F1"/>
+  <rect x="22" y="22" width="796" height="576" rx="22" stroke="#B8976A" stroke-opacity="0.24"/>
+  <text x="420" y="74" text-anchor="middle" font-family="Cinzel, Georgia, serif" font-size="27" letter-spacing="5" fill="#211912">KOLYE ÖLÇÜ REHBERI</text>
+  <text x="420" y="107" text-anchor="middle" font-family="Montserrat, Arial, sans-serif" font-size="13" letter-spacing="2.6" fill="#7A6D5F">ZINCIR UZUNLUKLARI</text>
+
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M305 158 C265 240 272 330 420 358 C568 330 575 240 535 158" stroke="#D8C2A0" stroke-width="5"/>
+    <path d="M278 154 C225 260 238 388 420 430 C602 388 615 260 562 154" stroke="#C9AA78" stroke-width="5"/>
+    <path d="M252 150 C187 280 208 445 420 500 C632 445 653 280 588 150" stroke="#B8976A" stroke-width="5"/>
+  </g>
+
+  <g font-family="Montserrat, Arial, sans-serif" font-size="18" fill="#211912">
+    <circle cx="305" cy="158" r="7" fill="#D8C2A0"/>
+    <circle cx="535" cy="158" r="7" fill="#D8C2A0"/>
+    <text x="592" y="214">40 cm</text>
+
+    <circle cx="278" cy="154" r="7" fill="#C9AA78"/>
+    <circle cx="562" cy="154" r="7" fill="#C9AA78"/>
+    <text x="620" y="322">45 cm</text>
+
+    <circle cx="252" cy="150" r="7" fill="#B8976A"/>
+    <circle cx="588" cy="150" r="7" fill="#B8976A"/>
+    <text x="646" y="458">50 / 55 / 60 cm</text>
+  </g>
+
+  <g fill="#7A6D5F" font-family="Montserrat, Arial, sans-serif" font-size="14" letter-spacing="0.6">
+    <text x="420" y="552" text-anchor="middle">Görünüm boyun yapısına ve kullanım şekline göre farklılık gösterebilir.</text>
+  </g>
+</svg>

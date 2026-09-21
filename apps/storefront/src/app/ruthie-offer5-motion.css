@@ -1,0 +1,277 @@
+/* Ruthie Points — Offer Modal 5 motion parity overrides.
+ * Keeps the existing Ruthie Points business logic intact while matching the
+ * shadcn Sheet-style reveal, staged content entrance and interactive motion.
+ */
+
+/* Make the Ruth wordmark read like the reference instead of a tiny header mark. */
+.ruthie-offer-modal .ruthie-offer-brand {
+  min-height: 56px !important;
+  margin-bottom: 30px !important;
+}
+
+.ruthie-offer-modal .ruthie-offer-brand img {
+  width: auto !important;
+  height: 42px !important;
+  max-width: 220px !important;
+  object-fit: contain !important;
+  object-position: left center !important;
+  transform-origin: left center;
+}
+
+/* The Sheet already slides from the right through Framer Motion.
+ * These nested animations reproduce the reference's visible staged entrance. */
+.ruthie-offer-modal .ruthie-offer-brand {
+  animation: ruthie-offer-logo-in 560ms cubic-bezier(.16, 1, .3, 1) 110ms both;
+}
+
+.ruthie-offer-modal .ruthie-offer-copy h2 {
+  animation: ruthie-offer-copy-in 620ms cubic-bezier(.16, 1, .3, 1) 155ms both;
+}
+
+.ruthie-offer-modal .ruthie-offer-copy > p {
+  animation: ruthie-offer-copy-in 620ms cubic-bezier(.16, 1, .3, 1) 205ms both;
+}
+
+.ruthie-offer-modal .ruthie-offer-action-row {
+  animation: ruthie-offer-copy-in 620ms cubic-bezier(.16, 1, .3, 1) 255ms both;
+}
+
+.ruthie-offer-modal .ruthie-offer-legal {
+  animation: ruthie-offer-copy-in 560ms cubic-bezier(.16, 1, .3, 1) 315ms both;
+}
+
+.ruthie-offer-modal .ruthie-offer-photo {
+  animation: ruthie-offer-photo-reveal 780ms cubic-bezier(.16, 1, .3, 1) 150ms both;
+  transform-origin: 50% 50%;
+}
+
+.ruthie-offer-modal .ruthie-offer-photo img {
+  animation: ruthie-offer-photo-zoom 1050ms cubic-bezier(.16, 1, .3, 1) 120ms both;
+  will-change: transform, filter;
+}
+
+.ruthie-offer-modal .ruthie-offer-details {
+  animation: ruthie-offer-details-in 640ms cubic-bezier(.16, 1, .3, 1) 300ms both;
+}
+
+.ruthie-offer-modal .ruthie-offer-section-head {
+  animation: ruthie-offer-copy-in 560ms cubic-bezier(.16, 1, .3, 1) 345ms both;
+}
+
+/* Close affordance has the same crisp Sheet feel on open / hover / tap. */
+.ruthie-offer-modal .rewards-close {
+  animation: ruthie-offer-close-in 480ms cubic-bezier(.16, 1, .3, 1) 210ms both;
+  transition:
+    transform 220ms cubic-bezier(.16, 1, .3, 1),
+    background-color 180ms ease !important;
+}
+
+.ruthie-offer-modal .rewards-close:hover {
+  transform: rotate(7deg) scale(1.07);
+}
+
+.ruthie-offer-modal .rewards-close:active {
+  transform: rotate(-4deg) scale(.88);
+}
+
+/* Button / balance micro-interactions from the reference. */
+.ruthie-offer-modal .ruthie-offer-cta {
+  overflow: hidden;
+  position: relative;
+  transform: translateZ(0);
+  transition:
+    transform 220ms cubic-bezier(.16, 1, .3, 1),
+    background-color 180ms ease,
+    box-shadow 220ms ease !important;
+}
+
+.ruthie-offer-modal .ruthie-offer-cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 24%, rgba(255,255,255,.13) 48%, transparent 72%);
+  transform: translateX(-135%);
+  transition: transform 620ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.ruthie-offer-modal .ruthie-offer-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0,0,0,.14);
+}
+
+.ruthie-offer-modal .ruthie-offer-cta:hover::before {
+  transform: translateX(135%);
+}
+
+.ruthie-offer-modal .ruthie-offer-cta svg {
+  transition: transform 260ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.ruthie-offer-modal .ruthie-offer-cta:hover svg {
+  transform: translateX(4px);
+}
+
+.ruthie-offer-modal .ruthie-offer-cta:active {
+  transform: translateY(0) scale(.965);
+}
+
+.ruthie-offer-modal .ruthie-offer-balance {
+  transition:
+    transform 260ms cubic-bezier(.16, 1, .3, 1),
+    border-color 220ms ease,
+    box-shadow 260ms ease !important;
+}
+
+.ruthie-offer-modal .ruthie-offer-balance:hover {
+  transform: translateY(-2px);
+  border-color: #d8d3cd;
+  box-shadow: 0 8px 22px rgba(0,0,0,.055);
+}
+
+/* Accordion row motion and stagger once a section mounts. */
+.ruthie-offer-modal .ruthie-offer-accordion-trigger {
+  transition:
+    color 180ms ease,
+    transform 180ms cubic-bezier(.16, 1, .3, 1) !important;
+}
+
+.ruthie-offer-modal .ruthie-offer-accordion-trigger:hover {
+  transform: translateX(3px);
+}
+
+.ruthie-offer-modal .ruthie-offer-accordion-trigger:active {
+  transform: translateX(1px) scale(.99);
+}
+
+.ruthie-offer-modal .ruthie-offer-accordion-icon {
+  transition:
+    transform 300ms cubic-bezier(.16, 1, .3, 1),
+    background-color 220ms ease !important;
+}
+
+.ruthie-offer-modal .ruthie-offer-accordion-trigger:hover .ruthie-offer-accordion-icon {
+  transform: rotate(-7deg) scale(1.07);
+  background: #eae3da;
+}
+
+.ruthie-offer-modal .ruthie-offer-accordion-content .ruthie-offer-action-item {
+  animation: ruthie-offer-row-in 420ms cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.ruthie-offer-modal .ruthie-offer-accordion-content .ruthie-offer-action-item:nth-child(1) { animation-delay: 40ms; }
+.ruthie-offer-modal .ruthie-offer-accordion-content .ruthie-offer-action-item:nth-child(2) { animation-delay: 85ms; }
+.ruthie-offer-modal .ruthie-offer-accordion-content .ruthie-offer-action-item:nth-child(3) { animation-delay: 130ms; }
+.ruthie-offer-modal .ruthie-offer-accordion-content .ruthie-offer-action-item:nth-child(4) { animation-delay: 175ms; }
+.ruthie-offer-modal .ruthie-offer-accordion-content .ruthie-offer-action-item:nth-child(5) { animation-delay: 220ms; }
+
+.ruthie-offer-modal .ruthie-offer-action-item {
+  transition:
+    transform 220ms cubic-bezier(.16, 1, .3, 1),
+    background-color 180ms ease !important;
+}
+
+button.ruthie-offer-action-item:not(:disabled):hover {
+  transform: translateX(4px);
+}
+
+/* Floating entry button feels alive without looping aggressively. */
+.ruthie-offer-trigger {
+  transition:
+    transform 240ms cubic-bezier(.16, 1, .3, 1),
+    box-shadow 240ms ease !important;
+}
+
+.ruthie-offer-trigger .rewards-floating-icon svg {
+  transition: transform 360ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.ruthie-offer-trigger:hover .rewards-floating-icon svg {
+  transform: rotate(18deg) scale(1.1);
+}
+
+@keyframes ruthie-offer-logo-in {
+  0% { opacity: 0; transform: translateY(16px) scale(.94); filter: blur(7px); }
+  65% { opacity: 1; transform: translateY(-1px) scale(1.015); filter: blur(0); }
+  100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+
+@keyframes ruthie-offer-copy-in {
+  from { opacity: 0; transform: translateY(18px); filter: blur(5px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+@keyframes ruthie-offer-photo-reveal {
+  from { opacity: .55; clip-path: inset(0 0 100% 0); }
+  to { opacity: 1; clip-path: inset(0 0 0 0); }
+}
+
+@keyframes ruthie-offer-photo-zoom {
+  from { transform: scale(1.09); filter: saturate(.88) contrast(.97); }
+  to { transform: scale(1); filter: saturate(1) contrast(1); }
+}
+
+@keyframes ruthie-offer-details-in {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ruthie-offer-close-in {
+  from { opacity: 0; transform: rotate(-18deg) scale(.72); }
+  to { opacity: 1; transform: rotate(0) scale(1); }
+}
+
+@keyframes ruthie-offer-row-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 767px) {
+  .ruthie-offer-modal .ruthie-offer-brand {
+    min-height: 48px !important;
+    margin-bottom: 24px !important;
+  }
+
+  .ruthie-offer-modal .ruthie-offer-brand img {
+    height: 36px !important;
+    max-width: 190px !important;
+  }
+
+  .ruthie-offer-modal .ruthie-offer-copy h2 {
+    animation-delay: 135ms;
+  }
+
+  .ruthie-offer-modal .ruthie-offer-copy > p {
+    animation-delay: 180ms;
+  }
+
+  .ruthie-offer-modal .ruthie-offer-action-row {
+    animation-delay: 225ms;
+  }
+
+  .ruthie-offer-modal .ruthie-offer-photo {
+    animation-duration: 680ms;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ruthie-offer-modal .ruthie-offer-brand,
+  .ruthie-offer-modal .ruthie-offer-copy h2,
+  .ruthie-offer-modal .ruthie-offer-copy > p,
+  .ruthie-offer-modal .ruthie-offer-action-row,
+  .ruthie-offer-modal .ruthie-offer-legal,
+  .ruthie-offer-modal .ruthie-offer-photo,
+  .ruthie-offer-modal .ruthie-offer-photo img,
+  .ruthie-offer-modal .ruthie-offer-details,
+  .ruthie-offer-modal .ruthie-offer-section-head,
+  .ruthie-offer-modal .rewards-close,
+  .ruthie-offer-modal .ruthie-offer-accordion-content .ruthie-offer-action-item {
+    animation: none !important;
+    filter: none !important;
+  }
+
+  .ruthie-offer-modal *,
+  .ruthie-offer-trigger * {
+    transition-duration: .01ms !important;
+  }
+}

@@ -1,0 +1,7 @@
+PAYTR NO_INSTALLMENT HATA DUZELTMESI
+
+- PayTR odeme sayfasina no_installment=0 acik olarak gonderilir.
+- max_installment=0 gonderilir; yasal ve karta uygun ust siniri PayTR belirler.
+- Taksit secenekleri sadece PayTR BIN sorgusunda kredi karti ve uygun kart programi donerse gosterilir.
+- Yerel PAYTR_NO_INSTALLMENT ve PAYTR_MAX_INSTALLMENT sinirlandirmalari kaldirildi.
+- Yeni SQL veya yeni environment variable gerekmez.

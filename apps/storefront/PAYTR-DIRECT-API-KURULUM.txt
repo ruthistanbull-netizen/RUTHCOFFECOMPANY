@@ -1,0 +1,46 @@
+﻿RUTH ISTANBUL - PAYTR DIRECT API KURULUM
+========================================
+
+Bu sÃ¼rÃ¼mde kart formu Ruth Istanbul Ã¶deme sayfasÄ±nda doÄŸrudan gÃ¶rÃ¼nÃ¼r.
+Kart numarasÄ±, son kullanma tarihi ve CVV kendi API route'larÄ±mÄ±za gÃ¶nderilmez
+ve Supabase'e kaydedilmez. TarayÄ±cÄ± formu doÄŸrudan PayTR'nin
+https://www.paytr.com/odeme adresine POST eder.
+
+1) PAYTR YETKÄ°SÄ°
+PayTR panelindeki Destek bÃ¶lÃ¼mÃ¼nden yeni maÄŸazada Direct API yetkisinin aÃ§Ä±k
+olduÄŸunu teyit et. Yetki aÃ§Ä±lmadan form gÃ¶rÃ¼nÃ¼r fakat Ã¶deme isteÄŸi PayTR
+tarafÄ±nda reddedilebilir.
+
+2) VERCEL ENVIRONMENT VARIABLES
+Website projesinin Production ortamÄ±nda ÅŸunlar bulunmalÄ±:
+  PAYTR_MERCHANT_ID
+  PAYTR_MERCHANT_KEY
+  PAYTR_MERCHANT_SALT
+  PAYTR_TEST_MODE=1
+  PAYTR_DEBUG_ON=1
+  NEXT_PUBLIC_SITE_URL=
+
+3) PAYTR BÄ°LDÄ°RÄ°M URL
+PayTR panelindeki Bildirim URL:
+  https://ruthistanbull.tr/api/paytr/callback
+
+4) SUPABASE
+Daha Ã¶nce Ã§alÄ±ÅŸtÄ±rÄ±lmadÄ±ysa ÅŸu SQL dosyasÄ±nÄ± bir kez Ã§alÄ±ÅŸtÄ±r:
+  supabase/PAYTR-DIRECT-API-TAM-ENTEGRASYON-SQL.sql
+
+Bu dosya checkout_drafts tablosunu ve Ã¶deme iÃ§in gerekli alanlarÄ± kurar.
+
+5) TEST AKIÅI
+- Vercel deploy tamamlandÄ±ktan sonra sepete Ã¼rÃ¼n ekle.
+- Teslimat bilgilerini doldurup Ã¶deme adÄ±mÄ±na geÃ§.
+- Kart formu butona basmadan doÄŸrudan gÃ¶rÃ¼nÃ¼r.
+- KartÄ±n ilk 6-8 hanesinden banka/kart programÄ± ve canlÄ± taksitler sorgulanÄ±r.
+- GÃ¼venli Ã–de butonuna basÄ±nca kart bilgileri doÄŸrudan PayTR'ye gÃ¶nderilir.
+- Kesin Ã¶deme sonucu yalnÄ±zca /api/paytr/callback Ã¼zerinden onaylanÄ±r.
+- BaÅŸarÄ±lÄ± callback sipariÅŸi oluÅŸturur; tekrar gelen callback ikinci sipariÅŸ oluÅŸturmaz.
+
+6) CANLI MOD
+PayTR testleri ve maÄŸaza onayÄ± tamamlandÄ±ktan sonra:
+  PAYTR_TEST_MODE=0
+  PAYTR_DEBUG_ON=0
+olarak deÄŸiÅŸtir ve Vercel'de yeniden deploy et.

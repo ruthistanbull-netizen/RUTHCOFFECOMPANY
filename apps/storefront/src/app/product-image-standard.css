@@ -1,0 +1,112 @@
+/* Canonical Ruth storefront product-photo contract.
+ * Product media always owns a 3:4 frame. The source is centered with cover so
+ * every frame is fully filled without empty bands; edge cropping is allowed.
+ */
+
+html body.site-app-shell .product-card-image-frame,
+html body.site-app-shell .product-recommendation-media,
+html body.site-app-shell .product-complete-card .product-card-image-frame,
+html body.site-app-shell .product-gallery-frame:not(.is-lightbox),
+html body.site-app-shell .product-browser-preview-media {
+  position: relative !important;
+  aspect-ratio: 3 / 4 !important;
+  overflow: hidden !important;
+  background: var(--ruth-product-media-top, var(--ruth-color-surface, var(--cream))) !important;
+}
+
+html body.site-app-shell .product-card-image-frame img,
+html body.site-app-shell .product-recommendation-media img,
+html body.site-app-shell .product-complete-card .product-card-image-frame img,
+html body.site-app-shell .product-gallery-frame:not(.is-lightbox) .product-gallery-image,
+html body.site-app-shell .product-gallery-frame:not(.is-lightbox) .product-gallery-image img,
+html body.site-app-shell .product-browser-preview-media > img,
+html body.site-app-shell .ruth-product-lightbox__zoom-image,
+html body.site-app-shell .ruth-product-lightbox__zoom-image img {
+  box-sizing: border-box !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+}
+
+html.ruth-product-page-active body.site-app-shell .product-gallery-image,
+html.ruth-product-page-active body.site-app-shell .product-gallery-image img,
+html.ruth-product-page-active body.site-app-shell .product-gallery-placeholder {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  background: var(--ruth-product-media-top, var(--ruth-color-surface, var(--cream))) !important;
+}
+
+html.ruth-product-page-active body.site-app-shell .product-gallery-image img,
+html.ruth-product-page-active body.site-app-shell .product-browser-preview-media > img {
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html.ruth-product-page-active body.site-app-shell .ruth-product-lightbox__zoom-image,
+html.ruth-product-page-active body.site-app-shell .ruth-product-lightbox__zoom-image img {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+}
+
+/* The swipe preview uses exactly the same fill geometry as the real page so
+ * there is no contain/cover size jump while switching products. */
+html body.site-app-shell .product-browser-preview-media > img {
+  transform: none !important;
+  translate: none !important;
+  -webkit-transform: none !important;
+}
+
+@media (max-width: 767px) {
+  html.ruth-product-page-active body.site-app-shell .product-gallery-frame.is-mobile-vertical:not(.is-lightbox),
+  html.ruth-product-page-active body.site-app-shell .product-browser-preview-media {
+    width: 100vw !important;
+    height: 133.333333vw !important;
+    min-height: 133.333333vw !important;
+    max-height: 133.333333vw !important;
+    aspect-ratio: 3 / 4 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  html.ruth-product-page-active body.site-app-shell .product-gallery-frame.is-mobile-vertical:not(.is-lightbox) .product-gallery-keen,
+  html.ruth-product-page-active body.site-app-shell .product-gallery-frame.is-mobile-vertical:not(.is-lightbox) .product-gallery-slide,
+  html.ruth-product-page-active body.site-app-shell .product-gallery-frame.is-mobile-vertical:not(.is-lightbox) .product-gallery-image {
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 100% !important;
+    min-height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+  }
+
+  html.ruth-product-page-active body.site-app-shell .product-gallery-frame.is-mobile-vertical:not(.is-lightbox) .product-gallery-image img,
+  html.ruth-product-page-active body.site-app-shell .product-browser-preview-media > img {
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    object-fit: cover !important;
+    object-position: center center !important;
+  }
+}

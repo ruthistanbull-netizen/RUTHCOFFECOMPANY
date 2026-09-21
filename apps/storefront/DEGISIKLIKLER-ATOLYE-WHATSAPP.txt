@@ -1,0 +1,4 @@
+Bu sürümde:
+- Ana sayfa hero yazısı ATÖLYE olarak değiştirildi.
+- Koleksiyonu Keşfet butonu https://www.ruthistanbull.tr/collections/ruthatelier adresine bağlandı.
+- WhatsApp destek butonu Avantajlar butonuyla aynı yükseklik, yazı boyutu, tipografi ve ikon ölçüsüne getirildi.

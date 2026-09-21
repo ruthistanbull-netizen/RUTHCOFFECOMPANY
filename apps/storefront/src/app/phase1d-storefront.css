@@ -1,0 +1,210 @@
+.phase1d-page {
+  width: min(100%, 1440px);
+  margin-inline: auto;
+  padding: clamp(96px, 12vw, 148px) clamp(16px, 4vw, 56px) clamp(72px, 10vw, 128px);
+}
+
+.phase1d-page--narrow {
+  width: min(100%, 920px);
+}
+
+.phase1d-page-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.65fr);
+  align-items: end;
+  gap: clamp(24px, 5vw, 72px);
+  margin-bottom: clamp(32px, 6vw, 80px);
+}
+
+.phase1d-page-header__copy {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.phase1d-page-header__eyebrow {
+  margin: 0;
+  color: var(--ruth-gold-dark);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.phase1d-page-header h1 {
+  margin: 0;
+  color: var(--ruth-ink);
+  font-family: var(--ruth-font-display);
+  font-size: clamp(2.25rem, 7vw, 5.5rem);
+  font-weight: 500;
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+}
+
+.phase1d-page-header p {
+  margin: 0;
+  max-width: 64ch;
+  color: var(--ruth-ink-muted);
+  font-size: clamp(0.9rem, 1.5vw, 1rem);
+  line-height: 1.75;
+}
+
+.phase1d-page-header__media {
+  position: relative;
+  min-height: 220px;
+  overflow: hidden;
+  border-radius: var(--ruth-radius-md);
+  background: var(--ruth-paper);
+}
+
+.phase1d-page-header__media img {
+  width: 100%;
+  height: 100%;
+  min-height: 220px;
+  object-fit: cover;
+}
+
+.phase1d-catalog {
+  display: grid;
+  min-width: 0;
+  gap: 20px;
+}
+
+.phase1d-catalog .ruth-toolbar__leading {
+  min-width: min(420px, 100%);
+}
+
+.phase1d-catalog .ruth-toolbar__trailing .ruth-field {
+  min-width: 190px;
+}
+
+.phase1d-catalog-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.phase1d-product-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(28px, 4vw, 56px) clamp(14px, 2.2vw, 32px);
+}
+
+.phase1d-filter-stack,
+.phase1d-filter-options,
+.phase1d-filter-group {
+  display: grid;
+  min-width: 0;
+}
+
+.phase1d-filter-stack { gap: 28px; }
+.phase1d-filter-group { gap: 14px; }
+.phase1d-filter-options { gap: 11px; }
+
+.phase1d-filter-group h3 {
+  margin: 0;
+  color: var(--ruth-ink);
+  font-family: var(--ruth-font-display);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.phase1d-product-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(340px, 0.7fr);
+  align-items: start;
+  gap: clamp(28px, 5vw, 72px);
+}
+
+.phase1d-product-summary {
+  position: sticky;
+  top: calc(var(--announcement-height, 0px) + 96px);
+  display: grid;
+  min-width: 0;
+  gap: 24px;
+}
+
+.phase1d-product-service-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.phase1d-service-card {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid var(--ruth-border);
+  border-radius: var(--ruth-radius-sm);
+  background: var(--ruth-surface);
+}
+
+.phase1d-service-card strong { font-size: 13px; }
+.phase1d-service-card span { color: var(--ruth-ink-muted); font-size: 12px; line-height: 1.5; }
+
+.phase1d-checkout-shell {
+  width: min(100%, 1240px);
+  margin-inline: auto;
+  padding: clamp(88px, 10vw, 132px) clamp(14px, 4vw, 44px) 96px;
+}
+
+.phase1d-cart-drawer .ruth-drawer {
+  width: min(470px, 100%);
+}
+
+.phase1d-home-section {
+  width: min(100%, 1440px);
+  margin-inline: auto;
+  padding-inline: clamp(16px, 4vw, 56px);
+}
+
+@media (max-width: 980px) {
+  .phase1d-page-header,
+  .phase1d-product-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .phase1d-page-header__media {
+    min-height: min(54vw, 420px);
+  }
+
+  .phase1d-product-summary { position: static; }
+  .phase1d-product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 680px) {
+  .phase1d-page {
+    padding-top: calc(var(--announcement-height, 0px) + 84px);
+    padding-inline: 14px;
+  }
+
+  .phase1d-page-header {
+    gap: 22px;
+    margin-bottom: 34px;
+  }
+
+  .phase1d-page-header h1 { font-size: clamp(2.15rem, 13vw, 3.9rem); }
+  .phase1d-product-grid { gap: 28px 10px; }
+  .phase1d-product-service-grid { grid-template-columns: minmax(0, 1fr); }
+
+  .phase1d-catalog .ruth-toolbar,
+  .phase1d-catalog .ruth-toolbar__leading,
+  .phase1d-catalog .ruth-toolbar__trailing {
+    width: 100%;
+  }
+
+  .phase1d-catalog .ruth-toolbar__trailing > * {
+    flex: 1 1 140px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phase1d-page *,
+  .phase1d-catalog * {
+    scroll-behavior: auto;
+  }
+}

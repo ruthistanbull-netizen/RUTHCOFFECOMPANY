@@ -1,0 +1,9 @@
+SITE GUNCELLEMELERI
+
+- PayTR Direct API disindaki eski odeme akislarinin kod ve SQL kalintilari kaldirildi.
+- Odeme isteginde yalnizca PayTR Direct API dokumaninda tanimli alanlar gonderilir.
+- Taksit sayisi installment_count ile, kart programi yalnizca taksit secildiginde card_type ile gonderilir.
+- Kart numarasi 16 hane, CVV 3 hane ve son kullanma tarihi AA/YY olarak dogrulanir.
+- Manuel siparis odeme linki /checkout?draft=...&payment=1 ile dogrudan kart adimini acar.
+- Odeme linkindeki tutar, kargo ve urun fiyatlari panelde olusturulan taslaktan sabit olarak okunur.
+- Musteri adresi Il, Ilce, Mahalle, Acik Adres ve Posta Kodu alanlariyla ayridir.

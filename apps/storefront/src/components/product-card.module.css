@@ -1,0 +1,255 @@
+.productCard {
+  min-width: 0;
+  color: var(--ruth-color-text-primary);
+  font-family: var(--ruth-font-body);
+}
+
+.mediaFrame {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--ruth-color-surface-muted);
+  touch-action: pan-y pinch-zoom;
+}
+
+.mediaButton {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.mediaButton:focus-visible {
+  outline: 1px solid var(--ruth-color-focus);
+  outline-offset: -1px;
+}
+
+.track {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+}
+
+.slide {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  flex: 0 0 100%;
+  overflow: hidden;
+}
+
+.image,
+.image > img {
+  width: 100%;
+  height: 100%;
+}
+
+.image > img {
+  object-fit: cover !important;
+  object-position: center center !important;
+}
+
+.arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: color-mix(in srgb, var(--ruth-color-surface) 72%, transparent);
+  color: var(--ruth-color-text-primary);
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(-50%);
+  transition: opacity var(--ruth-motion-fast) var(--ruth-easing);
+}
+
+.mediaFrame:hover .arrow,
+.arrow:focus-visible {
+  opacity: 1;
+}
+
+.arrow:disabled {
+  pointer-events: none;
+  opacity: 0;
+}
+
+.arrow svg {
+  width: 13px;
+  height: 13px;
+  stroke-width: 1.25;
+}
+
+.previous { left: 8px; }
+.next { right: 8px; }
+
+.materialBadge {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  z-index: 2;
+  padding: 4px 6px;
+  background: color-mix(in srgb, var(--ruth-color-surface) 72%, transparent);
+  color: color-mix(in srgb, var(--ruth-color-text-primary) 74%, transparent);
+  font-size: 0.55rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+}
+
+.cardInfo {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 28px;
+  align-items: start;
+  gap: 6px;
+  padding: 10px 2px 0;
+}
+
+.copy {
+  display: block;
+  min-width: 0;
+  color: var(--ruth-color-text-primary);
+  text-decoration: none;
+}
+
+.copy h3 {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  font-family: var(--ruth-font-body);
+  font-size: clamp(0.72rem, 1vw, 0.92rem);
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.description {
+  display: -webkit-box;
+  margin: 5px 0 0;
+  overflow: hidden;
+  color: var(--ruth-color-text-muted);
+  font-size: 0.65rem;
+  line-height: 1.35;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.priceRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 7px;
+  font-size: clamp(0.68rem, 0.95vw, 0.84rem);
+  line-height: 1.2;
+}
+
+.priceRow del {
+  color: var(--ruth-color-text-muted);
+  font-weight: 400;
+}
+
+.priceRow strong {
+  font-weight: 400;
+}
+
+.salePrice {
+  display: inline-flex;
+  align-items: center;
+  min-height: 20px;
+  padding: 2px 5px;
+  background: var(--ruth-color-sale);
+  color: var(--ruth-color-text-inverse);
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.addButton {
+  position: static;
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: var(--ruth-color-text-primary) !important;
+  box-shadow: none !important;
+  opacity: 0.72;
+}
+
+.addButton:hover,
+.addButton:focus-visible {
+  opacity: 1;
+}
+
+.addButton svg {
+  width: 17px;
+  height: 17px;
+  stroke-width: 1.2;
+}
+
+@media (max-width: 760px) {
+  .arrow { display: none; }
+
+  .cardInfo {
+    grid-template-columns: minmax(0, 1fr) 24px;
+    padding: 8px 2px 0;
+  }
+
+  .copy h3 {
+    font-size: 0.68rem;
+  }
+
+  .description {
+    display: none;
+  }
+
+  .priceRow {
+    gap: 4px;
+    margin-top: 5px;
+    font-size: 0.64rem;
+  }
+
+  .salePrice {
+    min-height: 18px;
+    padding: 2px 4px;
+  }
+
+  .addButton {
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+  }
+
+  .addButton svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .materialBadge {
+    left: 6px;
+    bottom: 6px;
+    font-size: 0.48rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arrow,
+  .addButton {
+    transition: none !important;
+  }
+}

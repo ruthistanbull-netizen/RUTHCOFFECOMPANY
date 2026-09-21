@@ -1,0 +1,302 @@
+.spacer {
+  height: 94px;
+}
+
+.fixedBar {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 70;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(190px, 260px);
+  align-items: center;
+  gap: clamp(18px, 3vw, 52px);
+  min-height: 78px;
+  padding: 12px clamp(18px, 3.5vw, 58px) calc(12px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--ruth-color-border-subtle);
+  background: color-mix(in srgb, var(--ruth-color-canvas) 96%, transparent);
+  color: var(--ruth-color-text-primary);
+  backdrop-filter: blur(18px);
+}
+
+.identity {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.identity > span {
+  color: var(--ruth-color-text-muted);
+  font-size: 0.5625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.identity h1 {
+  max-width: 100%;
+  margin: 0;
+  overflow: hidden;
+  color: var(--ruth-color-text-primary);
+  font-size: clamp(0.875rem, 1.2vw, 1.05rem);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.price {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.price strong {
+  font-size: 0.8125rem;
+  font-weight: 400;
+}
+
+.price del {
+  color: var(--ruth-color-text-muted);
+  font-size: 0.6875rem;
+}
+
+.primaryButton:global(.ruth-button),
+.drawerAddButton:global(.ruth-button) {
+  width: 100%;
+  min-height: 50px;
+  border: 1px solid var(--ruth-color-text-primary);
+  border-radius: 0;
+  background: var(--ruth-color-text-primary);
+  color: var(--ruth-color-text-inverse);
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.primaryButton:global(.ruth-button):hover:not(:disabled),
+.drawerAddButton:global(.ruth-button):hover:not(:disabled) {
+  background: color-mix(in srgb, var(--ruth-color-text-primary) 88%, var(--ruth-color-canvas));
+  transform: none;
+}
+
+.drawerTopline,
+.quantityRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--ruth-color-border-subtle);
+  font-size: 0.75rem;
+}
+
+.drawerTopline span,
+.quantityRow > span {
+  color: var(--ruth-color-text-muted);
+}
+
+.drawerTopline strong {
+  font-weight: 400;
+}
+
+.optionGroups {
+  display: grid;
+  gap: 26px;
+  padding-block: 26px;
+}
+
+.optionGroup {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.optionGroup legend {
+  margin-bottom: 12px;
+  color: var(--ruth-color-text-primary);
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.optionGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid var(--ruth-color-border-subtle);
+  border-left: 1px solid var(--ruth-color-border-subtle);
+}
+
+.option,
+.optionActive {
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 0;
+  border-right: 1px solid var(--ruth-color-border-subtle);
+  border-bottom: 1px solid var(--ruth-color-border-subtle);
+  background: var(--ruth-color-canvas);
+  color: var(--ruth-color-text-primary);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition:
+    background var(--ruth-motion-fast) ease,
+    color var(--ruth-motion-fast) ease;
+}
+
+.option:hover {
+  background: var(--ruth-color-surface-muted);
+}
+
+.optionActive {
+  background: var(--ruth-color-text-primary);
+  color: var(--ruth-color-text-inverse);
+}
+
+.option:focus-visible,
+.optionActive:focus-visible {
+  position: relative;
+  z-index: 1;
+  outline: 2px solid var(--ruth-color-focus);
+  outline-offset: -2px;
+}
+
+.colorDot {
+  width: 13px;
+  height: 13px;
+  border: 1px solid var(--ruth-color-border-strong);
+  border-radius: 50%;
+}
+
+.selectionHint {
+  margin: -6px 0 22px;
+  color: var(--ruth-color-text-muted);
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+.quantityRow {
+  padding-block: 20px 0;
+}
+
+.quantityControl {
+  display: grid;
+  grid-template-columns: 42px 38px 42px;
+  align-items: center;
+  border: 1px solid var(--ruth-color-border-subtle);
+}
+
+.quantityControl :global(.ruth-icon-button) {
+  width: 42px;
+  height: 42px;
+  border-radius: 0;
+}
+
+.quantityControl svg {
+  width: 13px;
+  height: 13px;
+  stroke-width: 1.3;
+}
+
+.quantityControl output {
+  text-align: center;
+  font-size: 0.8125rem;
+}
+
+.fixedBar + :global(.ruth-overlay) {
+  padding: 0;
+  background: color-mix(in srgb, var(--ruth-color-overlay) 100%, transparent);
+  backdrop-filter: none;
+}
+
+.fixedBar + :global(.ruth-overlay) :global(.ruth-drawer) {
+  width: min(500px, 100%);
+  border-left: 1px solid var(--ruth-color-border-subtle);
+  box-shadow: none;
+}
+
+.fixedBar + :global(.ruth-overlay) :global(.ruth-overlay__header) {
+  padding: 28px 24px;
+  border-color: var(--ruth-color-border-subtle);
+}
+
+.fixedBar + :global(.ruth-overlay) :global(.ruth-overlay__header h2) {
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.fixedBar + :global(.ruth-overlay) :global(.ruth-overlay__body) {
+  padding: 26px 24px;
+}
+
+.fixedBar + :global(.ruth-overlay) :global(.ruth-overlay__footer) {
+  padding: 18px 24px;
+  border-color: var(--ruth-color-border-subtle);
+}
+
+@media (max-width: 720px) {
+  .spacer {
+    height: 104px;
+  }
+
+  .fixedBar {
+    grid-template-columns: minmax(0, 1fr) minmax(116px, 148px);
+    gap: 12px;
+    min-height: 88px;
+    padding: 10px 10px calc(10px + env(safe-area-inset-bottom)) 14px;
+  }
+
+  .identity {
+    align-self: center;
+  }
+
+  .identity > span {
+    display: none;
+  }
+
+  .identity h1 {
+    font-size: 0.75rem;
+  }
+
+  .price {
+    grid-column: 1;
+    justify-content: flex-start;
+    margin-top: -6px;
+  }
+
+  .price strong {
+    font-size: 0.6875rem;
+  }
+
+  .primaryButton:global(.ruth-button) {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    min-height: 58px;
+    padding-inline: 10px;
+  }
+
+  .optionGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .option,
+  .optionActive {
+    transition: none;
+  }
+}

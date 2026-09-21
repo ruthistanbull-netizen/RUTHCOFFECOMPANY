@@ -1,0 +1,57 @@
+RUTH ISTANBUL - PAYTR IFRAME V2 KURULUM
+======================================
+
+1) SUPABASE
+Supabase SQL Editor'da şu dosyayı bir kez çalıştır:
+  supabase/PAYTR-IFRAME-V2-TAM-ENTEGRASYON-SQL.sql
+
+2) RENDER ENVIRONMENT VARIABLES
+Site servisinin Environment bölümüne ekle:
+  PAYTR_MERCHANT_ID       = yeni ek mağazanın Mağaza No değeri
+  PAYTR_MERCHANT_KEY      = yeni ek mağazanın Mağaza Parola değeri
+  PAYTR_MERCHANT_SALT     = yeni ek mağazanın Gizli Anahtar değeri
+  PAYTR_TEST_MODE         = 1
+  PAYTR_DEBUG_ON          = 1
+  PAYTR_NO_INSTALLMENT    = 0
+  PAYTR_MAX_INSTALLMENT   = 0
+  NEXT_PUBLIC_SITE_URL    = https://ruthistanbul.com
+
+Merchant Key ve Salt'ı koda, GitHub'a veya sohbet mesajına yazma.
+
+3) PAYTR BILDIRIM URL
+PayTR Mağaza Paneli > Destek & Kurulum > Ayarlar > Bildirim URL:
+  https://ruthistanbul.com/api/paytr/callback
+
+HTTP metodu PayTR tarafından POST olarak gönderilir. URL herkese açık olmalı.
+Bu endpoint yalnızca düz metin OK döndürür.
+
+4) TEST
+- Siteyi yeniden deploy et.
+- Sepete ürün ekleyip ödeme adımına ilerle.
+- "Güvenli Ödeme Ekranını Aç" butonuna bas.
+- PayTR iFrame V2 test ekranındaki hazır test kartıyla ödemeyi tamamla.
+- PayTR İşlemler sayfasında durumun "Başarılı" olduğunu kontrol et.
+- Supabase orders, order_items ve payments kayıtlarını kontrol et.
+- Admin panelde siparişin "Ödeme Alındı" olarak göründüğünü kontrol et.
+
+İşlem "Devam Ediyor" görünürse PayTR İşlem Detayı içindeki Bildirim URL yanıtını kontrol et.
+Yanıt yalnızca OK olmalıdır.
+
+5) CANLI MOD
+PayTR test kontrolü onaylandıktan ve mağaza canlı moda geçirildikten sonra Render'da:
+  PAYTR_TEST_MODE=0
+  PAYTR_DEBUG_ON=0
+olarak değiştir ve yeniden deploy et.
+
+ENTEGRASYONDA BULUNANLAR
+- PayTR iFrame V2 ödeme formu
+- Kart verisinin Ruth Istanbul sunucusuna gelmemesi
+- Server-side token/hash üretimi
+- Ürün, varyant, adet, indirim ve kargonun PayTR sepetine aktarılması
+- Başarılı/başarısız callback hash doğrulaması
+- Sipariş tutarı doğrulaması
+- Tekrarlanan callback'lerde idempotent sipariş oluşturma
+- Ödeme başarılı olmadan gerçek sipariş oluşturmama
+- Callback gelene kadar başarı sayfasında doğrulama/polling
+- Başarılı ödemede orders, order_items, payments ve stok hareketlerinin oluşturulması
+- Başarısız ödemede checkout_drafts kaydının failed yapılması

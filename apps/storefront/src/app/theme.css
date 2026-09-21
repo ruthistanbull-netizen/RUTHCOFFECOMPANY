@@ -1,0 +1,447 @@
+[data-ruth-theme="storefront"] {
+  --ruth-storefront-canvas: #ffffff;
+  --ruth-storefront-surface: #ffffff;
+  --ruth-storefront-surface-muted: #f6f6f6;
+  --ruth-storefront-surface-soft: #fbfbfb;
+  --ruth-storefront-ink: #111111;
+  --ruth-storefront-muted-ink: #5f5f5f;
+  --ruth-storefront-border: #dedede;
+  --ruth-storefront-border-strong: #a8a8a8;
+  --ruth-storefront-sale: #e30613;
+  --ruth-storefront-logo-light: #ffffff;
+  --ruth-storefront-logo-dark: #111111;
+  --ruth-storefront-translucent: rgba(255, 255, 255, 0.78);
+  --ruth-storefront-overlay-copy: rgba(17, 17, 17, 0.74);
+
+  --ruth-color-canvas: var(--ruth-storefront-canvas);
+  --ruth-color-surface: var(--ruth-storefront-surface);
+  --ruth-color-surface-muted: var(--ruth-storefront-surface-muted);
+  --ruth-color-text-primary: var(--ruth-storefront-ink);
+  --ruth-color-text-muted: var(--ruth-storefront-muted-ink);
+  --ruth-color-text-inverse: var(--ruth-storefront-logo-light);
+  --ruth-color-accent: var(--ruth-storefront-ink);
+  --ruth-color-accent-soft: var(--ruth-storefront-border);
+  --ruth-color-accent-strong: var(--ruth-storefront-ink);
+  --ruth-color-accent-wash: rgba(17, 17, 17, 0.06);
+  --ruth-color-border-subtle: var(--ruth-storefront-border);
+  --ruth-color-border-strong: var(--ruth-storefront-border-strong);
+  --ruth-color-focus: var(--ruth-storefront-ink);
+  --ruth-color-overlay: rgba(0, 0, 0, 0.34);
+  --ruth-color-sale: var(--ruth-storefront-sale);
+  --ruth-font-display: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+  --ruth-font-body: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+  --ruth-font-logo: "Cinzel", Georgia, serif;
+
+  --ruth-ink: var(--ruth-color-text-primary);
+  --ruth-ink-muted: var(--ruth-color-text-muted);
+  --ruth-paper: var(--ruth-storefront-surface-soft);
+  --ruth-surface: var(--ruth-color-surface);
+  --ruth-gold: var(--ruth-color-accent);
+  --ruth-gold-light: var(--ruth-color-accent-soft);
+  --ruth-gold-dark: var(--ruth-color-accent-strong);
+  --ruth-border: var(--ruth-color-border-subtle);
+  --ruth-shadow-soft: 0 12px 32px rgba(0, 0, 0, 0.06);
+  --ruth-shadow-elevated: 0 22px 58px rgba(0, 0, 0, 0.12);
+
+  --ivory: var(--ruth-color-canvas);
+  --cream: var(--ruth-color-surface-muted);
+  --ink: var(--ruth-color-text-primary);
+  --gold: var(--ruth-color-accent);
+  --gold-dark: var(--ruth-color-accent-strong);
+  --bronze: var(--ruth-color-accent-strong);
+  --muted-foreground: var(--ruth-color-text-muted);
+  --background: var(--ruth-color-canvas);
+  --foreground: var(--ruth-color-text-primary);
+  --font-heading: var(--ruth-font-display);
+  --font-body: var(--ruth-font-body);
+}
+
+/* Keep the private design-system verification route on its established baseline. */
+body:has(.ds-page) {
+  --ruth-storefront-canvas: #f6f0e7;
+  --ruth-storefront-accent: #b8976a;
+  --ruth-color-surface: #faf7f1;
+  --ruth-color-surface-muted: #faf7f1;
+  --ruth-color-text-primary: #211912;
+  --ruth-color-text-muted: color-mix(in srgb, #7a6d5f 80%, #211912);
+  --ruth-color-text-inverse: #ffffff;
+  --ruth-color-accent-soft: #d4b896;
+  --ruth-color-accent-strong: #765a37;
+  --ruth-color-accent-wash: rgba(184, 151, 106, 0.18);
+  --ruth-color-border-subtle: #e7ded2;
+  --ruth-color-border-strong: #cdbeac;
+  --ruth-color-focus: #765a37;
+  --ruth-color-overlay: rgba(23, 21, 18, 0.46);
+  --ruth-font-display: "Cinzel", Georgia, serif;
+  --ruth-font-body: "Montserrat", Arial, sans-serif;
+  --ruth-font-logo: "Cinzel", Georgia, serif;
+  --ruth-shadow-soft: 0 12px 36px rgba(23, 21, 18, 0.08);
+  --ruth-shadow-elevated: 0 24px 64px rgba(23, 21, 18, 0.14);
+}
+
+.site-app-shell:not(:has(.ds-page)) {
+  --ruth-canvas: var(--ruth-storefront-canvas);
+  --ruth-surface: var(--ruth-storefront-surface);
+  --ruth-paper: var(--ruth-storefront-surface-soft);
+  --ruth-border: var(--ruth-storefront-border);
+  --ruth-ink: var(--ruth-storefront-ink);
+  --ruth-ink-muted: var(--ruth-storefront-muted-ink);
+  --ruth-gold: var(--ruth-storefront-ink);
+  --ruth-gold-dark: var(--ruth-storefront-ink);
+  --ruth-gold-light: var(--ruth-storefront-border);
+  background: var(--ruth-color-canvas);
+  color: var(--ruth-color-text-primary);
+  font-family: var(--ruth-font-body);
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.site-app-shell:not(:has(.ds-page)) :where(main, section, article, aside, header, footer, nav, dialog) {
+  border-color: var(--ruth-color-border-subtle);
+}
+
+.site-app-shell:not(:has(.ds-page)) :where(h1, h2, h3, h4, h5, h6, button, input, select, textarea, a, p, span, strong) {
+  font-weight: 400;
+}
+
+.site-app-shell:not(:has(.ds-page)) :where(.bg-cream, .bg-ivory, .ruth-card, .ruth-drawer, .ruth-modal, .ruth-page-section) {
+  background: var(--ruth-color-surface) !important;
+}
+
+.site-app-shell:not(:has(.ds-page)) footer {
+  border-top: 1px solid var(--ruth-color-border-subtle) !important;
+  background: var(--ruth-color-surface) !important;
+}
+
+.site-app-shell:not(:has(.ds-page)) footer :where(.border-gold\/15, .border-gold\/20, .border-gold\/10) {
+  border-color: var(--ruth-color-border-subtle) !important;
+}
+
+.site-app-shell:not(:has(.ds-page)) .ruth-status--info,
+.site-app-shell:not(:has(.ds-page)) .ruth-status--success,
+.site-app-shell:not(:has(.ds-page)) .ruth-status--warning {
+  border-color: var(--ruth-color-text-primary) !important;
+  background: var(--ruth-color-text-primary) !important;
+  color: var(--ruth-color-text-inverse) !important;
+}
+
+.site-app-shell:not(:has(.ds-page)) .ruth-status__dot {
+  background: currentColor !important;
+}
+
+.site-app-shell:not(:has(.ds-page)) :where(.ruth-field, .ruth-input-wrap, .ruth-input, .ruth-search-shell, .ruth-search-shell__form) {
+  width: 100%;
+  max-width: none;
+}
+
+.phase1d-catalog .ruth-toolbar {
+  align-items: stretch;
+}
+
+.phase1d-catalog .ruth-toolbar__leading {
+  flex: 1 1 100%;
+  width: 100%;
+  min-width: 100%;
+}
+
+.phase1d-editorial-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.phase1d-editorial-grid .ruth-editorial-card:not(:has(img)) {
+  display: none;
+}
+
+.phase1d-editorial-grid .ruth-editorial-card {
+  min-height: 0;
+  aspect-ratio: 16 / 9;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.phase1d-editorial-grid .ruth-editorial-card__content {
+  padding: 14px;
+}
+
+.phase1d-editorial-grid .ruth-editorial-card__content h3 {
+  font-family: var(--ruth-font-body);
+  font-size: clamp(0.75rem, 1.15vw, 0.95rem);
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+.phase1d-page-header {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.phase1d-page-header__media {
+  display: none;
+}
+
+.phase1d-page-header h1 {
+  font-family: var(--ruth-font-body);
+  font-size: clamp(1rem, 2vw, 1.45rem);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.phase1d-page-header__copy {
+  gap: 7px;
+}
+
+.phase1d-page-header__copy > p:last-child:not(:first-child) {
+  max-width: 58ch;
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+.phase1d-product-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 36px 14px;
+}
+
+.phase1d-product-grid > article:first-child {
+  grid-column: 1 / -1;
+  width: min(100%, 760px);
+  justify-self: center;
+}
+
+.phase1d-product-grid > article:first-child [class*="mediaFrame"] {
+  aspect-ratio: 3 / 4;
+}
+
+.product-zara-gallery-shell {
+  width: min(calc(100% - 40px), 1120px);
+  margin-inline: auto;
+  overflow-x: clip;
+  border-inline: 0;
+}
+
+.product-zara-gallery-shell [data-product-gallery] {
+  width: min(100%, 760px);
+  max-width: 100%;
+  margin-inline: auto;
+  overflow-x: clip;
+}
+
+.product-zara-gallery-shell [data-product-gallery] > button[data-product-swipe-surface] {
+  width: 100%;
+  max-width: 100%;
+  min-height: 0 !important;
+  aspect-ratio: 3 / 4 !important;
+  overflow: hidden;
+  background: var(--ruth-color-surface-muted);
+}
+
+.product-zara-gallery-shell [data-product-gallery] > button[data-product-swipe-surface] img {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  object-fit: contain !important;
+}
+
+.product-zara-gallery-shell [data-product-gallery] > [data-product-swipe-ignore] {
+  width: 100%;
+  max-width: 100%;
+}
+
+.product-zara-gallery-shell [aria-label="Diğer ürün görselleri"] {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  padding-top: 10px;
+  background: var(--ruth-color-canvas);
+}
+
+.product-zara-gallery-shell [aria-label="Diğer ürün görselleri"] > button {
+  aspect-ratio: 3 / 4 !important;
+  background: var(--ruth-color-surface-muted);
+}
+
+.product-zara-gallery-shell [aria-label="Diğer ürün görselleri"] img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain !important;
+}
+
+.phase1d-cart-drawer .ruth-drawer {
+  width: min(390px, 100%);
+}
+
+.phase1d-cart-item {
+  grid-template-columns: 58px minmax(0, 1fr);
+  gap: 10px;
+}
+
+.phase1d-cart-item__media {
+  min-height: 0;
+  aspect-ratio: 3 / 4;
+  border-radius: 0;
+  background: var(--ruth-color-surface-muted);
+}
+
+.phase1d-cart-item__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.site-app-shell:not(:has(.ds-page)) header[data-scrolled="true"] [class*="bar"] {
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+.site-app-shell:not(:has(.ds-page)) header[data-scrolled="false"] [class*="bar"] {
+  background: var(--ruth-color-canvas) !important;
+  color: var(--ruth-color-text-primary) !important;
+}
+
+button[class*="menuControl"] {
+  min-width: 58px !important;
+}
+
+span[class*="hamburger"] {
+  display: grid;
+  width: 34px;
+  gap: 8px;
+}
+
+span[class*="hamburger"] i {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+}
+
+a[class*="menuWordmark"] {
+  color: var(--ruth-color-text-primary);
+  font-family: var(--ruth-font-logo);
+  font-size: clamp(3.8rem, 10vw, 9rem);
+  font-weight: 700;
+  line-height: 0.8;
+  letter-spacing: -0.08em;
+  text-decoration: none;
+}
+
+div[class*="collectionRail"] {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 34px clamp(22px, 5vw, 76px) 12px;
+  scrollbar-width: thin;
+  scroll-snap-type: x proximity;
+}
+
+a[class*="collectionCard"] {
+  flex: 0 0 clamp(150px, 15vw, 220px);
+  color: var(--ruth-color-text-primary);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+  scroll-snap-align: start;
+}
+
+span[class*="collectionImage"] {
+  display: block;
+  aspect-ratio: 3 / 4;
+  margin-bottom: 9px;
+  overflow: hidden;
+  background: var(--ruth-color-surface-muted);
+}
+
+span[class*="collectionImage"] img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (min-width: 901px) {
+  button[class*="menuControl"] {
+    min-width: 76px !important;
+  }
+
+  span[class*="hamburger"] {
+    width: 44px;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 900px) {
+  .phase1d-product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 30px 8px;
+  }
+
+  .product-zara-gallery-shell {
+    width: calc(100% - 20px);
+    max-width: calc(100% - 20px);
+    margin-inline: 10px;
+    overflow-x: clip;
+  }
+
+  .product-detail-page,
+  .product-zara-page,
+  .product-zara-gallery-shell,
+  .product-zara-gallery-shell > *,
+  .product-zara-gallery-shell [data-product-gallery] {
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  .product-zara-gallery-shell [data-product-gallery] > button[data-product-swipe-surface] {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .product-zara-gallery-shell [aria-label="Diğer ürün görselleri"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .phase1d-editorial-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  div[class*="collectionRail"] {
+    padding-inline: 18px;
+  }
+
+  a[class*="collectionCard"] {
+    flex-basis: 42vw;
+  }
+
+  a[class*="menuWordmark"] {
+    font-size: clamp(3.4rem, 18vw, 6.4rem);
+  }
+}
+
+@media (max-width: 560px) {
+  .phase1d-page {
+    padding-inline: 10px;
+  }
+
+  .phase1d-product-grid > article:first-child {
+    width: 100%;
+  }
+
+  .phase1d-cart-drawer .ruth-drawer {
+    width: 100%;
+  }
+
+  .phase1d-cart-item {
+    grid-template-columns: 54px minmax(0, 1fr);
+  }
+
+  a[class*="collectionCard"] {
+    flex-basis: 44vw;
+  }
+}

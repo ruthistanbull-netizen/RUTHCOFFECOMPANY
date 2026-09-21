@@ -1,0 +1,7 @@
+RUTH ISTANBUL WEBSITE - MOBIL TAM EKRAN URUN GALERISI
+
+- Urun fotografi tam ekran acildiginda mobilde saga/sola parmakla kaydirarak diger fotograflara gecis eklendi.
+- Kaydirma sirasinda fotograf parmak hareketini takip eder ve esik asilinca onceki/sonraki fotografa gecer.
+- Dikey hareket ve yakinlastirma davranisi korunur.
+
+Yeni SQL veya ortam degiskeni gerekmez.

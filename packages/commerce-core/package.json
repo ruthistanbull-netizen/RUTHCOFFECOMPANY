@@ -1,0 +1,27 @@
+{
+  "name": "@ruth-commerce/commerce-core",
+  "version": "1.3.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./customer": "./src/customer.ts",
+    "./status-normalization": "./src/status-normalization.ts",
+    "./theme": "./src/theme-engine.ts",
+    "./theme-sections": "./src/theme-sections.ts",
+    "./http-resilience": "./src/http-resilience.ts",
+    "./internal-transport": "./src/internal-transport.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types --test tests/*.test.ts"
+  },
+  "dependencies": {
+    "@ruth-commerce/contracts": "0.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.0"
+  }
+}

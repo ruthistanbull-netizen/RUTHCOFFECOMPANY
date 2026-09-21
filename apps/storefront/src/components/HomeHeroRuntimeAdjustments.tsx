@@ -1,0 +1,109 @@
+"use client";
+
+import { usePathname } from "next/navigation";
+import { useEffect } from "react";
+
+export function HomeHeroRuntimeAdjustments() {
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (pathname !== "/") return;
+
+    const root = document.documentElement;
+    root.classList.add("ruth-home-page-active");
+
+    return () => {
+      root.classList.remove("ruth-home-page-active");
+    };
+  }, [pathname]);
+
+  return (
+    <style>{`
+      @media (min-width: 1024px) {
+        .home-editorial-wordmark {
+          top: 38vh !important;
+        }
+      }
+
+      @media (max-width: 767px) {
+        html.ruth-home-page-active,
+        html.ruth-home-page-active body,
+        html.ruth-home-page-active .site-app-shell,
+        html.ruth-home-page-active main,
+        html.ruth-home-page-active #home-editorial,
+        html.ruth-home-page-active #home-editorial .home-editorial-slide:first-child > .sticky {
+          background-color: var(--ruth-home-header-surface, var(--ruth-home-media-top, var(--ivory))) !important;
+        }
+
+        html.ruth-home-page-active
+          #home-editorial
+          .home-editorial-slide:first-child
+          > .sticky
+          > div {
+          inset: 0 !important;
+          top: 0 !important;
+          right: 0 !important;
+          bottom: 0 !important;
+          left: 0 !important;
+          transform: none !important;
+        }
+
+        html.ruth-home-page-active .home-editorial-wordmark {
+          top: auto !important;
+          right: auto !important;
+          bottom: max(58px, calc(env(safe-area-inset-bottom) + 40px)) !important;
+          left: -7vw !important;
+          width: 114vw !important;
+          max-width: none !important;
+          height: clamp(204px, 50vw, 282px) !important;
+        }
+
+        html.ruth-home-page-active .ruth-zara-header,
+        html.ruth-home-page-active .ruth-zara-header.is-scrolled,
+        html.ruth-home-page-active .ruth-zara-header.is-contrast,
+        html.ruth-home-page-active .ruth-zara-header .ruth-zara-header-inner {
+          background: transparent !important;
+          border: 0 !important;
+          border-color: transparent !important;
+          outline: 0 !important;
+          box-shadow: none !important;
+          -webkit-backdrop-filter: none !important;
+          backdrop-filter: none !important;
+        }
+
+        html.ruth-home-page-active .ruth-zara-header::before,
+        html.ruth-home-page-active .ruth-zara-header::after,
+        html.ruth-home-page-active .ruth-zara-header .ruth-zara-header-inner::before,
+        html.ruth-home-page-active .ruth-zara-header .ruth-zara-header-inner::after {
+          content: none !important;
+          display: none !important;
+          border: 0 !important;
+          box-shadow: none !important;
+        }
+
+        html.ruth-home-page-active #home-editorial,
+        html.ruth-home-page-active #home-editorial .home-editorial-slide:first-child,
+        html.ruth-home-page-active #home-editorial .home-editorial-slide:first-child > .sticky {
+          border-top: 0 !important;
+          outline: 0 !important;
+          box-shadow: none !important;
+        }
+
+        html.ruth-home-page-active .ruth-zara-header .ruth-zara-header-inner {
+          color: var(--ruth-home-header-ink, #111111) !important;
+          mix-blend-mode: normal !important;
+        }
+
+        html.ruth-home-page-active .ruth-zara-header .header-wordmark {
+          filter: brightness(0) invert(var(--ruth-home-header-invert, 0)) !important;
+        }
+
+        html.ruth-home-page-active:has(.ruth-zara-header[data-menu-open="false"])
+          .ruth-zara-menu-button {
+          color: var(--ruth-home-header-ink, #111111) !important;
+          mix-blend-mode: normal !important;
+        }
+      }
+    `}</style>
+  );
+}

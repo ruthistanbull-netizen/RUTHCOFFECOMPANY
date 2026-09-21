@@ -1,0 +1,8 @@
+RUTH ISTANBUL WEBSITE - GUNCELLEMELER
+
+- Urun ana fotografina tiklandiginda tam ekran buyuk fotograf galerisi acilir.
+- Galeride onceki/sonraki oklari, klavye yon tuslari, kucuk fotograflar ve sayac bulunur.
+- ESC veya kapatma butonu ile galeri kapanir.
+- Mobil urun sayfasinda hareketli Sepete Ekle butonu gorundugunde WhatsApp butonu onun ustune tasinir.
+
+SQL degisikligi gerekmez.

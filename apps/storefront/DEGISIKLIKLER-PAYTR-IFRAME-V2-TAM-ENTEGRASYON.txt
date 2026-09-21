@@ -1,0 +1,20 @@
+PAYTR IFRAME V2 TAM ENTEGRASYON
+===============================
+
+- Eski Direct API/kart alanı akışı kaldırıldı.
+- PayTR iFrame V2 güvenli ödeme formu site içine gömüldü.
+- Token ve HMAC yalnızca sunucu tarafında üretiliyor.
+- Kart bilgileri Ruth Istanbul koduna veya veritabanına gelmiyor.
+- Sipariş ürünleri, varyantları, adetleri, indirim ve kargo PayTR sepetine aktarılıyor.
+- Callback hash ve sipariş tutarı doğrulanıyor.
+- Tekrarlı callback güvenli/idempotent işleniyor.
+- Ödeme onaylanmadan gerçek sipariş oluşturulmuyor.
+- Başarı sayfası callback sonucunu bekleyip doğruluyor.
+- Ödeme onaylanınca sepet ve ödeme taslak tokenı temizleniyor.
+- Başarılı ödemede sipariş, ürünler, ödeme ve stok hareketleri oluşturuluyor.
+- Taksit kaynaklı gerçek tahsilat tutarı payments kaydına yazılıyor.
+- Yenilenen ödeme denemelerinde benzersiz merchant_oid kullanılıyor.
+- PayTR test/canlı ayarları Render env üzerinden yönetiliyor.
+
+Kurulum: PAYTR-IFRAME-V2-KURULUM.txt
+SQL: supabase/PAYTR-IFRAME-V2-TAM-ENTEGRASYON-SQL.sql

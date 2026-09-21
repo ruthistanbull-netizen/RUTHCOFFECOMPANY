@@ -1,0 +1,21 @@
+RUTH ISTANBUL - IKAS UYELIK ESLESTIRME
+
+1) Supabase Dashboard > SQL Editor bölümünü aç.
+2) supabase/IKAS-UYELIK-ESLESTIRME-117-AKTIF-HESAP.sql dosyasını çalıştır.
+3) Admin paneli yeniden deploy et.
+4) Ruthie Points ve E-Posta > Müşterilere Gönder sayfalarında:
+   - ACTIVE_ACCOUNT eşleşenler yeşil "Üye"
+   - Diğer mevcut müşteriler kırmızı "Üye Değil"
+   olarak görünür.
+
+Bu SQL:
+- Yeni müşteri eklemez.
+- Müşteri silmez.
+- Siparişlere dokunmaz.
+- Eşleşmeyi e-posta, telefon ve ad-soyad önceliğiyle yapar.
+
+E-posta şablonları:
+- Hesabın Taşındı
+- Yeni Siteye Taşındık
+
+Mail otomatik gönderilmez. Yalnızca panelden sen seçip Gönder dediğinde gönderilir.

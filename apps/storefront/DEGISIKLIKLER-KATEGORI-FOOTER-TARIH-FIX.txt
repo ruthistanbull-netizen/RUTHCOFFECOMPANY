@@ -1,0 +1,4 @@
+- Kategori/koleksiyon/tüm ürünler listelerinde ürün adı altındaki kısa açıklamalar kaldırıldı.
+- Footer Alışveriş, Müşteri Hizmetleri ve Yasal olarak üç gruba ayrıldı.
+- Doğum tarihi alanları tarih seçici açmadan GG.AA.YYYY biçiminde elle yazılır.
+- Kayıt olurken doğum tarihi sorulmaz; Hesabım veya Avantajlar alanından bir kez eklenir.

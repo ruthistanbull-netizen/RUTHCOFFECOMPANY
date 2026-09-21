@@ -1,0 +1,531 @@
+@layer components {
+.header {
+  position: fixed;
+  top: var(--announcement-height, 0px);
+  right: 0;
+  left: 0;
+  z-index: var(--ruth-layer-header);
+  pointer-events: none;
+}
+
+.header > * {
+  pointer-events: auto;
+}
+
+.announcement {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: calc(var(--ruth-layer-header) + 1);
+  display: grid;
+  min-height: var(--announcement-height, 34px);
+  place-items: center;
+  border-bottom: 1px solid var(--ruth-color-border-subtle);
+  background: var(--ruth-color-surface);
+  color: var(--ruth-color-text-primary);
+}
+
+.announcementLink {
+  width: 100%;
+  padding: 8px 18px;
+  color: inherit;
+  font-size: 0.65rem;
+  letter-spacing: 0.13em;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 58px;
+  padding: 0 clamp(12px, 2.5vw, 34px);
+  transition:
+    background var(--ruth-motion-normal) var(--ruth-easing),
+    border-color var(--ruth-motion-normal) var(--ruth-easing),
+    color var(--ruth-motion-normal) var(--ruth-easing);
+}
+
+.home:not(.scrolled) .bar {
+  background: var(--ruth-color-surface);
+  color: var(--ruth-color-text-primary);
+}
+
+.internal .bar {
+  border-bottom: 1px solid var(--ruth-color-border-subtle);
+  background: var(--ruth-color-surface);
+  color: var(--ruth-color-text-primary);
+}
+
+.scrolled .bar {
+  border-color: transparent;
+  background: transparent;
+  color: var(--ruth-color-text-primary);
+  backdrop-filter: none;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.control {
+  min-width: auto !important;
+  padding-inline: 10px !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: inherit !important;
+  box-shadow: none !important;
+  font-size: 0.67rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.control svg {
+  width: 17px;
+  height: 17px;
+  stroke-width: 1.4;
+}
+
+.control:hover,
+.control:focus-visible {
+  background: transparent !important;
+  opacity: 0.62;
+  transform: none !important;
+}
+
+.menuControl {
+  min-width: 58px !important;
+}
+
+.hamburger {
+  display: grid !important;
+  width: 34px;
+  gap: 8px !important;
+}
+
+.hamburger i {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+}
+
+.accountWrap {
+  position: relative;
+}
+
+.accountPanel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  display: grid;
+  min-width: 160px;
+  overflow: hidden;
+  border: 1px solid var(--ruth-color-border-subtle);
+  background: var(--ruth-color-surface);
+  color: var(--ruth-color-text-primary);
+  box-shadow: var(--ruth-shadow-soft);
+}
+
+.accountLink {
+  padding: 11px 13px;
+  border: 0;
+  border-bottom: 1px solid var(--ruth-color-border-subtle);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.68rem;
+  letter-spacing: 0.07em;
+  text-align: left;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.accountLink:last-child {
+  border-bottom: 0;
+}
+
+.accountLink:hover,
+.accountLink:focus-visible {
+  background: var(--ruth-color-surface-muted);
+  outline: none;
+}
+
+.menuPanel,
+.searchPanel {
+  background: var(--ruth-color-canvas) !important;
+  color: var(--ruth-color-text-primary);
+}
+
+.menuPanel {
+  min-height: 100svh;
+}
+
+.menuPanel :global(.ruth-fullscreen-overlay__close),
+.searchPanel :global(.ruth-fullscreen-overlay__close) {
+  border-color: var(--ruth-color-border-subtle);
+  background: color-mix(in srgb, var(--ruth-color-canvas) 92%, transparent);
+  color: var(--ruth-color-text-primary);
+  backdrop-filter: blur(16px);
+}
+
+.menuTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 32px;
+  padding: clamp(28px, 4vw, 60px) clamp(22px, 5vw, 76px) 0;
+}
+
+.menuWordmark {
+  display: block;
+  color: var(--ruth-color-text-primary);
+  font-family: var(--ruth-font-logo);
+  font-size: clamp(3.8rem, 10vw, 9rem);
+  font-weight: 700;
+  letter-spacing: -0.08em;
+  line-height: 0.8;
+  text-decoration: none;
+}
+
+.menuTop p {
+  max-width: 28ch;
+  margin: 12px 80px 0 0;
+  color: var(--ruth-color-text-muted);
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  line-height: 1.7;
+  text-transform: uppercase;
+}
+
+.collectionRail {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 34px clamp(22px, 5vw, 76px) 12px;
+  scrollbar-width: thin;
+  scroll-snap-type: x proximity;
+}
+
+.collectionCard {
+  flex: 0 0 clamp(150px, 15vw, 220px);
+  color: var(--ruth-color-text-primary);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+  scroll-snap-align: start;
+}
+
+.collectionImage {
+  display: block;
+  aspect-ratio: 3 / 4;
+  margin-bottom: 9px;
+  overflow: hidden;
+  background: var(--ruth-color-surface-muted);
+}
+
+.collectionImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.menuGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) repeat(2, minmax(190px, 0.75fr));
+  gap: clamp(32px, 6vw, 100px);
+  padding: clamp(50px, 8vw, 120px) clamp(22px, 5vw, 76px) clamp(70px, 8vw, 120px);
+}
+
+.menuSection {
+  min-width: 0;
+}
+
+.menuNumber,
+.menuSection h3 {
+  margin: 0;
+  color: var(--ruth-color-text-muted);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.menuSection h3 {
+  margin-top: 7px;
+  color: var(--ruth-color-text-primary);
+}
+
+.mainNav,
+.listNav {
+  display: grid;
+  margin-top: 26px;
+}
+
+.mainNav {
+  gap: 6px;
+}
+
+.mainNavLink {
+  display: flex;
+  align-items: baseline;
+  gap: 13px;
+  color: var(--ruth-color-text-primary);
+  font-family: var(--ruth-font-display);
+  font-size: clamp(1.7rem, 3.5vw, 4rem);
+  line-height: 1.02;
+  text-decoration: none;
+}
+
+.mainNavLink span {
+  color: var(--ruth-color-text-muted);
+  font-family: var(--ruth-font-body);
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+}
+
+.listNav {
+  gap: 12px;
+}
+
+.listNavLink {
+  color: var(--ruth-color-text-primary);
+  font-size: 0.76rem;
+  letter-spacing: 0.06em;
+  line-height: 1.45;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.mainNavLink:hover,
+.mainNavLink:focus-visible,
+.listNavLink:hover,
+.listNavLink:focus-visible {
+  opacity: 0.55;
+  outline: none;
+}
+
+.menuFooter {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 0 clamp(22px, 5vw, 76px) 34px;
+  color: var(--ruth-color-text-muted);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.searchContent {
+  display: grid;
+  align-content: center;
+  width: 100%;
+  min-height: 100svh;
+  margin-inline: auto;
+  padding: clamp(88px, 12vw, 160px) clamp(20px, 5vw, 72px);
+}
+
+.searchForm {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  width: 100%;
+  gap: clamp(14px, 2vw, 26px);
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--ruth-color-border-strong);
+}
+
+.searchForm svg {
+  width: clamp(25px, 3vw, 38px);
+  height: clamp(25px, 3vw, 38px);
+  stroke-width: 1.1;
+}
+
+.searchInput {
+  width: 100% !important;
+  min-height: auto !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: var(--ruth-color-text-primary) !important;
+  font-family: var(--ruth-font-display) !important;
+  font-size: clamp(2rem, 7vw, 8rem) !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.045em;
+  line-height: 1 !important;
+  box-shadow: none !important;
+}
+
+.searchInput::placeholder {
+  color: var(--ruth-color-text-muted);
+  opacity: 0.38;
+}
+
+.searchInput:focus-visible {
+  outline: none !important;
+}
+
+.searchHint {
+  margin: 18px 0 0 clamp(39px, 5vw, 64px);
+  color: var(--ruth-color-text-muted);
+  font-size: 0.68rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.searchSuggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 28px;
+}
+
+.searchSuggestion {
+  padding: 9px 13px;
+  border: 1px solid var(--ruth-color-border-subtle);
+  background: transparent;
+  color: var(--ruth-color-text-primary);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.searchSuggestion:hover,
+.searchSuggestion:focus-visible {
+  background: var(--ruth-color-surface-muted);
+  outline: none;
+}
+
+@media (min-width: 901px) {
+  .menuControl {
+    min-width: 76px !important;
+  }
+
+  .hamburger {
+    width: 44px;
+    gap: 10px !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .controlLabel {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .bar {
+    min-height: 52px;
+    padding-inline: 7px;
+  }
+
+  .control {
+    width: 42px !important;
+    min-width: 42px !important;
+    padding: 0 !important;
+  }
+
+  .accountControl {
+    display: none !important;
+  }
+
+  .menuTop {
+    display: block;
+    padding: 26px 18px 0;
+  }
+
+  .menuTop p {
+    max-width: 30ch;
+    margin: 22px 0 0;
+  }
+
+  .menuWordmark {
+    font-size: clamp(3.4rem, 18vw, 6.4rem);
+  }
+
+  .collectionRail {
+    padding-inline: 18px;
+  }
+
+  .collectionCard {
+    flex-basis: 42vw;
+  }
+
+  .menuGrid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 44px;
+    padding: 48px 18px 72px;
+  }
+
+  .mainNavLink {
+    font-size: clamp(1.8rem, 10vw, 3.2rem);
+  }
+
+  .menuFooter {
+    display: grid;
+    padding: 0 18px 24px;
+  }
+
+  .searchContent {
+    padding: 90px 18px 44px;
+  }
+
+  .searchForm {
+    gap: 11px;
+  }
+
+  .searchInput {
+    font-size: clamp(2rem, 13vw, 4.3rem) !important;
+  }
+
+  .searchHint {
+    margin-left: 36px;
+  }
+}
+
+@media (max-width: 560px) {
+  .actions {
+    gap: 0;
+  }
+
+  .control {
+    width: 38px !important;
+    min-width: 38px !important;
+  }
+
+  .menuTop,
+  .collectionRail,
+  .menuGrid,
+  .menuFooter {
+    padding-inline: 18px;
+  }
+
+  .collectionCard {
+    flex-basis: 44vw;
+  }
+
+  .menuGrid {
+    padding-bottom: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar {
+    transition: none;
+  }
+}
+}

@@ -1,0 +1,55 @@
+﻿RUTH ISTANBUL â€” DINAMIK KATEGORI / KOLEKSIYON KURULUMU
+
+Bu sÃ¼rÃ¼mde kategori ve koleksiyonlarÄ±n tek kaynaÄŸÄ± Supabase'dir.
+Kod iÃ§inde hazÄ±r kategori/koleksiyon yoktur.
+
+YAPILANLAR
+- Panelde ÃœrÃ¼nler > Kategoriler ekranÄ± eklendi.
+- Panelde ÃœrÃ¼nler > Koleksiyonlar ekranÄ± eklendi.
+- Ä°sim, URL slug, aÃ§Ä±klama, kapak gÃ¶rseli, sÄ±ra ve aktiflik panelden yÃ¶netilir.
+- ÃœrÃ¼n dÃ¼zenleme ekranÄ±nda sadece panelde oluÅŸturulan kategori/koleksiyonlar seÃ§ilir.
+- Site Ã¼st menÃ¼sÃ¼ndeki Kategoriler ve Koleksiyonlar alt menÃ¼leri doÄŸrudan Supabase'den gelir.
+- Tema ekranÄ±ndaki eski kategori/koleksiyon alt baÅŸlÄ±klarÄ± kullanÄ±lmaz.
+- Yeni Gelenler menÃ¼sÃ¼nde alt baÅŸlÄ±k gÃ¶sterilmez.
+- Kategori/koleksiyon oluÅŸturma, dÃ¼zenleme, silme ve Ã¼rÃ¼ne baÄŸlama sonrasÄ±nda Vercel revalidate Ã§aÄŸrÄ±lÄ±r.
+- SaÄŸ altta WhatsApp destek butonu vardÄ±r; Tema ekranÄ±ndan aÃ§Ä±lÄ±r/kapanÄ±r, numarasÄ± ve yazÄ±sÄ± deÄŸiÅŸtirilir.
+
+KURULUM SIRASI â€” BU SIRAYI DEÄÄ°ÅTÄ°RME
+1) Yeni ADMIN PANEL ZIP'inin iÃ§eriÄŸini panel GitHub reposuna yÃ¼kle.
+2) Render'da Clear build cache & deploy yap ve deploy baÅŸarÄ±lÄ± olsun.
+3) Yeni WEBSITE ZIP'inin iÃ§eriÄŸini satÄ±ÅŸ sitesi GitHub reposuna yÃ¼kle.
+4) Vercel'de cache kullanmadan yeni deploy yap ve deploy Ready olsun.
+5) Ä°ki yeni sÃ¼rÃ¼m de yayÄ±ndayken Supabase SQL Editor'da
+   RUTH-DINAMIK-KATEGORI-KOLEKSIYON-SIFIRLAMA.sql dosyasÄ±nÄ± BÄ°R KEZ Ã§alÄ±ÅŸtÄ±r.
+
+UYARI
+SQL mevcut bÃ¼tÃ¼n kategori ve koleksiyonlarÄ± ve Ã¼rÃ¼n baÄŸlantÄ±larÄ±nÄ± siler.
+ÃœrÃ¼nleri, sipariÅŸleri, mÃ¼ÅŸterileri, gÃ¶rselleri ve varyantlarÄ± silmez.
+SQL bittikten sonra sonuÃ§taki dÃ¶rt sayÄ± da 0 olmalÄ±dÄ±r.
+
+SIFIRDAN KULLANIM
+1) Panel > ÃœrÃ¼nler > Kategoriler bÃ¶lÃ¼mÃ¼nden istediÄŸin kategorileri oluÅŸtur.
+2) Panel > ÃœrÃ¼nler > Koleksiyonlar bÃ¶lÃ¼mÃ¼nden istediÄŸin koleksiyonlarÄ± oluÅŸtur.
+3) Panel > ÃœrÃ¼nler bÃ¶lÃ¼mÃ¼nde Ã¼rÃ¼nÃ¼ dÃ¼zenle ve oluÅŸturduklarÄ±nÄ± seÃ§.
+4) Kaydet. MenÃ¼, kategori/koleksiyon sayfasÄ± ve Ã¼rÃ¼n listesi revalidate ile siteye yansÄ±r.
+
+WHATSAPP
+Panel > Tema > WhatsApp Destek Butonu bÃ¶lÃ¼mÃ¼nden:
+- Butonu aÃ§/kapat
+- Telefon numarasÄ±nÄ± Ã¼lke koduyla ve sadece rakam olarak yaz
+  Ã–rnek: 905551112233
+- Buton yazÄ±sÄ±nÄ± deÄŸiÅŸtir
+
+GEREKLÄ° ORTAM DEÄÄ°ÅKENLERÄ°
+Vercel satÄ±ÅŸ sitesi:
+REVALIDATE_SECRET=<aynÄ±-gizli-deÄŸer>
+
+Render admin panel:
+WEBSITE_REVALIDATE_URL=
+WEBSITE_REVALIDATE_SECRET=<Vercel ile aynÄ± gizli deÄŸer>
+
+Render build komutu (mevcut Ã§alÄ±ÅŸan ayar):
+npm ci && npm run build
+
+NOT
+Yeni kategori/koleksiyon oluÅŸturduÄŸunda menÃ¼de gÃ¶rÃ¼nmesi iÃ§in durumunun Aktif olmasÄ± gerekir.

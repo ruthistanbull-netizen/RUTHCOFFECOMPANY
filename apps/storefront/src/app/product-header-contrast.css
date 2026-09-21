@@ -1,0 +1,11 @@
+/* Product header icon contrast follows the same runtime tone as the menu button. */
+@media (max-width: 767px) {
+  html.ruth-product-page-active .ruth-zara-header[data-menu-open="false"] .ruth-zara-header-inner > div:last-child,
+  html.ruth-product-page-active .ruth-zara-header[data-menu-open="false"] .ruth-zara-header-inner > div:last-child button,
+  html.ruth-product-page-active .ruth-zara-header[data-menu-open="false"] .ruth-zara-header-inner > div:last-child a,
+  html.ruth-product-page-active .ruth-zara-header[data-menu-open="false"] .ruth-zara-header-inner > div:last-child svg {
+    color: var(--ruth-product-header-ink, #111111) !important;
+    stroke: currentColor !important;
+    mix-blend-mode: normal !important;
+  }
+}

@@ -1,0 +1,1 @@
+export const HOME_HERO_IMAGE_PART_5 = "Y36EoEhEWFFSywh98LAR8HmDan3b5XAA";

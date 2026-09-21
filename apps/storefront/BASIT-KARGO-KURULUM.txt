@@ -1,0 +1,36 @@
+RUTH ISTANBUL - BASIT KARGO KURULUMU
+====================================
+
+1) Self-hosted Supabase SQL Editor bölümünde şunu çalıştır:
+   supabase/BASIT-KARGO-ENTEGRASYONU-SQL.sql
+
+2) Zeabur Environment değişkeni (zaten eklediysen tekrar ekleme):
+   BASIT_KARGO_API_TOKEN=<Basit Kargo tokenı>
+
+3) İsteğe bağlı varsayılan paket ölçüleri:
+   BASIT_KARGO_DEFAULT_HEIGHT=5
+   BASIT_KARGO_DEFAULT_WIDTH=15
+   BASIT_KARGO_DEFAULT_DEPTH=10
+   BASIT_KARGO_DEFAULT_WEIGHT=1
+
+4) Basit Kargo paneli > Ayarlar > Webhook bölümüne her iki olay için aynı adresi ekle:
+   https://ruthcommerce.zeabur.app/api/shipping/basit-kargo/webhook
+
+   Olaylar:
+   - Durum Değişikliği
+   - Kargo Hareketi
+
+5) İsteğe bağlı webhook anahtarı kullanmak için Zeabur'a şunu ekle:
+   BASIT_KARGO_WEBHOOK_SECRET=<uzun-rastgele-bir-deger>
+
+   Bu durumda Basit Kargo paneline girilecek URL:
+   https://ruthcommerce.zeabur.app/api/shipping/basit-kargo/webhook?secret=<ayni-deger>
+
+6) Yeni paneli deploy et. Sol menüde Kargo Yönetimi açılır.
+
+NOTLAR
+- Kapıda ödeme alanları entegrasyona bilinçli olarak eklenmedi.
+- Kargo oluştururken canlı firma/fiyat listesi Basit Kargo'dan alınır.
+- Barkod, takip no, kargo firması, ücret ve durum self-hosted Supabase orders tablosuna kaydedilir.
+- Etiket SVG olarak açılır; tarayıcıdan yazdırılabilir veya kaydedilebilir.
+- Webhook geldiğinde durum Basit Kargo API'sinden doğrulanır, ardından sipariş ve müşteri takip ekranı güncellenir.

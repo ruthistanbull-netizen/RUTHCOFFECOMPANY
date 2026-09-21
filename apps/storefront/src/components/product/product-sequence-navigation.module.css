@@ -1,0 +1,166 @@
+.root {
+  position: relative;
+  overflow: clip;
+  touch-action: pan-y pinch-zoom;
+}
+
+.content {
+  transition:
+    opacity var(--ruth-motion-normal) ease,
+    transform var(--ruth-motion-slow) var(--ruth-easing),
+    filter var(--ruth-motion-slow) var(--ruth-easing);
+}
+
+.leaving-previous .content {
+  opacity: 0.18;
+  filter: blur(2px);
+  transform: translate3d(9vw, 0, 0) scale(0.985);
+}
+
+.leaving-next .content {
+  opacity: 0.18;
+  filter: blur(2px);
+  transform: translate3d(-9vw, 0, 0) scale(0.985);
+}
+
+.curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 82;
+  display: grid;
+  place-items: center;
+  background: var(--ruth-color-canvas);
+  color: var(--ruth-color-text-primary);
+  pointer-events: none;
+}
+
+.curtain span {
+  max-width: min(70vw, 520px);
+  overflow: hidden;
+  font-size: clamp(0.75rem, 1.2vw, 0.95rem);
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-align: center;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+  animation: product-name-in var(--ruth-motion-slow) var(--ruth-easing) both;
+}
+
+.curtain-next {
+  animation: product-curtain-next var(--ruth-motion-slow) var(--ruth-easing) both;
+}
+
+.curtain-previous {
+  animation: product-curtain-previous var(--ruth-motion-slow) var(--ruth-easing) both;
+}
+
+.edgeButton {
+  position: fixed;
+  top: 50%;
+  z-index: 46;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-height: 2.75rem;
+  padding: 0.75rem;
+  border: 0;
+  background: color-mix(in srgb, var(--ruth-color-canvas) 90%, transparent);
+  color: var(--ruth-color-text-primary);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.5625rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  backdrop-filter: blur(14px);
+  transform: translateY(-50%);
+  transition:
+    background var(--ruth-motion-fast) ease,
+    transform var(--ruth-motion-fast) var(--ruth-easing);
+}
+
+.edgeButton svg {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+  stroke-width: 1.2;
+}
+
+.edgeButton span {
+  max-width: 9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.edgeButton:hover {
+  background: var(--ruth-color-canvas);
+}
+
+.edgeButton:focus-visible {
+  outline: 2px solid var(--ruth-color-focus);
+  outline-offset: -2px;
+}
+
+.previous {
+  left: 0;
+}
+
+.next {
+  right: 0;
+}
+
+@keyframes product-curtain-next {
+  from {
+    transform: translate3d(100%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes product-curtain-previous {
+  from {
+    transform: translate3d(-100%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes product-name-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--ruth-motion-distance-standard, 12px));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 900px) {
+  .edgeButton {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .content,
+  .edgeButton {
+    transition: none;
+  }
+
+  .leaving-previous .content,
+  .leaving-next .content {
+    opacity: 0;
+    filter: none;
+    transform: none;
+  }
+
+  .curtain,
+  .curtain span {
+    animation: none;
+  }
+}

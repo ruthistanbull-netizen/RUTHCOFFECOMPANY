@@ -1,0 +1,36 @@
+:root {
+  --ruth-color-canvas: #faf7f2;
+  --ruth-color-surface: #ffffff;
+  --ruth-color-surface-muted: #f5efe7;
+  --ruth-color-text-primary: #171512;
+  --ruth-color-text-muted: #6a6056;
+  --ruth-color-text-inverse: #ffffff;
+  --ruth-color-accent: #b8976a;
+  --ruth-color-accent-soft: #d4b896;
+  --ruth-color-accent-strong: #765a37;
+  --ruth-color-accent-wash: rgba(184, 151, 106, 0.18);
+  --ruth-color-border-subtle: #e7ded2;
+  --ruth-color-border-strong: #cdbeac;
+  --ruth-color-focus: #765a37;
+  --ruth-color-overlay: rgba(23, 21, 18, 0.46);
+  --ruth-color-success: #2f6b4f;
+  --ruth-color-warning: #80500f;
+  --ruth-color-danger: #9b3a36;
+  --ruth-color-info: #355c7d;
+}
+
+:root,
+[data-ruth-theme] {
+  --ruth-ink: var(--ruth-color-text-primary);
+  --ruth-ink-muted: var(--ruth-color-text-muted);
+  --ruth-paper: var(--ruth-color-surface-muted);
+  --ruth-surface: var(--ruth-color-surface);
+  --ruth-gold: var(--ruth-color-accent);
+  --ruth-gold-light: var(--ruth-color-accent-soft);
+  --ruth-gold-dark: var(--ruth-color-accent-strong);
+  --ruth-border: var(--ruth-color-border-subtle);
+  --ruth-success: var(--ruth-color-success);
+  --ruth-warning: var(--ruth-color-warning);
+  --ruth-danger: var(--ruth-color-danger);
+  --ruth-info: var(--ruth-color-info);
+}

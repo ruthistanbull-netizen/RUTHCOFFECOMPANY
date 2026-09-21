@@ -1,0 +1,29 @@
+RUTH ISTANBUL - PAYTR TAKSIT VE RUTHIE POINTS GUNCELLEMESI
+===========================================================
+
+1) PAYTR KART / TAKSIT AKISI
+- Son kullanma tarihi tek alandir: AA/YY.
+- Kartin ilk 6-8 hanesi PayTR BIN servisiyle sorgulanir.
+- Taksit alani yalnizca PayTR kart turunu credit olarak dondururse gorunur.
+- Banka kartinda veya taksite uygun olmayan kartta taksit alani hic gosterilmez.
+- Site taksit tutari, aylik tutar veya vade farki hesaplamaz.
+- Yalnizca PayTR taksit servisi tarafindan dondurulen taksit sayilari listelenir.
+
+2) SUPABASE - BIR KEZ CALISTIR
+Website ve admin panel ayni Supabase projesini kullandigi icin su dosyayi yalnizca
+bir kez Supabase SQL Editor'da calistir:
+  supabase/RUTHIE-POINTS-PANEL-ENTEGRASYONU.sql
+
+PayTR Direct API temel SQL'i daha once calistirilmadiysa ayrica:
+  supabase/PAYTR-DIRECT-API-TAM-ENTEGRASYON-SQL.sql
+
+3) DEPLOY
+- Bu website projesini Vercel'e deploy et.
+- Admin panel icin ayrica verilen Ruthie Points ZIP'ini Render'a deploy et.
+- Yeni environment variable gerekmiyor.
+
+4) RUTHIE POINTS
+- Panelde Ruthie Points sayfasindan musteri arayabilir, puan ekleyebilir ve cikartabilirsin.
+- Her hareket tarih, aciklama ve islem sonrasi bakiye ile kaydedilir.
+- Panelde yapilan degisiklik musteri hesabina ve odeme ekranina yansir.
+- Odeme tamamlaninca kullanilan puan dusulur ve siparisten kazanilan puan eklenir.

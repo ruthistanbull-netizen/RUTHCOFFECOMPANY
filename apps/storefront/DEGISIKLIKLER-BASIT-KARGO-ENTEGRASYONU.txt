@@ -1,0 +1,23 @@
+BASIT KARGO ENTEGRASYONU - EKLENENLER
+=====================================
+
+PANEL
+- Sol menüye Kargo Yönetimi eklendi.
+- Basit Kargo'dan canlı firma listesi alınır.
+- Paket ölçülerine göre canlı fiyatlar alınır ve ucuzdan pahalıya sıralanır.
+- Tek sipariş ve seçili siparişler için toplu kargo oluşturulur.
+- Kapıda ödeme alanları gönderilmez.
+- Basit Kargo sipariş id, barkod, takip no, firma, fiyat ve durum Supabase'e kaydedilir.
+- SVG etiket görüntüleme/yazdırma eklendi.
+- Kargo eşitleme, barkod iptal ve teslim edilen kargoya iade kodu oluşturma eklendi.
+- Webhook durum değişikliği ve kargo hareketi API üzerinden doğrulanıp kaydedilir.
+- Webhook sipariş durumunu otomatik olarak Hazırlanıyor / Kargoda / Tamamlandı seviyelerine taşır.
+
+SITE
+- Yeni ödenmiş siparişlerde il, ilçe ve açık adres alanları orders tablosuna da kaydedilir.
+- Sipariş takip sayfasında kargo durumu, barkod, iade barkodu ve hareket zaman çizelgesi gösterilir.
+- Üye hesabındaki sipariş kartlarında kargo durumu ve son hareketler gösterilir.
+
+KURULUM
+- supabase/BASIT-KARGO-ENTEGRASYONU-SQL.sql
+- BASIT-KARGO-KURULUM.txt

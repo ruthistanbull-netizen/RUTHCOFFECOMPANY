@@ -1,0 +1,3 @@
+Eski üye hesapları admin paneldeki İkas Üye Aktarımı aracıyla önceden oluşturulur.
+"Hesabın Taşındı" e-postasındaki kişiye özel bağlantı /reset-password sayfasına gelir.
+Müşteri yalnızca yeni şifresini belirler; yeniden kayıt formu doldurmaz.

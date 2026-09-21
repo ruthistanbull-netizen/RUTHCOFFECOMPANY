@@ -1,0 +1,20 @@
+TELEFONDAN GITHUB YUKLEME NOTU
+
+Bu paket sadece degisen dosyalari icerir.
+Her dosyayi GitHub reposunda ayni klasor yolundaki mevcut dosyanin yerine yukleyin.
+Yeni dosya varsa ayni klasor yolunu olusturup ekleyin.
+ZIP dosyasini repoya yuklemeyin; ZIP'i telefonda acip icindeki dosyalari kullanin.
+
+DEGISEN DOSYALAR:
+- .env.marketing.example
+- PAZARLAMA-TAKIP-KURULUM.md
+- RUTH-ANALYTICS-V2-KURULUM.md
+- supabase/RUTH-SIPARIS-OTURUM-KAYNAK-TAKIP-SQL.sql
+- src/lib/orderServer.ts
+- src/lib/analytics/serverMarketing.ts
+- src/components/checkout/CheckoutClient.tsx
+- src/components/analytics/SiteAnalytics.tsx
+- src/app/api/analytics/route.ts
+- src/app/api/events/collect/route.ts
+- src/app/api/paytr/create-payment/route.ts
+- src/app/api/paytr/callback/route.ts

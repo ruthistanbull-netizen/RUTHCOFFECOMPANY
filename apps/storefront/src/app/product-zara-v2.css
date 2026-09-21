@@ -1,0 +1,126 @@
+.product-zara-page {
+  display: grid;
+  min-height: 100vh;
+  gap: clamp(56px, 8vw, 112px);
+  padding-top: calc(var(--announcement-height, 0px) + 58px);
+  padding-bottom: 0;
+  background: var(--ruth-color-canvas);
+  color: var(--ruth-color-text-primary);
+}
+
+.product-zara-gallery-shell {
+  width: min(100%, 1380px);
+  margin-inline: auto;
+  border-inline: 1px solid var(--ruth-color-border-subtle);
+  background: var(--ruth-color-canvas);
+}
+
+.product-zara-bundle {
+  width: min(calc(100% - 32px), 1180px);
+  margin-inline: auto;
+}
+
+.product-zara-related {
+  display: grid;
+  width: min(calc(100% - 32px), 1320px);
+  gap: 24px;
+  margin-inline: auto;
+  padding-top: 30px;
+  border-top: 1px solid var(--ruth-color-border-subtle);
+}
+
+.product-zara-related__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.product-zara-related__header h2 {
+  margin: 0;
+  font-size: clamp(1rem, 1.7vw, 1.35rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+.product-zara-related__header a {
+  color: var(--ruth-color-text-primary);
+  font-size: 0.625rem;
+  letter-spacing: 0.09em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.product-zara-related-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(10px, 1.6vw, 24px);
+}
+
+.product-zara-related-grid > article {
+  min-width: 0;
+}
+
+.product-zara-related-grid :where(h3) {
+  font-size: clamp(0.65rem, 0.9vw, 0.8rem) !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.01em !important;
+}
+
+.product-zara-related-grid :where(p, strong, del, span) {
+  font-size: clamp(0.56rem, 0.8vw, 0.7rem);
+  font-weight: 400;
+}
+
+.product-zara-page .phase1d-bundle-item,
+.product-zara-page .ruth-page-section,
+.product-zara-page .ruth-card {
+  border-radius: 0;
+}
+
+.product-zara-page .phase1d-option-chip-list > span {
+  border-radius: 0;
+  font-weight: 400;
+}
+
+.product-zara-page .ruth-page-section__title {
+  font-weight: 400;
+}
+
+.product-zara-page + footer {
+  padding-bottom: 110px;
+}
+
+@media (max-width: 800px) {
+  .product-zara-page {
+    gap: 58px;
+    padding-top: calc(var(--announcement-height, 0px) + 54px);
+  }
+
+  .product-zara-gallery-shell {
+    border-inline: 0;
+  }
+
+  .product-zara-related {
+    width: calc(100% - 20px);
+    gap: 16px;
+  }
+
+  .product-zara-related-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .product-zara-related__header h2 {
+    font-size: 0.9rem;
+  }
+
+  .product-zara-related-grid :where(h3) {
+    font-size: 0.58rem !important;
+  }
+
+  .product-zara-related-grid :where(p, strong, del, span) {
+    font-size: 0.5rem;
+  }
+}

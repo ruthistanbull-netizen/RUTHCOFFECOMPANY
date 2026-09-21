@@ -1,0 +1,13 @@
+RUTH ISTANBUL KATEGORI SISTEMI KURULUMU
+
+1) Bu website projesini Vercel'e deploy et.
+2) Panel için verilen ayrı panel ZIP'ini Render'a deploy et.
+3) Supabase > SQL Editor'da supabase/RUTH-KATEGORI-SISTEMI-TAM-FIX.sql dosyasını bir kez çalıştır.
+4) Vercel'de REVALIDATE_SECRET, Render'daki WEBSITE_REVALIDATE_SECRET ile aynı olmalı.
+
+Duzeltmeler:
+- Set/set/sets ve İngilizce kategori slug'ları tek kategoriye dönüştürülür.
+- Ürün-kategori ilişkileri Supabase'den okunur.
+- Eski ürün category_names/category_slugs alanları korunur.
+- Kategori sayfası yanlışlıkla tüm ürünleri göstermez.
+- Runtime cache, revalidate sonrasında eski kategori listesini tutmaz.

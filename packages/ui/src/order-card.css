@@ -1,0 +1,286 @@
+.ruth-order-card {
+  position: relative;
+  display: grid;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--ruth-border);
+  background: var(--ruth-surface);
+  color: var(--ruth-ink);
+  font-family: var(--ruth-font-body);
+}
+
+.ruth-order-card--compact {
+  gap: var(--ruth-card-gap-compact);
+  padding: var(--ruth-card-padding-compact);
+  border-radius: var(--ruth-radius-sm);
+}
+
+.ruth-order-card--standard {
+  gap: var(--ruth-card-gap-standard);
+  padding: var(--ruth-card-padding-standard);
+  border-radius: var(--ruth-radius-md);
+}
+
+.ruth-order-card--detailed {
+  gap: var(--ruth-card-gap-detailed);
+  padding: var(--ruth-card-padding-detailed);
+  border-radius: var(--ruth-radius-md);
+}
+
+.ruth-order-card--linked {
+  transition: transform var(--ruth-motion-normal) var(--ruth-easing), box-shadow var(--ruth-motion-normal) var(--ruth-easing), border-color var(--ruth-motion-normal) ease;
+}
+
+.ruth-order-card--linked:hover {
+  transform: translateY(-2px);
+  border-color: var(--ruth-gold-light);
+  box-shadow: var(--ruth-shadow-soft);
+}
+
+.ruth-order-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  min-width: 0;
+}
+
+.ruth-order-card__identity,
+.ruth-order-card__summary,
+.ruth-order-card__item-copy {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.ruth-order-card__eyebrow {
+  margin: 0;
+  color: var(--ruth-ink-muted);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.ruth-order-card h3 {
+  margin: 0;
+  font-family: var(--ruth-font-display);
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+.ruth-order-card__customer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.ruth-order-card__customer span,
+.ruth-order-card__summary span,
+.ruth-order-card__item-copy span,
+.ruth-order-card__item-copy small {
+  color: var(--ruth-ink-muted);
+}
+
+.ruth-order-card__summary {
+  justify-items: end;
+  flex: 0 0 auto;
+  text-align: right;
+  font-size: 13px;
+}
+
+.ruth-order-card__summary strong {
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.ruth-order-card__alert {
+  position: relative;
+  z-index: 3;
+  padding: 11px 13px;
+  border: 1px solid rgba(184, 151, 106, 0.36);
+  border-radius: var(--ruth-radius-sm);
+  background: rgba(212, 184, 150, 0.12);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.ruth-order-card__statuses {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 14px;
+  border-radius: var(--ruth-radius-sm);
+  background: var(--ruth-paper);
+}
+
+.ruth-order-card__statuses > div {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.ruth-order-card__statuses dt {
+  color: var(--ruth-ink-muted);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ruth-order-card__statuses dd {
+  min-width: 0;
+  margin: 0;
+}
+
+.ruth-order-card__items {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ruth-order-card__items li {
+  display: grid;
+  grid-template-columns: var(--ruth-card-media-standard) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--ruth-border);
+}
+
+.ruth-order-card__media {
+  width: var(--ruth-card-media-standard);
+  height: var(--ruth-card-media-standard);
+  overflow: hidden;
+  border-radius: var(--ruth-radius-sm);
+  background: var(--ruth-paper);
+}
+
+.ruth-order-card__media > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ruth-order-card__item-copy {
+  font-size: 13px;
+}
+
+.ruth-order-card__item-copy strong,
+.ruth-order-card__item-copy span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ruth-order-card__item-price {
+  font-size: 13px;
+}
+
+.ruth-order-card__item-summary {
+  padding-top: 12px;
+  border-top: 1px solid var(--ruth-border);
+  color: var(--ruth-ink-muted);
+  font-size: 13px;
+}
+
+.ruth-order-card__actions {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 14px;
+  border-top: 1px solid var(--ruth-border);
+}
+
+.ruth-order-card--compact .ruth-order-card__eyebrow {
+  display: none;
+}
+
+.ruth-order-card--compact .ruth-order-card__identity,
+.ruth-order-card--compact .ruth-order-card__summary {
+  gap: 3px;
+}
+
+.ruth-order-card--compact h3 {
+  font-size: 18px;
+}
+
+.ruth-order-card--compact .ruth-order-card__customer,
+.ruth-order-card--compact .ruth-order-card__summary {
+  font-size: 12px;
+}
+
+.ruth-order-card--compact .ruth-order-card__summary strong {
+  font-size: 16px;
+}
+
+.ruth-order-card--compact .ruth-order-card__statuses {
+  gap: 8px;
+  padding: 8px 10px;
+}
+
+.ruth-order-card--compact .ruth-order-card__statuses > div {
+  gap: 4px;
+}
+
+.ruth-order-card--compact .ruth-order-card__statuses dt {
+  font-size: 9px;
+}
+
+.ruth-order-card--compact .ruth-order-card__items li {
+  grid-template-columns: var(--ruth-card-media-compact) minmax(0, 1fr) auto;
+  gap: 10px;
+  padding-top: 8px;
+}
+
+.ruth-order-card--compact .ruth-order-card__media {
+  width: var(--ruth-card-media-compact);
+  height: var(--ruth-card-media-compact);
+}
+
+.ruth-order-card--compact .ruth-order-card__item-summary {
+  padding-top: 0;
+  border-top: 0;
+  font-size: 12px;
+}
+
+.ruth-order-card--compact .ruth-order-card__actions {
+  gap: 8px;
+  padding-top: 8px;
+}
+
+.ruth-order-card--detailed .ruth-order-card__items li {
+  grid-template-columns: var(--ruth-card-media-detailed) minmax(0, 1fr) auto;
+}
+
+.ruth-order-card--detailed .ruth-order-card__media {
+  width: var(--ruth-card-media-detailed);
+  height: var(--ruth-card-media-detailed);
+}
+
+@media (min-width: 760px) {
+  .ruth-order-card__statuses { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+@media (max-width: 520px) {
+  .ruth-order-card__header { align-items: stretch; flex-direction: column; gap: 10px; }
+  .ruth-order-card__summary { justify-items: start; text-align: left; }
+  .ruth-order-card__items li { grid-template-columns: var(--ruth-card-media-compact) minmax(0, 1fr); }
+  .ruth-order-card__item-price { grid-column: 2; }
+  .ruth-order-card--compact .ruth-order-card__statuses { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ruth-order-card--linked { transition: none; }
+}

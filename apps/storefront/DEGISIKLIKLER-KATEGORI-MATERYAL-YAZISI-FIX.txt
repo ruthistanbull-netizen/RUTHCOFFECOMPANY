@@ -1,0 +1,4 @@
+Kategori, koleksiyon ve ürün listeleme kartlarındaki materyal metni artık tek satırda kesilmez.
+"925 Ayar Gümüş" gibi uzun materyal adları gerektiğinde satır kırarak tamamen görünür.
+Fiyat alanının düzeni korunmuştur.
+SQL gerekmez.

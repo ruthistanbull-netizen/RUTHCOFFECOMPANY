@@ -1,0 +1,52 @@
+/* Soft off-white palette for the customer-facing storefront. */
+[data-ruth-theme="storefront"] {
+  --ruth-storefront-canvas: #f7f5f2;
+  --ruth-storefront-surface: #fcfbf9;
+  --ruth-storefront-surface-muted: #f0ede8;
+  --ruth-storefront-surface-soft: #faf8f5;
+  --ruth-storefront-border: #ded8d0;
+  --ruth-storefront-border-strong: #aaa297;
+  --ruth-storefront-translucent: rgba(252, 251, 249, 0.94);
+}
+
+.site-app-shell:not(:has(.ds-page)),
+.site-app-shell:not(:has(.ds-page)) > main,
+.site-app-shell:not(:has(.ds-page)) .phase1d-page,
+.site-app-shell:not(:has(.ds-page)) .product-detail-page,
+.site-app-shell:not(:has(.ds-page)) .product-zara-page {
+  background-color: var(--ruth-color-canvas) !important;
+}
+
+.site-app-shell:not(:has(.ds-page)) :where(
+  .ruth-card,
+  .ruth-drawer,
+  .ruth-modal,
+  .ruth-page-section,
+  .ruth-overlay__header,
+  .ruth-overlay__body,
+  .ruth-overlay__footer,
+  footer,
+  input,
+  select,
+  textarea
+) {
+  background-color: var(--ruth-color-surface) !important;
+}
+
+.site-app-shell:not(:has(.ds-page)) :where(.bg-white, .bg-ivory, .bg-cream) {
+  background-color: var(--ruth-color-surface) !important;
+}
+
+.site-app-shell:not(:has(.ds-page)) :where(
+  [class*="mediaFrame"],
+  [data-product-swipe-surface],
+  [class*="thumbnail"],
+  .phase1d-cart-item__media,
+  span[class*="collectionImage"]
+) {
+  background-color: var(--ruth-color-surface) !important;
+}
+
+.site-app-shell:not(:has(.ds-page)) header[data-scrolled="false"] [class*="bar"] {
+  background-color: var(--ruth-color-surface) !important;
+}

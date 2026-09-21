@@ -1,0 +1,20 @@
+{
+  "name": "@ruth-commerce/contracts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./customer": "./src/customer.ts",
+    "./ruthie": "./src/ruthie.ts",
+    "./status-display": "./src/status-display.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.0"
+  }
+}

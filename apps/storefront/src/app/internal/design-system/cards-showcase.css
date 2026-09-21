@@ -1,0 +1,128 @@
+.ds-card-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.ds-info-grid,
+.ds-motion-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.ds-info-grid strong,
+.ds-motion-sample strong {
+  display: block;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+.ds-info-grid p,
+.ds-motion-sample p {
+  margin: 8px 0 0;
+  color: #756d65;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.ds-motion-sample {
+  position: relative;
+  overflow: hidden;
+  min-height: 150px;
+  padding: 20px;
+  border: 1px solid rgba(23, 21, 19, 0.1);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.72);
+  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 260ms cubic-bezier(0.22, 1, 0.36, 1), border-color 260ms ease;
+}
+
+.ds-motion-sample > span {
+  display: block;
+  margin-bottom: 20px;
+  color: #9a7b52;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.ds-motion-sample--reveal {
+  animation: ds-soft-reveal 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.ds-motion-sample--lift:hover {
+  transform: translateY(-4px);
+  border-color: rgba(184, 151, 106, 0.5);
+  box-shadow: 0 18px 44px rgba(23, 21, 18, 0.1);
+}
+
+.ds-motion-sample--focus::after {
+  content: "";
+  position: absolute;
+  right: 20px;
+  bottom: 18px;
+  left: 20px;
+  height: 2px;
+  background: #b8976a;
+  transform: scaleX(0.28);
+  transform-origin: left;
+  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ds-motion-sample--focus:hover::after { transform: scaleX(1); }
+
+@keyframes ds-soft-reveal {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (min-width: 640px) {
+  .ds-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+
+  .ds-card-grid > :last-child {
+    grid-column: 1 / -1;
+  }
+
+  .ds-info-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+  }
+
+  .ds-motion-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+  }
+}
+
+@media (min-width: 980px) {
+  .ds-card-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+  }
+
+  .ds-card-grid > :last-child {
+    grid-column: auto;
+  }
+
+  .ds-info-grid,
+  .ds-motion-grid {
+    margin-top: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-motion-sample,
+  .ds-motion-sample--focus::after {
+    animation: none;
+    transition: none;
+  }
+}

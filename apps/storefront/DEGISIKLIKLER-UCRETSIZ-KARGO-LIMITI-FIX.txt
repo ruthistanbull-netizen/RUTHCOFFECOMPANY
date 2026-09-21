@@ -1,0 +1,7 @@
+RUTH ISTANBUL WEBSITE - DINAMIK UCRETSIZ KARGO LIMITI
+
+- Admin panel Kargo Yonetimi ekraninda kaydedilen ucretsiz kargo limiti checkout hesaplamasinda kullanilir.
+- Anasayfa guven karti ve urun detay sayfasindaki ucretsiz kargo metni yeni limite gore guncellenir.
+- Ayar site_settings tablosundaki shipping_settings kaydindan okunur.
+- Ayar bulunamazsa varsayilan 2000 TL kullanilir.
+- Yeni SQL gerekmez.

@@ -1,28 +1,15 @@
 FROM public.ecr.aws/docker/library/node:22-bookworm-slim
 
 WORKDIR /app
-
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Keep dependency installation cacheable: DB/migration and source-only changes
-# should not force a fresh npm install on every Zeabur admin deployment.
-COPY package.json package-lock.json ./
-COPY apps/admin/package.json apps/admin/package.json
-COPY apps/storefront/package.json apps/storefront/package.json
-COPY packages/contracts/package.json packages/contracts/package.json
-COPY packages/commerce-core/package.json packages/commerce-core/package.json
-COPY packages/ui/package.json packages/ui/package.json
-
-RUN npm ci --no-audit --no-fund
-
 COPY . .
-
-RUN npm run build:admin
+RUN npm install --no-audit --no-fund
+RUN npm run build
 
 ENV NODE_ENV=production
 ENV HOSTNAME=0.0.0.0
 ENV PORT=3000
 
 EXPOSE 3000
-
-CMD ["npm", "run", "start:admin"]
+CMD ["npm", "run", "start"]

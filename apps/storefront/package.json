@@ -1,0 +1,43 @@
+{
+  "name": "ruth-coffee-storefront",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "cache:ikas-images": "node scripts/cache-ikas-images.mjs",
+    "fit:white-images": "node scripts/fit-white-product-images.mjs",
+    "fit:white-images:force": "node -e \"process.env.FIT_WHITE_IMAGES_FORCE='1'; import('./scripts/fit-white-product-images.mjs')\"",
+    "optimize:product-images": "node scripts/optimize-product-card-images.mjs",
+    "optimize:product-images:force": "node -e \"process.env.OPTIMIZE_PRODUCT_IMAGES_FORCE='1'; import('./scripts/optimize-product-card-images.mjs')\""
+  },
+  "dependencies": {
+    "@ruth-commerce/commerce-core": "file:../../packages/commerce-core",
+    "@ruth-commerce/contracts": "file:../../packages/contracts",
+    "@ruth-commerce/ui": "file:../../packages/ui",
+    "@supabase/supabase-js": "^2.50.0",
+    "framer-motion": "^12.23.0",
+    "keen-slider": "^6.8.6",
+    "lucide-react": "^0.468.0",
+    "next": "16.2.9",
+    "react": "19.2.1",
+    "react-dom": "19.2.1",
+    "sharp": "^0.34.5"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.0",
+    "@types/node": "^20.19.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "eslint": "^9.39.0",
+    "eslint-config-next": "16.2.9",
+    "tailwindcss": "^4.1.0",
+    "typescript": "^5.9.0"
+  }
+}

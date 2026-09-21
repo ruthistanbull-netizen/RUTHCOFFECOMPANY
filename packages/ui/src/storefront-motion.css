@@ -1,0 +1,115 @@
+:root {
+  --ruth-motion-distance-subtle: 6px;
+  --ruth-motion-distance-standard: 12px;
+  --ruth-motion-distance-emphatic: 24px;
+  --ruth-motion-scale-enter: 0.985;
+  --ruth-motion-pressed-scale: 0.97;
+  --ruth-motion-media-scale: 1.018;
+}
+
+.ruth-visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Editorial sections keep an accessible dark fallback when remote campaign media is unavailable. */
+.site-app-shell .ruth-route-transition section[data-align] {
+  background: var(--ruth-color-text-primary);
+}
+
+.ruth-fullscreen-overlay-root {
+  position: fixed;
+  inset: 0;
+  z-index: var(--ruth-layer-modal);
+  overflow: hidden;
+  background: color-mix(in srgb, var(--ruth-color-overlay) 28%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--ruth-motion-slow) var(--ruth-easing);
+}
+
+.ruth-fullscreen-overlay-root[data-state="open"] {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.ruth-fullscreen-overlay {
+  position: absolute;
+  inset: 0;
+  min-width: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  background: var(--ruth-color-canvas);
+  color: var(--ruth-color-text-primary);
+  opacity: 0;
+  transform: translate3d(0, var(--ruth-motion-distance-standard, 12px), 0) scale(var(--ruth-motion-scale-enter, 0.985));
+  transition:
+    opacity var(--ruth-motion-slow) var(--ruth-easing),
+    transform var(--ruth-motion-slow) var(--ruth-easing);
+}
+
+.ruth-fullscreen-overlay-root[data-state="open"] .ruth-fullscreen-overlay {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+.ruth-fullscreen-overlay__close {
+  position: fixed;
+  top: calc(var(--announcement-height, 0px) + 14px);
+  right: 18px;
+  z-index: calc(var(--ruth-layer-modal) + 2);
+}
+
+.ruth-route-transition {
+  min-width: 0;
+  transform-origin: 50% 0;
+}
+
+.ruth-motion-link,
+.ruth-motion-control,
+.ruth-motion-media {
+  transition-timing-function: var(--ruth-easing);
+}
+
+.ruth-motion-link,
+.ruth-motion-control {
+  transition-duration: var(--ruth-motion-fast);
+  transition-property: color, background-color, border-color, opacity, transform;
+}
+
+.ruth-motion-media {
+  transition-duration: var(--ruth-motion-slow);
+  transition-property: opacity, transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ruth-fullscreen-overlay-root,
+  .ruth-fullscreen-overlay,
+  .ruth-motion-link,
+  .ruth-motion-control,
+  .ruth-motion-media {
+    transition: none !important;
+  }
+}
+
+.site-app-shell :where(.transition, .transition-all, .transition-colors, .transition-opacity, .transition-transform) {
+  transition-duration: var(--ruth-motion-normal) !important;
+  transition-timing-function: var(--ruth-easing) !important;
+}
+
+.site-app-shell :where(.duration-500, .duration-700) {
+  transition-duration: var(--ruth-motion-slow) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-app-shell :where(.transition, .transition-all, .transition-colors, .transition-opacity, .transition-transform, .duration-500, .duration-700) {
+    transition: none !important;
+  }
+}
