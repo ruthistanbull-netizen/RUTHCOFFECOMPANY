@@ -107,8 +107,9 @@ export const metadata: Metadata = {
     images: [DEFAULT_OG_IMAGE],
   },
   icons: {
-    icon: [{ url: "/favicon.svg?v=3", type: "image/svg+xml" }],
-    shortcut: ["/favicon.svg?v=3"],
+    icon: [{ url: "/favicon.png?v=4", sizes: "192x192", type: "image/png" }],
+    shortcut: ["/favicon.png?v=4"],
+    apple: [{ url: "/apple-touch-icon.png?v=4", sizes: "180x180", type: "image/png" }],
   },
   manifest: "/manifest.webmanifest",
   appleWebApp: {
