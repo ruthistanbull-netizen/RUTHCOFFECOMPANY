@@ -10,6 +10,15 @@ const themeEditorOrigins = (
   .filter(Boolean)
   .join(" ");
 
+const supabaseHttpOrigin = (() => {
+  try {
+    return new URL(process.env.NEXT_PUBLIC_SUPABASE_URL || "https://supabase.ruthistanbul.com").origin;
+  } catch {
+    return "https://supabase.ruthistanbul.com";
+  }
+})();
+
+const supabaseWsOrigin = supabaseHttpOrigin.replace(/^http/, "ws");
 const contentSecurityPolicy = [
   "default-src 'self'",
   "base-uri 'self'",
@@ -21,7 +30,7 @@ const contentSecurityPolicy = [
   "font-src 'self' data:",
   "style-src 'self' 'unsafe-inline'",
   "script-src 'self' 'unsafe-inline' https://www.paytr.com https://*.paytr.com https://connect.facebook.net https://www.googletagmanager.com https://www.clarity.ms",
-  "connect-src 'self' https://supabase.ruthistanbul.com wss://supabase.ruthistanbul.com https://www.google-analytics.com https://region1.google-analytics.com https://www.facebook.com https://connect.facebook.net https://www.clarity.ms https://*.clarity.ms",
+  `connect-src 'self' ${supabaseHttpOrigin} ${supabaseWsOrigin} https://www.google-analytics.com https://region1.google-analytics.com https://www.facebook.com https://connect.facebook.net https://www.clarity.ms https://*.clarity.ms`,
   "frame-src 'self' https:",
   "upgrade-insecure-requests",
 ].join("; ");
