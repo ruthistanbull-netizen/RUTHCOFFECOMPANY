@@ -1,24 +1,15 @@
-import chunk0 from "./chunk0";
-import chunk1 from "./chunk1";
-import chunk2 from "./chunk2";
-import chunk3 from "./chunk3";
-import chunk4 from "./chunk4";
-import chunk5 from "./chunk5";
+import { NextResponse } from "next/server";
 
-export const runtime = "nodejs";
-export const revalidate = 31536000;
+export const dynamic = "force-dynamic";
 
-const image = Buffer.from(
-  `${chunk0}${chunk1}${chunk2}${chunk3}${chunk4}${chunk5}`,
-  "base64",
-);
-
-export async function GET() {
-  return new Response(image, {
-    headers: {
-      "Content-Type": "image/webp",
-      "Cache-Control": "public, max-age=31536000, immutable",
-      "Content-Length": String(image.byteLength),
+export async function GET(request: Request) {
+  return NextResponse.redirect(
+    new URL("/home/rosta-hero-current.webp?v=20260921-rosta", request.url),
+    {
+      status: 307,
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+      },
     },
-  });
+  );
 }
