@@ -30,11 +30,9 @@ type EditorialSlide =
 
 const EDITORIAL_SLIDES: EditorialSlide[] = [
   {
-    kind: "image",
-    desktopSrc: "/home/rosta-under-hero-v4.jpg",
-    mobileSrc: "/home/rosta-under-hero-v4.jpg",
-    alt: "",
-    priority: false,
+    kind: "video",
+    src: "/home/rosta-under-video-v5?v=20260921",
+    label: "Rosta Coffee Co kahve hazırlama videosu",
   },
   {
     kind: "video",
@@ -123,7 +121,7 @@ function EditorialMedia({
   const wrapperClass = index === 0
     ? "absolute inset-0 overflow-hidden"
     : index === 1
-      ? "absolute inset-x-[4vw] inset-y-[1svh] overflow-hidden lg:bottom-[32px] lg:left-[18vw] lg:right-[18vw] lg:top-[52px]"
+      ? "absolute inset-0 flex items-center justify-center px-[4vw] sm:px-[8vw] lg:px-[18vw]"
       : "absolute inset-x-[8vw] inset-y-[1svh] overflow-hidden lg:bottom-[32px] lg:left-[34vw] lg:right-[34vw] lg:top-[52px]";
 
   return (
@@ -176,7 +174,9 @@ function EditorialMedia({
             </picture>
           ) : (
             <video
-              className="h-full w-full object-cover object-center"
+              className={index === 1
+                ? "aspect-[4/5] w-full max-h-[72svh] object-cover object-center sm:aspect-[4/3] sm:max-h-[74svh] lg:aspect-video lg:max-h-[72svh]"
+                : "h-full w-full object-cover object-center"}
               src={slide.src}
               aria-label={slide.label}
               autoPlay
@@ -265,7 +265,7 @@ export default function Hero({ heroImages }: { heroImages: HomepageHeroImages })
       className="relative overflow-clip bg-ivory"
     >
       <style>{`
-        .home-editorial-wordmark{box-sizing:border-box;pointer-events:none;position:fixed;left:0;top:calc(100svh - clamp(184px,38vw,236px));z-index:40;width:100vw;max-width:100vw;height:clamp(148px,35vw,214px);user-select:none;transition:background-color .24s ease,opacity .28s ease,visibility .28s ease}.home-editorial-wordmark[data-visible="false"]{opacity:0!important;visibility:hidden}@media(min-width:1024px){.home-editorial-wordmark{right:1vw;left:auto;top:45vh;width:56vw;max-width:98vw;height:clamp(102px,9.8vw,178px)}}
+        .home-editorial-wordmark{box-sizing:border-box;pointer-events:none;position:fixed;left:5vw;top:calc(100svh - clamp(170px,43vw,220px));z-index:40;width:90vw;max-width:90vw;height:clamp(76px,23vw,118px);user-select:none;transition:background-color .24s ease,opacity .28s ease,visibility .28s ease}.home-editorial-wordmark[data-visible="false"]{opacity:0!important;visibility:hidden}@media(min-width:1024px){.home-editorial-wordmark{right:1vw;left:auto;top:45vh;width:56vw;max-width:98vw;height:clamp(102px,9.8vw,178px)}}
       `}</style>
       <motion.div
         ref={wordmarkRef}
