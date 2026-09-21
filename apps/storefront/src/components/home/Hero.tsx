@@ -23,8 +23,8 @@ const EDITORIAL_SLIDES = [
   },
   {
     kind: "image",
-    desktopSrc: "/home/12-desktop.webp",
-    mobileSrc: "/home/img-1033-mobile.webp",
+    desktopSrc: "/home/rosta-espresso.webp",
+    mobileSrc: "/home/rosta-espresso.webp",
     alt: "",
     priority: false,
   },
