@@ -237,18 +237,6 @@ export function ProductHeaderAdaptiveTone() {
         mix-blend-mode: normal !important;
       }
 
-      @media (min-width: 768px) {
-        #home-editorial > .home-editorial-slide:nth-of-type(2) > .sticky > div {
-          background-image: url("/home/ruth-beach-desktop") !important;
-          background-position: center center !important;
-          background-repeat: no-repeat !important;
-          background-size: cover !important;
-        }
-        #home-editorial > .home-editorial-slide:nth-of-type(2) picture img {
-          opacity: 0 !important;
-        }
-      }
-
       .site-app-shell .product-card-collection { font-size: 9px !important; }
       .site-app-shell .product-card-name { font-size: 0.95rem !important; }
       .site-app-shell .product-card-current { font-size: 13.5px !important; }
