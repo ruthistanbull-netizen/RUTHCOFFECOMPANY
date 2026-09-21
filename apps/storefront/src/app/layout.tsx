@@ -163,7 +163,7 @@ export default async function RootLayout({
         "@id": `${SITE_URL}/#organization`,
         name: SITE_NAME,
         url: SITE_URL,
-        logo: absoluteUrl(themeSettings.logo.src || "/rosta-coffee-co.png"),
+        logo: absoluteUrl(themeSettings.logo.src || "/rosta-coffee-co-v4.webp"),
         sameAs: [...SOCIAL_PROFILES],
       },
       {

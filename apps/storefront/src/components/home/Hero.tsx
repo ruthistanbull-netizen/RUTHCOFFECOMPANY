@@ -16,21 +16,21 @@ const HOME_EDITORIAL_IMAGE_ID = "home-editorial-image-2";
 const EDITORIAL_SLIDES = [
   {
     kind: "image",
-    desktopSrc: "/home/rosta-hero.webp",
-    mobileSrc: "/home/rosta-hero.webp",
+    desktopSrc: "/home/rosta-hero-v4.webp",
+    mobileSrc: "/home/rosta-hero-v4.webp",
     alt: "",
     priority: true,
   },
   {
     kind: "image",
-    desktopSrc: "/home/rosta-espresso.webp",
-    mobileSrc: "/home/rosta-espresso.webp",
+    desktopSrc: "/home/rosta-under-hero-v4.jpg",
+    mobileSrc: "/home/rosta-under-hero-v4.jpg",
     alt: "",
     priority: false,
   },
   {
     kind: "video",
-    src: "/home/rosta-coffee-video.mp4",
+    src: "/home/rosta-coffee-video-v4.mp4",
     label: "Rosta Coffee Co kahve videosu",
   },
 ] as const;
@@ -117,7 +117,7 @@ function EditorialMedia({
     ? "absolute inset-0 overflow-hidden"
     : index === 1
       ? "absolute inset-x-[4vw] inset-y-[1svh] overflow-hidden lg:bottom-[32px] lg:left-[18vw] lg:right-[18vw] lg:top-[52px]"
-      : "absolute inset-x-[2vw] inset-y-[1svh] overflow-hidden lg:bottom-[32px] lg:left-[7vw] lg:right-[7vw] lg:top-[52px]";
+      : "absolute inset-x-[8vw] inset-y-[1svh] overflow-hidden lg:bottom-[32px] lg:left-[34vw] lg:right-[34vw] lg:top-[52px]";
 
   return (
     <div
@@ -159,6 +159,7 @@ function EditorialMedia({
               playsInline
               preload="auto"
               disablePictureInPicture
+              onLoadedData={notifyHeroMediaReady}
               data-home-editorial-media
             />
           )}
