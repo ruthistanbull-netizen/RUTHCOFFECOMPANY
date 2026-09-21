@@ -282,7 +282,13 @@ function applyGlobal(settings: ThemeCustomizerSettings) {
     "--ruth-color-text-primary": settings.colors.ink,
     "--ruth-color-text-muted": settings.colors.muted,
     "--ruth-color-accent": settings.colors.gold,
+    "--ruth-color-accent-soft": "color-mix(in srgb, #B9563D 28%, #F4F0E8)",
     "--ruth-color-accent-strong": settings.colors.goldDark,
+    "--ruth-color-border-subtle": "color-mix(in srgb, #AAA8A1 52%, transparent)",
+    "--ruth-color-border-strong": "#AAA8A1",
+    "--ruth-color-focus": "#B9563D",
+    "--ruth-color-overlay": "rgba(17, 17, 17, 0.46)",
+    "--ruth-color-text-inverse": "#F4F0E8",
   };
   for (const [key, value] of Object.entries(vars)) {
     document.documentElement.style.setProperty(key, value);
