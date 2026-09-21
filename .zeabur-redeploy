@@ -1,0 +1,1 @@
+Redeploy trigger after MissingKey TypeScript fix. The production build must use the latest main commit (fba2e873521049a30e9ba32fbfa5274dd4db3b6d).
