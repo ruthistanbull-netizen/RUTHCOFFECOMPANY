@@ -1,12 +1,12 @@
 :root {
-  --ruth-ink: #171512;
-  --ruth-ink-muted: #6f6a63;
-  --ruth-paper: #faf7f2;
-  --ruth-surface: #ffffff;
-  --ruth-gold: #b8976a;
-  --ruth-gold-light: #d4b896;
-  --ruth-gold-dark: #8d704b;
-  --ruth-border: #e7ded2;
+  --ruth-ink: #111111;
+  --ruth-ink-muted: #6F725B;
+  --ruth-paper: #F4F0E8;
+  --ruth-surface: #F4F0E8;
+  --ruth-gold: #B9563D;
+  --ruth-gold-light: #B9563D;
+  --ruth-gold-dark: #2B1B16;
+  --ruth-border: #AAA8A1;
   --ruth-success: #2f6b4f;
   --ruth-warning: #9a681e;
   --ruth-danger: #9b3a36;
@@ -17,8 +17,8 @@
   --ruth-radius-sm: 10px;
   --ruth-radius-md: 16px;
   --ruth-radius-lg: 24px;
-  --ruth-shadow-soft: 0 12px 36px rgba(23, 21, 18, 0.08);
-  --ruth-shadow-elevated: 0 24px 64px rgba(23, 21, 18, 0.14);
+  --ruth-shadow-soft: 0 12px 36px rgba(17, 17, 17, 0.08);
+  --ruth-shadow-elevated: 0 24px 64px rgba(17, 17, 17, 0.14);
   --ruth-motion-fast: 120ms;
   --ruth-motion-normal: 220ms;
   --ruth-motion-slow: 380ms;
@@ -85,10 +85,10 @@
 .ruth-button--sm { min-height: var(--ruth-control-sm); padding: 0 14px; font-size: 13px; }
 .ruth-button--md { min-height: var(--ruth-control-md); padding: 0 20px; font-size: 14px; }
 .ruth-button--lg { min-height: var(--ruth-control-lg); padding: 0 26px; font-size: 15px; }
-.ruth-button--primary { background: var(--ruth-ink); color: white; }
+.ruth-button--primary { background: var(--ruth-ink); color: var(--ruth-color-text-inverse); }
 .ruth-button--secondary { background: var(--ruth-paper); color: var(--ruth-ink); border-color: var(--ruth-border); }
 .ruth-button--ghost { background: transparent; color: var(--ruth-ink); }
-.ruth-button--danger { background: var(--ruth-danger); color: white; }
+.ruth-button--danger { background: var(--ruth-danger); color: var(--ruth-color-text-inverse); }
 
 .ruth-icon-button {
   display: inline-grid;
@@ -109,7 +109,7 @@
 .ruth-icon-button--lg { width: var(--ruth-control-icon-touch); height: var(--ruth-control-icon-touch); font-size: 22px; }
 .ruth-icon-button--surface { border-color: var(--ruth-border); background: var(--ruth-paper); color: var(--ruth-ink); }
 .ruth-icon-button--ghost { background: transparent; color: var(--ruth-ink); }
-.ruth-icon-button--dark { background: var(--ruth-ink); color: white; }
+.ruth-icon-button--dark { background: var(--ruth-ink); color: var(--ruth-color-text-inverse); }
 .ruth-icon-button--danger { background: rgba(155, 58, 54, 0.1); color: var(--ruth-danger); }
 
 .ruth-field { display: grid; gap: 7px; color: var(--ruth-ink); }
@@ -133,8 +133,8 @@
 .ruth-choice input[type="checkbox"] + .ruth-choice__control { border-radius: var(--ruth-radius-xs); }
 .ruth-choice input[type="radio"] + .ruth-choice__control { border-radius: 50%; }
 .ruth-choice__control::after { content: ""; opacity: 0; transform: scale(0.65); transition: opacity var(--ruth-motion-fast) ease, transform var(--ruth-motion-fast) var(--ruth-easing); }
-.ruth-choice input[type="checkbox"] + .ruth-choice__control::after { width: 8px; height: 4px; border-left: 2px solid white; border-bottom: 2px solid white; transform: translateY(-1px) rotate(-45deg) scale(0.65); }
-.ruth-choice input[type="radio"] + .ruth-choice__control::after { width: 8px; height: 8px; border-radius: 50%; background: white; }
+.ruth-choice input[type="checkbox"] + .ruth-choice__control::after { width: 8px; height: 4px; border-left: 2px solid var(--ruth-color-text-inverse); border-bottom: 2px solid var(--ruth-color-text-inverse); transform: translateY(-1px) rotate(-45deg) scale(0.65); }
+.ruth-choice input[type="radio"] + .ruth-choice__control::after { width: 8px; height: 8px; border-radius: 50%; background: var(--ruth-color-text-inverse); }
 .ruth-choice input:checked + .ruth-choice__control { border-color: var(--ruth-ink); background: var(--ruth-ink); }
 .ruth-choice input:checked + .ruth-choice__control::after { opacity: 1; }
 .ruth-choice input[type="checkbox"]:checked + .ruth-choice__control::after { transform: translateY(-1px) rotate(-45deg) scale(1); }
@@ -149,8 +149,8 @@
 .ruth-switch-row { display: flex; align-items: center; justify-content: space-between; gap: 18px; width: 100%; border: 0; background: transparent; color: var(--ruth-ink); padding: 0; text-align: left; cursor: pointer; }
 .ruth-switch-row:disabled { cursor: not-allowed; opacity: 0.55; }
 .ruth-switch-copy { display: grid; gap: 3px; }
-.ruth-switch { position: relative; flex: 0 0 auto; width: 44px; height: 26px; border: 1px solid var(--ruth-border); border-radius: 999px; background: #d8d2ca; transition: background var(--ruth-motion-normal) ease, border-color var(--ruth-motion-normal) ease; }
-.ruth-switch > span { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: white; box-shadow: 0 2px 8px rgba(23, 21, 18, 0.18); transition: transform var(--ruth-motion-normal) var(--ruth-easing); }
+.ruth-switch { position: relative; flex: 0 0 auto; width: 44px; height: 26px; border: 1px solid var(--ruth-border); border-radius: 999px; background: #AAA8A1; transition: background var(--ruth-motion-normal) ease, border-color var(--ruth-motion-normal) ease; }
+.ruth-switch > span { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--ruth-color-text-inverse); box-shadow: 0 2px 8px rgba(17, 17, 17, 0.18); transition: transform var(--ruth-motion-normal) var(--ruth-easing); }
 .ruth-switch--checked { border-color: var(--ruth-ink); background: var(--ruth-ink); }
 .ruth-switch--checked > span { transform: translateX(18px); }
 
@@ -161,7 +161,7 @@
 .ruth-status--danger { color: var(--ruth-danger); }
 .ruth-status--info { color: var(--ruth-info); }
 
-.ruth-overlay { position: fixed; inset: 0; z-index: var(--ruth-layer-modal); display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(23, 21, 18, 0.46); backdrop-filter: blur(8px); animation: ruth-overlay-in var(--ruth-motion-slow) var(--ruth-easing) both; }
+.ruth-overlay { position: fixed; inset: 0; z-index: var(--ruth-layer-modal); display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(17, 17, 17, 0.46); backdrop-filter: blur(8px); animation: ruth-overlay-in var(--ruth-motion-slow) var(--ruth-easing) both; }
 .ruth-modal,
 .ruth-drawer { background: var(--ruth-surface); color: var(--ruth-ink); box-shadow: var(--ruth-shadow-elevated); }
 .ruth-modal { width: min(540px, 100%); max-height: min(760px, 90vh); border-radius: var(--ruth-radius-lg); overflow: auto; animation: ruth-modal-in var(--ruth-motion-slow) var(--ruth-easing) both; }
