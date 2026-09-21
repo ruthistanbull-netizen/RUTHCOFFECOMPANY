@@ -1,22 +1,22 @@
 :root {
-  --ruth-color-canvas: #faf7f2;
-  --ruth-color-surface: #ffffff;
-  --ruth-color-surface-muted: #f5efe7;
-  --ruth-color-text-primary: #171512;
-  --ruth-color-text-muted: #6a6056;
-  --ruth-color-text-inverse: #ffffff;
-  --ruth-color-accent: #b8976a;
-  --ruth-color-accent-soft: #d4b896;
-  --ruth-color-accent-strong: #765a37;
-  --ruth-color-accent-wash: rgba(184, 151, 106, 0.18);
-  --ruth-color-border-subtle: #e7ded2;
-  --ruth-color-border-strong: #cdbeac;
-  --ruth-color-focus: #765a37;
-  --ruth-color-overlay: rgba(23, 21, 18, 0.46);
-  --ruth-color-success: #2f6b4f;
-  --ruth-color-warning: #80500f;
-  --ruth-color-danger: #9b3a36;
-  --ruth-color-info: #355c7d;
+  --ruth-color-canvas: #F4F0E8;
+  --ruth-color-surface: #F4F0E8;
+  --ruth-color-surface-muted: color-mix(in srgb, #F4F0E8 88%, #AAA8A1);
+  --ruth-color-text-primary: #111111;
+  --ruth-color-text-muted: #6F725B;
+  --ruth-color-text-inverse: #F4F0E8;
+  --ruth-color-accent: #B9563D;
+  --ruth-color-accent-soft: color-mix(in srgb, #B9563D 28%, #F4F0E8);
+  --ruth-color-accent-strong: #2B1B16;
+  --ruth-color-accent-wash: rgba(185, 86, 61, 0.16);
+  --ruth-color-border-subtle: color-mix(in srgb, #AAA8A1 52%, transparent);
+  --ruth-color-border-strong: #AAA8A1;
+  --ruth-color-focus: #B9563D;
+  --ruth-color-overlay: rgba(17, 17, 17, 0.46);
+  --ruth-color-success: #6F725B;
+  --ruth-color-warning: #B9563D;
+  --ruth-color-danger: #2B1B16;
+  --ruth-color-info: #AAA8A1;
 }
 
 :root,
