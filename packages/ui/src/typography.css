@@ -181,18 +181,23 @@
   font-variant-numeric: tabular-nums lining-nums;
 }
 
-:where([data-ruth-typography="storefront"]) :where(.ruth-type-display, [data-ruth-text-role="display"]) {
+:where([data-ruth-typography="storefront"]) :where(
+  .ruth-type-display,
+  .ruth-type-page-title,
+  .ruth-type-section-title,
+  [data-ruth-text-role="display"],
+  [data-ruth-text-role="page-title"],
+  [data-ruth-text-role="section-title"]
+) {
   font-family: var(--ruth-font-display);
+  font-weight: 900;
+  letter-spacing: -0.03em;
 }
 
 :where([data-ruth-typography="storefront"]) :where(
-  .ruth-type-page-title,
-  .ruth-type-section-title,
   .ruth-type-card-title,
   .ruth-type-body,
   .ruth-type-body-strong,
-  [data-ruth-text-role="page-title"],
-  [data-ruth-text-role="section-title"],
   [data-ruth-text-role="card-title"],
   [data-ruth-text-role="body"],
   [data-ruth-text-role="body-strong"]
