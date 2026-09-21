@@ -160,7 +160,7 @@ function EditorialMedia({
                     event.currentTarget.style.display = "none";
                     return;
                   }
-                  const fallback = "/home/rosta-hero-current.webp?v=20260921-visible2";
+                  const fallback = "/home/rosta-hero-v6?v=20260921-original-avif";
                   event.currentTarget.dataset.fallbackApplied = "1";
                   event.currentTarget.src = fallback;
                   event.currentTarget.srcset = fallback;
