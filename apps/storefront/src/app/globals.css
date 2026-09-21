@@ -167,7 +167,7 @@ input[type="radio"]:not(:disabled) {
 
   .ruth-zara-header.is-contrast .ruth-zara-header-inner,
   .ruth-zara-menu-button--contrast {
-    color: #fff !important;
+    color: var(--rosta-bone) !important;
     mix-blend-mode: difference !important;
   }
 
