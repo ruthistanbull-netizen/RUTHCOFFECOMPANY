@@ -121,13 +121,17 @@ function EditorialMedia({
   const wrapperClass = index === 0
     ? "absolute inset-0 overflow-hidden"
     : index === 1
-      ? "absolute inset-0 flex items-center justify-center px-[4vw] sm:px-[8vw] lg:px-[18vw]"
+      ? "absolute inset-0 overflow-hidden lg:flex lg:items-center lg:justify-center lg:px-[8vw] lg:py-[6svh]"
       : "absolute inset-x-[8vw] inset-y-[1svh] overflow-hidden lg:bottom-[32px] lg:left-[34vw] lg:right-[34vw] lg:top-[52px]";
 
   return (
     <div
       ref={ref}
-      className={`home-editorial-slide relative h-[108svh] ${index ? "-mt-[8svh]" : ""}`}
+      className={
+        index === 1
+          ? "home-editorial-slide relative h-[100svh] lg:-mt-[8svh] lg:h-[108svh]"
+          : `home-editorial-slide relative h-[108svh] ${index ? "-mt-[8svh]" : ""}`
+      }
       data-editorial-kind={slide.kind}
     >
       <div className="sticky top-0 h-[100svh] min-h-[560px] overflow-hidden bg-ivory lg:min-h-[700px]">
@@ -175,7 +179,7 @@ function EditorialMedia({
           ) : (
             <video
               className={index === 1
-                ? "aspect-[4/5] w-full max-h-[72svh] object-cover object-center sm:aspect-[4/3] sm:max-h-[74svh] lg:aspect-video lg:max-h-[72svh]"
+                ? "h-full w-full object-cover object-center lg:h-[84svh] lg:w-auto lg:max-w-[52vw]"
                 : "h-full w-full object-cover object-center"}
               src={slide.src}
               aria-label={slide.label}
