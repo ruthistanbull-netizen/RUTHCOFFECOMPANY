@@ -35,7 +35,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
 
   return <>
     <ThemeEditorHomeScrollBridge />
-    <h1 className="sr-only">Ruth Istanbul tasarım takı ve 925 ayar gümüş takılar</h1>
+    <h1 className="sr-only">Rosta Coffee Co kahve, kahve danışmanlığı ve kahve tedariği</h1>
     {page.sections.map((section) => (
       <HomeSectionRenderer
         key={section.id}
