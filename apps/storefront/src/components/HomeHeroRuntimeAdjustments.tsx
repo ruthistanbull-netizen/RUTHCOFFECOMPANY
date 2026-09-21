@@ -19,6 +19,15 @@ export function HomeHeroRuntimeAdjustments() {
 
   return (
     <style>{`
+      html.ruth-home-page-active main.site-content,
+      html.ruth-home-page-active #home-editorial,
+      html.ruth-home-page-active #home-editorial .home-editorial-slide:first-child,
+      html.ruth-home-page-active #home-editorial .home-editorial-slide:first-child > .sticky {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+        border-top: 0 !important;
+      }
+
       @media (min-width: 1024px) {
         .home-editorial-wordmark {
           top: 38vh !important;
