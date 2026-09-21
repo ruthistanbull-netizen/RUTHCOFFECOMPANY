@@ -9,18 +9,28 @@ import {
   useTransform,
 } from "framer-motion";
 import { ROSTA_WORDMARK_SRC } from "@/components/brand/rostaWordmark";
-import type { HomepageHeroImages } from "@/lib/themeMedia";
+import {
+  HOME_HERO_IMAGE_ID,
+  type HomepageHeroImages,
+} from "@/lib/themeMedia";
 
 const HOME_EDITORIAL_IMAGE_ID = "home-editorial-image-2";
 
-const EDITORIAL_SLIDES = [
-  {
-    kind: "image",
-    desktopSrc: "/home/rosta-hero-v4.webp",
-    mobileSrc: "/home/rosta-hero-v4.webp",
-    alt: "",
-    priority: true,
-  },
+type EditorialSlide =
+  | {
+      kind: "image";
+      desktopSrc: string;
+      mobileSrc: string;
+      alt: string;
+      priority: boolean;
+    }
+  | {
+      kind: "video";
+      src: string;
+      label: string;
+    };
+
+const EDITORIAL_SLIDES: EditorialSlide[] = [
   {
     kind: "image",
     desktopSrc: "/home/rosta-under-hero-v4.jpg",
@@ -33,9 +43,8 @@ const EDITORIAL_SLIDES = [
     src: "/home/rosta-coffee-video-v4.mp4",
     label: "Rosta Coffee Co kahve videosu",
   },
-] as const;
+];
 
-type EditorialSlide = (typeof EDITORIAL_SLIDES)[number];
 type SampledMedia = HTMLImageElement | HTMLVideoElement;
 
 function sourceSize(media: SampledMedia) {
@@ -135,17 +144,17 @@ function EditorialMedia({
               <source media="(min-width: 768px)" srcSet={slide.desktopSrc} />
               <img
                 src={slide.mobileSrc}
-                alt=""
+                alt={slide.alt}
                 className={index === 1 ? "h-full w-full object-contain object-center" : "h-full w-full object-cover object-center"}
-                loading={index === 0 ? "eager" : "lazy"}
-                fetchPriority={index === 0 ? "high" : "auto"}
+                loading={slide.priority ? "eager" : "lazy"}
+                fetchPriority={slide.priority ? "high" : "auto"}
                 decoding="async"
                 draggable={false}
                 onLoad={notifyHeroMediaReady}
                 onError={(event) => { event.currentTarget.style.display = "none"; }}
                 data-home-editorial-media
-                data-theme-id={HOME_EDITORIAL_IMAGE_ID}
-                data-theme-label="Ana sayfa editoryal görseli"
+                data-theme-id={index === 0 ? HOME_HERO_IMAGE_ID : HOME_EDITORIAL_IMAGE_ID}
+                data-theme-label={index === 0 ? "Ana sayfa hero görseli" : "Ana sayfa editoryal görseli"}
               />
             </picture>
           ) : (
@@ -169,12 +178,23 @@ function EditorialMedia({
   );
 }
 
-export default function Hero({ heroImages: _heroImages }: { heroImages: HomepageHeroImages }) {
+export default function Hero({ heroImages }: { heroImages: HomepageHeroImages }) {
   const reduceMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement | null>(null);
   const wordmarkRef = useRef<HTMLDivElement | null>(null);
   const [wordmarkColor, setWordmarkColor] = useState("#111111");
   const [wordmarkVisible, setWordmarkVisible] = useState(true);
+
+  const slides: EditorialSlide[] = [
+    {
+      kind: "image",
+      desktopSrc: heroImages.desktop,
+      mobileSrc: heroImages.mobile,
+      alt: "",
+      priority: true,
+    },
+    ...EDITORIAL_SLIDES,
+  ];
 
   useEffect(() => {
     let frame = 0;
@@ -257,9 +277,9 @@ export default function Hero({ heroImages: _heroImages }: { heroImages: Homepage
         }}
       />
 
-      {EDITORIAL_SLIDES.map((slide, index) => (
+      {slides.map((slide, index) => (
         <EditorialMedia
-          key={slide.kind === "video" ? slide.src : `${slide.kind}-${index}`}
+          key={slide.kind === "video" ? slide.src : `image-${index}`}
           slide={slide}
           index={index}
         />
