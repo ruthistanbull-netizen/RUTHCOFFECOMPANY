@@ -8,7 +8,7 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
-const ROSTA_WORDMARK_SRC = "/rosta-logo.png";
+import { ROSTA_WORDMARK_SRC } from "@/components/brand/rostaWordmark";
 import {
   HOME_HERO_DESKTOP_IMAGE_ID,
   HOME_HERO_MOBILE_IMAGE_ID,
