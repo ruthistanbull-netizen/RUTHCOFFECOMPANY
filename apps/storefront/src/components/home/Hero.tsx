@@ -120,9 +120,7 @@ function EditorialMedia({
   const scale = useTransform(progress, [0, 1], [1.012, 0.996]);
   const y = useTransform(progress, [0, 1], ["1.5%", "-1%"]);
   const opacity = useTransform(progress, [0, 0.82, 1], [1, 1, 0.96]);
-  const wrapperClass = index === 0
-    ? "absolute inset-0 overflow-hidden"
-    : "absolute inset-0 overflow-hidden lg:flex lg:items-center lg:justify-center lg:px-[8vw] lg:py-[6svh]";
+  const wrapperClass = "absolute inset-0 overflow-hidden";
 
   return (
     <div
@@ -144,12 +142,12 @@ function EditorialMedia({
           }
         >
           {slide.kind === "image" ? (
-            <picture className={index === 0 ? "block h-full w-full" : "block h-full w-full lg:aspect-video lg:h-auto lg:max-w-[1440px]"}>
+            <picture className="block h-full w-full">
               <source media="(min-width: 768px)" srcSet={slide.desktopSrc} />
               <img
                 src={slide.mobileSrc}
                 alt={slide.alt}
-                className={index === 0 ? "h-full w-full object-cover object-center [image-rendering:auto]" : "h-full w-full object-contain object-center lg:aspect-video lg:h-auto"}
+                className="h-full w-full object-cover object-center [image-rendering:auto]"
                 loading={slide.priority ? "eager" : "lazy"}
                 fetchPriority={slide.priority ? "high" : "auto"}
                 decoding="async"
@@ -176,9 +174,7 @@ function EditorialMedia({
             </picture>
           ) : (
             <video
-              className={index === 0
-                ? "h-full w-full object-cover object-center"
-                : "h-full w-full object-contain object-center lg:aspect-video lg:h-auto lg:max-w-[1440px]"}
+              className="h-full w-full object-cover object-center"
               src={slide.src}
               aria-label={slide.label}
               autoPlay
