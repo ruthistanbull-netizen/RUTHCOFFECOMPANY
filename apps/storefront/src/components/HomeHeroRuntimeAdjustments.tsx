@@ -73,10 +73,10 @@ export function HomeHeroRuntimeAdjustments() {
           top: auto !important;
           right: auto !important;
           bottom: max(58px, calc(env(safe-area-inset-bottom) + 40px)) !important;
-          left: -7vw !important;
-          width: 114vw !important;
-          max-width: none !important;
-          height: clamp(204px, 50vw, 282px) !important;
+          left: 3vw !important;
+          width: 94vw !important;
+          max-width: 94vw !important;
+          height: clamp(168px, 42vw, 230px) !important;
         }
 
         html.ruth-home-page-active .ruth-zara-header,
