@@ -53,6 +53,20 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
     const recoveryInUrl = window.location.hash.includes("type=recovery")
       || search.has("code")
       || search.get("type") === "recovery";
+    const tokenHash = search.get("token_hash") || "";
+
+    if (tokenHash && search.get("type") === "recovery") {
+      void supabase.auth.verifyOtp({ token_hash: tokenHash, type: "recovery" }).then(({ data, error: verifyError }) => {
+        if (!active) return;
+        if (verifyError || !data.session) {
+          setCheckingRecovery(false);
+          setRecoveryReady(false);
+          setError(verifyError?.message || "Şifre sıfırlama bağlantısı geçersiz veya süresi dolmuş.");
+          return;
+        }
+        acceptRecovery();
+      });
+    }
 
     const acceptRecovery = () => {
       if (!active) return;
