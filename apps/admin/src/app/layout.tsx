@@ -37,9 +37,7 @@ import "./notification-mobile-position.css";
 import "./global-premium-motion.css";
 import "./rosta-exact-palette.css";
 import { AdminAuthGate } from "@/components/AdminAuthGate";
-import { AdminShell } from "@/components/AdminShell";
 import { ROSTA_PANEL_URL } from "@/lib/platform";
-
 
 const inter = Inter({
   subsets: ["latin", "latin-ext"],
@@ -48,7 +46,6 @@ const inter = Inter({
   variable: "--font-inter",
   preload: true,
 });
-
 
 export const metadata: Metadata = {
   metadataBase: new URL(ROSTA_PANEL_URL),
@@ -68,7 +65,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="tr">
       <body className={inter.variable} data-ruth-typography="admin" data-rosta-panel="true">
-        <AdminAuthGate><AdminShell>{children}</AdminShell></AdminAuthGate>
+        <AdminAuthGate>{children}</AdminAuthGate>
       </body>
     </html>
   );
