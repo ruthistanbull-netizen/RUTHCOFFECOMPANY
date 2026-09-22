@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
 import { MetaMarketingError, requireMetaConnectionConfig, type MetaConnectionConfig } from "@/lib/integrations/metaMarketing";
-import { requireROSTA InsightOpenAIConfig, ROSTA InsightOpenAIError } from "@/lib/rosta-insightOpenAI";
+import { requireRuthieOpenAIConfig, RuthieOpenAIError } from "@/lib/ruthieOpenAI";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -84,7 +84,7 @@ export async function POST(request: Request) {
     const dateRange = validateDateRange(since, until);
 
     const meta = requireMetaConnectionConfig();
-    const rosta-insight = requireROSTA InsightOpenAIConfig();
+    const ruthie = requireRuthieOpenAIConfig();
     const timeRange = JSON.stringify(dateRange);
 
     const [ad, selectedInsights, accountInsights] = await Promise.all([
@@ -140,23 +140,23 @@ export async function POST(request: Request) {
       if (/^https:\/\//i.test(asset.url)) content.push({ type: "input_image", image_url: asset.url, detail: "low" });
     }
 
-    const response = await fetch(`${rosta-insight.baseUrl}/v1/responses`, {
+    const response = await fetch(`${ruthie.baseUrl}/v1/responses`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${rosta-insight.apiKey}`,
-        ...(rosta-insight.project ? { "OpenAI-Project": rosta-insight.project } : {}),
-        ...(rosta-insight.organization ? { "OpenAI-Organization": rosta-insight.organization } : {}),
+        Authorization: `Bearer ${ruthie.apiKey}`,
+        ...(ruthie.project ? { "OpenAI-Project": ruthie.project } : {}),
+        ...(ruthie.organization ? { "OpenAI-Organization": ruthie.organization } : {}),
       },
       body: JSON.stringify({
-        model: rosta-insight.chatModel,
+        model: ruthie.chatModel,
         store: false,
-        instructions: "Sen Ruth Commerce içindeki ROSTA Insight reklam analiz uzmanısın. Yalnız verilen Meta verisini ve varsa kreatif görsellerini kullan. Verilmeyen kâr marjı, hedef ROAS, ürün maliyeti veya attribution detaylarını uydurma. Kararını Türkçe, uygulanabilir ve ölçülü ver. Reklam üzerinde otomatik değişiklik yapma; yalnız öneri üret.",
+        instructions: "Sen ROSTA Commerce içindeki ROSTA Insight reklam analiz uzmanısın. Yalnız verilen Meta verisini ve varsa kreatif görsellerini kullan. Verilmeyen kâr marjı, hedef ROAS, ürün maliyeti veya attribution detaylarını uydurma. Kararını Türkçe, uygulanabilir ve ölçülü ver. Reklam üzerinde otomatik değişiklik yapma; yalnız öneri üret.",
         input: [{ role: "user", content }],
         text: {
           format: {
             type: "json_schema",
-            name: "rosta-insight_meta_ad_analysis",
+            name: "rosta_insight_meta_ad_analysis",
             strict: true,
             schema: analysisSchema(),
           },
@@ -176,13 +176,13 @@ export async function POST(request: Request) {
     if (!response.ok) throw await openAIError(response);
     const raw = await response.json() as Record<string, unknown>;
     const text = extractOutputText(raw);
-    if (!text) throw new ROSTA InsightOpenAIError({ code: "ROSTA_INSIGHT_AD_ANALYSIS_EMPTY", message: "ROSTA Insight reklam analizi boş yanıt döndürdü.", status: 502, retryable: true, requestId: response.headers.get("x-request-id") });
+    if (!text) throw new RuthieOpenAIError({ code: "RUTHIE_AD_ANALYSIS_EMPTY", message: "ROSTA Insight reklam analizi boş yanıt döndürdü.", status: 502, retryable: true, requestId: response.headers.get("x-request-id") });
 
     let analysis: AnalysisResult;
     try {
       analysis = JSON.parse(text) as AnalysisResult;
     } catch {
-      throw new ROSTA InsightOpenAIError({ code: "ROSTA_INSIGHT_AD_ANALYSIS_INVALID_JSON", message: "ROSTA Insight reklam analizi geçerli yapılandırılmış yanıt döndürmedi.", status: 502, retryable: true, requestId: response.headers.get("x-request-id") });
+      throw new RuthieOpenAIError({ code: "RUTHIE_AD_ANALYSIS_INVALID_JSON", message: "ROSTA Insight reklam analizi geçerli yapılandırılmış yanıt döndürmedi.", status: 502, retryable: true, requestId: response.headers.get("x-request-id") });
     }
 
     await writeAudit(auth, {
@@ -388,7 +388,7 @@ async function openAIError(response: Response) {
     const payload = await response.clone().json() as { error?: { message?: string } };
     if (payload.error?.message) message = payload.error.message.slice(0, 500);
   } catch { /* safe fallback */ }
-  return new ROSTA InsightOpenAIError({ code: "ROSTA_INSIGHT_AD_ANALYSIS_PROVIDER_ERROR", message, status: response.status >= 500 ? 502 : 400, retryable: response.status === 429 || response.status >= 500, requestId: response.headers.get("x-request-id") });
+  return new RuthieOpenAIError({ code: "RUTHIE_AD_ANALYSIS_PROVIDER_ERROR", message, status: response.status >= 500 ? 502 : 400, retryable: response.status === 429 || response.status >= 500, requestId: response.headers.get("x-request-id") });
 }
 
 function extractOutputText(payload: Record<string, unknown>) {
@@ -434,8 +434,8 @@ function asRecordArray(value: unknown): Array<Record<string, unknown>> {
 }
 
 function normalizeError(error: unknown) {
-  if (error instanceof MetaMarketingError || error instanceof ROSTA InsightOpenAIError) return error;
-  return new ROSTA InsightOpenAIError({ code: "ROSTA_INSIGHT_AD_ANALYSIS_FAILED", message: "ROSTA Insight reklam analizi tamamlanamadı.", status: 500, retryable: true });
+  if (error instanceof MetaMarketingError || error instanceof RuthieOpenAIError) return error;
+  return new RuthieOpenAIError({ code: "RUTHIE_AD_ANALYSIS_FAILED", message: "ROSTA Insight reklam analizi tamamlanamadı.", status: 500, retryable: true });
 }
 
 async function writeAudit(auth: { supabase: any; user: { id: string } }, input: { action: string; entityId: string; correlationId: string; metadata: Record<string, unknown> }) {
