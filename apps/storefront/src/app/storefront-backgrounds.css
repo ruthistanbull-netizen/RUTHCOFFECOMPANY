@@ -6,7 +6,7 @@
   --ruth-storefront-surface-soft: #F4F0E8;
   --ruth-storefront-border: #AAA8A1;
   --ruth-storefront-border-strong: #AAA8A1;
-  --ruth-storefront-translucent: rgba(252, 251, 249, 0.94);
+  --ruth-storefront-translucent: rgba(244, 240, 232, 0.94);
 }
 
 .site-app-shell:not(:has(.ds-page)),
