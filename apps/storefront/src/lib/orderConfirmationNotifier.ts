@@ -20,7 +20,7 @@ export async function notifyOrderConfirmationEmail(orderId: string) {
     .select("id,status")
     .eq("order_id", order.id)
     .eq("template_key", "order_confirmation")
-    .in("status", ["queued", "sending", "sent"])
+    .in("status", ["queued", "sending", "sent", "failed"])
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
