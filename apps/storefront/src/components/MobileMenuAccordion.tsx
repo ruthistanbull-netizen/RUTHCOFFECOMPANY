@@ -199,11 +199,11 @@ export function MobileMenuAccordion({
             min-height:31px;
             align-items:flex-start;
             color:var(--ink);
-            font-family:"Times New Roman",Georgia,serif!important;
+            font-family:var(--font-heading)!important;
             font-size:24px;
-            font-weight:400;
+            font-weight:900;
             line-height:25px;
-            letter-spacing:-1px;
+            letter-spacing:-.04em;
             text-transform:uppercase;
             text-decoration:none;
           }
@@ -235,8 +235,9 @@ export function MobileMenuAccordion({
             align-items:center;
             padding:6px 0 6px 18px;
             color:var(--ink);
+            font-family:var(--font-body)!important;
             font-size:11px;
-            font-weight:300;
+            font-weight:400;
             line-height:20px;
             letter-spacing:.08em;
             text-transform:uppercase;
@@ -284,8 +285,9 @@ export function MobileMenuAccordion({
             margin-top:4px;
             color:var(--ink);
             background:var(--ivory)!important;
+            font-family:var(--font-body)!important;
             font-size:9px;
-            font-weight:300;
+            font-weight:400;
             line-height:13px;
             letter-spacing:.35px;
             overflow-wrap:anywhere;
