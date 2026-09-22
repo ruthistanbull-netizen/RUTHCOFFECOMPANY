@@ -1,5 +1,5 @@
-import { ExactRuthiePoints } from "@/components/base44-exact/ExactRuthiePoints";
+import { redirect } from "next/navigation";
 
-export default function RostaPointsPage(){
-  return <ExactRuthiePoints />;
+export default function LegacyRostaPointsPage(){
+  redirect("/rosta-points");
 }
