@@ -288,13 +288,10 @@ export default function Hero({
     { kind: "hero-image", alt: "Rosta Coffee Co ana sayfa görseli", priority: true },
     {
       kind: "video",
-      src: editorialVideo || "/home/rosta-under-hero-video.mp4",
       label: "Rosta Coffee Co kahve hazırlama videosu",
     },
     {
       kind: "image",
-      desktopSrc: editorialImage || "/home/rosta-under-hero-photo.jpg",
-      mobileSrc: editorialImage || "/home/rosta-under-hero-photo.jpg",
       alt: "Rosta Coffee Co kahve hazırlama editoryali",
       priority: false,
     },
