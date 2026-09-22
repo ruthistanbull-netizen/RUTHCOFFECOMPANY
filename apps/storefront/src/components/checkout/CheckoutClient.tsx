@@ -757,7 +757,7 @@ export function CheckoutClient() {
         couponCode: code || null,
         customerEmail: form.email || user?.email || null,
         rewards: {
-          useRuthPoints: Boolean(user && useRostaPoints),
+          useRostaPoints: Boolean(user && useRostaPoints),
           requestedDiscount: localRostaPointDiscount,
           pointsUsed: selectedRostaPoints,
         },
@@ -988,7 +988,7 @@ export function CheckoutClient() {
             quantity: item.quantity,
           })),
           rewards: {
-            useRuthPoints: Boolean(user && useRostaPoints),
+            useRostaPoints: Boolean(user && useRostaPoints),
             requestedDiscount: rostaPointDiscount,
             pointsUsed: rostaPointsToUse,
           },
