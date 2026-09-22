@@ -1,5 +1,13 @@
-import { ExactRuthie } from "@/components/base44-exact/ExactRuthie";
+import { RuthieMobileNavPolish } from "@/app/ruthie/RuthieMobileNavPolish";
+import { RuthiePresentationBridge } from "@/app/ruthie/RuthiePresentationBridge";
+import { RuthieVoiceExperience } from "@/app/ruthie/RuthieVoiceExperience";
 
-export default function RostaInsightVoicePage(){
-  return <ExactRuthie />;
+export default function RostaInsightVoicePage() {
+  return (
+    <>
+      <RuthieMobileNavPolish />
+      <RuthieVoiceExperience />
+      <RuthiePresentationBridge mode="voice" placement="experience" />
+    </>
+  );
 }
