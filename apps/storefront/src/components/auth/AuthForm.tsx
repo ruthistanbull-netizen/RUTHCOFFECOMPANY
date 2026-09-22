@@ -7,7 +7,7 @@ import { LoadingIndicator } from "@ruth-commerce/ui";
 import { useEffect, useState, type FormEvent } from "react";
 import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { useRuthieRewardSettings } from "@/lib/useRuthieRewardSettings";
+import { useRostaPointsSettings } from "@/lib/useRostaPointsSettings";
 
 type AuthMode = "login" | "register";
 
@@ -33,7 +33,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { refreshSession } = useAuth();
-  const rewardSettings = useRuthieRewardSettings();
+  const rewardSettings = useRostaPointsSettings();
   const [form, setForm] = useState<FormState>(initialForm);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRecovering, setIsRecovering] = useState(false);
