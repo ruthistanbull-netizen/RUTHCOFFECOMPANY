@@ -16,13 +16,13 @@ import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useCart } from "@/components/cart/CartProvider";
 import {
-  RUTHIE_POINTS_UPDATED_EVENT,
-  calculateRuthiePoints,
-  formatRuthieNumber,
-  grantRuthieWelcomePoints,
+  ROSTA_POINTS_UPDATED_EVENT,
+  calculateRostaPoints,
+  formatRostaPointsNumber,
+  grantRostaWelcomePoints,
   pointsToLira,
 } from "@/lib/rewards";
-import { useRuthieRewardSettings } from "@/lib/useRuthieRewardSettings";
+import { useRostaPointsSettings } from "@/lib/useRostaPointsSettings";
 import { displayBirthDate, formatManualDateInput } from "@/lib/manualDate";
 
 function formatLira(value: number) {
@@ -48,7 +48,7 @@ export function RostaPointsWidget() {
   const { isLoggedIn, isLoading, session } = useAuth();
   const { isOpen: isCartOpen } = useCart();
   const reduceMotion = useReducedMotion();
-  const rewardSettings = useRuthieRewardSettings();
+  const rewardSettings = useRostaPointsSettings();
   const signupPoints = rewardSettings.signupPoints;
   const configuredBirthdayPoints = rewardSettings.birthdayPoints;
 
@@ -77,16 +77,16 @@ export function RostaPointsWidget() {
 
   useEffect(() => {
     if (!isLoggedIn) return;
-    grantRuthieWelcomePoints();
+    grantRostaWelcomePoints();
     setRefreshKey((value) => value + 1);
   }, [isLoggedIn]);
 
   useEffect(() => {
     const refresh = () => setRefreshKey((value) => value + 1);
-    window.addEventListener(RUTHIE_POINTS_UPDATED_EVENT, refresh);
+    window.addEventListener(ROSTA_POINTS_UPDATED_EVENT, refresh);
     window.addEventListener("storage", refresh);
     return () => {
-      window.removeEventListener(RUTHIE_POINTS_UPDATED_EVENT, refresh);
+      window.removeEventListener(ROSTA_POINTS_UPDATED_EVENT, refresh);
       window.removeEventListener("storage", refresh);
     };
   }, []);
@@ -149,7 +149,7 @@ export function RostaPointsWidget() {
   }, [session?.access_token, isOpen]);
 
   const rewardSummary = useMemo(
-    () => calculateRuthiePoints({ isLoggedIn, birthdayPoints: birthday.birthdayPoints }),
+    () => calculateRostaPoints({ isLoggedIn, birthdayPoints: birthday.birthdayPoints }),
     [isLoggedIn, refreshKey, birthday.birthdayPoints],
   );
 
@@ -160,7 +160,7 @@ export function RostaPointsWidget() {
   const birthdayAwardPoints = birthday.birthdayPoints > 0
     ? birthday.birthdayPoints
     : configuredBirthdayPoints;
-  const birthdayAwardText = `${formatRuthieNumber(birthdayAwardPoints)} ROSTA Points`;
+  const birthdayAwardText = `${formatRostaPointsNumber(birthdayAwardPoints)} ROSTA Points`;
 
   const saveBirthday = async () => {
     if (!session?.access_token || !birthdayInput || savingBirthday) return;
@@ -679,7 +679,7 @@ export function RostaPointsWidget() {
                   >
                     {isLoggedIn
                       ? "ROSTA Points ayrıcalıklarını kullan"
-                      : `Üye ol & ${formatRuthieNumber(signupPoints)} ROSTA Points kazan`}
+                      : `Üye ol & ${formatRostaPointsNumber(signupPoints)} ROSTA Points kazan`}
                   </motion.h2>
 
                   <motion.p
@@ -688,7 +688,7 @@ export function RostaPointsWidget() {
                     transition={{ delay: reduceMotion ? 0 : 0.22, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                   >
                     {isLoggedIn
-                      ? `${formatRuthieNumber(visiblePoints)} puanın hesabında aktif. Puanlarını ödeme adımında indirime dönüştürebilirsin.`
+                      ? `${formatRostaPointsNumber(visiblePoints)} puanın hesabında aktif. Puanlarını ödeme adımında indirime dönüştürebilirsin.`
                       : "ROSTA Points programına katıl, alışverişlerinden puan kazan ve puanlarını sonraki siparişlerinde indirime dönüştür."}
                   </motion.p>
 
@@ -754,7 +754,7 @@ export function RostaPointsWidget() {
                       <h3>ROSTA Points</h3>
                     </div>
                     <div className="ruthie-offer-value">
-                      <strong>{formatRuthieNumber(visiblePoints)}</strong>
+                      <strong>{formatRostaPointsNumber(visiblePoints)}</strong>
                       <small>≈ {formatLira(visibleDiscount)}</small>
                     </div>
                   </div>
@@ -790,7 +790,7 @@ export function RostaPointsWidget() {
                         >
                           <div className="ruthie-offer-action-item">
                             <UserPlus size={19} />
-                            <div><strong>Üye ol</strong><span>{formatRuthieNumber(signupPoints)} ROSTA Points</span></div>
+                            <div><strong>Üye ol</strong><span>{formatRostaPointsNumber(signupPoints)} ROSTA Points</span></div>
                             {isLoggedIn ? <CheckCircle2 size={17} /> : null}
                           </div>
                           <div className="ruthie-offer-action-item">
@@ -813,12 +813,12 @@ export function RostaPointsWidget() {
                                     {birthday.claimed
                                       ? "Doğum günü puanın eklendi"
                                       : birthday.eligible
-                                        ? `${formatRuthieNumber(birthdayAwardPoints)} puanı hesabına ekle`
+                                        ? `${formatRostaPointsNumber(birthdayAwardPoints)} puanı hesabına ekle`
                                         : "Doğum gününde puan kazan"}
                                   </strong>
                                   <span>
                                     {birthday.claimed
-                                      ? `Bu yılın ${formatRuthieNumber(birthdayAwardPoints)} puanı hesabında.`
+                                      ? `Bu yılın ${formatRostaPointsNumber(birthdayAwardPoints)} puanı hesabında.`
                                       : birthday.eligible
                                         ? `Doğum günü haftan ${birthday.windowEnd} tarihine kadar geçerli.`
                                         : `Doğum gününde ve sonraki 7 gün içinde ${birthdayAwardText} kazan.`}
@@ -832,7 +832,7 @@ export function RostaPointsWidget() {
                                 <Cake size={19} />
                                 <div>
                                   <strong>Doğum gününde puan kazan</strong>
-                                  <span>Doğum tarihini ekle; doğum gününde ve sonraki 7 gün içinde {formatRuthieNumber(birthdayAwardPoints)} puanı hesabına al.</span>
+                                  <span>Doğum tarihini ekle; doğum gününde ve sonraki 7 gün içinde {formatRostaPointsNumber(birthdayAwardPoints)} puanı hesabına al.</span>
                                   <div className="ruthie-birthday-fields">
                                     <input
                                       type="text"
@@ -896,7 +896,7 @@ export function RostaPointsWidget() {
                           {[500, 1000, 2000, 5000].map((points) => (
                             <div key={points} className="ruthie-offer-action-item">
                               <Gift size={19} />
-                              <div><strong>{formatLira(pointsToLira(points))} indirim</strong><span>{formatRuthieNumber(points)} ROSTA Points</span></div>
+                              <div><strong>{formatLira(pointsToLira(points))} indirim</strong><span>{formatRostaPointsNumber(points)} ROSTA Points</span></div>
                               <span />
                             </div>
                           ))}
