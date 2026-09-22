@@ -1,12 +1,16 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
 import { ExactAuth } from "@/components/base44-exact/ExactAuth";
+import { AdminShell } from "@/components/AdminShell";
+
+const PUBLIC_AUTH_ROUTES = new Set(["/login", "/forgot-password", "/reset-password"]);
 
 export function AdminAuthGate({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const isPublicAuthRoute = useMemo(() => PUBLIC_AUTH_ROUTES.has(pathname), [pathname]);
   const [ready, setReady] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
   const [error, setError] = useState("");
@@ -15,39 +19,40 @@ export function AdminAuthGate({ children }: { children: ReactNode }) {
     let mounted = true;
     let unsubscribe = () => {};
 
-    try {
-      const supabase = getSupabaseBrowser();
-      fetch("/api/bootstrap-admin/auto", { method: "POST", cache: "no-store" })
-        .catch(() => null)
-        .finally(() => {
-          supabase.auth.getSession().then(({ data, error: sessionError }) => {
-            if (!mounted) return;
-            if (sessionError) setError(sessionError.message);
-            setSignedIn(Boolean(data.session));
-            setReady(true);
-          }).catch((caught) => {
-            if (!mounted) return;
-            setError(caught instanceof Error ? caught.message : "Panel oturumu okunamadı.");
-            setReady(true);
-          });
-        });
+    const resolveSession = async () => {
+      try {
+        const supabase = getSupabaseBrowser();
 
-      const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
+        if (!isPublicAuthRoute) {
+          await fetch("/api/bootstrap-admin/auto", { method: "POST", cache: "no-store" }).catch(() => null);
+        }
+
+        const { data, error: sessionError } = await supabase.auth.getSession();
         if (!mounted) return;
-        setSignedIn(Boolean(session));
+        if (sessionError) setError(sessionError.message);
+        setSignedIn(Boolean(data.session));
         setReady(true);
-      });
-      unsubscribe = () => subscription.subscription.unsubscribe();
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Panel Supabase bağlantısı kurulamadı.");
-      setReady(true);
-    }
+
+        const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
+          if (!mounted) return;
+          setSignedIn(Boolean(session));
+          setReady(true);
+        });
+        unsubscribe = () => subscription.subscription.unsubscribe();
+      } catch (caught) {
+        if (!mounted) return;
+        setError(caught instanceof Error ? caught.message : "Panel Supabase bağlantısı kurulamadı.");
+        setReady(true);
+      }
+    };
+
+    void resolveSession();
 
     return () => {
       mounted = false;
       unsubscribe();
     };
-  }, []);
+  }, [isPublicAuthRoute]);
 
   if (!ready) {
     return (
@@ -66,9 +71,11 @@ export function AdminAuthGate({ children }: { children: ReactNode }) {
   }
 
   if (!signedIn) {
-    if (pathname === "/login" || pathname === "/forgot-password" || pathname === "/reset-password") return <>{children}</>;
+    if (isPublicAuthRoute) return <>{children}</>;
     return <ExactAuth mode="login" />;
   }
 
-  return <>{children}</>;
+  if (isPublicAuthRoute) return <>{children}</>;
+
+  return <AdminShell>{children}</AdminShell>;
 }
