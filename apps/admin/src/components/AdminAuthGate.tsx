@@ -13,20 +13,32 @@ export function AdminAuthGate({ children }: { children: ReactNode }) {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const supabase = getSupabaseBrowser();
     let mounted = true;
-    supabase.auth.getSession().then(({ data }) => {
-      if (!mounted) return;
-      setSignedIn(Boolean(data.session));
+    let unsubscribe = () => {};
+    try {
+      const supabase = getSupabaseBrowser();
+      supabase.auth.getSession().then(({ data, error: sessionError }) => {
+        if (!mounted) return;
+        if (sessionError) setError(sessionError.message);
+        setSignedIn(Boolean(data.session));
+        setReady(true);
+      }).catch((caught) => {
+        if (!mounted) return;
+        setError(caught instanceof Error ? caught.message : "Panel oturumu okunamadı.");
+        setReady(true);
+      });
+      const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
+        setSignedIn(Boolean(session));
+        setReady(true);
+      });
+      unsubscribe = () => subscription.subscription.unsubscribe();
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Panel Supabase bağlantısı kurulamadı.");
       setReady(true);
-    });
-    const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSignedIn(Boolean(session));
-      setReady(true);
-    });
+    }
     return () => {
       mounted = false;
-      subscription.subscription.unsubscribe();
+      unsubscribe();
     };
   }, []);
 
