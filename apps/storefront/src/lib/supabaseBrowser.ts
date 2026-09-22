@@ -30,14 +30,9 @@ export function getSupabaseBrowser() {
   const supabaseUrl = normalizeSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL);
   const supabaseAnonKey = (
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-  )?.trim();
-
-  if (!supabaseAnonKey) {
-    throw new Error(
-      "Supabase env eksik: public anon/publishable key gerekli.",
-    );
-  }
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    "sb_publishable_6Zoqk9z0WEDsvNZ79-b2Qw_fnKVuWhb"
+  ).trim();
 
   if (!browserClient) {
     browserClient = installPasswordResetEmailBridge(createClient(supabaseUrl, supabaseAnonKey));
