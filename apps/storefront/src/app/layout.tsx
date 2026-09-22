@@ -201,15 +201,39 @@ export default async function RootLayout({
             font-synthesis: none;
           }
           .site-app-shell :where(button, input, select, textarea) {
-            font-family: inherit;
+            font-family: var(--font-body);
           }
-          .site-app-shell :where(.font-heading) {
-            font-family: var(--font-heading);
-            font-weight: 900;
-            letter-spacing: -0.03em;
+          .site-app-shell :where(
+            p, span, a, button, input, select, textarea, label, small,
+            li, dt, dd, th, td, time, address
+          ) {
+            font-family: var(--font-body);
           }
-          .site-app-shell :where(.font-editorial, .font-serif, .ruth-type-display, [data-ruth-text-role="display"]) {
-            font-family: var(--ruth-font-display);
+          .site-app-shell :where(
+            h1, h2, h3, h4, h5, h6,
+            .font-heading, .font-editorial, .font-serif,
+            .ruth-type-display, .ruth-type-page-title, .ruth-type-section-title,
+            [data-ruth-text-role="display"],
+            [data-ruth-text-role="page-title"],
+            [data-ruth-text-role="section-title"],
+            .ruth-mobile-link-accordion__title,
+            .ruth-zara-main-tab,
+            .ruth-zara-desktop-link,
+            .product-title,
+            .product-card-name
+          ) {
+            font-family: var(--font-heading) !important;
+          }
+          .site-app-shell :where(
+            .font-heading, .font-editorial, .font-serif,
+            .ruth-type-display, .ruth-type-page-title, .ruth-type-section-title,
+            [data-ruth-text-role="display"],
+            [data-ruth-text-role="page-title"],
+            [data-ruth-text-role="section-title"],
+            .ruth-mobile-link-accordion__title,
+            .ruth-zara-main-tab,
+            .ruth-zara-desktop-link
+          ) {
             font-weight: 900;
             letter-spacing: -0.03em;
           }
