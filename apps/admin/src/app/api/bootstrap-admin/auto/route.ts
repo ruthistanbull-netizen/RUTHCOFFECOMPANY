@@ -42,6 +42,42 @@ export async function POST() {
   }
 
   if (existingProfile) {
+    const authUserId = String(existingProfile.auth_user_id || "").trim();
+
+    if (authUserId) {
+      const current = await supabase.auth.admin.getUserById(authUserId);
+      if (current.error) {
+        return NextResponse.json(
+          { ok: false, error: current.error.message },
+          { status: 500 },
+        );
+      }
+
+      // İlk giriş hiç yapılmadıysa Zeabur'daki PASSWORD env'i kaynak kabul edip
+      // bootstrap hesabının şifresini yeniden eşitle. Başarılı ilk girişten sonra
+      // bu blok bir daha şifreye dokunmaz.
+      if (!current.data.user?.last_sign_in_at) {
+        const synced = await supabase.auth.admin.updateUserById(authUserId, {
+          password,
+          email_confirm: true,
+          user_metadata: {
+            ...(current.data.user?.user_metadata || {}),
+            full_name: BOOTSTRAP_NAME,
+            rosta_admin: true,
+          },
+        });
+
+        if (synced.error) {
+          return NextResponse.json(
+            { ok: false, error: synced.error.message },
+            { status: 500 },
+          );
+        }
+
+        return NextResponse.json({ ok: true, existing: true, passwordSynced: true });
+      }
+    }
+
     return NextResponse.json({ ok: true, existing: true });
   }
 
