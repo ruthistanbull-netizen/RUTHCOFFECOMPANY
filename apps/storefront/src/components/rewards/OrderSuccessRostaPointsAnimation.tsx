@@ -130,17 +130,17 @@ export function OrderSuccessRostaPointsAnimation({ orderNo }: Props) {
 
   return (
     <motion.div
-      className="ruthie-success-reward"
+      className="rosta-points-success-reward"
       initial={{ opacity: 0, y: 18, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
     >
-      <div className="ruthie-success-shine" aria-hidden="true" />
+      <div className="rosta-points-success-shine" aria-hidden="true" />
       <div className="relative z-10 flex justify-center">
-        <span className="ruthie-success-badge"><Sparkles size={17} /> ROSTA Points</span>
+        <span className="rosta-points-success-badge"><Sparkles size={17} /> ROSTA Points</span>
       </div>
       <motion.h2
-        className="ruthie-success-title relative z-10 mt-4 font-heading text-2xl sm:text-3xl md:text-4xl"
+        className="rosta-points-success-title relative z-10 mt-4 font-heading text-2xl sm:text-3xl md:text-4xl"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.18, duration: 0.35 }}
@@ -148,7 +148,7 @@ export function OrderSuccessRostaPointsAnimation({ orderNo }: Props) {
         ROSTA Points kazandınız
       </motion.h2>
       <motion.p
-        className="ruthie-success-copy relative z-10 mt-2 text-xs leading-6 text-muted-ruth sm:text-sm sm:leading-7"
+        className="rosta-points-success-copy relative z-10 mt-2 text-xs leading-6 text-muted-ruth sm:text-sm sm:leading-7"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.35, duration: 0.35 }}
@@ -157,8 +157,8 @@ export function OrderSuccessRostaPointsAnimation({ orderNo }: Props) {
           ? `Bu alışverişten +${formatRostaPointsNumber(earnedPoints)} ROSTA Points hesabına eklendi.`
           : "Alışverişlerin hesabında ROSTA Points olarak birikir ve ödeme adımında indirime dönüşür."}
       </motion.p>
-      <div className="ruthie-success-actions relative z-10 mt-4 flex justify-center sm:mt-6">
-        <Link href="/account" className="ruthie-success-action inline-flex items-center justify-center gap-2 bg-ink px-5 py-3 text-[0.65rem] uppercase sm:px-6 sm:py-4 sm:text-xs tracking-wide-luxe text-cream">
+      <div className="rosta-points-success-actions relative z-10 mt-4 flex justify-center sm:mt-6">
+        <Link href="/account" className="rosta-points-success-action inline-flex items-center justify-center gap-2 bg-ink px-5 py-3 text-[0.65rem] uppercase sm:px-6 sm:py-4 sm:text-xs tracking-wide-luxe text-cream">
           <Gift size={15} /> Puanlarımı Gör
         </Link>
       </div>
