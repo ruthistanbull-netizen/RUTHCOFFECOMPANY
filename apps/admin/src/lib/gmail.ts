@@ -1,6 +1,24 @@
+import fs from "node:fs";
+import path from "node:path";
 import { createCipheriv, createDecipheriv, createHash, randomBytes } from "node:crypto";
 
 const TOKEN_PREFIX = "enc:rosta:v1:";
+
+type GmailIntegration = {
+  id: string;
+  email: string | null;
+  access_token: string | null;
+  refresh_token: string | null;
+  expires_at: string | null;
+  sender_name: string | null;
+};
+
+export type InlineEmailImage = {
+  contentId: string;
+  contentType: string;
+  filename: string;
+  dataBase64: string;
+};
 
 function requiredEnv(name: string) {
   const value = String(process.env[name] || "").trim();
@@ -45,6 +63,14 @@ export function decryptRefreshToken(stored: string) {
   ]).toString("utf8");
 }
 
+export function decryptGmailRefreshToken(stored: string) {
+  const value = String(stored || "").trim();
+  return {
+    token: decryptRefreshToken(value),
+    encrypted: value.startsWith(TOKEN_PREFIX),
+  };
+}
+
 export function gmailRedirectUri(request: Request) {
   return String(process.env.GMAIL_REDIRECT_URI || "").trim()
     || new URL("/api/email/gmail/callback", request.url).toString();
@@ -55,7 +81,7 @@ export function gmailAuthUrl(state: string, redirectUri: string) {
     client_id: requiredEnv("GOOGLE_CLIENT_ID"),
     redirect_uri: redirectUri,
     response_type: "code",
-    scope: "openid email https://www.googleapis.com/auth/gmail.send",
+    scope: "openid email https://www.googleapis.com/auth/gmail.send https://www.googleapis.com/auth/gmail.readonly",
     access_type: "offline",
     prompt: "consent",
     state,
@@ -99,13 +125,152 @@ export async function refreshGmailAccessToken(refreshToken: string) {
 }
 
 export async function getGoogleEmail(accessToken: string) {
-  const response = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
+  const profile = await getGmailProfile(accessToken);
+  const email = String(profile.emailAddress || "").trim().toLowerCase();
+  if (!email) throw new Error("Google hesabında e-posta bulunamadı.");
+  return email;
+}
+
+export async function getGmailProfile(accessToken: string) {
+  const response = await fetch("https://gmail.googleapis.com/gmail/v1/users/me/profile", {
     headers: { Authorization: `Bearer ${accessToken}` },
     cache: "no-store",
   });
   const data = await response.json();
-  if (!response.ok) throw new Error(data.error?.message || "Google hesabı okunamadı.");
-  const email = String(data.email || "").trim().toLowerCase();
-  if (!email) throw new Error("Google hesabında e-posta bulunamadı.");
-  return email;
+  if (!response.ok) throw new Error(data.error?.message || "Gmail profili alınamadı.");
+  return data as { emailAddress?: string; messagesTotal?: number; threadsTotal?: number };
 }
+
+export async function ensureGmailAccessToken(supabase: any, integration: GmailIntegration) {
+  const refreshToken = integration.refresh_token ? decryptRefreshToken(integration.refresh_token) : "";
+  const expiresAt = integration.expires_at ? new Date(integration.expires_at).getTime() : 0;
+  if (integration.access_token && expiresAt > Date.now() + 90_000) return integration.access_token;
+  if (!refreshToken) throw new Error("Gmail refresh token yok. Gmail hesabını yeniden bağla.");
+
+  const refreshed = await refreshGmailAccessToken(refreshToken);
+  const nextExpiresAt = new Date(Date.now() + Number(refreshed.expires_in || 3600) * 1000).toISOString();
+  const { error } = await supabase
+    .from("email_integrations")
+    .update({
+      access_token: refreshed.access_token,
+      expires_at: nextExpiresAt,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", integration.id);
+  if (error) throw new Error(error.message);
+  return refreshed.access_token;
+}
+
+function base64Url(value: string) {
+  return Buffer.from(value)
+    .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/g, "");
+}
+function encodeHeader(value: string) {
+  return `=?UTF-8?B?${Buffer.from(value, "utf8").toString("base64")}?=`;
+}
+function htmlToText(html: string) {
+  return html
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/p>/gi, "\n")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .trim();
+}
+function wrapBase64(value: string) {
+  return value.replace(/(.{76})/g, "$1\r\n");
+}
+
+export function makeMimeMessage(input: {
+  fromEmail: string;
+  fromName: string;
+  to: string;
+  subject: string;
+  html: string;
+  inlineImages?: InlineEmailImage[];
+}) {
+  const alt = `rosta_alt_${Date.now()}`;
+  const related = `rosta_related_${Date.now()}`;
+  const text = htmlToText(input.html);
+  const alternative = [
+    `--${alt}`,
+    'Content-Type: text/plain; charset="UTF-8"',
+    "Content-Transfer-Encoding: 8bit",
+    "",
+    text,
+    "",
+    `--${alt}`,
+    'Content-Type: text/html; charset="UTF-8"',
+    "Content-Transfer-Encoding: 8bit",
+    "",
+    input.html,
+    "",
+    `--${alt}--`,
+  ].join("\r\n");
+
+  const headers = [
+    `From: ${encodeHeader(input.fromName)} <${input.fromEmail}>`,
+    `To: ${input.to}`,
+    `Subject: ${encodeHeader(input.subject)}`,
+    "MIME-Version: 1.0",
+  ];
+
+  const inlineImages = input.inlineImages || [];
+  if (!inlineImages.length) {
+    return [...headers, `Content-Type: multipart/alternative; boundary="${alt}"`, "", alternative].join("\r\n");
+  }
+
+  const imageParts = inlineImages.flatMap((image) => [
+    `--${related}`,
+    `Content-Type: ${image.contentType}; name="${image.filename}"`,
+    "Content-Transfer-Encoding: base64",
+    `Content-ID: <${image.contentId}>`,
+    `Content-Disposition: inline; filename="${image.filename}"`,
+    "",
+    wrapBase64(image.dataBase64),
+    "",
+  ]);
+  return [
+    ...headers,
+    `Content-Type: multipart/related; boundary="${related}"`,
+    "",
+    `--${related}`,
+    `Content-Type: multipart/alternative; boundary="${alt}"`,
+    "",
+    alternative,
+    "",
+    ...imageParts,
+    `--${related}--`,
+  ].join("\r\n");
+}
+
+export async function sendGmailMessage(accessToken: string, message: string) {
+  const response = await fetch("https://gmail.googleapis.com/gmail/v1/users/me/messages/send", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ raw: base64Url(message) }),
+    cache: "no-store",
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error?.message || "Gmail gönderimi başarısız.");
+  return data as { id: string; threadId?: string };
+}
+
+export function loadRostaInlineLogo(): InlineEmailImage[] {
+  const candidate = path.join(process.cwd(), "public", "rosta-coffee-co.svg");
+  if (!fs.existsSync(candidate)) return [];
+  return [{
+    contentId: "rosta-email-logo",
+    contentType: "image/svg+xml",
+    filename: "rosta-coffee-co.svg",
+    dataBase64: fs.readFileSync(candidate).toString("base64"),
+  }];
+}
+
+export const loadRuthInlineLogo = loadRostaInlineLogo;
