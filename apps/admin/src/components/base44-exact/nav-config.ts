@@ -29,7 +29,9 @@ import {
   Settings2,
   SlidersHorizontal,
   Star,
+  Sparkles,
   Truck,
+  Target,
   UserCog,
   Warehouse,
   Workflow,
@@ -97,6 +99,14 @@ export const exactNavStructure: ExactNavGroup[] = [
       { label: "E-posta Merkezi", path: "/email", icon: Inbox, exact: true },
       { label: "E-posta Şablonları", path: "/email/templates", icon: FileText },
       { label: "E-posta Otomasyonları", path: "/email/automations", icon: Workflow },
+    ],
+  },
+  {
+    label: "META REKLAMLARI",
+    items: [
+      { label: "Meta Reklamları", path: "/meta-ads", icon: Target, exact: true, badge: "META" },
+      { label: "Meta Katalogları", path: "/meta-ads/catalogs", icon: Layers, exact: true, badge: "META" },
+      { label: "ROSTA Insight Reklam Analizi", path: "/meta-ads/analysis", icon: Sparkles, badge: "AI" },
     ],
   },
   {
