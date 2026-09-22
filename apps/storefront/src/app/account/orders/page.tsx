@@ -3,7 +3,7 @@ import { AccountOrdersClient } from "@/components/auth/AccountOrdersClient";
 
 export const metadata: Metadata = {
   title: "Siparişlerim",
-  description: "Ruth Istanbul siparişlerim sayfası.",
+  description: "ROSTA Coffee Co. siparişlerim sayfası.",
 };
 
 export default function AccountOrdersPage() {
