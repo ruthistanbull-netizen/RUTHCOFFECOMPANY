@@ -12,7 +12,6 @@ import {
   Megaphone,
   Plug,
   RefreshCw,
-  Server,
   Sparkles,
   Tag,
   Truck,
@@ -34,7 +33,7 @@ import {
 } from "./primitives";
 import { ExactDataCard, ExactMetricCard } from "./data";
 
-type Scope = "all" | "panel" | "ruthie" | "marketing";
+type Scope = "all" | "panel" | "insight" | "marketing";
 type Integration = {
   key: string;
   label: string;
@@ -49,20 +48,19 @@ type Integration = {
 type State = { connected: boolean; detail: string; checking?: boolean };
 
 const definitions: Integration[] = [
-  { key: "supabase", label: "Supabase", description: "Veritabanı, kimlik, storage ve canlı panel verisi", scopes: ["panel", "ruthie"], icon: Database, statusEndpoint: "/api/health", mode: "server", help: ["Supabase Project URL ve service role anahtarını Render güvenli ortam değişkenlerine ekle.", "Admin servisini yeniden yayınla.", "Servis Sağlığı ekranından veritabanı kontrolünü çalıştır."] },
-  { key: "paytr", label: "PayTR", description: "Ödeme, taksit, callback ve iade altyapısı", scopes: ["panel", "ruthie"], icon: CreditCard, statusEndpoint: "/api/payments/list?limit=1", manageHref: "/payments", mode: "server", help: ["PayTR mağaza bilgilerini storefront ve admin servisinin güvenli ayarlarına ekle.", "Callback adresini production ödeme rotasına yönlendir.", "Ödemeler ekranından canlı kayıt kontrolü yap."] },
-  { key: "shipping", label: "Basit Kargo", description: "Barkod, etiket, fiyat ve ters kargo işlemleri", scopes: ["panel", "ruthie"], icon: Truck, statusEndpoint: "/api/shipping/basit-kargo/handlers", manageHref: "/shipping", mode: "server", help: ["Basit Kargo API erişimini Render güvenli ayarlarına ekle.", "Kargo ekranından taşıyıcı listesini yenile.", "Test siparişinde barkod ve etiket üret."] },
-  { key: "gmail", label: "Gmail", description: "Hizmet, pazarlama ve müşteri iletişimi e-postaları", scopes: ["panel", "ruthie", "marketing"], icon: Mail, statusEndpoint: "/api/email/status", manageHref: "/email", mode: "gmail", help: ["Google Cloud üzerinde Gmail API'yi etkinleştir.", "OAuth callback adresini Google istemcisine ekle.", "Bağla düğmesiyle Google hesabında izin ver."] },
-  { key: "openai", label: "OpenAI · ROSTA Insight", description: "ROSTA Insight sohbeti, analiz ve onaylı panel işlemleri", scopes: ["ruthie"], icon: Sparkles, statusEndpoint: "/api/rosta-insight/integrations/status-v2", manageHref: "/ruthie", mode: "server", help: ["OpenAI API anahtarını yalnız Render admin servisinde sakla.", "Model ve proje erişimini doğrula.", "ROSTA Insight ekranından sohbet ve onay akışını test et."] },
-  { key: "meta", label: "Meta Marketing", description: "Reklam hesabı raporlama ve kampanya analizi", scopes: ["ruthie", "marketing"], icon: Megaphone, statusEndpoint: "/api/integrations/meta/status", mode: "server", help: ["Business Manager sistem kullanıcısı oluştur.", "Reklam hesabına raporlama izinlerini ver.", "Uzun ömürlü erişimi admin servisinde sakla."] },
-  { key: "tiktok", label: "TikTok Ads", description: "TikTok reklam performansı ve raporları", scopes: ["ruthie", "marketing"], icon: Megaphone, mode: "server", help: ["TikTok for Business geliştirici uygulaması oluştur.", "Reklam hesabını uygulamaya bağla.", "API erişimini Render güvenli ayarlarına ekle."] },
-  { key: "ga4", label: "Google Analytics 4", description: "Oturum, dönüşüm ve davranış analizi", scopes: ["ruthie", "marketing"], icon: BarChart3, mode: "server", help: ["GA4 ölçüm kimliğini storefront ayarlarına ekle.", "Measurement Protocol veya raporlama erişimini admin servisine bağla.", "Analitik ekranında veri akışını doğrula."] },
+  { key: "supabase", label: "Supabase", description: "Veritabanı, kimlik, storage ve canlı panel verisi", scopes: ["panel", "insight"], icon: Database, statusEndpoint: "/api/health", mode: "server", help: ["Supabase Project URL ve service role anahtarını Zeabur güvenli ortam değişkenlerine ekle.", "Admin servisini yeniden yayınla.", "Servis Sağlığı ekranından veritabanı kontrolünü çalıştır."] },
+  { key: "paytr", label: "PayTR", description: "Ödeme, taksit, callback ve iade altyapısı", scopes: ["panel", "insight"], icon: CreditCard, statusEndpoint: "/api/payments/list?limit=1", manageHref: "/payments", mode: "server", help: ["PayTR mağaza bilgilerini storefront ve admin servisinin güvenli ayarlarına ekle.", "Callback adresini production ödeme rotasına yönlendir.", "Ödemeler ekranından canlı kayıt kontrolü yap."] },
+  { key: "shipping", label: "Basit Kargo", description: "Barkod, etiket, fiyat ve ters kargo işlemleri", scopes: ["panel", "insight"], icon: Truck, statusEndpoint: "/api/shipping/basit-kargo/handlers", manageHref: "/shipping", mode: "server", help: ["Basit Kargo API erişimini Zeabur güvenli ayarlarına ekle.", "Kargo ekranından taşıyıcı listesini yenile.", "Test siparişinde barkod ve etiket üret."] },
+  { key: "gmail", label: "Gmail", description: "Hizmet, pazarlama ve müşteri iletişimi e-postaları", scopes: ["panel", "insight", "marketing"], icon: Mail, statusEndpoint: "/api/email/status", manageHref: "/email", mode: "gmail", help: ["Google Cloud üzerinde Gmail API'yi etkinleştir.", "OAuth callback adresini Google istemcisine ekle.", "Bağla düğmesiyle Google hesabında izin ver."] },
+  { key: "openai", label: "OpenAI · ROSTA Insight", description: "ROSTA Insight sohbeti, analiz ve onaylı panel işlemleri", scopes: ["insight"], icon: Sparkles, statusEndpoint: "/api/rosta-insight/integrations/status-v2", manageHref: "/rosta-insight", mode: "server", help: ["OpenAI API anahtarını yalnız Zeabur admin servisinde sakla.", "Model ve proje erişimini doğrula.", "ROSTA Insight ekranından sohbet ve onay akışını test et."] },
+  { key: "meta", label: "Meta Marketing", description: "Reklam hesabı raporlama ve kampanya analizi", scopes: ["insight", "marketing"], icon: Megaphone, statusEndpoint: "/api/integrations/meta/status", mode: "server", help: ["Business Manager sistem kullanıcısı oluştur.", "Reklam hesabına raporlama izinlerini ver.", "Uzun ömürlü erişimi admin servisinde sakla."] },
+  { key: "tiktok", label: "TikTok Ads", description: "TikTok reklam performansı ve raporları", scopes: ["insight", "marketing"], icon: Megaphone, mode: "server", help: ["TikTok for Business geliştirici uygulaması oluştur.", "Reklam hesabını uygulamaya bağla.", "API erişimini Zeabur güvenli ayarlarına ekle."] },
+  { key: "ga4", label: "Google Analytics 4", description: "Oturum, dönüşüm ve davranış analizi", scopes: ["insight", "marketing"], icon: BarChart3, mode: "server", help: ["GA4 ölçüm kimliğini storefront ayarlarına ekle.", "Measurement Protocol veya raporlama erişimini admin servisine bağla.", "Analitik ekranında veri akışını doğrula."] },
   { key: "gtm", label: "Google Tag Manager", description: "Piksel, dönüşüm ve event etiketleri", scopes: ["panel", "marketing"], icon: Tag, mode: "server", help: ["Web container oluştur.", "Container kimliğini storefront ayarlarına ekle.", "Önizleme modunda sepet ve satın alma eventlerini test et."] },
-  { key: "search-console", label: "Search Console", description: "SEO performansı ve arama görünürlüğü", scopes: ["ruthie", "marketing"], icon: BarChart3, mode: "server", help: ["Site mülkünü doğrula.", "Raporlama yetkisini admin servisine bağla.", "ROSTA Insight SEO analizini yenile."] },
+  { key: "search-console", label: "Search Console", description: "SEO performansı ve arama görünürlüğü", scopes: ["insight", "marketing"], icon: BarChart3, mode: "server", help: ["Site mülkünü doğrula.", "Raporlama yetkisini admin servisine bağla.", "ROSTA Insight SEO analizini yenile."] },
   { key: "clarity", label: "Microsoft Clarity", description: "Isı haritası ve ziyaretçi oturum kayıtları", scopes: ["marketing"], icon: BarChart3, mode: "server", help: ["Clarity projesi oluştur.", "Proje kimliğini storefront'a ekle.", "Production oturumlarının geldiğini doğrula."] },
-  { key: "github", label: "GitHub", description: "Kod, commit, PR ve geliştirme bağlantısı", scopes: ["panel", "ruthie"], icon: Github, mode: "server", help: ["Yalnız Ruth Commerce reposuna erişim ver.", "Repo bağlantısını ve erişimi güvenli sunucu ayarlarında sakla.", "ROSTA Insight geliştirme işlemiyle bağlantıyı test et."] },
-  { key: "vercel", label: "Vercel", description: "Storefront deploy, önizleme ve cache yenileme", scopes: ["panel", "ruthie"], icon: Cloud, mode: "server", help: ["Vercel API erişimi ve proje kimliğini hazırla.", "Bilgileri admin servisinin güvenli ayarlarına ekle.", "Storefront yayın ve cache yenilemesini test et."] },
-  { key: "render", label: "Render", description: "Admin panel deploy ve servis durumu", scopes: ["panel", "ruthie"], icon: Server, mode: "server", help: ["Render API erişimini ve servis kimliğini hazırla.", "Bilgileri güvenli ortam değişkenlerine ekle.", "Servis Sağlığı ekranından admin servisini doğrula."] },
+  { key: "github", label: "GitHub", description: "Kod, commit, PR ve geliştirme bağlantısı", scopes: ["panel", "insight"], icon: Github, mode: "server", help: ["Yalnız ROSTA Coffee Company reposuna erişim ver.", "Repo bağlantısını ve erişimi güvenli sunucu ayarlarında sakla.", "ROSTA Insight geliştirme işlemiyle bağlantıyı test et."] },
+  { key: "zeabur", label: "Zeabur", description: "Admin ve storefront deploy, domain ve servis durumu", scopes: ["panel", "insight"], icon: Cloud, statusEndpoint: "/api/rosta-insight/integrations/status-v2", mode: "server", help: ["ROSTA admin ve storefront servislerinin Zeabur proje bağlantısını doğrula.", "Gizli değişkenleri yalnız Zeabur servis ayarlarında sakla.", "ZEABUR_SERVICE_ID, ZEABUR_PROJECT_ID ve ZEABUR_WEB_URL ile çalışan servisi doğrula."] },
 ];
 
 export function ExactIntegrationsPanelV2() {
@@ -110,7 +108,7 @@ export function ExactIntegrationsPanelV2() {
   const metrics = useMemo(() => ({
     connected: definitions.filter((item) => states[item.key]?.connected).length,
     waiting: definitions.filter((item) => !states[item.key]?.connected).length,
-    ruthie: definitions.filter((item) => item.scopes.includes("ruthie") && states[item.key]?.connected).length,
+    insight: definitions.filter((item) => item.scopes.includes("insight") && states[item.key]?.connected).length,
   }), [states]);
 
   const connect = async (item: Integration) => {
@@ -157,10 +155,10 @@ export function ExactIntegrationsPanelV2() {
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <ExactMetricCard label="Bağlı" value={metrics.connected} icon={CheckCircle2} />
         <ExactMetricCard label="Bağlantı Bekleyen" value={metrics.waiting} icon={Unplug} />
-        <ExactMetricCard label="ROSTA Insight Bağlantıları" value={metrics.ruthie} icon={Sparkles} />
+        <ExactMetricCard label="ROSTA Insight Bağlantıları" value={metrics.insight} icon={Sparkles} />
         <ExactMetricCard label="Toplam Sağlayıcı" value={definitions.length} icon={Webhook} />
       </div>
-      <ExactSegmentedControl value={scope} onChange={(value) => setScope(value as Scope)} options={[{ value: "all", label: "Tümü" }, { value: "panel", label: "Panel" }, { value: "ruthie", label: "ROSTA Insight" }, { value: "marketing", label: "Pazarlama" }]} />
+      <ExactSegmentedControl value={scope} onChange={(value) => setScope(value as Scope)} options={[{ value: "all", label: "Tümü" }, { value: "panel", label: "Panel" }, { value: "insight", label: "ROSTA Insight" }, { value: "marketing", label: "Pazarlama" }]} />
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
         {visible.map((item) => {
           const state = states[item.key] || { connected: false, detail: loading ? "Kontrol ediliyor…" : "Durum henüz doğrulanmadı." };
