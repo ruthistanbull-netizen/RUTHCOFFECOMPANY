@@ -59,7 +59,7 @@ type Props = {
 };
 
 function nameOf(customer: BulkEmailCustomer) {
-  return customer.full_name || customer.email || "Ruth Istanbul müşterisi";
+  return customer.full_name || customer.email || "ROSTA Coffee Co. müşterisi";
 }
 
 function messageFromFields(fields?: Partial<EmailTemplateFields> | null) {
