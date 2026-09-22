@@ -4,7 +4,7 @@ import { AccountClient } from "@/components/auth/AccountClient";
 
 export const metadata: Metadata = {
   title: "Hesabım",
-  description: "Ruth Istanbul hesap sayfası.",
+  description: "ROSTA Coffee Co. hesap sayfası.",
   robots: { index: false, follow: false },
 };
 
