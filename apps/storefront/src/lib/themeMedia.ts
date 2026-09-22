@@ -1,23 +1,32 @@
-import type { ThemeCustomizerSettings } from "@/lib/themeCustomizer";
+import {
+  defaultThemeCustomizerSettings,
+  type ThemeCustomizerSettings,
+} from "@/lib/themeCustomizer";
 
 export const HOME_HERO_IMAGE_ID = "home-hero-image-1";
 export const HOME_HERO_DESKTOP_IMAGE_ID = `${HOME_HERO_IMAGE_ID}--desktop-image`;
 export const HOME_HERO_MOBILE_IMAGE_ID = `${HOME_HERO_IMAGE_ID}--mobile-image`;
 
-export type HomepageHeroImages = {
-  desktop: string;
-  mobile: string;
-};
+export type HomepageHeroImages = { desktop: string; mobile: string };
 
 export const ROSTA_DEFAULT_HERO_IMAGE =
   "/home/rosta-hero-v6?v=20260921-original-avif";
 
-export function homepageHeroImages(
-  _settings: ThemeCustomizerSettings,
-): HomepageHeroImages {
+function clean(value: unknown) {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+export function homepageHeroImages(settings: ThemeCustomizerSettings): HomepageHeroImages {
+  const saved = clean(settings.homepageImages.heroImage);
+  const overrides = settings.editor.pages["/"]?.overrides || [];
+  const desktopOverride = clean(overrides.find((item) => item.id === HOME_HERO_DESKTOP_IMAGE_ID)?.imageSrc);
+  const mobileOverride = clean(overrides.find((item) => item.id === HOME_HERO_MOBILE_IMAGE_ID)?.imageSrc);
+  const sharedOverride = clean(overrides.find((item) => item.id === HOME_HERO_IMAGE_ID)?.imageSrc);
+  const shared = sharedOverride || saved || ROSTA_DEFAULT_HERO_IMAGE;
+
   return {
-    desktop: ROSTA_DEFAULT_HERO_IMAGE,
-    mobile: ROSTA_DEFAULT_HERO_IMAGE,
+    desktop: desktopOverride || shared || ROSTA_DEFAULT_HERO_IMAGE,
+    mobile: mobileOverride || shared || ROSTA_DEFAULT_HERO_IMAGE,
   };
 }
 
