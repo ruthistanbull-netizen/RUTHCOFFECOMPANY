@@ -411,7 +411,7 @@ export function ExactEmailCustomers() {
               <p className="mt-1">{chosenTemplate?.description || "E-posta → Şablonlar sayfasındaki güncel kayıt kullanılır."}</p>
               <p className="mt-1 text-accent">Şablonlar sayfasında kaydettiğin değişiklikler burada otomatik olarak aynı kaynaktan okunur.</p>
             </div>
-            <ExactField label="Konu" required><input value={subject} onChange={(event) => setSubject(event.target.value)} className={exactFormInputClass} placeholder="Yeni koleksiyon Ruth Istanbul’da" disabled={sending} /></ExactField>
+            <ExactField label="Konu" required><input value={subject} onChange={(event) => setSubject(event.target.value)} className={exactFormInputClass} placeholder="Yeni koleksiyon ROSTA Coffee Co.’da" disabled={sending} /></ExactField>
             <ExactField label="Mesaj" required><textarea value={message} onChange={(event) => setMessage(event.target.value)} className={`${exactFormInputClass} min-h-64`} placeholder="Merhaba {{customer_name}}, ..." disabled={sending} /></ExactField>
             <div className="p-3 radius-small bg-surface-secondary text-xs text-muted">
               <p><strong className="text-main">Alıcı:</strong> {sendCustomers.length}</p>
