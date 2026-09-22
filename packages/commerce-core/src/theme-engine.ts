@@ -61,6 +61,7 @@ export type ThemeCustomizerSettings = {
   header: { links: ThemeNavItem[] };
   whatsapp: { enabled: boolean; phone: string; label: string };
   homepageImages: { heroImage: string; scrollImages: string[] };
+  homepageLayout: { secondaryInsetXMobile: number; secondaryInsetYMobile: number; secondaryInsetXDesktop: number; secondaryInsetTopDesktop: number; secondaryInsetBottomDesktop: number };
   editor: ThemeVisualEditorSettings;
 };
 
@@ -78,6 +79,7 @@ export const defaultThemeCustomizerSettings: ThemeCustomizerSettings = {
   ] },
   whatsapp: { enabled: true, phone: "908503469789", label: "WhatsApp" },
   homepageImages: { heroImage: "", scrollImages: ["/scroll-product-1.png", "/scroll-product-2.png", "/scroll-product-3.png", "/scroll-product-4.png", "/scroll-product-5.png", "/scroll-product-6.png"] },
+  homepageLayout: { secondaryInsetXMobile: 2, secondaryInsetYMobile: 1, secondaryInsetXDesktop: 7, secondaryInsetTopDesktop: 52, secondaryInsetBottomDesktop: 32 },
   editor: { pages: {} },
 };
 
@@ -205,6 +207,7 @@ export function normalizeThemeCustomizerSettings(input: unknown): ThemeCustomize
   const colors = raw.colors || {};
   const whatsapp = raw.whatsapp || {};
   const homepageImages = raw.homepageImages || {};
+  const homepageLayout = raw.homepageLayout || {};
   const header = raw.header || {};
   const links: ThemeNavItem[] = Array.isArray(header.links) ? header.links.map((item: any, index: number) => ({
     id: stringValue(item?.id, `link-${index}`).slice(0, 80),
@@ -244,6 +247,13 @@ export function normalizeThemeCustomizerSettings(input: unknown): ThemeCustomize
     homepageImages: {
       heroImage: safeUrl(homepageImages.heroImage, defaultThemeCustomizerSettings.homepageImages.heroImage, "image"),
       scrollImages: scrollImages.length ? scrollImages : defaultThemeCustomizerSettings.homepageImages.scrollImages,
+    },
+    homepageLayout: {
+      secondaryInsetXMobile: numeric(homepageLayout.secondaryInsetXMobile, defaultThemeCustomizerSettings.homepageLayout.secondaryInsetXMobile, 0, 20),
+      secondaryInsetYMobile: numeric(homepageLayout.secondaryInsetYMobile, defaultThemeCustomizerSettings.homepageLayout.secondaryInsetYMobile, 0, 20),
+      secondaryInsetXDesktop: numeric(homepageLayout.secondaryInsetXDesktop, defaultThemeCustomizerSettings.homepageLayout.secondaryInsetXDesktop, 0, 20),
+      secondaryInsetTopDesktop: numeric(homepageLayout.secondaryInsetTopDesktop, defaultThemeCustomizerSettings.homepageLayout.secondaryInsetTopDesktop, 0, 300),
+      secondaryInsetBottomDesktop: numeric(homepageLayout.secondaryInsetBottomDesktop, defaultThemeCustomizerSettings.homepageLayout.secondaryInsetBottomDesktop, 0, 300),
     },
     editor: normalizeThemeEditor(raw.editor),
   };
