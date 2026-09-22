@@ -62,16 +62,6 @@ type BulkSendResult = {
   errors?: string[];
 };
 
-const OWNER_TEST_EMAILS = new Set(["ruthistanbull@gmail.com"]);
-
-function normalizedEmail(value: unknown) {
-  return String(value || "").trim().toLocaleLowerCase("en-US");
-}
-
-function isOwnerTestCustomer(customer: Customer) {
-  return OWNER_TEST_EMAILS.has(normalizedEmail(customer.email));
-}
-
 function nameOf(customer: Customer) {
   return customer.full_name || customer.email || customer.phone || "İsimsiz müşteri";
 }
@@ -82,10 +72,6 @@ function money(value: number) {
 
 function allowedForTemplate(customer: Customer, template?: EmailTemplate | null) {
   if (!customer.email || !template) return false;
-  // Ruth owner's own customer record is intentionally a permanent test recipient.
-  // It must stay selectable even when the selected template normally requires a
-  // storefront membership/consent state, so every email flow can be tested safely.
-  if (isOwnerTestCustomer(customer)) return true;
   if (template.template_key === "account_migrated") return Boolean(customer.is_member && customer.service_email_allowed);
   if (template.type === "service") return Boolean(customer.service_email_allowed);
   return Boolean(customer.marketing_email_consent);
