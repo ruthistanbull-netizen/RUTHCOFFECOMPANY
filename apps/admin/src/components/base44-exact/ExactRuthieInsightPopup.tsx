@@ -33,7 +33,7 @@ import {
 } from "react";
 import { Pressable, useOverlayBehavior } from "@ruth-commerce/ui";
 import { adminAuthHeaders } from "@/lib/adminApi";
-import { RuthieBrandIcon } from "@/components/ROSTA InsightBrandIcon";
+import { RuthieBrandIcon } from "@/components/RuthieBrandIcon";
 import { ExactIconButton } from "./primitives";
 
 export type RuthieInsightAutoPrompt = {
@@ -823,7 +823,7 @@ export function ExactRuthieInsightPopup({
                     {messages.map((message, index) => (
                       <motion.div key={`${message.role}-${index}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
                         <div className={message.role === "user" ? "max-w-[88%] rounded-[18px] rounded-br-[6px] bg-accent px-3.5 py-2.5 text-sm leading-relaxed text-accent-foreground" : "max-w-[92%] rounded-[18px] rounded-bl-[6px] bg-surface-secondary px-3.5 py-2.5 text-sm leading-relaxed text-main"}>
-                          {message.role === "assistant" ? <div className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold text-accent"><RuthieBrandIcon size={13} /> Ruthie</div> : null}
+                          {message.role === "assistant" ? <div className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold text-accent"><RuthieBrandIcon size={13} /> ROSTA Insight</div> : null}
                           {message.imageDataUrl ? <motion.img src={message.imageDataUrl} alt="ROSTA Insight tarafından üretilen fotoğraf" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} className="mb-2 max-h-[360px] w-auto max-w-full rounded-xl object-contain" /> : null}
                           <p className="whitespace-pre-wrap">{message.text}</p>
                           {message.attachmentNames?.length ? <div className="mt-2 flex flex-wrap gap-1">{message.attachmentNames.map((name) => <span key={name} className="rounded-full bg-black/10 px-2 py-1 text-[9px]">{name}</span>)}</div> : null}
@@ -953,7 +953,7 @@ export function ExactRuthieInsightPopup({
                   </div>
                 </div>
 
-                <div className="mt-2 flex justify-end"><Link href="/ruthie/chat" onClick={onClose} className="inline-flex items-center gap-1 text-[10px] font-medium text-muted hover:text-accent">Tam ROSTA Insight sohbetini aç <ExternalLink className="h-3 w-3" /></Link></div>
+                <div className="mt-2 flex justify-end"><Link href="/rosta-insight/chat" onClick={onClose} className="inline-flex items-center gap-1 text-[10px] font-medium text-muted hover:text-accent">Tam ROSTA Insight sohbetini aç <ExternalLink className="h-3 w-3" /></Link></div>
               </div>
             </motion.section>
           </div>
