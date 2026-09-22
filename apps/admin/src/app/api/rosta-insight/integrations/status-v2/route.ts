@@ -21,8 +21,7 @@ type IntegrationId =
   | "basit-kargo"
   | "gmail"
   | "openai"
-  | "vercel"
-  | "render"
+  | "zeabur"
   | "github";
 
 type IntegrationState = { connected: boolean; detail: string };
@@ -126,18 +125,11 @@ const definitions: Definition[] = [
     disconnectedDetail: "OpenAI API anahtarı eksik.",
   },
   {
-    id: "vercel",
-    overrideFlag: "ROSTA_INSIGHT_VERCEL_CONNECTED",
-    requirementGroups: [["VERCEL_TOKEN"], ["VERCEL_PROJECT_ID", "VERCEL_STORE_PROJECT_ID"]],
-    connectedDetail: "Vercel tokenı ve storefront proje kimliği tanımlı.",
-    disconnectedDetail: "Vercel tokenı veya proje kimliği eksik.",
-  },
-  {
-    id: "render",
-    overrideFlag: "ROSTA_INSIGHT_RENDER_CONNECTED",
-    requirementGroups: [["RENDER_API_KEY", "RENDER_TOKEN"], ["RENDER_SERVICE_ID", "RENDER_ADMIN_SERVICE_ID"]],
-    connectedDetail: "Render API anahtarı ve admin servis kimliği tanımlı.",
-    disconnectedDetail: "Render API anahtarı veya servis kimliği eksik.",
+    id: "zeabur",
+    overrideFlag: "ROSTA_INSIGHT_ZEABUR_CONNECTED",
+    requirementGroups: [["ZEABUR_SERVICE_ID"], ["ZEABUR_PROJECT_ID"], ["ZEABUR_WEB_URL"]],
+    connectedDetail: "Zeabur servis, proje ve web URL bilgileri çalışma ortamında doğrulandı.",
+    disconnectedDetail: "Zeabur çalışma ortamı bilgileri bu servis içinde doğrulanamadı.",
   },
   {
     id: "github",
