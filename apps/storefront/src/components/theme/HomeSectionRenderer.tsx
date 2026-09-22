@@ -55,6 +55,8 @@ export function HomeSectionRenderer({
   heroImages,
   scrollImages,
   freeShippingThreshold,
+  editorialVideo,
+  editorialImage,
 }: {
   section: ThemeSection;
   featuredProducts: Product[];
@@ -63,9 +65,11 @@ export function HomeSectionRenderer({
   heroImages: HomepageHeroImages;
   scrollImages: string[];
   freeShippingThreshold: number;
+  editorialVideo: string;
+  editorialImage: string;
 }) {
   if (!section.enabled) return null;
-  if (section.type === "hero") return <div data-theme-section-id={section.id}><Hero heroImages={heroImages} /></div>;
+  if (section.type === "hero") return <div data-theme-section-id={section.id}><Hero heroImages={heroImages} editorialVideo={editorialVideo} editorialImage={editorialImage} /></div>;
   if (section.type === "scroll-story") return <div data-theme-section-id={section.id}><ScrollStory images={scrollImages} /></div>;
   if (section.type === "collections") return <div data-theme-section-id={section.id}><CollectionCards collections={collections} /></div>;
   if (section.type === "featured-products" && !hasProductSectionCustomization(section)) return <div data-theme-section-id={section.id}><FeaturedProducts products={featuredProducts} /></div>;
