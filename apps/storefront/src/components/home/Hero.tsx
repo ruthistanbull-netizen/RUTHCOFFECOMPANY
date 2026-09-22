@@ -305,7 +305,7 @@ export default function Hero({
       className="relative overflow-clip bg-ivory"
     >
       <style>{`
-        .home-editorial-wordmark{box-sizing:border-box;pointer-events:none;position:fixed;left:0;top:calc(100svh - clamp(184px,38vw,236px));z-index:40;width:100vw;max-width:100vw;height:clamp(148px,35vw,214px);user-select:none;transition:background-color .24s ease,opacity .28s ease,visibility .28s ease}.home-editorial-wordmark[data-visible="false"]{opacity:0!important;visibility:hidden}@media(min-width:1024px){.home-editorial-wordmark{right:1vw;left:auto;top:45vh;width:56vw;max-width:98vw;height:clamp(102px,9.8vw,178px)}}
+        .home-editorial-wordmark{box-sizing:border-box;pointer-events:none;position:fixed;left:0;top:calc(100svh - clamp(184px,38vw,236px));z-index:40;width:min(100vw,1208px);max-width:100vw;height:auto;aspect-ratio:1208/512;user-select:none;transition:background-color .24s ease,opacity .28s ease,visibility .28s ease}.home-editorial-wordmark[data-visible="false"]{opacity:0!important;visibility:hidden}@media(min-width:1024px){.home-editorial-wordmark{right:1vw;left:auto;top:45vh;width:56vw;max-width:98vw;height:auto;aspect-ratio:1208/512}}
       `}</style>
       <motion.div
         ref={wordmarkRef}
@@ -321,8 +321,8 @@ export default function Hero({
           maskRepeat: "no-repeat",
           WebkitMaskPosition: "center",
           maskPosition: "center",
-          WebkitMaskSize: "contain",
-          maskSize: "contain",
+          WebkitMaskSize: "100% 100%",
+          maskSize: "100% 100%",
           willChange: "opacity, background-color",
         }}
         initial={reduceMotion ? false : { opacity: 0, scale: 0.995 }}
