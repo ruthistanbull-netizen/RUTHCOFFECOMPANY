@@ -41,9 +41,9 @@ async function readThemeSections(): Promise<ThemeSectionSettings> {
   return applyRostaSectionPalette(normalizeThemeSectionSettings(data?.setting_value || defaultThemeSectionSettings));
 }
 
-const cachedThemeSections = unstable_cache(readThemeSections, ["ruth-theme-sections"], {
+const cachedThemeSections = unstable_cache(readThemeSections, ["rosta-theme-sections"], {
   revalidate: THEME_SECTION_REVALIDATE_SECONDS,
-  tags: ["ruth-theme"],
+  tags: ["rosta-theme"],
 });
 
 export async function getThemeSectionSettings() {
