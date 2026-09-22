@@ -9,26 +9,22 @@ import {
   useTransform,
 } from "framer-motion";
 import { ROSTA_HOME_WORDMARK_SRC } from "@/components/brand/rostaWordmark";
-import type { HomepageHeroImages } from "@/lib/themeMedia";
+import {
+  HOME_HERO_DESKTOP_IMAGE_ID,
+  HOME_HERO_MOBILE_IMAGE_ID,
+  homepageHeroImages,
+  type HomepageHeroImages,
+} from "@/lib/themeMedia";
+import type { ThemeCustomizerSettings } from "@/lib/themeCustomizer";
 
-const HOME_HERO_IMAGE_ID = "home-hero-image-1";
 const HOME_EDITORIAL_IMAGE_ID = "home-editorial-image-2";
 
-type EditorialSlide =
-  | {
-      kind: "image";
-      desktopSrc: string;
-      mobileSrc: string;
-      alt: string;
-      priority: boolean;
-    }
-  | {
-      kind: "video";
-      src: string;
-      label: string;
-    };
-
-const EDITORIAL_SLIDES: EditorialSlide[] = [
+const EDITORIAL_SLIDES = [
+  {
+    kind: "hero-image",
+    alt: "Rosta Coffee Co ana sayfa görseli",
+    priority: true,
+  },
   {
     kind: "video",
     src: "/home/rosta-under-hero-video.mp4",
@@ -41,8 +37,9 @@ const EDITORIAL_SLIDES: EditorialSlide[] = [
     alt: "Rosta Coffee Co kahve hazırlama editoryali",
     priority: false,
   },
-];
+] as const;
 
+type EditorialSlide = (typeof EDITORIAL_SLIDES)[number];
 type SampledMedia = HTMLImageElement | HTMLVideoElement;
 
 function sourceSize(media: SampledMedia) {
@@ -109,9 +106,11 @@ function notifyHeroMediaReady() {
 function EditorialMedia({
   slide,
   index,
+  heroImages,
 }: {
   slide: EditorialSlide;
   index: number;
+  heroImages: HomepageHeroImages;
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const reduceMotion = useReducedMotion();
@@ -122,54 +121,64 @@ function EditorialMedia({
   const opacity = useTransform(progress, [0, 0.82, 1], [1, 1, 0.96]);
   const wrapperClass = index === 0
     ? "absolute inset-0 overflow-hidden"
-    : "home-editorial-secondary-frame absolute overflow-hidden";
+    : "absolute inset-x-[2vw] inset-y-[1svh] overflow-hidden lg:bottom-[32px] lg:left-[7vw] lg:right-[7vw] lg:top-[52px]";
 
   return (
     <div
       ref={ref}
-      className={
-        `home-editorial-slide relative h-[108svh] ${index ? "-mt-[8svh]" : ""}`
-      }
+      className={`home-editorial-slide relative h-[108svh] ${index ? "-mt-[8svh]" : ""}`}
       data-editorial-kind={slide.kind}
     >
       <div className="sticky top-0 h-[100svh] min-h-[560px] overflow-hidden bg-ivory lg:min-h-[700px]">
         <motion.div
           className={wrapperClass}
-          style={
-            reduceMotion
-              ? undefined
-              : { y, scale, opacity, willChange: "transform, opacity" }
-          }
+          style={reduceMotion ? undefined : { y, scale, opacity, willChange: "transform, opacity" }}
         >
-          {slide.kind === "image" ? (
+          {slide.kind === "hero-image" ? (
+            <div className="h-full w-full">
+              <img
+                key={`hero-mobile:${heroImages.mobile}`}
+                src={heroImages.mobile}
+                alt={slide.alt}
+                className="h-full w-full object-cover object-center md:hidden"
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
+                draggable={false}
+                onLoad={notifyHeroMediaReady}
+                data-home-editorial-media
+                data-theme-id={HOME_HERO_MOBILE_IMAGE_ID}
+                data-theme-label="Ana sayfa hero görseli · Mobil"
+              />
+              <img
+                key={`hero-desktop:${heroImages.desktop}`}
+                src={heroImages.desktop}
+                alt={slide.alt}
+                className="hidden h-full w-full object-cover object-center md:block"
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
+                draggable={false}
+                onLoad={notifyHeroMediaReady}
+                data-home-editorial-media
+                data-theme-id={HOME_HERO_DESKTOP_IMAGE_ID}
+                data-theme-label="Ana sayfa hero görseli · Masaüstü"
+              />
+            </div>
+          ) : slide.kind === "image" ? (
             <picture className="block h-full w-full">
               <source media="(min-width: 768px)" srcSet={slide.desktopSrc} />
               <img
                 src={slide.mobileSrc}
                 alt={slide.alt}
-                className="h-full w-full object-cover object-center [image-rendering:auto]"
-                loading={slide.priority ? "eager" : "lazy"}
-                fetchPriority={slide.priority ? "high" : "auto"}
+                className="h-full w-full object-cover object-center"
+                loading="lazy"
+                fetchPriority="auto"
                 decoding="async"
                 draggable={false}
-                onLoad={notifyHeroMediaReady}
-                onError={(event) => {
-                  if (index !== 0 || event.currentTarget.dataset.fallbackApplied === "1") {
-                    event.currentTarget.style.display = "none";
-                    return;
-                  }
-                  const fallback = "/home/rosta-hero-v6?v=20260921-original-avif";
-                  event.currentTarget.dataset.fallbackApplied = "1";
-                  event.currentTarget.src = fallback;
-                  event.currentTarget.srcset = fallback;
-                  const picture = event.currentTarget.closest("picture");
-                  picture?.querySelectorAll("source").forEach((source) => {
-                    source.srcset = fallback;
-                  });
-                }}
                 data-home-editorial-media
-                data-theme-id={index === 0 ? HOME_HERO_IMAGE_ID : HOME_EDITORIAL_IMAGE_ID}
-                data-theme-label={index === 0 ? "Ana sayfa hero görseli" : "Ana sayfa editoryal görseli"}
+                data-theme-id={HOME_EDITORIAL_IMAGE_ID}
+                data-theme-label="Ana sayfa editoryal görseli"
               />
             </picture>
           ) : (
@@ -183,7 +192,6 @@ function EditorialMedia({
               playsInline
               preload="auto"
               disablePictureInPicture
-              onLoadedData={notifyHeroMediaReady}
               data-home-editorial-media
             />
           )}
@@ -197,19 +205,31 @@ export default function Hero({ heroImages }: { heroImages: HomepageHeroImages })
   const reduceMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement | null>(null);
   const wordmarkRef = useRef<HTMLDivElement | null>(null);
-  const [wordmarkColor, setWordmarkColor] = useState("#111111");
+  const [wordmarkColor, setWordmarkColor] = useState("#F4F0E8");
   const [wordmarkVisible, setWordmarkVisible] = useState(true);
+  const [liveHeroImages, setLiveHeroImages] = useState(heroImages);
 
-  const slides: EditorialSlide[] = [
-    {
-      kind: "image",
-      desktopSrc: heroImages.desktop,
-      mobileSrc: heroImages.mobile,
-      alt: "",
-      priority: true,
-    },
-    ...EDITORIAL_SLIDES,
-  ];
+  useEffect(() => {
+    setLiveHeroImages(heroImages);
+  }, [heroImages.desktop, heroImages.mobile]);
+
+  useEffect(() => {
+    notifyHeroMediaReady();
+  }, [liveHeroImages.desktop, liveHeroImages.mobile]);
+
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("themeEditor") !== "1") return;
+    if (window.parent === window) return;
+
+    const onMessage = (event: MessageEvent) => {
+      if (event.source !== window.parent || !event.data || typeof event.data !== "object") return;
+      if (event.data.type !== "RUTH_THEME_EDITOR_SETTINGS" || !event.data.settings) return;
+      setLiveHeroImages(homepageHeroImages(event.data.settings as ThemeCustomizerSettings));
+    };
+
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, []);
 
   useEffect(() => {
     let frame = 0;
@@ -263,12 +283,12 @@ export default function Hero({ heroImages }: { heroImages: HomepageHeroImages })
       className="relative overflow-clip bg-ivory"
     >
       <style>{`
-        .home-editorial-wordmark{box-sizing:border-box;pointer-events:none;position:fixed;left:5vw;top:calc(100svh - clamp(170px,43vw,220px));z-index:40;width:90vw;max-width:90vw;height:clamp(76px,23vw,118px);user-select:none;transition:background-color .24s ease,opacity .28s ease,visibility .28s ease}.home-editorial-wordmark[data-visible="false"]{opacity:0!important;visibility:hidden}@media(min-width:1024px){.home-editorial-wordmark{right:1vw;left:auto;top:45vh;width:56vw;max-width:98vw;height:clamp(102px,9.8vw,178px)}}
+        .home-editorial-wordmark{box-sizing:border-box;pointer-events:none;position:fixed;left:0;top:calc(100svh - clamp(184px,38vw,236px));z-index:40;width:100vw;max-width:100vw;height:clamp(148px,35vw,214px);user-select:none;transition:background-color .24s ease,opacity .28s ease,visibility .28s ease}.home-editorial-wordmark[data-visible="false"]{opacity:0!important;visibility:hidden}@media(min-width:1024px){.home-editorial-wordmark{right:1vw;left:auto;top:45vh;width:56vw;max-width:98vw;height:clamp(102px,9.8vw,178px)}}
       `}</style>
       <motion.div
         ref={wordmarkRef}
         role="img"
-        aria-label="Rosta"
+        aria-label="Rosta Coffee Co"
         className="home-editorial-wordmark"
         data-visible={wordmarkVisible ? "true" : "false"}
         style={{
@@ -292,11 +312,12 @@ export default function Hero({ heroImages }: { heroImages: HomepageHeroImages })
         }}
       />
 
-      {slides.map((slide, index) => (
+      {EDITORIAL_SLIDES.map((slide, index) => (
         <EditorialMedia
-          key={slide.kind === "video" ? slide.src : `image-${index}`}
+          key={slide.kind === "video" ? slide.src : `${slide.kind}-${index}`}
           slide={slide}
           index={index}
+          heroImages={liveHeroImages}
         />
       ))}
     </section>
