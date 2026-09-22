@@ -5,9 +5,9 @@ import { CommerceStatusBadge, SearchShell, type SearchShellSection } from "@ruth
 
 type DemoResult = { id: string; kind: "order" | "customer" | "product"; title: string; description: string; meta?: string; status?: string };
 const results: DemoResult[] = [
-  { id: "order-1042", kind: "order", title: "RUTH-1042", description: "Elif Kaya · ₺2.480", meta: "Bugün", status: "processing" },
+  { id: "order-1042", kind: "order", title: "ROSTA-1042", description: "Elif Kaya · ₺2.480", meta: "Bugün", status: "processing" },
   { id: "customer-elif", kind: "customer", title: "Elif Kaya", description: "elif@example.com", meta: "3 sipariş" },
-  { id: "product-nazar", kind: "product", title: "The Nazar Necklace", description: "925 ayar gümüş", meta: "Stok 18" },
+  { id: "product-espresso-blend", kind: "product", title: "ROSTA Espresso Blend", description: "Arabica + Robusta · Orta-Koyu Kavrum", meta: "Stok 18" },
 ];
 
 export default function SearchShellDemo() {
@@ -21,5 +21,5 @@ export default function SearchShellDemo() {
     renderResult: (item) => <div style={{ display: "flex", justifyContent: "space-between", gap: 16 }}><span><strong>{item.title}</strong><small style={{ display: "block" }}>{item.description}</small></span><span>{item.meta}{item.status ? <CommerceStatusBadge status={item.status} domain="order" /> : null}</span></div>,
     emptyLabel: "Eşleşen kayıt yok.",
   }));
-  return <SearchShell query={query} onQueryChange={setQuery} onSearchSubmit={setQuery} sections={sections} label="Panel genel araması" placeholder="Sipariş, müşteri veya ürün ara" hint="Elif, RUTH veya Nazar yazın." idleDescription="En az iki karakter yazın." />;
+  return <SearchShell query={query} onQueryChange={setQuery} onSearchSubmit={setQuery} sections={sections} label="Panel genel araması" placeholder="Sipariş, müşteri veya ürün ara" hint="Elif, ROSTA veya Espresso yazın." idleDescription="En az iki karakter yazın." />;
 }
