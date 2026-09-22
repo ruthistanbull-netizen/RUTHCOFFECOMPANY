@@ -97,11 +97,11 @@ async function readSiteSettings(): Promise<Record<string, SiteSetting["setting_v
 
 const cachedCollections = unstable_cache(readCollections, ["rosta-live-collections-v1"], {
   revalidate: CACHE_REVALIDATE_SECONDS,
-  tags: ["ruth-collections"],
+  tags: ["rosta-collections"],
 });
 const cachedCategories = unstable_cache(readCategories, ["rosta-live-categories-v1"], {
   revalidate: CACHE_REVALIDATE_SECONDS,
-  tags: ["ruth-categories"],
+  tags: ["rosta-categories"],
 });
 const cachedSiteSettings = unstable_cache(readSiteSettings, ["rosta-public-site-settings-v1"], {
   revalidate: CACHE_REVALIDATE_SECONDS,
