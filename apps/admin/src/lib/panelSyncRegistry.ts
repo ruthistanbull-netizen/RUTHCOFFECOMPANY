@@ -17,7 +17,7 @@ const DEFAULT_SNAPSHOT_AUTHORITY_MS = 30_000;
 
 function snapshotAuthorityMs(scope: string) {
   if (["orders", "payments", "shipping", "returns"].includes(scope)) return 15_000;
-  if (["products", "catalog", "inventory", "customers", "ruthie-points"].includes(scope)) return 30_000;
+  if (["products", "catalog", "inventory", "customers", "rosta-points"].includes(scope)) return 30_000;
   if (["dashboard", "contact", "reviews"].includes(scope)) return 30_000;
   if (["email", "marketing", "theme"].includes(scope)) return 60_000;
   return DEFAULT_SNAPSHOT_AUTHORITY_MS;
@@ -120,7 +120,7 @@ export const PANEL_SYNC_TARGETS: PanelSyncTarget[] = [
   eventTarget("catalog-categories", "/api/catalog-groups?type=category", "catalog", 65),
   eventTarget("catalog-collections", "/api/catalog-groups?type=collection", "catalog", 65),
   eventTarget("discount-campaigns", "/api/discount-campaigns", "marketing", 65),
-  eventTarget("rosta-points", "/api/ruthie-points", "ruthie-points", 75),
+  eventTarget("rosta-points", "/api/rosta-points", "rosta-points", 75),
   eventTarget("email-status", "/api/email/status", "email", 70),
   eventTarget("review-settings", "/api/review-automation/settings", "email", 45),
   eventTarget("abandoned-settings", "/api/email/abandoned-cart/settings", "email", 45),
@@ -142,7 +142,7 @@ function dynamicScope(pathname: string) {
   if (pathname.startsWith("/api/catalog")) return "catalog";
   if (pathname.startsWith("/api/inventory")) return "inventory";
   if (pathname.startsWith("/api/customers") || pathname.startsWith("/api/crm") || pathname.startsWith("/api/members")) return "customers";
-  if (pathname.startsWith("/api/ruthie-points") || pathname.startsWith("/api/loyalty") || pathname.startsWith("/api/rewards")) return "ruthie-points";
+  if (pathname.startsWith("/api/rosta-points") || pathname.startsWith("/api/ruthie-points") || pathname.startsWith("/api/loyalty") || pathname.startsWith("/api/rewards")) return "rosta-points";
   if (pathname.startsWith("/api/email") || pathname.startsWith("/api/review-automation")) return "email";
   if (pathname.startsWith("/api/reviews")) return "reviews";
   if (pathname.startsWith("/api/contact")) return "contact";
