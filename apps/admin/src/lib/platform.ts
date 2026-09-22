@@ -4,13 +4,11 @@ export const ROSTA_PANEL_URL =
 
 export const ROSTA_STORE_URL =
   process.env.NEXT_PUBLIC_STORE_URL ||
-  process.env.STORE_URL ||
   process.env.NEXT_PUBLIC_SITE_URL ||
   "https://rostacoffecompany.zeabur.app";
 
 export const ROSTA_SUPABASE_URL =
   process.env.NEXT_PUBLIC_SUPABASE_URL ||
-  process.env.SUPABASE_URL ||
   "https://fposvxuryzidmeuwytbg.supabase.co";
 
 export const ROSTA_SUPABASE_PUBLISHABLE_KEY =
