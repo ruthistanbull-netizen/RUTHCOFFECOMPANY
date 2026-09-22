@@ -56,7 +56,7 @@ export function InventoryManager(){
       <td><div className="admin-row-actions"><button disabled={saving===row.id} onClick={()=>save(row)}>{saving===row.id?"Kaydediliyor":"Kaydet"}</button><button onClick={()=>archive(row.id)}>Pasifleştir</button></div></td>
     </tr>)}</tbody></table></div>:<div className="admin-empty">Henüz varyant yok. Ürünlerin gramaj / öğütüm / paket seçeneklerini buradan ekleyebilirsin.</div>}
 
-    <AnimatePresence>{draft?<motion.div className="admin-editor-backdrop" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} transition={{duration:.18}} onMouseDown={()=>setDraft(null)}><motion.section className="admin-editor-panel" initial={{x:56,opacity:.98}} animate={{x:0,opacity:1}} exit={{x:72,opacity:0}} transition={{duration:.28,ease:[.32,.72,0,1]}} onMouseDown={e=>e.stopPropagation()}>
+    <AnimatePresence>{draft?<motion.div className="admin-editor-backdrop" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} transition={{duration:.18}} onMouseDown={()=>setDraft(null)}><motion.section className="admin-editor-panel" initial={{y:70,opacity:.98}} animate={{y:0,opacity:1}} exit={{y:70,opacity:0}} transition={{duration:.28,ease:[.32,.72,0,1]}} onMouseDown={e=>e.stopPropagation()}>
       <header><div><p className="admin-kicker">YENİ VARYANT</p><h2>Ürün seçeneği</h2></div><button className="admin-icon-button" onClick={()=>setDraft(null)}><X size={18}/></button></header>
       <div className="admin-form-grid">
         <label className="admin-field admin-field-wide"><span>Ürün</span><select value={draft.product_id} onChange={e=>setDraft({...draft,product_id:e.target.value})}>{products.map(p=><option key={p.id} value={p.id}>{p.name}</option>)}</select></label>
