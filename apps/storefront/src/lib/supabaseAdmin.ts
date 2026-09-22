@@ -37,7 +37,7 @@ function assertValidServerKey(supabaseUrl: string, key: string) {
 
 export function getSupabaseAdmin() {
   const supabaseUrl = normalizeSupabaseUrl(
-    process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || "https://fposvxuryzidmeuwytbg.supabase.co",
   );
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
 
