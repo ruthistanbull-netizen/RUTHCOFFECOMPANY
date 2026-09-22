@@ -1,4 +1,5 @@
 import {
+  Bell,
   BarChart,
   Brush,
   CircleUserRound,
@@ -112,6 +113,7 @@ export const exactNavStructure: ExactNavGroup[] = [
       { label: "Ayarlar", path: "/settings", icon: Settings2, exact: true },
       { label: "Kullanıcılar ve Roller", path: "/settings/users", icon: UserCog },
       { label: "Görünüm", path: "/settings/appearance", icon: Brush },
+      { label: "Bildirimler", path: "/notifications", icon: Bell },
     ],
   },
 ];
