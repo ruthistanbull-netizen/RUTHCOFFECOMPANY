@@ -294,7 +294,7 @@ export function CheckoutClient() {
             draftTokenRef.current = restoredToken;
             setCheckoutDraftToken(restoredToken);
           }
-          // Manuel ödeme linkinde de normal ödeme ekranındaki Ruthie Points ve kupon akışı çalışır.
+          // Manuel ödeme linkinde de normal ödeme ekranındaki kupon akışı çalışır.
           // Taslaktan yalnızca ürün/kargo tabanı alınır; canlı fiyat teklifi kullanıcı oturumuna göre yeniden hesaplanır.
           setPricingQuote({
             subtotal: Number(data.draft?.subtotal || 0),
