@@ -4,7 +4,7 @@ import "@/components/checkout/PaytrOrderResult.success.css";
 
 export const metadata: Metadata = {
   title: "Siparişiniz Tamamlandı",
-  description: "Ruth Istanbul sipariş başarı sayfası.",
+  description: "ROSTA Coffee Co. sipariş başarı sayfası.",
 };
 
 type Props = {
