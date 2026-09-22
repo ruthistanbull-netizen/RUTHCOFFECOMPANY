@@ -146,7 +146,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const { data: adjustment, error: adjustmentError } = await supabase.rpc("adjust_ruthie_points", {
+    const { data: adjustment, error: adjustmentError } = await supabase.rpc("adjust_rosta_points", {
       p_profile_id: data.id,
       p_amount: POINTS,
       p_reason: `${current.claimYear} doğum günü hediyesi`,
