@@ -1,0 +1,84 @@
+/* Shared Ruthie page motion only. The Gradient Orb itself is the untouched
+   UI Capsule source component and is deliberately not styled here. */
+
+@keyframes ruthieExperienceEnter {
+  0% { opacity: 0; transform: scale(.992) translateY(5px); filter: blur(7px); }
+  58% { opacity: 1; filter: blur(0); }
+  100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+}
+
+@keyframes ruthieTopbarEnter {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ruthieMessageEnter {
+  0% { opacity: 0; transform: translate3d(0, 12px, 0) scale(.985); filter: blur(3px); }
+  100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); filter: blur(0); }
+}
+
+@keyframes ruthieComposerEnter {
+  from { opacity: 0; transform: translateY(18px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+section[data-ruthie-experience] {
+  animation: ruthieExperienceEnter .62s cubic-bezier(.18,.82,.18,1) both;
+}
+
+section[data-ruthie-experience] header {
+  animation: ruthieTopbarEnter .5s cubic-bezier(.2,.82,.2,1) .04s both;
+}
+
+section[data-ruthie-experience="chat"] [aria-live="polite"] > div:not(:last-child) {
+  animation: ruthieMessageEnter .38s cubic-bezier(.18,.82,.2,1) both;
+  transform-origin: center bottom;
+}
+
+section[data-ruthie-experience="chat"] textarea {
+  transition: color .2s ease, text-shadow .2s ease, transform .2s ease !important;
+}
+
+section[data-ruthie-experience="chat"] textarea:focus {
+  transform: translateY(-1px);
+  text-shadow: 0 0 20px rgba(184, 137, 255, .12);
+}
+
+section[data-ruthie-experience="chat"] main > div:last-child {
+  animation: ruthieComposerEnter .52s cubic-bezier(.18,.82,.2,1) .08s both;
+}
+
+section[data-ruthie-experience] button:not(:disabled),
+section[data-ruthie-experience] a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 860px) {
+  section[data-ruthie-experience="chat"] [aria-live="polite"] {
+    padding-top: 60px !important;
+  }
+
+  section[data-ruthie-experience="chat"] main > div:last-child {
+    padding-bottom: max(11px, env(safe-area-inset-bottom)) !important;
+  }
+
+  section[data-ruthie-experience="voice"] main > div:last-child {
+    padding-top: 48px;
+  }
+}
+
+@media (max-width: 430px) {
+  section[data-ruthie-experience="chat"] [aria-live="polite"] {
+    padding-top: 54px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  section[data-ruthie-experience],
+  section[data-ruthie-experience] header,
+  section[data-ruthie-experience="chat"] [aria-live="polite"] > div,
+  section[data-ruthie-experience="chat"] main > div:last-child {
+    animation: none !important;
+    transition-duration: .01ms !important;
+  }
+}
