@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
 
-export function AdminAuthGate({ children }: { children: React.ReactNode }) {
+export function AdminAuthGate({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
   const [email, setEmail] = useState("");
@@ -30,17 +30,12 @@ export function AdminAuthGate({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  async function login(event: React.FormEvent) {
+  async function login(event: FormEvent) {
     event.preventDefault();
     setBusy(true);
     setError("");
     try {
       const supabase = getSupabaseBrowser();
-      if (!remember && typeof window !== "undefined") {
-        window.localStorage.setItem("rosta_admin_session_mode", "session");
-      } else if (typeof window !== "undefined") {
-        window.localStorage.setItem("rosta_admin_session_mode", "remember");
-      }
       const { error: loginError } = await supabase.auth.signInWithPassword({ email, password });
       if (loginError) throw loginError;
     } catch (caught) {
