@@ -46,8 +46,8 @@ export function ProductDetailsTabs({
 
   const tabs: Array<{ key: DetailKey; label: string }> = [
     { key: "description", label: "Açıklama" },
-    { key: "material", label: "Materyal" },
-    { key: "size", label: "Ölçü ve Kullanım" },
+    { key: "material", label: "Çekirdek / İçerik" },
+    { key: "size", label: "Paket / Kullanım" },
   ];
 
   const renderContent = () => {
@@ -61,7 +61,7 @@ export function ProductDetailsTabs({
           <Copy text={material || "Materyal bilgisi ürün bazında değişebilir."} />
           <div className={styles.subsection}>
             <span>Bakım</span>
-            <Copy text={care || "Ürüne özel saklama ve kullanım bilgilerini ürün açıklamasından takip edin."} />
+            <Copy text={care || "Paketi serin, kuru ve güneş almayan yerde saklayın."} />
           </div>
         </div>
       );
@@ -70,7 +70,7 @@ export function ProductDetailsTabs({
     if (active === "size") {
       return (
         <div className={styles.copy}>
-          <Copy text={sizeUsage || "Ürüne özel kullanım bilgisi."} />
+          <Copy text={sizeUsage || "Paket, öğütüm ve kullanım bilgisi ürün bazında değişebilir."} />
         </div>
       );
     }
