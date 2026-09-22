@@ -308,7 +308,7 @@ function hashRequest(value: NormalizedRequest) {
 }
 
 function quoteSecret(apiKey: string) {
-  return process.env.RUTHIE_IMAGE_QUOTE_SECRET?.trim() || apiKey;
+  return process.env.ROSTA_INSIGHT_IMAGE_QUOTE_SECRET?.trim() || process.env.RUTHIE_IMAGE_QUOTE_SECRET?.trim() || apiKey;
 }
 
 function signQuote(payload: QuotePayload, apiKey: string) {
@@ -390,7 +390,7 @@ function purposeGuidance(purpose: string) {
       "Kullanım amacı Meta performans reklamıdır. İlk bakışta ürünü ve faydayı anlatan, dönüşüm odaklı güçlü bir reklam kreatifi üret.",
       "Kompozisyonu feed ve Reels/Stories kırpmasına dayanıklı kur; ürün ile ana mesajı orta güvenli bölgede tut ve küçük ekranda bile okunurluğu koru.",
       "Uygunsa kısa ve yüksek kontrastlı Türkçe reklam başlığı ekle; çok kısa bir CTA olarak 'Şimdi Keşfet' veya 'İncele' benzeri ifade kullanılabilir. Kullanıcı tarafından verilmemiş fiyat, indirim oranı, stok aciliyeti, ücretsiz kargo veya son tarih gibi ticari iddiaları kesinlikle uydurma.",
-      "Reklam metni ürünün önüne geçmesin; takı ana kahraman kalsın. Metni birkaç kelimeyle sınırlı tut ve tipografiyi premium marka estetiğinde tasarla.",
+      "Reklam metni ürünün önüne geçmesin; kahve ürünü, ambalaj veya fincan ana kahraman kalsın. Metni birkaç kelimeyle sınırlı tut ve tipografiyi premium ROSTA marka estetiğinde tasarla.",
     ];
   }
   return [];
@@ -409,15 +409,18 @@ function buildFinalPrompt(request: NormalizedRequest, products: ProductRow[]) {
   ].filter(Boolean);
 
   const productParts = products.map((product, index) => {
-    const details = [product.material, product.finish_color].filter(Boolean).join(", ");
+    const details = [
+      product.material && `Çekirdek / tür: ${product.material}`,
+      product.finish_color && `Kavrum: ${product.finish_color}`,
+    ].filter(Boolean).join(" · ");
     return `Referans ${index + 1}: ${product.name || `Ürün ${index + 1}`}${details ? ` (${details})` : ""}`;
   });
 
   return [
-    "Ruth Istanbul için premium, foto-gerçekçi bir takı görseli oluştur.",
+    "ROSTA Coffee Co. için premium, foto-gerçekçi bir kahve ürün görseli oluştur.",
     products.length
-      ? "Eklenen referans görseller seçili katalog ürünleridir. Her ürünün gerçek tasarımını, siluetini, taşlarını, metal rengini, oranlarını, yüzey dokusunu ve ayırt edici detaylarını mümkün olan en yüksek sadakatle koru. Ürünleri başka tasarımlarla değiştirme, yeni taş/aksesuar ekleme ve seçilen hiçbir ürünü atlama. Birden fazla referans varsa hepsini nihai kompozisyona dahil et."
-      : "Takıların oranlarını ve malzeme gerçekçiliğini koru; premium ticari fotoğraf kalitesi hedefle.",
+      ? "Eklenen referans görseller seçili ROSTA katalog ürünleridir. Paket biçimini, ROSTA logosunu, etiket yerleşimini, ürün adını, ambalaj renklerini, oranları ve ayırt edici tasarım detaylarını mümkün olan en yüksek sadakatle koru. Referans ürünün marka kimliğini başka bir tasarımla değiştirme; etikete yeni fiyat, indirim, sertifika, menşei veya ürün iddiası uydurma. Birden fazla referans varsa seçilen hiçbir ürünü atlama ve hepsini nihai kompozisyona dahil et."
+      : "Kahve çekirdeği, öğütülmüş kahve, fincan, crema ve ambalaj materyallerinde fiziksel gerçekçiliği koru; premium ticari fotoğraf kalitesi hedefle.",
     ...productParts,
     ...styleParts,
     ...purposeGuidance(request.style.purpose),
