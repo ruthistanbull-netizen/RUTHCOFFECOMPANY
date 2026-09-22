@@ -284,6 +284,22 @@ export default function Hero({
     };
   }, []);
 
+  const slides: EditorialSlide[] = [
+    { kind: "hero-image", alt: "Rosta Coffee Co ana sayfa görseli", priority: true },
+    {
+      kind: "video",
+      src: editorialVideo || "/home/rosta-under-hero-video.mp4",
+      label: "Rosta Coffee Co kahve hazırlama videosu",
+    },
+    {
+      kind: "image",
+      desktopSrc: editorialImage || "/home/rosta-under-hero-photo.jpg",
+      mobileSrc: editorialImage || "/home/rosta-under-hero-photo.jpg",
+      alt: "Rosta Coffee Co kahve hazırlama editoryali",
+      priority: false,
+    },
+  ];
+
   return (
     <section
       ref={sectionRef}
@@ -321,7 +337,7 @@ export default function Hero({
         }}
       />
 
-      {EDITORIAL_SLIDES.map((slide, index) => (
+      {slides.map((slide, index) => (
         <EditorialMedia
           key={`${slide.kind}-${index}`}
           slide={slide}
