@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Plus, Save, X } from "lucide-react";
 import { adminRequest } from "@/lib/adminApi";
+import { MediaUploadButton } from "@/components/MediaUploadButton";
 
 type Product = {
   id?: string; name:string; slug:string; status:string; price:number|string; compare_at_price?:number|string|null;
@@ -107,7 +108,7 @@ export function ProductManager(){
         <label className="admin-check"><input type="checkbox" checked={Boolean(draft.is_featured)} onChange={e=>setDraft({...draft,is_featured:e.target.checked})}/><span>Öne çıkan ürün</span></label>
         <label className="admin-check"><input type="checkbox" checked={Boolean(draft.is_new)} onChange={e=>setDraft({...draft,is_new:e.target.checked})}/><span>Yeni ürün</span></label>
 
-        {draft.id?<label className="admin-field admin-field-wide"><span>Ürün görselleri · her satıra bir URL</span><textarea rows={7} value={imageLines} onChange={e=>setImageLines(e.target.value)} placeholder="https://.../image-1.webp\nhttps://.../image-2.webp"/></label>:null}
+        {draft.id?<div className="admin-field admin-field-wide"><span>Ürün görselleri · her satıra bir URL</span><textarea rows={7} value={imageLines} onChange={e=>setImageLines(e.target.value)} placeholder="https://.../image-1.webp\nhttps://.../image-2.webp"/><MediaUploadButton folder={`products/${draft.id}`} label="Ürün Görseli Yükle" accept="image/*" onUploaded={(url)=>setImageLines(current=>current.trim()?`${current.trim()}\n${url}`:url)}/></div>:null}
 
         {draft.id && !detail?<div className="admin-detail-loading">Katalog ilişkileri yükleniyor…</div>:null}
         {draft.id && detail?<div className="admin-field admin-field-wide"><span>Kategoriler</span><div className="admin-chip-grid">{detail.categories.map(item=><button type="button" key={item.id} className={detail.categoryIds.includes(String(item.id))?"admin-chip is-active":"admin-chip"} onClick={()=>toggleId("categoryIds",String(item.id))}>{item.name}</button>)}</div></div>:null}
