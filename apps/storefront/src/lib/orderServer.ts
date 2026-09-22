@@ -38,7 +38,7 @@ export type CheckoutAttributionInput = {
   referrer?: string; landing_page?: string; started_at?: string;
 };
 
-const RUTH_POINTS_PER_TL = 10;
+const ROSTA_POINTS_PER_TL = 10;
 const ROSTA_MAX_POINTS = 10000;
 
 type NormalizedCustomer = Required<
@@ -475,9 +475,9 @@ async function calculateCheckoutPricing({
 
   const requestedSafePoints = Math.max(0, Math.floor(Number(requestedRewardPoints || 0)));
   const rewardPointsUsed = Math.min(requestedSafePoints, rewardPointsAvailable);
-  const maxRewardDiscount = Math.floor(rewardPointsUsed / RUTH_POINTS_PER_TL);
+  const maxRewardDiscount = Math.floor(rewardPointsUsed / ROSTA_POINTS_PER_TL);
   const rewardDiscountTotal = Number(Math.min(afterAutomatic, normalizeDiscount(requestedRewardDiscount), maxRewardDiscount).toFixed(2));
-  const actuallyUsedRewardPoints = Math.min(rewardPointsUsed, Math.round(rewardDiscountTotal * RUTH_POINTS_PER_TL));
+  const actuallyUsedRewardPoints = Math.min(rewardPointsUsed, Math.round(rewardDiscountTotal * ROSTA_POINTS_PER_TL));
   const afterRewards = Math.max(0, afterAutomatic - rewardDiscountTotal);
 
   let couponDiscountTotal = 0;
@@ -1034,7 +1034,7 @@ async function synchronizePaidOrderSideEffects({
   if (draft.profile_id) {
     const pointsUsed = Math.max(
       0,
-      Math.floor(Number(draft.reward_points_used || Number(draft.reward_discount_total || 0) * RUTH_POINTS_PER_TL)),
+      Math.floor(Number(draft.reward_points_used || Number(draft.reward_discount_total || 0) * ROSTA_POINTS_PER_TL)),
     );
     if (pointsUsed > 0) {
       const { error: spentPointsError } = await supabase.rpc("adjust_rosta_points", {
