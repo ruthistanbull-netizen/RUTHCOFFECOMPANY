@@ -24,8 +24,8 @@ type StrictOptions = Parameters<typeof useRuthieRealtimeVisionStrict>[0];
 
 const VOICE_PROFILE_GUIDE = [
   RUTHIE_VOICE_ANALYSIS_GUIDE,
-  "Kullanıcı ilk tanıtımında 'Ben Görkem'im' veya 'Ben Enes'im' derse bunu ses profili tanıtımı olarak kabul et. Mevcut oturum kimliğiyle çelişmiyorsa kısa biçimde tanıdığını söyle.",
-  "Ses analizinin ana amacı yalnız kişiyi ayırmak değildir; normal Türkçe konuşmayı, hızını, telaffuzunu ve özel terimleri daha rahat anlayarak yanlış anlamayı azaltmaktır.",
+  "Kullanıcı kendini adıyla tanıtırsa bunu yalnız ses profili kişiselleştirmesi olarak değerlendir. Aktif oturum profilindeki kimlikle çelişiyorsa yetki veya kimlik değişikliği yapma.",
+  "Ses analizinin amacı normal Türkçe konuşmayı, hızını, telaffuzunu ve ROSTA operasyon terimlerini daha rahat anlayarak yanlış anlamayı azaltmaktır.",
   "Ses analizinin yüzde veya durumunu sorarsa aşağıdaki canlı profil değerini aynen kullan.",
 ].join("\n");
 
