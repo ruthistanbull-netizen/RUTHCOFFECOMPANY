@@ -33,7 +33,7 @@ import {
 } from "react";
 import { Pressable, useOverlayBehavior } from "@ruth-commerce/ui";
 import { adminAuthHeaders } from "@/lib/adminApi";
-import { RuthieBrandIcon } from "@/components/RuthieBrandIcon";
+import { RuthieBrandIcon } from "@/components/ROSTA InsightBrandIcon";
 import { ExactIconButton } from "./primitives";
 
 export type RuthieInsightAutoPrompt = {
@@ -377,7 +377,7 @@ export function ExactRuthieInsightPopup({
     void (async () => {
       try {
         const headers = await adminAuthHeaders();
-        const response = await fetch("/api/ruthie/openai/status", { headers, cache: "no-store" });
+        const response = await fetch("/api/rosta-insight/openai/status", { headers, cache: "no-store" });
         const payload = await response.json().catch(() => null) as ProviderStatus | null;
         if (cancelled) return;
         const ready = Boolean(response.ok && payload?.ok && payload.configured && payload.capabilities?.chat);
@@ -553,7 +553,7 @@ export function ExactRuthieInsightPopup({
 
     try {
       const headers = await adminAuthHeaders();
-      const response = await fetch("/api/ruthie/openai/chat", {
+      const response = await fetch("/api/rosta-insight/openai/chat", {
         method: "POST",
         cache: "no-store",
         headers: { ...headers, "Content-Type": "application/json", "x-correlation-id": correlationId() },
@@ -591,7 +591,7 @@ export function ExactRuthieInsightPopup({
     setImageError(null);
     try {
       const headers = await adminAuthHeaders();
-      const response = await fetch("/api/ruthie/openai/image-v3", {
+      const response = await fetch("/api/rosta-insight/openai/image-v3", {
         method: "POST",
         cache: "no-store",
         headers: { ...headers, "Content-Type": "application/json" },
@@ -615,7 +615,7 @@ export function ExactRuthieInsightPopup({
     setImageError(null);
     try {
       const headers = await adminAuthHeaders();
-      const response = await fetch("/api/ruthie/openai/image-v3", {
+      const response = await fetch("/api/rosta-insight/openai/image-v3", {
         method: "POST",
         cache: "no-store",
         headers: { ...headers, "Content-Type": "application/json" },
@@ -824,7 +824,7 @@ export function ExactRuthieInsightPopup({
                       <motion.div key={`${message.role}-${index}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
                         <div className={message.role === "user" ? "max-w-[88%] rounded-[18px] rounded-br-[6px] bg-accent px-3.5 py-2.5 text-sm leading-relaxed text-accent-foreground" : "max-w-[92%] rounded-[18px] rounded-bl-[6px] bg-surface-secondary px-3.5 py-2.5 text-sm leading-relaxed text-main"}>
                           {message.role === "assistant" ? <div className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold text-accent"><RuthieBrandIcon size={13} /> Ruthie</div> : null}
-                          {message.imageDataUrl ? <motion.img src={message.imageDataUrl} alt="Ruthie tarafından üretilen fotoğraf" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} className="mb-2 max-h-[360px] w-auto max-w-full rounded-xl object-contain" /> : null}
+                          {message.imageDataUrl ? <motion.img src={message.imageDataUrl} alt="ROSTA Insight tarafından üretilen fotoğraf" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} className="mb-2 max-h-[360px] w-auto max-w-full rounded-xl object-contain" /> : null}
                           <p className="whitespace-pre-wrap">{message.text}</p>
                           {message.attachmentNames?.length ? <div className="mt-2 flex flex-wrap gap-1">{message.attachmentNames.map((name) => <span key={name} className="rounded-full bg-black/10 px-2 py-1 text-[9px]">{name}</span>)}</div> : null}
                         </div>
