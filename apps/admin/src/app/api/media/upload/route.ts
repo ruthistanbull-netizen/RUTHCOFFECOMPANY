@@ -4,8 +4,8 @@ import { requireAdmin } from "@/lib/auth";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const MAX_FILE_SIZE = 15 * 1024 * 1024;
-const ALLOWED = new Set(["image/jpeg","image/png","image/webp","image/avif","video/mp4","video/webm"]);
+const MAX_FILE_SIZE = 60 * 1024 * 1024;
+const ALLOWED = new Set(["image/jpeg","image/png","image/webp","image/avif","video/mp4","video/webm","video/quicktime"]);
 
 function safeName(value: string) {
   return value.toLocaleLowerCase("tr-TR")
@@ -22,7 +22,7 @@ export async function POST(request: Request) {
   const folder = safeName(String(form?.get("folder") || "uploads"));
   if (!(file instanceof File)) return NextResponse.json({ ok:false, error:"Dosya bulunamadı." }, { status:400 });
   if (!ALLOWED.has(file.type)) return NextResponse.json({ ok:false, error:"Desteklenmeyen dosya türü." }, { status:400 });
-  if (file.size <= 0 || file.size > MAX_FILE_SIZE) return NextResponse.json({ ok:false, error:"Dosya en fazla 15 MB olabilir." }, { status:400 });
+  if (file.size <= 0 || file.size > MAX_FILE_SIZE) return NextResponse.json({ ok:false, error:"Dosya en fazla 60 MB olabilir." }, { status:400 });
 
   const ext = safeName(file.name.split(".").pop() || (file.type.startsWith("video/") ? "mp4" : "webp"));
   const base = safeName(file.name.replace(/\.[^.]+$/, ""));
