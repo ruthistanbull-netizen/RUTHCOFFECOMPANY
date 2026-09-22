@@ -1,6 +1,5 @@
 import crypto from "node:crypto";
 import { NextResponse } from "next/server";
-import { generatedProducts } from "@/data/generated-products";
 import { normalizePhone } from "@/lib/phone";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 
@@ -33,44 +32,6 @@ function clientIp(request: Request) {
 function rateHash(request: Request, orderNo: string) {
   const salt = process.env.ORDER_TRACKING_RATE_LIMIT_SALT || "ruth-order-tracking-v1";
   return crypto.createHash("sha256").update(`${salt}|${clientIp(request)}|${orderNo.toLocaleUpperCase("tr-TR")}`).digest("hex");
-}
-
-function key(value: unknown) {
-  return clean(value)
-    .toLocaleLowerCase("tr-TR")
-    .replace(/ğ/g, "g")
-    .replace(/ü/g, "u")
-    .replace(/ş/g, "s")
-    .replace(/ı/g, "i")
-    .replace(/ö/g, "o")
-    .replace(/ç/g, "c")
-    .replace(/â/g, "a")
-    .replace(/û/g, "u")
-    .replace(/î/g, "i")
-    .replace(/[^a-z0-9]+/g, "");
-}
-
-function localProductImage(slug?: unknown, name?: unknown) {
-  const slugKey = key(slug);
-  const nameKey = key(name);
-  const products = generatedProducts
-    .map((product) => ({
-      slugKey: key(product.slug),
-      nameKey: key(product.name),
-      image: product.main_image_url || product.image_urls?.find(Boolean) || null,
-    }))
-    .filter((product) => product.image)
-    .sort((a, b) => Math.max(b.slugKey.length, b.nameKey.length) - Math.max(a.slugKey.length, a.nameKey.length));
-
-  const direct = products.find((product) => product.slugKey === slugKey || product.nameKey === nameKey);
-  if (direct?.image) return direct.image;
-
-  const fuzzy = products.find((product) => Boolean(
-    (slugKey && product.slugKey && (slugKey.includes(product.slugKey) || product.slugKey.includes(slugKey))) ||
-    (nameKey && product.nameKey && (nameKey.includes(product.nameKey) || product.nameKey.includes(nameKey))),
-  ));
-
-  return fuzzy?.image || null;
 }
 
 function orderStatusLabel(status: string | null | undefined) {
@@ -137,7 +98,7 @@ async function attachItemImages(supabase: ReturnType<typeof getSupabaseAdmin>, i
   if (productIds.length > 0) {
     const { data: products } = await supabase.from("products").select("id, slug, name, main_image_url").in("id", productIds);
     for (const product of products || []) {
-      const image = product.main_image_url || localProductImage(product.slug, product.name);
+      const image = product.main_image_url || null;
       if (product.id && image) productImageById.set(String(product.id), image);
     }
   }
@@ -148,7 +109,6 @@ async function attachItemImages(supabase: ReturnType<typeof getSupabaseAdmin>, i
       item.image_url ||
       (item.variant_id ? variantImageById.get(String(item.variant_id)) : null) ||
       (item.product_id ? productImageById.get(String(item.product_id)) : null) ||
-      localProductImage(item.product_slug, item.product_name) ||
       null,
   }));
 }
