@@ -158,6 +158,11 @@ export default async function RootLayout({
     "--ruth-color-focus": "#B9563D",
     "--ruth-color-overlay": "rgba(17, 17, 17, 0.44)",
     "--ruth-color-text-inverse": "#F4F0E8",
+    "--home-editorial-inset-x-mobile": `${themeSettings.homepageLayout.secondaryInsetXMobile}vw`,
+    "--home-editorial-inset-y-mobile": `${themeSettings.homepageLayout.secondaryInsetYMobile}svh`,
+    "--home-editorial-inset-x-desktop": `${themeSettings.homepageLayout.secondaryInsetXDesktop}vw`,
+    "--home-editorial-inset-top-desktop": `${themeSettings.homepageLayout.secondaryInsetTopDesktop}px`,
+    "--home-editorial-inset-bottom-desktop": `${themeSettings.homepageLayout.secondaryInsetBottomDesktop}px`,
     "--announcement-height": themeSettings.announcement.enabled ? "34px" : "0px",
   } as React.CSSProperties;
 
