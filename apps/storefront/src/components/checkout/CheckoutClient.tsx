@@ -2,22 +2,12 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { ChevronDown, CreditCard, RefreshCw, Shield, ShoppingBag, Truck } from "lucide-react";
+import { CreditCard, RefreshCw, Shield, ShoppingBag, Truck } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { formatPrice } from "@/lib/formatPrice";
 import { useCart } from "@/components/cart/CartProvider";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { getRuthAttribution, trackRuthEvent } from "@/components/analytics/SiteAnalytics";
-import {
-  RUTHIE_POINTS_UPDATED_EVENT,
-  RUTHIE_WELCOME_POINTS,
-  calculateRuthiePoints,
-  grantRuthieWelcomePoints,
-  pointsToLira,
-  makeRuthieOrderRewardKey,
-  pointsForOrderTotal,
-  savePendingRuthieOrderReward,
-} from "@/lib/rewards";
 
 type CheckoutForm = {
   fullName: string;
@@ -76,7 +66,7 @@ const initialForm: CheckoutForm = {
   note: "",
 };
 
-const CHECKOUT_DRAFT_TOKEN_KEY = "ruth-checkout-draft-token";
+const CHECKOUT_DRAFT_TOKEN_KEY = "rosta-checkout-draft-token";
 
 type CardForm = {
   ccOwner: string;
@@ -200,9 +190,6 @@ export function CheckoutClient() {
   const [cardOptionsMessage, setCardOptionsMessage] = useState<string | null>(null);
   const [paytrTestMode, setPaytrTestMode] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [useRuthiePoints, setUseRuthiePoints] = useState(true);
-  const [requestedRuthiePoints, setRequestedRuthiePoints] = useState(0);
-  const [isRuthiePointsOpen, setIsRuthiePointsOpen] = useState(false);
   const [availableDiscounts, setAvailableDiscounts] = useState<AccountDiscount[]>([]);
   const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discountPercent?: number; title?: string } | null>(null);
   const [couponInput, setCouponInput] = useState("");
@@ -210,9 +197,6 @@ export function CheckoutClient() {
   const [couponLoading, setCouponLoading] = useState(false);
   const [quoteLoading, setQuoteLoading] = useState(false);
   const [pricingQuote, setPricingQuote] = useState<PricingQuote | null>(null);
-  const [rewardRefreshKey, setRewardRefreshKey] = useState(0);
-  const [birthdayPoints, setBirthdayPoints] = useState(0);
-  const [serverRewardPoints, setServerRewardPoints] = useState<number | null>(null);
   const [checkoutStep, setCheckoutStep] = useState<1 | 2 | 3>(openPaymentDirectly ? 3 : 1);
   const [draftLoaded, setDraftLoaded] = useState(false);
   const [draftNotice, setDraftNotice] = useState<string | null>(null);
@@ -268,23 +252,6 @@ export function CheckoutClient() {
     ensureCheckoutDraftToken();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    if (!user) return;
-    grantRuthieWelcomePoints();
-    setRewardRefreshKey((current) => current + 1);
-  }, [user]);
-
-  useEffect(() => {
-    const refresh = () => setRewardRefreshKey((current) => current + 1);
-    window.addEventListener(RUTHIE_POINTS_UPDATED_EVENT, refresh);
-    window.addEventListener("storage", refresh);
-    return () => {
-      window.removeEventListener(RUTHIE_POINTS_UPDATED_EVENT, refresh);
-      window.removeEventListener("storage", refresh);
-    };
-  }, []);
-
 
   useEffect(() => {
     if (!isReady || !draftToken || draftLoaded) return;
@@ -552,56 +519,17 @@ export function CheckoutClient() {
     };
   }, [session?.access_token]);
 
-  useEffect(() => {
-    if (!session?.access_token) {
-      setBirthdayPoints(0);
-      setServerRewardPoints(null);
-      return;
-    }
-
-    Promise.all([
-      fetch("/api/rewards/birthday", { headers: { Authorization: `Bearer ${session.access_token}` }, cache: "no-store" }).then((response) => response.json()),
-      fetch("/api/rewards/balance", { headers: { Authorization: `Bearer ${session.access_token}` }, cache: "no-store" }).then((response) => response.json()),
-    ])
-      .then(([birthdayData, balanceData]) => {
-        if (birthdayData?.ok) {
-          setBirthdayPoints(Number(birthdayData.birthdayPoints || 0));
-          if (Number.isFinite(Number(birthdayData.rewardPointsBalance))) {
-            setServerRewardPoints(Math.max(0, Math.floor(Number(birthdayData.rewardPointsBalance))));
-          }
-        }
-        if (balanceData?.ok) {
-          setServerRewardPoints(Math.max(0, Math.floor(Number(balanceData.points || 0))));
-        }
-      })
-      .catch(() => undefined);
-  }, [session?.access_token, rewardRefreshKey]);
-
-  const rewardSummary = calculateRuthiePoints({ isLoggedIn: Boolean(user), birthdayPoints });
-  void rewardRefreshKey;
-  const maxRuthiePointsForCheckout = user
-    ? Math.max(0, Math.floor(serverRewardPoints ?? rewardSummary.totalPoints))
-    : 0;
-  const ruthiePointOptions = Array.from(
-    { length: Math.max(0, Math.floor(maxRuthiePointsForCheckout / 500)) },
-    (_, index) => (index + 1) * 500,
-  );
-  const selectedRuthiePoints = user && useRuthiePoints
-    ? Math.min(maxRuthiePointsForCheckout, Math.max(0, Math.floor(Number(requestedRuthiePoints || 0))))
-    : 0;
-  const localRuthPointDiscount = Math.min(subtotal, pointsToLira(selectedRuthiePoints));
-  const localCouponBase = Math.max(0, subtotal - localRuthPointDiscount);
   const localCouponDiscount = appliedCoupon?.discountPercent
-    ? Number(((localCouponBase * appliedCoupon.discountPercent) / 100).toFixed(2))
+    ? Number(((subtotal * appliedCoupon.discountPercent) / 100).toFixed(2))
     : 0;
   const quoteSubtotal = Number(pricingQuote?.subtotal ?? subtotal);
   const automaticDiscount = Number(pricingQuote?.automaticDiscountTotal || 0);
-  const ruthPointDiscount = Number(pricingQuote?.rewardDiscountTotal ?? localRuthPointDiscount);
+  const ruthPointDiscount = 0;
   const couponDiscount = Number(pricingQuote?.couponDiscountTotal ?? localCouponDiscount);
   const shippingFee = Number(pricingQuote?.shippingFee || 0);
   const baseShippingFee = Number(pricingQuote?.baseShippingFee || 0);
-  const totalDiscount = Number(pricingQuote?.discountTotal ?? (automaticDiscount + ruthPointDiscount + couponDiscount));
-  const checkoutTotal = Number(pricingQuote?.totalAmount ?? Math.max(0, subtotal - localRuthPointDiscount - localCouponDiscount));
+  const totalDiscount = Number(pricingQuote?.discountTotal ?? (automaticDiscount + couponDiscount));
+  const checkoutTotal = Number(pricingQuote?.totalAmount ?? Math.max(0, subtotal - localCouponDiscount));
   const selectedInstallmentOption = installmentOptions.find((option) => option.count === selectedInstallment) || null;
   const installmentRate = selectedInstallmentOption?.rate || 0;
   const installmentTotal = selectedInstallment > 0
@@ -612,7 +540,7 @@ export function CheckoutClient() {
     ? Number((installmentTotal / selectedInstallment).toFixed(2))
     : installmentTotal;
   const normalCheckoutTotal = Number((quoteSubtotal + baseShippingFee).toFixed(2));
-  const ruthPointsToUse = selectedRuthiePoints;
+  const ruthPointsToUse = 0;
   const cartQuoteSignature = useMemo(
     () => JSON.stringify(items.map((item) => ({ key: item.key, slug: item.slug, quantity: item.quantity }))),
     [items],
@@ -623,12 +551,12 @@ export function CheckoutClient() {
         cart: cartQuoteSignature,
         customer: form,
         coupon: appliedCoupon?.code || null,
-        points: ruthPointsToUse,
+        points: 0,
         total: installmentTotal,
         installment: selectedInstallment,
         installmentRate,
       }),
-    [appliedCoupon?.code, cartQuoteSignature, form, installmentRate, installmentTotal, ruthPointsToUse, selectedInstallment],
+    [appliedCoupon?.code, cartQuoteSignature, form, installmentRate, installmentTotal, selectedInstallment],
   );
 
   useEffect(() => {
@@ -693,26 +621,6 @@ export function CheckoutClient() {
   }, [cardForm.cardNumber, checkoutStep]);
 
   useEffect(() => {
-    if (!user || maxRuthiePointsForCheckout <= 0) {
-      setRequestedRuthiePoints(0);
-      setUseRuthiePoints(false);
-      return;
-    }
-
-    setRequestedRuthiePoints((current) => Math.min(Math.max(0, Math.floor(Number(current || 0))), maxRuthiePointsForCheckout));
-  }, [maxRuthiePointsForCheckout, user]);
-
-  const selectRuthiePointAmount = (amount: number) => {
-    const safeAmount = Math.min(maxRuthiePointsForCheckout, Math.max(0, Math.floor(Number(amount || 0))));
-    setUseRuthiePoints(safeAmount > 0);
-    setRequestedRuthiePoints(safeAmount);
-  };
-
-  const useAllRuthiePoints = () => {
-    selectRuthiePointAmount(maxRuthiePointsForCheckout);
-  };
-
-  useEffect(() => {
     if (!session?.access_token) {
       setAvailableDiscounts([]);
       setAppliedCoupon(null);
@@ -757,9 +665,9 @@ export function CheckoutClient() {
         couponCode: code || null,
         customerEmail: form.email || user?.email || null,
         rewards: {
-          useRuthPoints: Boolean(user && useRuthiePoints),
-          requestedDiscount: localRuthPointDiscount,
-          pointsUsed: selectedRuthiePoints,
+          useRuthPoints: false,
+          requestedDiscount: 0,
+          pointsUsed: 0,
         },
         draftToken: openPaymentDirectly ? draftToken : null,
       }),
@@ -767,9 +675,6 @@ export function CheckoutClient() {
     const data = await response.json();
     if (!response.ok || !data.ok) throw new Error(data.error || "İndirim hesaplanamadı.");
     setPricingQuote(data.quote as PricingQuote);
-    if (Number.isFinite(Number(data.quote?.rewardPointsAvailable))) {
-      setServerRewardPoints(Math.max(0, Math.floor(Number(data.quote.rewardPointsAvailable))));
-    }
     if (showMessage && code) {
       const saved = Number(data.quote?.couponDiscountTotal || 0);
       const shippingText = data.quote?.freeShipping ? " ve ücretsiz kargo" : "";
@@ -803,7 +708,7 @@ export function CheckoutClient() {
     };
     // cartQuoteSignature sepet içeriğinin stabil özetidir.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cartQuoteSignature, appliedCoupon?.code, selectedRuthiePoints, useRuthiePoints, session?.access_token, form.email, isReady, openPaymentDirectly]);
+  }, [cartQuoteSignature, appliedCoupon?.code, session?.access_token, form.email, isReady, openPaymentDirectly]);
 
   const selectAccountDiscount = async (discount: AccountDiscount) => {
     try {
@@ -988,9 +893,9 @@ export function CheckoutClient() {
             quantity: item.quantity,
           })),
           rewards: {
-            useRuthPoints: Boolean(user && useRuthiePoints),
-            requestedDiscount: ruthPointDiscount,
-            pointsUsed: ruthPointsToUse,
+            useRuthPoints: false,
+            requestedDiscount: 0,
+            pointsUsed: 0,
           },
           coupon: appliedCoupon ? { code: appliedCoupon.code } : null,
           attribution: getRuthAttribution(),
@@ -1009,17 +914,6 @@ export function CheckoutClient() {
         window.localStorage.setItem(CHECKOUT_DRAFT_TOKEN_KEY, data.resumeToken);
         draftTokenRef.current = data.resumeToken;
         setCheckoutDraftToken(data.resumeToken);
-      }
-
-      if (user) {
-        const orderKey = makeRuthieOrderRewardKey(data.orderNo || draftTokenRef.current || checkoutDraftToken);
-        savePendingRuthieOrderReward({
-          orderKey,
-          orderNo: data.orderNo || null,
-          totalAmount: installmentTotal,
-          pointsToEarn: pointsForOrderTotal(checkoutTotal),
-          pointsUsed: ruthPointsToUse,
-        });
       }
 
       const prepared: DirectPayment = {
@@ -1125,12 +1019,7 @@ export function CheckoutClient() {
             {openPaymentDirectly
               ? "Ürünlerini ve teslimat bilgilerini kontrol et, ardından kart bilgilerini girerek ödemeyi tamamla."
               : (
-                <>
-                  Teslimat bilgilerini tamamla, ardından kart bilgilerini girerek siparişini tamamla.
-                  {user
-                    ? " Giriş yaptığın için Ruthie Points indirimin ödeme adımında aktif olabilir."
-                    : " Üye olmadan da sipariş verebilirsin; Ruthie Points kullanmak için giriş yap."}
-                </>
+                <>Teslimat bilgilerini tamamla, ardından kart bilgilerini girerek siparişini tamamla.</>
               )}
           </p>
         </div>
@@ -1577,93 +1466,6 @@ export function CheckoutClient() {
                 </div>
 
                 <>
-                <div className="rounded-xl border border-gold/15 bg-ivory text-sm">
-                  {user ? (
-                    <>
-                      <button
-                        type="button"
-                        onClick={() => setIsRuthiePointsOpen((current) => !current)}
-                        className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left transition hover:bg-cream/70"
-                        aria-expanded={isRuthiePointsOpen}
-                      >
-                        <span>
-                          <span className="block font-heading text-sm text-ink">Ruthie Points Kullan</span>
-                          <span className="mt-1 block text-xs leading-5 text-muted-ruth">
-                            Hesabında {maxRuthiePointsForCheckout.toLocaleString("tr-TR")} Ruthie Points var.
-                          </span>
-                          {selectedRuthiePoints > 0 && (
-                            <span className="mt-1 block text-xs font-medium text-gold-dark">
-                              Seçilen: {selectedRuthiePoints.toLocaleString("tr-TR")} Points · -{formatPrice(ruthPointDiscount, "TRY")}
-                            </span>
-                          )}
-                        </span>
-                        <ChevronDown
-                          size={18}
-                          className={`shrink-0 text-gold-dark transition-transform duration-300 ${isRuthiePointsOpen ? "rotate-180" : ""}`}
-                        />
-                      </button>
-
-                      {isRuthiePointsOpen && (
-                        <div className="border-t border-gold/10 px-4 pb-4 pt-3">
-                          {maxRuthiePointsForCheckout > 0 ? (
-                            <div>
-                              <p className="text-xs leading-5 text-muted-ruth">
-                                Kullanmak istediğin puanı seç. Hepsini kullan dediğinde hesabındaki kullanılabilir puanın tamamı uygulanır.
-                              </p>
-                              <div className="mt-3 grid gap-2">
-                                <button
-                                  type="button"
-                                  onClick={() => selectRuthiePointAmount(0)}
-                                  className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs transition ${selectedRuthiePoints === 0 ? "border-gold-dark bg-cream text-ink" : "border-gold/15 bg-white text-ink hover:border-gold-dark"}`}
-                                >
-                                  <span>Puan kullanma</span>
-                                  <span>0 TL</span>
-                                </button>
-                                {ruthiePointOptions.map((amount) => {
-                                  const selected = useRuthiePoints && selectedRuthiePoints === amount;
-                                  return (
-                                    <button
-                                      key={amount}
-                                      type="button"
-                                      onClick={() => selectRuthiePointAmount(amount)}
-                                      className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs transition ${selected ? "border-gold-dark bg-ink text-cream" : "border-gold/15 bg-white text-ink hover:border-gold-dark"}`}
-                                    >
-                                      <span>{amount.toLocaleString("tr-TR")} Points</span>
-                                      <span>-{formatPrice(pointsToLira(amount), "TRY")}</span>
-                                    </button>
-                                  );
-                                })}
-                                <button
-                                  type="button"
-                                  onClick={useAllRuthiePoints}
-                                  className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs font-medium uppercase tracking-wide-luxe transition ${useRuthiePoints && selectedRuthiePoints === maxRuthiePointsForCheckout ? "border-gold-dark bg-ink text-cream" : "border-gold/15 bg-white text-ink hover:border-gold-dark"}`}
-                                >
-                                  <span>Hepsini Kullan</span>
-                                  <span>{maxRuthiePointsForCheckout.toLocaleString("tr-TR")} Points</span>
-                                </button>
-                              </div>
-                            </div>
-                          ) : (
-                            <p className="rounded-lg border border-gold/10 bg-cream/70 px-3 py-2 text-xs leading-5 text-muted-ruth">
-                              Kullanılabilir Ruthie Points bulunmuyor. Alışveriş tamamladıkça puanın burada görünecek.
-                            </p>
-                          )}
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    <div className="px-4 py-4 text-sm">
-                      <p className="font-heading text-ink">Ruthie Points</p>
-                      <p className="mt-1 text-xs leading-5 text-muted-ruth">
-                        Üye ol, {RUTHIE_WELCOME_POINTS.toLocaleString("tr-TR")} Ruthie Points kazan ve ödeme adımında {formatPrice(200, "TRY")} indirim kullan.
-                      </p>
-                      <Link href="/login?redirect=/checkout" className="mt-3 inline-block text-xs uppercase tracking-wide-luxe text-gold-dark underline underline-offset-4">
-                        Giriş Yap / Üye Ol
-                      </Link>
-                    </div>
-                  )}
-                </div>
-
                 <div className="rounded-xl border border-gold/10 bg-ivory p-4 text-sm">
                   <p className="font-heading text-ink">İndirim Kullan</p>
                   <p className="mt-1 text-xs leading-5 text-muted-ruth">Kupon kodunu veya hesabındaki yorum indirimini kullan.</p>
@@ -1718,19 +1520,13 @@ export function CheckoutClient() {
 
                 </>
 
-                {(automaticDiscount > 0 || ruthPointDiscount > 0 || couponDiscount > 0) && (
+                {(automaticDiscount > 0 || couponDiscount > 0) && (
                   <div className="rounded-lg border border-gold/10 bg-ivory/75 p-3 text-sm">
-                    <p className="mb-2 text-[10px] uppercase tracking-wide-luxe text-muted-ruth">Kullanılan indirim ve puanlar</p>
+                    <p className="mb-2 text-[10px] uppercase tracking-wide-luxe text-muted-ruth">Kullanılan indirimler</p>
                     {automaticDiscount > 0 && (
                       <div className="flex justify-between text-gold-dark">
                         <span>Otomatik ürün/kampanya indirimi</span>
                         <span>-{formatPrice(automaticDiscount, "TRY")}</span>
-                      </div>
-                    )}
-                    {ruthPointDiscount > 0 && (
-                      <div className="flex justify-between text-gold-dark">
-                        <span>{ruthPointsToUse.toLocaleString("tr-TR")} Ruthie Points</span>
-                        <span>-{formatPrice(ruthPointDiscount, "TRY")}</span>
                       </div>
                     )}
                     {couponDiscount > 0 && (
