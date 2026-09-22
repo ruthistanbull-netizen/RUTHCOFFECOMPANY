@@ -48,7 +48,7 @@ export async function POST(request: Request) {
 
     const offerSdp = await request.text();
     const panelSnapshot = await buildRuthiePanelSnapshot(auth.supabase);
-    const requestedVoice = request.headers.get("x-ruthie-voice") || cookieValue(request.headers.get("cookie"), RUTHIE_VOICE_COOKIE);
+    const requestedVoice = (request.headers.get("x-rosta-insight-voice") || request.headers.get("x-ruthie-voice")) || cookieValue(request.headers.get("cookie"), RUTHIE_VOICE_COOKIE);
     const call = await createRuthieRealtimeCallV2({
       offerSdp,
       panelSnapshot,
@@ -63,12 +63,12 @@ export async function POST(request: Request) {
       ...noStoreHeaders(),
       "Content-Type": "application/sdp",
       "X-Correlation-Id": correlationId,
-      "X-ROSTA Insight-Actor-Id": String(auth.profile.id),
-      "X-ROSTA Insight-Actor-Name": encodeURIComponent(String(auth.profile.full_name || "Admin")),
-      "X-ROSTA Insight-Actor-Email": encodeURIComponent(String(auth.profile.email || "")),
-      "X-ROSTA Insight-Voice": normalizeRuthieVoice(requestedVoice),
+      "X-ROSTA-Insight-Actor-Id": String(auth.profile.id),
+      "X-ROSTA-Insight-Actor-Name": encodeURIComponent(String(auth.profile.full_name || "Admin")),
+      "X-ROSTA-Insight-Actor-Email": encodeURIComponent(String(auth.profile.email || "")),
+      "X-ROSTA-Insight-Voice": normalizeRuthieVoice(requestedVoice),
     });
-    if (call.location) headers.set("X-ROSTA Insight-Realtime-Location", call.location);
+    if (call.location) headers.set("X-ROSTA-Insight-Realtime-Location", call.location);
     if (call.requestId) headers.set("X-OpenAI-Request-Id", call.requestId);
 
     return new Response(call.answerSdp, { status: 201, headers });
