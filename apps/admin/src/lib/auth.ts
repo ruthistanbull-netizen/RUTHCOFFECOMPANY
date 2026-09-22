@@ -64,6 +64,10 @@ export async function requireAdmin(request: Request) {
     return { error: NextResponse.json({ ok: false, error: "Oturum geçersiz." }, { status: 401 }) };
   }
 
+  if (String(userData.user.user_metadata?.panel_status || "active").toLowerCase() === "disabled") {
+    return { error: NextResponse.json({ ok: false, error: "Bu panel hesabı devre dışı bırakılmış." }, { status: 403 }) };
+  }
+
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("id,email,full_name,role,auth_user_id")
