@@ -17,10 +17,12 @@ import {
   ListChecks,
   ListTodo,
   MessageSquareText,
+  Megaphone,
   Package,
   PackageOpen,
   PackagePlus,
   Palette,
+  Percent,
   RotateCcw,
   ShoppingBag,
   ShoppingCart,
@@ -90,6 +92,8 @@ export const exactNavStructure: ExactNavGroup[] = [
   {
     label: "PAZARLAMA",
     items: [
+      { label: "Pazarlama", path: "/marketing", icon: Megaphone, exact: true },
+      { label: "İndirimler", path: "/discounts", icon: Percent, exact: true },
       { label: "E-posta Merkezi", path: "/email", icon: Inbox, exact: true },
       { label: "E-posta Şablonları", path: "/email/templates", icon: FileText },
       { label: "E-posta Otomasyonları", path: "/email/automations", icon: Workflow },
