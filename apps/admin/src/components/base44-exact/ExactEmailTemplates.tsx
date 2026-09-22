@@ -83,9 +83,9 @@ const previewVariables = {
   order_count: 2,
   total_spent: 2480,
   last_order_no: "RTH-1234",
-  checkout_url: "https://www.ruthistanbul.com/checkout",
-  review_url: "https://www.ruthistanbul.com/account/orders",
-  activation_url: "https://www.ruthistanbul.com/account/activate",
+  checkout_url: "https://rostacoffecompany.zeabur.app/checkout",
+  review_url: "https://rostacoffecompany.zeabur.app/account/orders",
+  activation_url: "https://rostacoffecompany.zeabur.app/activate-account",
 };
 
 function typeFromCategory(category: string): TemplateType {
@@ -120,7 +120,7 @@ function toEditor(template: EmailTemplate): EditorState {
     name: template.name,
     type: template.type || typeFromCategory(template.category || ""),
     category: template.category || "Özel",
-    description: template.description || "Panelden düzenlenen Ruth Istanbul e-posta şablonu.",
+    description: template.description || "Panelden düzenlenen ROSTA Coffee Co. e-posta şablonu.",
     enabled: template.enabled !== false,
     fields: normalizeFields(template),
   };
@@ -365,7 +365,7 @@ export function ExactEmailTemplates() {
       name: "Yeni E-posta Şablonu",
       type: "campaign",
       category: "Özel",
-      description: "Sıfırdan hazırlanan özel Ruth Istanbul e-posta şablonu.",
+      description: "Sıfırdan hazırlanan özel ROSTA Coffee Co. e-posta şablonu.",
       enabled: true,
       fields: { ...base.fields, subject: "", preheader: "", headline: "", intro: "", offer: "", note: "", heroImageUrl: "" },
     };
@@ -397,7 +397,7 @@ export function ExactEmailTemplates() {
         templatesRef.current = nextTemplates;
         setTemplates(nextTemplates);
         acceptTemplate(restored);
-        toast.success("Şablon hazır Ruth tasarımına döndürüldü.");
+        toast.success("Şablon hazır ROSTA tasarımına döndürüldü.");
       } else {
         const remaining = currentTemplates.filter((item) => item.template_key !== currentEditor.templateKey && item.id !== currentEditor.id);
         templatesRef.current = remaining;
