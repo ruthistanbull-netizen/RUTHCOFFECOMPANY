@@ -142,8 +142,8 @@ type ReturnsListContext = {
 };
 
 const RETURNS_PAGE_SIZE = 50;
-const RETURNS_CONTEXT_KEY = "ruth-returns-resource-context-v1";
-const RETURNS_SAVED_VIEWS_KEY = "ruth-returns-saved-views-v1";
+const RETURNS_CONTEXT_KEY = "rosta-returns-resource-context-v1";
+const RETURNS_SAVED_VIEWS_KEY = "rosta-returns-saved-views-v1";
 const CASE_FILTER_VALUES = new Set<CaseFilter>(["all", "open", "approved", "completed", "rejected", "none"]);
 const RETURN_SORT_KEYS = new Set<ReturnSortKey>(["order_no", "customer_name", "total_amount"]);
 const DEFAULT_RETURN_COLUMNS: ReturnColumnVisibility = {
