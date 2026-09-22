@@ -112,22 +112,22 @@ export async function POST(request: Request) {
   // intentionally serves stale content while it refreshes in the background,
   // which made the storefront appear out of sync with the panel. expire: 0
   // makes the next catalog read block for fresh data instead.
-  if (scope === "all" || scope === "theme") revalidateTag("ruth-theme", IMMEDIATE_EXPIRY);
+  if (scope === "all" || scope === "theme") revalidateTag("rosta-theme", IMMEDIATE_EXPIRY);
 
   let invalidatedProductSlugs: string[] = [];
   if (scope === "all" || scope === "catalog") {
-    revalidateTag("ruth-products", IMMEDIATE_EXPIRY);
+    revalidateTag("rosta-products", IMMEDIATE_EXPIRY);
 
     if (targetedCatalogChange) {
       const targets = await productWindowInvalidationTargets(productIds, productSlugs);
       invalidatedProductSlugs = targets.slugs;
       if (targets.broad) {
-        revalidateTag("ruth-product-windows", IMMEDIATE_EXPIRY);
+        revalidateTag("rosta-product-windows", IMMEDIATE_EXPIRY);
       } else {
         for (const slug of targets.slugs) revalidateTag(`ruth-product-window:${slug}`, IMMEDIATE_EXPIRY);
       }
     } else {
-      revalidateTag("ruth-product-windows", IMMEDIATE_EXPIRY);
+      revalidateTag("rosta-product-windows", IMMEDIATE_EXPIRY);
       revalidateTag("ruth-collections", IMMEDIATE_EXPIRY);
       revalidateTag("ruth-categories", IMMEDIATE_EXPIRY);
     }
