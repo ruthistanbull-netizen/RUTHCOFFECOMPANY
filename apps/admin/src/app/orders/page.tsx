@@ -1,8 +1,6 @@
-import { OrderManager } from "@/components/OrderManager";
+import { Suspense } from "react";
+import { ExactOrdersV2 } from "@/components/base44-exact/ExactOrdersV2";
 
-export default function OrdersPage(){
-  return <>
-    <header className="admin-page-header"><div><p className="admin-kicker">OPERASYON</p><h1>Siparişler</h1><p>Storefront siparişleri aynı Supabase veritabanından canlı okunur ve operasyon durumları buradan güncellenir.</p></div></header>
-    <OrderManager/>
-  </>;
+export default function OrdersPage() {
+  return <Suspense fallback={<div className="ruth-loading-state">Siparişler yükleniyor…</div>}><ExactOrdersV2 /></Suspense>;
 }
