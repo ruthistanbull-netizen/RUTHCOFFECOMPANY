@@ -261,7 +261,7 @@ export function RostaPointsWidget() {
           overflow: hidden !important;
           border: 0 !important;
           border-radius: 0 !important;
-          background: #F4F0E8fff !important;
+          background: #F4F0E8 !important;
           color: #111111 !important;
           box-shadow: -24px 0 70px rgba(17, 17, 17, 0.16) !important;
           transform-origin: 100% 50%;
@@ -301,7 +301,7 @@ export function RostaPointsWidget() {
         .rosta-points-offer-copy {
           position: relative;
           padding: 52px 52px 46px;
-          background: #F4F0E8fff;
+          background: #F4F0E8;
         }
         .rosta-points-offer-brand {
           display: flex;
@@ -382,7 +382,7 @@ export function RostaPointsWidget() {
           padding: 0 23px;
           border-radius: 999px;
           background: #111111;
-          color: #F4F0E8fff !important;
+          color: #F4F0E8 !important;
           font-size: 12px;
           font-weight: 600;
           text-decoration: none !important;
