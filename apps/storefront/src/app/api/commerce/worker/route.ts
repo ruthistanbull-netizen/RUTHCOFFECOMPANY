@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
+import { deliverQueuedOrderConfirmations } from "@/lib/orderEmailDelivery";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -16,17 +17,20 @@ function workerId() {
 }
 
 async function healthSnapshot(supabase: ReturnType<typeof getSupabaseAdmin>) {
-  const [outboxPending, outboxDead, jobsPending, jobsDead] = await Promise.all([
+  const [outboxPending, outboxDead, jobsPending, jobsDead, emailPending, emailFailed] = await Promise.all([
     supabase.from("commerce_outbox").select("id", { count: "exact", head: true }).in("status", ["pending", "failed", "processing"]),
     supabase.from("commerce_outbox").select("id", { count: "exact", head: true }).eq("status", "dead_letter"),
     supabase.from("commerce_jobs").select("id", { count: "exact", head: true }).in("status", ["queued", "failed", "running"]),
     supabase.from("commerce_jobs").select("id", { count: "exact", head: true }).eq("status", "dead_letter"),
+    supabase.from("email_logs").select("id", { count: "exact", head: true }).in("status", ["queued", "sending"]),
+    supabase.from("email_logs").select("id", { count: "exact", head: true }).eq("status", "failed"),
   ]);
 
   const checks = [
     { name: "database", status: "healthy", detail: "Supabase service-role query succeeded." },
     { name: "outbox", status: Number(outboxDead.count || 0) > 0 ? "degraded" : "healthy", pending: Number(outboxPending.count || 0), deadLetter: Number(outboxDead.count || 0) },
     { name: "jobs", status: Number(jobsDead.count || 0) > 0 ? "degraded" : "healthy", pending: Number(jobsPending.count || 0), deadLetter: Number(jobsDead.count || 0) },
+    { name: "email", status: Number(emailFailed.count || 0) > 0 ? "degraded" : "healthy", pending: Number(emailPending.count || 0), failed: Number(emailFailed.count || 0) },
   ];
   const status = checks.some((check) => check.status === "degraded") ? "degraded" : "healthy";
   const { error } = await supabase.from("commerce_health_snapshots").insert({ status, checks });
@@ -119,6 +123,11 @@ async function run(request: Request) {
     }
   }
 
+  const emailDelivery = await deliverQueuedOrderConfirmations(supabase, 10);
+  if (emailDelivery.failed > 0) {
+    failures.push({ source: "email_queue", id: "*", error: `${emailDelivery.failed} sipariş e-postası gönderilemedi.` });
+  }
+
   const health = await healthSnapshot(supabase);
   await supabase.from("commerce_audit_logs").insert({
     action: "commerce.worker_completed",
@@ -126,7 +135,7 @@ async function run(request: Request) {
     entity_id: id,
     actor_type: "system",
     correlation_id: id,
-    after_data: { published, completedJobs, failures: failures.length, health: health.status },
+    after_data: { published, completedJobs, emailDelivery, failures: failures.length, health: health.status },
     metadata: { started_at: startedAt, completed_at: new Date().toISOString(), region: process.env.ZEABUR_REGION || process.env.REGION || null },
   });
 
@@ -135,6 +144,7 @@ async function run(request: Request) {
     workerId: id,
     published,
     completedJobs,
+    emailDelivery,
     failures,
     health,
   }, { status: failures.length === 0 ? 200 : 207, headers: { "Cache-Control": "no-store" } });
