@@ -181,7 +181,7 @@ const getCachedCatalogReadModel = unstable_cache(
   ["ruth-storefront-catalog-read-model-v1"],
   {
     revalidate: CACHE_REVALIDATE_SECONDS,
-    tags: ["ruth-products"],
+    tags: ["rosta-products"],
   },
 );
 
