@@ -169,7 +169,7 @@ export function productCategoryValues(product: Product) {
 
 export function productCollectionFilterValue(product: Product) {
   const raw = product.collections?.name || product.collections?.slug || product.collection_slugs?.[0] || null;
-  if (!raw || isCategoryLikeValue(raw)) return null;
+  if (!raw) return null;
   return displayCollectionName(raw);
 }
 
