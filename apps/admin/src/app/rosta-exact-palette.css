@@ -1,0 +1,93 @@
+/* Color-only layer for the directly transplanted Ruth Commerce panel.
+   Geometry, spacing, animation, radii and interaction behavior remain source-identical. */
+:root,
+html:not(.dark) {
+  --app-background: 40 35% 93% !important;
+  --surface-primary: 40 35% 93% !important;
+  --surface-secondary: 40 35% 93% !important;
+  --surface-tertiary: 47 5% 65% !important;
+  --text-main: 0 0% 6.7% !important;
+  --text-muted: 64 11% 40% !important;
+  --text-subtle: 47 5% 65% !important;
+  --border-subtle: 47 5% 65% !important;
+  --border-strong: 47 5% 65% !important;
+  --accent: 12 50% 48% !important;
+  --accent-hover: 16 32% 13% !important;
+  --accent-soft: 40 35% 93% !important;
+  --accent-foreground: 40 35% 93% !important;
+  --success: 64 11% 40% !important;
+  --success-soft: 40 35% 93% !important;
+  --success-foreground: 16 32% 13% !important;
+  --warning: 12 50% 48% !important;
+  --warning-soft: 40 35% 93% !important;
+  --warning-foreground: 16 32% 13% !important;
+  --danger: 16 32% 13% !important;
+  --danger-soft: 40 35% 93% !important;
+  --danger-foreground: 16 32% 13% !important;
+  --info: 47 5% 65% !important;
+  --info-soft: 40 35% 93% !important;
+  --info-foreground: 0 0% 6.7% !important;
+  --neutral: 47 5% 65% !important;
+  --neutral-soft: 40 35% 93% !important;
+  --neutral-foreground: 64 11% 40% !important;
+
+  --rosta-carbon:#111111;
+  --rosta-bone:#F4F0E8;
+  --rosta-espresso:#2B1B16;
+  --rosta-oxide:#B9563D;
+  --rosta-olive:#6F725B;
+  --rosta-steel:#AAA8A1;
+
+  --ruth-color-canvas:#F4F0E8 !important;
+  --ruth-color-surface:#F4F0E8 !important;
+  --ruth-color-surface-muted:#F4F0E8 !important;
+  --ruth-color-text-primary:#111111 !important;
+  --ruth-color-text-muted:#6F725B !important;
+  --ruth-color-text-inverse:#F4F0E8 !important;
+  --ruth-color-accent:#B9563D !important;
+  --ruth-color-accent-soft:#B9563D !important;
+  --ruth-color-accent-strong:#2B1B16 !important;
+  --ruth-color-border-subtle:#AAA8A1 !important;
+  --ruth-color-border-strong:#AAA8A1 !important;
+  --ruth-color-focus:#B9563D !important;
+}
+
+html:not(.dark),
+html:not(.dark) body {
+  background:#F4F0E8 !important;
+  color:#111111;
+}
+
+html:not(.dark) [class~="bg-white"],
+html:not(.dark) [class*="bg-white/"] {
+  background-color:#F4F0E8 !important;
+}
+
+html:not(.dark) [class~="text-white"] {
+  color:#F4F0E8 !important;
+}
+
+html:not(.dark) [class~="border-white"],
+html:not(.dark) [class*="border-white/"] {
+  border-color:#F4F0E8 !important;
+}
+
+html.dark {
+  --app-background:0 0% 6.7% !important;
+  --surface-primary:16 32% 13% !important;
+  --surface-secondary:0 0% 6.7% !important;
+  --surface-tertiary:64 11% 40% !important;
+  --text-main:40 35% 93% !important;
+  --text-muted:47 5% 65% !important;
+  --text-subtle:64 11% 40% !important;
+  --border-subtle:64 11% 40% !important;
+  --border-strong:47 5% 65% !important;
+  --accent:12 50% 48% !important;
+  --accent-hover:40 35% 93% !important;
+  --accent-soft:16 32% 13% !important;
+  --accent-foreground:40 35% 93% !important;
+}
+
+[data-rosta-panel="true"] :where(input,textarea,select) {
+  accent-color:#B9563D;
+}
