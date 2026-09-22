@@ -3,7 +3,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
-import { BarChart3, Boxes, Coffee, Layers3, LogOut, PackageOpen, Palette, ShoppingBag, Users } from "lucide-react";
+import { BarChart3, Boxes, Layers3, LogOut, PackageOpen, Palette, ShoppingBag, Users } from "lucide-react";
 import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
 import { ROSTA_STORE_URL } from "@/lib/platform";
 
