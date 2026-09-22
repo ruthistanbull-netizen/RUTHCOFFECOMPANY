@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { adminRequest } from "@/lib/adminApi";
 
-type Column = { key: string; label: string; render?: (row: any) => React.ReactNode };
+type Column = { key: string; label: string; render?: (row: any) => ReactNode };
 
 export function ResourceTable({ endpoint, dataKey, columns, empty }: { endpoint: string; dataKey: string; columns: Column[]; empty: string }) {
   const [rows, setRows] = useState<any[] | null>(null);
