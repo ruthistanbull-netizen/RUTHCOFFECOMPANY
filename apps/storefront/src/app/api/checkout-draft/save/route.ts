@@ -129,10 +129,10 @@ async function resolveCanonicalPrices(
 
   const [productsResult, variantsResult] = await Promise.all([
     slugs.length
-      ? supabase.from("products").select("id, slug, price").in("slug", slugs)
+      ? supabase.from("products").select("id, slug, price, status").in("slug", slugs)
       : Promise.resolve({ data: [], error: null }),
     variantIds.length
-      ? supabase.from("product_variants").select("id, product_id, price").in("id", variantIds)
+      ? supabase.from("product_variants").select("id, product_id, price, is_active").in("id", variantIds)
       : Promise.resolve({ data: [], error: null }),
   ]);
 
@@ -145,20 +145,23 @@ async function resolveCanonicalPrices(
 
   return items.map((item) => {
     const product = productsBySlug.get(item.productSlug) || null;
-    const variant = item.variantId ? variantsById.get(item.variantId) || null : null;
-    const variantBelongsToProduct = !variant || !product || String(variant.product_id) === String(product.id);
-    const canonicalPrice = variantBelongsToProduct
-      ? positiveNumber(variant?.price) || positiveNumber(product?.price)
-      : positiveNumber(product?.price);
-    const unitPrice = canonicalPrice || positiveNumber(item.unitPrice);
+    if (!product || product.status !== "active") {
+      throw new Error(`${item.productName} artık satışta değil.`);
+    }
 
+    const variant = item.variantId ? variantsById.get(item.variantId) || null : null;
+    if (item.variantId && (!variant || variant.is_active === false || String(variant.product_id) !== String(product.id))) {
+      throw new Error(`${item.productName} için seçilen varyant artık geçerli değil.`);
+    }
+
+    const unitPrice = positiveNumber(variant?.price) || positiveNumber(product.price);
     if (unitPrice <= 0) {
       throw new Error(`${item.productName} için geçerli ürün fiyatı bulunamadı.`);
     }
 
     return {
       ...item,
-      productId: item.productId || (product?.id ? String(product.id) : ""),
+      productId: String(product.id),
       unitPrice,
       totalPrice: Number((unitPrice * item.quantity).toFixed(2)),
     };
