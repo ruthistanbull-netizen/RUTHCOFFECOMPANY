@@ -13,7 +13,7 @@ import "@ruth-commerce/ui/operations.css";
 import "@ruth-commerce/ui/order-card.css";
 import "@ruth-commerce/ui/search-shell.css";
 import "./globals.css";
-import "./necklace-size-guide.css";
+import "./ruthie-offer5-motion.css";
 import "./product-image-standard.css";
 import "./product-header-contrast.css";
 import { Header } from "@/components/Header";
@@ -27,6 +27,7 @@ import { NavigationSpeedup } from "@/components/NavigationSpeedup";
 import { ProductNavigationContextCapture } from "@/components/ProductNavigationContextCapture";
 import { LatinUppercaseFixer } from "@/components/LatinUppercaseFixer";
 import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
+import { RostaPointsWidget } from "@/components/RostaPointsWidget";
 import { MobileMenuAccordion } from "@/components/MobileMenuAccordion";
 import { HomepageHeaderLogoVisibility } from "@/components/HomepageHeaderLogoVisibility";
 import { StorefrontMotionProvider } from "@/components/StorefrontMotionProvider";
@@ -98,7 +99,7 @@ export const metadata: Metadata = {
     locale: "tr_TR",
     type: "website",
     url: SITE_URL,
-    images: [{ url: DEFAULT_OG_IMAGE, alt: `${SITE_NAME} tasarım takı koleksiyonu` }],
+    images: [{ url: DEFAULT_OG_IMAGE, alt: `${SITE_NAME} kahve ve kahve deneyimi` }],
   },
   twitter: {
     card: "summary_large_image",
@@ -272,6 +273,7 @@ export default async function RootLayout({
               </main>
               <Footer />
               <CartDrawer />
+              <RostaPointsWidget />
               <FloatingWhatsApp settings={themeSettings.whatsapp} />
             </CartProvider>
           </AuthProvider>
