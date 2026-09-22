@@ -12,7 +12,8 @@
     "./theme": "./src/theme-engine.ts",
     "./theme-sections": "./src/theme-sections.ts",
     "./http-resilience": "./src/http-resilience.ts",
-    "./internal-transport": "./src/internal-transport.ts"
+    "./internal-transport": "./src/internal-transport.ts",
+    "./theme-engine": "./src/theme-engine.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
