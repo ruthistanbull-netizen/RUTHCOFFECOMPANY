@@ -1,5 +1,7 @@
 import {
   BarChart,
+  Brush,
+  CircleUserRound,
   Contact,
   CreditCard,
   FileText,
@@ -20,9 +22,11 @@ import {
   RotateCcw,
   ShoppingBag,
   ShoppingCart,
+  Settings2,
   SlidersHorizontal,
   Star,
   Truck,
+  UserCog,
   Warehouse,
   Workflow,
   type LucideIcon,
@@ -99,6 +103,15 @@ export const exactNavStructure: ExactNavGroup[] = [
     label: "RAPORLAMA",
     items: [
       { label: "Analitik", path: "/analytics", icon: BarChart },
+    ],
+  },
+  {
+    label: "SİSTEM",
+    items: [
+      { label: "Hesabım", path: "/account", icon: CircleUserRound },
+      { label: "Ayarlar", path: "/settings", icon: Settings2, exact: true },
+      { label: "Kullanıcılar ve Roller", path: "/settings/users", icon: UserCog },
+      { label: "Görünüm", path: "/settings/appearance", icon: Brush },
     ],
   },
 ];
