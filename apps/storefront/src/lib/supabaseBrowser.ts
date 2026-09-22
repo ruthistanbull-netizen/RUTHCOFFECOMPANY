@@ -1,7 +1,7 @@
 "use client";
 
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { normalizeSupabaseUrl } from "@/lib/supabaseRuntime";
+import { CANONICAL_SUPABASE_URL } from "@/lib/supabaseRuntime";
 
 let browserClient: SupabaseClient | null = null;
 
@@ -27,7 +27,7 @@ function installPasswordResetEmailBridge(client: SupabaseClient) {
 }
 
 export function getSupabaseBrowser() {
-  const supabaseUrl = normalizeSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL);
+  const supabaseUrl = CANONICAL_SUPABASE_URL;
   const supabaseAnonKey = (
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
