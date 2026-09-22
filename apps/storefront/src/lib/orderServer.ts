@@ -22,6 +22,8 @@ export type CheckoutCustomerInput = {
 };
 
 export type CheckoutRewardsInput = {
+  useRostaPoints?: boolean;
+  /** @deprecated Legacy request compatibility only. */
   useRuthPoints?: boolean;
   requestedDiscount?: number;
   pointsUsed?: number;
@@ -37,7 +39,7 @@ export type CheckoutAttributionInput = {
 };
 
 const RUTH_POINTS_PER_TL = 10;
-const RUTHIE_MAX_DEMO_POINTS = 10000;
+const ROSTA_MAX_POINTS = 10000;
 
 type NormalizedCustomer = Required<
   Pick<CheckoutCustomerInput, "fullName" | "email" | "phone" | "city" | "district" | "addressLine">
@@ -617,8 +619,8 @@ export async function createCheckoutQuote({
     couponCode,
     customerEmail: identity.customerEmail,
     profileId: identity.profileId,
-    requestedRewardDiscount: rewards?.useRuthPoints ? normalizeDiscount(rewards.requestedDiscount) : 0,
-    requestedRewardPoints: Math.max(0, Math.min(Number(rewards?.pointsUsed || 0), RUTHIE_MAX_DEMO_POINTS)),
+    requestedRewardDiscount: (rewards?.useRostaPoints ?? rewards?.useRuthPoints) ? normalizeDiscount(rewards.requestedDiscount) : 0,
+    requestedRewardPoints: Math.max(0, Math.min(Number(rewards?.pointsUsed || 0), ROSTA_MAX_POINTS)),
   });
   return {
     ...pricing,
@@ -646,8 +648,8 @@ export async function repriceExistingCheckoutDraft({
     couponCode: coupon?.code || null,
     customerEmail: draft.customer.email,
     profileId,
-    requestedRewardDiscount: rewards?.useRuthPoints ? Number(rewards.requestedDiscount || 0) : 0,
-    requestedRewardPoints: rewards?.useRuthPoints ? Number(rewards.pointsUsed || 0) : 0,
+    requestedRewardDiscount: (rewards?.useRostaPoints ?? rewards?.useRuthPoints) ? Number(rewards.requestedDiscount || 0) : 0,
+    requestedRewardPoints: (rewards?.useRostaPoints ?? rewards?.useRuthPoints) ? Number(rewards.pointsUsed || 0) : 0,
   });
 
   const updatePayload = {
@@ -695,8 +697,8 @@ export async function createCheckoutDraft({
   const customer = normalizeCustomer(customerInput);
   const profileId = await getProfileIdFromAuthToken(authToken, customer);
   const items = await normalizeCartItemsFromDatabase(supabase, cartItems);
-  const requestedRewardDiscount = rewards?.useRuthPoints ? normalizeDiscount(rewards.requestedDiscount) : 0;
-  const requestedRewardPoints = Math.max(0, Math.min(Number(rewards?.pointsUsed || 0), RUTHIE_MAX_DEMO_POINTS));
+  const requestedRewardDiscount = (rewards?.useRostaPoints ?? rewards?.useRuthPoints) ? normalizeDiscount(rewards.requestedDiscount) : 0;
+  const requestedRewardPoints = Math.max(0, Math.min(Number(rewards?.pointsUsed || 0), ROSTA_MAX_POINTS));
   const pricing = await calculateCheckoutPricing({
     supabase,
     items,
