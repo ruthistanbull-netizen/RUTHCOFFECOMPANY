@@ -1,11 +1,11 @@
 /* Soft off-white palette for the customer-facing storefront. */
 [data-ruth-theme="storefront"] {
-  --ruth-storefront-canvas: #f7f5f2;
-  --ruth-storefront-surface: #fcfbf9;
-  --ruth-storefront-surface-muted: #f0ede8;
-  --ruth-storefront-surface-soft: #faf8f5;
-  --ruth-storefront-border: #ded8d0;
-  --ruth-storefront-border-strong: #aaa297;
+  --ruth-storefront-canvas: #F4F0E8;
+  --ruth-storefront-surface: #F4F0E8;
+  --ruth-storefront-surface-muted: #F4F0E8;
+  --ruth-storefront-surface-soft: #F4F0E8;
+  --ruth-storefront-border: #AAA8A1;
+  --ruth-storefront-border-strong: #AAA8A1;
   --ruth-storefront-translucent: rgba(252, 251, 249, 0.94);
 }
 
