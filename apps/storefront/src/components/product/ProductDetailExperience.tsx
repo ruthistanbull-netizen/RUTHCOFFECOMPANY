@@ -137,10 +137,6 @@ function productDetails(product: Product): ProductDetailItem[] {
   ];
 }
 
-function hasNecklaceGuide(_product: Product) {
-  return false;
-}
-
 function prefersReducedPreload() {
   if (typeof navigator === "undefined") return false;
   const connection = (navigator as Navigator & { connection?: NetworkInformationLike })
@@ -727,9 +723,6 @@ export function ProductDetailExperience({
   const discountPercentage = hasDiscount
     ? Math.max(1, Math.round(((compareAt - productPrice) / compareAt) * 100))
     : 0;
-  const necklaceGuideStyle = hasNecklaceGuide(product)
-    ? `.product-desktop-details details:nth-child(3) p::before,#product-detail-size-usage::before{content:"";display:block;width:min(100%,410px);aspect-ratio:820/1431;margin:0 0 14px;background:url('/necklace-size-guide.jpg') center/contain no-repeat;border:1px solid rgba(184,151,106,.18)}`
-    : "";
 
   return (
     <div
@@ -786,7 +779,6 @@ export function ProductDetailExperience({
         .product-service-card strong{display:block;font-size:8px;letter-spacing:.13em;text-transform:uppercase}
         .product-service-card span{display:block;margin-top:5px;color:var(--muted-foreground);font-size:8px}
         .product-secondary-content{background:var(--ivory)}
-        ${necklaceGuideStyle}
         @media(max-width:767px){
           .product-detail-page{padding-top:0}
           .product-primary{display:flex;width:100%;margin:0;flex-direction:column;gap:0;padding:0}
