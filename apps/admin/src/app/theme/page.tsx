@@ -1,16 +1,12 @@
-import { ThemeClient } from "@/components/ThemeClient";
+import { SaveLifecycleProvider } from "@ruth-commerce/ui";
+import { ThemeEditorNonBlockingGuard } from "@/components/theme/ThemeEditorNonBlockingGuard";
+import { ThemePreviewViewport } from "@/components/theme/ThemePreviewViewport";
 
 export default function ThemePage() {
   return (
-    <>
-      <header className="admin-page-header">
-        <div>
-          <p className="admin-kicker">MAĞAZA TASARIMI</p>
-          <h1>Storefront</h1>
-          <p>ROSTA renk ve tipografi sistemi sabit kalır; içerik ve medya ayarları aynı storefront tema kayıtlarına bağlıdır.</p>
-        </div>
-      </header>
-      <ThemeClient />
-    </>
+    <SaveLifecycleProvider>
+      <ThemeEditorNonBlockingGuard />
+      <ThemePreviewViewport />
+    </SaveLifecycleProvider>
   );
 }
