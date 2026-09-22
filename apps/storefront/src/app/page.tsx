@@ -47,6 +47,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
         heroImages={heroImages}
         scrollImages={themeSettings.homepageImages.scrollImages}
         freeShippingThreshold={freeShippingThreshold}
+        editorialVideo={themeSettings.homepageImages.editorialVideo || "/home/rosta-under-hero-video.mp4"}
+        editorialImage={themeSettings.homepageImages.editorialImage || "/home/rosta-under-hero-photo.jpg"}
       />
     ))}
   </>;
