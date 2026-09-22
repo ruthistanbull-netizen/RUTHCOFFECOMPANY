@@ -4,10 +4,10 @@ import { useEffect } from "react";
 import { ThemeEditorDevicePreview } from "./ThemeEditorDevicePreview";
 import { VisualThemeCustomizer } from "./VisualThemeCustomizer";
 
-const CONFIGURED_STOREFRONT = process.env.NEXT_PUBLIC_STOREFRONT_URL || "https://www.ruthistanbul.com";
+const CONFIGURED_STOREFRONT = process.env.NEXT_PUBLIC_STOREFRONT_URL || "https://rostacoffecompany.zeabur.app";
 const STOREFRONT_ORIGIN = (() => {
   try { return new URL(CONFIGURED_STOREFRONT).origin; }
-  catch { return "https://www.ruthistanbul.com"; }
+  catch { return "https://rostacoffecompany.zeabur.app"; }
 })();
 
 function canonicalPreviewUrl(frame: HTMLIFrameElement) {
