@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
 import { ExactAuth } from "@/components/base44-exact/ExactAuth";
 
 export function AdminAuthGate({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
   const [ready, setReady] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
   const [error, setError] = useState("");
@@ -63,7 +65,10 @@ export function AdminAuthGate({ children }: { children: ReactNode }) {
     );
   }
 
-  if (!signedIn) return <ExactAuth mode="login" />;
+  if (!signedIn) {
+    if (pathname === "/login" || pathname === "/forgot-password" || pathname === "/reset-password") return <>{children}</>;
+    return <ExactAuth mode="login" />;
+  }
 
   return <>{children}</>;
 }
