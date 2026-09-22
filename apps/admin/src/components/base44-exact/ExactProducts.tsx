@@ -158,12 +158,13 @@ type ProductListContext = Omit<SavedProductView, "id" | "name"> & {
 const MOBILE_PRODUCT_BATCH = 24;
 const DESKTOP_PAGE_SIZE = 48;
 const PRODUCT_API_PAGE_SIZE = 25;
-const PRODUCTS_CONTEXT_KEY = "ruth-products-resource-context-v1";
-const PRODUCTS_SAVED_VIEWS_KEY = "ruth-products-saved-views-v1";
-const DEFAULT_FINISHES = ["Gümüş", "18K Altın Kaplama", "Altın Rengi", "Eskitme"];
-const STANDARD_CARE_VALUE = "Parfüm, su ve kimyasal temasından kaçının. Kullanmadığınızda kutusunda saklayın.";
-const ADJUSTABLE_RING_VALUE = "Ayarlanabilir Yüzük Gövdesi";
-const NECKLACE_SIZE_GUIDE_VALUE = "Kolye ölçü fotoğrafı";
+const PRODUCTS_CONTEXT_KEY = "rosta-products-resource-context-v1";
+const PRODUCTS_SAVED_VIEWS_KEY = "rosta-products-saved-views-v1";
+const DEFAULT_FINISHES = ["Açık Kavrum", "Orta-Açık Kavrum", "Orta Kavrum", "Orta-Koyu Kavrum", "Koyu Kavrum"];
+const STANDARD_CARE_VALUE = "Serin, kuru ve doğrudan güneş görmeyen yerde; hava almayan ambalajda saklayın. Tazelik için paketi açtıktan sonra mümkün olduğunca kısa sürede tüketin.";
+const WHOLE_BEAN_USAGE_VALUE = "250 g · Çekirdek";
+const FILTER_USAGE_VALUE = "250 g · Filtre öğütüm";
+const ESPRESSO_USAGE_VALUE = "250 g · Espresso öğütüm";
 const DEFAULT_COLUMNS: ColumnVisibility = {
   material: true,
   collections: true,
@@ -172,10 +173,10 @@ const DEFAULT_COLUMNS: ColumnVisibility = {
   price: true,
 };
 const BULK_FIELDS: Array<{ value: BulkField; label: string }> = [
-  { value: "finish_color", label: "Kaplama / Renk" },
-  { value: "size_usage", label: "Ölçü ve Kullanım" },
-  { value: "care_advice", label: "Bakım Önerisi" },
-  { value: "material", label: "Materyal" },
+  { value: "finish_color", label: "Kavrum" },
+  { value: "size_usage", label: "Paket / Öğütüm" },
+  { value: "care_advice", label: "Saklama Önerisi" },
+  { value: "material", label: "Çekirdek Türü" },
   { value: "stock_status", label: "Stok Durumu" },
   { value: "status", label: "Yayın Durumu" },
   { value: "is_featured", label: "Öne Çıkarılan Ürün" },
@@ -360,9 +361,9 @@ function isNumericBulkField(field: BulkField) {
 
 function defaultBulkValue(field: BulkField, materials: string[], categories: Group[], collections: Group[]) {
   if (field === "finish_color") return DEFAULT_FINISHES[0];
-  if (field === "size_usage") return NECKLACE_SIZE_GUIDE_VALUE;
+  if (field === "size_usage") return FILTER_USAGE_VALUE;
   if (field === "care_advice") return STANDARD_CARE_VALUE;
-  if (field === "material") return materials[0] || "925 Ayar Gümüş";
+  if (field === "material") return materials[0] || "Arabica";
   if (field === "stock_status") return "in_stock";
   if (field === "status") return "active";
   if (field === "discount_remove") return "remove";
@@ -384,15 +385,16 @@ function bulkValueOptions(field: BulkField, materials: string[], categories: Gro
   }
   if (field === "size_usage") {
     return [
-      { value: NECKLACE_SIZE_GUIDE_VALUE, label: "Kolye ölçü tablosu" },
-      { value: ADJUSTABLE_RING_VALUE, label: "Ayarlanabilir yüzük" },
-      { value: "", label: "Ölçü bilgisini kaldır" },
+      { value: WHOLE_BEAN_USAGE_VALUE, label: "250 g · Çekirdek" },
+      { value: FILTER_USAGE_VALUE, label: "250 g · Filtre öğütüm" },
+      { value: ESPRESSO_USAGE_VALUE, label: "250 g · Espresso öğütüm" },
+      { value: "", label: "Paket / öğütüm bilgisini kaldır" },
     ];
   }
   if (field === "care_advice") {
     return [
-      { value: STANDARD_CARE_VALUE, label: "Standart takı bakımı" },
-      { value: "", label: "Bakım önerisini kaldır" },
+      { value: STANDARD_CARE_VALUE, label: "Standart kahve saklama" },
+      { value: "", label: "Saklama önerisini kaldır" },
     ];
   }
   if (field === "material") return materials.map((value) => ({ value, label: value }));
@@ -482,7 +484,7 @@ export function ExactProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [collections, setCollections] = useState<Group[]>([]);
   const [categories, setCategories] = useState<Group[]>([]);
-  const [materials, setMaterials] = useState<string[]>(["925 Ayar Gümüş", "Pirinç", "Çelik"]);
+  const [materials, setMaterials] = useState<string[]>(["Arabica", "Robusta", "Arabica + Robusta Blend"]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [mobile, setMobile] = useState(true);
@@ -592,7 +594,7 @@ export function ExactProducts() {
       const [catalog, materialResult] = await Promise.all([
         adminRequest<ProductsResponse>(catalogPath, catalogOptions),
         adminRequest<{ options?: string[] }>("/api/product-settings/materials", { signal: controller.signal })
-          .catch(() => ({ options: ["925 Ayar Gümüş", "Pirinç", "Çelik"] })),
+          .catch(() => ({ options: ["Arabica", "Robusta", "Arabica + Robusta Blend"] })),
       ]);
       if (controller.signal.aborted || loadSequenceRef.current !== sequence) return;
 
@@ -600,7 +602,7 @@ export function ExactProducts() {
       setProducts(firstProducts);
       setCollections(catalog.collections || []);
       setCategories(catalog.categories || []);
-      setMaterials([...new Set([...(materialResult.options || []), "925 Ayar Gümüş", "Pirinç", "Çelik"].filter(Boolean))]);
+      setMaterials([...new Set([...(materialResult.options || []), "Arabica", "Robusta", "Arabica + Robusta Blend"].filter(Boolean))]);
       seedProgressiveProductCache(catalog, firstProducts, catalog.pagination);
 
       if (mode === "initial") setLoading(false);
@@ -1071,7 +1073,7 @@ export function ExactProducts() {
 
       <section className="space-y-3 rounded-[var(--radius-card)] bg-surface-primary p-3 shadow-card md:p-4">
         <div className="grid gap-2 lg:grid-cols-[minmax(260px,1fr)_auto]">
-          <ExactSearchInput value={search} onChange={setSearch} placeholder="Ürün, slug, materyal veya koleksiyon ara..." />
+          <ExactSearchInput value={search} onChange={setSearch} placeholder="Ürün, slug, çekirdek türü veya koleksiyon ara..." />
           <div className="flex min-w-0 flex-wrap items-center gap-2">
             <select value={sort} onChange={(event) => setSort(event.target.value as ProductSort)} className="h-11 min-w-[150px] rounded-[var(--radius-control)] border border-border-subtle bg-surface-secondary px-3 text-xs font-medium text-main" aria-label="Ürünleri sırala">
               {Object.entries(SORT_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
@@ -1086,7 +1088,7 @@ export function ExactProducts() {
           <ExactFilterBar
             chips={[
               { key: "collection", label: "Tüm Koleksiyonlar", options: collections.map((item) => item.name), value: collection },
-              { key: "material", label: "Tüm Materyaller", options: materials, value: material },
+              { key: "material", label: "Tüm Çekirdek Türleri", options: materials, value: material },
               { key: "status", label: "Tüm Durumlar", options: [{ label: "Aktif", value: "active" }, { label: "Taslak", value: "draft" }, { label: "Arşiv", value: "archived" }], value: status },
             ]}
             onChipChange={(key, value) => {
