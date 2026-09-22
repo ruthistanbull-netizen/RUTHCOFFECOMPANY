@@ -1,8 +1,6 @@
-import { CatalogManager } from "@/components/CatalogManager";
+import { SaveLifecycleProvider } from "@ruth-commerce/ui";
+import { ExactCatalog } from "@/components/base44-exact/ExactCatalog";
 
-export default function CatalogPage(){
-  return <>
-    <header className="admin-page-header"><div><p className="admin-kicker">KATALOG YAPISI</p><h1>Kategori & Koleksiyonlar</h1><p>Storefront menü ve katalog grupları aynı Supabase tablolarından yönetilir.</p></div></header>
-    <CatalogManager/>
-  </>;
+export default function CatalogPage() {
+  return <SaveLifecycleProvider><ExactCatalog /></SaveLifecycleProvider>;
 }
