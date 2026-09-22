@@ -24,9 +24,11 @@ export async function POST(request: Request) {
     });
     if (error) throw new Error(error.message);
 
+    const authUrl = gmailAuthUrl(state, redirectUri);
     return NextResponse.json({
       ok: true,
-      url: gmailAuthUrl(state, redirectUri),
+      authUrl,
+      url: authUrl,
       expiresAt,
     }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
