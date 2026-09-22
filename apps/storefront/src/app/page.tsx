@@ -45,12 +45,10 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
         allProducts={allProducts}
         collections={collections}
         heroImages={heroImages}
-        editorialVideo={themeSettings.homepageImages.editorialVideo}
-        editorialImage={themeSettings.homepageImages.editorialImage}
-        scrollImages={themeSettings.homepageImages.scrollImages}
-        freeShippingThreshold={freeShippingThreshold}
         editorialVideo={themeSettings.homepageImages.editorialVideo || "/home/rosta-under-hero-video.mp4"}
         editorialImage={themeSettings.homepageImages.editorialImage || "/home/rosta-under-hero-photo.jpg"}
+        scrollImages={themeSettings.homepageImages.scrollImages}
+        freeShippingThreshold={freeShippingThreshold}
       />
     ))}
   </>;
