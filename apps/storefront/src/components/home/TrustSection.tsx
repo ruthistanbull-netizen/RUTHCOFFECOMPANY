@@ -1,15 +1,15 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Gem, Package, RefreshCw, Shield, Truck } from "lucide-react";
+import { Coffee, Package, RefreshCw, Shield, Truck } from "lucide-react";
 
 function trustItems(freeShippingThreshold: number) {
   return [
     { icon: Shield, title: "Güvenli Ödeme", lines: ["PAYTR ile Güvenli Ödeme"] },
     { icon: Package, title: "Özenli Paketleme", lines: ["Hediye hissiyle hazırlanır"] },
-    { icon: RefreshCw, title: "Kolay İade ve Değişim", lines: ["14 gün içinde iade", "30 gün içinde değişim"] },
+    { icon: RefreshCw, title: "Kolay Destek", lines: ["Sipariş ve ürün desteği"] },
     { icon: Truck, title: "Ücretsiz Kargo", lines: [`${freeShippingThreshold.toLocaleString("tr-TR")}₺ Üzeri Ücretsiz Kargo`] },
-    { icon: Gem, title: "Kaliteli Materyal", lines: ["925 Ayar Gümüş ve Brass ile Atelier Parçalar"] },
+    { icon: Coffee, title: "Kahve Odaklı Seçki", lines: ["Ürün bilgisi ve kullanım detaylarıyla"] },
   ];
 }
 
