@@ -117,7 +117,7 @@ export function setActiveConversationId(value: string) {
 
 export async function importConversation(conversation: UnifiedClientConversation) {
   const headers = await adminAuthHeaders();
-  const response = await fetch("/api/ruthie/conversations", {
+  const response = await fetch("/api/rosta-insight/conversations", {
     method: "POST",
     cache: "no-store",
     headers: { ...headers, "Content-Type": "application/json" },
@@ -133,15 +133,15 @@ export async function importConversation(conversation: UnifiedClientConversation
       })),
     }),
   });
-  if (!response.ok) throw new Error("Ruthie sohbeti ortak hafızaya aktarılamadı.");
+  if (!response.ok) throw new Error("ROSTA Insight sohbeti ortak hafızaya aktarılamadı.");
   return response.json();
 }
 
 export async function fetchUnifiedConversations() {
   const headers = await adminAuthHeaders();
-  const response = await fetch("/api/ruthie/conversations?include_messages=1", { headers, cache: "no-store" });
+  const response = await fetch("/api/rosta-insight/conversations?include_messages=1", { headers, cache: "no-store" });
   const payload = await response.json().catch(() => null) as { ok?: boolean; conversations?: any[] } | null;
-  if (!response.ok || !payload?.ok) throw new Error("Ortak Ruthie sohbetleri alınamadı.");
+  if (!response.ok || !payload?.ok) throw new Error("Ortak ROSTA Insight sohbetleri alınamadı.");
   return (payload.conversations || []).map((conversation): UnifiedClientConversation => ({
     id: String(conversation.id),
     title: String(conversation.title || "Yeni sohbet"),
@@ -162,7 +162,7 @@ export async function fetchUnifiedConversations() {
 export async function fetchUnifiedConversation(conversationId: string) {
   if (!isRuthieConversationId(conversationId)) return null;
   const headers = await adminAuthHeaders();
-  const response = await fetch(`/api/ruthie/conversations/${encodeURIComponent(conversationId)}`, { headers, cache: "no-store" });
+  const response = await fetch(`/api/rosta-insight/conversations/${encodeURIComponent(conversationId)}`, { headers, cache: "no-store" });
   const payload = await response.json().catch(() => null) as {
     ok?: boolean;
     conversation?: any;
@@ -180,7 +180,7 @@ export async function persistUnifiedMessage(options: {
 }) {
   if (!isRuthieConversationId(options.conversationId)) return null;
   const headers = await adminAuthHeaders();
-  const response = await fetch(`/api/ruthie/conversations/${encodeURIComponent(options.conversationId)}/messages`, {
+  const response = await fetch(`/api/rosta-insight/conversations/${encodeURIComponent(options.conversationId)}/messages`, {
     method: "POST",
     cache: "no-store",
     headers: { ...headers, "Content-Type": "application/json" },
@@ -217,7 +217,7 @@ export async function sendRuthieChatMessage(options: {
     dataUrl: attachment.dataUrl,
   }));
 
-  const response = await fetch("/api/ruthie/openai/chat", {
+  const response = await fetch("/api/rosta-insight/openai/chat", {
     method: "POST",
     cache: "no-store",
     headers: { ...headers, "Content-Type": "application/json" },
@@ -229,11 +229,11 @@ export async function sendRuthieChatMessage(options: {
     }),
   });
   const payload = await response.json().catch(() => null) as any;
-  if (!response.ok || !payload?.ok) throw new Error(apiErrorMessage(payload, "Ruthie yanıt veremedi."));
+  if (!response.ok || !payload?.ok) throw new Error(apiErrorMessage(payload, "ROSTA Insight yanıt veremedi."));
 
   const raw = payload.response && typeof payload.response === "object" ? payload.response : {};
   return {
-    message: String(raw.text || "Ruthie yanıt oluşturamadı."),
+    message: String(raw.text || "ROSTA Insight yanıt oluşturamadı."),
     sources: Array.isArray(raw.sources)
       ? raw.sources.filter((source: any) => source && typeof source.url === "string").map((source: any) => ({
         title: typeof source.title === "string" ? source.title : undefined,
@@ -247,9 +247,9 @@ export async function sendRuthieChatMessage(options: {
 }
 
 export async function executeApprovedAction(action: RuthiePendingAction): Promise<RuthieActionResult> {
-  if (!action?.token) throw new Error("Ruthie işlem onayı bulunamadı veya süresi doldu.");
+  if (!action?.token) throw new Error("ROSTA Insight işlem onayı bulunamadı veya süresi doldu.");
   const headers = await adminAuthHeaders();
-  const response = await fetch("/api/ruthie/admin/execute", {
+  const response = await fetch("/api/rosta-insight/admin/execute", {
     method: "POST",
     cache: "no-store",
     headers: { ...headers, "Content-Type": "application/json" },
@@ -258,13 +258,13 @@ export async function executeApprovedAction(action: RuthiePendingAction): Promis
   const payload = await response.json().catch(() => null) as any;
   const raw = payload?.result && typeof payload.result === "object" ? payload.result : null;
   if (!response.ok || !payload?.ok || raw?.ok === false) {
-    throw new Error(apiErrorMessage(payload, raw?.error || "Onaylanan Ruthie işlemi uygulanamadı."));
+    throw new Error(apiErrorMessage(payload, raw?.error || "Onaylanan ROSTA Insight işlemi uygulanamadı."));
   }
   const result = normalizeActionResult(raw) || {};
   return {
     ...result,
     ok: true,
-    message: result.message || `${result.title || action.title || action.summary || "Ruthie işlemi"} tamamlandı.`,
+    message: result.message || `${result.title || action.title || action.summary || "ROSTA Insight işlemi"} tamamlandı.`,
     summary: result.summary || result.title || action.summary,
   };
 }
