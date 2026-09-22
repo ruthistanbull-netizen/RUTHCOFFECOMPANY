@@ -1,3 +1,5 @@
+"use client";
+
 import { ResourceTable } from "@/components/ResourceTable";
 
 export default function ProductsPage() {
