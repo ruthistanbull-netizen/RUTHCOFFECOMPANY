@@ -138,9 +138,7 @@ function EditorialMedia({
           style={
             reduceMotion
               ? undefined
-              : index === 0
-                ? { opacity, willChange: "opacity" }
-                : { y, scale, opacity, willChange: "transform, opacity" }
+              : { y, scale, opacity, willChange: "transform, opacity" }
           }
         >
           {slide.kind === "image" ? (
