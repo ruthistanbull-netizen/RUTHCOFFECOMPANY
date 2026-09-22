@@ -53,6 +53,8 @@ export function HomeSectionRenderer({
   allProducts,
   collections,
   heroImages,
+  editorialVideo,
+  editorialImage,
   scrollImages,
   freeShippingThreshold,
   editorialVideo,
@@ -63,6 +65,8 @@ export function HomeSectionRenderer({
   allProducts: Product[];
   collections: Collection[];
   heroImages: HomepageHeroImages;
+  editorialVideo?: string;
+  editorialImage?: string;
   scrollImages: string[];
   freeShippingThreshold: number;
   editorialVideo: string;
