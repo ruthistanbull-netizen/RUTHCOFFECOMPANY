@@ -15,6 +15,7 @@
     "@ruth-commerce/contracts": "file:../../packages/contracts",
     "@ruth-commerce/ui": "file:../../packages/ui",
     "@supabase/supabase-js": "2.108.2",
+    "framer-motion": "^12.23.0",
     "lucide-react": "^0.468.0",
     "next": "16.2.9",
     "react": "19.2.1",
