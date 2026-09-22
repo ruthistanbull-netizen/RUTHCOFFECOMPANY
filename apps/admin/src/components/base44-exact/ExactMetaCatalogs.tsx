@@ -675,7 +675,7 @@ export function ExactMetaCatalogs() {
                   maxLength={100}
                   required
                   autoFocus
-                  placeholder="Örn. Ruth Istanbul Ürün Kataloğu"
+                  placeholder="Örn. ROSTA Coffee Co. Ürün Kataloğu"
                   className="ruth-type-control h-11 w-full rounded-xl border border-border-subtle bg-surface-secondary px-3 text-main outline-none focus:border-accent focus:ring-2 focus:ring-accent/15"
                 />
               </label>
