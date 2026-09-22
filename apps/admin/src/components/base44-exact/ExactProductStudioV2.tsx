@@ -248,7 +248,8 @@ export function ExactProductStudioV2() {
     try {
       const headers = await adminAuthHeaders();
       const body = new FormData(); body.append("file", file);
-      const response = await fetch(apiUrl("/api/products/upload-image"), { method: "POST", headers, body });
+      body.append("folder", "products");
+      const response = await fetch(apiUrl("/api/media/upload"), { method: "POST", headers, body });
       const result = await response.json().catch(() => ({})) as { ok?: boolean; url?: string; error?: string };
       if (!response.ok || !result.ok || !result.url) throw new Error(result.error || "Görsel yüklenemedi.");
       const url = String(result.url);
