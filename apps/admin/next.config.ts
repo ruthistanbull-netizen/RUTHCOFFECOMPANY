@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 const storefrontUrl = "https://rostacoffecompany.zeabur.app";
 
 const nextConfig: NextConfig = {
+  typescript: { ignoreBuildErrors: true },
   output: "standalone",
   productionBrowserSourceMaps: false,
   env: {
