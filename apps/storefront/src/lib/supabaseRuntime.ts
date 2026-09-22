@@ -1,14 +1,24 @@
-export const CANONICAL_SUPABASE_URL = "https://supabase.ruthistanbul.com";
+export const ROSTA_SUPABASE_PROJECT_REF = "fposvxuryzidmeuwytbg";
+export const CANONICAL_SUPABASE_URL = `https://${ROSTA_SUPABASE_PROJECT_REF}.supabase.co`;
 
-const LEGACY_PRODUCTION_SUPABASE_URLS = new Set([
-  "https://mpfpkiikqutiwuycpsjb.supabase.co",
-]);
+function clean(value?: string) {
+  return value?.trim().replace(/\/+$/, "").replace(/\/rest\/v1$/i, "") || "";
+}
 
 export function normalizeSupabaseUrl(value?: string) {
-  const normalized = value?.trim().replace(/\/+$/, "").replace(/\/rest\/v1$/i, "");
-  if (!normalized) return CANONICAL_SUPABASE_URL;
-  if (LEGACY_PRODUCTION_SUPABASE_URLS.has(normalized.toLowerCase())) {
-    return CANONICAL_SUPABASE_URL;
+  const normalized = clean(value) || CANONICAL_SUPABASE_URL;
+  let hostname = "";
+  try {
+    hostname = new URL(normalized).hostname.toLowerCase();
+  } catch {
+    throw new Error("ROSTA Supabase URL geçersiz.");
   }
-  return normalized;
+
+  const expected = `${ROSTA_SUPABASE_PROJECT_REF}.supabase.co`;
+  if (hostname !== expected) {
+    throw new Error(
+      `ROSTA güvenlik kilidi: Supabase projesi ${ROSTA_SUPABASE_PROJECT_REF} dışında bir veritabanına bağlanılamaz.`,
+    );
+  }
+  return CANONICAL_SUPABASE_URL;
 }
