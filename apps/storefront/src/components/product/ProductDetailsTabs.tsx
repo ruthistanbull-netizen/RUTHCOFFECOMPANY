@@ -54,7 +54,7 @@ export function ProductDetailsTabs({
 
   const renderContent = () => {
     if (active === "description") {
-      return <Copy text={description || "Ruth Istanbul’un zamansız ve sembolik tasarım diliyle hazırlandı."} />;
+      return <Copy text={description || "ROSTA Coffee Co. ürünü."} />;
     }
 
     if (active === "material") {
@@ -63,7 +63,7 @@ export function ProductDetailsTabs({
           <Copy text={material || "Materyal bilgisi ürün bazında değişebilir."} />
           <div className={styles.subsection}>
             <span>Bakım</span>
-            <Copy text={care || "Parfüm, su ve kimyasal temasından kaçının. Kullanmadığınızda kutusunda saklayın."} />
+            <Copy text={care || "Ürüne özel saklama ve kullanım bilgilerini ürün açıklamasından takip edin."} />
           </div>
         </div>
       );
@@ -72,8 +72,8 @@ export function ProductDetailsTabs({
     if (active === "size") {
       return (
         <div className={styles.copy}>
-          <Copy text={sizeUsage || "Günlük kullanıma uygun zarif form."} />
-          {showNecklaceGuide ? (
+          <Copy text={sizeUsage || "Ürüne özel kullanım bilgisi."} />
+          {false && showNecklaceGuide ? (
             <img
               className={styles.sizeGuide}
               src="/necklace-size-guide.jpg"
@@ -159,7 +159,7 @@ export function ProductDetailsTabs({
         <div className={styles.drawerContent}>
           <section>
             <span>Hazırlık ve Kargo</span>
-            <p>Ürünler üretim süreci nedeniyle 3–5 iş günü içerisinde kargoya verilir.</p>
+            <p>Sipariş hazırlık süresi ürün ve sipariş tipine göre değişebilir.</p>
             <p>
               {freeShippingThreshold.toLocaleString("tr-TR")} TL ve üzeri siparişlerde kargo ücretsizdir.
             </p>
