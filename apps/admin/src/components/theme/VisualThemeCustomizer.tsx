@@ -57,10 +57,10 @@ type ContextPoint = { x: number; y: number; viewportWidth: number; viewportHeigh
 type ContextRequest = { id: string; point: ContextPoint };
 type MenuPosition = { x: number; y: number };
 
-const RAW_STOREFRONT_URL = process.env.NEXT_PUBLIC_STOREFRONT_URL || "https://www.ruthistanbul.com";
-const STOREFRONT_URL = RAW_STOREFRONT_URL
-  .replace(/^https:\/\/ruthistanbul\.com(?=\/|$)/, "https://www.ruthistanbul.com")
-  .replace(/\/$/, "");
+const STOREFRONT_URL = (
+  process.env.NEXT_PUBLIC_STOREFRONT_URL ||
+  "https://rostacoffecompany.zeabur.app"
+).replace(/\/$/, "");
 const THEME_IMAGE_ACCEPT = "image/*,.jpg,.jpeg,.png,.webp,.avif,.heic,.heif";
 const FALLBACK_PAGES: PageItem[] = [
   { path: "/", label: "Ana Sayfa", group: "Mağaza" },
