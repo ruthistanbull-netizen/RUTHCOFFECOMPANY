@@ -9,6 +9,7 @@ import {
   Filter,
   Handshake,
   History,
+  HeartPulse,
   Inbox,
   Landmark,
   Layers,
@@ -114,6 +115,7 @@ export const exactNavStructure: ExactNavGroup[] = [
       { label: "Kullanıcılar ve Roller", path: "/settings/users", icon: UserCog },
       { label: "Görünüm", path: "/settings/appearance", icon: Brush },
       { label: "Bildirimler", path: "/notifications", icon: Bell },
+      { label: "Servis Sağlığı", path: "/system", icon: HeartPulse },
     ],
   },
 ];
