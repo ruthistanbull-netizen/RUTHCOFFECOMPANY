@@ -4,7 +4,7 @@ import { AuthForm } from "@/components/auth/AuthForm";
 
 export const metadata: Metadata = {
   title: "Giriş Yap",
-  description: "Ruth Istanbul üyelik sayfası.",
+  description: "ROSTA Coffee Co. üyelik sayfası.",
 };
 
 export default function LoginPage() {
