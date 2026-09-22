@@ -1,0 +1,128 @@
+:root {
+  --ruth-panel-user-logo: url('/ruth-commerce-user-logo.svg?v=20260901-1');
+}
+
+/* Canonical Ruth Commerce wordmark supplied by the user. Keep one visual source
+   for the panel shell, auth screens and loading/preparing states. */
+[data-panel-brand] [class*="brandMark"] {
+  width: 148px !important;
+  height: 64px !important;
+  flex: 0 0 64px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  background-image: var(--ruth-panel-user-logo) !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  color: transparent !important;
+  font-size: 0 !important;
+  box-shadow: none !important;
+}
+
+[data-panel-brand] [class*="brandCopy"] {
+  display: none !important;
+}
+
+/* Replace legacy raster logo images without touching their component logic. */
+img[data-ruth-loading-logo],
+img[src*="/ruth-commerce-panel-logo.png"],
+img[src*="/brand/ruth-r-mark.webp"],
+img[src*="/panel-ruth-logo-cropped.png"],
+img[src*="/panel-r-logo.png"] {
+  content: url('/ruth-commerce-user-logo.svg?v=20260901-1') !important;
+  object-fit: contain !important;
+  object-position: center !important;
+}
+
+/* Base44 compact brand used a square R tile plus separate copy. Turn that tile
+   into the full wordmark and remove the duplicate Ruth Commerce text. */
+div:has(> img[src*="/brand/ruth-r-mark.webp"]) {
+  width: 150px !important;
+  height: 58px !important;
+  min-width: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+a:has(> div > img[src*="/brand/ruth-r-mark.webp"]) > div:not(:has(img)) {
+  display: none !important;
+}
+
+/* Legacy auth CSS paints logos as backgrounds instead of <img>. */
+[data-exact-base44-auth] > section:first-child .relative.z-10 > div:first-child,
+[data-exact-base44-auth] > section:last-child > div > div:first-child,
+[data-exact-base44-auth="login"] > section:first-child .relative.z-10 > div:first-child,
+[data-exact-base44-auth="login"] > section:last-child > div > div:first-child,
+aside[class*="z-sidebar"] > div:first-child > a::after {
+  background-color: transparent !important;
+  background-image: var(--ruth-panel-user-logo) !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  box-shadow: none !important;
+}
+
+/* Older Control Room auth/logo classes. */
+.cr-login__brand-mark,
+.cr-auth-state__mark {
+  color: transparent !important;
+  font-size: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  background-image: var(--ruth-panel-user-logo) !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  box-shadow: none !important;
+}
+
+.cr-login__brand-mark {
+  width: clamp(190px, 28vw, 290px) !important;
+  height: clamp(105px, 15vw, 155px) !important;
+}
+
+.cr-auth-state__mark {
+  width: min(220px, 72vw) !important;
+  height: 116px !important;
+}
+
+/* Dark surfaces need the same black artwork inverted, not a second asset. */
+html.dark img[data-ruth-loading-logo],
+html.dark img[src*="/ruth-commerce-panel-logo.png"],
+html.dark img[src*="/brand/ruth-r-mark.webp"],
+html.dark [data-panel-brand] [class*="brandMark"],
+html.dark aside[class*="z-sidebar"] > div:first-child > a::after,
+[data-exact-base44-auth="login"] > section:first-child .relative.z-10 > div:first-child,
+[data-exact-base44-auth="login"] > section:last-child > div > div:first-child,
+.cr-login__brand-mark {
+  filter: invert(1) !important;
+}
+
+@media (min-width: 701px) {
+  /* The classic Control Room desktop rail is dark even in the light theme. */
+  [data-panel-brand] [class*="brandMark"] {
+    filter: invert(1) !important;
+  }
+}
+
+@media (max-width: 700px) {
+  [data-panel-brand] {
+    width: 166px !important;
+  }
+
+  [data-panel-brand] [class*="brandMark"] {
+    width: 132px !important;
+    height: 58px !important;
+    flex-basis: 132px !important;
+    filter: none !important;
+  }
+
+  div:has(> img[src*="/brand/ruth-r-mark.webp"]) {
+    width: 132px !important;
+    height: 52px !important;
+  }
+}

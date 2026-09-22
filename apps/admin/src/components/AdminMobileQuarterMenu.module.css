@@ -1,0 +1,329 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483300;
+  border: 0;
+  background: rgba(10, 10, 12, 0.18);
+  cursor: default;
+  touch-action: none;
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.root {
+  --quarter-menu-surface: #1d1e20;
+  --quarter-menu-surface-raised: #252629;
+  --quarter-menu-accent: #c9a23a;
+  --quarter-menu-accent-strong: #e2c76b;
+  --quarter-menu-accent-soft: rgba(201, 162, 58, 0.18);
+  --quarter-menu-muted: #b8bbc0;
+  --quarter-menu-muted-soft: #9da0a6;
+  --quarter-menu-white: #fffaf0;
+
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  z-index: 2147483400;
+  overflow: hidden;
+  pointer-events: none;
+  contain: layout paint style;
+  isolation: isolate;
+  touch-action: none;
+  overscroll-behavior: contain;
+  transition: opacity 160ms ease, visibility 160ms ease, clip-path 220ms cubic-bezier(.22,1,.36,1);
+}
+
+.root[data-open="true"] {
+  clip-path: circle(150% at 100% 100%);
+}
+
+/* Closed state exposes the real quarter-circle instead of a rectangular crop.
+   The open and closed states are both circles, so the exit animation never
+   flashes a square edge while the main ring collapses. */
+.root[data-open="false"] {
+  clip-path: circle(132px at 100% 100%);
+}
+
+.root[data-open="false"] .coreHit {
+  width: 132px;
+  height: 132px;
+  transform: none;
+  border-radius: 0;
+  clip-path: circle(132px at 100% 100%);
+}
+
+:global(html[data-ruth-overlay-active="true"]) .root,
+:global(html[data-ruth-overlay-active="true"]) .backdrop {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none !important;
+}
+
+:global(html[data-ruth-overlay-active="true"]) .root .coreHit,
+:global(html[data-ruth-overlay-active="true"]) .root .segmentButton {
+  pointer-events: none !important;
+}
+
+.menuSvg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.mainRingBase {
+  fill: var(--quarter-menu-surface);
+  stroke: none;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(-6px -6px 15px rgba(0, 0, 0, 0.23));
+}
+
+.accentWedge {
+  fill: none;
+  stroke: var(--quarter-menu-accent);
+  stroke-linecap: butt;
+  stroke-linejoin: miter;
+  pointer-events: none;
+  transition: opacity 120ms ease;
+}
+
+.segmentButton {
+  outline: none;
+  pointer-events: auto;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mainSegment {
+  fill: transparent;
+  stroke: none;
+  vector-effect: non-scaling-stroke;
+  transition: fill 140ms ease;
+}
+
+.segmentButton:active .mainSegment,
+.segmentButton:focus-visible .mainSegment {
+  fill: var(--quarter-menu-accent-soft);
+}
+
+.activeSegment {
+  fill: rgba(255, 255, 255, 0.055);
+}
+
+.selectedSegment {
+  fill: var(--quarter-menu-accent-strong);
+  stroke: var(--quarter-menu-accent-strong);
+  stroke-width: 1.4px;
+  stroke-linecap: butt;
+  stroke-linejoin: miter;
+  paint-order: stroke fill;
+  vector-effect: non-scaling-stroke;
+}
+
+/* The selected marker uses the exact main-sector endpoints and fills the visual
+   gap cleanly without rounded caps or side overhang. */
+.selectedOuterArc {
+  fill: none;
+  stroke: rgba(255, 250, 240, 0.98);
+  stroke-width: 5.2px;
+  stroke-linecap: butt;
+  stroke-linejoin: miter;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+  opacity: 1;
+  transform-box: view-box;
+  transform-origin: 360px 360px;
+  transform: scale(1.0031);
+  filter: drop-shadow(0 0 2px rgba(255, 250, 240, 0.22));
+}
+
+.segmentIcon,
+.subIcon {
+  color: var(--quarter-menu-muted);
+  pointer-events: none;
+  stroke-width: 2.2;
+}
+
+.featuredIcon,
+.selectedIcon,
+.activeSubIcon {
+  color: var(--quarter-menu-white);
+}
+
+/* Gold submenu slices use the same icon treatment as a gold/selected main
+   heading; dark submenu slices keep the same muted tone as dark main headings. */
+.subHitSegment ~ .subIcon {
+  color: var(--quarter-menu-white);
+}
+
+.segmentLabel {
+  fill: var(--quarter-menu-muted-soft);
+  font-family: var(--font-body);
+  font-size: 8.6px;
+  font-weight: 760;
+  letter-spacing: -0.025em;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  pointer-events: none;
+}
+
+.featuredLabel,
+.selectedLabel {
+  fill: var(--quarter-menu-white);
+}
+
+.root [data-quarter-submenu-label="true"] {
+  text-rendering: geometricPrecision;
+}
+
+.subRingBase {
+  fill: var(--quarter-menu-surface);
+  stroke: none;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(-6px -6px 16px rgba(0, 0, 0, 0.24));
+  pointer-events: none;
+}
+
+.subSegment {
+  fill: var(--quarter-menu-surface-raised);
+  stroke: var(--quarter-menu-surface-raised);
+  stroke-width: 1px;
+  stroke-linecap: butt;
+  stroke-linejoin: miter;
+  paint-order: stroke fill;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Paint accented submenu buttons with the REAL sector path so the colour fits
+   every curved button exactly. The reveal is delayed to restore the original
+   opening rhythm that was lost when these sectors were made immediately solid. */
+.subHitSegment {
+  fill: var(--quarter-menu-accent);
+  stroke: var(--quarter-menu-accent);
+  stroke-width: 1.15px;
+  stroke-linecap: butt;
+  stroke-linejoin: miter;
+  paint-order: stroke fill;
+  vector-effect: non-scaling-stroke;
+  pointer-events: all;
+  opacity: 0;
+  transform-box: view-box;
+  transform-origin: 360px 360px;
+  animation: ruthQuarterSubSectorIn 360ms 430ms cubic-bezier(.16,1,.3,1) forwards;
+}
+
+.segmentButton:has(.subAccentArcActive) > .subHitSegment {
+  fill: var(--quarter-menu-accent-strong);
+  stroke: var(--quarter-menu-accent-strong);
+}
+
+.subAccentArc,
+.subAccentArcActive {
+  fill: none;
+  stroke-linecap: butt;
+  stroke-linejoin: miter;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.subAccentArc {
+  stroke: var(--quarter-menu-accent);
+}
+
+.subAccentArcActive {
+  stroke: var(--quarter-menu-accent-strong);
+}
+
+@keyframes ruthQuarterSubSectorIn {
+  0% {
+    opacity: 0;
+    transform: scale(.94);
+  }
+  55% {
+    opacity: .82;
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.coreShadow,
+.core,
+.burger {
+  pointer-events: none;
+}
+
+/* Closed control now uses the same Ruth gold as the Net Satış card. CSS owns
+   only the colour transition; Framer still owns the existing scale/open motion,
+   so changing the colour cannot break the menu opening animation. */
+.core {
+  fill: var(--quarter-menu-accent) !important;
+  stroke: rgba(151, 111, 20, .48);
+  stroke-width: 1.15px;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(-9px -9px 20px rgba(0, 0, 0, 0.24));
+  transition: fill 420ms cubic-bezier(.22,1,.36,1), stroke 320ms ease;
+}
+
+.root[data-open="true"] .core {
+  fill: hsl(var(--text-main)) !important;
+  stroke: hsl(var(--border-strong));
+}
+
+.burgerLine {
+  stroke: #1d1e20 !important;
+  stroke-width: 5.5;
+  stroke-linecap: round;
+  transition: stroke 260ms ease;
+}
+
+.root[data-open="true"] .burgerLine {
+  stroke: #fff !important;
+}
+
+.root[data-open="true"] .burgerLine:nth-of-type(2) {
+  stroke: rgba(255, 255, 255, 0) !important;
+}
+
+.coreHit {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  width: 60%;
+  height: 60%;
+  transform: translate(50%, 50%);
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  pointer-events: auto;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (min-width: 1024px) {
+  .root,
+  .backdrop {
+    display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root,
+  .mainSegment,
+  .core,
+  .burgerLine {
+    transition: none;
+  }
+
+  .subHitSegment {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}

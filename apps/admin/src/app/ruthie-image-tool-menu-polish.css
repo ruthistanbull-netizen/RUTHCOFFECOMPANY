@@ -1,0 +1,455 @@
+/* Ruthie image generation — use the same compact layered visual grammar as the
+   + / @ composer tool menu. This is presentation-only: image generation data,
+   pricing, product references and API ownership stay in their React owners. */
+
+:root {
+  --ruthie-tool-motion: 160ms;
+  --ruthie-tool-ease: cubic-bezier(.22, 1, .36, 1);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Ruthie Insight: main @Fotoğraf üret card                                   */
+/* -------------------------------------------------------------------------- */
+
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] {
+  border: 1px solid hsl(var(--border-subtle)) !important;
+  border-radius: 22px !important;
+  background: hsl(var(--surface-primary) / .97) !important;
+  box-shadow: var(--shadow-overlay) !important;
+}
+
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] > div:first-child {
+  min-height: 42px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid hsl(var(--border-subtle));
+}
+
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] > div:first-child > span:first-child {
+  min-height: 30px !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: hsl(var(--accent) / .09) !important;
+  color: hsl(var(--accent)) !important;
+  box-shadow: none !important;
+}
+
+/* Quality / size chips become compact tool-menu choices rather than large pills. */
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-7"][class*="rounded-full"] {
+  min-width: 0 !important;
+  height: 34px !important;
+  border: 1px solid transparent !important;
+  border-radius: 11px !important;
+  background: hsl(var(--surface-secondary)) !important;
+  color: hsl(var(--text-muted)) !important;
+  box-shadow: none !important;
+  transition:
+    transform var(--ruthie-tool-motion) var(--ruthie-tool-ease),
+    background var(--ruthie-tool-motion) ease,
+    border-color var(--ruthie-tool-motion) ease,
+    color var(--ruthie-tool-motion) ease !important;
+}
+
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-7"][class*="bg-accent"] {
+  border-color: hsl(var(--accent) / .22) !important;
+  background: hsl(var(--accent) / .10) !important;
+  color: hsl(var(--accent)) !important;
+  box-shadow: inset 0 0 0 1px hsl(var(--accent) / .025) !important;
+}
+
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-7"]:active,
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-11"]:active {
+  transform: scale(.975);
+}
+
+/* Product + style launchers: same row anatomy as + menu options. */
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-11"] {
+  min-height: 54px !important;
+  height: auto !important;
+  padding: 8px 10px !important;
+  border: 1px solid transparent !important;
+  border-radius: 14px !important;
+  background: hsl(var(--surface-secondary) / .78) !important;
+  color: hsl(var(--text-main)) !important;
+  box-shadow: none !important;
+  transition:
+    transform var(--ruthie-tool-motion) var(--ruthie-tool-ease),
+    background var(--ruthie-tool-motion) ease,
+    border-color var(--ruthie-tool-motion) ease !important;
+}
+
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-11"]:hover {
+  border-color: hsl(var(--accent) / .16) !important;
+  background: hsl(var(--surface-secondary)) !important;
+}
+
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-11"] > span:first-child > svg {
+  width: 34px !important;
+  height: 34px !important;
+  padding: 9px;
+  border-radius: 11px;
+  background: hsl(var(--accent) / .08);
+  color: hsl(var(--accent));
+}
+
+/* Purpose choices: on mobile they become real + menu rows, not cramped cards. */
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] div[class*="grid-cols-3"] > button {
+  min-height: 54px;
+  border: 1px solid transparent !important;
+  border-radius: 14px !important;
+  background: hsl(var(--surface-secondary) / .72) !important;
+  color: hsl(var(--text-main)) !important;
+  box-shadow: none !important;
+  transition:
+    transform var(--ruthie-tool-motion) var(--ruthie-tool-ease),
+    background var(--ruthie-tool-motion) ease,
+    border-color var(--ruthie-tool-motion) ease !important;
+}
+
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] div[class*="grid-cols-3"] > button:hover {
+  border-color: hsl(var(--accent) / .16) !important;
+  background: hsl(var(--surface-secondary)) !important;
+}
+
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] div[class*="grid-cols-3"] > button[class*="bg-accent"] {
+  border-color: hsl(var(--accent) / .24) !important;
+  background: hsl(var(--accent) / .10) !important;
+  color: hsl(var(--accent)) !important;
+}
+
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] div[class*="grid-cols-3"] > button:active {
+  transform: scale(.985);
+}
+
+/* Quote / action footer follows the same quiet menu surface. */
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] div[class*="border-t"] {
+  border-color: hsl(var(--border-subtle)) !important;
+}
+
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-8"] {
+  border-radius: 11px !important;
+  box-shadow: none !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Insight product/style picker dialogs                                        */
+/* -------------------------------------------------------------------------- */
+
+section[role="dialog"][aria-label="Ürün ekle"],
+section[role="dialog"][aria-label="Fotoğraf tarzı"] {
+  border: 1px solid hsl(var(--border-subtle)) !important;
+  border-radius: 24px !important;
+  background: hsl(var(--surface-primary) / .99) !important;
+  box-shadow: var(--shadow-overlay) !important;
+  transform-origin: 50% 100%;
+}
+
+section[role="dialog"][aria-label="Ürün ekle"] > div:nth-child(2),
+section[role="dialog"][aria-label="Fotoğraf tarzı"] > div:nth-child(2) {
+  min-height: 54px;
+  padding: 6px 4px 12px !important;
+  border-color: hsl(var(--border-subtle)) !important;
+}
+
+section[role="dialog"][aria-label="Ürün ekle"] > div:nth-child(2) button,
+section[role="dialog"][aria-label="Fotoğraf tarzı"] > div:nth-child(2) button {
+  border-radius: 11px !important;
+  background: hsl(var(--surface-secondary) / .72);
+  transition: transform var(--ruthie-tool-motion) var(--ruthie-tool-ease), background var(--ruthie-tool-motion) ease;
+}
+
+section[role="dialog"][aria-label="Ürün ekle"] > div:nth-child(2) button:active,
+section[role="dialog"][aria-label="Fotoğraf tarzı"] > div:nth-child(2) button:active {
+  transform: scale(.94);
+}
+
+/* Search field mirrors the composer menu search/input surface. */
+section[role="dialog"][aria-label="Ürün ekle"] label:has(input[placeholder="Ürün ara…"]) {
+  height: 44px !important;
+  border: 1px solid hsl(var(--border-subtle)) !important;
+  border-radius: 13px !important;
+  background: hsl(var(--surface-secondary) / .72) !important;
+  box-shadow: none !important;
+  transition: border-color var(--ruthie-tool-motion) ease, box-shadow var(--ruthie-tool-motion) ease, background var(--ruthie-tool-motion) ease;
+}
+
+section[role="dialog"][aria-label="Ürün ekle"] label:has(input[placeholder="Ürün ara…"]):focus-within {
+  border-color: hsl(var(--accent) / .32) !important;
+  background: hsl(var(--surface-primary)) !important;
+  box-shadow: 0 0 0 3px hsl(var(--accent) / .07) !important;
+}
+
+/* Product result rows look like the + menu rows, image tile included. */
+section[role="dialog"][aria-label="Ürün ekle"] div[class*="max-h-[324px]"] {
+  display: grid;
+  gap: 4px !important;
+  padding: 2px !important;
+}
+
+section[role="dialog"][aria-label="Ürün ekle"] div[class*="max-h-[324px]"] > button {
+  min-height: 62px !important;
+  height: auto !important;
+  padding: 6px 8px !important;
+  border: 1px solid transparent !important;
+  border-radius: 14px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  transition:
+    transform var(--ruthie-tool-motion) var(--ruthie-tool-ease),
+    background var(--ruthie-tool-motion) ease,
+    border-color var(--ruthie-tool-motion) ease !important;
+}
+
+section[role="dialog"][aria-label="Ürün ekle"] div[class*="max-h-[324px]"] > button:hover {
+  background: hsl(var(--surface-secondary)) !important;
+}
+
+section[role="dialog"][aria-label="Ürün ekle"] div[class*="max-h-[324px]"] > button[class*="bg-accent-soft"] {
+  border-color: hsl(var(--accent) / .18) !important;
+  background: hsl(var(--accent) / .07) !important;
+}
+
+section[role="dialog"][aria-label="Ürün ekle"] div[class*="max-h-[324px]"] > button:active {
+  transform: scale(.988);
+}
+
+section[role="dialog"][aria-label="Ürün ekle"] div[class*="max-h-[324px]"] > button > span:first-child {
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 12px !important;
+  background: hsl(var(--surface-secondary)) !important;
+}
+
+/* Style categories become separated tool-menu cards instead of flat rules. */
+section[role="dialog"][aria-label="Fotoğraf tarzı"] > div:last-child {
+  padding-inline: 2px;
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--border-subtle)) transparent;
+}
+
+section[role="dialog"][aria-label="Fotoğraf tarzı"] div[class*="overflow-hidden"][class*="border-b"] {
+  margin: 4px 0;
+  border: 1px solid transparent !important;
+  border-radius: 14px !important;
+  background: hsl(var(--surface-secondary) / .54) !important;
+  box-shadow: none;
+  transition:
+    transform var(--ruthie-tool-motion) var(--ruthie-tool-ease),
+    border-color var(--ruthie-tool-motion) ease,
+    background var(--ruthie-tool-motion) ease;
+}
+
+section[role="dialog"][aria-label="Fotoğraf tarzı"] div[class*="overflow-hidden"][class*="border-b"]:hover {
+  border-color: hsl(var(--accent) / .12) !important;
+  background: hsl(var(--surface-secondary) / .84) !important;
+}
+
+section[role="dialog"][aria-label="Fotoğraf tarzı"] div[class*="overflow-hidden"][class*="border-b"][class*="bg-accent-soft"] {
+  border-color: hsl(var(--accent) / .18) !important;
+  background: hsl(var(--accent) / .065) !important;
+}
+
+section[role="dialog"][aria-label="Fotoğraf tarzı"] div[class*="overflow-hidden"][class*="border-b"] > button {
+  min-height: 58px !important;
+  padding: 8px 10px !important;
+  border-radius: 14px !important;
+}
+
+section[role="dialog"][aria-label="Fotoğraf tarzı"] div[class*="overflow-hidden"][class*="border-b"] > button:active {
+  transform: scale(.992);
+}
+
+/* Sub-options inherit the compact choice-chip language from the + menu. */
+section[role="dialog"][aria-label="Fotoğraf tarzı"] div[class*="overflow-hidden"] div[class*="flex-wrap"] > button {
+  min-height: 34px !important;
+  padding-inline: 10px !important;
+  border: 1px solid transparent !important;
+  border-radius: 11px !important;
+  background: hsl(var(--surface-primary)) !important;
+  color: hsl(var(--text-muted)) !important;
+  transition:
+    transform var(--ruthie-tool-motion) var(--ruthie-tool-ease),
+    background var(--ruthie-tool-motion) ease,
+    border-color var(--ruthie-tool-motion) ease,
+    color var(--ruthie-tool-motion) ease !important;
+}
+
+section[role="dialog"][aria-label="Fotoğraf tarzı"] div[class*="overflow-hidden"] div[class*="flex-wrap"] > button:hover {
+  background: hsl(var(--surface-secondary)) !important;
+  color: hsl(var(--text-main)) !important;
+}
+
+section[role="dialog"][aria-label="Fotoğraf tarzı"] div[class*="overflow-hidden"] div[class*="flex-wrap"] > button[class*="bg-accent"] {
+  border-color: hsl(var(--accent) / .22) !important;
+  background: hsl(var(--accent) / .10) !important;
+  color: hsl(var(--accent)) !important;
+}
+
+section[role="dialog"][aria-label="Fotoğraf tarzı"] div[class*="overflow-hidden"] div[class*="flex-wrap"] > button:active {
+  transform: scale(.965);
+}
+
+section[role="dialog"][aria-label="Fotoğraf tarzı"] div[class*="sticky"] {
+  border-color: hsl(var(--border-subtle)) !important;
+  background: hsl(var(--surface-primary) / .98) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Animate newly revealed accordion content using the same short menu motion. */
+section[role="dialog"][aria-label="Fotoğraf tarzı"] div[class*="overflow-hidden"] > div[class*="flex-wrap"] {
+  animation: ruthie-tool-reveal var(--ruthie-tool-motion) var(--ruthie-tool-ease) both;
+}
+
+@keyframes ruthie-tool-reveal {
+  from { opacity: 0; transform: translate3d(0, 6px, 0) scale(.985); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Full Ruthie chat V3: same menu grammar                                      */
+/* CSS-module class names retain the semantic local class name in Next builds. */
+/* -------------------------------------------------------------------------- */
+
+[class*="RuthieChatComposerEnhancerV3_imageDock"],
+[class*="imageDock"]:has(button[aria-label="Fotoğraf üret aracını kaldır"]) {
+  gap: 8px !important;
+  padding: 9px !important;
+  border: 1px solid hsl(var(--border-subtle)) !important;
+  border-radius: 20px !important;
+  background: hsl(var(--surface-primary) / .98) !important;
+  box-shadow: var(--shadow-overlay) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+[class*="RuthieChatComposerEnhancerV3_optionGroup"] button,
+[class*="imageDock"]:has(button[aria-label="Fotoğraf üret aracını kaldır"]) button[data-active] {
+  border-radius: 11px !important;
+  box-shadow: none !important;
+}
+
+[class*="RuthieChatComposerEnhancerV3_optionGroup"] button[data-active="true"],
+[class*="imageDock"]:has(button[aria-label="Fotoğraf üret aracını kaldır"]) button[data-active="true"] {
+  border-color: hsl(var(--accent) / .22) !important;
+  background: hsl(var(--accent) / .09) !important;
+  color: hsl(var(--accent)) !important;
+}
+
+[class*="RuthieChatComposerEnhancerV3_purposeOptions"] > button,
+[class*="purposeOptions"] > button {
+  border: 1px solid transparent !important;
+  border-radius: 14px !important;
+  background: hsl(var(--surface-secondary) / .70) !important;
+  box-shadow: none !important;
+}
+
+[class*="RuthieChatComposerEnhancerV3_purposeOptions"] > button[data-active="true"],
+[class*="purposeOptions"] > button[data-active="true"] {
+  border-color: hsl(var(--accent) / .20) !important;
+  background: hsl(var(--accent) / .07) !important;
+}
+
+[class*="RuthieChatComposerEnhancerV3_subPanel"],
+[class*="subPanel"]:has(button[aria-label="Ürün seçiciyi kapat"]),
+[class*="subPanel"]:has(button[aria-label="Fotoğraf tarzını kapat"]) {
+  border: 1px solid hsl(var(--border-subtle)) !important;
+  border-radius: 17px !important;
+  background: hsl(var(--surface-primary)) !important;
+  box-shadow: 0 10px 28px hsl(var(--text-main) / .055) !important;
+  animation: ruthie-tool-reveal var(--ruthie-tool-motion) var(--ruthie-tool-ease) both;
+}
+
+[class*="RuthieChatComposerEnhancerV3_productCard"],
+[class*="productCard"] {
+  border: 1px solid transparent !important;
+  border-radius: 13px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+[class*="RuthieChatComposerEnhancerV3_productCard"]:hover,
+[class*="productCard"]:hover {
+  background: hsl(var(--surface-secondary)) !important;
+}
+
+[class*="RuthieChatComposerEnhancerV3_productCard"][data-active="true"],
+[class*="productCard"][data-active="true"] {
+  border-color: hsl(var(--accent) / .18) !important;
+  background: hsl(var(--accent) / .07) !important;
+}
+
+[class*="RuthieChatComposerEnhancerV3_accordion"],
+[class*="accordion"]:has(> button[class*="accordionTrigger"]) {
+  margin-block: 4px !important;
+  border: 1px solid transparent !important;
+  border-radius: 14px !important;
+  background: hsl(var(--surface-secondary) / .56) !important;
+}
+
+[class*="RuthieChatComposerEnhancerV3_accordion"][data-selected="true"],
+[class*="accordion"][data-selected="true"] {
+  border-color: hsl(var(--accent) / .18) !important;
+  background: hsl(var(--accent) / .065) !important;
+}
+
+[class*="RuthieChatComposerEnhancerV3_accordionBody"] > div > button,
+[class*="accordionBody"] > div > button {
+  border-color: transparent !important;
+  border-radius: 11px !important;
+  background: hsl(var(--surface-primary)) !important;
+}
+
+[class*="RuthieChatComposerEnhancerV3_accordionBody"] > div > button[data-active="true"],
+[class*="accordionBody"] > div > button[data-active="true"] {
+  border-color: hsl(var(--accent) / .22) !important;
+  background: hsl(var(--accent) / .10) !important;
+  color: hsl(var(--accent)) !important;
+}
+
+[class*="RuthieChatComposerEnhancerV3_accordionBody"] > div,
+[class*="accordionBody"] > div {
+  animation: ruthie-tool-reveal var(--ruthie-tool-motion) var(--ruthie-tool-ease) both;
+}
+
+@media (max-width: 640px) {
+  /* Keep the direct photo-tool choices readable on narrow iPhones. */
+  [data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] div[class*="grid-cols-3"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  [data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] div[class*="grid-cols-3"] > button {
+    min-height: 48px;
+  }
+
+  section[role="dialog"][aria-label="Ürün ekle"],
+  section[role="dialog"][aria-label="Fotoğraf tarzı"] {
+    left: 8px !important;
+    right: 8px !important;
+    bottom: 8px !important;
+    width: auto !important;
+    border-radius: 24px !important;
+    box-shadow: 0 18px 60px rgba(24, 20, 16, .18) !important;
+  }
+
+  [class*="RuthieChatComposerEnhancerV3_purposeOptions"],
+  [class*="purposeOptions"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  section[role="dialog"][aria-label="Ürün ekle"] button:hover,
+  section[role="dialog"][aria-label="Fotoğraf tarzı"] button:hover,
+  [class*="imageDock"] button:hover {
+    transition-duration: var(--ruthie-tool-motion) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  section[role="dialog"][aria-label="Ürün ekle"] *,
+  section[role="dialog"][aria-label="Fotoğraf tarzı"] *,
+  [class*="RuthieChatComposerEnhancerV3_"] * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

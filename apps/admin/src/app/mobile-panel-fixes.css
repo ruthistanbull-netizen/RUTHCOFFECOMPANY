@@ -1,0 +1,120 @@
+/* Ruth Commerce mobile-only integration fixes. */
+
+@media (max-width: 1023px) {
+  /* Paint the iPhone safe area with the exact same opaque surface as the
+     mobile header. The dashboard root keeps its own grey app background. */
+  html,
+  body {
+    background-color: hsl(var(--surface-primary)) !important;
+  }
+
+  /* Keep only the real iOS safe area. The old 64px application spacer made
+     the top read as a separate grey band. */
+  header.z-header {
+    min-height: calc(3rem + env(safe-area-inset-top)) !important;
+    height: calc(3rem + env(safe-area-inset-top)) !important;
+    padding-top: env(safe-area-inset-top) !important;
+    padding-bottom: 0.4rem !important;
+    background: hsl(var(--surface-primary)) !important;
+  }
+
+  html.ruth-admin-preparing nav[aria-label="Ruth Commerce mobil menü"] {
+    display: none !important;
+  }
+
+  /* Persistent dock must leave the stage whenever an immersive overlay opens. */
+  body:has(aside[class~="z-drawer"]) nav[aria-label="Ruth Commerce mobil menü"],
+  body:has([data-exact-workspace-layer]) nav[aria-label="Ruth Commerce mobil menü"],
+  body:has([data-exact-select-layer]) nav[aria-label="Ruth Commerce mobil menü"],
+  body:has([data-ruth-liquid-date-layer]) nav[aria-label="Ruth Commerce mobil menü"],
+  body:has([role="dialog"][aria-modal="true"]) nav[aria-label="Ruth Commerce mobil menü"] {
+    pointer-events: none !important;
+    opacity: 0 !important;
+    filter: blur(4px) !important;
+    transform: translate3d(0, calc(100% + 28px), 0) scale(0.97) !important;
+  }
+
+  nav[aria-label="Ruth Commerce mobil menü"] {
+    transition:
+      transform 340ms cubic-bezier(0.18, 0.92, 0.2, 1.08),
+      opacity 190ms ease,
+      filter 190ms ease !important;
+  }
+
+  /* Workspace modals own the full mobile viewport; do not reserve dock room. */
+  [data-exact-workspace-modal] > div:last-child {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom)) !important;
+  }
+}
+
+@media (max-width: 767px) {
+  /* Dashboard report: mobile controls sit beneath the title and use the full
+     card width instead of squeezing into the desktop header row. */
+  section:has(select[aria-label="Grafik verisi"]) > header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+    padding: 14px 14px 12px !important;
+  }
+
+  section:has(select[aria-label="Grafik verisi"]) > header > h3 {
+    width: 100%;
+    font-size: 15px !important;
+    line-height: 1.2 !important;
+  }
+
+  section:has(select[aria-label="Grafik verisi"]) > header > div {
+    width: 100%;
+    flex: 0 0 auto !important;
+  }
+
+  section:has(select[aria-label="Grafik verisi"]) > header > div > div {
+    display: grid !important;
+    width: 100%;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 8px !important;
+  }
+
+  select[aria-label="Grafik verisi"],
+  select[aria-label="Grafik tarih görünümü"] {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 40px !important;
+    border-radius: 12px !important;
+    padding: 0 32px 0 12px !important;
+    font-size: 12px !important;
+  }
+
+  section:has(select[aria-label="Grafik verisi"]) > div:last-child {
+    padding: 9px 10px 12px !important;
+  }
+
+  section:has(select[aria-label="Grafik verisi"]) > div:last-child > div:first-child {
+    margin-bottom: 4px !important;
+    padding-inline: 2px;
+    font-size: 9px !important;
+    text-align: left !important;
+  }
+
+  /* MetricBarChart owns its responsive viewBox and height. Give it enough
+     vertical room on phones so bars and labels remain readable at a glance. */
+  section:has(select[aria-label="Grafik verisi"]) svg[aria-label="Seçilebilir ticaret performans grafiği"] {
+    display: block;
+    width: 100% !important;
+    min-height: 280px;
+    aspect-ratio: auto;
+  }
+
+  /* Liquid selects are modal-style on mobile, so the sheet never competes with
+     the bottom dock and visually reads from the centre of the screen. */
+  [data-ruth-liquid-select-panel] {
+    max-width: calc(100vw - 32px) !important;
+    border-radius: 22px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  nav[aria-label="Ruth Commerce mobil menü"] {
+    transition-duration: 1ms !important;
+  }
+}

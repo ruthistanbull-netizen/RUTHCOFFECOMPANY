@@ -1,0 +1,229 @@
+@supports (padding-top: env(safe-area-inset-top)) {
+  @media (max-width: 1023px) {
+    header.z-header {
+      min-height: calc(4rem + max(env(safe-area-inset-top), 28px));
+      height: calc(4rem + max(env(safe-area-inset-top), 28px));
+      padding-top: max(env(safe-area-inset-top), 28px);
+      padding-bottom: 0.75rem;
+      align-items: flex-end;
+    }
+
+    main {
+      scroll-padding-top: calc(4rem + max(env(safe-area-inset-top), 28px));
+    }
+
+    [data-exact-select-layer] {
+      padding-top: max(env(safe-area-inset-top), 28px);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+  }
+}
+
+@media (display-mode: standalone) and (max-width: 1023px) {
+  header.z-header {
+    min-height: calc(4rem + max(env(safe-area-inset-top), 32px));
+    height: calc(4rem + max(env(safe-area-inset-top), 32px));
+    padding-top: max(env(safe-area-inset-top), 32px);
+  }
+}
+
+@media (max-width: 1023px) {
+  html,
+  body {
+    width: 100%;
+    min-height: 100dvh;
+    max-width: 100%;
+    overflow-x: clip;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    position: relative;
+  }
+
+  main,
+  [data-exact-workspace-layer],
+  [data-exact-workspace-modal],
+  [role="dialog"][aria-modal="true"] {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  /* iOS Safari/PWA zooms focused controls whose text is smaller than 16px. */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  textarea,
+  select,
+  [contenteditable="true"] {
+    font-size: 16px !important;
+    line-height: 1.35;
+  }
+
+  input,
+  textarea,
+  select {
+    max-width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  /* The custom top-left Menu + Ruthie capsule replaces the legacy shell controls. */
+  [class*="topbar"] [class*="mobileMenuButton"],
+  [class*="topbar"] [class*="ruthieAction"] {
+    display: none !important;
+  }
+
+  /* Full-screen Base44 workspaces start below the iPhone status bar. */
+  [data-exact-workspace-layer] {
+    padding-top: max(env(safe-area-inset-top), 28px);
+  }
+
+  [data-exact-workspace-modal] {
+    height: calc(100dvh - max(env(safe-area-inset-top), 28px)) !important;
+    max-height: calc(100dvh - max(env(safe-area-inset-top), 28px)) !important;
+    border-radius: 28px 28px 0 0 !important;
+  }
+
+  [data-exact-workspace-modal] > header {
+    min-height: 72px;
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+
+  [data-exact-workspace-modal] > div:last-child {
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  [data-exact-workspace-modal] *,
+  aside[role="dialog"][aria-modal="true"] *,
+  div[role="dialog"][aria-modal="true"] * {
+    box-sizing: border-box;
+  }
+
+  [data-exact-workspace-modal] .grid,
+  [data-exact-workspace-modal] .flex,
+  aside[role="dialog"][aria-modal="true"] .grid,
+  aside[role="dialog"][aria-modal="true"] .flex,
+  div[role="dialog"][aria-modal="true"] .grid,
+  div[role="dialog"][aria-modal="true"] .flex {
+    min-width: 0;
+  }
+
+  [data-exact-workspace-modal] img,
+  [data-exact-workspace-modal] canvas,
+  [data-exact-workspace-modal] video,
+  aside[role="dialog"][aria-modal="true"] img,
+  aside[role="dialog"][aria-modal="true"] canvas,
+  aside[role="dialog"][aria-modal="true"] video,
+  div[role="dialog"][aria-modal="true"] img,
+  div[role="dialog"][aria-modal="true"] canvas,
+  div[role="dialog"][aria-modal="true"] video {
+    max-width: 100%;
+  }
+
+  [data-exact-workspace-modal] pre,
+  [data-exact-workspace-modal] code,
+  aside[role="dialog"][aria-modal="true"] pre,
+  aside[role="dialog"][aria-modal="true"] code {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  /* Product popups are form-first on mobile. The catalogue remains on /products. */
+  [data-workspace-kind="product"] [data-exact-base44-page="product-studio"] > .grid > :first-child {
+    display: none !important;
+  }
+
+  [data-workspace-kind="product"] [data-exact-base44-page="product-studio"] {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  [data-workspace-kind="product"] [data-exact-base44-page="product-studio"] > .grid {
+    display: block !important;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  [data-workspace-kind="product"] [data-exact-base44-page="product-studio"] > .grid > :last-child {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  /* The workspace already owns its title, so nested mobile headers are removed. */
+  [data-workspace-kind="manual-order"] [data-exact-base44-page="manual-order"] > :first-child {
+    display: none !important;
+  }
+
+  /* Every Base44 drawer stays below Dynamic Island / notch. */
+  aside[role="dialog"][aria-modal="true"] {
+    top: max(env(safe-area-inset-top), 28px) !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: calc(100dvh - max(env(safe-area-inset-top), 28px)) !important;
+    overflow: hidden;
+    border-radius: 28px 28px 0 0;
+  }
+
+  aside[role="dialog"][aria-modal="true"] > header {
+    min-height: 72px;
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+
+  aside[role="dialog"][aria-modal="true"] > div {
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  aside[role="dialog"][aria-modal="true"] > footer {
+    padding-bottom: max(env(safe-area-inset-bottom), 14px);
+  }
+
+  /* Smaller Base44 form modals use the same safe viewport without sideways drift. */
+  div[role="dialog"][aria-modal="true"] {
+    width: 100% !important;
+    max-width: 100vw !important;
+    max-height: calc(100dvh - max(env(safe-area-inset-top), 28px)) !important;
+    overflow-x: hidden;
+  }
+
+  div[role="dialog"][aria-modal="true"] > div {
+    overflow-x: hidden;
+  }
+
+  /* Product image canvas consumes drag gestures instead of moving the page. */
+  div[role="dialog"][aria-modal="true"] .cursor-grab {
+    touch-action: none;
+    overscroll-behavior: none;
+  }
+}
+
+/* Net Sales is a TRY metric; replace the generic dollar glyph with the lira sign. */
+[data-exact-base44-page="overview"] article.bg-gradient-to-br div.h-7.w-7 > svg {
+  display: none;
+}
+
+[data-exact-base44-page="overview"] article.bg-gradient-to-br div.h-7.w-7::after {
+  content: "₺";
+  display: block;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1;
+  color: currentColor;
+}
+
+/* The standalone R mark is intentionally removed; Ruth Commerce remains the brand. */
+a:has(img[src="/brand/ruth-r-mark.webp"]) > div:has(img[src="/brand/ruth-r-mark.webp"]) {
+  display: none !important;
+}

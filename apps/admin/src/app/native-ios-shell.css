@@ -1,0 +1,17 @@
+html[data-ruth-native-ios="true"] nav[aria-label="Mobil ana menü"],
+html[data-ruth-native-ios="true"] nav[aria-label="Ruth Commerce mobil menü"],
+html[data-ruth-native-ios="true"] [data-ruth-liquidgl-fixed-lens],
+html[data-ruth-native-ios="true"] [data-ruth-quick-liquid-bridge-v2],
+html[data-ruth-native-ios="true"] [data-ruth-liquid-anchor-v2] {
+  display: none !important;
+}
+
+html[data-ruth-native-ios="true"] body > canvas {
+  pointer-events: none !important;
+}
+
+@media (max-width: 1023px) {
+  html[data-ruth-native-ios="true"] [data-base44-exact-shell] main {
+    padding-bottom: max(6.4rem, calc(env(safe-area-inset-bottom) + 5.45rem)) !important;
+  }
+}

@@ -1,0 +1,385 @@
+/* Ruthie insight popup — motion polish.
+   Uses individual translate/scale properties so it composes with Framer Motion's
+   transform animations instead of fighting them. */
+
+[data-ruthie-insight-popup="true"] {
+  animation: ri-surface-settle 520ms cubic-bezier(.22, 1, .36, 1) both;
+}
+
+[data-ruthie-insight-popup="true"] button,
+[data-ruthie-insight-popup="true"] a,
+[data-ruthie-insight-popup="true"] textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+[data-ruthie-insight-popup="true"] button {
+  transform-origin: 50% 55%;
+}
+
+/* Header / Ruthie identity */
+[data-ruthie-insight-popup="true"] > header > div:first-of-type {
+  animation: ri-avatar-enter 620ms cubic-bezier(.18, .9, .22, 1.16) both;
+  transition: scale 220ms cubic-bezier(.22, 1, .36, 1),
+              translate 220ms cubic-bezier(.22, 1, .36, 1),
+              box-shadow 260ms ease,
+              filter 260ms ease;
+}
+
+[data-ruthie-insight-popup="true"] > header > div:first-of-type svg {
+  animation: ri-mark-breathe 4.8s ease-in-out 900ms infinite;
+  transform-origin: center;
+}
+
+[data-ruthie-insight-popup="true"] > header button:last-child {
+  transition: scale 170ms cubic-bezier(.22, 1, .36, 1),
+              translate 170ms cubic-bezier(.22, 1, .36, 1),
+              background 180ms ease,
+              box-shadow 220ms ease,
+              border-color 180ms ease !important;
+}
+
+[data-ruthie-insight-popup="true"] > header button:last-child:hover {
+  translate: 0 -1px;
+  scale: 1.045;
+  border-color: rgba(201, 162, 58, .22) !important;
+  box-shadow: 0 9px 22px rgba(65, 51, 24, .11);
+}
+
+[data-ruthie-insight-popup="true"] > header button:last-child:active {
+  translate: 0 1px;
+  scale: .92;
+  box-shadow: 0 3px 10px rgba(65, 51, 24, .08);
+}
+
+/* Empty-state Ruthie orb */
+[data-ruthie-insight-popup="true"] [class*="min-h-52"] > div[class*="mb-3"] {
+  animation: ri-orb-enter 680ms cubic-bezier(.18, .9, .22, 1.12) both,
+             ri-orb-float 5.2s ease-in-out 900ms infinite;
+  will-change: translate, box-shadow;
+}
+
+/* Quick actions */
+[data-ruthie-insight-popup="true"] [class*="max-w-md"][class*="grid"] > button {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transition: scale 180ms cubic-bezier(.22, 1, .36, 1),
+              translate 180ms cubic-bezier(.22, 1, .36, 1),
+              border-color 180ms ease,
+              box-shadow 220ms ease,
+              background 220ms ease,
+              color 180ms ease !important;
+}
+
+[data-ruthie-insight-popup="true"] [class*="max-w-md"][class*="grid"] > button::after {
+  content: "";
+  position: absolute;
+  inset: -40% -18%;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 32%, rgba(255,255,255,.62) 48%, transparent 64%);
+  translate: -115% 0;
+  transition: translate 520ms cubic-bezier(.22, 1, .36, 1);
+}
+
+[data-ruthie-insight-popup="true"] [class*="max-w-md"][class*="grid"] > button:hover {
+  translate: 0 -2px;
+  scale: 1.012;
+}
+
+[data-ruthie-insight-popup="true"] [class*="max-w-md"][class*="grid"] > button:hover::after {
+  translate: 115% 0;
+}
+
+[data-ruthie-insight-popup="true"] [class*="max-w-md"][class*="grid"] > button:active {
+  translate: 0 1px;
+  scale: .965;
+  box-shadow: 0 3px 10px rgba(59, 49, 29, .05) !important;
+  transition-duration: 80ms !important;
+}
+
+/* Image tool card */
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"]::before {
+  content: "";
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  right: -90px;
+  top: -100px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(230,210,139,.24), transparent 68%);
+  animation: ri-card-glow 5.5s ease-in-out infinite;
+  z-index: -1;
+}
+
+/* Quality / size pills */
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-7"][class*="rounded-full"] {
+  position: relative;
+  overflow: hidden;
+  transition: scale 160ms cubic-bezier(.22, 1, .36, 1),
+              translate 160ms cubic-bezier(.22, 1, .36, 1),
+              box-shadow 220ms ease,
+              border-color 180ms ease,
+              color 180ms ease,
+              filter 180ms ease !important;
+}
+
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-7"][class*="rounded-full"]:hover {
+  translate: 0 -1px;
+  scale: 1.025;
+  filter: saturate(1.04);
+}
+
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-7"][class*="rounded-full"]:active {
+  translate: 0 1px;
+  scale: .93;
+  transition-duration: 70ms !important;
+}
+
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-7"][class*="bg-accent"] {
+  animation: ri-pill-selected 360ms cubic-bezier(.16, 1, .3, 1) both;
+}
+
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-7"][class*="bg-accent"] svg {
+  animation: ri-check-pop 340ms cubic-bezier(.18, .9, .22, 1.2) both;
+}
+
+/* Tool-card CTAs */
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-8"] {
+  position: relative;
+  overflow: hidden;
+  transition: scale 170ms cubic-bezier(.22, 1, .36, 1),
+              translate 170ms cubic-bezier(.22, 1, .36, 1),
+              box-shadow 220ms ease,
+              filter 180ms ease !important;
+}
+
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-8"]:hover {
+  translate: 0 -2px;
+  scale: 1.018;
+  filter: saturate(1.05);
+  box-shadow: 0 11px 24px rgba(92, 69, 20, .11), inset 0 1px 0 rgba(255,255,255,.9) !important;
+}
+
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-8"]:active {
+  translate: 0 1px;
+  scale: .955;
+  box-shadow: 0 4px 11px rgba(70, 54, 22, .07) !important;
+  transition-duration: 75ms !important;
+}
+
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-8"] svg {
+  transition: rotate 260ms cubic-bezier(.22, 1, .36, 1), scale 220ms cubic-bezier(.22, 1, .36, 1);
+}
+
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-8"]:hover svg {
+  rotate: -7deg;
+  scale: 1.12;
+}
+
+/* Composer */
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] > div[class*="rounded-[18px]"] {
+  transition: scale 220ms cubic-bezier(.22, 1, .36, 1),
+              translate 220ms cubic-bezier(.22, 1, .36, 1),
+              border-color 220ms ease,
+              box-shadow 260ms ease,
+              background 260ms ease !important;
+}
+
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] > div[class*="rounded-[18px]"]:focus-within {
+  translate: 0 -1px;
+  scale: 1.004;
+}
+
+[data-ruthie-insight-popup="true"] textarea {
+  transition: color 180ms ease, opacity 180ms ease;
+}
+
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ekle ve oluştur"] {
+  transition: scale 150ms cubic-bezier(.22, 1, .36, 1),
+              translate 150ms cubic-bezier(.22, 1, .36, 1),
+              background 180ms ease,
+              box-shadow 200ms ease,
+              color 180ms ease !important;
+}
+
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ekle ve oluştur"]:hover {
+  translate: 0 -1px;
+  scale: 1.055;
+  box-shadow: 0 8px 18px rgba(61, 50, 30, .08);
+}
+
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ekle ve oluştur"]:active {
+  translate: 0 1px;
+  scale: .90;
+}
+
+/* Send / image quote main action */
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Görsel fiyatını göster"],
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ruthie’ye gönder"] {
+  position: relative;
+  isolation: isolate;
+  overflow: visible;
+  transition: scale 160ms cubic-bezier(.22, 1, .36, 1),
+              translate 160ms cubic-bezier(.22, 1, .36, 1),
+              box-shadow 220ms ease,
+              filter 180ms ease !important;
+}
+
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Görsel fiyatını göster"]::before,
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ruthie’ye gönder"]::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  z-index: -1;
+  border-radius: 999px;
+  background: rgba(201, 162, 58, .14);
+  opacity: 0;
+  scale: .72;
+  transition: opacity 180ms ease, scale 300ms cubic-bezier(.22, 1, .36, 1);
+}
+
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Görsel fiyatını göster"]:hover,
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ruthie’ye gönder"]:hover {
+  translate: 0 -2px;
+  scale: 1.065;
+  filter: saturate(1.07);
+  box-shadow: 0 13px 26px rgba(168,131,38,.28), inset 0 1px 0 rgba(255,255,255,.5) !important;
+}
+
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Görsel fiyatını göster"]:hover::before,
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ruthie’ye gönder"]:hover::before {
+  opacity: 1;
+  scale: 1;
+}
+
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Görsel fiyatını göster"]:active,
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ruthie’ye gönder"]:active {
+  translate: 0 2px;
+  scale: .90;
+  box-shadow: 0 4px 11px rgba(168,131,38,.19), inset 0 2px 4px rgba(77,55,10,.12) !important;
+  transition-duration: 65ms !important;
+}
+
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Görsel fiyatını göster"] svg,
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ruthie’ye gönder"] svg {
+  transition: translate 200ms cubic-bezier(.22, 1, .36, 1), rotate 240ms cubic-bezier(.22, 1, .36, 1), scale 200ms cubic-bezier(.22, 1, .36, 1);
+}
+
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ruthie’ye gönder"]:hover svg {
+  translate: 2px -2px;
+  rotate: -8deg;
+  scale: 1.08;
+}
+
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Görsel fiyatını göster"]:hover svg {
+  rotate: 9deg;
+  scale: 1.12;
+}
+
+/* Tool chooser popover */
+[data-ruthie-insight-popup="true"] div[class*="absolute"][class*="bottom-[calc(100%+8px)]"] button {
+  transition: scale 150ms cubic-bezier(.22, 1, .36, 1),
+              translate 150ms cubic-bezier(.22, 1, .36, 1),
+              background 170ms ease,
+              box-shadow 180ms ease !important;
+}
+
+[data-ruthie-insight-popup="true"] div[class*="absolute"][class*="bottom-[calc(100%+8px)]"] button:hover {
+  translate: 2px 0;
+  scale: 1.008;
+}
+
+[data-ruthie-insight-popup="true"] div[class*="absolute"][class*="bottom-[calc(100%+8px)]"] button:active {
+  translate: 1px 1px;
+  scale: .975;
+}
+
+[data-ruthie-insight-popup="true"] a[href="/ruthie/chat"] {
+  transition: translate 180ms cubic-bezier(.22, 1, .36, 1), color 180ms ease, opacity 180ms ease;
+}
+
+[data-ruthie-insight-popup="true"] a[href="/ruthie/chat"]:hover {
+  translate: -2px 0;
+}
+
+[data-ruthie-insight-popup="true"] a[href="/ruthie/chat"] svg {
+  transition: translate 180ms cubic-bezier(.22, 1, .36, 1), rotate 180ms ease;
+}
+
+[data-ruthie-insight-popup="true"] a[href="/ruthie/chat"]:hover svg {
+  translate: 2px -2px;
+  rotate: 3deg;
+}
+
+@keyframes ri-surface-settle {
+  0% { filter: blur(5px) saturate(.92); }
+  55% { filter: blur(.7px) saturate(1.02); }
+  100% { filter: blur(0) saturate(1); }
+}
+
+@keyframes ri-avatar-enter {
+  0% { scale: .72; rotate: -7deg; filter: saturate(.85); }
+  62% { scale: 1.07; rotate: 2deg; }
+  100% { scale: 1; rotate: 0; filter: saturate(1); }
+}
+
+@keyframes ri-mark-breathe {
+  0%, 100% { scale: 1; opacity: 1; }
+  50% { scale: 1.055; opacity: .94; }
+}
+
+@keyframes ri-orb-enter {
+  0% { scale: .78; filter: blur(2px); }
+  68% { scale: 1.055; filter: blur(0); }
+  100% { scale: 1; filter: blur(0); }
+}
+
+@keyframes ri-orb-float {
+  0%, 100% { translate: 0 0; box-shadow: 0 10px 30px rgba(201,162,58,.12), 0 0 0 7px rgba(201,162,58,.045), inset 0 1px 0 rgba(255,255,255,.96); }
+  50% { translate: 0 -3px; box-shadow: 0 15px 34px rgba(201,162,58,.16), 0 0 0 8px rgba(201,162,58,.055), inset 0 1px 0 rgba(255,255,255,.96); }
+}
+
+@keyframes ri-card-glow {
+  0%, 100% { opacity: .58; scale: .94; translate: 0 0; }
+  50% { opacity: .9; scale: 1.08; translate: -8px 7px; }
+}
+
+@keyframes ri-pill-selected {
+  0% { scale: .92; filter: brightness(1.05); }
+  62% { scale: 1.045; filter: brightness(1.02); }
+  100% { scale: 1; filter: brightness(1); }
+}
+
+@keyframes ri-check-pop {
+  0% { scale: .5; rotate: -18deg; opacity: .25; }
+  70% { scale: 1.18; rotate: 3deg; opacity: 1; }
+  100% { scale: 1; rotate: 0; opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-ruthie-insight-popup="true"],
+  [data-ruthie-insight-popup="true"] *,
+  [data-ruthie-insight-popup="true"] *::before,
+  [data-ruthie-insight-popup="true"] *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  [data-ruthie-insight-popup="true"] button,
+  [data-ruthie-insight-popup="true"] a,
+  [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] > div[class*="rounded-[18px]"] {
+    translate: none !important;
+    scale: 1 !important;
+    rotate: 0deg !important;
+  }
+}

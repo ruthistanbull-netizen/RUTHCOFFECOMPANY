@@ -1,0 +1,63 @@
+/* Ruth Commerce product-photo contract for the admin panel.
+ * Product photos always render in a 3:4 frame and fully fill that frame.
+ */
+
+[data-base44-exact-page="products"] .relative.aspect-square:has(img) {
+  aspect-ratio: 3 / 4 !important;
+  background: hsl(var(--surface-tertiary)) !important;
+}
+
+[data-base44-exact-page="products"] img.object-cover,
+[data-exact-base44-page="product-studio"] img.object-cover,
+[data-workspace-kind="product"] img.object-cover,
+[data-sortable-media-grid-index] img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+}
+
+/* Compact/list product thumbnails keep a real 3:4 frame and fill it. */
+[data-base44-exact-page="products"] .h-14.w-14:has(> img),
+[data-base44-exact-page="products"] .h-16.w-16:has(> img),
+[data-base44-exact-page="products"] .h-20.w-20:has(> img) {
+  width: auto !important;
+  aspect-ratio: 3 / 4 !important;
+  flex: 0 0 auto !important;
+  background: hsl(var(--surface-tertiary)) !important;
+}
+
+[data-exact-base44-page="product-studio"] .h-14.w-11:has(> img),
+[data-workspace-kind="product"] .h-14.w-11:has(> img) {
+  width: 42px !important;
+  height: 56px !important;
+  aspect-ratio: 3 / 4 !important;
+  background: hsl(var(--surface-tertiary)) !important;
+}
+
+[data-sortable-media-grid-index] > div:has(> img) {
+  aspect-ratio: 3 / 4 !important;
+  overflow: hidden !important;
+  background: var(--ruth-color-surface-muted) !important;
+}
+
+/* Older/secondary admin product surfaces share the same fill rule. */
+.cr-product-card__media,
+.cr-manual-product-card__media,
+.cr-product-photo-grid > *,
+.cr-variant-media {
+  aspect-ratio: 3 / 4 !important;
+  overflow: hidden !important;
+}
+
+.cr-product-card__media img,
+.cr-manual-product-card__media img,
+.cr-product-photo-grid img,
+.cr-variant-media img,
+.cr-inspector-product__media img,
+.cr-image-button img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+}

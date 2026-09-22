@@ -1,0 +1,87 @@
+/*
+ * Overlay performance + mobile detail contract.
+ *
+ * Keep expensive backdrop blur disabled, but do not override the canonical
+ * ExactLargePopup transform. ExactLargePopup owns one compositor-only vertical
+ * transform for both opening and closing, matching the dashboard expansion
+ * motion timing without competing CSS/JS motion owners.
+ */
+
+[data-admin-large-popup-layer] > button[aria-label="Pencere arka planını kapat"],
+.z-drawer.fixed.inset-0:not([role]) {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* Detail drawers keep their static transform optimization. Large popups are
+   deliberately excluded because forcing transform here cancels Framer Motion. */
+.z-drawer[role="dialog"][data-overlay-owner="canonical"] {
+  transform: translate3d(0, 0, 0) !important;
+  will-change: auto !important;
+}
+
+/* Keep the browser's native vertical pan responsive inside long panels. */
+[data-admin-large-popup] > div[class*="overflow-y-auto"],
+.z-drawer[role="dialog"] > div[class*="overflow-y-auto"] {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  touch-action: pan-y;
+}
+
+@media (max-width: 767px) {
+  /* Detail drawers are pages on mobile, not floating sheets. */
+  .z-drawer.fixed.inset-0:not([role]) {
+    display: none !important;
+  }
+
+  .z-drawer[role="dialog"][data-overlay-owner="canonical"] {
+    inset: 0 !important;
+    width: 100vw !important;
+    max-width: none !important;
+    height: 100dvh !important;
+    max-height: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: hsl(var(--surface-primary)) !important;
+  }
+
+  .z-drawer[role="dialog"] > header {
+    padding-left: max(1rem, env(safe-area-inset-left)) !important;
+    padding-right: max(1rem, env(safe-area-inset-right)) !important;
+    padding-top: max(0.75rem, env(safe-area-inset-top)) !important;
+  }
+
+  .z-drawer[role="dialog"] > div[class*="overflow-y-auto"] {
+    padding-left: max(1rem, env(safe-area-inset-left)) !important;
+    padding-right: max(1rem, env(safe-area-inset-right)) !important;
+    padding-bottom: max(5rem, env(safe-area-inset-bottom)) !important;
+    overscroll-behavior-y: auto;
+  }
+
+  .z-drawer[role="dialog"] > footer {
+    padding-left: max(1rem, env(safe-area-inset-left)) !important;
+    padding-right: max(1rem, env(safe-area-inset-right)) !important;
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom)) !important;
+  }
+
+  /* Product workspace fallback: if a route opens the legacy modal directly,
+     it still behaves like a normal full-screen mobile page. Normal product
+     taps are routed to /products/studio by the host and do not use the modal. */
+  [data-exact-workspace-modal][data-workspace-kind="product"] {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    max-width: none !important;
+    height: 100dvh !important;
+    max-height: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  body:has([data-exact-workspace-modal][data-workspace-kind="product"])
+    [data-admin-large-popup-layer] > button[aria-label="Pencere arka planını kapat"] {
+    display: none !important;
+  }
+}

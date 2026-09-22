@@ -1,0 +1,260 @@
+body:has([data-theme-customizer-v2]) [data-desktop-unified-navigation="true"],
+body:has([data-theme-customizer-v2]) [data-mobile-source-dock-v5="true"] {
+  display: none !important;
+}
+
+/* Theme editor V3 switch hardening.
+   The old track was an inline <span>, so width/height could collapse and the thumb
+   could visually escape the track. Keep all editor switches on one shared shape. */
+[data-theme-editor-immersive-root] button > span.relative.h-5.w-9 {
+  display: inline-flex !important;
+  width: 44px !important;
+  height: 24px !important;
+  min-width: 44px !important;
+  flex: 0 0 44px !important;
+  align-items: center !important;
+  padding: 4px !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+  border-radius: 9999px !important;
+  transition: background-color 180ms ease, box-shadow 180ms ease !important;
+}
+
+[data-theme-editor-immersive-root] button > span.relative.h-5.w-9 > span {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  display: block !important;
+  width: 16px !important;
+  height: 16px !important;
+  min-width: 16px !important;
+  flex: 0 0 16px !important;
+  transform: translateX(0) !important;
+  border-radius: 9999px !important;
+  transition: transform 180ms cubic-bezier(.2,.8,.2,1) !important;
+}
+
+[data-theme-editor-immersive-root] button > span.relative.h-5.w-9.bg-black > span {
+  transform: translateX(20px) !important;
+}
+
+[data-theme-editor-immersive-root] button:focus-visible > span.relative.h-5.w-9 {
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.12) !important;
+}
+
+@media (min-width: 768px) {
+  [data-theme-sections-launcher] {
+    left: 12px !important;
+    top: auto !important;
+    bottom: 66px !important;
+  }
+}
+
+@media (max-width: 767px) {
+  [data-theme-customizer-v2] {
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  [data-theme-customizer-v2] > header {
+    height: auto !important;
+    min-height: 100px;
+    flex-wrap: wrap;
+    align-content: center;
+    gap: 6px !important;
+    padding: 7px 8px !important;
+  }
+
+  [data-theme-customizer-v2] > header > div:first-child {
+    display: none !important;
+  }
+
+  [data-theme-customizer-v2] > header > div:nth-child(2) {
+    order: 1;
+    width: 100%;
+    flex: 1 1 100%;
+    justify-content: space-between !important;
+    gap: 6px !important;
+  }
+
+  [data-theme-customizer-v2] > header > div:nth-child(2) > select {
+    width: auto !important;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  [data-theme-customizer-v2] > header > div:nth-child(2) > div:last-child {
+    flex: 0 0 auto;
+  }
+
+  [data-theme-customizer-v2] > header > div:nth-child(2) > div:last-child button {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    gap: 4px !important;
+    font-size: 9px !important;
+  }
+
+  [data-theme-customizer-v2] > header > div:nth-child(3) {
+    order: 2;
+    width: 100% !important;
+    flex: 1 1 100%;
+    justify-content: flex-end !important;
+    gap: 6px !important;
+  }
+
+  [data-theme-customizer-v2] > header > div:nth-child(3) button {
+    padding-left: 9px !important;
+    padding-right: 9px !important;
+    font-size: 8px !important;
+  }
+
+  [data-theme-customizer-v2] > header + div {
+    min-height: 0;
+    flex-direction: column !important;
+  }
+
+  [data-theme-customizer-v2] > header + div > main {
+    order: 1;
+    width: 100%;
+    height: 46%;
+    min-height: 250px;
+    flex: 0 0 46% !important;
+  }
+
+  [data-theme-customizer-v2] > header + div > aside {
+    order: 2;
+    width: 100% !important;
+    height: 54%;
+    min-height: 0;
+    flex: 1 1 54%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border-right: 0 !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    -webkit-overflow-scrolling: touch;
+  }
+
+  [data-theme-customizer-v2] > header + div > aside > div:last-child {
+    min-height: auto !important;
+    overflow: visible !important;
+  }
+
+  [data-theme-customizer-v2] > header + div > main > div:first-child {
+    top: 6px !important;
+  }
+
+  [data-theme-customizer-v2] > header + div > main > div:nth-child(2) {
+    padding: 44px 8px 10px !important;
+    justify-content: center !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  [data-theme-customizer-v2] > header + div > main > div:nth-child(2) > div {
+    width: min(390px, calc(100vw - 18px)) !important;
+    max-width: calc(100vw - 18px) !important;
+    height: min(844px, calc((100vw - 18px) * 2.16410256)) !important;
+    flex: 0 0 auto;
+  }
+
+  /* V3 mobile toolbar: reserve a real slot for the back button instead of
+     letting fixed editor controls float above the Desktop/Mobile selector. */
+  [data-theme-customizer-v3] > header {
+    height: auto !important;
+    min-height: 104px !important;
+    flex-wrap: wrap !important;
+    align-content: center !important;
+    gap: 6px !important;
+    padding: 7px 8px 7px 54px !important;
+    overflow: visible !important;
+  }
+
+  [data-theme-customizer-v3] > header > div:first-child {
+    display: none !important;
+  }
+
+  [data-theme-customizer-v3] > header > div:nth-child(2) {
+    order: 1;
+    width: 100% !important;
+    min-width: 0 !important;
+    flex: 1 1 100% !important;
+    gap: 6px !important;
+  }
+
+  [data-theme-customizer-v3] > header > div:nth-child(2) > select {
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+  }
+
+  [data-theme-customizer-v3] > header > div:nth-child(2) > div:last-child {
+    flex: 0 0 auto !important;
+  }
+
+  [data-theme-customizer-v3] > header > div:nth-child(2) > div:last-child button {
+    min-width: 34px !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+
+  [data-theme-customizer-v3] > header > div:nth-child(3) {
+    order: 2;
+    width: 100% !important;
+    flex: 1 1 100% !important;
+    justify-content: flex-end !important;
+    gap: 6px !important;
+  }
+
+  [data-theme-editor-immersive-root] > a[aria-label="Panele dön"] {
+    left: 10px !important;
+    top: 10px !important;
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 11px !important;
+  }
+
+  /* Sections button lives below the toolbar on phones; it must never cover the
+     Desktop/Mobile segmented control. */
+  [data-theme-sections-launcher] {
+    left: 10px !important;
+    top: 116px !important;
+    bottom: auto !important;
+    max-width: calc(100vw - 20px) !important;
+  }
+
+  /* When the section drawer opens, start it below the complete mobile toolbar. */
+  [data-theme-editor-immersive-root] aside.fixed.top-14 {
+    top: 104px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  [data-theme-customizer-v2] > header > div:nth-child(2) > div:last-child button {
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+    font-size: 8px !important;
+  }
+
+  [data-theme-customizer-v2] > header > div:nth-child(3) button {
+    padding-left: 7px !important;
+    padding-right: 7px !important;
+  }
+
+  [data-theme-customizer-v3] > header {
+    padding-left: 50px !important;
+  }
+
+  [data-theme-customizer-v3] > header > div:nth-child(2) > div:last-child button {
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+  }
+
+  [data-theme-customizer-v3] > header > div:nth-child(3) button,
+  [data-theme-customizer-v3] > header > div:nth-child(3) a {
+    min-width: 34px !important;
+    padding-left: 7px !important;
+    padding-right: 7px !important;
+  }
+}

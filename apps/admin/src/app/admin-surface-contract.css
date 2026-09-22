@@ -1,0 +1,155 @@
+/*
+ * Canonical admin surface contract.
+ *
+ * Visual reference: dashboard Cart / Net Sales popup family.
+ * This stylesheet owns presentation only. Dismissal, focus, scroll locking and
+ * state ownership remain in useOverlayBehavior / the React caller.
+ */
+
+:root {
+  --ruth-admin-popup-border: var(--ruth-color-border-subtle);
+  --ruth-admin-popup-surface: var(--ruth-color-surface);
+  --ruth-admin-popup-mobile-top-clearance: max(3.75rem, calc(env(safe-area-inset-top) + 2.75rem));
+  --ruth-admin-mobile-navigation-clearance: calc(7.25rem + env(safe-area-inset-bottom));
+  --ruth-admin-quarter-menu-scroll-clearance: calc(9rem + env(safe-area-inset-bottom));
+}
+
+/* Shared popup visual language. Geometry remains caller-owned so drawers,
+   workspaces and compact pickers do not lose their intended behavior. Existing
+   component shadow classes remain the single shadow owner. */
+:where([role="dialog"][aria-modal="true"]:not(#ruth-command-orbit-menu):not([aria-label="Komut paleti"])) {
+  border-color: var(--ruth-admin-popup-border);
+  background: var(--ruth-admin-popup-surface);
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Cart / Net Sales behavior: chrome stays reachable while the body scrolls. */
+:where([role="dialog"][aria-modal="true"]:not(#ruth-command-orbit-menu)) > .border-b {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  background: color-mix(in srgb, var(--ruth-admin-popup-surface) 96%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(1.08);
+  backdrop-filter: blur(14px) saturate(1.08);
+}
+
+:where([role="dialog"][aria-modal="true"]:not(#ruth-command-orbit-menu)) > .border-t {
+  position: sticky;
+  bottom: 0;
+  z-index: 4;
+  background: color-mix(in srgb, var(--ruth-admin-popup-surface) 97%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(1.08);
+  backdrop-filter: blur(14px) saturate(1.08);
+}
+
+/* Any action reached inside a popup must remain a real touch target. Side
+   drawers keep their own full-height geometry; only modal / picker surfaces get
+   the dashboard bottom-sheet mobile silhouette. */
+@media (max-width: 767px) {
+  :where([role="dialog"][aria-modal="true"]:not(#ruth-command-orbit-menu):not(aside)) {
+    max-height: calc(100dvh - var(--ruth-admin-popup-mobile-top-clearance));
+    border-radius: var(--radius-container) var(--radius-container) 0 0;
+  }
+
+  :where([role="dialog"][aria-modal="true"]:not(#ruth-command-orbit-menu)) :where(button, a[href], input, select, textarea, .ruth-picker-trigger) {
+    scroll-margin-bottom: var(--ruth-admin-mobile-navigation-clearance);
+  }
+
+  :where([role="dialog"][aria-modal="true"]:not(#ruth-command-orbit-menu)) :where(button, a[href]) {
+    min-height: 44px;
+  }
+
+  :where([role="dialog"][aria-modal="true"]:not(#ruth-command-orbit-menu)) > .border-t {
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom)) !important;
+  }
+}
+
+@media (min-width: 768px) {
+  :where([role="dialog"][aria-modal="true"]:not(#ruth-command-orbit-menu):not([aria-label="Komut paleti"]):not(aside)) {
+    border: 1px solid var(--ruth-admin-popup-border);
+    border-radius: var(--radius-card);
+  }
+}
+
+/* Page actions: never let narrow screens produce isolated / floating controls.
+   Exact page headers retain their desktop layout from md upward. */
+@media (max-width: 767px) {
+  :where(main [data-exact-base44-page] > div:first-child:has(h1)) {
+    align-items: stretch !important;
+    gap: 0.75rem !important;
+  }
+
+  :where(main [data-exact-base44-page] > div:first-child:has(h1) > div:last-child) {
+    width: 100%;
+    min-width: 0;
+    flex-wrap: wrap;
+    justify-content: flex-start !important;
+  }
+
+  :where(main [data-exact-base44-page] > div:first-child:has(h1) > div:last-child) :where(button, a[href]) {
+    min-height: 44px;
+  }
+
+  /* Orders has four header actions because Toplu İşlem is portalled into the
+     existing action host. Keep the primary create action full-width, then place
+     selection / bulk / refresh on one stable row. */
+  [data-exact-base44-page="orders-v2"] > div:first-child:has(h1) > div:last-child {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 44px;
+    gap: 0.5rem !important;
+    align-items: stretch !important;
+  }
+
+  [data-exact-base44-page="orders-v2"] > div:first-child:has(h1) > div:last-child > div {
+    display: contents;
+  }
+
+  [data-exact-base44-page="orders-v2"] > div:first-child:has(h1) > div:last-child a[href="/orders/new"] {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    width: 100%;
+  }
+
+  [data-exact-base44-page="orders-v2"] > div:first-child:has(h1) > div:last-child a[href="/orders/new"] > button {
+    width: 100%;
+  }
+
+  [data-exact-base44-page="orders-v2"] > div:first-child:has(h1) > div:last-child button[aria-label="Yenile"] {
+    grid-column: 3;
+    grid-row: 2;
+    width: 44px;
+    min-width: 44px;
+    justify-self: end;
+  }
+
+  [data-exact-base44-page="orders-v2"] > div:first-child:has(h1) > div:last-child > button:not([aria-label="Yenile"]) {
+    grid-column: 2;
+    grid-row: 2;
+    width: 100%;
+  }
+
+  [data-exact-base44-page="orders-v2"] > div:first-child:has(h1) > div:last-child > div > button:not([aria-label="Yenile"]) {
+    grid-column: 1;
+    grid-row: 2;
+    width: 100%;
+  }
+
+  /* The persistent bottom navigation and quarter-menu live above content.
+     Give every exact panel page enough scroll runway to move its final CTA clear
+     of those controls instead of allowing an unreachable button at the bottom. */
+  body:has([data-ruth-mobile-quarter-menu="true"]) main {
+    padding-bottom: var(--ruth-admin-quarter-menu-scroll-clearance) !important;
+    scroll-padding-bottom: var(--ruth-admin-quarter-menu-scroll-clearance);
+  }
+
+  body:has([data-ruth-mobile-quarter-menu="true"]) [data-exact-base44-page] {
+    scroll-padding-bottom: var(--ruth-admin-quarter-menu-scroll-clearance);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where([role="dialog"][aria-modal="true"]:not(#ruth-command-orbit-menu)) {
+    scroll-behavior: auto;
+  }
+}

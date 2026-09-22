@@ -1,0 +1,102 @@
+/* Final admin UI polish: mobile sheet motion, Ruthie orb shell and page loading. */
+
+@media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
+  /* Ruthie Insight still uses the legacy compositor sheet helper. Canonical
+     large popups are intentionally excluded so ExactLargePopup can own both
+     enter and exit transforms without an !important CSS override. */
+  [data-ruthie-insight-popup="true"] {
+    transform: none !important;
+    opacity: 1 !important;
+    transform-origin: 50% 100% !important;
+  }
+
+  /* Backdrop blur is expensive on iPhone while a large sheet is moving. */
+  [data-admin-large-popup-layer] > button:first-of-type,
+  body > div:has(> [data-ruthie-insight-popup="true"]) > button:first-of-type {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+}
+
+/* Ruthie quick-voice orb: the actual listening glow and tap ripple belong to
+   RuthieQuickVoiceOrb.module.css. Do not globally suppress its ::before/::after
+   layers, otherwise the orb loses the visible activation flash while listening. */
+
+/* Shared page loading state: no floating card/container, just a larger centered
+   spinner and label. Compact inline loaders are intentionally untouched. */
+.ruth-loading-state:not(.ruth-loading-state--compact) {
+  min-height: calc(100dvh - 132px) !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 16px !important;
+  text-align: center !important;
+}
+
+.ruth-loading-state:not(.ruth-loading-state--compact) .ruth-feedback-spinner--md {
+  width: 38px !important;
+  height: 38px !important;
+  border-width: 2.75px !important;
+  color: hsl(var(--accent)) !important;
+}
+
+.ruth-loading-state:not(.ruth-loading-state--compact) > div {
+  justify-items: center !important;
+}
+
+.ruth-loading-state:not(.ruth-loading-state--compact) strong {
+  font-size: 17px !important;
+  line-height: 1.45 !important;
+  font-weight: 600 !important;
+}
+
+/* Core products/orders/customers initial verifier is the loading surface shown
+   most often during page navigation. Remove only its loading card appearance;
+   its error state keeps the existing card treatment. */
+[data-core-list-gate]:has(> div > svg.animate-spin) {
+  min-height: calc(100dvh - 132px) !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+[data-core-list-gate]:has(> div > svg.animate-spin) > div {
+  gap: 16px !important;
+}
+
+[data-core-list-gate]:has(> div > svg.animate-spin) > div > svg {
+  width: 38px !important;
+  height: 38px !important;
+  stroke-width: 2 !important;
+}
+
+[data-core-list-gate]:has(> div > svg.animate-spin) > div > p {
+  font-size: 17px !important;
+  line-height: 1.45 !important;
+  font-weight: 600 !important;
+}
+
+@media (min-width: 1024px) {
+  .ruth-loading-state:not(.ruth-loading-state--compact),
+  [data-core-list-gate]:has(> div > svg.animate-spin) {
+    min-height: calc(100dvh - 112px) !important;
+  }
+
+  .ruth-loading-state:not(.ruth-loading-state--compact) .ruth-feedback-spinner--md,
+  [data-core-list-gate]:has(> div > svg.animate-spin) > div > svg {
+    width: 42px !important;
+    height: 42px !important;
+  }
+
+  .ruth-loading-state:not(.ruth-loading-state--compact) strong,
+  [data-core-list-gate]:has(> div > svg.animate-spin) > div > p {
+    font-size: 18px !important;
+  }
+}

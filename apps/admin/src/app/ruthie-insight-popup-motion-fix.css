@@ -1,0 +1,54 @@
+/* Ruthie Insight popup motion ownership.
+   The popup surface is animated only by AdminRuthieInsightPopupMotion. */
+
+[data-ruthie-insight-popup="true"] {
+  animation: none !important;
+  transform: none !important;
+  opacity: 1 !important;
+  scale: 1 !important;
+  transform-origin: 50% 100% !important;
+}
+
+[data-ruthie-insight-popup="true"][data-ruthie-motion-phase="opening"],
+[data-ruthie-insight-popup="true"][data-ruthie-motion-phase="closing"] {
+  will-change: translate !important;
+  box-shadow: 0 16px 44px rgba(54, 42, 20, 0.13) !important;
+}
+
+/* Once close starts, keep the full-screen backdrop permanently transparent.
+   Framer may rewrite inline opacity during AnimatePresence exit on iOS; this
+   stylesheet-level !important rule survives those writes and prevents the two
+   delayed black flashes that appeared after the sheet had already closed. */
+body > div:has(> [data-ruthie-insight-popup="true"][data-ruthie-motion-phase="closing"])
+  > button[aria-label="Ruthie sohbetini kapat"] {
+  opacity: 0 !important;
+  background: transparent !important;
+  pointer-events: none !important;
+  animation: none !important;
+  transition: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+/* The surface is already almost opaque. Removing a full-screen backdrop filter
+   while the entire dialog is moving avoids expensive iPhone recomposition. */
+@media (max-width: 767px) {
+  [data-ruthie-insight-popup="true"] {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  body > div:has(> [data-ruthie-insight-popup="true"]) > button[aria-label="Ruthie sohbetini kapat"] {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  [data-ruthie-insight-popup="true"][data-ruthie-motion-phase="closing"] {
+    pointer-events: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-ruthie-insight-popup="true"] {
+    translate: 0 0 !important;
+  }
+}

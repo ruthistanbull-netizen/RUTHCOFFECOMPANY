@@ -1,0 +1,117 @@
+/* Modern, borderless admin header controls. Keep the controls visually light;
+   the icon itself carries the action instead of a framed button chrome. */
+
+html:not(.dark) header.z-header > button,
+html:not(.dark) header.z-header > div > button {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #111111 !important;
+}
+
+header.z-header > button > svg,
+header.z-header > div > button > svg {
+  width: 21px !important;
+  height: 21px !important;
+  stroke-width: 1.72 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  filter: none !important;
+}
+
+header.z-header > button,
+header.z-header > div > button {
+  transition:
+    transform 160ms cubic-bezier(.2,.8,.2,1),
+    opacity 160ms ease,
+    background-color 160ms ease !important;
+}
+
+header.z-header > button:hover,
+header.z-header > div > button:hover {
+  background: color-mix(in srgb, currentColor 5%, transparent) !important;
+}
+
+header.z-header > button:active,
+header.z-header > div > button:active {
+  transform: scale(.91) !important;
+}
+
+@media (max-width: 1023px) {
+  /* The mobile search control used to look like a rounded input frame even
+     though only the magnifier was visible. Make it a clean icon action. */
+  header.z-header > button:has(svg.lucide-search) {
+    width: 42px !important;
+    min-width: 42px !important;
+    height: 42px !important;
+    padding: 0 !important;
+    margin-left: auto !important;
+    margin-right: 0 !important;
+    justify-content: center !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #111111 !important;
+  }
+
+  header.z-header > button:has(svg.lucide-search) > span,
+  header.z-header > button:has(svg.lucide-search) > kbd {
+    display: none !important;
+  }
+
+  header.z-header > button:has(svg.lucide-search) > svg {
+    width: 22px !important;
+    height: 22px !important;
+    stroke-width: 1.68 !important;
+  }
+
+  header.z-header > div > button[aria-label="Bildirimler"] > svg,
+  header.z-header > button[aria-label="Temayı değiştir"] > svg,
+  header.z-header > button[aria-label="Menüyü aç"] > svg {
+    width: 22px !important;
+    height: 22px !important;
+    stroke-width: 1.68 !important;
+  }
+
+  /* Keep Ruthie's button on the exact same vertical center as the other
+     42px header actions, while letting the filled brand mark read a touch
+     larger than the outline Lucide icons. */
+  [data-ruthie-quick-chat-v2="true"].ruthie-quick-v2 {
+    left: 12px !important;
+    top: calc(env(safe-area-inset-top) - 1px) !important;
+    height: 42px !important;
+    align-items: center !important;
+  }
+
+  [data-ruthie-quick-chat-v2="true"] .ruthie-quick-v2__bot {
+    width: 42px !important;
+    height: 42px !important;
+    flex: 0 0 42px !important;
+    display: grid !important;
+    place-items: center !important;
+  }
+
+  [data-ruthie-quick-chat-v2="true"] .ruthie-quick-v2__bot > svg {
+    width: 36px !important;
+    height: 36px !important;
+    transform: translateY(-1px) !important;
+    filter: drop-shadow(0 2px 5px color-mix(in srgb, hsl(var(--accent)) 14%, transparent)) !important;
+  }
+
+  [data-ruthie-quick-chat-v2="true"] .ruthie-quick-v2__bot > span.is-online,
+  [data-ruthie-quick-chat-v2="true"] .ruthie-quick-v2__bot > span.is-offline {
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 8px !important;
+    height: 8px !important;
+    border-width: 1.5px !important;
+  }
+}
+
+.dark header.z-header > button,
+.dark header.z-header > div > button {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}

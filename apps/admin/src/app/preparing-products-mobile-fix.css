@@ -1,0 +1,118 @@
+@media (max-width: 639px) {
+  [data-exact-base44-page="preparing-products"] {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  [data-exact-base44-page="preparing-products"] > div.grid:last-of-type {
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  [data-exact-base44-page="preparing-products"] article {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  [data-exact-base44-page="preparing-products"] article > div:first-child {
+    display: grid !important;
+    grid-template-columns: 64px minmax(0, 1fr) !important;
+    align-items: start !important;
+    gap: 10px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  [data-exact-base44-page="preparing-products"] article > div:first-child > div:first-child {
+    width: 64px !important;
+    height: 64px !important;
+  }
+
+  [data-exact-base44-page="preparing-products"] article > div:first-child > div:nth-child(2) {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  [data-exact-base44-page="preparing-products"] article > div:first-child > div:nth-child(2) > div:first-child {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  [data-exact-base44-page="preparing-products"] article > div:first-child > div:nth-child(2) > div:first-child > div:first-child,
+  [data-exact-base44-page="preparing-products"] article > div:first-child > div:nth-child(2) > div:first-child > div:first-child button {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  [data-exact-base44-page="preparing-products"] article > div:first-child > div:nth-child(2) > div:first-child > div:nth-child(2) {
+    margin-top: 7px !important;
+    display: flex !important;
+    align-items: baseline !important;
+    justify-content: flex-start !important;
+    gap: 6px !important;
+    text-align: left !important;
+    white-space: nowrap !important;
+  }
+
+  [data-exact-base44-page="preparing-products"] article > div:first-child > div:nth-child(2) > div:first-child > div:nth-child(2) > p:first-child {
+    font-size: 18px !important;
+    line-height: 1 !important;
+  }
+
+  [data-exact-base44-page="preparing-products"] article > div:first-child > div:nth-child(2) > div:first-child > div:nth-child(2) > p:last-child {
+    font-size: 8px !important;
+    line-height: 1 !important;
+  }
+
+  [data-exact-base44-page="preparing-products"] article > div:nth-child(2) {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  [data-exact-base44-page="preparing-products"] article > div:nth-child(2) > div {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  [data-exact-base44-page="preparing-products"] article > div:nth-child(2) > div > div {
+    min-width: 0 !important;
+  }
+
+  [data-exact-base44-page="preparing-products"] article > div:nth-child(2) > div > div p:first-child {
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+  }
+
+  [data-exact-base44-page="preparing-products"] article > div:nth-child(2) > div > span {
+    max-width: 82px !important;
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  [data-exact-base44-page="preparing-products"] [aria-expanded="true"] + div {
+    position: fixed !important;
+    left: 14px !important;
+    right: 14px !important;
+    top: 50% !important;
+    width: auto !important;
+    max-width: none !important;
+    transform: translateY(-50%) !important;
+    z-index: 2147482500 !important;
+    max-height: min(68dvh, 520px) !important;
+  }
+}

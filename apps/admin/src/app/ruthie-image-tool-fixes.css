@@ -1,0 +1,62 @@
+/* Ruthie image-tool functional polish.
+   Loaded after ruthie-image-tool-menu-polish.css so interaction fixes win. */
+
+/* Keep the three creative-purpose choices side-by-side on phones. */
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] div[class*="grid-cols-3"] {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 6px !important;
+}
+
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] div[class*="grid-cols-3"] > button {
+  min-width: 0 !important;
+  min-height: 58px !important;
+  padding: 8px 7px !important;
+}
+
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] div[class*="grid-cols-3"] > button strong,
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] div[class*="grid-cols-3"] > button span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Product/style launchers must remain the real interactive React buttons. */
+[data-ruthie-insight-popup="true"] button[class*="h-11"] {
+  position: relative;
+  z-index: 2;
+  pointer-events: auto !important;
+  touch-action: manipulation;
+}
+
+/* Restore the previous send-arrow glyph while image mode is active.
+   The React action stays the same (price quote first); only the glyph changes. */
+[data-ruthie-insight-popup="true"] button[aria-label="Görsel fiyatını göster"] > svg {
+  display: none !important;
+}
+
+[data-ruthie-insight-popup="true"] button[aria-label="Görsel fiyatını göster"]::before {
+  content: "";
+  width: 17px;
+  height: 17px;
+  display: block;
+  background: currentColor;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m22 2-7 20-4-9-9-4Z' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M22 2 11 13' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m22 2-7 20-4-9-9-4Z' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M22 2 11 13' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+@media (max-width: 640px) {
+  [data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] div[class*="grid-cols-3"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  [data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] div[class*="grid-cols-3"] > button {
+    min-height: 62px !important;
+    padding-inline: 6px !important;
+  }
+}

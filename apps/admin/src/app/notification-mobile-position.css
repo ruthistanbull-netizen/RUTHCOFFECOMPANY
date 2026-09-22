@@ -1,0 +1,11 @@
+@media (max-width: 767px) {
+  /* Keep the notification popover fully inside the mobile viewport and aligned to the bell. */
+  [role="dialog"][aria-label="Bildirimler"] {
+    position: fixed !important;
+    top: 64px !important;
+    right: 12px !important;
+    left: auto !important;
+    width: min(410px, calc(100vw - 24px)) !important;
+    max-width: calc(100vw - 24px) !important;
+  }
+}

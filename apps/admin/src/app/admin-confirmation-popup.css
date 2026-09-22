@@ -1,0 +1,195 @@
+.admin-confirmation-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483640;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  isolation: isolate;
+}
+
+.admin-confirmation-backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: rgba(17, 19, 24, 0.42);
+  -webkit-backdrop-filter: blur(10px) saturate(0.92);
+  backdrop-filter: blur(10px) saturate(0.92);
+}
+
+.admin-confirmation-card {
+  position: relative;
+  z-index: 1;
+  width: min(440px, calc(100vw - 48px));
+  overflow: hidden;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.985);
+  color: hsl(var(--text-main));
+  box-shadow: 0 28px 90px rgba(15, 23, 42, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  -webkit-backdrop-filter: blur(26px) saturate(1.08);
+  backdrop-filter: blur(26px) saturate(1.08);
+  animation: admin-confirmation-in 180ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.admin-confirmation-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 20px 20px 14px;
+}
+
+.admin-confirmation-icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  place-items: center;
+  border-radius: 13px;
+  background: hsl(var(--accent-soft));
+  color: hsl(var(--accent));
+}
+
+.admin-confirmation-icon svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2;
+}
+
+.admin-confirmation-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.admin-confirmation-eyebrow {
+  margin: 1px 0 4px;
+  color: hsl(var(--text-subtle));
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.admin-confirmation-title {
+  margin: 0;
+  color: hsl(var(--text-main));
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.admin-confirmation-message {
+  margin: 10px 0 0;
+  color: hsl(var(--text-muted));
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.admin-confirmation-note {
+  margin: 0 20px 18px;
+  padding: 11px 12px;
+  border-radius: 12px;
+  background: hsl(var(--surface-secondary));
+  color: hsl(var(--text-muted));
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+.admin-confirmation-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 14px 20px 20px;
+  border-top: 1px solid hsl(var(--border-subtle));
+}
+
+.admin-confirmation-button {
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: var(--radius-control);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 140ms ease, background 140ms ease, border-color 140ms ease;
+}
+
+.admin-confirmation-button:active {
+  transform: scale(0.985);
+}
+
+.admin-confirmation-button-secondary {
+  border: 1px solid hsl(var(--border-subtle));
+  background: hsl(var(--surface-primary));
+  color: hsl(var(--text-main));
+}
+
+.admin-confirmation-button-secondary:hover {
+  background: hsl(var(--surface-secondary));
+}
+
+.admin-confirmation-button-primary {
+  border: 1px solid transparent;
+  background: hsl(var(--accent));
+  color: hsl(var(--accent-foreground));
+}
+
+.admin-confirmation-button-primary:hover {
+  background: hsl(var(--accent-hover));
+}
+
+html.dark .admin-confirmation-backdrop {
+  background: rgba(0, 0, 0, 0.58);
+}
+
+html.dark .admin-confirmation-card {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(28, 29, 33, 0.985);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+@keyframes admin-confirmation-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@media (max-width: 560px) {
+  .admin-confirmation-layer {
+    padding: 14px;
+  }
+
+  .admin-confirmation-card {
+    width: min(390px, calc(100vw - 28px));
+    border-radius: 20px;
+  }
+
+  .admin-confirmation-header {
+    padding: 18px 16px 12px;
+  }
+
+  .admin-confirmation-note {
+    margin-right: 16px;
+    margin-left: 16px;
+  }
+
+  .admin-confirmation-actions {
+    padding: 12px 16px 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-confirmation-card {
+    animation: none;
+  }
+}
