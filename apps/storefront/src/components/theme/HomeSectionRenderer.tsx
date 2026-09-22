@@ -57,20 +57,16 @@ export function HomeSectionRenderer({
   editorialImage,
   scrollImages,
   freeShippingThreshold,
-  editorialVideo,
-  editorialImage,
 }: {
   section: ThemeSection;
   featuredProducts: Product[];
   allProducts: Product[];
   collections: Collection[];
   heroImages: HomepageHeroImages;
-  editorialVideo?: string;
-  editorialImage?: string;
-  scrollImages: string[];
-  freeShippingThreshold: number;
   editorialVideo: string;
   editorialImage: string;
+  scrollImages: string[];
+  freeShippingThreshold: number;
 }) {
   if (!section.enabled) return null;
   if (section.type === "hero") return <div data-theme-section-id={section.id}><Hero heroImages={heroImages} editorialVideo={editorialVideo} editorialImage={editorialImage} /></div>;
