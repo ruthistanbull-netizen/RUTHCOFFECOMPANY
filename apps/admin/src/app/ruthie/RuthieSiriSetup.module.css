@@ -1,0 +1,53 @@
+.page {
+  --setup-bg: color-mix(in srgb, var(--ruth-color-text-primary) 97%, black);
+  --setup-panel: color-mix(in srgb, var(--ruth-color-text-primary) 91%, black);
+  --setup-line: color-mix(in srgb, var(--ruth-color-text-inverse) 12%, transparent);
+  --setup-text: var(--ruth-color-text-inverse);
+  --setup-muted: color-mix(in srgb, var(--ruth-color-text-inverse) 54%, transparent);
+  --setup-accent: var(--ruth-gold, var(--ruth-color-accent));
+  --setup-accent-soft: var(--ruth-gold-light, var(--ruth-color-accent-soft));
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  overflow-y: auto;
+  padding: max(18px, env(safe-area-inset-top)) 18px max(24px, env(safe-area-inset-bottom));
+  background: var(--setup-bg);
+  color: var(--setup-text);
+}
+.page > header { width: min(820px, 100%); margin: 0 auto 20px; display: flex; align-items: center; justify-content: space-between; }
+.page > header > div { display: flex; align-items: center; gap: 10px; }
+.page > header > div > span { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 13px; background: linear-gradient(145deg, var(--setup-accent-soft), var(--setup-accent)); color: var(--ruth-color-text-primary); }
+.page > header > div > span svg { width: 19px; height: 19px; }
+.page > header > div > div { display: grid; gap: 2px; }
+.page > header strong { font-size: 16px; }
+.page > header small { color: var(--setup-muted); font-size: 10px; }
+.page > header > a { display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid var(--setup-line); border-radius: 12px; color: var(--setup-text); }
+.page > header > a svg { width: 18px; height: 18px; }
+.setupPanel { width: min(820px, 100%); margin: 0 auto; padding: clamp(18px, 4vw, 34px); border: 1px solid var(--setup-line); border-radius: 24px; background: var(--setup-panel); box-shadow: 0 24px 70px color-mix(in srgb, black 32%, transparent); }
+.setupPanel h1 { margin: 0; font-size: clamp(30px, 6vw, 54px); letter-spacing: -.05em; }
+.setupPanel > p { max-width: 700px; margin: 12px 0 24px; color: var(--setup-muted); font-size: 14px; line-height: 1.65; }
+.setupPanel ol { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.setupPanel li { display: grid; grid-template-columns: 38px minmax(0, 1fr); gap: 12px; padding: 14px; border: 1px solid var(--setup-line); border-radius: 16px; background: color-mix(in srgb, var(--ruth-color-text-inverse) 5%, transparent); }
+.setupPanel li > span { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 11px; background: color-mix(in srgb, var(--setup-accent) 18%, transparent); color: var(--setup-accent-soft); font-size: 12px; font-weight: 800; }
+.setupPanel li div { display: grid; gap: 4px; }
+.setupPanel li strong { font-size: 13px; }
+.setupPanel li p { margin: 0; color: var(--setup-muted); font-size: 12px; line-height: 1.5; }
+.urlBox { margin-top: 18px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; padding: 8px; border: 1px solid color-mix(in srgb, var(--setup-accent) 30%, var(--setup-line)); border-radius: 15px; background: color-mix(in srgb, var(--setup-accent) 8%, transparent); }
+.urlBox code { min-width: 0; padding: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--setup-muted); font-size: 11px; }
+.urlBox button,
+.actions button,
+.actions a { min-height: 42px; padding: 0 13px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; border: 1px solid var(--setup-line); border-radius: 12px; background: color-mix(in srgb, var(--ruth-color-text-inverse) 6%, transparent); color: var(--setup-text); text-decoration: none; font: inherit; font-size: 11px; font-weight: 750; }
+.urlBox button svg,
+.actions svg { width: 16px; height: 16px; }
+.actions { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
+.actions button:first-child { border-color: color-mix(in srgb, var(--setup-accent) 34%, var(--setup-line)); color: var(--setup-accent-soft); }
+.page > aside { width: min(820px, 100%); margin: 14px auto 0; padding: 14px 16px; border: 1px solid var(--setup-line); border-radius: 15px; background: color-mix(in srgb, var(--ruth-color-text-inverse) 4%, transparent); }
+.page > aside strong { font-size: 11px; }
+.page > aside p { margin: 5px 0 0; color: var(--setup-muted); font-size: 11px; line-height: 1.55; }
+@media (max-width: 560px) {
+  .page { padding-right: 10px; padding-left: 10px; }
+  .setupPanel { border-radius: 20px; }
+  .urlBox { grid-template-columns: 1fr; }
+  .urlBox button { width: 100%; }
+  .actions { display: grid; grid-template-columns: 1fr 1fr; }
+}
