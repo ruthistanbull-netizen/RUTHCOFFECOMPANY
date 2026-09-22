@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import sharp from "sharp";
 import { requireAdmin } from "@/lib/auth";
@@ -22,7 +23,7 @@ export async function POST(request:Request){
       .resize({width:3000,height:3000,fit:"inside",withoutEnlargement:true})
       .webp({quality:92,effort:4})
       .toBuffer();
-    const objectPath=`theme/${Date.now()}-${crypto.randomUUID().slice(0,10)}.webp`;
+    const objectPath=`theme/${Date.now()}-${randomUUID().slice(0,10)}.webp`;
     const uploaded=await auth.supabase.storage.from("rosta-media").upload(objectPath,output,{
       contentType:"image/webp",cacheControl:"31536000",upsert:false,
     });
