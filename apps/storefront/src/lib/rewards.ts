@@ -1,9 +1,9 @@
 export const RUTHIE_WELCOME_POINTS = 1000;
 export const RUTHIE_POINTS_PER_TL = 10;
 
-const RUTHIE_REWARD_STORAGE_KEY = "ruthie-points-state-v1";
-export const RUTHIE_PENDING_ORDER_KEY = "ruthie-pending-order-reward-v1";
-export const RUTHIE_POINTS_UPDATED_EVENT = "ruthie-points-updated";
+const RUTHIE_REWARD_STORAGE_KEY = "rosta-points-state-v1";
+export const RUTHIE_PENDING_ORDER_KEY = "rosta-pending-order-reward-v1";
+export const RUTHIE_POINTS_UPDATED_EVENT = "rosta-points-updated";
 
 export type RuthieRewardState = {
   welcomeClaimed: boolean;
