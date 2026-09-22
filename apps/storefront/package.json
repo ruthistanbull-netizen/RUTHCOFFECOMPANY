@@ -20,7 +20,7 @@
     "@ruth-commerce/commerce-core": "file:../../packages/commerce-core",
     "@ruth-commerce/contracts": "file:../../packages/contracts",
     "@ruth-commerce/ui": "file:../../packages/ui",
-    "@supabase/supabase-js": "^2.50.0",
+    "@supabase/supabase-js": "2.108.2",
     "framer-motion": "^12.23.0",
     "keen-slider": "^6.8.6",
     "lucide-react": "^0.468.0",

@@ -9,6 +9,7 @@ import { ThemeProductSlider } from "@/components/theme/ThemeProductSlider";
 import type { Collection, Product } from "@/types/site";
 import type { HomepageHeroImages } from "@/lib/themeMedia";
 import type { ThemeSection } from "@ruth-commerce/commerce-core/theme-sections";
+import { ROSTA_PALETTE, sanitizeRostaPaletteColor } from "@/lib/rostaDesignSystem";
 
 function hasProductSectionCustomization(section: ThemeSection) {
   return section.title !== undefined ||
@@ -81,13 +82,18 @@ export function HomeSectionRenderer({
     const desktopItems = Math.max(1, Math.round(section.desktopItems || 4));
     const mobileItems = Math.max(1, Math.round(section.mobileItems || 2));
     const gap = section.gap ?? 12;
-    const sectionText = section.textColor || "var(--ink)";
+    const sectionBackground = sanitizeRostaPaletteColor(section.backgroundColor, ROSTA_PALETTE.bone);
+    const darkBackground = sectionBackground === ROSTA_PALETTE.carbon || sectionBackground === ROSTA_PALETTE.espresso;
+    const sectionText = sanitizeRostaPaletteColor(
+      section.textColor,
+      darkBackground ? ROSTA_PALETTE.bone : ROSTA_PALETTE.carbon,
+    );
     const textVars = section.textColor ? {
-      ["--ink" as string]: section.textColor,
-      ["--gold-dark" as string]: section.textColor,
-      ["--muted-foreground" as string]: section.textColor,
-      ["--ruth-color-text-primary" as string]: section.textColor,
-      ["--ruth-color-text-muted" as string]: section.textColor,
+      ["--ink" as string]: sectionText,
+      ["--gold-dark" as string]: sectionText,
+      ["--muted-foreground" as string]: sectionText,
+      ["--ruth-color-text-primary" as string]: sectionText,
+      ["--ruth-color-text-muted" as string]: sectionText,
     } : {};
 
     return (
@@ -96,7 +102,7 @@ export function HomeSectionRenderer({
         className="theme-config-product-section overflow-hidden"
         style={{
           ...textVars,
-          background: section.backgroundColor || "var(--cream)",
+          background: sectionBackground,
           color: sectionText,
           paddingTop: section.paddingY ?? 64,
           paddingBottom: section.paddingY ?? 64,
@@ -108,7 +114,7 @@ export function HomeSectionRenderer({
           {(section.eyebrow || section.title || section.linkLabel) ? (
             <div className="mb-7 flex items-end justify-between gap-4 px-4 md:mb-10 md:px-8">
               <div>
-                {section.eyebrow ? <p data-theme-section-eyebrow className="mb-2 whitespace-pre-wrap text-[9px] uppercase tracking-[0.16em]" style={{ color: section.textColor || "var(--gold-dark)" }}>{section.eyebrow}</p> : null}
+                {section.eyebrow ? <p data-theme-section-eyebrow className="mb-2 whitespace-pre-wrap text-[9px] uppercase tracking-[0.16em]" style={{ color: section.textColor ? sectionText : ROSTA_PALETTE.espresso }}>{section.eyebrow}</p> : null}
                 {section.title ? <h2 data-theme-section-title className="whitespace-pre-wrap font-heading text-[clamp(1.4rem,2.6vw,2.6rem)] leading-tight">{section.title}</h2> : null}
               </div>
               {section.linkLabel && section.linkHref ? <Link data-theme-section-link href={section.linkHref} className="whitespace-pre-wrap text-[9px] uppercase tracking-[0.12em]">{section.linkLabel}</Link> : null}
@@ -128,19 +134,25 @@ export function HomeSectionRenderer({
   }
 
   if (section.type === "image-banner") {
+    const sectionBackground = sanitizeRostaPaletteColor(section.backgroundColor, ROSTA_PALETTE.bone);
+    const darkBackground = sectionBackground === ROSTA_PALETTE.carbon || sectionBackground === ROSTA_PALETTE.espresso;
+    const sectionText = sanitizeRostaPaletteColor(
+      section.textColor,
+      darkBackground ? ROSTA_PALETTE.bone : ROSTA_PALETTE.carbon,
+    );
     return (
       <section
         data-theme-section-id={section.id}
         className="theme-config-banner relative overflow-hidden"
         style={{
-          background: section.backgroundColor || "var(--cream)",
+          background: sectionBackground,
           borderRadius: section.borderRadius || 0,
           ["--banner-mobile-height" as string]: `${section.mobileHeight || 360}px`,
           ["--banner-desktop-height" as string]: `${section.desktopHeight || 520}px`,
         }}
       >
         {section.imageSrc ? <img src={section.imageSrc} alt={section.title || ""} className="absolute inset-0 h-full w-full object-cover" /> : null}
-        <div className="relative z-10 flex h-full items-center justify-center p-8 text-center" style={{ color: section.textColor || "var(--ink)" }}>
+        <div className="relative z-10 flex h-full items-center justify-center p-8 text-center" style={{ color: sectionText }}>
           <div>
             {section.eyebrow ? <p data-theme-section-eyebrow className="mb-2 whitespace-pre-wrap text-[10px] uppercase tracking-[0.16em]">{section.eyebrow}</p> : null}
             {section.title ? <h2 data-theme-section-title className="whitespace-pre-wrap font-heading font-editorial text-[clamp(1.8rem,4vw,4rem)]">{section.title}</h2> : null}
@@ -154,13 +166,19 @@ export function HomeSectionRenderer({
   }
 
   if (section.type === "rich-text") {
+    const sectionBackground = sanitizeRostaPaletteColor(section.backgroundColor, ROSTA_PALETTE.bone);
+    const darkBackground = sectionBackground === ROSTA_PALETTE.carbon || sectionBackground === ROSTA_PALETTE.espresso;
+    const sectionText = sanitizeRostaPaletteColor(
+      section.textColor,
+      darkBackground ? ROSTA_PALETTE.bone : ROSTA_PALETTE.carbon,
+    );
     return (
       <section
         data-theme-section-id={section.id}
         className="px-5 text-center md:px-8"
         style={{
-          background: section.backgroundColor || "var(--ivory)",
-          color: section.textColor || "var(--ink)",
+          background: sectionBackground,
+          color: sectionText,
           paddingTop: section.paddingY ?? 64,
           paddingBottom: section.paddingY ?? 64,
         }}

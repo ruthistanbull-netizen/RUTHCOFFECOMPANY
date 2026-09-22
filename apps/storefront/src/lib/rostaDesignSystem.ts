@@ -9,6 +9,19 @@ export const ROSTA_PALETTE = {
   steel: "#AAA8A1",
 } as const;
 
+const ROSTA_CANONICAL_COLORS = new Map(
+  Object.values(ROSTA_PALETTE).map((value) => [value.toLowerCase(), value]),
+);
+
+export function sanitizeRostaPaletteColor(
+  value: string | null | undefined,
+  fallback: string,
+) {
+  const mapped = mapRostaLegacyColor(value);
+  if (!mapped) return fallback;
+  return ROSTA_CANONICAL_COLORS.get(mapped.trim().toLowerCase()) || fallback;
+}
+
 export const ROSTA_LOGO_SRC = "/rosta-coffee-co.svg";
 
 export const ROSTA_THEME_COLORS: ThemeCustomizerSettings["colors"] = {
@@ -59,8 +72,12 @@ function sanitizeDeviceStyle(style: ThemeDeviceStyle | undefined): ThemeDeviceSt
   if (!style) return style;
   return {
     ...style,
-    color: mapRostaLegacyColor(style.color) || style.color,
-    backgroundColor: mapRostaLegacyColor(style.backgroundColor) || style.backgroundColor,
+    color: style.color
+      ? sanitizeRostaPaletteColor(style.color, ROSTA_PALETTE.carbon)
+      : style.color,
+    backgroundColor: style.backgroundColor
+      ? sanitizeRostaPaletteColor(style.backgroundColor, ROSTA_PALETTE.bone)
+      : style.backgroundColor,
   };
 }
 

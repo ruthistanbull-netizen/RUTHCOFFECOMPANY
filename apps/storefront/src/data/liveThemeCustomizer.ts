@@ -6,6 +6,7 @@ import {
   normalizeThemeCustomizerSettings,
   type ThemeCustomizerSettings,
 } from "@/lib/themeCustomizer";
+import { applyRostaStorefrontDesignSystem } from "@/lib/rostaDesignSystem";
 
 function themeClient() {
   try {
@@ -20,7 +21,7 @@ export async function getLiveThemeCustomizerSettings(): Promise<ThemeCustomizerS
 
   try {
     const client = themeClient();
-    if (!client) return defaultThemeCustomizerSettings;
+    if (!client) return applyRostaStorefrontDesignSystem(defaultThemeCustomizerSettings);
 
     const { data, error } = await client
       .from("site_settings")
@@ -29,9 +30,11 @@ export async function getLiveThemeCustomizerSettings(): Promise<ThemeCustomizerS
       .maybeSingle();
 
     if (error) throw error;
-    return normalizeThemeCustomizerSettings(data?.setting_value || defaultThemeCustomizerSettings);
+    return applyRostaStorefrontDesignSystem(
+      normalizeThemeCustomizerSettings(data?.setting_value || defaultThemeCustomizerSettings),
+    );
   } catch (error) {
     console.error("Canlı tema ayarları okunamadı:", error);
-    return defaultThemeCustomizerSettings;
+    return applyRostaStorefrontDesignSystem(defaultThemeCustomizerSettings);
   }
 }
