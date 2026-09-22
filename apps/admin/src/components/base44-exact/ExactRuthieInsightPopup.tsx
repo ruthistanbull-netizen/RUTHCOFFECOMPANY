@@ -382,11 +382,11 @@ export function ExactRuthieInsightPopup({
         if (cancelled) return;
         const ready = Boolean(response.ok && payload?.ok && payload.configured && payload.capabilities?.chat);
         setProviderReady(ready);
-        setError(ready ? null : "Ruthie şu anda sohbete hazır değil.");
+        setError(ready ? null : "ROSTA Insight şu anda sohbete hazır değil.");
       } catch {
         if (!cancelled) {
           setProviderReady(false);
-          setError("Ruthie bağlantı durumu alınamadı.");
+          setError("ROSTA Insight bağlantı durumu alınamadı.");
         }
       } finally {
         if (!cancelled) setProviderChecked(true);
@@ -566,13 +566,13 @@ export function ExactRuthieInsightPopup({
       const reply = payload?.response?.text?.trim();
       if (!response.ok || !payload?.ok || !reply) {
         const apiError = typeof payload?.error === "string" ? payload.error : payload?.error?.message;
-        throw new Error(apiError || "Ruthie yanıt veremedi.");
+        throw new Error(apiError || "ROSTA Insight yanıt veremedi.");
       }
       const completed = [...outgoing, { role: "assistant" as const, text: reply }].slice(-16);
       messagesRef.current = completed;
       setMessages(completed);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Ruthie yanıt veremedi.");
+      setError(caught instanceof Error ? caught.message : "ROSTA Insight yanıt veremedi.");
     } finally {
       setSending(false);
     }
@@ -768,7 +768,7 @@ export function ExactRuthieInsightPopup({
           <div className="fixed inset-0 flex items-end justify-center md:items-center md:p-4" style={{ zIndex: 2147483600 }}>
             <motion.button
               type="button"
-              aria-label="Ruthie sohbetini kapat"
+              aria-label="ROSTA Insight sohbetini kapat"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -798,7 +798,7 @@ export function ExactRuthieInsightPopup({
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <h2 id="ruthie-insight-popup-title" className="ruth-type-card-title text-main">Ruthie</h2>
+                    <h2 id="ruthie-insight-popup-title" className="ruth-type-card-title text-main">ROSTA Insight</h2>
                     <span className="inline-flex items-center gap-1 text-[10px] text-success-foreground"><span className={`h-1.5 w-1.5 rounded-full ${providerReady ? "bg-success" : "bg-subtle"}`} />{providerReady ? "hazır" : providerChecked ? "çevrimdışı" : "bağlanıyor"}</span>
                   </div>
                   <p className="ruth-type-caption mt-0.5 text-muted">Panel hakkında sor, dosya ekle veya @ ile araç seç</p>
@@ -810,7 +810,7 @@ export function ExactRuthieInsightPopup({
                 {!messages.length ? (
                   <div className="flex min-h-52 flex-col items-center justify-center text-center">
                     <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-accent-soft text-accent"><RuthieBrandIcon size={27} /></div>
-                    <p className="ruth-type-card-title text-main">Ruthie’ye ne sormak istiyorsun?</p>
+                    <p className="ruth-type-card-title text-main">ROSTA Insight’a ne sormak istiyorsun?</p>
                     <p className="ruth-type-caption mt-1 max-w-sm text-muted">Siparişleri, ödemeleri, kargoyu konuşabilir; fotoğraf veya dosya ekleyebilirsin.</p>
                     <div className="mt-4 grid w-full max-w-md gap-2 sm:grid-cols-2">
                       {QUICK_PROMPTS.map((prompt, index) => (
@@ -830,7 +830,7 @@ export function ExactRuthieInsightPopup({
                         </div>
                       </motion.div>
                     ))}
-                    {sending ? <div className="flex justify-start"><motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="rounded-[18px] rounded-bl-[6px] bg-surface-secondary px-3.5 py-2.5 text-xs text-muted">Ruthie yazıyor…</motion.div></div> : null}
+                    {sending ? <div className="flex justify-start"><motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="rounded-[18px] rounded-bl-[6px] bg-surface-secondary px-3.5 py-2.5 text-xs text-muted">ROSTA Insight yazıyor…</motion.div></div> : null}
                   </div>
                 )}
                 <div ref={bottomRef} />
@@ -904,7 +904,7 @@ export function ExactRuthieInsightPopup({
                             <div className="flex gap-1.5"><motion.button type="button" whileTap={{ scale: 0.95 }} onClick={() => { setQuote(null); setImageStage("idle"); }} className="h-8 rounded-lg border border-border-subtle bg-surface-primary px-3 text-[8px] text-muted">İptal</motion.button><motion.button type="button" whileTap={{ scale: 0.95 }} onClick={() => void confirmImageGeneration()} className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-accent px-3 text-[8px] font-semibold text-accent-foreground"><Check className="h-3 w-3" />Kabul et ve üret</motion.button></div>
                           </motion.div>
                         ) : imageStage === "generating" ? (
-                          <motion.div key="generating" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="relative mt-2 flex min-h-9 items-center gap-2 overflow-hidden border-t border-border-subtle pt-2 text-[8px] text-muted"><LoaderCircle className="h-3.5 w-3.5 animate-spin text-accent" />Ruthie fotoğrafı üretiyor. Seçili ürün referansları korunuyor.<motion.i className="absolute bottom-0 left-0 h-0.5 w-1/3 bg-accent" initial={{ x: "-100%" }} animate={{ x: "320%" }} transition={{ repeat: Infinity, duration: 1.2, ease: "easeInOut" }} /></motion.div>
+                          <motion.div key="generating" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="relative mt-2 flex min-h-9 items-center gap-2 overflow-hidden border-t border-border-subtle pt-2 text-[8px] text-muted"><LoaderCircle className="h-3.5 w-3.5 animate-spin text-accent" />ROSTA Insight fotoğrafı üretiyor. Seçili ürün referansları korunuyor.<motion.i className="absolute bottom-0 left-0 h-0.5 w-1/3 bg-accent" initial={{ x: "-100%" }} animate={{ x: "320%" }} transition={{ repeat: Infinity, duration: 1.2, ease: "easeInOut" }} /></motion.div>
                         ) : (
                           <motion.div key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="mt-2 flex items-center justify-between gap-2 border-t border-border-subtle pt-2"><span className="text-[8px] leading-4 text-muted">Gönder’e basınca önce fiyat gösterilir. Onay vermeden ücretli üretim başlamaz.</span><motion.button type="button" whileTap={{ scale: 0.95 }} onClick={() => void requestImageQuote()} disabled={imageStage === "quoting"} className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg bg-surface-primary px-3 text-[8px] font-semibold text-main shadow-sm disabled:opacity-50">{imageStage === "quoting" ? <><LoaderCircle className="h-3 w-3 animate-spin" />Hesaplanıyor</> : <><Sparkles className="h-3 w-3" />Fiyatı göster</>}</motion.button></motion.div>
                         )}
@@ -917,7 +917,7 @@ export function ExactRuthieInsightPopup({
                   <AnimatePresence>
                     {(toolsOpen || mentionOpen) ? (
                       <motion.div initial={{ opacity: 0, y: 8, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 6, scale: 0.98 }} transition={{ duration: 0.16 }} className="absolute bottom-[calc(100%+8px)] left-0 z-30 w-[min(360px,calc(100vw-38px))] overflow-hidden rounded-2xl border border-border-subtle bg-surface-primary shadow-overlay">
-                        <div className="flex min-h-10 items-center gap-2 px-3 text-[9px] font-semibold text-muted">{mentionOpen ? <><span className="flex h-6 w-6 items-center justify-center rounded-lg bg-accent-soft text-xs font-bold text-accent">@</span>Ruthie araçları</> : "Ekle ve oluştur"}</div>
+                        <div className="flex min-h-10 items-center gap-2 px-3 text-[9px] font-semibold text-muted">{mentionOpen ? <><span className="flex h-6 w-6 items-center justify-center rounded-lg bg-accent-soft text-xs font-bold text-accent">@</span>ROSTA Insight araçları</> : "Ekle ve oluştur"}</div>
                         <div className="space-y-1 p-1.5 pt-0">
                           {(mentionOpen ? mentionItems : [
                             { id: "attach", label: "Fotoğraf veya dosya ekle", detail: "Görsel, PDF, Word, Excel ve daha fazlası", icon: Paperclip },
@@ -939,7 +939,7 @@ export function ExactRuthieInsightPopup({
                     onChange={(event) => onInputChange(event.target.value)}
                     onKeyDown={onComposerKeyDown}
                     rows={1}
-                    placeholder={providerReady ? "Ruthie’ye yaz veya @ ile araç seç…" : "Ruthie hazırlanıyor..."}
+                    placeholder={providerReady ? "ROSTA Insight’a yaz veya @ ile araç seç…" : "ROSTA Insight hazırlanıyor..."}
                     disabled={!providerReady || sending}
                     className="max-h-28 min-h-9 w-full resize-none bg-transparent px-2 py-2 text-sm text-main outline-none placeholder:text-subtle disabled:opacity-60"
                   />
@@ -949,11 +949,11 @@ export function ExactRuthieInsightPopup({
                       <motion.button type="button" whileTap={{ scale: 0.88 }} onClick={() => { setToolsOpen((current) => !current); setMentionOpen(false); }} aria-label="Ekle ve oluştur" className="flex h-9 w-9 items-center justify-center rounded-full text-muted hover:bg-surface-primary hover:text-main"><motion.span animate={{ rotate: toolsOpen ? 45 : 0 }} transition={{ duration: 0.17 }}><Plus className="h-4 w-4" /></motion.span></motion.button>
                       <span className="hidden text-[8px] text-muted sm:inline">@ yazınca araçlar açılır</span>
                     </div>
-                    <Pressable type="button" pressStrength="icon" onClick={primaryAction} disabled={!providerReady || sending || imageStage === "generating" || (!input.trim() && !attachments.length && !selectedProducts.length && !selectedStyle && !purpose)} aria-label={imageSelected ? "Görsel fiyatını göster" : "Ruthie’ye gönder"} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground disabled:opacity-35">{imageStage === "quoting" ? <LoaderCircle className="h-4 w-4 animate-spin" /> : imageSelected ? <Sparkles className="h-4 w-4" /> : <Send className="h-4 w-4" />}</Pressable>
+                    <Pressable type="button" pressStrength="icon" onClick={primaryAction} disabled={!providerReady || sending || imageStage === "generating" || (!input.trim() && !attachments.length && !selectedProducts.length && !selectedStyle && !purpose)} aria-label={imageSelected ? "Görsel fiyatını göster" : "ROSTA Insight’a gönder"} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground disabled:opacity-35">{imageStage === "quoting" ? <LoaderCircle className="h-4 w-4 animate-spin" /> : imageSelected ? <Sparkles className="h-4 w-4" /> : <Send className="h-4 w-4" />}</Pressable>
                   </div>
                 </div>
 
-                <div className="mt-2 flex justify-end"><Link href="/ruthie/chat" onClick={onClose} className="inline-flex items-center gap-1 text-[10px] font-medium text-muted hover:text-accent">Tam Ruthie sohbetini aç <ExternalLink className="h-3 w-3" /></Link></div>
+                <div className="mt-2 flex justify-end"><Link href="/ruthie/chat" onClick={onClose} className="inline-flex items-center gap-1 text-[10px] font-medium text-muted hover:text-accent">Tam ROSTA Insight sohbetini aç <ExternalLink className="h-3 w-3" /></Link></div>
               </div>
             </motion.section>
           </div>
