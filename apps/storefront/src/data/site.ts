@@ -24,7 +24,7 @@ import {
   type ThemeCustomizerSettings,
 } from "@/lib/themeCustomizer";
 import { applyRostaStorefrontDesignSystem } from "@/lib/rostaDesignSystem";
-// ROSTA never falls back to the copied Ruth Istanbul static catalog.
+// ROSTA never falls back to any copied legacy static catalog.
 // If ROSTA Supabase is unavailable, serving an empty/last-known-good catalog
 // is safer than exposing stale products from another brand.
 const fallbackProducts: Product[] = [];
@@ -618,7 +618,7 @@ async function fetchLiveProducts(): Promise<Product[]> {
 
 const getCachedLiveProducts = unstable_cache(
   fetchLiveProducts,
-  ["ruth-live-products-v4"],
+  ["rosta-live-products-v5"],
   { revalidate: NEXT_CACHE_REVALIDATE_SECONDS, tags: ["rosta-products"] },
 );
 
