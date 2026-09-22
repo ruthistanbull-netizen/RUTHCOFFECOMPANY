@@ -1,12 +1,29 @@
 import {
+  BarChart,
   Contact,
+  CreditCard,
+  FileText,
+  Filter,
+  Handshake,
+  History,
   Inbox,
+  Landmark,
   Layers,
   LayoutDashboard,
+  ListChecks,
+  MessageSquareText,
   Package,
+  PackageOpen,
+  PackagePlus,
   Palette,
+  RotateCcw,
   ShoppingBag,
+  ShoppingCart,
+  SlidersHorizontal,
+  Star,
+  Truck,
   Warehouse,
+  Workflow,
   type LucideIcon,
 } from "lucide-react";
 
@@ -30,26 +47,42 @@ export const exactNavStructure: ExactNavGroup[] = [
     label: "SİPARİŞ VE OPERASYON",
     items: [
       { label: "Siparişler", path: "/orders", icon: ShoppingBag, exact: true },
+      { label: "Sepetler", path: "/cart-activity", icon: ShoppingCart, exact: true },
+      { label: "Hazırlanacak Ürünler", path: "/preparing-products", icon: ListChecks, exact: true },
+      { label: "Terk Edilen Sepetler", path: "/abandoned-carts", icon: History, exact: true },
+      { label: "Ödemeler", path: "/payments", icon: CreditCard, exact: true },
+      { label: "Hakedişler", path: "/settlements", icon: Landmark, exact: true },
+      { label: "Kargo", path: "/shipping", icon: Truck },
+      { label: "İade ve Değişim", path: "/returns", icon: RotateCcw },
     ],
   },
   {
     label: "ÜRÜN VE STOK",
     items: [
       { label: "Ürünler", path: "/products", icon: Package, exact: true },
-      { label: "Kategori ve Koleksiyonlar", path: "/catalog", icon: Layers, exact: true },
-      { label: "Stok Yönetimi", path: "/inventory", icon: Warehouse, exact: true },
+      { label: "Ürün Oluştur", path: "/products/studio?type=single", icon: PackagePlus },
+      { label: "Paket Ürün Oluştur", path: "/products/studio?type=bundle", icon: PackageOpen },
+      { label: "Ürün Düzenleme Stüdyosu", path: "/products/studio", icon: SlidersHorizontal },
+      { label: "Kategori ve Koleksiyonlar", path: "/catalog", icon: Layers },
+      { label: "Stok Yönetimi", path: "/inventory", icon: Warehouse },
     ],
   },
   {
     label: "MÜŞTERİ",
     items: [
-      { label: "Müşteriler", path: "/customers", icon: Contact, exact: true },
+      { label: "Müşteriler", path: "/customers", icon: Contact },
+      { label: "Segmentler", path: "/segments", icon: Filter },
+      { label: "CRM", path: "/crm", icon: Handshake },
+      { label: "ROSTA Points", path: "/ruthie-points", icon: Star },
+      { label: "Yorum ve Değerlendirmeler", path: "/reviews", icon: MessageSquareText },
     ],
   },
   {
     label: "PAZARLAMA",
     items: [
       { label: "E-posta Merkezi", path: "/email", icon: Inbox, exact: true },
+      { label: "E-posta Şablonları", path: "/email/templates", icon: FileText },
+      { label: "E-posta Otomasyonları", path: "/email/automations", icon: Workflow },
     ],
   },
   {
@@ -58,14 +91,20 @@ export const exactNavStructure: ExactNavGroup[] = [
       { label: "Mağaza Tasarımı", path: "/theme", icon: Palette, exact: true },
     ],
   },
+  {
+    label: "RAPORLAMA",
+    items: [
+      { label: "Analitik", path: "/analytics", icon: BarChart },
+    ],
+  },
 ];
 
 export const exactMobileNav: ExactNavItem[] = [
   { label: "Genel", path: "/", icon: LayoutDashboard, exact: true },
-  { label: "Siparişler", path: "/orders", icon: ShoppingBag, exact: true },
-  { label: "Ürünler", path: "/products", icon: Package, exact: true },
-  { label: "Müşteriler", path: "/customers", icon: Contact, exact: true },
-  { label: "E-posta", path: "/email", icon: Inbox, exact: true },
+  { label: "Siparişler", path: "/orders", icon: ShoppingBag, aliases: ["/cart-activity", "/abandoned-carts", "/preparing-products", "/payments", "/settlements", "/shipping", "/returns"] },
+  { label: "Ürünler", path: "/products", icon: Package },
+  { label: "Müşteriler", path: "/customers", icon: Contact },
+  { label: "E-posta", path: "/email", icon: Inbox },
 ];
 
 export const exactAllNavItems = exactNavStructure.flatMap((group) =>
