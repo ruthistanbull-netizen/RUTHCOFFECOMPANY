@@ -10,7 +10,7 @@ export async function GET(
 ) {
   const { slug } = await params;
   const cookieStore = await cookies();
-  const source = cookieStore.get("ruth_product_source")?.value || "";
+  const source = cookieStore.get("rosta_product_source")?.value || "";
   const window = await getProductPageWindowForSource(slug, source);
 
   if (!window.current) {
