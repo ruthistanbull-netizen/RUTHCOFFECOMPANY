@@ -1,5 +1,3 @@
 {
-  "dockerfile": {
-    "path": "Dockerfile"
-  }
+  "cache_dependencies": false
 }
