@@ -1,5 +1,5 @@
-import { ExactRuthie } from "@/components/base44-exact/ExactRuthie";
+import { redirect } from "next/navigation";
 
 export default function RostaInsightPage(){
-  return <ExactRuthie />;
+  redirect("/rosta-insight/chat");
 }
