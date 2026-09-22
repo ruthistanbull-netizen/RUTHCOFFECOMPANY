@@ -795,7 +795,7 @@ export function RostaPointsWidget() {
                           </div>
                           <div className="ruthie-offer-action-item">
                             <ShoppingBag size={19} />
-                            <div><strong>Sipariş ver</strong><span>Harcanan her 1 TL için 1 Ruthie Point</span></div>
+                            <div><strong>Sipariş ver</strong><span>Harcanan her 1 TL için 1 ROSTA Point</span></div>
                             <span />
                           </div>
 
