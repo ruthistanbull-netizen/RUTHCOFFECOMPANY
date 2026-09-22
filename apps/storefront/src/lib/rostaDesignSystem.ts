@@ -9,7 +9,7 @@ export const ROSTA_PALETTE = {
   steel: "#AAA8A1",
 } as const;
 
-export const ROSTA_LOGO_SRC = "/rosta-coffee-co.svg";
+const ROSTA_CANONICAL_COLORS = new Map(\n  Object.values(ROSTA_PALETTE).map((value) => [value.toLowerCase(), value]),\n);\n\nexport function sanitizeRostaPaletteColor(\n  value: string | null | undefined,\n  fallback: string,\n) {\n  const mapped = mapRostaLegacyColor(value);\n  if (!mapped) return fallback;\n  return ROSTA_CANONICAL_COLORS.get(mapped.trim().toLowerCase()) || fallback;\n}\n\nexport const ROSTA_LOGO_SRC = "/rosta-coffee-co.svg";
 
 export const ROSTA_THEME_COLORS: ThemeCustomizerSettings["colors"] = {
   ivory: ROSTA_PALETTE.bone,
