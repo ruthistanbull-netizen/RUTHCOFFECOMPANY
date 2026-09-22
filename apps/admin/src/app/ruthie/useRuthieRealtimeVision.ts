@@ -7,20 +7,20 @@ import {
   RUTHIE_VOICE_ANALYSIS_GUIDE,
 } from "@/lib/ruthieBehavior";
 import { RUTHIE_CAPABILITY_GUIDE } from "@/lib/ruthieCapabilityGuide";
-import { RUTHIE_VOICE_PROFILE_CONTEXT_KEY } from "./ROSTA InsightVoiceProfileContextSync";
+import { RUTHIE_VOICE_PROFILE_CONTEXT_KEY } from "./RuthieVoiceProfileContextSync";
 import {
-  useROSTA InsightRealtimeVision as useROSTA InsightRealtimeVisionStrict,
-  type ROSTA InsightRealtimeController,
-} from "./useROSTA InsightRealtimeVisionStrict";
+  useRuthieRealtimeVision as useRuthieRealtimeVisionStrict,
+  type RuthieRealtimeController,
+} from "./useRuthieRealtimeVisionStrict";
 
 export type {
-  ROSTA InsightRealtimeController,
-  ROSTA InsightRealtimeMessage,
-  ROSTA InsightRealtimePendingAction,
-  ROSTA InsightRealtimePhase,
-} from "./useROSTA InsightRealtimeVisionStrict";
+  RuthieRealtimeController,
+  RuthieRealtimeMessage,
+  RuthieRealtimePendingAction,
+  RuthieRealtimePhase,
+} from "./useRuthieRealtimeVisionStrict";
 
-type StrictOptions = Parameters<typeof useROSTA InsightRealtimeVisionStrict>[0];
+type StrictOptions = Parameters<typeof useRuthieRealtimeVisionStrict>[0];
 
 const VOICE_PROFILE_GUIDE = [
   RUTHIE_VOICE_ANALYSIS_GUIDE,
@@ -29,7 +29,7 @@ const VOICE_PROFILE_GUIDE = [
   "Ses analizinin yüzde veya durumunu sorarsa aşağıdaki canlı profil değerini aynen kullan.",
 ].join("\n");
 
-export function useROSTA InsightRealtimeVision(options: StrictOptions): ROSTA InsightRealtimeController {
+export function useRuthieRealtimeVision(options: StrictOptions): RuthieRealtimeController {
   const originalContext = options.conversationContext;
   const conversationContext = useCallback(
     () => [
@@ -43,7 +43,7 @@ export function useROSTA InsightRealtimeVision(options: StrictOptions): ROSTA In
     [originalContext],
   );
 
-  return useROSTA InsightRealtimeVisionStrict({
+  return useRuthieRealtimeVisionStrict({
     ...options,
     conversationContext,
   });
