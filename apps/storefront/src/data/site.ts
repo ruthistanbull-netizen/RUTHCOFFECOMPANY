@@ -619,7 +619,7 @@ async function fetchLiveProducts(): Promise<Product[]> {
 const getCachedLiveProducts = unstable_cache(
   fetchLiveProducts,
   ["ruth-live-products-v4"],
-  { revalidate: NEXT_CACHE_REVALIDATE_SECONDS, tags: ["ruth-products"] },
+  { revalidate: NEXT_CACHE_REVALIDATE_SECONDS, tags: ["rosta-products"] },
 );
 
 export async function getProducts(): Promise<Product[]> {
@@ -965,8 +965,8 @@ async function fetchThemeCustomizerSettings(): Promise<ThemeCustomizerSettings> 
 
 const getCachedThemeCustomizerSettings = unstable_cache(
   fetchThemeCustomizerSettings,
-  ["ruth-theme-customizer-v4"],
-  { revalidate: THEME_CACHE_REVALIDATE_SECONDS, tags: ["ruth-theme"] },
+  ["rosta-theme-customizer-v1"],
+  { revalidate: THEME_CACHE_REVALIDATE_SECONDS, tags: ["rosta-theme"] },
 );
 
 export async function getThemeCustomizerSettings(): Promise<ThemeCustomizerSettings> {
