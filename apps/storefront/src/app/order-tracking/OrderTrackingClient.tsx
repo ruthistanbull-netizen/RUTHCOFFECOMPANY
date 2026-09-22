@@ -268,7 +268,7 @@ export function OrderTrackingClient() {
           <AnimatedBlock delay={0.12}>
             <div className="flex h-full flex-col justify-between rounded-3xl bg-ink p-6 text-cream md:p-10">
               <div>
-                <p className="mb-5 text-xs uppercase tracking-wide-luxe text-gold">Ruth Istanbul</p>
+                <p className="mb-5 text-xs uppercase tracking-wide-luxe text-gold">ROSTA Coffee Co.</p>
                 <h2 className="font-heading text-4xl md:text-5xl">Sipariş durumunu anlık kontrol et.</h2>
                 <p className="mt-6 leading-8 text-cream/70">
                   Kargon hazırlandığında firma ve takip bilgileri burada görüntülenir.
