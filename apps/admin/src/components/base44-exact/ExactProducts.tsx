@@ -380,7 +380,7 @@ function bulkValueOptions(field: BulkField, materials: string[], categories: Gro
   if (field === "finish_color") {
     return [
       ...DEFAULT_FINISHES.map((value) => ({ value, label: value })),
-      { value: "", label: "Kaplama bilgisini kaldır" },
+      { value: "", label: "Kavrum bilgisini kaldır" },
     ];
   }
   if (field === "size_usage") {
@@ -992,7 +992,7 @@ export function ExactProducts() {
     const chips: Array<{ key: string; label: string; clear: () => void }> = [];
     if (search.trim()) chips.push({ key: "search", label: `Ara: ${search.trim()}`, clear: () => setSearch("") });
     if (collection) chips.push({ key: "collection", label: `Koleksiyon: ${collection}`, clear: () => setCollection(null) });
-    if (material) chips.push({ key: "material", label: `Materyal: ${material}`, clear: () => setMaterial(null) });
+    if (material) chips.push({ key: "material", label: `Çekirdek / İçerik: ${material}`, clear: () => setMaterial(null) });
     if (status) chips.push({ key: "status", label: `Durum: ${STATUS_LABELS[status] || status}`, clear: () => setStatus(null) });
     if (sort !== "default") chips.push({ key: "sort", label: `Sıra: ${SORT_LABELS[sort]}`, clear: () => setSort("default") });
     return chips;
@@ -1009,7 +1009,7 @@ export function ExactProducts() {
       </div>
       <div className={density === "compact" ? "p-2.5" : "p-3"}>
         <p className="truncate text-sm font-semibold text-main">{product.name}</p>
-        <p className="truncate text-[11px] text-subtle">{product.material || "Materyal yok"} · {product.product_variants?.length || 0} varyant</p>
+        <p className="truncate text-[11px] text-subtle">{product.material || "Çekirdek bilgisi yok"} · {product.product_variants?.length || 0} varyant</p>
         <div className="mt-2 flex items-center justify-between gap-2">
           <ProductPrice product={product} />
           <span className={stockCount(product) === 0 ? "text-[11px] font-medium text-danger-foreground" : stockCount(product) < 10 ? "text-[11px] font-medium text-warning-foreground" : "text-[11px] font-medium text-muted"}>{stockCount(product)} stokta</span>
@@ -1024,7 +1024,7 @@ export function ExactProducts() {
       <div className="h-14 w-14 shrink-0 overflow-hidden bg-surface-tertiary radius-small"><ProductPhoto product={product} /></div>
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2"><p className="truncate text-sm font-semibold text-main">{product.name}</p><ExactStatusBadge status={product.status} size="sm" />{isBundle(product) ? <ExactStatusBadge status="bundle" label="Paket" tone="accent" size="sm" /> : null}</div>
-        <p className="truncate text-[11px] text-muted">{product.slug} · {product.material || "Materyal yok"} · {collectionNames(product).join(", ") || "Koleksiyon yok"}</p>
+        <p className="truncate text-[11px] text-muted">{product.slug} · {product.material || "Çekirdek bilgisi yok"} · {collectionNames(product).join(", ") || "Koleksiyon yok"}</p>
       </div>
       <div className="shrink-0 text-right"><ProductPrice product={product} align="right" /><p className="mt-1 text-[11px] text-muted">{stockCount(product)} stokta</p></div>
     </>
@@ -1128,7 +1128,7 @@ export function ExactProducts() {
         {columnsOpen && view === "list" ? (
           <div className="flex flex-wrap items-center gap-2 rounded-xl bg-surface-secondary p-2.5" aria-label="Ürün listesi sütunları">
             {(Object.keys(DEFAULT_COLUMNS) as ProductColumn[]).map((key) => {
-              const labels: Record<ProductColumn, string> = { material: "Materyal", collections: "Koleksiyon", status: "Durum", stock: "Stok", price: "Fiyat" };
+              const labels: Record<ProductColumn, string> = { material: "Çekirdek / İçerik", collections: "Koleksiyon", status: "Durum", stock: "Stok", price: "Fiyat" };
               return <button key={key} type="button" aria-pressed={columns[key]} onClick={() => setColumns((current) => ({ ...current, [key]: !current[key] }))} className={`min-h-9 rounded-lg border px-3 text-xs font-medium ${columns[key] ? "border-accent bg-accent-soft text-accent" : "border-border-subtle bg-surface-primary text-muted"}`}><Check className={`mr-1 inline h-3.5 w-3.5 ${columns[key] ? "opacity-100" : "opacity-0"}`} />{labels[key]}</button>;
             })}
           </div>
@@ -1236,7 +1236,7 @@ export function ExactProducts() {
           <div className="hidden items-center gap-3 rounded-lg bg-surface-secondary px-3 py-2 text-[10px] font-semibold uppercase tracking-wide text-subtle md:flex">
             {bulkMode ? <span className="w-11 shrink-0" /> : null}
             <span className="min-w-0 flex-1">Ürün</span>
-            {columns.material ? <span className="w-32 shrink-0">Materyal</span> : null}
+            {columns.material ? <span className="w-32 shrink-0">Çekirdek / İçerik</span> : null}
             {columns.collections ? <span className="w-40 shrink-0">Koleksiyon</span> : null}
             {columns.status ? <span className="w-24 shrink-0">Durum</span> : null}
             {columns.stock ? <span className="w-20 shrink-0 text-right">Stok</span> : null}
