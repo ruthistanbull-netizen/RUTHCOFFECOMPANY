@@ -70,7 +70,7 @@ const EDGE_RESISTANCE = 0.16;
 const IMAGE_WAIT_MS = 650;
 const MAX_PRODUCT_CACHE = 9;
 const MAX_IMAGE_CACHE = 6;
-const PRODUCT_SWIPE_HINT_STORAGE_KEY = "ruth_product_swipe_hint_seen_v1";
+const PRODUCT_SWIPE_HINT_STORAGE_KEY = "rosta_product_swipe_hint_seen_v1";
 const PRODUCT_SWIPE_HINT_VISIBLE_MS = 5_000;
 
 function emptyGesture(): GestureState {
