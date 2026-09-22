@@ -15,7 +15,6 @@ type ProductDetailsTabsProps = {
   material: string;
   sizeUsage: string;
   care: string;
-  showNecklaceGuide: boolean;
   freeShippingThreshold: number;
 };
 
@@ -38,7 +37,6 @@ export function ProductDetailsTabs({
   material,
   sizeUsage,
   care,
-  showNecklaceGuide,
   freeShippingThreshold,
 }: ProductDetailsTabsProps) {
   const prefersReducedMotion = useReducedMotion();
@@ -73,14 +71,6 @@ export function ProductDetailsTabs({
       return (
         <div className={styles.copy}>
           <Copy text={sizeUsage || "Ürüne özel kullanım bilgisi."} />
-          {false && showNecklaceGuide ? (
-            <img
-              className={styles.sizeGuide}
-              src="/necklace-size-guide.jpg"
-              alt="Kolye ve zincir ölçü rehberi"
-              loading="lazy"
-            />
-          ) : null}
         </div>
       );
     }
