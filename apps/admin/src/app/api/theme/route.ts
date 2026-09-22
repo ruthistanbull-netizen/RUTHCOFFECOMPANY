@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
 import { revalidateStorefront } from "@/lib/storefront";
-import { normalizeThemeCustomizerSettings } from "@ruth-commerce/commerce-core/theme-engine";
+import { normalizeThemeCustomizerSettings } from "@ruth-commerce/commerce-core/theme";
 import { normalizeThemeSectionSettings } from "@ruth-commerce/commerce-core/theme-sections";
 
 export const dynamic = "force-dynamic";
