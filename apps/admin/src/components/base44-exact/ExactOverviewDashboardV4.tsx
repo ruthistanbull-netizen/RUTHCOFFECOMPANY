@@ -19,12 +19,12 @@ import {
 import { usePressable } from "@ruth-commerce/ui";
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { adminRequest } from "@/lib/adminApi";
-import { ROSTABrandIcon } from "@/components/ROSTABrandIcon";
+import { RuthieBrandIcon } from "@/components/RuthieBrandIcon";
 import { ADMIN_DATE_RANGE_OPTIONS, dateRangeParam, type AdminDateRangeKey, type AdminDateRangeValue } from "@/components/DateRangeControl";
 import { ExactButton, ExactPageHeader, ExactSkeleton, ExactStatusBadge, exactCx } from "./primitives";
 import { ExactDataCard, ExactMetricCard } from "./data";
 import { ExactSelect } from "./ExactSelect";
-import { ExactROSTAInsightPopup, type ROSTAInsightAutoPrompt } from "./ExactROSTAInsightPopup";
+import { ExactRuthieInsightPopup, type RuthieInsightAutoPrompt } from "./ExactRuthieInsightPopup";
 
 type Order = {
   id: string;
@@ -407,7 +407,7 @@ export function ExactOverviewDashboardV4() {
   const [sessionsOpen, setSessionsOpen] = useState(false);
   const [conversionOpen, setConversionOpen] = useState(false);
   const [ruthieOpen, setROSTAOpen] = useState(false);
-  const [autoPrompt, setAutoPrompt] = useState<ROSTAInsightAutoPrompt | null>(null);
+  const [autoPrompt, setAutoPrompt] = useState<RuthieInsightAutoPrompt | null>(null);
   const activeVisitors = useLiveVisitors();
 
   const load = useCallback(async (silent = false) => {
@@ -473,7 +473,7 @@ export function ExactOverviewDashboardV4() {
           <ExactMetricCard label="Net Satış" value={Number(summary.revenue || 0)} format="currency" icon={CircleDollarSign} accent className="h-full min-h-[132px]" />
           <DashboardPressSurface ariaLabel="ROSTA Insight sohbetini aç" onActivate={openROSTA} className="lg:col-span-2">
             <ExactDataCard className="h-full min-h-[132px] transition-shadow hover:shadow-floating">
-              <div className="flex items-start gap-3"><div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent text-white shadow-floating"><ROSTABrandIcon size={23} /><span className="absolute inset-[-3px] rounded-full border border-accent/25" /></div><div className="min-w-0 flex-1"><div className="flex items-center justify-between gap-2"><p className="text-sm font-semibold text-main">ROSTA Insight</p><span className="inline-flex items-center gap-1 text-[9px] text-success-foreground"><span className="h-1.5 w-1.5 rounded-full bg-success" />hazır</span></div><p className="mt-1 text-[11px] text-muted">Bu dönemde {Number(summary.orders || 0)} sipariş ve {money(Number(summary.revenue || 0))} satış oluştu. {attention ? `${attention} işlem dikkat bekliyor.` : "Acil kontrol bekleyen işlem görünmüyor."}</p></div></div>
+              <div className="flex items-start gap-3"><div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent text-white shadow-floating"><RuthieBrandIcon size={23} /><span className="absolute inset-[-3px] rounded-full border border-accent/25" /></div><div className="min-w-0 flex-1"><div className="flex items-center justify-between gap-2"><p className="text-sm font-semibold text-main">ROSTA Insight</p><span className="inline-flex items-center gap-1 text-[9px] text-success-foreground"><span className="h-1.5 w-1.5 rounded-full bg-success" />hazır</span></div><p className="mt-1 text-[11px] text-muted">Bu dönemde {Number(summary.orders || 0)} sipariş ve {money(Number(summary.revenue || 0))} satış oluştu. {attention ? `${attention} işlem dikkat bekliyor.` : "Acil kontrol bekleyen işlem görünmüyor."}</p></div></div>
               <div className="mt-3 flex flex-wrap gap-2">{INSIGHT_QUESTIONS.map((question) => <button key={question.label} type="button" onClick={(event) => { event.stopPropagation(); ask(question.text); }} className="rounded-full bg-accent-soft px-3 py-1.5 text-[10px] font-medium text-accent transition-colors hover:bg-accent hover:text-white">{question.label}</button>)}</div>
             </ExactDataCard>
           </DashboardPressSurface>
@@ -534,7 +534,7 @@ export function ExactOverviewDashboardV4() {
         </>
       ) : null}
 
-      <ExactROSTAInsightPopup open={ruthieOpen} onClose={() => setROSTAOpen(false)} autoPrompt={autoPrompt} />
+      <ExactRuthieInsightPopup open={ruthieOpen} onClose={() => setROSTAOpen(false)} autoPrompt={autoPrompt} />
     </div>
   );
 }
