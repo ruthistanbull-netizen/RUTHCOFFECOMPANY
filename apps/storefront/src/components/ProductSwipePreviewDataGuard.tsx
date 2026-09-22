@@ -314,7 +314,7 @@ export function ProductSwipePreviewDataGuard() {
     window.addEventListener("pointermove", onPointerMove, true);
     window.addEventListener("popstate", syncSlug);
     window.addEventListener("pageshow", syncSlug);
-    window.addEventListener("ruth:product-history-change", syncSlug);
+    window.addEventListener("rosta:product-history-change", syncSlug);
     syncSlug();
 
     return () => {
@@ -325,7 +325,7 @@ export function ProductSwipePreviewDataGuard() {
       window.removeEventListener("pointermove", onPointerMove, true);
       window.removeEventListener("popstate", syncSlug);
       window.removeEventListener("pageshow", syncSlug);
-      window.removeEventListener("ruth:product-history-change", syncSlug);
+      window.removeEventListener("rosta:product-history-change", syncSlug);
       if (frame) window.cancelAnimationFrame(frame);
     };
   }, []);
