@@ -76,7 +76,7 @@ export const defaultThemeCustomizerSettings: ThemeCustomizerSettings = {
     { id: "tracking", label: "Sipariş Takip", path: "/siparis-takip", side: "right", children: [] },
     { id: "contact", label: "İletişim", path: "/contact", side: "right", children: [] },
   ] },
-  whatsapp: { enabled: true, phone: "908503469789", label: "WhatsApp" },
+  whatsapp: { enabled: false, phone: "", label: "WhatsApp" },
   homepageImages: { heroImage: "", heroDesktopImage: "", heroMobileImage: "", editorialVideo: "/home/rosta-under-hero-video.mp4", editorialImage: "/home/rosta-under-hero-photo.jpg", scrollImages: ["/scroll-product-1.png", "/scroll-product-2.png", "/scroll-product-3.png", "/scroll-product-4.png", "/scroll-product-5.png", "/scroll-product-6.png"] },
   editor: { pages: {} },
 };
