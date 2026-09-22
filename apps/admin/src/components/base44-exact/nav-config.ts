@@ -88,7 +88,7 @@ export const exactNavStructure: ExactNavGroup[] = [
       { label: "Müşteriler", path: "/customers", icon: Contact },
       { label: "Segmentler", path: "/segments", icon: Filter },
       { label: "CRM", path: "/crm", icon: Handshake },
-      { label: "ROSTA Points", path: "/ruthie-points", icon: Star },
+      { label: "ROSTA Points", path: "/rosta-points", icon: Star, aliases: ["/ruthie-points"] },
       { label: "Yorum ve Değerlendirmeler", path: "/reviews", icon: MessageSquareText },
     ],
   },
