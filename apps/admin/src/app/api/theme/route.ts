@@ -31,6 +31,7 @@ export async function PUT(request: Request) {
   const { error } = await auth.supabase.from("site_settings").upsert({
     setting_key: key,
     setting_value: body.value ?? {},
+    is_public: true,
     updated_at: new Date().toISOString(),
   }, { onConflict: "setting_key" });
 
