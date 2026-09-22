@@ -12,7 +12,7 @@ function authorized(request: Request) {
 }
 
 function workerId() {
-  return `vercel:${process.env.VERCEL_REGION || "unknown"}:${crypto.randomUUID()}`;
+  return `rosta:${process.env.ZEABUR_REGION || process.env.REGION || "unknown"}:${crypto.randomUUID()}`;
 }
 
 async function healthSnapshot(supabase: ReturnType<typeof getSupabaseAdmin>) {
@@ -127,7 +127,7 @@ async function run(request: Request) {
     actor_type: "system",
     correlation_id: id,
     after_data: { published, completedJobs, failures: failures.length, health: health.status },
-    metadata: { started_at: startedAt, completed_at: new Date().toISOString(), region: process.env.VERCEL_REGION || null },
+    metadata: { started_at: startedAt, completed_at: new Date().toISOString(), region: process.env.ZEABUR_REGION || process.env.REGION || null },
   });
 
   return NextResponse.json({
