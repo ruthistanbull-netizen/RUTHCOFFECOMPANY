@@ -24,7 +24,7 @@ export async function GET(request: Request) {
   );
 
   if (!expected || !incoming || !safeEqual(incoming, expected)) {
-    return NextResponse.json({ ok: true, service: "ruth-storefront" }, {
+    return NextResponse.json({ ok: true, service: "rosta-storefront" }, {
       status: 200,
       headers: { "Cache-Control": "no-store", "X-Robots-Tag": "noindex" },
     });
@@ -55,7 +55,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({
       ok: status !== "unhealthy",
-      service: "ruth-storefront",
+      service: "rosta-storefront",
       status,
       checks,
       latestSnapshot: latestSnapshot.error ? null : latestSnapshot.data,
@@ -64,7 +64,7 @@ export async function GET(request: Request) {
   } catch (error) {
     return NextResponse.json({
       ok: false,
-      service: "ruth-storefront",
+      service: "rosta-storefront",
       status: "unhealthy",
       error: error instanceof Error ? error.message : "Commerce health check failed.",
       timestamp: new Date().toISOString(),
