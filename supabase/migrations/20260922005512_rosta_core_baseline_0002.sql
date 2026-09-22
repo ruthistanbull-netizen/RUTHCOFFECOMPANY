@@ -1,4 +1,4 @@
--- Pre-Phase-2 business functions for a fresh Ruth Commerce database.
+-- Pre-Phase-2 business functions for a fresh ROSTA Commerce database.
 
 create or replace function public.adjust_ruthie_points(
   p_profile_id uuid,p_amount integer,p_reason text default null,
