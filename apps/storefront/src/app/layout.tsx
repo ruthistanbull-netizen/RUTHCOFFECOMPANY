@@ -13,7 +13,7 @@ import "@ruth-commerce/ui/operations.css";
 import "@ruth-commerce/ui/order-card.css";
 import "@ruth-commerce/ui/search-shell.css";
 import "./globals.css";
-import "./ruthie-offer5-motion.css";
+import "./rosta-points-motion.css";
 import "./product-image-standard.css";
 import "./product-header-contrast.css";
 import { Header } from "@/components/Header";
