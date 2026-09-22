@@ -89,11 +89,11 @@ export function HomeSectionRenderer({
       darkBackground ? ROSTA_PALETTE.bone : ROSTA_PALETTE.carbon,
     );
     const textVars = section.textColor ? {
-      ["--ink" as string]: section.textColor,
-      ["--gold-dark" as string]: section.textColor,
-      ["--muted-foreground" as string]: section.textColor,
-      ["--ruth-color-text-primary" as string]: section.textColor,
-      ["--ruth-color-text-muted" as string]: section.textColor,
+      ["--ink" as string]: sectionText,
+      ["--gold-dark" as string]: sectionText,
+      ["--muted-foreground" as string]: sectionText,
+      ["--ruth-color-text-primary" as string]: sectionText,
+      ["--ruth-color-text-muted" as string]: sectionText,
     } : {};
 
     return (
