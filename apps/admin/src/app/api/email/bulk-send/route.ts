@@ -7,7 +7,7 @@ import { loadRostaInlineLogo } from "@/lib/gmail";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
-const OWNER_TEST_EMAILS=new Set(["ruthistanbull@gmail.com"]);
+const OWNER_TEST_EMAILS=new Set(String(process.env.ROSTA_OWNER_TEST_EMAILS||"").split(",").map((value)=>value.trim().toLocaleLowerCase("en-US")).filter(Boolean));
 const SERVICE_KEYS=new Set(["order_thanks","account_migrated","site_moved","review_request"]);
 
 function clean(value:unknown){return typeof value==="string"?value.trim():"";}
