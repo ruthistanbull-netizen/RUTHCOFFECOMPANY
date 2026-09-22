@@ -124,7 +124,7 @@ export async function POST(request: Request) {
       couponCode = clean(existingReview?.coupon_code) || makeCode();
     }
 
-    const reviewerName = profile.full_name || profile.email || "Ruth Istanbul müşterisi";
+    const reviewerName = profile.full_name || profile.email || "ROSTA Coffee Co. müşterisi";
     const payload = {
       product_id: productId,
       product_slug: productSlug || null,
