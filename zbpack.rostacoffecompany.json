@@ -1,5 +1,3 @@
 {
-  "dockerfile": {
-    "name": "rostacoffecompany"
-  }
+  "dockerfile": { "name": "rostacoffecompany" }
 }
