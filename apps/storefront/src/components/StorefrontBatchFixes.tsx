@@ -149,7 +149,7 @@ export function StorefrontBatchFixes() {
         .product-purchase-mobile-price,
         .product-variant-picker [class*="price"]
       ) {
-        font-family: Arial, "Helvetica Neue", Helvetica, sans-serif !important;
+        font-family: var(--font-body) !important;
         font-weight: 400 !important;
         letter-spacing: 0.005em !important;
         font-variant-numeric: tabular-nums !important;
@@ -159,7 +159,7 @@ export function StorefrontBatchFixes() {
       .product-card-sale-pill em,
       .product-detail-sale-pill strong,
       .product-detail-sale-pill em {
-        font-family: Arial, "Helvetica Neue", Helvetica, sans-serif !important;
+        font-family: var(--font-body) !important;
         font-size: 15px !important;
         font-weight: 500 !important;
         line-height: 1 !important;
