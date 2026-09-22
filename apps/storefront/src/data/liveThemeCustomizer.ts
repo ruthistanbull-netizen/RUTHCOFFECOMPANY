@@ -30,7 +30,9 @@ export async function getLiveThemeCustomizerSettings(): Promise<ThemeCustomizerS
       .maybeSingle();
 
     if (error) throw error;
-    return applyRostaStorefrontDesignSystem(\n      normalizeThemeCustomizerSettings(data?.setting_value || defaultThemeCustomizerSettings),\n    );
+    return applyRostaStorefrontDesignSystem(
+      normalizeThemeCustomizerSettings(data?.setting_value || defaultThemeCustomizerSettings),
+    );
   } catch (error) {
     console.error("Canlı tema ayarları okunamadı:", error);
     return applyRostaStorefrontDesignSystem(defaultThemeCustomizerSettings);
