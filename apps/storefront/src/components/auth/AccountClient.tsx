@@ -364,12 +364,12 @@ export function AccountClient({ ordersOnly = false }: { ordersOnly?: boolean }) 
             </div>
             <div className="group rounded-2xl border border-gold/15 bg-cream p-5 text-left transition hover:bg-ivory md:col-span-2">
               <div className="flex items-center justify-between gap-3">
-                <p className="text-xs uppercase tracking-wide-luxe text-muted-ruth">Ruthie Points</p>
+                <p className="text-xs uppercase tracking-wide-luxe text-muted-ruth">ROSTA Points</p>
                 <Gift size={18} className="text-gold-dark" />
               </div>
               <p className="mt-3 font-heading text-2xl text-ink">{ruthPoints.toLocaleString("tr-TR")}</p>
               <p className="mt-1 text-xs leading-5 text-muted-ruth">
-                Hesabında aktif Ruthie Points var. Ödeme adımında yaklaşık {ruthPointDiscount.toLocaleString("tr-TR")} TL indirim olarak kullanabilirsin.
+                Hesabında aktif ROSTA Points var. Ödeme adımında yaklaşık {ruthPointDiscount.toLocaleString("tr-TR")} TL indirim olarak kullanabilirsin.
               </p>
               <div className="mt-4 flex flex-col gap-2 sm:flex-row">
                 <Link
@@ -380,7 +380,7 @@ export function AccountClient({ ordersOnly = false }: { ordersOnly?: boolean }) 
                 </Link>
                 <button
                   type="button"
-                  onClick={() => window.dispatchEvent(new Event("ruth-open-rewards"))}
+                  onClick={() => window.dispatchEvent(new Event("rosta-open-points"))}
                   className="inline-flex items-center justify-center border border-gold/25 px-5 py-3 text-xs uppercase tracking-wide-luxe text-ink"
                 >
                   Nasıl Kazanılır?
@@ -417,7 +417,7 @@ export function AccountClient({ ordersOnly = false }: { ordersOnly?: boolean }) 
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
                 <p className="text-xs uppercase tracking-wide-luxe text-muted-ruth">Doğum Günü Avantajı</p>
-                <h2 className="mt-2 font-heading text-2xl">{configuredBirthdayPoints.toLocaleString("tr-TR")} Ruthie Points</h2>
+                <h2 className="mt-2 font-heading text-2xl">{configuredBirthdayPoints.toLocaleString("tr-TR")} ROSTA Points</h2>
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-ruth">Puan, doğum gününde ve onu izleyen 7 gün içinde Avantajlar alanından bir kez hesabına eklenebilir.</p>
               </div>
               <div className="flex flex-col gap-2 sm:flex-row">
