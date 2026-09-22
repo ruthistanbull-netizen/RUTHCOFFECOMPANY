@@ -27,13 +27,10 @@ const EDITORIAL_SLIDES = [
   },
   {
     kind: "video",
-    src: "/home/rosta-under-hero-video.mp4",
     label: "Rosta Coffee Co kahve hazırlama videosu",
   },
   {
     kind: "image",
-    desktopSrc: "/home/rosta-under-hero-photo.jpg",
-    mobileSrc: "/home/rosta-under-hero-photo.jpg",
     alt: "Rosta Coffee Co kahve hazırlama editoryali",
     priority: false,
   },
@@ -107,10 +104,14 @@ function EditorialMedia({
   slide,
   index,
   heroImages,
+  editorialVideo,
+  editorialImage,
 }: {
   slide: EditorialSlide;
   index: number;
   heroImages: HomepageHeroImages;
+  editorialVideo: string;
+  editorialImage: string;
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const reduceMotion = useReducedMotion();
@@ -167,9 +168,9 @@ function EditorialMedia({
             </div>
           ) : slide.kind === "image" ? (
             <picture className="block h-full w-full">
-              <source media="(min-width: 768px)" srcSet={slide.desktopSrc} />
+              <source media="(min-width: 768px)" srcSet={editorialImage} />
               <img
-                src={slide.mobileSrc}
+                src={editorialImage}
                 alt={slide.alt}
                 className="h-full w-full object-cover object-center"
                 loading="lazy"
@@ -184,7 +185,7 @@ function EditorialMedia({
           ) : (
             <video
               className="h-full w-full object-cover object-center"
-              src={slide.src}
+              src={editorialVideo}
               aria-label={slide.label}
               autoPlay
               loop
@@ -201,7 +202,15 @@ function EditorialMedia({
   );
 }
 
-export default function Hero({ heroImages }: { heroImages: HomepageHeroImages }) {
+export default function Hero({
+  heroImages,
+  editorialVideo,
+  editorialImage,
+}: {
+  heroImages: HomepageHeroImages;
+  editorialVideo: string;
+  editorialImage: string;
+}) {
   const reduceMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement | null>(null);
   const wordmarkRef = useRef<HTMLDivElement | null>(null);
@@ -314,10 +323,12 @@ export default function Hero({ heroImages }: { heroImages: HomepageHeroImages })
 
       {EDITORIAL_SLIDES.map((slide, index) => (
         <EditorialMedia
-          key={slide.kind === "video" ? slide.src : `${slide.kind}-${index}`}
+          key={`${slide.kind}-${index}`}
           slide={slide}
           index={index}
           heroImages={liveHeroImages}
+          editorialVideo={editorialVideo}
+          editorialImage={editorialImage}
         />
       ))}
     </section>
