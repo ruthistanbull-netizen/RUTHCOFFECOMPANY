@@ -1,4 +1,4 @@
--- Ruth Commerce V2 pre-Phase-2 baseline schema.
+-- ROSTA Commerce V2 pre-Phase-2 baseline schema.
 -- Run only against a new, empty database. Never run this bootstrap against the
 -- existing production project. After this file, run 0001_baseline_runtime.sql,
 -- 0002_baseline_business.sql and then the timestamped supabase/migrations files.
@@ -369,7 +369,7 @@ create table public.email_integrations (
   provider text not null default 'gmail',
   profile_id uuid not null,
   email text,
-  sender_name text default 'Ruth Istanbul',
+  sender_name text default 'ROSTA Coffee Co.',
   access_token text,
   refresh_token text,
   expires_at timestamptz,
