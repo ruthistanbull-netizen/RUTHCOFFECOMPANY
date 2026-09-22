@@ -222,7 +222,7 @@ export function RuthiePresentationBridge({ mode, placement = "legacy" }: Props) 
           {pending ? (
             <section className={styles.experienceLoading} role="status" aria-live="polite">
               <LoaderCircle />
-              <div><small>RUTHIE CANLI SONUÇ</small><strong>Hemen getiriyorum</strong><p>{pending.text}</p></div>
+              <div><small>ROSTA INSIGHT CANLI SONUÇ</small><strong>Hemen getiriyorum</strong><p>{pending.text}</p></div>
               <button type="button" onClick={() => { activeAbortRef.current?.abort(); setPending(null); }} aria-label="Sonuç isteğini kapat"><X /></button>
             </section>
           ) : null}
@@ -243,7 +243,7 @@ export function RuthiePresentationBridge({ mode, placement = "legacy" }: Props) 
           <section className={styles.loadingPanel}>
             <header>
               <span><LoaderCircle /></span>
-              <div><small>RUTHIE CANLI SONUÇ</small><strong>Hemen getiriyorum</strong></div>
+              <div><small>ROSTA INSIGHT CANLI SONUÇ</small><strong>Hemen getiriyorum</strong></div>
               <button type="button" onClick={() => { activeAbortRef.current?.abort(); setPending(null); }} aria-label="Sonuç isteğini kapat"><X /></button>
             </header>
             <p>{pending.text}</p>
