@@ -6,6 +6,7 @@
   --rosta-oxide:#B9563D;
   --rosta-olive:#6F725B;
   --rosta-steel:#AAA8A1;
+  --font-archivo:var(--font-inter);
 
   --panel-canvas:var(--rosta-bone);
   --panel-surface:var(--rosta-bone);
