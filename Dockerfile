@@ -5,12 +5,18 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 COPY . .
 RUN npm install --no-audit --no-fund
-RUN npm run build
+
+# Zeabur injects ZEABUR_WEB_DOMAIN / ZEABUR_WEB_URL into build RUN steps.
+# Build the correct workspace even when both services use the root Dockerfile.
+RUN if printf '%s %s' "$ZEABUR_WEB_DOMAIN" "$ZEABUR_WEB_URL" | grep -qi 'rostapanel'; \
+    then npm run build:admin; \
+    else npm run build:storefront; \
+    fi
 
 ENV NODE_ENV=production
 ENV HOSTNAME=0.0.0.0
 ENV PORT=3000
-ENV ROSTA_APP=storefront
 
 EXPOSE 3000
-CMD ["npm", "run", "start"]
+
+CMD ["sh","-c","if printf '%s %s' \"$ZEABUR_WEB_DOMAIN\" \"$ZEABUR_WEB_URL\" | grep -qi 'rostapanel'; then exec npm run start:admin; else exec npm run start:storefront; fi"]
