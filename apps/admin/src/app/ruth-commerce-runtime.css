@@ -1,0 +1,129 @@
+@import "tailwindcss";
+@source "../components/**/*.{ts,tsx}";
+@source "../app/**/*.{ts,tsx}";
+
+@theme inline {
+  --color-background: hsl(var(--app-background));
+  --color-foreground: hsl(var(--text-main));
+  --color-surface: hsl(var(--surface-primary));
+  --color-surface-primary: hsl(var(--surface-primary));
+  --color-surface-secondary: hsl(var(--surface-secondary));
+  --color-surface-tertiary: hsl(var(--surface-tertiary));
+  --color-main: hsl(var(--text-main));
+  --color-muted: hsl(var(--text-muted));
+  --color-subtle: hsl(var(--text-subtle));
+  --color-border: hsl(var(--border-subtle));
+  --color-border-subtle: hsl(var(--border-subtle));
+  --color-border-strong: hsl(var(--border-strong));
+  --color-accent: hsl(var(--accent));
+  --color-accent-hover: hsl(var(--accent-hover));
+  --color-accent-soft: hsl(var(--accent-soft));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-success: hsl(var(--success));
+  --color-success-soft: hsl(var(--success-soft));
+  --color-success-foreground: hsl(var(--success-foreground));
+  --color-warning: hsl(var(--warning));
+  --color-warning-soft: hsl(var(--warning-soft));
+  --color-warning-foreground: hsl(var(--warning-foreground));
+  --color-danger: hsl(var(--danger));
+  --color-danger-soft: hsl(var(--danger-soft));
+  --color-danger-foreground: hsl(var(--danger-foreground));
+  --color-info: hsl(var(--info));
+  --color-info-soft: hsl(var(--info-soft));
+  --color-info-foreground: hsl(var(--info-foreground));
+  --radius-container: var(--radius-container);
+  --radius-card: var(--radius-card);
+  --radius-control: var(--radius-control);
+  --radius-small: var(--radius-small);
+  --shadow-card: var(--shadow-card);
+  --shadow-floating: var(--shadow-floating);
+  --shadow-sticky: var(--shadow-sticky);
+  --shadow-overlay: var(--shadow-overlay);
+}
+
+@layer base {
+  :root {
+    /* Ruth Commerce panel geometry + motion, ROSTA palette only. */
+    --app-background: 40 35% 93%;
+    --surface-primary: 40 35% 93%;
+    --surface-secondary: 40 35% 93%;
+    --surface-tertiary: 47 5% 65%;
+    --text-main: 0 0% 6.7%;
+    --text-muted: 64 11% 40%;
+    --text-subtle: 47 5% 65%;
+    --border-subtle: 47 5% 65%;
+    --border-strong: 47 5% 65%;
+    --accent: 12 50% 48%;
+    --accent-hover: 16 32% 13%;
+    --accent-soft: 40 35% 93%;
+    --accent-foreground: 40 35% 93%;
+    --success: 64 11% 40%;
+    --success-soft: 40 35% 93%;
+    --success-foreground: 16 32% 13%;
+    --warning: 12 50% 48%;
+    --warning-soft: 40 35% 93%;
+    --warning-foreground: 16 32% 13%;
+    --danger: 16 32% 13%;
+    --danger-soft: 40 35% 93%;
+    --danger-foreground: 16 32% 13%;
+    --info: 47 5% 65%;
+    --info-soft: 40 35% 93%;
+    --info-foreground: 0 0% 6.7%;
+    --radius-container: 28px;
+    --radius-card: 22px;
+    --radius-control: 16px;
+    --radius-small: 12px;
+    --radius-pill: 9999px;
+    --shadow-card: 0 2px 8px -2px rgba(17,17,17,.05), 0 6px 20px -6px rgba(17,17,17,.04);
+    --shadow-floating: 0 12px 40px -8px rgba(17,17,17,.16), 0 6px 16px -4px rgba(17,17,17,.08);
+    --shadow-sticky: 0 1px 3px rgba(17,17,17,.05), 0 1px 2px rgba(17,17,17,.03);
+    --shadow-overlay: 0 24px 64px -12px rgba(17,17,17,.28);
+    --font-heading: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-body: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-display: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --z-sidebar: 40;
+    --z-header: 50;
+    --z-drawer: 60;
+    --z-modal: 70;
+    --z-toast: 80;
+    --z-command: 90;
+  }
+
+  * { border-color: hsl(var(--border-subtle)); }
+  html { background: hsl(var(--app-background)); color-scheme: light; }
+  body {
+    background: hsl(var(--app-background));
+    color: hsl(var(--text-main));
+    font-family: var(--font-body);
+    font-feature-settings: "cv11", "ss01";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: hsl(var(--border-strong)); border-radius: var(--radius-pill); }
+}
+
+@layer utilities {
+  .surface-primary { background-color: hsl(var(--surface-primary)); }
+  .surface-secondary { background-color: hsl(var(--surface-secondary)); }
+  .surface-tertiary { background-color: hsl(var(--surface-tertiary)); }
+  .text-main { color: hsl(var(--text-main)); }
+  .text-muted { color: hsl(var(--text-muted)); }
+  .text-subtle { color: hsl(var(--text-subtle)); }
+  .shadow-card { box-shadow: var(--shadow-card); }
+  .shadow-floating { box-shadow: var(--shadow-floating); }
+  .shadow-sticky { box-shadow: var(--shadow-sticky); }
+  .shadow-overlay { box-shadow: var(--shadow-overlay); }
+  .radius-container { border-radius: var(--radius-container); }
+  .radius-card { border-radius: var(--radius-card); }
+  .radius-control { border-radius: var(--radius-control); }
+  .radius-small { border-radius: var(--radius-small); }
+  .z-sidebar { z-index: var(--z-sidebar); }
+  .z-header { z-index: var(--z-header); }
+  .z-drawer { z-index: var(--z-drawer); }
+  .z-modal { z-index: var(--z-modal); }
+  .z-command { z-index: var(--z-command); }
+  .no-scrollbar::-webkit-scrollbar { display:none; }
+  .no-scrollbar { -ms-overflow-style:none; scrollbar-width:none; }
+}
