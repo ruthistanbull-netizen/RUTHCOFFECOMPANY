@@ -506,7 +506,7 @@ export function RostaPointsWidget() {
           gap: 12px;
           align-items: center;
           padding: 13px 0;
-          border-top: 1px solid rgba(232, 229, 225, 0.72);
+          border-top: 1px solid rgba(170, 168, 161, 0.72);
           color: #2B1B16;
         }
         button.rosta-points-offer-action-item {
@@ -553,7 +553,7 @@ export function RostaPointsWidget() {
         }
         .rosta-points-birthday-fields input:focus {
           border-color: #6F725B;
-          box-shadow: 0 0 0 3px rgba(115, 87, 61, 0.08);
+          box-shadow: 0 0 0 3px rgba(43, 27, 22, 0.08);
         }
         .rosta-points-birthday-fields button {
           min-height: 36px;
