@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Plus, Save, X } from "lucide-react";
 import { adminRequest } from "@/lib/adminApi";
 import { MediaUploadButton } from "@/components/MediaUploadButton";
@@ -95,7 +96,7 @@ export function ProductManager(){
       </table>
     </div>
 
-    {draft?<div className="admin-editor-backdrop" onMouseDown={()=>setDraft(null)}><section className="admin-editor-panel" onMouseDown={e=>e.stopPropagation()}>
+    <AnimatePresence>{draft?<motion.div className="admin-editor-backdrop" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} transition={{duration:.18}} onMouseDown={()=>setDraft(null)}><motion.section className="admin-editor-panel" initial={{y:70,opacity:.98}} animate={{y:0,opacity:1}} exit={{y:70,opacity:0}} transition={{duration:.28,ease:[.32,.72,0,1]}} onMouseDown={e=>e.stopPropagation()}>
       <header><div><p className="admin-kicker">{draft.id?"ÜRÜN DÜZENLE":"YENİ ÜRÜN"}</p><h2>{draft.id?draft.name:"Yeni ürün"}</h2></div><button className="admin-icon-button" onClick={()=>setDraft(null)}><X size={18}/></button></header>
       <div className="admin-form-grid">
         <label className="admin-field admin-field-wide"><span>Ürün adı</span><input value={draft.name} onChange={e=>setDraft({...draft,name:e.target.value})}/></label>
@@ -115,6 +116,6 @@ export function ProductManager(){
         {draft.id && detail?<div className="admin-field admin-field-wide"><span>Koleksiyonlar</span><div className="admin-chip-grid">{detail.collections.map(item=><button type="button" key={item.id} className={detail.collectionIds.includes(String(item.id))?"admin-chip is-active":"admin-chip"} onClick={()=>toggleId("collectionIds",String(item.id))}>{item.name}</button>)}</div></div>:null}
       </div>
       <footer><button className="admin-secondary-button" onClick={()=>setDraft(null)}>Vazgeç</button><button className="admin-primary-button" disabled={busy||!draft.name.trim()} onClick={save}><Save size={15}/>{busy?"Kaydediliyor…":"Kaydet"}</button></footer>
-    </section></div>:null}
+    </motion.section></motion.div>:null}</AnimatePresence>
   </>;
 }

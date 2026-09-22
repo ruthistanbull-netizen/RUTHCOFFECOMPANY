@@ -1,8 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, Inter } from "next/font/google";
+import { Inter } from "next/font/google";
 import "@ruth-commerce/ui/semantic-tokens.css";
 import "@ruth-commerce/ui/typography.css";
+import "./ruth-commerce-runtime.css";
 import "./globals.css";
+import "./ruth-commerce-parity.css";
+import "./ruth-commerce-motion.css";
 import { AdminAuthGate } from "@/components/AdminAuthGate";
 import { AdminShell } from "@/components/AdminShell";
 import { ROSTA_PANEL_URL } from "@/lib/platform";
@@ -16,13 +19,6 @@ const inter = Inter({
   preload: true,
 });
 
-const archivo = Archivo({
-  subsets: ["latin", "latin-ext"],
-  weight: ["900"],
-  display: "swap",
-  variable: "--font-archivo",
-  preload: true,
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(ROSTA_PANEL_URL),
@@ -41,7 +37,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="tr">
-      <body className={`${inter.variable} ${archivo.variable}`}>
+      <body className={inter.variable} data-ruth-typography="admin">
         <AdminAuthGate><AdminShell>{children}</AdminShell></AdminAuthGate>
       </body>
     </html>
