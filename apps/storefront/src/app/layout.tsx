@@ -204,10 +204,20 @@ export default async function RootLayout({
             font-family: var(--font-body);
           }
           .site-app-shell :where(
-            p, span, a, button, input, select, textarea, label, small,
-            li, dt, dd, th, td, time, address
+            .product-card-current,
+            .product-card-compare,
+            .product-card-sale-pill,
+            .product-price,
+            .product-detail-sale-pill,
+            .product-purchase-price,
+            .product-purchase-mobile-price,
+            .product-variant-picker [class*="price"],
+            .ruth-mobile-link-accordion__child,
+            .ruth-mobile-photo-collection-card__label,
+            .ruth-zara-desktop-child,
+            .ruth-zara-menu-copy__link
           ) {
-            font-family: var(--font-body);
+            font-family: var(--font-body) !important;
           }
           .site-app-shell :where(
             h1, h2, h3, h4, h5, h6,
