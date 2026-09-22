@@ -29,10 +29,17 @@ export function ExactUsers() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      let result: { users?: AdminUser[]; profiles?: AdminUser[] };
-      try { result = await adminRequest("/api/admin/users"); }
-      catch (primaryError) { try { result = await adminRequest("/api/users"); } catch { throw primaryError; } }
-      const next = result.users || result.profiles || [];
+      const result = await adminRequest<{ accounts?: Array<any> }>("/api/account");
+      const next: AdminUser[] = (result.accounts || []).map((account: any) => ({
+        id: String(account.id),
+        email: String(account.email || ""),
+        full_name: account.full_name || null,
+        role: (account.panel_role || "viewer") as AdminRole,
+        status: account.status || "active",
+        is_active: account.status !== "disabled",
+        last_sign_in_at: account.last_sign_in_at || null,
+        created_at: account.created_at || null,
+      }));
       setUsers(next);
       setSelected((current) => current ? next.find((user) => user.id === current.id) || null : null);
     } catch (caught) { toast.error(caught instanceof Error ? caught.message : "Panel kullanıcıları alınamadı."); }
