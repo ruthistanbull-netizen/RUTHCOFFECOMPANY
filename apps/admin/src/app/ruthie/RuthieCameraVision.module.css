@@ -1,0 +1,434 @@
+.cameraSurface {
+  --camera-scan-duration: calc(var(--ruth-motion-slow) * 8);
+  position: relative;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  width: min(1120px, 100%);
+  height: min(76dvh, 760px);
+  min-height: 520px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--ruth-color-accent) 26%, transparent);
+  border-radius: 28px;
+  background: color-mix(in srgb, var(--ruth-color-text-primary) 82%, black);
+  box-shadow:
+    0 32px 90px rgb(0 0 0 / 42%),
+    inset 0 0 0 1px rgb(255 255 255 / 3%);
+  isolation: isolate;
+}
+
+.preview,
+.cameraShade,
+.scanGlow {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.preview {
+  z-index: -4;
+  object-fit: cover;
+  background: color-mix(in srgb, var(--ruth-color-text-primary) 82%, black);
+}
+
+.mirrored {
+  transform: scaleX(-1);
+}
+
+.cameraShade {
+  z-index: -3;
+  background:
+    linear-gradient(180deg, rgb(4 5 9 / 74%) 0%, transparent 24%, transparent 62%, rgb(4 5 9 / 88%) 100%),
+    radial-gradient(circle at 50% 46%, transparent 28%, rgb(5 7 12 / 30%) 100%);
+  pointer-events: none;
+}
+
+.scanGlow {
+  z-index: -2;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.scanGlow::before {
+  content: "";
+  position: absolute;
+  inset: 18% 10%;
+  border-radius: 32px;
+  box-shadow: inset 0 0 70px color-mix(in srgb, var(--ruth-color-accent) 12%, transparent);
+}
+
+.scanGlow > span {
+  position: absolute;
+  left: 12%;
+  width: 76%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--ruth-color-accent-soft) 76%, transparent), transparent);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--ruth-color-accent) 46%, transparent);
+  animation: cameraScan var(--camera-scan-duration) linear infinite;
+}
+
+.scanGlow > span:nth-child(2) { animation-delay: calc(var(--camera-scan-duration) * -.33); opacity: .62; }
+.scanGlow > span:nth-child(3) { animation-delay: calc(var(--camera-scan-duration) * -.66); opacity: .34; }
+
+.topStatus {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: max-content;
+  margin: 18px;
+  padding: 10px 14px;
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 999px;
+  background: rgb(9 11 17 / 78%);
+  backdrop-filter: blur(18px);
+  color: var(--ruth-color-text-inverse);
+}
+
+.topStatus > span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.liveDot {
+  background: color-mix(in srgb, var(--ruth-color-success) 52%, white);
+  box-shadow:
+    0 0 0 5px color-mix(in srgb, var(--ruth-color-success) 11%, transparent),
+    0 0 18px color-mix(in srgb, var(--ruth-color-success) 54%, transparent);
+}
+
+.waitingDot {
+  background: var(--ruth-color-accent-soft);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--ruth-color-accent-soft) 52%, transparent);
+}
+
+.topStatus div {
+  display: grid;
+  gap: 1px;
+}
+
+.topStatus strong {
+  font-size: 12px;
+  letter-spacing: .01em;
+}
+
+.topStatus small {
+  color: rgb(255 255 255 / 54%);
+  font-size: 10px;
+}
+
+.focusReticle {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  width: min(27vw, 210px);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 32px;
+  opacity: .68;
+  pointer-events: none;
+}
+
+.focusReticle span {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  border-color: color-mix(in srgb, var(--ruth-color-accent-soft) 76%, transparent);
+}
+
+.focusReticle span:nth-child(1) { top: 0; left: 0; border-top: 2px solid; border-left: 2px solid; border-radius: 14px 0 0; }
+.focusReticle span:nth-child(2) { top: 0; right: 0; border-top: 2px solid; border-right: 2px solid; border-radius: 0 14px 0 0; }
+.focusReticle span:nth-child(3) { bottom: 0; left: 0; border-bottom: 2px solid; border-left: 2px solid; border-radius: 0 0 0 14px; }
+.focusReticle span:nth-child(4) { right: 0; bottom: 0; border-right: 2px solid; border-bottom: 2px solid; border-radius: 0 0 14px; }
+
+.loading,
+.cameraError {
+  position: absolute;
+  z-index: 4;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(88%, 520px);
+  transform: translate(-50%, -50%);
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 18px;
+  background: rgb(9 11 17 / 88%);
+  backdrop-filter: blur(18px);
+  color: var(--ruth-color-text-inverse);
+}
+
+.loading {
+  padding: 14px 18px;
+  font-size: 13px;
+}
+
+.loading svg,
+.cameraControls .primaryAction svg {
+  animation: cameraSpin calc(var(--ruth-motion-slow) * 2) linear infinite;
+}
+
+.cameraError {
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 16px;
+  text-align: center;
+  font-size: 13px;
+}
+
+.cameraError > svg {
+  color: color-mix(in srgb, var(--ruth-color-danger) 52%, white);
+}
+
+.cameraError button {
+  min-height: 36px;
+  padding: 0 13px;
+  border: 1px solid color-mix(in srgb, var(--ruth-color-accent) 38%, transparent);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--ruth-color-accent) 15%, transparent);
+  color: var(--ruth-color-text-inverse);
+  font: inherit;
+}
+
+.translationBar {
+  position: relative;
+  z-index: 2;
+  align-self: end;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 18px 12px;
+}
+
+.translationBar > button,
+.translationBar label {
+  min-height: 44px;
+  border: 1px solid rgb(255 255 255 / 11%);
+  border-radius: 14px;
+  background: rgb(9 11 17 / 76%);
+  backdrop-filter: blur(18px);
+  color: var(--ruth-color-text-inverse);
+}
+
+.translationBar > button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 15px;
+  font: inherit;
+  font-size: 12px;
+}
+
+.translationBar > button svg { width: 17px; height: 17px; }
+
+.translationBar > button.translationActive {
+  border-color: color-mix(in srgb, var(--ruth-color-accent-soft) 46%, transparent);
+  background: color-mix(in srgb, var(--ruth-color-accent) 22%, rgb(9 11 17 / 76%));
+  box-shadow: 0 0 24px color-mix(in srgb, var(--ruth-color-accent) 14%, transparent);
+}
+
+.translationBar label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 9px 0 14px;
+}
+
+.translationBar label > span {
+  color: rgb(255 255 255 / 48%);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.translationBar select {
+  min-height: 34px;
+  border: 0;
+  border-radius: 9px;
+  background: rgb(255 255 255 / 7%);
+  color: var(--ruth-color-text-inverse);
+  padding: 0 26px 0 10px;
+  font: inherit;
+  font-size: 12px;
+}
+
+.translationBar option {
+  color: var(--ruth-color-text-primary);
+}
+
+.cameraControls {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  padding: 0 18px 12px;
+}
+
+.cameraControls button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 12px;
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 15px;
+  background: rgb(9 11 17 / 76%);
+  backdrop-filter: blur(18px);
+  color: var(--ruth-color-text-inverse);
+  font: inherit;
+  font-size: 12px;
+}
+
+.cameraControls button:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--ruth-color-accent-soft) 36%, transparent);
+  background: rgb(20 23 31 / 86%);
+}
+
+.cameraControls button:disabled {
+  opacity: .46;
+  cursor: not-allowed;
+}
+
+.cameraControls svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+
+.cameraControls .primaryAction {
+  border-color: color-mix(in srgb, var(--ruth-color-accent-soft) 48%, transparent);
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--ruth-color-accent-soft) 76%, var(--ruth-color-text-primary)),
+    color-mix(in srgb, var(--ruth-color-accent-strong) 88%, var(--ruth-color-text-primary))
+  );
+  color: color-mix(in srgb, var(--ruth-color-text-primary) 88%, black);
+  font-weight: 700;
+}
+
+.privacyNote {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 18px 16px;
+  color: rgb(255 255 255 / 42%);
+  font-size: 10px;
+  text-align: center;
+}
+
+.privacyNote svg {
+  width: 14px;
+  height: 14px;
+  color: var(--ruth-color-accent-soft);
+  flex: none;
+}
+
+.cameraBadge {
+  position: absolute;
+  z-index: 2;
+  top: 18px;
+  right: 18px;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 50%;
+  background: rgb(9 11 17 / 70%);
+  color: var(--ruth-color-accent-soft);
+  backdrop-filter: blur(16px);
+}
+
+.cameraBadge svg { width: 18px; height: 18px; }
+
+@keyframes cameraScan {
+  from { top: 12%; }
+  to { top: 88%; }
+}
+
+@keyframes cameraSpin {
+  to { transform: rotate(1turn); }
+}
+
+@media (max-width: 760px) {
+  .cameraSurface {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .topStatus {
+    margin: 10px;
+    padding: 9px 12px;
+  }
+
+  .cameraBadge {
+    top: 10px;
+    right: 10px;
+  }
+
+  .translationBar {
+    align-items: stretch;
+    padding: 0 10px 8px;
+  }
+
+  .translationBar > button,
+  .translationBar label {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .translationBar label {
+    justify-content: space-between;
+  }
+
+  .translationBar label > span {
+    display: none;
+  }
+
+  .translationBar select {
+    width: 100%;
+  }
+
+  .cameraControls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 0 10px 8px;
+  }
+
+  .privacyNote {
+    padding: 0 10px max(12px, env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-height: 670px) and (max-width: 760px) {
+  .topStatus small,
+  .privacyNote,
+  .focusReticle {
+    display: none;
+  }
+
+  .cameraControls button {
+    min-height: 42px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scanGlow > span,
+  .loading svg,
+  .cameraControls .primaryAction svg {
+    animation: none;
+  }
+}
