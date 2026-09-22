@@ -206,7 +206,7 @@ create or replace function public.transition_order_state(
 )
 returns public.orders
 language plpgsql
-security definer
+security invoker
 set search_path = public, pg_catalog
 as $$
 declare
@@ -322,7 +322,7 @@ create or replace function public.transition_order_shipment_state(
 )
 returns public.orders
 language plpgsql
-security definer
+security invoker
 set search_path = public, pg_catalog
 as $$
 declare
@@ -422,7 +422,7 @@ $$;
 create or replace function public.claim_shipping_webhooks(p_worker text, p_limit integer default 25)
 returns setof public.shipping_webhook_inbox
 language plpgsql
-security definer
+security invoker
 set search_path = public, pg_catalog
 as $$
 begin
@@ -449,7 +449,7 @@ create or replace function public.complete_shipping_webhook(
 )
 returns public.shipping_webhook_inbox
 language plpgsql
-security definer
+security invoker
 set search_path = public, pg_catalog
 as $$
 declare v_row public.shipping_webhook_inbox;
@@ -492,6 +492,12 @@ on conflict(order_id,idempotency_key) do nothing;
 
 revoke all privileges on table public.order_timeline_events from anon,authenticated;
 revoke all privileges on table public.shipping_webhook_inbox from anon,authenticated;
+revoke all privileges on table public.order_timeline_events from public,anon,authenticated;
+revoke all privileges on table public.shipping_webhook_inbox from public,anon,authenticated;
+grant select,insert,update,delete on table public.order_timeline_events to service_role;
+grant select,insert,update,delete on table public.shipping_webhook_inbox to service_role;
+revoke execute on function public.rosta_touch_commerce_updated_at() from public,anon,authenticated;
+grant execute on function public.rosta_touch_commerce_updated_at() to service_role;
 revoke all privileges on function public.transition_order_state(uuid,text,bigint,text,text,text,text,text,text,jsonb) from PUBLIC,anon,authenticated;
 revoke all privileges on function public.transition_order_shipment_state(uuid,text,text,text,text,text,text,bigint,text,text,text,text,text,jsonb) from PUBLIC,anon,authenticated;
 revoke all privileges on function public.claim_shipping_webhooks(text,integer) from PUBLIC,anon,authenticated;
