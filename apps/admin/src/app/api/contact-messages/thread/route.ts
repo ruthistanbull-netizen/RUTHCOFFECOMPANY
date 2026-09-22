@@ -117,7 +117,7 @@ async function activeGmailIntegration(supabase: any, profileId: string) {
   if (own) return own as GmailIntegration;
 
   // Gmail is an operational panel connection, not a customer/account-specific
-  // mailbox. If another admin connected the canonical Ruth Gmail, all admins may
+  // mailbox. If another admin connected the canonical ROSTA Gmail, all admins may
   // use that same active connection from the protected admin routes.
   const { data: shared, error: sharedError } = await supabase
     .from("email_integrations")
