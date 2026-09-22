@@ -1,0 +1,228 @@
+.root {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  max-width: none;
+  max-height: none;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  isolation: isolate;
+  overflow: visible;
+  will-change: transform;
+}
+
+.root[data-compact="true"] {
+  position: relative;
+  left: auto;
+  top: auto;
+  width: 100%;
+  height: 100%;
+  transform: none;
+}
+
+.root::before,
+.root::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  pointer-events: none;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.root::before {
+  z-index: -2;
+  width: 78%;
+  height: 78%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--voice-gold-light, var(--ruth-color-accent-soft)) 12%, transparent) 0%,
+    color-mix(in srgb, var(--voice-gold, var(--ruth-color-accent)) 5%, transparent) 46%,
+    transparent 73%
+  );
+  filter: blur(24px);
+}
+
+.root::after {
+  z-index: -1;
+  width: 82%;
+  height: 34%;
+  border: 1px solid color-mix(in srgb, var(--voice-gold-light, var(--ruth-color-accent-soft)) 13%, transparent);
+  box-shadow:
+    0 0 36px color-mix(in srgb, var(--voice-gold, var(--ruth-color-accent)) 9%, transparent),
+    inset 0 0 24px color-mix(in srgb, var(--voice-gold-light, var(--ruth-color-accent-soft)) 4%, transparent);
+  transform: translate(-50%, -50%) rotate(-8deg);
+  opacity: .66;
+}
+
+.root[data-compact="false"]::after {
+  display: none;
+}
+
+.root canvas {
+  position: absolute !important;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 100% !important;
+  min-height: 100% !important;
+  opacity: 1;
+  image-rendering: auto;
+  transform: translateZ(0);
+}
+
+.coreCanvas {
+  z-index: 1;
+  opacity: .68;
+  filter:
+    grayscale(1)
+    sepia(1)
+    saturate(2.25)
+    hue-rotate(348deg)
+    brightness(.84)
+    contrast(1.12)
+    drop-shadow(0 0 6px color-mix(in srgb, var(--voice-gold-light, var(--ruth-color-accent-soft)) 25%, transparent))
+    drop-shadow(0 0 18px color-mix(in srgb, var(--voice-gold, var(--ruth-color-accent)) 11%, transparent));
+  will-change: filter;
+}
+
+.sphereCanvas {
+  z-index: 2;
+  mix-blend-mode: normal;
+  filter:
+    saturate(.9)
+    brightness(.92)
+    drop-shadow(0 0 3px color-mix(in srgb, var(--voice-gold-white, var(--ruth-color-text-inverse)) 15%, transparent))
+    drop-shadow(0 0 10px color-mix(in srgb, var(--voice-gold, var(--ruth-color-accent)) 10%, transparent));
+  will-change: filter, opacity;
+}
+
+.root[data-phase="connecting"] .coreCanvas,
+.root[data-phase="connecting"] .sphereCanvas {
+  opacity: .82;
+}
+
+.root[data-phase="listening"] .coreCanvas {
+  opacity: .72;
+  filter:
+    grayscale(1)
+    sepia(1)
+    saturate(2.45)
+    hue-rotate(348deg)
+    brightness(.88)
+    contrast(1.15)
+    drop-shadow(0 0 7px color-mix(in srgb, var(--voice-gold-light, var(--ruth-color-accent-soft)) 31%, transparent))
+    drop-shadow(0 0 21px color-mix(in srgb, var(--voice-gold, var(--ruth-color-accent)) 14%, transparent));
+}
+
+.root[data-phase="listening"] .sphereCanvas {
+  filter:
+    saturate(.92)
+    brightness(.95)
+    drop-shadow(0 0 4px color-mix(in srgb, var(--voice-gold-white, var(--ruth-color-text-inverse)) 18%, transparent))
+    drop-shadow(0 0 12px color-mix(in srgb, var(--voice-gold-light, var(--ruth-color-accent-soft)) 12%, transparent));
+}
+
+.root[data-phase="thinking"],
+.root[data-phase="acting"] {
+  width: 103%;
+  height: 103%;
+}
+
+.root[data-phase="thinking"] .coreCanvas,
+.root[data-phase="acting"] .coreCanvas,
+.root[data-phase="speaking"] .coreCanvas {
+  opacity: .76;
+  filter:
+    grayscale(1)
+    sepia(1)
+    saturate(2.55)
+    hue-rotate(348deg)
+    brightness(.91)
+    contrast(1.17)
+    drop-shadow(0 0 7px color-mix(in srgb, var(--voice-gold-white, var(--ruth-color-text-inverse)) 20%, transparent))
+    drop-shadow(0 0 23px color-mix(in srgb, var(--voice-gold, var(--ruth-color-accent)) 16%, transparent));
+}
+
+.root[data-phase="thinking"] .sphereCanvas,
+.root[data-phase="acting"] .sphereCanvas,
+.root[data-phase="speaking"] .sphereCanvas {
+  filter:
+    saturate(.94)
+    brightness(.97)
+    drop-shadow(0 0 4px color-mix(in srgb, var(--voice-gold-white, var(--ruth-color-text-inverse)) 21%, transparent))
+    drop-shadow(0 0 14px color-mix(in srgb, var(--voice-gold-light, var(--ruth-color-accent-soft)) 14%, transparent));
+}
+
+.root[data-phase="error"] .coreCanvas {
+  opacity: .82;
+  filter:
+    saturate(1.25)
+    brightness(1.08)
+    contrast(1.15)
+    drop-shadow(0 0 12px color-mix(in srgb, var(--ruth-color-danger) 54%, transparent))
+    drop-shadow(0 0 30px color-mix(in srgb, var(--ruth-color-danger) 25%, transparent));
+}
+
+.root[data-phase="error"] .sphereCanvas {
+  filter:
+    brightness(1.02)
+    drop-shadow(0 0 6px color-mix(in srgb, var(--ruth-color-danger) 34%, transparent))
+    drop-shadow(0 0 19px color-mix(in srgb, var(--ruth-color-danger) 22%, transparent));
+}
+
+@media (max-width: 720px), (pointer: coarse) {
+  .root,
+  .root[data-phase="thinking"],
+  .root[data-phase="acting"] {
+    top: 50%;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    max-width: none;
+    max-height: none;
+  }
+
+  .root[data-compact="true"] {
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
+  }
+
+  .coreCanvas {
+    display: none;
+  }
+
+  .sphereCanvas {
+    filter:
+      saturate(.9)
+      brightness(.93)
+      drop-shadow(0 0 2px color-mix(in srgb, var(--voice-gold-white, var(--ruth-color-text-inverse)) 13%, transparent))
+      drop-shadow(0 0 7px color-mix(in srgb, var(--voice-gold, var(--ruth-color-accent)) 8%, transparent));
+  }
+
+  .root::after {
+    width: 86%;
+    height: 36%;
+    opacity: .5;
+  }
+
+  .root[data-compact="false"]::after {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root,
+  .root canvas {
+    transition: none;
+  }
+}
