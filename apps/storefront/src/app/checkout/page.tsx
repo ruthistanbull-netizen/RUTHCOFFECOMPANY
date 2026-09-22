@@ -8,7 +8,7 @@ import { CheckoutDiscountLabelEnhancer } from "@/components/checkout/CheckoutDis
 
 export const metadata: Metadata = {
   title: "Ödeme",
-  description: "Ruth Istanbul güvenli PayTR ödeme sayfası.",
+  description: "ROSTA Coffee Co. güvenli PayTR ödeme sayfası.",
 };
 
 function CheckoutLoading() {
