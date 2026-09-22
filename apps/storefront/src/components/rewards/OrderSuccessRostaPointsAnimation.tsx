@@ -6,12 +6,12 @@ import { Gift, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import {
-  RUTHIE_POINTS_UPDATED_EVENT,
-  clearPendingRuthieOrderReward,
-  consumeRuthiePoints,
-  formatRuthieNumber,
-  getPendingRuthieOrderReward,
-  grantRuthieOrderPoints,
+  ROSTA_POINTS_UPDATED_EVENT,
+  clearPendingRostaOrderReward,
+  consumeRostaPoints,
+  formatRostaPointsNumber,
+  getPendingRostaOrderReward,
+  grantRostaOrderPoints,
   pointsForOrderTotal,
 } from "@/lib/rewards";
 
@@ -76,20 +76,20 @@ export function OrderSuccessRostaPointsAnimation({ orderNo }: Props) {
       return;
     }
 
-    const pending = getPendingRuthieOrderReward();
+    const pending = getPendingRostaOrderReward();
     const orderKey = pending?.orderKey || (orderNo ? `order:${orderNo}` : "");
     const pointsToEarn = pending?.pointsToEarn || pointsForOrderTotal(pending?.totalAmount || 0);
 
     if (pending?.pointsUsed) {
-      consumeRuthiePoints({ orderKey: `${orderKey}:spent`, points: pending.pointsUsed });
+      consumeRostaPoints({ orderKey: `${orderKey}:spent`, points: pending.pointsUsed });
     }
 
     if (orderKey && pointsToEarn > 0) {
-      grantRuthieOrderPoints({ orderKey, points: pointsToEarn });
+      grantRostaOrderPoints({ orderKey, points: pointsToEarn });
       setEarnedPoints(pointsToEarn);
       setIsRewardReady(true);
-      clearPendingRuthieOrderReward();
-      window.dispatchEvent(new Event(RUTHIE_POINTS_UPDATED_EVENT));
+      clearPendingRostaOrderReward();
+      window.dispatchEvent(new Event(ROSTA_POINTS_UPDATED_EVENT));
       return;
     }
 
@@ -154,7 +154,7 @@ export function OrderSuccessRostaPointsAnimation({ orderNo }: Props) {
         transition={{ delay: 0.35, duration: 0.35 }}
       >
         {isRewardReady && earnedPoints > 0
-          ? `Bu alışverişten +${formatRuthieNumber(earnedPoints)} ROSTA Points hesabına eklendi.`
+          ? `Bu alışverişten +${formatRostaPointsNumber(earnedPoints)} ROSTA Points hesabına eklendi.`
           : "Alışverişlerin hesabında ROSTA Points olarak birikir ve ödeme adımında indirime dönüşür."}
       </motion.p>
       <div className="ruthie-success-actions relative z-10 mt-4 flex justify-center sm:mt-6">
