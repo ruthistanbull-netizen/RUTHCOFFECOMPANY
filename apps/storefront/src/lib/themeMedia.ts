@@ -18,6 +18,8 @@ function clean(value: unknown) {
 
 export function homepageHeroImages(settings: ThemeCustomizerSettings): HomepageHeroImages {
   const saved = clean(settings.homepageImages.heroImage);
+  const savedDesktop = clean(settings.homepageImages.heroDesktopImage);
+  const savedMobile = clean(settings.homepageImages.heroMobileImage);
   const overrides = settings.editor.pages["/"]?.overrides || [];
   const desktopOverride = clean(overrides.find((item) => item.id === HOME_HERO_DESKTOP_IMAGE_ID)?.imageSrc);
   const mobileOverride = clean(overrides.find((item) => item.id === HOME_HERO_MOBILE_IMAGE_ID)?.imageSrc);
@@ -25,8 +27,8 @@ export function homepageHeroImages(settings: ThemeCustomizerSettings): HomepageH
   const shared = sharedOverride || saved || ROSTA_DEFAULT_HERO_IMAGE;
 
   return {
-    desktop: desktopOverride || shared || ROSTA_DEFAULT_HERO_IMAGE,
-    mobile: mobileOverride || shared || ROSTA_DEFAULT_HERO_IMAGE,
+    desktop: desktopOverride || savedDesktop || shared || ROSTA_DEFAULT_HERO_IMAGE,
+    mobile: mobileOverride || savedMobile || shared || ROSTA_DEFAULT_HERO_IMAGE,
   };
 }
 
