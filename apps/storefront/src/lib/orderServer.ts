@@ -1035,7 +1035,7 @@ async function synchronizePaidOrderSideEffects({
       Math.floor(Number(draft.reward_points_used || Number(draft.reward_discount_total || 0) * RUTH_POINTS_PER_TL)),
     );
     if (pointsUsed > 0) {
-      const { error: spentPointsError } = await supabase.rpc("adjust_ruthie_points", {
+      const { error: spentPointsError } = await supabase.rpc("adjust_rosta_points", {
         p_profile_id: draft.profile_id,
         p_amount: -pointsUsed,
         p_reason: `${draft.order_no} siparişinde kullanılan ROSTA Points`,
@@ -1051,7 +1051,7 @@ async function synchronizePaidOrderSideEffects({
 
     const pointsEarned = Math.max(0, Math.floor(Number(draft.total_amount || 0)));
     if (pointsEarned > 0) {
-      const { error: earnedPointsError } = await supabase.rpc("adjust_ruthie_points", {
+      const { error: earnedPointsError } = await supabase.rpc("adjust_rosta_points", {
         p_profile_id: draft.profile_id,
         p_amount: pointsEarned,
         p_reason: `${draft.order_no} siparişinden kazanılan ROSTA Points`,
