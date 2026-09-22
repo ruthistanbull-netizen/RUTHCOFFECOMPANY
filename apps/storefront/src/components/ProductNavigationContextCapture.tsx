@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-const COOKIE_NAME = "ruth_product_source";
+const COOKIE_NAME = "rosta_product_source";
 
 function normalizedCatalogSource(pathname: string) {
   const path = String(pathname || "").replace(/\/+$/, "") || "/";
