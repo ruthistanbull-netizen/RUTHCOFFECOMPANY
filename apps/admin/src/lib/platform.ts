@@ -1,8 +1,12 @@
+export const ROSTA_PANEL_URL =
+  process.env.NEXT_PUBLIC_PANEL_URL ||
+  "https://rostapanel.zeabur.app";
+
 export const ROSTA_STORE_URL =
   process.env.NEXT_PUBLIC_STORE_URL ||
   process.env.STORE_URL ||
   process.env.NEXT_PUBLIC_SITE_URL ||
-  "https://ruthcoffeecompany.zeabur.app";
+  "https://rostacoffecompany.zeabur.app";
 
 export const ROSTA_SUPABASE_URL =
   process.env.NEXT_PUBLIC_SUPABASE_URL ||
