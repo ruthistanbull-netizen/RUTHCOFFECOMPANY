@@ -1,24 +1,17 @@
+import { ROSTA_STORE_URL } from "@/lib/platform";
+
 export function storefrontUrl(path = "/") {
-  const base = String(
-    process.env.NEXT_PUBLIC_STORE_URL ||
-    process.env.STORE_URL ||
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    "http://localhost:3000"
-  ).replace(/\/$/, "");
+  const base = ROSTA_STORE_URL.replace(/\/$/, "");
   return `${base}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
 export async function revalidateStorefront(source: string, scope: "all" | "catalog" | "theme" = "all") {
-  const base = String(
-    process.env.WEBSITE_REVALIDATE_URL ||
-    process.env.STORE_URL ||
-    process.env.NEXT_PUBLIC_STORE_URL ||
-    ""
-  ).replace(/\/$/, "");
-  const secret = String(process.env.WEBSITE_REVALIDATE_SECRET || "").trim();
-  if (!base || !secret) return { ok: false, skipped: true };
+  const explicit = String(process.env.WEBSITE_REVALIDATE_URL || "").trim();
+  const base = explicit || `${ROSTA_STORE_URL.replace(/\/$/, "")}/api/revalidate`;
+  const secret = String(process.env.WEBSITE_REVALIDATE_SECRET || process.env.REVALIDATE_SECRET || "").trim();
+  if (!secret) return { ok: false, skipped: true, reason: "missing-secret" };
 
-  const target = base.includes("/api/revalidate") ? base : `${base}/api/revalidate`;
+  const target = base.includes("/api/revalidate") ? base : `${base.replace(/\/$/, "")}/api/revalidate`;
   try {
     const response = await fetch(target, {
       method: "POST",
@@ -30,8 +23,8 @@ export async function revalidateStorefront(source: string, scope: "all" | "catal
       body: JSON.stringify({ source, scope, at: new Date().toISOString() }),
       cache: "no-store",
     });
-    return { ok: response.ok, status: response.status };
-  } catch {
-    return { ok: false };
+    return { ok: response.ok, status: response.status, target };
+  } catch (error) {
+    return { ok: false, target, error: error instanceof Error ? error.message : "unknown" };
   }
 }
