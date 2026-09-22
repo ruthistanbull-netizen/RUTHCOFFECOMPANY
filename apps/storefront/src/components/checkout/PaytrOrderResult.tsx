@@ -2,8 +2,6 @@
 
 import { useEffect } from "react";
 import { CheckCircle2 } from "lucide-react";
-import { OrderSuccessRuthieAnimation } from "@/components/rewards/OrderSuccessRuthieAnimation";
-import { RuthieCoinRainIllustrated } from "@/components/rewards/RuthieCoinRainIllustrated";
 import { useCart } from "@/components/cart/CartProvider";
 
 type PurchaseStatusPayload = {
@@ -117,7 +115,6 @@ export function PaytrOrderResult({ orderNo }: { orderNo?: string }) {
 
   return (
     <>
-      <RuthieCoinRainIllustrated />
       <div className="order-success-card mx-auto max-w-2xl rounded-2xl border border-gold/15 bg-cream p-5 sm:p-8">
         <CheckCircle2 className="order-success-icon mx-auto mb-4 text-gold-dark" size={42} />
         <p className="order-success-eyebrow mb-2 text-[0.65rem] uppercase tracking-wide-luxe text-gold-dark sm:text-xs">
@@ -125,9 +122,8 @@ export function PaytrOrderResult({ orderNo }: { orderNo?: string }) {
         </p>
         <h1 className="order-success-title font-heading text-4xl sm:text-5xl">Siparişiniz Tamamlandı</h1>
         <p className="order-success-copy mx-auto mt-4 max-w-lg text-sm leading-7 text-muted-ruth">
-          Ödemen başarıyla tamamlandı. Siparişin Ruth Istanbul sistemine alındı.
+          Ödemen başarıyla tamamlandı. Siparişin ROSTA Coffee Co. sistemine alındı.
         </p>
-        <OrderSuccessRuthieAnimation orderNo={orderNo} />
       </div>
     </>
   );
