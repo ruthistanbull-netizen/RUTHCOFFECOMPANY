@@ -38,7 +38,7 @@ const nextConfig: NextConfig = {
     // revalidate çağrısı kaçsa bile ürün/tema cache'i 10 saniyeyi aşmasın.
     NEXT_PUBLIC_CATALOG_REVALIDATE_SECONDS: "10",
   },
-  transpilePackages: ["@ruth-commerce/ui", "@ruth-commerce/commerce-core"],
+  transpilePackages: ["@ruth-commerce/ui", "@ruth-commerce/commerce-core", "@ruth-commerce/contracts"],
   experimental: {
     cpus: 2,
     optimizePackageImports: ["lucide-react", "framer-motion"],
