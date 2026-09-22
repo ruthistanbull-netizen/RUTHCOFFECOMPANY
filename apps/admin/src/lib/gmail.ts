@@ -20,6 +20,26 @@ export type InlineEmailImage = {
   dataBase64: string;
 };
 
+export type GmailMessagePayload = {
+  mimeType?: string | null;
+  headers?: Array<{ name?: string | null; value?: string | null }> | null;
+  body?: { data?: string | null; size?: number | null } | null;
+  parts?: GmailMessagePayload[] | null;
+};
+
+export type GmailMessage = {
+  id: string;
+  threadId: string;
+  internalDate?: string | null;
+  snippet?: string | null;
+  payload?: GmailMessagePayload | null;
+};
+
+export type GmailThread = {
+  id: string;
+  messages?: GmailMessage[];
+};
+
 function requiredEnv(name: string) {
   const value = String(process.env[name] || "").trim();
   if (!value) throw new Error(`${name} env eksik.`);
@@ -191,6 +211,8 @@ export function makeMimeMessage(input: {
   subject: string;
   html: string;
   inlineImages?: InlineEmailImage[];
+  inReplyTo?: string | null;
+  references?: string | null;
 }) {
   const alt = `rosta_alt_${Date.now()}`;
   const related = `rosta_related_${Date.now()}`;
@@ -217,6 +239,10 @@ export function makeMimeMessage(input: {
     `Subject: ${encodeHeader(input.subject)}`,
     "MIME-Version: 1.0",
   ];
+  const safeInReplyTo = String(input.inReplyTo || "").replace(/[\r\n]+/g, " ").trim();
+  const safeReferences = String(input.references || "").replace(/[\r\n]+/g, " ").trim();
+  if (safeInReplyTo) headers.push(`In-Reply-To: ${safeInReplyTo}`);
+  if (safeReferences) headers.push(`References: ${safeReferences}`);
 
   const inlineImages = input.inlineImages || [];
   if (!inlineImages.length) {
@@ -247,14 +273,14 @@ export function makeMimeMessage(input: {
   ].join("\r\n");
 }
 
-export async function sendGmailMessage(accessToken: string, message: string) {
+export async function sendGmailMessage(accessToken: string, message: string, threadId?: string | null) {
   const response = await fetch("https://gmail.googleapis.com/gmail/v1/users/me/messages/send", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ raw: base64Url(message) }),
+    body: JSON.stringify({ raw: base64Url(message), ...(threadId ? { threadId } : {}) }),
     cache: "no-store",
   });
   const data = await response.json();
@@ -274,3 +300,51 @@ export function loadRostaInlineLogo(): InlineEmailImage[] {
 }
 
 export const loadRuthInlineLogo = loadRostaInlineLogo;
+
+
+export async function getGmailThread(accessToken: string, threadId: string) {
+  const response = await fetch(
+    `https://gmail.googleapis.com/gmail/v1/users/me/threads/${encodeURIComponent(threadId)}?format=full`,
+    { headers: { Authorization: `Bearer ${accessToken}` }, cache: "no-store" },
+  );
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error?.message || "Gmail konuşması alınamadı.");
+  return data as GmailThread;
+}
+
+export function gmailHeader(payload: GmailMessagePayload | null | undefined, name: string) {
+  const expected = name.toLocaleLowerCase("en-US");
+  const header = (payload?.headers || []).find(
+    (item) => String(item.name || "").toLocaleLowerCase("en-US") === expected,
+  );
+  return String(header?.value || "").trim();
+}
+
+function decodeGmailBody(value?: string | null) {
+  if (!value) return "";
+  try { return Buffer.from(value, "base64url").toString("utf8"); } catch { return ""; }
+}
+
+function findGmailPart(payload: GmailMessagePayload | null | undefined, mimeType: string): GmailMessagePayload | null {
+  if (!payload) return null;
+  if (String(payload.mimeType || "").toLocaleLowerCase("en-US") === mimeType && payload.body?.data) return payload;
+  for (const part of payload.parts || []) {
+    const found = findGmailPart(part, mimeType);
+    if (found) return found;
+  }
+  return null;
+}
+
+export function gmailMessageText(message: GmailMessage) {
+  const plain = findGmailPart(message.payload, "text/plain");
+  if (plain?.body?.data) return decodeGmailBody(plain.body.data).trim();
+  const html = findGmailPart(message.payload, "text/html");
+  if (html?.body?.data) return htmlToText(decodeGmailBody(html.body.data)).trim();
+  if (message.payload?.body?.data) {
+    const body = decodeGmailBody(message.payload.body.data);
+    return String(message.payload.mimeType || "").toLocaleLowerCase("en-US") === "text/html"
+      ? htmlToText(body)
+      : body.trim();
+  }
+  return String(message.snippet || "").trim();
+}
