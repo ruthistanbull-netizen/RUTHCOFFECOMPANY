@@ -40,7 +40,7 @@ export async function awardSignupRewardForProfile(profileId: string): Promise<Co
   if (!cleanProfileId) throw new Error("Ruthie Points profili gerekli.");
 
   const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase.rpc("award_ruthie_signup_reward", {
+  const { data, error } = await supabase.rpc("award_rosta_signup_reward", {
     p_profile_id: cleanProfileId,
   });
   if (error) throw new Error(`Üyelik Ruthie Points ödülü eklenemedi: ${error.message}`);
@@ -64,7 +64,7 @@ export async function claimBirthdayRewardForProfile(profileId: string): Promise<
   if (!cleanProfileId) throw new Error("Ruthie Points profili gerekli.");
 
   const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase.rpc("claim_ruthie_birthday_reward", {
+  const { data, error } = await supabase.rpc("claim_rosta_birthday_reward", {
     p_profile_id: cleanProfileId,
   });
   if (error) throw new Error(`Doğum günü Ruthie Points ödülü işlenemedi: ${error.message}`);
@@ -81,7 +81,7 @@ export async function claimBirthdayRewardForProfile(profileId: string): Promise<
 
 export async function claimBirthdayRewardsForToday(): Promise<BirthdayRewardBatchResult> {
   const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase.rpc("claim_all_ruthie_birthday_rewards", {
+  const { data, error } = await supabase.rpc("claim_all_rosta_birthday_rewards", {
     p_limit: 5_000,
   });
   if (error) throw new Error(`Günlük doğum günü Ruthie Points işi tamamlanamadı: ${error.message}`);
