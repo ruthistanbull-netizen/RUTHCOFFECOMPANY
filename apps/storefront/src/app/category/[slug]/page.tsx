@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!isNewArrivals && !category) return { title: "Kategori bulunamadı", robots: { index: false, follow: false } };
 
   const name = isNewArrivals ? "Yeni Gelenler" : categoryDisplayName(category?.slug, category?.name || "Ürünler");
-  const summary = isNewArrivals ? "Ruth Istanbul’un en yeni parçaları." : category?.description || categoryDescription(category?.slug);
+  const summary = isNewArrivals ? "ROSTA Coffee Co.’nun en yeni ürünleri." : category?.description || categoryDescription(category?.slug);
   const canonicalSlug = isNewArrivals ? "new-arrivals" : category?.public_slug || normalized;
   const canonical = `${SITE_URL}/category/${encodeURIComponent(canonicalSlug)}`;
 
@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     robots: products.length
       ? { index: true, follow: true }
       : { index: false, follow: true, noarchive: true },
-    openGraph: { title: `${name} | Ruth Istanbul`, description: summary, url: canonical },
+    openGraph: { title: `${name} | ROSTA Coffee Co.`, description: summary, url: canonical },
   };
 }
 
@@ -51,7 +51,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
 
   const products = await getCachedProductsByCategorySlug(slug);
   const name = isNewArrivals ? "Yeni Gelenler" : categoryDisplayName(category?.slug, category?.name || "Ürünler");
-  const description = isNewArrivals ? "Ruth Istanbul’un en yeni parçaları." : category?.description || categoryDescription(category?.slug);
+  const description = isNewArrivals ? "ROSTA Coffee Co.’nun en yeni ürünleri." : category?.description || categoryDescription(category?.slug);
 
   return (
     <div className="min-h-screen bg-ivory px-4 pb-24 pt-[calc(var(--announcement-height,0px)+128px)] md:px-8">
