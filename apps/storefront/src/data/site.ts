@@ -2,11 +2,7 @@ import { unstable_cache, unstable_noStore as noStore } from "next/cache";
 import { supabase } from "@/lib/supabase";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 import { automaticDiscountForItem, loadDiscountCampaignSettings } from "@/lib/discountCampaigns";
-import {
-  isChainProduct,
-  productCategoryValues,
-  productHasImage,
-} from "@/lib/productDisplay";
+import { productHasImage } from "@/lib/productDisplay";
 import { getCollectionCover } from "@/lib/collectionDisplay";
 import {
   categoryAliases,
