@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "next/link";\nimport type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { BarChart3, Boxes, Coffee, LogOut, Palette, ShoppingBag, Users } from "lucide-react";
 import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
@@ -13,7 +13,7 @@ const links = [
   { href: "/theme", label: "Mağaza Tasarımı", icon: Palette },
 ];
 
-export function AdminShell({ children }: { children: React.ReactNode }) {
+export function AdminShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   return (
