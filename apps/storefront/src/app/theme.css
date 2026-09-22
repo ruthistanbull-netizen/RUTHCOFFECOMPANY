@@ -1,17 +1,17 @@
 [data-ruth-theme="storefront"] {
-  --ruth-storefront-canvas: #ffffff;
-  --ruth-storefront-surface: #ffffff;
-  --ruth-storefront-surface-muted: #f6f6f6;
-  --ruth-storefront-surface-soft: #fbfbfb;
+  --ruth-storefront-canvas: #F4F0E8;
+  --ruth-storefront-surface: #F4F0E8;
+  --ruth-storefront-surface-muted: #F4F0E8;
+  --ruth-storefront-surface-soft: #F4F0E8;
   --ruth-storefront-ink: #111111;
-  --ruth-storefront-muted-ink: #5f5f5f;
-  --ruth-storefront-border: #dedede;
-  --ruth-storefront-border-strong: #a8a8a8;
-  --ruth-storefront-sale: #e30613;
-  --ruth-storefront-logo-light: #ffffff;
+  --ruth-storefront-muted-ink: #6F725B;
+  --ruth-storefront-border: #AAA8A1;
+  --ruth-storefront-border-strong: #AAA8A1;
+  --ruth-storefront-sale: #B9563D;
+  --ruth-storefront-logo-light: #F4F0E8;
   --ruth-storefront-logo-dark: #111111;
-  --ruth-storefront-translucent: rgba(255, 255, 255, 0.78);
-  --ruth-storefront-overlay-copy: rgba(17, 17, 17, 0.74);
+  --ruth-storefront-translucent: rgb(244 240 232 / 78%);
+  --ruth-storefront-overlay-copy: rgb(17 17 17 / 74%);
 
   --ruth-color-canvas: var(--ruth-storefront-canvas);
   --ruth-color-surface: var(--ruth-storefront-surface);
@@ -19,64 +19,65 @@
   --ruth-color-text-primary: var(--ruth-storefront-ink);
   --ruth-color-text-muted: var(--ruth-storefront-muted-ink);
   --ruth-color-text-inverse: var(--ruth-storefront-logo-light);
-  --ruth-color-accent: var(--ruth-storefront-ink);
-  --ruth-color-accent-soft: var(--ruth-storefront-border);
-  --ruth-color-accent-strong: var(--ruth-storefront-ink);
-  --ruth-color-accent-wash: rgba(17, 17, 17, 0.06);
+  --ruth-color-accent: #B9563D;
+  --ruth-color-accent-soft: #B9563D;
+  --ruth-color-accent-strong: #2B1B16;
+  --ruth-color-accent-wash: rgb(185 86 61 / 18%);
   --ruth-color-border-subtle: var(--ruth-storefront-border);
   --ruth-color-border-strong: var(--ruth-storefront-border-strong);
-  --ruth-color-focus: var(--ruth-storefront-ink);
-  --ruth-color-overlay: rgba(0, 0, 0, 0.34);
+  --ruth-color-focus: #B9563D;
+  --ruth-color-overlay: rgb(17 17 17 / 44%);
   --ruth-color-sale: var(--ruth-storefront-sale);
-  --ruth-font-display: "Montserrat", "Helvetica Neue", Arial, sans-serif;
-  --ruth-font-body: "Montserrat", "Helvetica Neue", Arial, sans-serif;
-  --ruth-font-logo: "Cinzel", Georgia, serif;
+  --ruth-font-display: var(--font-archivo), "Arial Black", "Helvetica Neue", Arial, sans-serif;
+  --ruth-font-body: var(--font-inter), "Helvetica Neue", Arial, sans-serif;
+  --ruth-font-logo: var(--font-archivo), "Arial Black", "Helvetica Neue", Arial, sans-serif;
 
   --ruth-ink: var(--ruth-color-text-primary);
   --ruth-ink-muted: var(--ruth-color-text-muted);
   --ruth-paper: var(--ruth-storefront-surface-soft);
   --ruth-surface: var(--ruth-color-surface);
-  --ruth-gold: var(--ruth-color-accent);
-  --ruth-gold-light: var(--ruth-color-accent-soft);
-  --ruth-gold-dark: var(--ruth-color-accent-strong);
+  --ruth-gold: #B9563D;
+  --ruth-gold-light: #B9563D;
+  --ruth-gold-dark: #2B1B16;
   --ruth-border: var(--ruth-color-border-subtle);
-  --ruth-shadow-soft: 0 12px 32px rgba(0, 0, 0, 0.06);
-  --ruth-shadow-elevated: 0 22px 58px rgba(0, 0, 0, 0.12);
+  --ruth-shadow-soft: 0 12px 32px rgb(17 17 17 / 6%);
+  --ruth-shadow-elevated: 0 22px 58px rgb(17 17 17 / 12%);
 
-  --ivory: var(--ruth-color-canvas);
-  --cream: var(--ruth-color-surface-muted);
-  --ink: var(--ruth-color-text-primary);
-  --gold: var(--ruth-color-accent);
-  --gold-dark: var(--ruth-color-accent-strong);
-  --bronze: var(--ruth-color-accent-strong);
-  --muted-foreground: var(--ruth-color-text-muted);
-  --background: var(--ruth-color-canvas);
-  --foreground: var(--ruth-color-text-primary);
+  --ivory: #F4F0E8;
+  --cream: #F4F0E8;
+  --ink: #111111;
+  --gold: #B9563D;
+  --gold-dark: #2B1B16;
+  --bronze: #2B1B16;
+  --muted-foreground: #6F725B;
+  --background: #F4F0E8;
+  --foreground: #111111;
   --font-heading: var(--ruth-font-display);
   --font-body: var(--ruth-font-body);
 }
 
 /* Keep the private design-system verification route on its established baseline. */
 body:has(.ds-page) {
-  --ruth-storefront-canvas: #f6f0e7;
-  --ruth-storefront-accent: #b8976a;
-  --ruth-color-surface: #faf7f1;
-  --ruth-color-surface-muted: #faf7f1;
-  --ruth-color-text-primary: #211912;
-  --ruth-color-text-muted: color-mix(in srgb, #7a6d5f 80%, #211912);
-  --ruth-color-text-inverse: #ffffff;
-  --ruth-color-accent-soft: #d4b896;
-  --ruth-color-accent-strong: #765a37;
-  --ruth-color-accent-wash: rgba(184, 151, 106, 0.18);
-  --ruth-color-border-subtle: #e7ded2;
-  --ruth-color-border-strong: #cdbeac;
-  --ruth-color-focus: #765a37;
-  --ruth-color-overlay: rgba(23, 21, 18, 0.46);
-  --ruth-font-display: "Cinzel", Georgia, serif;
-  --ruth-font-body: "Montserrat", Arial, sans-serif;
-  --ruth-font-logo: "Cinzel", Georgia, serif;
-  --ruth-shadow-soft: 0 12px 36px rgba(23, 21, 18, 0.08);
-  --ruth-shadow-elevated: 0 24px 64px rgba(23, 21, 18, 0.14);
+  --ruth-storefront-canvas: #F4F0E8;
+  --ruth-storefront-accent: #B9563D;
+  --ruth-color-surface: #F4F0E8;
+  --ruth-color-surface-muted: #F4F0E8;
+  --ruth-color-text-primary: #111111;
+  --ruth-color-text-muted: #6F725B;
+  --ruth-color-text-inverse: #F4F0E8;
+  --ruth-color-accent: #B9563D;
+  --ruth-color-accent-soft: #B9563D;
+  --ruth-color-accent-strong: #2B1B16;
+  --ruth-color-accent-wash: rgb(185 86 61 / 18%);
+  --ruth-color-border-subtle: #AAA8A1;
+  --ruth-color-border-strong: #AAA8A1;
+  --ruth-color-focus: #B9563D;
+  --ruth-color-overlay: rgb(17 17 17 / 46%);
+  --ruth-font-display: var(--font-archivo), "Arial Black", "Helvetica Neue", Arial, sans-serif;
+  --ruth-font-body: var(--font-inter), "Helvetica Neue", Arial, sans-serif;
+  --ruth-font-logo: var(--font-archivo), "Arial Black", "Helvetica Neue", Arial, sans-serif;
+  --ruth-shadow-soft: 0 12px 36px rgb(17 17 17 / 8%);
+  --ruth-shadow-elevated: 0 24px 64px rgb(17 17 17 / 14%);
 }
 
 .site-app-shell:not(:has(.ds-page)) {
