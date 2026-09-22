@@ -1,0 +1,25 @@
+ROSTA COFFEE CO. - PAYTR TAKSIT VE ROSTA POINTS
+=================================================
+
+1) PAYTR KART / TAKSIT AKISI
+- Kart bilgileri PayTR entegrasyonu üzerinden işlenir.
+- Taksit seçenekleri yalnız PayTR tarafından kart için döndürülen uygun seçeneklerden oluşur.
+- Uygun olmayan kartlarda taksit alanı gösterilmez.
+- Panel veya storefront kendi başına vade oranı uydurmaz.
+
+2) ROSTA POINTS
+- Panel canonical ekranı: /rosta-points
+- Canonical API: /api/rosta-points
+- Puan hareketleri ROSTA Supabase içindeki rosta_point_transactions ve ilgili profil bakiyesi üzerinden tutulur.
+- Eski /ruthie-points adresi yalnız geriye uyumluluk yönlendirmesidir; yeni kod bu yolu kullanmaz.
+- Ruth Istanbul müşteri veya ürün verisi bu sisteme aktarılmaz.
+
+3) ALTYAPI
+- Admin: https://rostapanel.zeabur.app
+- Storefront: https://rostacoffecompany.zeabur.app
+- İki uygulama da yalnız ROSTA Supabase projesini kullanır.
+- Şema değişiklikleri repodaki Supabase migration dosyalarıyla takip edilir.
+
+4) DEPLOY
+- Admin ve storefront Zeabur servisleri olarak deploy edilir.
+- GitHub Actions bu proje için kullanılmaz.
