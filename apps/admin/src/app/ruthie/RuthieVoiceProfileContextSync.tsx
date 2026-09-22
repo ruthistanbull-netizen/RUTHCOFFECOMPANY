@@ -32,7 +32,7 @@ export function RuthieVoiceProfileContextSync() {
         if (cancelled || !response.ok || !payload?.ok || !payload.profile) return;
         const profile = payload.profile;
         const context = [
-          "RUTHIE SES PROFİLİ CANLI DURUMU:",
+          "ROSTA INSIGHT SES PROFİLİ CANLI DURUMU:",
           `Profil sahibi: ${profile.displayName || "Admin"}.`,
           `Ses analizi: ${profile.analysisEnabled ? "Açık" : "Kapalı"}.`,
           `Sürekli öğrenme: ${profile.learningEnabled ? "Açık" : "Kapalı"}.`,
