@@ -1,7 +1,8 @@
 export const CANONICAL_PRODUCT_MATERIALS = [
-  "925 Ayar Gümüş",
-  "Brass",
-  "Bez Kumaş",
+  "Arabica",
+  "Robusta",
+  "Arabica + Robusta Blend",
+  "Kafeinsiz",
 ] as const;
 
 function normalizeMaterialText(value: string) {
@@ -18,10 +19,22 @@ export function normalizeProductMaterial(value: unknown): string | null {
   const text = String(value || "").trim();
   const normalized = normalizeMaterialText(text);
   if (!normalized) return null;
-  if (normalized === "celik" || normalized === "steel") return null;
-  if (normalized === "brass" || normalized === "pirinc") return "Brass";
-  if (normalized === "bez kumas") return "Bez Kumaş";
-  if (normalized === "925 ayar gumus") return "925 Ayar Gümüş";
+
+  if (normalized === "arabica" || normalized === "100% arabica") return "Arabica";
+  if (normalized === "robusta" || normalized === "100% robusta") return "Robusta";
+  if (
+    normalized === "blend" ||
+    normalized === "arabica robusta" ||
+    normalized === "arabica + robusta" ||
+    normalized === "arabica + robusta blend" ||
+    normalized === "arabica-robusta blend"
+  ) return "Arabica + Robusta Blend";
+  if (
+    normalized === "kafeinsiz" ||
+    normalized === "decaf" ||
+    normalized === "decaffeinated"
+  ) return "Kafeinsiz";
+
   return text;
 }
 
