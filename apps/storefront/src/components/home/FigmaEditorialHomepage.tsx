@@ -23,7 +23,7 @@ const MEDIA: EditorialMedia[] = [
     src: "/home/editorial/home-01.mp4",
     logo: true,
     tone: "dark",
-    label: "Ruth Istanbul editoryal video 1",
+    label: "ROSTA Coffee Co. editoryal video 1",
   },
   {
     id: "home-02",
@@ -31,7 +31,7 @@ const MEDIA: EditorialMedia[] = [
     src: "/home/editorial/home-02.webp",
     logo: true,
     tone: "light",
-    label: "Ruth Istanbul editoryal fotoğraf 2",
+    label: "ROSTA Coffee Co. editoryal fotoğraf 2",
   },
   {
     id: "home-03",
@@ -39,7 +39,7 @@ const MEDIA: EditorialMedia[] = [
     src: "/home/editorial/home-03.mp4",
     logo: false,
     tone: "dark",
-    label: "Ruth Istanbul editoryal video 3",
+    label: "ROSTA Coffee Co. editoryal video 3",
   },
   {
     id: "home-04",
@@ -47,7 +47,7 @@ const MEDIA: EditorialMedia[] = [
     src: "/home/editorial/home-04.webp",
     logo: true,
     tone: "light",
-    label: "Ruth Istanbul editoryal fotoğraf 4",
+    label: "ROSTA Coffee Co. editoryal fotoğraf 4",
   },
 ];
 
