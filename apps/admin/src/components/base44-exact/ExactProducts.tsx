@@ -577,9 +577,7 @@ export function ExactProducts() {
     if (mode === "initial") setLoading(true);
     else setRefreshing(true);
     try {
-      const catalogPath = mode === "initial"
-        ? "/api/products?q="
-        : `/api/products/list?page=1&pageSize=${PRODUCT_API_PAGE_SIZE}&q=`;
+      const catalogPath = `/api/products/list?page=1&pageSize=${PRODUCT_API_PAGE_SIZE}&q=`;
       const catalogOptions = mode === "initial"
         ? { signal: controller.signal }
         : {
