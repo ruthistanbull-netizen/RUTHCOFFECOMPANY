@@ -231,7 +231,7 @@ export function ProductRecommendations({
                 className="product-recommendation-media"
               />
               <div className="product-recommendation-copy">
-                <small>{item.collections?.name || "Ruth Istanbul"}</small>
+                <small>{item.collections?.name || "ROSTA Coffee Co."}</small>
                 <strong>{item.name}</strong>
                 <span>{formatPrice(Number(item.price || 0), item.currency || "TRY")}</span>
               </div>
