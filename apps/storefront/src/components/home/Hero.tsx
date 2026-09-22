@@ -97,7 +97,7 @@ function sampleMediaTone(media: SampledMedia, viewportX: number, viewportY: numb
 }
 
 function notifyHeroMediaReady() {
-  window.dispatchEvent(new Event("ruth:home-hero-media-changed"));
+  window.dispatchEvent(new Event("rosta:home-hero-media-changed"));
 }
 
 function EditorialMedia({
@@ -273,14 +273,14 @@ export default function Hero({
     update();
     window.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update);
-    window.addEventListener("ruth:home-hero-media-changed", update);
+    window.addEventListener("rosta:home-hero-media-changed", update);
     timer = window.setInterval(update, 420);
     return () => {
       window.cancelAnimationFrame(frame);
       window.clearInterval(timer);
       window.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
-      window.removeEventListener("ruth:home-hero-media-changed", update);
+      window.removeEventListener("rosta:home-hero-media-changed", update);
     };
   }, []);
 
