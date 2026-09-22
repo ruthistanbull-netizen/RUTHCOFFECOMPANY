@@ -100,7 +100,7 @@ const REALTIME_ADMIN_TOOL = {
   type: "function",
   name: "ruthie_admin",
   description: [
-    "Ruth Commerce admin panelinin canlı aracıdır.",
+    "ROSTA Commerce admin panelinin canlı aracıdır.",
     "Sipariş, ürün, müşteri, stok, iade, kargo, kampanya, tema, yorum, puan ve e-posta sorgularında uygun action kullan.",
     "Panelde değişiklik istenirse uygun write action çağır; istemci kullanıcıdan sesli onay alır.",
     "query GET filtreleri, payload işlem JSON gövdesi, resourceId dinamik kayıt kimliğidir.",
