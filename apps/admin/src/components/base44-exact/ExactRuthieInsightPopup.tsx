@@ -136,22 +136,22 @@ const PURPOSES: Array<{ value: Exclude<ImagePurpose, "">; title: string; detail:
 ];
 
 const STYLE_GROUPS: StyleGroup[] = [
-  { id: "model", label: "Model Üzerinde", description: "Takının gerçek kullanımını model üzerinde göster", options: ["Yüz görünür", "Yüz yarım görünür", "Sadece boyun yakın plan", "Sadece kulak yakın plan", "Sadece el yakın plan", "Tek model", "Editorial model"] },
-  { id: "studio", label: "Stüdyo Ürün Fotoğrafı", description: "Temiz ve e-ticaret odaklı ürün çekimi", options: ["Beyaz fon", "Krem fon", "Koyu lüks fon", "Soft gölgeli", "E-ticaret uyumlu", "İzole ürün görünümü"] },
-  { id: "campaign", label: "Lüks Kampanya Görseli", description: "Marka kampanyası ve reklam hissi", options: ["Dramatik ışık", "Premium fon", "Reklam afiş hissi", "Güçlü gölge", "Marka kampanyası hissi"] },
-  { id: "lifestyle", label: "Lifestyle / Günlük Kullanım", description: "Doğal ve gerçek kullanım odaklı", options: ["Doğal masa", "Ayna önü", "Kumaş üstü", "Elde kullanım", "Günlük ortam"] },
-  { id: "flatlay", label: "Flat Lay / Masa Üstü", description: "Yukarıdan düzenlenmiş ürün kompozisyonu", options: ["Yukarıdan çekim", "Dekorlu", "Sade", "Çoklu ürün yerleşimi", "Set düzeni"] },
-  { id: "macro", label: "Makro / Detay Çekim", description: "Taş, metal ve işçilik detaylarını öne çıkar", options: ["Taş detayı", "Metal doku", "İşçilik yakın plan", "Ultra yakın çekim"] },
-  { id: "hand", label: "Elde Tutulan Ürün", description: "Ürünü elde doğal biçimde göster", options: ["Tek elde tutma", "İki elde sunum", "Kutudan çıkarma"] },
-  { id: "mirror", label: "Ayna Yansımalı", description: "Yansıma ile editoryal ve premium görünüm", options: ["Tam yansıma", "Kısmi yansıma", "Lüks zemin yansıması"] },
-  { id: "stilllife", label: "Still Life / Obje Kompozisyonu", description: "Ürünleri seçili dekor objeleriyle kurgula", options: ["Taşlarla", "Kumaşla", "Metal objelerle", "Çiçeklerle", "Deniz temalı objelerle"] },
-  { id: "editorial", label: "Editorial / Moda Çekimi", description: "Dergi ve moda kampanyası estetiği", options: ["Moda çekimi", "Dramatik kompozisyon", "Dergi tarzı", "Artistik ışık"] },
-  { id: "lookbook", label: "Lookbook Tarzı", description: "Seri üretime uygun temiz koleksiyon dili", options: ["Sade fon", "Koleksiyon havası", "Temiz kadraj", "Premium moda sunumu"] },
+  { id: "model", label: "Lifestyle / İnsanlı", description: "Kahveyi gerçek tüketim veya servis anında göster", options: ["Elde kahve fincanı", "Kahve içerken", "Barista servis anı", "Masa başı lifestyle", "Kafe ortamı", "Editorial lifestyle"] },
+  { id: "studio", label: "Stüdyo Ürün Fotoğrafı", description: "Temiz ve e-ticaret odaklı kahve ürün çekimi", options: ["Beyaz fon", "Krem fon", "Koyu premium fon", "Soft gölgeli", "E-ticaret uyumlu", "İzole paket görünümü"] },
+  { id: "campaign", label: "Premium Kampanya Görseli", description: "Marka kampanyası ve reklam hissi", options: ["Dramatik ışık", "Premium fon", "Reklam afiş hissi", "Güçlü gölge", "Marka kampanyası hissi"] },
+  { id: "lifestyle", label: "Kafe / Günlük Kullanım", description: "Doğal kahve tüketimi ve gerçek ortam hissi", options: ["Doğal masa", "Kafe masası", "Evde kahve anı", "Elde fincan", "Günlük ortam"] },
+  { id: "flatlay", label: "Flat Lay / Masa Üstü", description: "Yukarıdan düzenlenmiş kahve kompozisyonu", options: ["Yukarıdan çekim", "Çekirdeklerle dekorlu", "Sade", "Çoklu ürün yerleşimi", "Demleme seti"] },
+  { id: "macro", label: "Makro / Detay Çekim", description: "Çekirdek, crema, doku ve ambalaj detaylarını öne çıkar", options: ["Kahve çekirdeği detayı", "Crema detayı", "Ambalaj dokusu", "Öğütülmüş kahve", "Ultra yakın çekim"] },
+  { id: "hand", label: "Elde Ürün / Fincan", description: "Paketi veya fincanı elde doğal biçimde göster", options: ["Paketi elde tutma", "Fincanı elde tutma", "İki elde sunum", "Paketi açma anı"] },
+  { id: "mirror", label: "Yansımalı Ürün Çekimi", description: "Yansıma ile editoryal ve premium görünüm", options: ["Tam yansıma", "Kısmi yansıma", "Premium zemin yansıması"] },
+  { id: "stilllife", label: "Still Life / Obje Kompozisyonu", description: "Kahve ürünlerini seçili dekor objeleriyle kurgula", options: ["Kahve çekirdekleriyle", "Keten kumaşla", "Seramik fincanla", "Ahşap ekipmanla", "Bitkilerle"] },
+  { id: "editorial", label: "Editorial / Marka Çekimi", description: "Dergi ve marka kampanyası estetiği", options: ["Editorial çekim", "Dramatik kompozisyon", "Dergi tarzı", "Artistik ışık"] },
+  { id: "lookbook", label: "Koleksiyon Serisi", description: "Seri üretime uygun tutarlı ürün dili", options: ["Sade fon", "Seri ürün havası", "Temiz kadraj", "Premium katalog sunumu"] },
   { id: "poster", label: "Reklam Afişi Tarzı", description: "Performans reklamı ve hero kreatif", options: ["Yazısız afiş", "Yazılı afiş", "Hero ürün", "Dikkat çekici kompozisyon"] },
   { id: "ugc", label: "UGC / Sosyal Medya Tarzı", description: "Daha doğal ve kullanıcı çekimi hissi", options: ["Doğal çekim", "Telefon kamerası hissi", "Sosyal medya görünümü", "Kullanıcı deneyimi havası"] },
-  { id: "packaging", label: "Paketleme / Kutu İçinde", description: "Hediye ve kutu deneyimini göster", options: ["Kutu içinde", "Kutudan çıkarken", "Hediye paketi", "Premium ambalaj"] },
-  { id: "set", label: "Kombin / Set Görseli", description: "Birden fazla ürünü birlikte sun", options: ["Kolye + küpe", "Yüzük + küpe", "Tam set", "Çoklu ürün premium sunum"] },
-  { id: "season", label: "Sezon Temalı", description: "Kampanya dönemine göre atmosfer oluştur", options: ["Yaz", "Sonbahar", "Gece", "Beach", "Bridal", "Özel gün", "Yılbaşı", "Sevgililer günü"] },
+  { id: "packaging", label: "Paket / Ambalaj", description: "ROSTA kahve ambalajını ve açılış deneyimini göster", options: ["Paket yakın plan", "Paketten dökülürken", "Kutu içinde", "Premium ambalaj"] },
+  { id: "set", label: "Set / Bundle Görseli", description: "Birden fazla kahve ürünü veya ekipmanı birlikte sun", options: ["Kahve + fincan", "Kahve + demleme ekipmanı", "Hediye seti", "Çoklu ürün premium sunum"] },
+  { id: "season", label: "Sezon Temalı", description: "Kampanya dönemine göre atmosfer oluştur", options: ["Yaz", "Sonbahar", "Kış", "Gece", "Özel gün", "Yılbaşı", "Bahar"] },
 ];
 
 const EXTRA_GROUPS: Array<{ id: ExtraKey; label: string; options: string[] }> = [
@@ -171,7 +171,7 @@ const QUICK_PROMPTS = [
 ];
 
 function correlationId() {
-  return globalThis.crypto?.randomUUID?.() || `ruthie-insight-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  return globalThis.crypto?.randomUUID?.() || `rosta-insight-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 }
 
 function id(prefix: string) {
