@@ -1,0 +1,88 @@
+/* Ported from Ruth Commerce panel motion language. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-exact-base44-page] .admin-card,
+  [data-exact-base44-page] .admin-metric,
+  [data-exact-base44-page] .admin-theme-lock-card {
+    transition:
+      transform 180ms cubic-bezier(.22,1,.36,1),
+      box-shadow 180ms cubic-bezier(.22,1,.36,1),
+      border-color 160ms ease;
+  }
+
+  [data-exact-base44-page] .admin-card:hover,
+  [data-exact-base44-page] .admin-metric:hover,
+  [data-exact-base44-page] .admin-theme-lock-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 28px rgba(17,17,17,.065);
+  }
+
+  [data-exact-base44-page] button:not(:disabled),
+  [data-exact-base44-page] a[role="button"] {
+    transition:
+      transform 140ms cubic-bezier(.22,1,.36,1),
+      box-shadow 160ms ease,
+      background-color 140ms ease,
+      border-color 140ms ease,
+      color 140ms ease;
+  }
+
+  [data-exact-base44-page] button:not(:disabled):hover,
+  [data-exact-base44-page] a[role="button"]:hover { transform: translateY(-.5px); }
+
+  [data-exact-base44-page] button:not(:disabled):active,
+  [data-exact-base44-page] a[role="button"]:active {
+    transform: translateY(1px) scale(.985);
+    transition-duration:70ms;
+  }
+
+  [data-exact-base44-page] input,
+  [data-exact-base44-page] select,
+  [data-exact-base44-page] textarea {
+    transition:border-color 150ms ease,box-shadow 150ms ease,background-color 150ms ease;
+  }
+
+  [data-exact-base44-page] input:focus-visible,
+  [data-exact-base44-page] select:focus-visible,
+  [data-exact-base44-page] textarea:focus-visible {
+    box-shadow:0 0 0 3px rgba(185,86,61,.12);
+  }
+
+  [data-exact-base44-page] { animation:rosta-panel-page-enter 220ms cubic-bezier(.22,1,.36,1) both; }
+  @keyframes rosta-panel-page-enter {
+    from { opacity:.94; transform:translateY(3px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+
+  .admin-editor-backdrop { animation:rosta-backdrop-in 180ms ease both; }
+  .admin-editor-panel { animation:rosta-sheet-right 280ms cubic-bezier(.32,.72,0,1) both; }
+  @keyframes rosta-backdrop-in { from { opacity:0; } to { opacity:1; } }
+  @keyframes rosta-sheet-right { from { transform:translate3d(100%,0,0); } to { transform:translate3d(0,0,0); } }
+}
+
+@media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
+  .admin-editor-panel {
+    animation-name:rosta-sheet-up;
+    transform-origin:50% 100%;
+  }
+  @keyframes rosta-sheet-up {
+    from { transform:translate3d(0,100%,0); opacity:.98; }
+    to { transform:translate3d(0,0,0); opacity:1; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-exact-base44-page] *,
+  .admin-editor-backdrop,
+  .admin-editor-panel {
+    animation-duration:.01ms!important;
+    transition-duration:.01ms!important;
+  }
+}
+
+@media (hover:none) {
+  [data-exact-base44-page] .admin-card:hover,
+  [data-exact-base44-page] .admin-metric:hover,
+  [data-exact-base44-page] button:not(:disabled):hover {
+    transform:none;
+  }
+}
