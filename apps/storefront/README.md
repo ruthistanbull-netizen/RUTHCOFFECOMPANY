@@ -1,8 +1,15 @@
-# Ruth Istanbul — Base44 Next Theme
+# ROSTA Coffee Co. Storefront
 
-Base44 tasarımından Next.js + Vercel + self-hosted Supabase yapısına çevrilmiş Ruth Istanbul site projesi.
+ROSTA Coffee Co. storefront, Next.js tabanlı kahve perakende/toptan satış ve marka deneyimidir.
 
-## Sayfalar
+## Production
+
+- Storefront: `https://rostacoffecompany.zeabur.app`
+- Admin: `https://rostapanel.zeabur.app`
+- Supabase project ref: `fposvxuryzidmeuwytbg`
+- Deploy platform: Zeabur
+
+## Ana sayfalar
 
 - `/`
 - `/products`
@@ -17,21 +24,21 @@ Base44 tasarımından Next.js + Vercel + self-hosted Supabase yapısına çevril
 - `/terms`
 - `/kvkk`
 
-## Vercel ENV
+## Environment
+
+Güncel örnek değerler için `.env.example` dosyasını kullan.
+
+Temel Supabase değişkenleri:
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=https://supabase.ruthistanbul.com
-NEXT_PUBLIC_SUPABASE_ANON_KEY=<self-hosted anon key>
-SUPABASE_SERVICE_ROLE_KEY=<self-hosted service-role key; server-only>
-NEXT_TELEMETRY_DISABLED=1
+NEXT_PUBLIC_SUPABASE_URL=https://fposvxuryzidmeuwytbg.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<ROSTA anon/publishable key>
+SUPABASE_SERVICE_ROLE_KEY=<ROSTA service-role key; server-only>
+NEXT_PUBLIC_SITE_URL=https://rostacoffecompany.zeabur.app
 ```
 
-## Önemli
+`SUPABASE_SERVICE_ROLE_KEY` hiçbir zaman browser bundle içine taşınmaz.
 
-`SUPABASE_SERVICE_ROLE_KEY` yalnız server route/action kodunda kullanılabilir; browser bundle içine taşınamaz. Storefront ve panel production ortamı canonical self-hosted Supabase adresi `https://supabase.ruthistanbul.com` üzerinden çalışır.
+## İzolasyon
 
-Production deploy doğrulaması UI Architecture Guard snapshot kontrolüyle birlikte çalışır.
-
-Snapshot-only CI düzeltmelerinden sonra production storefront build'i bilinçli olarak yeniden tetiklenir.
-
-Deploy preflight marker: Phase 8 behavioral verifier alignment validated on 2026-08-28.
+Storefront yalnız ROSTA Supabase ve ROSTA servislerini kullanır. Eski marka ürün, müşteri, sipariş veya katalog kayıtları fallback olarak kullanılmaz.
