@@ -71,8 +71,21 @@ export function AdminAuthGate({ children }: { children: ReactNode }) {
     setError("");
     try {
       const supabase = getSupabaseBrowser();
-      const { error: loginError } = await supabase.auth.signInWithPassword({ email, password });
+      const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({ email, password });
       if (loginError) throw loginError;
+      const token = loginData.session?.access_token;
+      if (!token) throw new Error("Panel oturumu oluşturulamadı.");
+      const response = await fetch("/api/me", {
+        headers: { Authorization: `Bearer ${token}` },
+        cache: "no-store",
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || payload?.ok === false) {
+        await supabase.auth.signOut();
+        throw new Error(payload?.error || "Panel yetkisi doğrulanamadı.");
+      }
+      setSignedIn(true);
+      setReady(true);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Giriş yapılamadı.");
     } finally {
