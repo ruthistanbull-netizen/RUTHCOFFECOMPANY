@@ -9,14 +9,14 @@ import { useCart } from "@/components/cart/CartProvider";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { getRuthAttribution, trackRuthEvent } from "@/components/analytics/SiteAnalytics";
 import {
-  RUTHIE_POINTS_UPDATED_EVENT,
-  RUTHIE_WELCOME_POINTS,
-  calculateRuthiePoints,
-  grantRuthieWelcomePoints,
+  ROSTA_POINTS_UPDATED_EVENT,
+  ROSTA_WELCOME_POINTS,
+  calculateRostaPoints,
+  grantRostaWelcomePoints,
   pointsToLira,
-  makeRuthieOrderRewardKey,
+  makeRostaOrderRewardKey,
   pointsForOrderTotal,
-  savePendingRuthieOrderReward,
+  savePendingRostaOrderReward,
 } from "@/lib/rewards";
 
 type CheckoutForm = {
@@ -200,9 +200,9 @@ export function CheckoutClient() {
   const [cardOptionsMessage, setCardOptionsMessage] = useState<string | null>(null);
   const [paytrTestMode, setPaytrTestMode] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [useRuthiePoints, setUseRuthiePoints] = useState(true);
-  const [requestedRuthiePoints, setRequestedRuthiePoints] = useState(0);
-  const [isRuthiePointsOpen, setIsRuthiePointsOpen] = useState(false);
+  const [useRostaPoints, setUseRostaPoints] = useState(true);
+  const [requestedRostaPoints, setRequestedRostaPoints] = useState(0);
+  const [isRostaPointsOpen, setIsRostaPointsOpen] = useState(false);
   const [availableDiscounts, setAvailableDiscounts] = useState<AccountDiscount[]>([]);
   const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discountPercent?: number; title?: string } | null>(null);
   const [couponInput, setCouponInput] = useState("");
@@ -271,16 +271,16 @@ export function CheckoutClient() {
 
   useEffect(() => {
     if (!user) return;
-    grantRuthieWelcomePoints();
+    grantRostaWelcomePoints();
     setRewardRefreshKey((current) => current + 1);
   }, [user]);
 
   useEffect(() => {
     const refresh = () => setRewardRefreshKey((current) => current + 1);
-    window.addEventListener(RUTHIE_POINTS_UPDATED_EVENT, refresh);
+    window.addEventListener(ROSTA_POINTS_UPDATED_EVENT, refresh);
     window.addEventListener("storage", refresh);
     return () => {
-      window.removeEventListener(RUTHIE_POINTS_UPDATED_EVENT, refresh);
+      window.removeEventListener(ROSTA_POINTS_UPDATED_EVENT, refresh);
       window.removeEventListener("storage", refresh);
     };
   }, []);
@@ -577,31 +577,31 @@ export function CheckoutClient() {
       .catch(() => undefined);
   }, [session?.access_token, rewardRefreshKey]);
 
-  const rewardSummary = calculateRuthiePoints({ isLoggedIn: Boolean(user), birthdayPoints });
+  const rewardSummary = calculateRostaPoints({ isLoggedIn: Boolean(user), birthdayPoints });
   void rewardRefreshKey;
-  const maxRuthiePointsForCheckout = user
+  const maxRostaPointsForCheckout = user
     ? Math.max(0, Math.floor(serverRewardPoints ?? rewardSummary.totalPoints))
     : 0;
-  const ruthiePointOptions = Array.from(
-    { length: Math.max(0, Math.floor(maxRuthiePointsForCheckout / 500)) },
+  const rostaPointOptions = Array.from(
+    { length: Math.max(0, Math.floor(maxRostaPointsForCheckout / 500)) },
     (_, index) => (index + 1) * 500,
   );
-  const selectedRuthiePoints = user && useRuthiePoints
-    ? Math.min(maxRuthiePointsForCheckout, Math.max(0, Math.floor(Number(requestedRuthiePoints || 0))))
+  const selectedRostaPoints = user && useRostaPoints
+    ? Math.min(maxRostaPointsForCheckout, Math.max(0, Math.floor(Number(requestedRostaPoints || 0))))
     : 0;
-  const localRuthPointDiscount = Math.min(subtotal, pointsToLira(selectedRuthiePoints));
-  const localCouponBase = Math.max(0, subtotal - localRuthPointDiscount);
+  const localRostaPointDiscount = Math.min(subtotal, pointsToLira(selectedRostaPoints));
+  const localCouponBase = Math.max(0, subtotal - localRostaPointDiscount);
   const localCouponDiscount = appliedCoupon?.discountPercent
     ? Number(((localCouponBase * appliedCoupon.discountPercent) / 100).toFixed(2))
     : 0;
   const quoteSubtotal = Number(pricingQuote?.subtotal ?? subtotal);
   const automaticDiscount = Number(pricingQuote?.automaticDiscountTotal || 0);
-  const ruthPointDiscount = Number(pricingQuote?.rewardDiscountTotal ?? localRuthPointDiscount);
+  const rostaPointDiscount = Number(pricingQuote?.rewardDiscountTotal ?? localRostaPointDiscount);
   const couponDiscount = Number(pricingQuote?.couponDiscountTotal ?? localCouponDiscount);
   const shippingFee = Number(pricingQuote?.shippingFee || 0);
   const baseShippingFee = Number(pricingQuote?.baseShippingFee || 0);
-  const totalDiscount = Number(pricingQuote?.discountTotal ?? (automaticDiscount + ruthPointDiscount + couponDiscount));
-  const checkoutTotal = Number(pricingQuote?.totalAmount ?? Math.max(0, subtotal - localRuthPointDiscount - localCouponDiscount));
+  const totalDiscount = Number(pricingQuote?.discountTotal ?? (automaticDiscount + rostaPointDiscount + couponDiscount));
+  const checkoutTotal = Number(pricingQuote?.totalAmount ?? Math.max(0, subtotal - localRostaPointDiscount - localCouponDiscount));
   const selectedInstallmentOption = installmentOptions.find((option) => option.count === selectedInstallment) || null;
   const installmentRate = selectedInstallmentOption?.rate || 0;
   const installmentTotal = selectedInstallment > 0
@@ -612,7 +612,7 @@ export function CheckoutClient() {
     ? Number((installmentTotal / selectedInstallment).toFixed(2))
     : installmentTotal;
   const normalCheckoutTotal = Number((quoteSubtotal + baseShippingFee).toFixed(2));
-  const ruthPointsToUse = selectedRuthiePoints;
+  const rostaPointsToUse = selectedRostaPoints;
   const cartQuoteSignature = useMemo(
     () => JSON.stringify(items.map((item) => ({ key: item.key, slug: item.slug, quantity: item.quantity }))),
     [items],
@@ -623,12 +623,12 @@ export function CheckoutClient() {
         cart: cartQuoteSignature,
         customer: form,
         coupon: appliedCoupon?.code || null,
-        points: ruthPointsToUse,
+        points: rostaPointsToUse,
         total: installmentTotal,
         installment: selectedInstallment,
         installmentRate,
       }),
-    [appliedCoupon?.code, cartQuoteSignature, form, installmentRate, installmentTotal, ruthPointsToUse, selectedInstallment],
+    [appliedCoupon?.code, cartQuoteSignature, form, installmentRate, installmentTotal, rostaPointsToUse, selectedInstallment],
   );
 
   useEffect(() => {
@@ -693,23 +693,23 @@ export function CheckoutClient() {
   }, [cardForm.cardNumber, checkoutStep]);
 
   useEffect(() => {
-    if (!user || maxRuthiePointsForCheckout <= 0) {
-      setRequestedRuthiePoints(0);
-      setUseRuthiePoints(false);
+    if (!user || maxRostaPointsForCheckout <= 0) {
+      setRequestedRostaPoints(0);
+      setUseRostaPoints(false);
       return;
     }
 
-    setRequestedRuthiePoints((current) => Math.min(Math.max(0, Math.floor(Number(current || 0))), maxRuthiePointsForCheckout));
-  }, [maxRuthiePointsForCheckout, user]);
+    setRequestedRostaPoints((current) => Math.min(Math.max(0, Math.floor(Number(current || 0))), maxRostaPointsForCheckout));
+  }, [maxRostaPointsForCheckout, user]);
 
-  const selectRuthiePointAmount = (amount: number) => {
-    const safeAmount = Math.min(maxRuthiePointsForCheckout, Math.max(0, Math.floor(Number(amount || 0))));
-    setUseRuthiePoints(safeAmount > 0);
-    setRequestedRuthiePoints(safeAmount);
+  const selectRostaPointAmount = (amount: number) => {
+    const safeAmount = Math.min(maxRostaPointsForCheckout, Math.max(0, Math.floor(Number(amount || 0))));
+    setUseRostaPoints(safeAmount > 0);
+    setRequestedRostaPoints(safeAmount);
   };
 
-  const useAllRuthiePoints = () => {
-    selectRuthiePointAmount(maxRuthiePointsForCheckout);
+  const useAllRostaPoints = () => {
+    selectRostaPointAmount(maxRostaPointsForCheckout);
   };
 
   useEffect(() => {
@@ -757,9 +757,9 @@ export function CheckoutClient() {
         couponCode: code || null,
         customerEmail: form.email || user?.email || null,
         rewards: {
-          useRuthPoints: Boolean(user && useRuthiePoints),
-          requestedDiscount: localRuthPointDiscount,
-          pointsUsed: selectedRuthiePoints,
+          useRuthPoints: Boolean(user && useRostaPoints),
+          requestedDiscount: localRostaPointDiscount,
+          pointsUsed: selectedRostaPoints,
         },
         draftToken: openPaymentDirectly ? draftToken : null,
       }),
@@ -803,7 +803,7 @@ export function CheckoutClient() {
     };
     // cartQuoteSignature sepet içeriğinin stabil özetidir.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cartQuoteSignature, appliedCoupon?.code, selectedRuthiePoints, useRuthiePoints, session?.access_token, form.email, isReady, openPaymentDirectly]);
+  }, [cartQuoteSignature, appliedCoupon?.code, selectedRostaPoints, useRostaPoints, session?.access_token, form.email, isReady, openPaymentDirectly]);
 
   const selectAccountDiscount = async (discount: AccountDiscount) => {
     try {
@@ -959,7 +959,7 @@ export function CheckoutClient() {
         total_amount: installmentTotal,
         base_total_amount: checkoutTotal,
         installment_fee: installmentFee,
-        reward_points_used: ruthPointsToUse,
+        reward_points_used: rostaPointsToUse,
         coupon_code: appliedCoupon?.code || null,
         installment_count: selectedInstallment,
       });
@@ -988,9 +988,9 @@ export function CheckoutClient() {
             quantity: item.quantity,
           })),
           rewards: {
-            useRuthPoints: Boolean(user && useRuthiePoints),
-            requestedDiscount: ruthPointDiscount,
-            pointsUsed: ruthPointsToUse,
+            useRuthPoints: Boolean(user && useRostaPoints),
+            requestedDiscount: rostaPointDiscount,
+            pointsUsed: rostaPointsToUse,
           },
           coupon: appliedCoupon ? { code: appliedCoupon.code } : null,
           attribution: getRuthAttribution(),
@@ -1012,13 +1012,13 @@ export function CheckoutClient() {
       }
 
       if (user) {
-        const orderKey = makeRuthieOrderRewardKey(data.orderNo || draftTokenRef.current || checkoutDraftToken);
-        savePendingRuthieOrderReward({
+        const orderKey = makeRostaOrderRewardKey(data.orderNo || draftTokenRef.current || checkoutDraftToken);
+        savePendingRostaOrderReward({
           orderKey,
           orderNo: data.orderNo || null,
           totalAmount: installmentTotal,
           pointsToEarn: pointsForOrderTotal(checkoutTotal),
-          pointsUsed: ruthPointsToUse,
+          pointsUsed: rostaPointsToUse,
         });
       }
 
@@ -1582,30 +1582,30 @@ export function CheckoutClient() {
                     <>
                       <button
                         type="button"
-                        onClick={() => setIsRuthiePointsOpen((current) => !current)}
+                        onClick={() => setIsRostaPointsOpen((current) => !current)}
                         className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left transition hover:bg-cream/70"
-                        aria-expanded={isRuthiePointsOpen}
+                        aria-expanded={isRostaPointsOpen}
                       >
                         <span>
                           <span className="block font-heading text-sm text-ink">ROSTA Points Kullan</span>
                           <span className="mt-1 block text-xs leading-5 text-muted-ruth">
-                            Hesabında {maxRuthiePointsForCheckout.toLocaleString("tr-TR")} ROSTA Points var.
+                            Hesabında {maxRostaPointsForCheckout.toLocaleString("tr-TR")} ROSTA Points var.
                           </span>
-                          {selectedRuthiePoints > 0 && (
+                          {selectedRostaPoints > 0 && (
                             <span className="mt-1 block text-xs font-medium text-gold-dark">
-                              Seçilen: {selectedRuthiePoints.toLocaleString("tr-TR")} Points · -{formatPrice(ruthPointDiscount, "TRY")}
+                              Seçilen: {selectedRostaPoints.toLocaleString("tr-TR")} Points · -{formatPrice(rostaPointDiscount, "TRY")}
                             </span>
                           )}
                         </span>
                         <ChevronDown
                           size={18}
-                          className={`shrink-0 text-gold-dark transition-transform duration-300 ${isRuthiePointsOpen ? "rotate-180" : ""}`}
+                          className={`shrink-0 text-gold-dark transition-transform duration-300 ${isRostaPointsOpen ? "rotate-180" : ""}`}
                         />
                       </button>
 
-                      {isRuthiePointsOpen && (
+                      {isRostaPointsOpen && (
                         <div className="border-t border-gold/10 px-4 pb-4 pt-3">
-                          {maxRuthiePointsForCheckout > 0 ? (
+                          {maxRostaPointsForCheckout > 0 ? (
                             <div>
                               <p className="text-xs leading-5 text-muted-ruth">
                                 Kullanmak istediğin puanı seç. Hepsini kullan dediğinde hesabındaki kullanılabilir puanın tamamı uygulanır.
@@ -1613,19 +1613,19 @@ export function CheckoutClient() {
                               <div className="mt-3 grid gap-2">
                                 <button
                                   type="button"
-                                  onClick={() => selectRuthiePointAmount(0)}
-                                  className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs transition ${selectedRuthiePoints === 0 ? "border-gold-dark bg-cream text-ink" : "border-gold/15 bg-white text-ink hover:border-gold-dark"}`}
+                                  onClick={() => selectRostaPointAmount(0)}
+                                  className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs transition ${selectedRostaPoints === 0 ? "border-gold-dark bg-cream text-ink" : "border-gold/15 bg-white text-ink hover:border-gold-dark"}`}
                                 >
                                   <span>Puan kullanma</span>
                                   <span>0 TL</span>
                                 </button>
-                                {ruthiePointOptions.map((amount) => {
-                                  const selected = useRuthiePoints && selectedRuthiePoints === amount;
+                                {rostaPointOptions.map((amount) => {
+                                  const selected = useRostaPoints && selectedRostaPoints === amount;
                                   return (
                                     <button
                                       key={amount}
                                       type="button"
-                                      onClick={() => selectRuthiePointAmount(amount)}
+                                      onClick={() => selectRostaPointAmount(amount)}
                                       className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs transition ${selected ? "border-gold-dark bg-ink text-cream" : "border-gold/15 bg-white text-ink hover:border-gold-dark"}`}
                                     >
                                       <span>{amount.toLocaleString("tr-TR")} Points</span>
@@ -1635,11 +1635,11 @@ export function CheckoutClient() {
                                 })}
                                 <button
                                   type="button"
-                                  onClick={useAllRuthiePoints}
-                                  className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs font-medium uppercase tracking-wide-luxe transition ${useRuthiePoints && selectedRuthiePoints === maxRuthiePointsForCheckout ? "border-gold-dark bg-ink text-cream" : "border-gold/15 bg-white text-ink hover:border-gold-dark"}`}
+                                  onClick={useAllRostaPoints}
+                                  className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs font-medium uppercase tracking-wide-luxe transition ${useRostaPoints && selectedRostaPoints === maxRostaPointsForCheckout ? "border-gold-dark bg-ink text-cream" : "border-gold/15 bg-white text-ink hover:border-gold-dark"}`}
                                 >
                                   <span>Hepsini Kullan</span>
-                                  <span>{maxRuthiePointsForCheckout.toLocaleString("tr-TR")} Points</span>
+                                  <span>{maxRostaPointsForCheckout.toLocaleString("tr-TR")} Points</span>
                                 </button>
                               </div>
                             </div>
@@ -1655,7 +1655,7 @@ export function CheckoutClient() {
                     <div className="px-4 py-4 text-sm">
                       <p className="font-heading text-ink">ROSTA Points</p>
                       <p className="mt-1 text-xs leading-5 text-muted-ruth">
-                        Üye ol, {RUTHIE_WELCOME_POINTS.toLocaleString("tr-TR")} ROSTA Points kazan ve ödeme adımında {formatPrice(200, "TRY")} indirim kullan.
+                        Üye ol, {ROSTA_WELCOME_POINTS.toLocaleString("tr-TR")} ROSTA Points kazan ve ödeme adımında {formatPrice(200, "TRY")} indirim kullan.
                       </p>
                       <Link href="/login?redirect=/checkout" className="mt-3 inline-block text-xs uppercase tracking-wide-luxe text-gold-dark underline underline-offset-4">
                         Giriş Yap / Üye Ol
@@ -1718,7 +1718,7 @@ export function CheckoutClient() {
 
                 </>
 
-                {(automaticDiscount > 0 || ruthPointDiscount > 0 || couponDiscount > 0) && (
+                {(automaticDiscount > 0 || rostaPointDiscount > 0 || couponDiscount > 0) && (
                   <div className="rounded-lg border border-gold/10 bg-ivory/75 p-3 text-sm">
                     <p className="mb-2 text-[10px] uppercase tracking-wide-luxe text-muted-ruth">Kullanılan indirim ve puanlar</p>
                     {automaticDiscount > 0 && (
@@ -1727,10 +1727,10 @@ export function CheckoutClient() {
                         <span>-{formatPrice(automaticDiscount, "TRY")}</span>
                       </div>
                     )}
-                    {ruthPointDiscount > 0 && (
+                    {rostaPointDiscount > 0 && (
                       <div className="flex justify-between text-gold-dark">
-                        <span>{ruthPointsToUse.toLocaleString("tr-TR")} ROSTA Points</span>
-                        <span>-{formatPrice(ruthPointDiscount, "TRY")}</span>
+                        <span>{rostaPointsToUse.toLocaleString("tr-TR")} ROSTA Points</span>
+                        <span>-{formatPrice(rostaPointDiscount, "TRY")}</span>
                       </div>
                     )}
                     {couponDiscount > 0 && (
