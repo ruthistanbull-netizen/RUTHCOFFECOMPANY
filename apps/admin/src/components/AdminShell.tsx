@@ -416,6 +416,9 @@ export function AdminShell({ children }: { children: ReactNode }) {
             {collapsed ? <PanelLeft size={18} /> : <PanelLeftClose size={18} />}
           </button>
           <span className="rosta-commerce-page-title">{current?.label || "Kontrol Merkezi"}</span>
+          <Link href="/" className="rosta-commerce-mobile-brand" aria-label="ROSTA Panel">
+            <img src="/rosta-coffee-co.svg" alt="ROSTA Coffee Co." />
+          </Link>
 
           <button type="button" className="rosta-commerce-search" onClick={() => setSearchOpen(true)}>
             <Search size={16} />
