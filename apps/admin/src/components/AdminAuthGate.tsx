@@ -1,20 +1,18 @@
 "use client";
 
-import { useEffect, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
+import { ExactAuth } from "@/components/base44-exact/ExactAuth";
 
 export function AdminAuthGate({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
-  const [email, setEmail] = useState("ruthistanbull@gmail.com");
-  const [password, setPassword] = useState("");
-  const [remember, setRemember] = useState(true);
-  const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
     let mounted = true;
     let unsubscribe = () => {};
+
     try {
       const supabase = getSupabaseBrowser();
       fetch("/api/bootstrap-admin/auto", { method: "POST", cache: "no-store" })
@@ -31,7 +29,9 @@ export function AdminAuthGate({ children }: { children: ReactNode }) {
             setReady(true);
           });
         });
+
       const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
+        if (!mounted) return;
         setSignedIn(Boolean(session));
         setReady(true);
       });
@@ -40,56 +40,30 @@ export function AdminAuthGate({ children }: { children: ReactNode }) {
       setError(caught instanceof Error ? caught.message : "Panel Supabase bağlantısı kurulamadı.");
       setReady(true);
     }
+
     return () => {
       mounted = false;
       unsubscribe();
     };
   }, []);
 
-  async function login(event: FormEvent) {
-    event.preventDefault();
-    setBusy(true);
-    setError("");
-    try {
-      const supabase = getSupabaseBrowser();
-      const { error: loginError } = await supabase.auth.signInWithPassword({ email, password });
-      if (loginError) throw loginError;
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Giriş yapılamadı.");
-    } finally {
-      setBusy(false);
-    }
-  }
-
   if (!ready) {
-    return <div className="admin-loading-screen"><div className="admin-loader" /><span>ROSTA Panel yükleniyor</span></div>;
-  }
-
-  if (!signedIn) {
     return (
-      <main className="admin-login">
-        <section className="admin-login-brand">
-          <img className="admin-login-logo" src="/rosta-coffee-co.svg" alt="ROSTA Coffee Co." />
-          <div>
-            <p className="admin-kicker">CONTROL ROOM</p>
-            <h1>Kahvenin her adımını tek yerden yönet.</h1>
-            <p className="admin-login-copy">Storefront, ürünler, siparişler, müşteriler ve mağaza görünümü aynı altyapı üzerinden yönetilir.</p>
+      <main className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-background px-5">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,hsl(var(--accent)/0.13),transparent_38%)]" />
+        <div className="relative text-center">
+          <img src="/rosta-coffee-co.svg" alt="ROSTA Coffee Co." className="mx-auto h-24 w-52 object-contain" />
+          <h1 className="mt-6 text-xl font-bold text-main">Panel hazırlanıyor</h1>
+          <p className="mt-2 text-sm text-muted">{error || "Güvenli yönetici oturumu doğrulanıyor."}</p>
+          <div className="mx-auto mt-5 h-1.5 w-48 overflow-hidden rounded-full bg-surface-tertiary">
+            <div className="h-full w-2/5 rounded-full bg-accent animate-[ruth-loading_1.4s_ease-in-out_infinite]" />
           </div>
-        </section>
-        <section className="admin-login-form-wrap">
-          <form className="admin-login-form" onSubmit={login}>
-            <p className="admin-kicker">YÖNETİCİ GİRİŞİ</p>
-            <h2>ROSTA Panel</h2>
-            <label><span>E-posta</span><input type="email" value={email} onChange={(event) => setEmail(event.target.value)} required autoComplete="email" /></label>
-            <label><span>Şifre</span><input type="password" value={password} onChange={(event) => setPassword(event.target.value)} required autoComplete="current-password" /></label>
-            <label className="admin-check"><input type="checkbox" checked={remember} onChange={(event) => setRemember(event.target.checked)} /><span>Oturumu açık tut</span></label>
-            {error ? <div className="admin-error">{error}</div> : null}
-            <button className="admin-primary-button" disabled={busy}>{busy ? "Giriş yapılıyor…" : "Giriş Yap"}</button>
-          </form>
-        </section>
+        </div>
       </main>
     );
   }
+
+  if (!signedIn) return <ExactAuth mode="login" />;
 
   return <>{children}</>;
 }
