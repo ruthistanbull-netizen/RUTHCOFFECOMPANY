@@ -16,7 +16,7 @@ export const revalidate = 300;
 function description(product: Product) {
   return cleanSeoText(
     product.seo_description || product.short_description || product.description,
-    `${product.name} Ruth Istanbul online mağazasında.`,
+    `${product.name} | ROSTA COFFEE CO.`,
     160,
   );
 }
