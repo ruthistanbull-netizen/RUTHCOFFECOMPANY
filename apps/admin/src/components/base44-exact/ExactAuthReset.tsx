@@ -7,7 +7,7 @@ import { ExactAuth } from "./ExactAuth";
 /**
  * Password-recovery links are single-use. Capture their URL payload before
  * supabase-js can consume/clean it, establish the recovery session, then mount
- * the existing ExactAuth UI. Supports Ruth's custom Gmail token_hash links as
+ * the existing ExactAuth UI. Supports ROSTA's custom Gmail token_hash links as
  * well as the legacy Supabase code/hash recovery formats.
  */
 export function ExactAuthReset({ mode }: { mode: "reset" }) {
