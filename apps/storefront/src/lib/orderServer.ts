@@ -141,7 +141,7 @@ function makeOrderNo() {
     .replace(/[-:.TZ]/g, "")
     .slice(0, 14);
   const random = Math.random().toString(36).slice(2, 8).toUpperCase();
-  return `RTH${stamp}${random}`;
+  return `RST${stamp}${random}`;
 }
 
 function makeResumeToken() {
