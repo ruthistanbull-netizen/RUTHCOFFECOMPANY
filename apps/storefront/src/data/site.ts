@@ -4,9 +4,6 @@ import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 import { automaticDiscountForItem, loadDiscountCampaignSettings } from "@/lib/discountCampaigns";
 import {
   isChainProduct,
-  isNecklaceProduct,
-  isRingProduct,
-  isRuthAtelierProduct,
   productCategoryValues,
   productHasImage,
 } from "@/lib/productDisplay";
@@ -31,9 +28,10 @@ import {
   type ThemeCustomizerSettings,
 } from "@/lib/themeCustomizer";
 import { applyRostaStorefrontDesignSystem } from "@/lib/rostaDesignSystem";
-import { generatedProducts } from "@/data/generated-products";
-
-const fallbackProducts: Product[] = generatedProducts;
+// ROSTA never falls back to the copied Ruth Istanbul static catalog.
+// If ROSTA Supabase is unavailable, serving an empty/last-known-good catalog
+// is safer than exposing stale products from another brand.
+const fallbackProducts: Product[] = [];
 const USE_SUPABASE_CATALOG =
   process.env.NEXT_PUBLIC_USE_SUPABASE_CATALOG !== "false";
 let staticProductsCache: Product[] | null = null;
@@ -646,24 +644,6 @@ export async function getProducts(): Promise<Product[]> {
 export async function getFeaturedProducts(): Promise<Product[]> {
   const products = await getProducts();
 
-  const atelierPieces = products
-    .filter(
-      (product) =>
-        isRuthAtelierProduct(product) &&
-        (isRingProduct(product) || isNecklaceProduct(product)),
-    )
-    .sort((a, b) => {
-      const newScore = Number(Boolean(b.is_new)) - Number(Boolean(a.is_new));
-      if (newScore !== 0) return newScore;
-      const featuredScore =
-        Number(Boolean(b.is_featured)) - Number(Boolean(a.is_featured));
-      if (featuredScore !== 0) return featuredScore;
-      return (
-        (a.sort_order ?? Number.MAX_SAFE_INTEGER) -
-        (b.sort_order ?? Number.MAX_SAFE_INTEGER)
-      );
-    });
-
   const featured = products
     .filter((product) => product.is_featured)
     .sort(
@@ -684,7 +664,7 @@ export async function getFeaturedProducts(): Promise<Product[]> {
     });
 
   const bySlug = new Map<string, Product>();
-  for (const product of [...atelierPieces, ...featured, ...rest]) {
+  for (const product of [...featured, ...rest]) {
     if (!productHasImage(product)) continue;
     if (!bySlug.has(product.slug)) bySlug.set(product.slug, product);
     if (bySlug.size >= 12) break;
