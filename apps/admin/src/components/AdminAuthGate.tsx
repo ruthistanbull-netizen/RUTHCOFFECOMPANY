@@ -20,16 +20,39 @@ export function AdminAuthGate({ children }: { children: ReactNode }) {
       supabase.auth.getSession().then(({ data, error: sessionError }) => {
         if (!mounted) return;
         if (sessionError) setError(sessionError.message);
-        setSignedIn(Boolean(data.session));
-        setReady(true);
+        if (!data.session) {
+          setSignedIn(false);
+          setReady(true);
+          return;
+        }
+        fetch("/api/me", {
+          headers: { Authorization: `Bearer ${data.session.access_token}` },
+          cache: "no-store",
+        })
+          .then(async (response) => {
+            const payload = await response.json().catch(() => ({}));
+            if (!response.ok || payload?.ok === false) throw new Error(payload?.error || "Panel yetkisi doğrulanamadı.");
+            if (!mounted) return;
+            setSignedIn(true);
+          })
+          .catch((caught) => {
+            if (!mounted) return;
+            setSignedIn(false);
+            setError(caught instanceof Error ? caught.message : "Panel yetkisi doğrulanamadı.");
+          })
+          .finally(() => {
+            if (mounted) setReady(true);
+          });
       }).catch((caught) => {
         if (!mounted) return;
         setError(caught instanceof Error ? caught.message : "Panel oturumu okunamadı.");
         setReady(true);
       });
       const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
-        setSignedIn(Boolean(session));
-        setReady(true);
+        if (!session) {
+          setSignedIn(false);
+          setReady(true);
+        }
       });
       unsubscribe = () => subscription.subscription.unsubscribe();
     } catch (caught) {
