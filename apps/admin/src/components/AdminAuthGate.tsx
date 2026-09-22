@@ -6,7 +6,7 @@ import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
 export function AdminAuthGate({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState("ruthistanbull@gmail.com");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -17,16 +17,20 @@ export function AdminAuthGate({ children }: { children: ReactNode }) {
     let unsubscribe = () => {};
     try {
       const supabase = getSupabaseBrowser();
-      supabase.auth.getSession().then(({ data, error: sessionError }) => {
-        if (!mounted) return;
-        if (sessionError) setError(sessionError.message);
-        setSignedIn(Boolean(data.session));
-        setReady(true);
-      }).catch((caught) => {
-        if (!mounted) return;
-        setError(caught instanceof Error ? caught.message : "Panel oturumu okunamadı.");
-        setReady(true);
-      });
+      fetch("/api/bootstrap-admin/auto", { method: "POST", cache: "no-store" })
+        .catch(() => null)
+        .finally(() => {
+          supabase.auth.getSession().then(({ data, error: sessionError }) => {
+            if (!mounted) return;
+            if (sessionError) setError(sessionError.message);
+            setSignedIn(Boolean(data.session));
+            setReady(true);
+          }).catch((caught) => {
+            if (!mounted) return;
+            setError(caught instanceof Error ? caught.message : "Panel oturumu okunamadı.");
+            setReady(true);
+          });
+        });
       const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
         setSignedIn(Boolean(session));
         setReady(true);
