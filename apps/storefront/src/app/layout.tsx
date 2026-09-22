@@ -13,7 +13,6 @@ import "@ruth-commerce/ui/operations.css";
 import "@ruth-commerce/ui/order-card.css";
 import "@ruth-commerce/ui/search-shell.css";
 import "./globals.css";
-import "./ruthie-offer5-motion.css";
 import "./necklace-size-guide.css";
 import "./product-image-standard.css";
 import "./product-header-contrast.css";
@@ -26,7 +25,6 @@ import { AnalyticsConsentGate } from "@/components/analytics/AnalyticsConsentGat
 import { PremiumInteractions } from "@/components/PremiumInteractions";
 import { NavigationSpeedup } from "@/components/NavigationSpeedup";
 import { ProductNavigationContextCapture } from "@/components/ProductNavigationContextCapture";
-import { RewardsWidget } from "@/components/RewardsWidget";
 import { LatinUppercaseFixer } from "@/components/LatinUppercaseFixer";
 import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
 import { MobileMenuAccordion } from "@/components/MobileMenuAccordion";
@@ -274,7 +272,6 @@ export default async function RootLayout({
               </main>
               <Footer />
               <CartDrawer />
-              <RewardsWidget />
               <FloatingWhatsApp settings={themeSettings.whatsapp} />
             </CartProvider>
           </AuthProvider>
