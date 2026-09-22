@@ -20,6 +20,16 @@ export function normalizeProductMaterial(value: unknown): string | null {
   const normalized = normalizeMaterialText(text);
   if (!normalized) return null;
 
+  if (
+    normalized.includes("925") ||
+    normalized.includes("gumus") ||
+    normalized === "silver" ||
+    normalized === "brass" ||
+    normalized.includes("pirinc") ||
+    normalized === "celik" ||
+    normalized === "steel"
+  ) return null;
+
   if (normalized === "arabica" || normalized === "100% arabica") return "Arabica";
   if (normalized === "robusta" || normalized === "100% robusta") return "Robusta";
   if (
