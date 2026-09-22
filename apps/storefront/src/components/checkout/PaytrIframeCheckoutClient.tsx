@@ -16,7 +16,7 @@ import {
   pointsToLira,
   savePendingRuthieOrderReward,
 } from "@/lib/rewards";
-import { useRuthieRewardSettings } from "@/lib/useRuthieRewardSettings";
+import { useRostaPointsSettings } from "@/lib/useRostaPointsSettings";
 
 type CheckoutForm = {
   fullName: string;
@@ -103,7 +103,7 @@ function Field({ label, required, children }: { label: string; required?: boolea
 export function PaytrIframeCheckoutClient() {
   const { items, subtotal, isReady, replaceCartItems } = useCart();
   const { user, session } = useAuth();
-  const rewardSettings = useRuthieRewardSettings();
+  const rewardSettings = useRostaPointsSettings();
   const searchParams = useSearchParams();
   const externalDraftToken = searchParams.get("draft") || "";
   const openPaymentDirectly = searchParams.get("payment") === "1";
