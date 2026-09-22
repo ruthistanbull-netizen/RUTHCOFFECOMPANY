@@ -9,7 +9,20 @@ export const ROSTA_PALETTE = {
   steel: "#AAA8A1",
 } as const;
 
-const ROSTA_CANONICAL_COLORS = new Map(\n  Object.values(ROSTA_PALETTE).map((value) => [value.toLowerCase(), value]),\n);\n\nexport function sanitizeRostaPaletteColor(\n  value: string | null | undefined,\n  fallback: string,\n) {\n  const mapped = mapRostaLegacyColor(value);\n  if (!mapped) return fallback;\n  return ROSTA_CANONICAL_COLORS.get(mapped.trim().toLowerCase()) || fallback;\n}\n\nexport const ROSTA_LOGO_SRC = "/rosta-coffee-co.svg";
+const ROSTA_CANONICAL_COLORS = new Map(
+  Object.values(ROSTA_PALETTE).map((value) => [value.toLowerCase(), value]),
+);
+
+export function sanitizeRostaPaletteColor(
+  value: string | null | undefined,
+  fallback: string,
+) {
+  const mapped = mapRostaLegacyColor(value);
+  if (!mapped) return fallback;
+  return ROSTA_CANONICAL_COLORS.get(mapped.trim().toLowerCase()) || fallback;
+}
+
+export const ROSTA_LOGO_SRC = "/rosta-coffee-co.svg";
 
 export const ROSTA_THEME_COLORS: ThemeCustomizerSettings["colors"] = {
   ivory: ROSTA_PALETTE.bone,
@@ -59,8 +72,12 @@ function sanitizeDeviceStyle(style: ThemeDeviceStyle | undefined): ThemeDeviceSt
   if (!style) return style;
   return {
     ...style,
-    color: mapRostaLegacyColor(style.color) || style.color,
-    backgroundColor: mapRostaLegacyColor(style.backgroundColor) || style.backgroundColor,
+    color: style.color
+      ? sanitizeRostaPaletteColor(style.color, ROSTA_PALETTE.carbon)
+      : style.color,
+    backgroundColor: style.backgroundColor
+      ? sanitizeRostaPaletteColor(style.backgroundColor, ROSTA_PALETTE.bone)
+      : style.backgroundColor,
   };
 }
 
