@@ -31,7 +31,7 @@ values
       {"id":"tracking","label":"Sipariş Takip","path":"/siparis-takip","side":"right","children":[]},
       {"id":"contact","label":"İletişim","path":"/contact","side":"right","children":[]}
     ]},
-    "whatsapp":{"enabled":true,"phone":"908503469789","label":"WhatsApp"},
+    "whatsapp":{"enabled":false,"phone":"","label":"WhatsApp"},
     "homepageImages":{
       "heroImage":"",
       "heroDesktopImage":"",
