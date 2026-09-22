@@ -4,7 +4,7 @@ import { ResetPasswordClient } from "@/components/auth/ResetPasswordClient";
 
 export const metadata: Metadata = {
   title: "Şifremi Unuttum",
-  description: "Ruth Istanbul hesabın için şifre yenileme bağlantısı iste veya yeni şifreni belirle.",
+  description: "ROSTA Coffee Co. hesabın için şifre yenileme bağlantısı iste veya yeni şifreni belirle.",
 };
 
 export default function ResetPasswordPage() {
