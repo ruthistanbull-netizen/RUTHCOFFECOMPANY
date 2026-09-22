@@ -224,7 +224,7 @@ export function ExactMetaAdsAnalysisRealtime() {
         invalidate: false,
       }));
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Ruthie reklam analizini tamamlayamadı.");
+      toast.error(error instanceof Error ? error.message : "ROSTA Insight reklam analizini tamamlayamadı.");
     } finally {
       setAnalyzing(false);
     }
@@ -232,7 +232,7 @@ export function ExactMetaAdsAnalysisRealtime() {
 
   return (
     <div className="space-y-4 animate-fade-in" data-exact-base44-page="meta-ads-analysis">
-      <ExactPageHeader title="Ruthie Reklam Analizi" subtitle="Kampanya, reklam seti ve reklamları aç; istediğin reklamı Ruthie ile analiz et" />
+      <ExactPageHeader title="ROSTA Insight Reklam Analizi" subtitle="Kampanya, reklam seti ve reklamları aç; istediğin reklamı ROSTA Insight ile analiz et" />
 
       <div className="rounded-2xl border border-border-subtle bg-surface-primary p-4 sm:p-5"><div className="flex items-start gap-3"><span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-accent-soft text-accent"><BrainCircuit className="h-5 w-5" /></span><div><div className="flex flex-wrap items-center gap-2"><p className="ruth-type-card-title text-main">{accountName}</p><span className="ruth-type-caption rounded-full bg-success-soft px-2 py-1 font-semibold text-success-foreground">{activeCount} aktif reklam</span></div><p className="ruth-type-caption mt-1 max-w-3xl text-muted">Kampanyayı, sonra reklam setini aç. Reklamın kreatifini ve performansını görüp Analiz Et ile tarih aralığını seçebilirsin.</p></div></div></div>
 
@@ -296,7 +296,7 @@ export function ExactMetaAdsAnalysisRealtime() {
         </ExactDataCard>
       )}
 
-      <ExactDetailDrawer open={Boolean(selected)} onClose={close} title={selected?.name || "Ruthie Reklam Analizi"} subtitle={selected ? `${selected.campaign?.name || "Kampanya"} · ${selected.adset?.name || "Reklam seti"}` : undefined} width={860}>
+      <ExactDetailDrawer open={Boolean(selected)} onClose={close} title={selected?.name || "ROSTA Insight Reklam Analizi"} subtitle={selected ? `${selected.campaign?.name || "Kampanya"} · ${selected.adset?.name || "Reklam seti"}` : undefined} width={860}>
         {selected ? (
           result ? <AnalysisView result={result} money={money} compact={compact} roas={roas} /> : (
             <div className="min-w-0 space-y-4">
@@ -306,10 +306,10 @@ export function ExactMetaAdsAnalysisRealtime() {
                   <div><h3 className="ruth-type-section-title text-main">Analiz tarihini seç</h3><p className="ruth-type-caption mt-1 text-muted">Bu dönemin performansını Meta’dan yeniden çekip diğer reklamlarla karşılaştıracağım.</p></div>
                   <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2"><DateField label="Başlangıç" value={since} min="" max={until || dateValue()} onChange={setSince} disabled={analyzing} /><DateField label="Bitiş" value={until} min={since} max={dateValue()} onChange={setUntil} disabled={analyzing} /></div>
                   <div className="flex flex-wrap gap-2">{[7, 30, 90].map((days) => <button key={days} type="button" disabled={analyzing} onClick={() => { setSince(dateValue(-(days - 1))); setUntil(dateValue()); }} className="ruth-type-control rounded-full border border-border-subtle px-3 py-1.5 text-muted hover:bg-surface-secondary disabled:opacity-50">Son {days} gün</button>)}</div>
-                  <ExactButton onClick={() => void startAnalysis()} loading={analyzing}>{analyzing ? "Ruthie analiz ediyor..." : <><BrainCircuit className="h-4 w-4" /> Ruthie ile Analiz Et</>}</ExactButton>
+                  <ExactButton onClick={() => void startAnalysis()} loading={analyzing}>{analyzing ? "ROSTA Insight analiz ediyor..." : <><BrainCircuit className="h-4 w-4" /> ROSTA Insight ile Analiz Et</>}</ExactButton>
                 </div>
               </div>
-              {analyzing ? <div className="rounded-2xl bg-accent-soft p-5"><div className="flex items-center gap-3"><span className="grid h-12 w-12 place-items-center rounded-full bg-accent text-white"><BrainCircuit className="h-5 w-5" /></span><div><p className="ruth-type-card-title text-main">Ruthie reklamı inceliyor</p><p className="ruth-type-caption mt-1 text-muted">Performans, funnel, benchmark ve kreatif birlikte değerlendiriliyor.</p></div></div></div> : null}
+              {analyzing ? <div className="rounded-2xl bg-accent-soft p-5"><div className="flex items-center gap-3"><span className="grid h-12 w-12 place-items-center rounded-full bg-accent text-white"><BrainCircuit className="h-5 w-5" /></span><div><p className="ruth-type-card-title text-main">ROSTA Insight reklamı inceliyor</p><p className="ruth-type-caption mt-1 text-muted">Performans, funnel, benchmark ve kreatif birlikte değerlendiriliyor.</p></div></div></div> : null}
             </div>
           )
         ) : null}
@@ -338,7 +338,7 @@ function AnalysisView({ result, money, compact, roas }: { result: AnalysisPayloa
     <div className="space-y-4">
       <div className="rounded-2xl border border-border-subtle bg-surface-secondary p-4 sm:p-5"><div className="flex flex-col gap-3 sm:flex-row sm:justify-between"><div><span className={`ruth-type-control inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 ${meta.className}`}><Icon className="h-3.5 w-3.5" />{meta.label}</span><h3 className="ruth-type-section-title mt-3 text-main">{result.analysis.headline}</h3><p className="ruth-type-body mt-2 max-w-3xl text-muted">{result.analysis.summary}</p></div><div className="shrink-0 rounded-2xl bg-surface-primary px-4 py-3 text-center"><p className="ruth-type-label uppercase text-subtle">Güven</p><p className="ruth-type-metric text-main">%{Math.round(result.analysis.confidence)}</p><p className="ruth-type-caption text-muted">{result.peerCount} reklam kıyası</p></div></div></div>
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4"><SummaryTile icon={CircleDollarSign} label="Harcama" value={money(result.metrics.spend)} /><SummaryTile icon={ShoppingBag} label="Alışveriş" value={compact(result.metrics.purchases)} /><SummaryTile icon={CircleDollarSign} label="Gelir" value={money(result.metrics.revenue)} /><SummaryTile icon={TrendingUp} label="ROAS" value={roas(result.metrics.roas)} accent /></div>
-      <div className="grid gap-3 lg:grid-cols-2"><ListCard title="Ruthie neden böyle düşünüyor?" items={result.analysis.why} /><ListCard title="Ne yapmalısın?" items={result.analysis.actions} numbered /></div>
+      <div className="grid gap-3 lg:grid-cols-2"><ListCard title="ROSTA Insight neden böyle düşünüyor?" items={result.analysis.why} /><ListCard title="Ne yapmalısın?" items={result.analysis.actions} numbered /></div>
       <div className="grid gap-3 lg:grid-cols-2"><ExactDataCard title="Kreatif Analizi"><p className="ruth-type-body text-main">{result.analysis.creativeAnalysis}</p></ExactDataCard><ExactDataCard title="Bütçe Yönü"><p className="ruth-type-body text-main">{result.analysis.budgetGuidance}</p></ExactDataCard></div>
       <ExactDataCard title="Metrik Analizi"><div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">{result.analysis.metricAnalysis.map((item, index) => <div key={`${item.metric}:${index}`} className="rounded-xl bg-surface-secondary p-3"><p className="ruth-type-card-title text-main">{item.metric}</p><p className="ruth-type-caption mt-1 text-muted">{item.observation}</p><p className="ruth-type-body mt-2 text-main">{item.implication}</p></div>)}</div></ExactDataCard>
       {result.analysis.risks.length ? <ExactDataCard title="Dikkat Edilecekler"><div className="space-y-2">{result.analysis.risks.map((item, index) => <div key={index} className="ruth-type-body flex gap-2 text-main"><CircleAlert className="mt-0.5 h-4 w-4 shrink-0 text-warning-foreground" /><span>{item}</span></div>)}</div></ExactDataCard> : null}
