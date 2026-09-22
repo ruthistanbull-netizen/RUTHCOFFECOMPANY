@@ -225,7 +225,7 @@ export function RostaPointsWidget() {
   return (
     <>
       <style jsx global>{`
-        .rewards-floating-bubble.ruthie-offer-trigger {
+        .rewards-floating-bubble.rosta-points-offer-trigger {
           overflow: hidden;
           border: 1px solid rgba(38, 32, 27, 0.14) !important;
           background: rgba(255, 255, 255, 0.92) !important;
@@ -234,11 +234,11 @@ export function RostaPointsWidget() {
           backdrop-filter: blur(18px);
           -webkit-backdrop-filter: blur(18px);
         }
-        .ruthie-offer-trigger .rewards-floating-icon {
+        .rosta-points-offer-trigger .rewards-floating-icon {
           background: #171717 !important;
           color: #fff !important;
         }
-        .rewards-overlay.ruthie-offer-overlay {
+        .rewards-overlay.rosta-points-offer-overlay {
           position: fixed !important;
           inset: 0 !important;
           z-index: 9998 !important;
@@ -246,7 +246,7 @@ export function RostaPointsWidget() {
           backdrop-filter: none !important;
           -webkit-backdrop-filter: none !important;
         }
-        .rewards-panel.ruthie-offer-modal {
+        .rewards-panel.rosta-points-offer-modal {
           position: fixed !important;
           z-index: 9999 !important;
           top: 0 !important;
@@ -266,7 +266,7 @@ export function RostaPointsWidget() {
           box-shadow: -24px 0 70px rgba(0, 0, 0, 0.16) !important;
           transform-origin: 100% 50%;
         }
-        .ruthie-offer-modal .rewards-close {
+        .rosta-points-offer-modal .rewards-close {
           position: absolute;
           top: max(18px, env(safe-area-inset-top));
           right: max(18px, env(safe-area-inset-right));
@@ -282,10 +282,10 @@ export function RostaPointsWidget() {
           color: #252525;
           transition: background 180ms ease;
         }
-        .ruthie-offer-modal .rewards-close:hover {
+        .rosta-points-offer-modal .rewards-close:hover {
           background: rgba(0, 0, 0, 0.055);
         }
-        .ruthie-offer-scroll {
+        .rosta-points-offer-scroll {
           min-height: 0;
           flex: 1 1 auto;
           overflow-y: auto;
@@ -293,23 +293,23 @@ export function RostaPointsWidget() {
           scrollbar-width: thin;
           scrollbar-color: rgba(0, 0, 0, 0.18) transparent;
         }
-        .ruthie-offer-scroll::-webkit-scrollbar { width: 5px; }
-        .ruthie-offer-scroll::-webkit-scrollbar-thumb {
+        .rosta-points-offer-scroll::-webkit-scrollbar { width: 5px; }
+        .rosta-points-offer-scroll::-webkit-scrollbar-thumb {
           border-radius: 999px;
           background: rgba(0, 0, 0, 0.18);
         }
-        .ruthie-offer-copy {
+        .rosta-points-offer-copy {
           position: relative;
           padding: 52px 52px 46px;
           background: #ffffff;
         }
-        .ruthie-offer-brand {
+        .rosta-points-offer-brand {
           display: flex;
           min-height: 42px;
           align-items: center;
           margin-bottom: 28px;
         }
-        .ruthie-offer-brand img {
+        .rosta-points-offer-brand img {
           display: block;
           width: auto;
           max-width: 142px;
@@ -317,13 +317,13 @@ export function RostaPointsWidget() {
           object-fit: contain;
           object-position: left center;
         }
-        .ruthie-offer-brand-fallback {
+        .rosta-points-offer-brand-fallback {
           font-family: var(--font-heading);
           font-size: 12px;
           letter-spacing: 0.2em;
           text-transform: uppercase;
         }
-        .ruthie-offer-copy h2 {
+        .rosta-points-offer-copy h2 {
           max-width: 500px;
           margin: 0;
           color: #171717;
@@ -333,20 +333,20 @@ export function RostaPointsWidget() {
           line-height: 1.04;
           letter-spacing: -0.035em;
         }
-        .ruthie-offer-copy > p {
+        .rosta-points-offer-copy > p {
           max-width: 480px;
           margin: 15px 0 0;
           color: #77716b;
           font-size: 15px;
           line-height: 1.55;
         }
-        .ruthie-offer-action-row {
+        .rosta-points-offer-action-row {
           display: grid;
           grid-template-columns: minmax(0, 1fr) auto;
           gap: 12px;
           margin-top: 28px;
         }
-        .ruthie-offer-balance {
+        .rosta-points-offer-balance {
           display: flex;
           min-width: 0;
           min-height: 52px;
@@ -358,21 +358,21 @@ export function RostaPointsWidget() {
           border-radius: 999px;
           background: #fff;
         }
-        .ruthie-offer-balance span {
+        .rosta-points-offer-balance span {
           overflow: hidden;
           color: #7a746f;
           font-size: 12px;
           text-overflow: ellipsis;
           white-space: nowrap;
         }
-        .ruthie-offer-balance strong {
+        .rosta-points-offer-balance strong {
           color: #171717;
           font-family: var(--font-heading);
           font-size: 17px;
           font-weight: 500;
           white-space: nowrap;
         }
-        .ruthie-offer-cta {
+        .rosta-points-offer-cta {
           display: inline-flex;
           min-width: 126px;
           min-height: 52px;
@@ -388,19 +388,19 @@ export function RostaPointsWidget() {
           text-decoration: none !important;
           transition: background 180ms ease;
         }
-        .ruthie-offer-cta:hover { background: #2a2a2a; }
-        .ruthie-offer-legal {
+        .rosta-points-offer-cta:hover { background: #2a2a2a; }
+        .rosta-points-offer-legal {
           margin-top: 13px !important;
           color: #8b8580 !important;
           font-size: 10.5px !important;
           line-height: 1.5 !important;
         }
-        .ruthie-offer-legal a {
+        .rosta-points-offer-legal a {
           color: #54504c;
           text-decoration: underline;
           text-underline-offset: 3px;
         }
-        .ruthie-offer-photo {
+        .rosta-points-offer-photo {
           position: relative;
           width: 100%;
           height: min(43vw, 390px);
@@ -408,25 +408,25 @@ export function RostaPointsWidget() {
           overflow: hidden;
           background: #e8e1d8;
         }
-        .ruthie-offer-photo img {
+        .rosta-points-offer-photo img {
           display: block;
           width: 100%;
           height: 100%;
           object-fit: cover;
           object-position: 50% 42%;
         }
-        .ruthie-offer-photo::after {
+        .rosta-points-offer-photo::after {
           content: "";
           position: absolute;
           inset: 0;
           pointer-events: none;
           background: linear-gradient(180deg, rgba(0,0,0,0.015), rgba(0,0,0,0.05));
         }
-        .ruthie-offer-details {
+        .rosta-points-offer-details {
           padding: 28px 52px calc(40px + env(safe-area-inset-bottom));
           background: #fbfaf8;
         }
-        .ruthie-offer-section-head {
+        .rosta-points-offer-section-head {
           display: flex;
           align-items: flex-end;
           justify-content: space-between;
@@ -434,7 +434,7 @@ export function RostaPointsWidget() {
           padding-bottom: 20px;
           border-bottom: 1px solid #e8e5e1;
         }
-        .ruthie-offer-section-head span {
+        .rosta-points-offer-section-head span {
           display: block;
           margin-bottom: 5px;
           color: #88817a;
@@ -443,7 +443,7 @@ export function RostaPointsWidget() {
           letter-spacing: 0.16em;
           text-transform: uppercase;
         }
-        .ruthie-offer-section-head h3 {
+        .rosta-points-offer-section-head h3 {
           margin: 0;
           color: #191919;
           font-family: var(--font-heading);
@@ -451,25 +451,25 @@ export function RostaPointsWidget() {
           font-weight: 500;
           letter-spacing: -0.02em;
         }
-        .ruthie-offer-value {
+        .rosta-points-offer-value {
           text-align: right;
         }
-        .ruthie-offer-value strong {
+        .rosta-points-offer-value strong {
           display: block;
           font-family: var(--font-heading);
           font-size: 22px;
           font-weight: 500;
         }
-        .ruthie-offer-value small {
+        .rosta-points-offer-value small {
           display: block;
           margin-top: 3px;
           color: #8b8580;
           font-size: 10px;
         }
-        .ruthie-offer-accordion {
+        .rosta-points-offer-accordion {
           border-bottom: 1px solid #e8e5e1;
         }
-        .ruthie-offer-accordion-trigger {
+        .rosta-points-offer-accordion-trigger {
           display: flex;
           width: 100%;
           min-height: 62px;
@@ -484,12 +484,12 @@ export function RostaPointsWidget() {
           font-weight: 600;
           text-align: left;
         }
-        .ruthie-offer-accordion-trigger > span:first-child {
+        .rosta-points-offer-accordion-trigger > span:first-child {
           display: flex;
           align-items: center;
           gap: 10px;
         }
-        .ruthie-offer-accordion-icon {
+        .rosta-points-offer-accordion-icon {
           display: inline-flex;
           width: 30px;
           height: 30px;
@@ -499,8 +499,8 @@ export function RostaPointsWidget() {
           background: #f0ece6;
           color: #72583f;
         }
-        .ruthie-offer-accordion-content { overflow: hidden; }
-        .ruthie-offer-action-item {
+        .rosta-points-offer-accordion-content { overflow: hidden; }
+        .rosta-points-offer-action-item {
           display: grid;
           grid-template-columns: 30px minmax(0, 1fr) auto;
           gap: 12px;
@@ -509,7 +509,7 @@ export function RostaPointsWidget() {
           border-top: 1px solid rgba(232, 229, 225, 0.72);
           color: #312c27;
         }
-        button.ruthie-offer-action-item {
+        button.rosta-points-offer-action-item {
           width: 100%;
           border-right: 0;
           border-bottom: 0;
@@ -517,30 +517,30 @@ export function RostaPointsWidget() {
           background: transparent;
           text-align: left;
         }
-        .ruthie-offer-action-item > svg:first-child {
+        .rosta-points-offer-action-item > svg:first-child {
           width: 19px;
           height: 19px;
           color: #765c43;
         }
-        .ruthie-offer-action-item strong {
+        .rosta-points-offer-action-item strong {
           display: block;
           font-size: 12.5px;
           font-weight: 600;
         }
-        .ruthie-offer-action-item span {
+        .rosta-points-offer-action-item span {
           display: block;
           margin-top: 3px;
           color: #817a74;
           font-size: 11px;
           line-height: 1.45;
         }
-        .ruthie-offer-action-item:disabled { opacity: 0.6; }
-        .ruthie-birthday-fields {
+        .rosta-points-offer-action-item:disabled { opacity: 0.6; }
+        .rosta-points-birthday-fields {
           display: flex;
           gap: 8px;
           margin-top: 10px;
         }
-        .ruthie-birthday-fields input {
+        .rosta-points-birthday-fields input {
           width: 130px;
           min-height: 36px;
           padding: 0 11px;
@@ -551,11 +551,11 @@ export function RostaPointsWidget() {
           font-size: 11px;
           outline: none;
         }
-        .ruthie-birthday-fields input:focus {
+        .rosta-points-birthday-fields input:focus {
           border-color: #9a836d;
           box-shadow: 0 0 0 3px rgba(115, 87, 61, 0.08);
         }
-        .ruthie-birthday-fields button {
+        .rosta-points-birthday-fields button {
           min-height: 36px;
           padding: 0 13px;
           border: 0;
@@ -564,7 +564,7 @@ export function RostaPointsWidget() {
           color: #fff;
           font-size: 10.5px;
         }
-        .ruthie-offer-note {
+        .rosta-points-offer-note {
           margin: 4px 0 14px;
           color: #817a74;
           font-size: 10.5px;
@@ -574,35 +574,35 @@ export function RostaPointsWidget() {
           font-size: 10px !important;
         }
         @media (max-width: 767px) {
-          .rewards-panel.ruthie-offer-modal {
+          .rewards-panel.rosta-points-offer-modal {
             width: 100vw !important;
           }
-          .ruthie-offer-copy {
+          .rosta-points-offer-copy {
             padding: calc(44px + env(safe-area-inset-top)) 24px 34px;
           }
-          .ruthie-offer-brand { margin-bottom: 22px; }
-          .ruthie-offer-brand img { height: 23px; max-width: 124px; }
-          .ruthie-offer-copy h2 { font-size: 34px; }
-          .ruthie-offer-copy > p { margin-top: 12px; font-size: 13px; }
-          .ruthie-offer-action-row {
+          .rosta-points-offer-brand { margin-bottom: 22px; }
+          .rosta-points-offer-brand img { height: 23px; max-width: 124px; }
+          .rosta-points-offer-copy h2 { font-size: 34px; }
+          .rosta-points-offer-copy > p { margin-top: 12px; font-size: 13px; }
+          .rosta-points-offer-action-row {
             grid-template-columns: 1fr;
             margin-top: 22px;
           }
-          .ruthie-offer-cta { width: 100%; }
-          .ruthie-offer-photo {
+          .rosta-points-offer-cta { width: 100%; }
+          .rosta-points-offer-photo {
             height: 44vh;
             min-height: 280px;
             max-height: 430px;
           }
-          .ruthie-offer-details {
+          .rosta-points-offer-details {
             padding: 24px 24px calc(34px + env(safe-area-inset-bottom));
           }
-          .ruthie-offer-section-head h3 { font-size: 21px; }
-          .ruthie-offer-value strong { font-size: 20px; }
+          .rosta-points-offer-section-head h3 { font-size: 21px; }
+          .rosta-points-offer-value strong { font-size: 20px; }
         }
         @media (prefers-reduced-motion: reduce) {
-          .ruthie-offer-trigger,
-          .ruthie-offer-modal * {
+          .rosta-points-offer-trigger,
+          .rosta-points-offer-modal * {
             scroll-behavior: auto !important;
           }
         }
@@ -610,7 +610,7 @@ export function RostaPointsWidget() {
 
       <motion.button
         type="button"
-        className={`rewards-floating-bubble ruthie-offer-trigger premium-touch ${
+        className={`rewards-floating-bubble rosta-points-offer-trigger premium-touch ${
           isCartOpen ? "rewards-floating-bubble--cart-open" : ""
         }`}
         onClick={() => setIsOpen(true)}
@@ -627,9 +627,9 @@ export function RostaPointsWidget() {
         {isOpen ? (
           <>
             <motion.button
-              key="ruthie-offer-overlay"
+              key="rosta-points-offer-overlay"
               type="button"
-              className="rewards-overlay ruthie-offer-overlay"
+              className="rewards-overlay rosta-points-offer-overlay"
               aria-label="ROSTA Points penceresini kapat"
               onClick={closeRewards}
               initial={{ opacity: 0 }}
@@ -639,8 +639,8 @@ export function RostaPointsWidget() {
             />
 
             <motion.aside
-              key="ruthie-offer-modal"
-              className="rewards-panel ruthie-offer-modal"
+              key="rosta-points-offer-modal"
+              className="rewards-panel rosta-points-offer-modal"
               role="dialog"
               aria-modal="true"
               aria-label="ROSTA Points"
@@ -661,10 +661,10 @@ export function RostaPointsWidget() {
                 <X size={19} />
               </motion.button>
 
-              <div className="ruthie-offer-scroll">
-                <section className="ruthie-offer-copy">
+              <div className="rosta-points-offer-scroll">
+                <section className="rosta-points-offer-copy">
                   <motion.div
-                    className="ruthie-offer-brand"
+                    className="rosta-points-offer-brand"
                     initial={reduceMotion ? undefined : { opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: reduceMotion ? 0 : 0.12, duration: 0.36 }}
@@ -693,12 +693,12 @@ export function RostaPointsWidget() {
                   </motion.p>
 
                   <motion.div
-                    className="ruthie-offer-action-row"
+                    className="rosta-points-offer-action-row"
                     initial={reduceMotion ? undefined : { opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: reduceMotion ? 0 : 0.27, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                   >
-                    <div className="ruthie-offer-balance">
+                    <div className="rosta-points-offer-balance">
                       <span>{isLoggedIn ? "Mevcut bakiye" : "Hoş geldin değeri"}</span>
                       <strong>{formatLira(visibleDiscount)}</strong>
                     </div>
@@ -710,7 +710,7 @@ export function RostaPointsWidget() {
                     >
                       <Link
                         href={isLoggedIn ? "/account" : "/register?redirect=/account"}
-                        className="ruthie-offer-cta"
+                        className="rosta-points-offer-cta"
                         onClick={closeRewards}
                       >
                         {isLoggedIn ? "Hesabım" : "Hemen Katıl"}
@@ -720,20 +720,20 @@ export function RostaPointsWidget() {
                   </motion.div>
 
                   {!isLoading && !isLoggedIn ? (
-                    <p className="ruthie-offer-legal">
+                    <p className="rosta-points-offer-legal">
                       Zaten hesabın var mı?{" "}
                       <Link href="/login?redirect=/account" onClick={closeRewards}>Giriş yap</Link>.
                       Üye olarak ROSTA Points koşullarını kabul etmiş olursun.
                     </p>
                   ) : (
-                    <p className="ruthie-offer-legal">
+                    <p className="rosta-points-offer-legal">
                       Puanların ödeme adımında kullanılabilir ve yaklaşık indirim değeri bakiyene göre hesaplanır.
                     </p>
                   )}
                 </section>
 
                 <motion.div
-                  className="ruthie-offer-photo"
+                  className="rosta-points-offer-photo"
                   initial={reduceMotion ? undefined : { opacity: 0.86 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: reduceMotion ? 0 : 0.08, duration: 0.55 }}
@@ -747,28 +747,28 @@ export function RostaPointsWidget() {
                   />
                 </motion.div>
 
-                <section className="ruthie-offer-details">
-                  <div className="ruthie-offer-section-head">
+                <section className="rosta-points-offer-details">
+                  <div className="rosta-points-offer-section-head">
                     <div>
                       <span>Bakiye ve kullanım</span>
                       <h3>ROSTA Points</h3>
                     </div>
-                    <div className="ruthie-offer-value">
+                    <div className="rosta-points-offer-value">
                       <strong>{formatRostaPointsNumber(visiblePoints)}</strong>
                       <small>≈ {formatLira(visibleDiscount)}</small>
                     </div>
                   </div>
 
-                  <div className="ruthie-offer-accordion">
+                  <div className="rosta-points-offer-accordion">
                     <motion.button
                       type="button"
-                      className="ruthie-offer-accordion-trigger"
+                      className="rosta-points-offer-accordion-trigger"
                       onClick={() => setActiveSection(activeSection === "earn" ? null : "earn")}
                       aria-expanded={activeSection === "earn"}
                       whileTap={reduceMotion ? undefined : { scale: 0.99 }}
                     >
                       <span>
-                        <span className="ruthie-offer-accordion-icon"><Sparkles size={15} /></span>
+                        <span className="rosta-points-offer-accordion-icon"><Sparkles size={15} /></span>
                         Kazanma Yolları
                       </span>
                       <motion.span
@@ -782,18 +782,18 @@ export function RostaPointsWidget() {
                     <AnimatePresence initial={false}>
                       {activeSection === "earn" ? (
                         <motion.div
-                          className="ruthie-offer-accordion-content"
+                          className="rosta-points-offer-accordion-content"
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: "auto", opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
                           transition={reduceMotion ? { duration: 0.01 } : { duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
                         >
-                          <div className="ruthie-offer-action-item">
+                          <div className="rosta-points-offer-action-item">
                             <UserPlus size={19} />
                             <div><strong>Üye ol</strong><span>{formatRostaPointsNumber(signupPoints)} ROSTA Points</span></div>
                             {isLoggedIn ? <CheckCircle2 size={17} /> : null}
                           </div>
-                          <div className="ruthie-offer-action-item">
+                          <div className="rosta-points-offer-action-item">
                             <ShoppingBag size={19} />
                             <div><strong>Sipariş ver</strong><span>Harcanan her 1 TL için 1 ROSTA Point</span></div>
                             <span />
@@ -803,7 +803,7 @@ export function RostaPointsWidget() {
                             birthday.birthDate ? (
                               <button
                                 type="button"
-                                className="ruthie-offer-action-item"
+                                className="rosta-points-offer-action-item"
                                 onClick={claimBirthday}
                                 disabled={claiming || birthday.claimed}
                               >
@@ -828,12 +828,12 @@ export function RostaPointsWidget() {
                                 {birthday.claimed ? <CheckCircle2 size={17} /> : <ChevronRight size={16} />}
                               </button>
                             ) : (
-                              <div className="ruthie-offer-action-item">
+                              <div className="rosta-points-offer-action-item">
                                 <Cake size={19} />
                                 <div>
                                   <strong>Doğum gününde puan kazan</strong>
                                   <span>Doğum tarihini ekle; doğum gününde ve sonraki 7 gün içinde {formatRostaPointsNumber(birthdayAwardPoints)} puanı hesabına al.</span>
-                                  <div className="ruthie-birthday-fields">
+                                  <div className="rosta-points-birthday-fields">
                                     <input
                                       type="text"
                                       inputMode="numeric"
@@ -853,7 +853,7 @@ export function RostaPointsWidget() {
                               </div>
                             )
                           ) : (
-                            <div className="ruthie-offer-action-item">
+                            <div className="rosta-points-offer-action-item">
                               <Cake size={19} />
                               <div><strong>Doğum gününde puan kazan</strong><span>{birthdayAwardText}</span></div>
                               <span />
@@ -864,16 +864,16 @@ export function RostaPointsWidget() {
                     </AnimatePresence>
                   </div>
 
-                  <div className="ruthie-offer-accordion">
+                  <div className="rosta-points-offer-accordion">
                     <motion.button
                       type="button"
-                      className="ruthie-offer-accordion-trigger"
+                      className="rosta-points-offer-accordion-trigger"
                       onClick={() => setActiveSection(activeSection === "spend" ? null : "spend")}
                       aria-expanded={activeSection === "spend"}
                       whileTap={reduceMotion ? undefined : { scale: 0.99 }}
                     >
                       <span>
-                        <span className="ruthie-offer-accordion-icon"><Gift size={15} /></span>
+                        <span className="rosta-points-offer-accordion-icon"><Gift size={15} /></span>
                         Kullanma Yolları
                       </span>
                       <motion.span
@@ -887,20 +887,20 @@ export function RostaPointsWidget() {
                     <AnimatePresence initial={false}>
                       {activeSection === "spend" ? (
                         <motion.div
-                          className="ruthie-offer-accordion-content"
+                          className="rosta-points-offer-accordion-content"
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: "auto", opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
                           transition={reduceMotion ? { duration: 0.01 } : { duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
                         >
                           {[500, 1000, 2000, 5000].map((points) => (
-                            <div key={points} className="ruthie-offer-action-item">
+                            <div key={points} className="rosta-points-offer-action-item">
                               <Gift size={19} />
                               <div><strong>{formatLira(pointsToLira(points))} indirim</strong><span>{formatRostaPointsNumber(points)} ROSTA Points</span></div>
                               <span />
                             </div>
                           ))}
-                          <p className="ruthie-offer-note">Puanlarını ödeme adımında kullanabilirsin.</p>
+                          <p className="rosta-points-offer-note">Puanlarını ödeme adımında kullanabilirsin.</p>
                         </motion.div>
                       ) : null}
                     </AnimatePresence>
