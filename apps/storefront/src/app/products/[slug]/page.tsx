@@ -61,7 +61,7 @@ export default async function ProductPage({
 }) {
   const { slug } = await params;
   const cookieStore = await cookies();
-  const source = cookieStore.get("ruth_product_source")?.value || "";
+  const source = cookieStore.get("rosta_product_source")?.value || "";
   const productWindow = await getProductPageWindowForSource(slug, source);
   if (!productWindow.current) return notFound();
 
