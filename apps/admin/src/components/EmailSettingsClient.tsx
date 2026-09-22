@@ -62,7 +62,7 @@ export function EmailSettingsClient() {
 
   return (
     <section className="admin-card" style={{ maxWidth: 720 }}>
-      <div className="admin-card-header">
+      <div className="admin-card-body" style={{ borderBottom: "1px solid var(--panel-line)" }}>
         <div>
           <p className="admin-kicker">GMAIL</p>
           <h2>İşlemsel e-posta</h2>
@@ -70,17 +70,18 @@ export function EmailSettingsClient() {
         </div>
       </div>
 
+      <div className="admin-card-body">
       {loading ? <p>Bağlantı kontrol ediliyor…</p> : null}
       {error ? <div className="admin-error">{error}</div> : null}
 
       {!loading && integration?.status === "active" ? (
-        <div className="admin-stack">
-          <div className="admin-stat-row">
-            <span>Bağlı hesap</span>
+        <div style={{ display: "grid", gap: 12, padding: 18 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", gap: 16 }}>
+            <span style={{ color: "var(--panel-muted)", fontSize: 12 }}>Bağlı hesap</span>
             <strong>{integration.email || "Gmail"}</strong>
           </div>
-          <div className="admin-stat-row">
-            <span>Gönderen</span>
+          <div style={{ display: "flex", justifyContent: "space-between", gap: 16 }}>
+            <span style={{ color: "var(--panel-muted)", fontSize: 12 }}>Gönderen</span>
             <strong>{integration.sender_name || "ROSTA Coffee Co."}</strong>
           </div>
           <button className="admin-secondary-button" onClick={disconnect} disabled={busy}>
@@ -92,6 +93,7 @@ export function EmailSettingsClient() {
           <Mail size={16} /> {busy ? "Google açılıyor…" : "Gmail Hesabını Bağla"}
         </button>
       ) : null}
+      </div>
     </section>
   );
 }
