@@ -128,8 +128,8 @@ export async function POST(request: Request) {
       }
     } else {
       revalidateTag("rosta-product-windows", IMMEDIATE_EXPIRY);
-      revalidateTag("ruth-collections", IMMEDIATE_EXPIRY);
-      revalidateTag("ruth-categories", IMMEDIATE_EXPIRY);
+      revalidateTag("rosta-collections", IMMEDIATE_EXPIRY);
+      revalidateTag("rosta-categories", IMMEDIATE_EXPIRY);
     }
   }
 
