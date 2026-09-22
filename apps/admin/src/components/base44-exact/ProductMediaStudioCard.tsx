@@ -104,7 +104,7 @@ async function uploadFile(
 }
 
 async function uploadOneImage(file: File, onProgress: (progress: number) => void) {
-  return uploadFile(file, "/api/media/product-image", "Görsel yüklenemedi.", onProgress);
+  return uploadFile(file, "/api/media/upload", "Görsel yüklenemedi.", onProgress);
 }
 
 async function createVideoUploadSession(file: File) {
@@ -207,46 +207,11 @@ async function patchProxyChunk(
 }
 
 async function uploadOneVideo(file: File, onProgress: (progress: number) => void) {
-  const session = await createVideoUploadSession(file);
-  const uploadUrl = String(session.uploadUrl);
-  let offset = 0;
-
-  while (offset < file.size) {
-    const chunkEnd = Math.min(file.size, offset + VIDEO_PROXY_CHUNK_BYTES);
-    const chunk = file.slice(offset, chunkEnd);
-    let uploaded = false;
-    let lastError: unknown = null;
-
-    for (let attempt = 0; attempt < VIDEO_RETRY_DELAYS.length; attempt += 1) {
-      if (VIDEO_RETRY_DELAYS[attempt]) await sleep(VIDEO_RETRY_DELAYS[attempt]);
-      try {
-        offset = await patchProxyChunk(
-          uploadUrl,
-          chunk,
-          offset,
-          file.size,
-          onProgress,
-        );
-        uploaded = true;
-        break;
-      } catch (caught) {
-        lastError = caught;
-        const remoteOffset = await readProxyOffset(uploadUrl);
-        if (remoteOffset != null && remoteOffset > offset) {
-          offset = remoteOffset;
-          uploaded = true;
-          break;
-        }
-      }
-    }
-
-    if (!uploaded) {
-      throw lastError instanceof Error ? lastError : new Error("Video yükleme devam ettirilemedi.");
-    }
-  }
-
-  onProgress(100);
-  return String(session.url);
+  if (file.size <= 0) throw new Error("Video dosyası boş görünüyor.");
+  if (file.size > PRODUCT_VIDEO_MAX_BYTES) throw new Error("Video en fazla 60 MB olabilir.");
+  const contentType = videoContentType(file);
+  if (!contentType) throw new Error("Yalnız MP4, WebM veya MOV video yüklenebilir.");
+  return uploadFile(file, "/api/media/upload", "Video yüklenemedi.", onProgress);
 }
 
 export function ProductMediaStudioCard({
