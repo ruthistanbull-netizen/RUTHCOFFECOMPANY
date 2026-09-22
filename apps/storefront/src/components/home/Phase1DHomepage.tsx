@@ -50,7 +50,7 @@ export function Phase1DHomepage({ newProducts, editorialProducts, categories, co
         <div className="phase1d-home-hero__content">
           <p>Rosta Coffee Co</p>
           <h1 id="phase1d-home-title" lang="en-US" data-latin-uppercase>Ancient forms.<br />Modern rituals.</h1>
-          <span>Mitolojiden ilham alan, günlük yaşama uyarlanan zamansız takılar.</span>
+          <span>Günlük kahve ritüelleri için sade, tutarlı ve anlaşılır ürünler.</span>
           <div className="phase1d-home-hero__actions">
             <ButtonLink href="/products">Koleksiyonu Keşfet</ButtonLink>
             <ButtonLink href="/collections" variant="secondary">Hikâyeleri Gör</ButtonLink>
@@ -102,7 +102,7 @@ export function Phase1DHomepage({ newProducts, editorialProducts, categories, co
               href={categoryHref(category.public_slug || category.slug)}
               eyebrow={String(index + 1).padStart(2, "0")}
               title={category.name}
-              description={category.description || "Ruth Istanbul seçili ürün formu."}
+              description={category.description || "ROSTA Coffee Co. seçili ürünü."}
               media={<Media src={category.cover_image_url || productImage(categoryFallbacks[index])} />}
             />
           ))}
@@ -112,8 +112,8 @@ export function Phase1DHomepage({ newProducts, editorialProducts, categories, co
       <section className="phase1d-home-manifesto">
         <div className="phase1d-home-manifesto__copy phase1d-home-section">
           <p>Ruth manifesto</p>
-          <h2>Takı yalnız görünen değil, taşıdığın anlamdır.</h2>
-          <span>Her form; geçmişten gelen bir sembolü, bugünün sade ritmiyle buluşturur. Ruth Istanbul parçaları hızlı tüketim için değil, kişisel hikâyenin parçası olmak için tasarlanır.</span>
+          <h2>İyi kahve, doğru ürün ve doğru hazırlamayla başlar.</h2>
+          <span>ROSTA Coffee Co. ürünleri, kahveyi gereksiz karmaşadan uzaklaştırıp daha tutarlı bir günlük deneyime dönüştürmek için seçilir.</span>
           <ButtonLink href="/pages/about" variant="secondary">Ruth’u Tanı</ButtonLink>
         </div>
         <div className="phase1d-home-manifesto__media">
@@ -143,7 +143,7 @@ export function Phase1DHomepage({ newProducts, editorialProducts, categories, co
         </div>
       </PageSection>
 
-      <section className="phase1d-home-service phase1d-home-section" aria-label="Ruth Istanbul hizmetleri">
+      <section className="phase1d-home-service phase1d-home-section" aria-label="ROSTA Coffee Co. hizmetleri">
         {[
           ["01", "Güvenli ödeme", "PayTR korumalı ödeme akışı"],
           ["02", "Üretim ve gönderim", "3–5 iş gününde kargoya teslim"],
