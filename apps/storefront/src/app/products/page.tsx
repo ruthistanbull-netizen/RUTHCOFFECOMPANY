@@ -5,12 +5,12 @@ import { getProducts, toCatalogProducts } from "@/data/catalogReadModel";
 import { SITE_URL } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Tasarım Takılar | Kolye, Yüzük, Bileklik ve Setler",
-  description: "Ruth Istanbul kolye, yüzük, bileklik ve set koleksiyonlarını keşfet. 925 ayar gümüş ve özel tasarım takılar.",
+  title: "Kahve ve Ürünler | ROSTA Coffee Co.",
+  description: "ROSTA Coffee Co. kahve ve seçili ürünlerini keşfet.",
   alternates: { canonical: `${SITE_URL}/products` },
   openGraph: {
-    title: "Tasarım Takılar | Ruth Istanbul",
-    description: "Ruth Istanbul kolye, yüzük, bileklik ve set koleksiyonlarını keşfet.",
+    title: "Kahve ve Ürünler | ROSTA Coffee Co.",
+    description: "ROSTA Coffee Co. kahve ve seçili ürünlerini keşfet.",
     url: `${SITE_URL}/products`,
   },
 };
@@ -26,7 +26,7 @@ export default async function ProductsPage() {
         <PageIntro
           eyebrow="Alışveriş"
           title="Tüm Ürünler"
-          description="Ruth Istanbul’un seçili parçalarını keşfet ve güvenle alışveriş yap."
+          description="ROSTA Coffee Co. ürünlerini keşfet ve güvenle alışveriş yap."
           className="mb-12 md:mb-20"
         />
         <ProductCatalog products={toCatalogProducts(products)} showProductDescriptions={false} />
