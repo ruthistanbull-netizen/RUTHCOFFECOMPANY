@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";\nimport type { ReactNode } from "react";
+import Link from "next/link";
+import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { BarChart3, Boxes, Coffee, LogOut, Palette, ShoppingBag, Users } from "lucide-react";
 import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
