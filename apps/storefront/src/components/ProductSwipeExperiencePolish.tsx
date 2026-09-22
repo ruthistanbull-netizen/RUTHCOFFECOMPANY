@@ -25,8 +25,8 @@ type SwipeWindow = {
 
 type Direction = "next" | "previous";
 
-const NEXT_HINT_KEY = "ruth_product_swipe_next_hint_v6_seen";
-const BACK_HINT_KEY = "ruth_product_swipe_back_hint_v6_seen";
+const NEXT_HINT_KEY = "rosta_product_swipe_next_hint_v1_seen";
+const BACK_HINT_KEY = "rosta_product_swipe_back_hint_v1_seen";
 const SETTLE_MS = 330;
 const SNAP_RATIO = 0.18;
 const SNAP_VELOCITY = 0.38;
@@ -579,7 +579,7 @@ export function ProductSwipeExperiencePolish() {
     const originalPushState = window.history.pushState.bind(window.history);
     window.history.pushState = function pushState(data, unused, url) {
       const result = originalPushState(data, unused, url);
-      window.dispatchEvent(new Event("ruth:product-history-change"));
+      window.dispatchEvent(new Event("rosta:product-history-change"));
       return result;
     };
 
@@ -593,7 +593,7 @@ export function ProductSwipeExperiencePolish() {
     window.addEventListener("pointercancel", onPointerEnd, true);
     window.addEventListener("pageshow", syncSlug);
     window.addEventListener("popstate", onHistory);
-    window.addEventListener("ruth:product-history-change", onHistory);
+    window.addEventListener("rosta:product-history-change", onHistory);
     syncSlug();
 
     return () => {
@@ -608,7 +608,7 @@ export function ProductSwipeExperiencePolish() {
       window.removeEventListener("pointercancel", onPointerEnd, true);
       window.removeEventListener("pageshow", syncSlug);
       window.removeEventListener("popstate", onHistory);
-      window.removeEventListener("ruth:product-history-change", onHistory);
+      window.removeEventListener("rosta:product-history-change", onHistory);
       if (frame) window.cancelAnimationFrame(frame);
     };
   }, []);

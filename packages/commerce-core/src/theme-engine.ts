@@ -60,7 +60,7 @@ export type ThemeCustomizerSettings = {
   colors: { ivory: string; cream: string; ink: string; gold: string; goldDark: string; muted: string };
   header: { links: ThemeNavItem[] };
   whatsapp: { enabled: boolean; phone: string; label: string };
-  homepageImages: { heroImage: string; scrollImages: string[] };
+  homepageImages: { heroImage: string; heroDesktopImage: string; heroMobileImage: string; editorialVideo: string; editorialImage: string; scrollImages: string[] };
   editor: ThemeVisualEditorSettings;
 };
 
@@ -76,8 +76,8 @@ export const defaultThemeCustomizerSettings: ThemeCustomizerSettings = {
     { id: "tracking", label: "Sipariş Takip", path: "/siparis-takip", side: "right", children: [] },
     { id: "contact", label: "İletişim", path: "/contact", side: "right", children: [] },
   ] },
-  whatsapp: { enabled: true, phone: "908503469789", label: "WhatsApp" },
-  homepageImages: { heroImage: "", scrollImages: ["/scroll-product-1.png", "/scroll-product-2.png", "/scroll-product-3.png", "/scroll-product-4.png", "/scroll-product-5.png", "/scroll-product-6.png"] },
+  whatsapp: { enabled: false, phone: "", label: "WhatsApp" },
+  homepageImages: { heroImage: "", heroDesktopImage: "", heroMobileImage: "", editorialVideo: "/home/rosta-under-hero-video.mp4", editorialImage: "/home/rosta-under-hero-photo.jpg", scrollImages: ["/scroll-product-1.png", "/scroll-product-2.png", "/scroll-product-3.png", "/scroll-product-4.png", "/scroll-product-5.png", "/scroll-product-6.png"] },
   editor: { pages: {} },
 };
 
@@ -243,6 +243,10 @@ export function normalizeThemeCustomizerSettings(input: unknown): ThemeCustomize
     },
     homepageImages: {
       heroImage: safeUrl(homepageImages.heroImage, defaultThemeCustomizerSettings.homepageImages.heroImage, "image"),
+      heroDesktopImage: safeUrl(homepageImages.heroDesktopImage, defaultThemeCustomizerSettings.homepageImages.heroDesktopImage, "image"),
+      heroMobileImage: safeUrl(homepageImages.heroMobileImage, defaultThemeCustomizerSettings.homepageImages.heroMobileImage, "image"),
+      editorialVideo: safeUrl(homepageImages.editorialVideo, defaultThemeCustomizerSettings.homepageImages.editorialVideo, "image"),
+      editorialImage: safeUrl(homepageImages.editorialImage, defaultThemeCustomizerSettings.homepageImages.editorialImage, "image"),
       scrollImages: scrollImages.length ? scrollImages : defaultThemeCustomizerSettings.homepageImages.scrollImages,
     },
     editor: normalizeThemeEditor(raw.editor),

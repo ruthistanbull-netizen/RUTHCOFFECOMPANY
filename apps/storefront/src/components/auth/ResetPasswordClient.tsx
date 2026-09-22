@@ -179,7 +179,7 @@ export function ResetPasswordClient() {
   return (
     <div className="min-h-screen bg-ivory px-4 pb-24 pt-28 md:px-8 md:pt-32">
       <div className="mx-auto max-w-md rounded-2xl border border-gold/15 bg-cream p-6 shadow-sm md:p-8">
-        <p className="mb-3 text-xs uppercase tracking-wide-luxe text-gold-dark">Ruth Istanbul</p>
+        <p className="mb-3 text-xs uppercase tracking-wide-luxe text-gold-dark">ROSTA Coffee Co.</p>
 
         {checking ? (
           <>

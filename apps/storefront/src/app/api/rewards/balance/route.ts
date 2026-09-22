@@ -42,7 +42,7 @@ export async function GET(request: Request) {
       });
       points = claim.balance;
     } catch (claimError) {
-      console.error("Misafir sipariş Ruthie Points uzlaştırması tamamlanamadı", {
+      console.error("Misafir sipariş ROSTA Points uzlaştırması tamamlanamadı", {
         profileId: profile.id,
         error: claimError,
       });
@@ -54,7 +54,7 @@ export async function GET(request: Request) {
     } catch (birthdayError) {
       // Günlük worker tekrar deneyeceği için geçici birthday hatası bakiye
       // ekranını kapatmaz. Başarılı claim aynı profile + yıl için idempotenttir.
-      console.error("Doğum günü Ruthie Points işlemi tamamlanamadı", {
+      console.error("Doğum günü ROSTA Points işlemi tamamlanamadı", {
         profileId: profile.id,
         error: birthdayError,
       });

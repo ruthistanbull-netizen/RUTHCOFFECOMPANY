@@ -1,5 +1,5 @@
 {
-  "name": "ruth-coffee-storefront",
+  "name": "rosta-coffee-storefront",
   "version": "0.1.0",
   "private": true,
   "engines": {
@@ -11,7 +11,6 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "cache:ikas-images": "node scripts/cache-ikas-images.mjs",
     "fit:white-images": "node scripts/fit-white-product-images.mjs",
     "fit:white-images:force": "node -e \"process.env.FIT_WHITE_IMAGES_FORCE='1'; import('./scripts/fit-white-product-images.mjs')\"",
     "optimize:product-images": "node scripts/optimize-product-card-images.mjs",

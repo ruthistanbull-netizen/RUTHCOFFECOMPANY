@@ -65,7 +65,7 @@ export function AdminAuthGate({ children }: { children: ReactNode }) {
     return (
       <main className="admin-login">
         <section className="admin-login-brand">
-          <div className="admin-brand-logo">ROSTA</div>
+          <img className="admin-login-logo" src="/rosta-coffee-co.svg" alt="ROSTA Coffee Co." />
           <div>
             <p className="admin-kicker">CONTROL ROOM</p>
             <h1>Kahvenin her adımını tek yerden yönet.</h1>

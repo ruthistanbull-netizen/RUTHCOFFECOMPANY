@@ -7,6 +7,7 @@ import { requiredEnv, verifyPaytrCallback } from "@/lib/commerce/paymentEngine";
 import { executePaymentStatusCommand, executeRegisterOrderCommand } from "@/lib/commerce/commandAdapter";
 import { persistCommerceEvents } from "@/lib/commerce/eventStore";
 import { notifyOrderConfirmationEmail } from "@/lib/orderConfirmationNotifier";
+import { deliverQueuedOrderConfirmations } from "@/lib/orderEmailDelivery";
 
 export const runtime = "nodejs";
 
@@ -254,6 +255,10 @@ export async function POST(request: Request) {
         if (status === "success" && confirmedOrderId && coreCreated) {
           try {
             await notifyOrderConfirmationEmail(confirmedOrderId);
+            const delivery = await deliverQueuedOrderConfirmations(backgroundSupabase, 3);
+            if (delivery.failed > 0) {
+              console.warn("ROSTA sipariş e-postası retry kuyruğuna kaldı", { orderId: confirmedOrderId, delivery });
+            }
           } catch (emailError) {
             console.error("Sipariş alındı e-postası gönderilemedi", { orderId: confirmedOrderId, emailError });
           }

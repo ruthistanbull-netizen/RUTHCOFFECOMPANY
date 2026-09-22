@@ -2,10 +2,10 @@
 
 import { useLayoutEffect } from "react";
 
-const FIRST_VISIT_KEY = "ruth_product_swipe_hint_first_visit_v7_seen";
-const LEGACY_NEXT_KEY = "ruth_product_swipe_next_hint_v6_seen";
-const LEGACY_BACK_KEY = "ruth_product_swipe_back_hint_v6_seen";
-const LEGACY_ORIGINAL_KEY = "ruth_product_swipe_hint_seen_v1";
+const FIRST_VISIT_KEY = "rosta_product_swipe_hint_first_visit_v1_seen";
+const LEGACY_NEXT_KEY = "rosta_product_swipe_next_hint_v1_seen";
+const LEGACY_BACK_KEY = "rosta_product_swipe_back_hint_v1_seen";
+const LEGACY_ORIGINAL_KEY = "rosta_product_swipe_hint_seen_v1";
 const GUIDE_VISIBLE_MS = 5_000;
 
 function isProductPage() {
@@ -129,7 +129,7 @@ export function ProductSwipeFirstVisitGuard() {
     observer.observe(document.body, { childList: true, subtree: true });
     window.addEventListener("popstate", schedule);
     window.addEventListener("pageshow", schedule);
-    window.addEventListener("ruth:product-history-change", schedule);
+    window.addEventListener("rosta:product-history-change", schedule);
     schedule();
 
     return () => {
@@ -138,7 +138,7 @@ export function ProductSwipeFirstVisitGuard() {
       if (frame) window.cancelAnimationFrame(frame);
       window.removeEventListener("popstate", schedule);
       window.removeEventListener("pageshow", schedule);
-      window.removeEventListener("ruth:product-history-change", schedule);
+      window.removeEventListener("rosta:product-history-change", schedule);
       delete body.dataset.ruthSwipeGuideBlocked;
     };
   }, []);

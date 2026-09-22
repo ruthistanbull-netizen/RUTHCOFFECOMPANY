@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { Mail } from "lucide-react";
 import { categoryHref } from "@/lib/catalogCategories";
 import type { Category, Collection } from "@/types/site";
@@ -11,10 +12,16 @@ import { ThemeEditorNativeNavigation } from "@/components/theme/ThemeEditorNativ
 import { ROSTA_WORDMARK_SRC } from "@/components/brand/rostaWordmark";
 
 const SOCIAL_LINKS = [
-  { label: "WhatsApp", href: "https://wa.me/908503469789", icon: <WhatsAppIcon /> },
-  { label: "Instagram", href: "https://www.instagram.com/theruthistanbul/", icon: <InstagramIcon /> },
-  { label: "TikTok", href: "https://www.tiktok.com/@theruthistanbul", icon: <TikTokIcon /> },
-];
+  process.env.NEXT_PUBLIC_ROSTA_WHATSAPP_URL
+    ? { label: "WhatsApp", href: process.env.NEXT_PUBLIC_ROSTA_WHATSAPP_URL, icon: <WhatsAppIcon /> }
+    : null,
+  process.env.NEXT_PUBLIC_ROSTA_INSTAGRAM_URL
+    ? { label: "Instagram", href: process.env.NEXT_PUBLIC_ROSTA_INSTAGRAM_URL, icon: <InstagramIcon /> }
+    : null,
+  process.env.NEXT_PUBLIC_ROSTA_TIKTOK_URL
+    ? { label: "TikTok", href: process.env.NEXT_PUBLIC_ROSTA_TIKTOK_URL, icon: <TikTokIcon /> }
+    : null,
+].filter((social): social is { label: string; href: string; icon: ReactNode } => Boolean(social));
 
 const PAYMENT_LOGOS = [
   { label: "Visa", src: "/payments/visa.png" },

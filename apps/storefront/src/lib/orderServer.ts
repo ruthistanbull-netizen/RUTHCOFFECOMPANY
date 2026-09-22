@@ -22,6 +22,8 @@ export type CheckoutCustomerInput = {
 };
 
 export type CheckoutRewardsInput = {
+  useRostaPoints?: boolean;
+  /** @deprecated Legacy request compatibility only. */
   useRuthPoints?: boolean;
   requestedDiscount?: number;
   pointsUsed?: number;
@@ -36,8 +38,8 @@ export type CheckoutAttributionInput = {
   referrer?: string; landing_page?: string; started_at?: string;
 };
 
-const RUTH_POINTS_PER_TL = 10;
-const RUTHIE_MAX_DEMO_POINTS = 10000;
+const ROSTA_POINTS_PER_TL = 10;
+const ROSTA_MAX_POINTS = 10000;
 
 type NormalizedCustomer = Required<
   Pick<CheckoutCustomerInput, "fullName" | "email" | "phone" | "city" | "district" | "addressLine">
@@ -141,7 +143,7 @@ function makeOrderNo() {
     .replace(/[-:.TZ]/g, "")
     .slice(0, 14);
   const random = Math.random().toString(36).slice(2, 8).toUpperCase();
-  return `RTH${stamp}${random}`;
+  return `RST${stamp}${random}`;
 }
 
 function makeResumeToken() {
@@ -467,15 +469,15 @@ async function calculateCheckoutPricing({
       .select("reward_points_balance")
       .eq("id", profileId)
       .maybeSingle();
-    if (rewardProfileError) throw new Error(`Ruthie Points bakiyesi alınamadı: ${rewardProfileError.message}`);
+    if (rewardProfileError) throw new Error(`ROSTA Points bakiyesi alınamadı: ${rewardProfileError.message}`);
     rewardPointsAvailable = Math.max(0, Math.floor(Number(rewardProfile?.reward_points_balance || 0)));
   }
 
   const requestedSafePoints = Math.max(0, Math.floor(Number(requestedRewardPoints || 0)));
   const rewardPointsUsed = Math.min(requestedSafePoints, rewardPointsAvailable);
-  const maxRewardDiscount = Math.floor(rewardPointsUsed / RUTH_POINTS_PER_TL);
+  const maxRewardDiscount = Math.floor(rewardPointsUsed / ROSTA_POINTS_PER_TL);
   const rewardDiscountTotal = Number(Math.min(afterAutomatic, normalizeDiscount(requestedRewardDiscount), maxRewardDiscount).toFixed(2));
-  const actuallyUsedRewardPoints = Math.min(rewardPointsUsed, Math.round(rewardDiscountTotal * RUTH_POINTS_PER_TL));
+  const actuallyUsedRewardPoints = Math.min(rewardPointsUsed, Math.round(rewardDiscountTotal * ROSTA_POINTS_PER_TL));
   const afterRewards = Math.max(0, afterAutomatic - rewardDiscountTotal);
 
   let couponDiscountTotal = 0;
@@ -617,8 +619,8 @@ export async function createCheckoutQuote({
     couponCode,
     customerEmail: identity.customerEmail,
     profileId: identity.profileId,
-    requestedRewardDiscount: rewards?.useRuthPoints ? normalizeDiscount(rewards.requestedDiscount) : 0,
-    requestedRewardPoints: Math.max(0, Math.min(Number(rewards?.pointsUsed || 0), RUTHIE_MAX_DEMO_POINTS)),
+    requestedRewardDiscount: (rewards?.useRostaPoints ?? rewards?.useRuthPoints) ? normalizeDiscount(rewards.requestedDiscount) : 0,
+    requestedRewardPoints: Math.max(0, Math.min(Number(rewards?.pointsUsed || 0), ROSTA_MAX_POINTS)),
   });
   return {
     ...pricing,
@@ -646,8 +648,8 @@ export async function repriceExistingCheckoutDraft({
     couponCode: coupon?.code || null,
     customerEmail: draft.customer.email,
     profileId,
-    requestedRewardDiscount: rewards?.useRuthPoints ? Number(rewards.requestedDiscount || 0) : 0,
-    requestedRewardPoints: rewards?.useRuthPoints ? Number(rewards.pointsUsed || 0) : 0,
+    requestedRewardDiscount: (rewards?.useRostaPoints ?? rewards?.useRuthPoints) ? Number(rewards.requestedDiscount || 0) : 0,
+    requestedRewardPoints: (rewards?.useRostaPoints ?? rewards?.useRuthPoints) ? Number(rewards.pointsUsed || 0) : 0,
   });
 
   const updatePayload = {
@@ -695,8 +697,8 @@ export async function createCheckoutDraft({
   const customer = normalizeCustomer(customerInput);
   const profileId = await getProfileIdFromAuthToken(authToken, customer);
   const items = await normalizeCartItemsFromDatabase(supabase, cartItems);
-  const requestedRewardDiscount = rewards?.useRuthPoints ? normalizeDiscount(rewards.requestedDiscount) : 0;
-  const requestedRewardPoints = Math.max(0, Math.min(Number(rewards?.pointsUsed || 0), RUTHIE_MAX_DEMO_POINTS));
+  const requestedRewardDiscount = (rewards?.useRostaPoints ?? rewards?.useRuthPoints) ? normalizeDiscount(rewards.requestedDiscount) : 0;
+  const requestedRewardPoints = Math.max(0, Math.min(Number(rewards?.pointsUsed || 0), ROSTA_MAX_POINTS));
   const pricing = await calculateCheckoutPricing({
     supabase,
     items,
@@ -1032,36 +1034,36 @@ async function synchronizePaidOrderSideEffects({
   if (draft.profile_id) {
     const pointsUsed = Math.max(
       0,
-      Math.floor(Number(draft.reward_points_used || Number(draft.reward_discount_total || 0) * RUTH_POINTS_PER_TL)),
+      Math.floor(Number(draft.reward_points_used || Number(draft.reward_discount_total || 0) * ROSTA_POINTS_PER_TL)),
     );
     if (pointsUsed > 0) {
-      const { error: spentPointsError } = await supabase.rpc("adjust_ruthie_points", {
+      const { error: spentPointsError } = await supabase.rpc("adjust_rosta_points", {
         p_profile_id: draft.profile_id,
         p_amount: -pointsUsed,
-        p_reason: `${draft.order_no} siparişinde kullanılan Ruthie Points`,
+        p_reason: `${draft.order_no} siparişinde kullanılan ROSTA Points`,
         p_transaction_type: "order_spent",
         p_reference_type: "order",
         p_reference_id: orderId,
         p_admin_profile_id: null,
       });
       if (spentPointsError) {
-        throw new Error(`${spentPointsError.message}. Supabase'te RUTHIE-POINTS-PANEL-ENTEGRASYONU.sql dosyasını çalıştır.`);
+        throw new Error(`${spentPointsError.message}.`);
       }
     }
 
     const pointsEarned = Math.max(0, Math.floor(Number(draft.total_amount || 0)));
     if (pointsEarned > 0) {
-      const { error: earnedPointsError } = await supabase.rpc("adjust_ruthie_points", {
+      const { error: earnedPointsError } = await supabase.rpc("adjust_rosta_points", {
         p_profile_id: draft.profile_id,
         p_amount: pointsEarned,
-        p_reason: `${draft.order_no} siparişinden kazanılan Ruthie Points`,
+        p_reason: `${draft.order_no} siparişinden kazanılan ROSTA Points`,
         p_transaction_type: "order_earned",
         p_reference_type: "order",
         p_reference_id: orderId,
         p_admin_profile_id: null,
       });
       if (earnedPointsError) {
-        throw new Error(`${earnedPointsError.message}. Supabase'te RUTHIE-POINTS-PANEL-ENTEGRASYONU.sql dosyasını çalıştır.`);
+        throw new Error(`${earnedPointsError.message}.`);
       }
     }
   }

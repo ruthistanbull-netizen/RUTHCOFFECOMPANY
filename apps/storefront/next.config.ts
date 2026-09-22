@@ -1,22 +1,7 @@
 import type { NextConfig } from "next";
 
-const themeEditorOrigins = (
-  process.env.THEME_EDITOR_ORIGINS ||
-  process.env.NEXT_PUBLIC_ADMIN_URL ||
-  "https://ruthcommerce.zeabur.app https://*.ruthistanbul.com https://ruthistanbul.com http://localhost:* https://localhost:*"
-)
-  .split(/[\s,]+/)
-  .map((value) => value.trim())
-  .filter(Boolean)
-  .join(" ");
-
-const supabaseHttpOrigin = (() => {
-  try {
-    return new URL(process.env.NEXT_PUBLIC_SUPABASE_URL || "https://supabase.ruthistanbul.com").origin;
-  } catch {
-    return "https://supabase.ruthistanbul.com";
-  }
-})();
+const themeEditorOrigins = "https://rostapanel.zeabur.app http://localhost:* https://localhost:*";
+const supabaseHttpOrigin = "https://fposvxuryzidmeuwytbg.supabase.co";
 
 const supabaseWsOrigin = supabaseHttpOrigin.replace(/^http/, "ws");
 const contentSecurityPolicy = [

@@ -48,10 +48,10 @@ function emptyClaim(balance = 0, customerId: string | null = null): PaidGuestOrd
  * Promotes paid guest orders into a member account through the canonical
  * Customer Engine identity graph. E-mail OR normalized phone can resolve the
  * same guest customer. Orders are then permanently linked to profile_id and
- * their Ruthie Points are reconciled with the immutable order reference.
+ * their ROSTA Points are reconciled with the immutable order reference.
  *
  * Safe to call after registration, login/account sync, order-history reads and
- * reward-balance reads. adjust_ruthie_points is idempotent for the same
+ * reward-balance reads. adjust_rosta_points is idempotent for the same
  * profile + order reference, so repeated reconciliation never double-awards.
  */
 export async function claimPaidGuestOrderPointsForProfile({
@@ -69,8 +69,8 @@ export async function claimPaidGuestOrderPointsForProfile({
     .eq("id", cleanProfileId)
     .maybeSingle();
 
-  if (profileError) throw new Error(`Ruthie Points profili alınamadı: ${profileError.message}`);
-  if (!profile) throw new Error("Ruthie Points profili bulunamadı.");
+  if (profileError) throw new Error(`ROSTA Points profili alınamadı: ${profileError.message}`);
+  if (!profile) throw new Error("ROSTA Points profili bulunamadı.");
 
   const cleanEmail = normalizedEmail(profile.email || email);
   const cleanPhone = normalizePhone(profile.phone_normalized || profile.phone || phone);
@@ -180,7 +180,7 @@ export async function claimPaidGuestOrderPointsForProfile({
   }
 
   const { data: existingTransactions, error: transactionLookupError } = await supabase
-    .from("ruthie_point_transactions")
+    .from("rosta_point_transactions")
     .select("reference_id")
     .eq("profile_id", cleanProfileId)
     .eq("transaction_type", "order_earned")
@@ -188,7 +188,7 @@ export async function claimPaidGuestOrderPointsForProfile({
     .in("reference_id", eligibleOrderIds);
 
   if (transactionLookupError) {
-    throw new Error(`Ruthie Points geçmişi alınamadı: ${transactionLookupError.message}`);
+    throw new Error(`ROSTA Points geçmişi alınamadı: ${transactionLookupError.message}`);
   }
 
   const previouslyRewarded = new Set(
@@ -202,10 +202,10 @@ export async function claimPaidGuestOrderPointsForProfile({
     const points = pointsForPaidTotal(order.total_amount);
     if (points <= 0) continue;
 
-    const { error: awardError } = await supabase.rpc("adjust_ruthie_points", {
+    const { error: awardError } = await supabase.rpc("adjust_rosta_points", {
       p_profile_id: cleanProfileId,
       p_amount: points,
-      p_reason: `${order.order_no} siparişinden kazanılan Ruthie Points`,
+      p_reason: `${order.order_no} siparişinden kazanılan ROSTA Points`,
       p_transaction_type: "order_earned",
       p_reference_type: "order",
       p_reference_id: String(order.id),
@@ -221,7 +221,7 @@ export async function claimPaidGuestOrderPointsForProfile({
     .select("reward_points_balance")
     .eq("id", cleanProfileId)
     .single();
-  if (balanceError) throw new Error(`Ruthie Points bakiyesi yenilenemedi: ${balanceError.message}`);
+  if (balanceError) throw new Error(`ROSTA Points bakiyesi yenilenemedi: ${balanceError.message}`);
 
   return {
     matchedOrders: eligibleOrders.length,

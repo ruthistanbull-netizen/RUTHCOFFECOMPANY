@@ -27,6 +27,7 @@ export async function requireAdmin(request: Request) {
   if (profileError) {
     return { error: NextResponse.json({ ok: false, error: profileError.message }, { status: 500 }) };
   }
+
   if (!profile || String(profile.role || "").toLowerCase() !== "admin") {
     return { error: NextResponse.json({ ok: false, error: "Bu panele erişim yetkin yok." }, { status: 403 }) };
   }

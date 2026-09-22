@@ -691,8 +691,8 @@ export function ProductGallery({
         setSelectedIndex(0);
       }
     };
-    window.addEventListener("ruth:variant-image", onVariant);
-    return () => window.removeEventListener("ruth:variant-image", onVariant);
+    window.addEventListener("rosta:variant-image", onVariant);
+    return () => window.removeEventListener("rosta:variant-image", onVariant);
   }, [product.id]);
 
   const selectedImage = displayImages[selectedIndex] ?? displayImages[0];

@@ -4,7 +4,7 @@ import { XCircle } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Ödeme Başarısız",
-  description: "Ruth Istanbul ödeme başarısız sayfası.",
+  description: "ROSTA Coffee Co. ödeme başarısız sayfası.",
 };
 
 type Props = {

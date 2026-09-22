@@ -16,7 +16,6 @@ import {
   cleanedProductDescription,
   displayCollectionName,
   displayMaterial,
-  isNecklaceOrChainProduct,
   productCareDetails,
   productMaterialDetails,
 } from "@/lib/productDisplay";
@@ -71,7 +70,7 @@ const EDGE_RESISTANCE = 0.16;
 const IMAGE_WAIT_MS = 650;
 const MAX_PRODUCT_CACHE = 9;
 const MAX_IMAGE_CACHE = 6;
-const PRODUCT_SWIPE_HINT_STORAGE_KEY = "ruth_product_swipe_hint_seen_v1";
+const PRODUCT_SWIPE_HINT_STORAGE_KEY = "rosta_product_swipe_hint_seen_v1";
 const PRODUCT_SWIPE_HINT_VISIBLE_MS = 5_000;
 
 function emptyGesture(): GestureState {
@@ -107,54 +106,35 @@ function firstImage(product: Product | null | undefined) {
 }
 
 function productDetails(product: Product): ProductDetailItem[] {
-  const material = displayMaterial(product);
+  const productInfo = cleanLine(
+    product.material || productMaterialDetails(product) || displayMaterial(product),
+  );
   const description =
     cleanLine(cleanedProductDescription(product)) ||
-    "Ruth Istanbul koleksiyonunun zamansız çizgisini taşıyan özel tasarım.";
-  const materialDetails = cleanLine(
-    product.material || productMaterialDetails(product) || material,
-  );
+    "ROSTA Coffee Co. ürünü.";
   const careDetails = cleanLine(product.care_advice || productCareDetails(product));
-  const sizeUsage = cleanLine(product.size_usage);
-  const necklaceGuideSelected = sizeUsage === "Kolye ölçü fotoğrafı";
-  const showNecklaceGuide =
-    necklaceGuideSelected && isNecklaceOrChainProduct(product);
-  const sizeUsageContent = necklaceGuideSelected
-    ? showNecklaceGuide
-      ? ""
-      : product.is_adjustable
-        ? "Ayarlanabilir yüzük gövdesi"
-        : ""
-    : sizeUsage || (product.is_adjustable ? "Ayarlanabilir yüzük gövdesi" : "");
+  const usage = cleanLine(product.size_usage);
 
   return [
     { id: "description", label: "Açıklama", content: description },
     {
       id: "material",
-      label: "Materyal ve Bakım",
+      label: "Ürün Bilgisi",
       content: [
-        "MATERYAL",
-        materialDetails || "Ürün materyal ve kaplama bilgileri ürün bazında değişebilir.",
-        "",
-        "BAKIM",
-        careDetails || "Ürünü parfüm, su ve kimyasal ürünlerle doğrudan temastan koruyunuz.",
-      ].join("\n"),
+        productInfo || "Ürün bilgileri ürün bazında değişebilir.",
+        careDetails ? "" : null,
+        careDetails ? "SAKLAMA / KULLANIM" : null,
+        careDetails || null,
+      ].filter((value): value is string => Boolean(value)).join("\n"),
     },
-    { id: "size-usage", label: "Ölçü ve Kullanım", content: sizeUsageContent },
+    { id: "size-usage", label: "Kullanım", content: usage || "Detaylı kullanım bilgisi ürün açıklamasında yer alır." },
     {
       id: "shipping-returns",
-      label: "Kargo İade ve Değişim",
+      label: "Kargo ve İade",
       content:
-        "Ürünler 3–5 iş günü içinde kargoya verilir. Uygun koşullarda teslimden sonra 14 gün içinde iade ve değişim desteği sunulur.",
+        "Teslimat ve iade koşulları sipariş ve ürün tipine göre uygulanır. Güncel detaylar için kargo ve iade sayfasını inceleyebilirsiniz.",
     },
   ];
-}
-
-function hasNecklaceGuide(product: Product) {
-  return (
-    cleanLine(product.size_usage) === "Kolye ölçü fotoğrafı" &&
-    isNecklaceOrChainProduct(product)
-  );
 }
 
 function prefersReducedPreload() {
@@ -203,15 +183,15 @@ function ProductBrowserPreview({ product }: { product: Product | null }) {
       <section className="product-browser-preview-details">
         <div className="product-browser-preview-tabs">
           <span>Açıklama</span>
-          <span>Materyal ve Bakım</span>
-          <span>Ölçü ve Kullanım</span>
-          <span>Kargo İade ve Değişim</span>
+          <span>Ürün Bilgisi</span>
+          <span>Kullanım</span>
+          <span>Kargo ve İade</span>
         </div>
         <div className="product-browser-preview-copy">
           <small>
-            {displayCollectionName(product.collections?.name) || "Ruth Istanbul"}
+            {displayCollectionName(product.collections?.name) || "ROSTA Coffee Co."}
           </small>
-          <p>Ürünün tasarım, materyal ve kullanım bilgileri</p>
+          <p>Ürün detayları ve kullanım bilgileri</p>
         </div>
       </section>
       <aside className="product-browser-preview-purchase">
@@ -743,9 +723,6 @@ export function ProductDetailExperience({
   const discountPercentage = hasDiscount
     ? Math.max(1, Math.round(((compareAt - productPrice) / compareAt) * 100))
     : 0;
-  const necklaceGuideStyle = hasNecklaceGuide(product)
-    ? `.product-desktop-details details:nth-child(3) p::before,#product-detail-size-usage::before{content:"";display:block;width:min(100%,410px);aspect-ratio:820/1431;margin:0 0 14px;background:url('/necklace-size-guide.jpg') center/contain no-repeat;border:1px solid rgba(184,151,106,.18)}`
-    : "";
 
   return (
     <div
@@ -802,7 +779,6 @@ export function ProductDetailExperience({
         .product-service-card strong{display:block;font-size:8px;letter-spacing:.13em;text-transform:uppercase}
         .product-service-card span{display:block;margin-top:5px;color:var(--muted-foreground);font-size:8px}
         .product-secondary-content{background:var(--ivory)}
-        ${necklaceGuideStyle}
         @media(max-width:767px){
           .product-detail-page{padding-top:0}
           .product-primary{display:flex;width:100%;margin:0;flex-direction:column;gap:0;padding:0}

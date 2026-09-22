@@ -16,7 +16,7 @@ export const revalidate = 300;
 function description(product: Product) {
   return cleanSeoText(
     product.seo_description || product.short_description || product.description,
-    `${product.name} Ruth Istanbul online mağazasında.`,
+    `${product.name} | ROSTA COFFEE CO.`,
     160,
   );
 }
@@ -61,7 +61,7 @@ export default async function ProductPage({
 }) {
   const { slug } = await params;
   const cookieStore = await cookies();
-  const source = cookieStore.get("ruth_product_source")?.value || "";
+  const source = cookieStore.get("rosta_product_source")?.value || "";
   const productWindow = await getProductPageWindowForSource(slug, source);
   if (!productWindow.current) return notFound();
 

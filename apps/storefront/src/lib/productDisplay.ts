@@ -38,96 +38,23 @@ export function uniqueClean(values: Array<string | null | undefined>) {
   return result;
 }
 
-const CATEGORY_LABELS: Record<string, string> = {
-  ring: "Yüzük",
-  rings: "Yüzük",
-  yuzuk: "Yüzük",
-  "yuzukler": "Yüzük",
-  "yüzük": "Yüzük",
-  "yüzükler": "Yüzük",
-  necklace: "Kolye",
-  necklaces: "Kolye",
-  pendant: "Kolye",
-  pendants: "Kolye",
-  kolye: "Kolye",
-  kolyeler: "Kolye",
-  chain: "Zincir",
-  chains: "Zincir",
-  zincir: "Zincir",
-  zincirler: "Zincir",
-  bracelet: "Bileklik",
-  bracelets: "Bileklik",
-  bileklik: "Bileklik",
-  bileklikler: "Bileklik",
-  earring: "Küpe",
-  earrings: "Küpe",
-  kupe: "Küpe",
-  kupeler: "Küpe",
-  "küpe": "Küpe",
-  "küpeler": "Küpe",
-  set: "Set",
-  sets: "Set",
-  "setler": "Set",
-};
-
-const CATEGORY_SLUGS = new Set(Object.keys(CATEGORY_LABELS));
-
-const COLLECTION_LABELS: Record<string, string> = {
-  "ruth-atelier": "Ruth Atelier",
-  "ruth atelier": "Ruth Atelier",
-  "sun-kissed": "Sun-Kissed",
-  "sun kissed": "Sun-Kissed",
-  huna: "HÛNA",
-  "hûna": "HÛNA",
-  "nazar-collection": "Nazar Koleksiyonu",
-  "nazar collection": "Nazar Koleksiyonu",
-  "nazar-koleksiyonu": "Nazar Koleksiyonu",
-  arya: "Arya",
-  mantra: "Mantrâ",
-  "mantrâ": "Mantrâ",
-  "handmade-specials": "Handmade Specials",
-  "handmade specials": "Handmade Specials",
-  "atelier-setleri": "Atelier Setleri",
-  "atelier setleri": "Atelier Setleri",
-};
-
 export function displayCategoryName(value: string | null | undefined) {
   if (!value) return null;
-  const slug = normalizeSlug(value);
-  const plain = lower(value).replace(/\s+/g, " ");
-  return CATEGORY_LABELS[slug] || CATEGORY_LABELS[plain] || titleCase(value);
+  return titleCase(value.replace(/[-_]+/g, " "));
 }
 
 export function isCategoryLikeValue(value: string | null | undefined) {
-  if (!value) return false;
-  const slug = normalizeSlug(value);
-  const plain = lower(value).replace(/\s+/g, " ");
-  return CATEGORY_SLUGS.has(slug) || CATEGORY_SLUGS.has(plain);
+  return Boolean(value && value.trim());
 }
 
 export function displayCollectionName(value: string | null | undefined) {
   if (!value) return null;
-  const slug = normalizeSlug(value);
-  const plain = lower(value).replace(/\s+/g, " ");
-
-  if (isCategoryLikeValue(value)) return displayCategoryName(value);
-  return COLLECTION_LABELS[slug] || COLLECTION_LABELS[plain] || value.replace(/Istanbul/g, "Istanbul");
+  return titleCase(value.replace(/[-_]+/g, " "));
 }
 
-export function isRuthAtelierProduct(product: Product) {
-  const values = [
-    product.collection_id,
-    product.collections?.name,
-    product.collections?.slug,
-    ...(product.collection_slugs || []),
-    ...(product.category_names || []),
-    ...(product.category_slugs || []),
-  ]
-    .filter(Boolean)
-    .join(" ");
-
-  const haystack = lower(values);
-  return haystack.includes("ruth atelier") || haystack.includes("ruth-atelier");
+// Kept as a compatibility export for copied UI modules. ROSTA has no Ruth Atelier taxonomy.
+export function isRuthAtelierProduct(_product: Product) {
+  return false;
 }
 
 export function productHasImage(product: Product) {
@@ -138,15 +65,7 @@ export function productHasImage(product: Product) {
 }
 
 export function displayMaterial(product: Product) {
-  const material = product.material?.trim();
-  if (material) return material;
-
-  if (product.name?.toLocaleLowerCase("tr-TR").includes("the trilogy of sun")) {
-    return "925 Ayar Gümüş";
-  }
-
-  if (isRuthAtelierProduct(product)) return "Brass";
-  return "925 Ayar Gümüş";
+  return product.material?.trim() || product.material_note?.trim() || "Ürün bilgisi";
 }
 
 export function materialFilterValue(product: Product) {
@@ -243,16 +162,14 @@ export function productCategoryValues(product: Product) {
   const values = [
     ...(product.category_names || []),
     ...(product.category_slugs || []),
-    product.collections?.name,
-    product.collections?.slug,
-  ].filter((value): value is string => Boolean(value && isCategoryLikeValue(value)));
+  ].filter((value): value is string => Boolean(value && value.trim()));
 
   return uniqueClean(values.map(displayCategoryName)).sort((a, b) => a.localeCompare(b, "tr"));
 }
 
 export function productCollectionFilterValue(product: Product) {
   const raw = product.collections?.name || product.collections?.slug || product.collection_slugs?.[0] || null;
-  if (!raw || isCategoryLikeValue(raw)) return null;
+  if (!raw) return null;
   return displayCollectionName(raw);
 }
 
@@ -294,24 +211,20 @@ function hasKindWord(product: Product, words: string[]) {
   return words.some((word) => text.includes(` ${word} `));
 }
 
-export function isRingProduct(product: Product) {
-  return hasKindWord(product, ["ring", "rings", "yüzük", "yuzuk"]);
+export function isRingProduct(_product: Product) {
+  return false;
 }
 
-export function isChainProduct(product: Product) {
-  return hasKindWord(product, ["chain", "chains", "zincir", "zincirler"]);
+export function isChainProduct(_product: Product) {
+  return false;
 }
 
-export function isNecklaceProduct(product: Product) {
-  return hasKindWord(product, ["necklace", "necklaces", "pendant", "pendants", "kolye", "kolyeler"]);
+export function isNecklaceProduct(_product: Product) {
+  return false;
 }
 
-export function isNecklaceOrChainProduct(product: Product) {
-  // size_usage is an explicit merchandising choice made in the admin panel.
-  // When the necklace guide is selected, do not second-guess that choice from
-  // the product name/category; the guide must render on the product page.
-  if (lower(product.size_usage || "") === "kolye ölçü fotoğrafı") return true;
-  return isNecklaceProduct(product) || isChainProduct(product);
+export function isNecklaceOrChainProduct(_product: Product) {
+  return false;
 }
 
 function cleanProductLine(line: string) {
@@ -361,32 +274,12 @@ function isCareLine(line: string) {
 
 export function cleanedProductDescription(product: Product) {
   const description = product.description || product.short_description || "";
-  const lines = description
-    .split(/\r?\n+/)
-    .map(cleanProductLine)
-    .filter(Boolean);
-
-  const result: string[] = [];
-  let skipCareBlock = false;
-
-  for (const line of lines) {
-    const text = lower(line);
-
-    if (text === "öne çıkanlar" || text === "one cikanlar" || text === "kısa bakım notu" || text === "kisa bakim notu") {
-      if (text.includes("bak")) skipCareBlock = true;
-      continue;
-    }
-
-    if (skipCareBlock) {
-      if (isCareLine(line)) continue;
-      skipCareBlock = false;
-    }
-
-    if (isMaterialOrFinishLine(line) || isCareLine(line)) continue;
-    result.push(line.replace(/Istanbul/g, "Istanbul"));
-  }
-
-  return uniqueClean(result).join("\n\n");
+  return uniqueClean(
+    description
+      .split(/\r?\n+/)
+      .map(cleanProductLine)
+      .filter(Boolean),
+  ).join("\n\n");
 }
 
 function hasGoldFinish(product: Product) {
@@ -401,16 +294,9 @@ function hasGoldFinish(product: Product) {
 }
 
 export function productMaterialDetails(product: Product) {
-  const atelier = isRuthAtelierProduct(product);
-  const goldFinish = hasGoldFinish(product);
-
-  if (atelier) {
-    return goldFinish ? "Brass üzeri altın kaplama." : "Brass.";
-  }
-
-  return goldFinish ? "925 ayar gümüş üzeri altın kaplama." : "925 ayar gümüş.";
+  return product.material_note?.trim() || product.material?.trim() || "";
 }
 
-export function productCareDetails(_product: Product) {
-  return "Parfüm, su ve kimyasal temasından kaçın. Kullanmadığında kutusunda sakla.";
+export function productCareDetails(product: Product) {
+  return product.care_advice?.trim() || "";
 }

@@ -251,7 +251,7 @@ export function ProductSwipeTransitionParity() {
     window.addEventListener("resize", schedule);
     window.addEventListener("orientationchange", schedule);
     window.addEventListener("popstate", schedule);
-    window.addEventListener("ruth:product-history-change", schedule);
+    window.addEventListener("rosta:product-history-change", schedule);
     window.visualViewport?.addEventListener("resize", schedule);
     window.visualViewport?.addEventListener("scroll", schedule);
     schedule();
@@ -262,7 +262,7 @@ export function ProductSwipeTransitionParity() {
       window.removeEventListener("resize", schedule);
       window.removeEventListener("orientationchange", schedule);
       window.removeEventListener("popstate", schedule);
-      window.removeEventListener("ruth:product-history-change", schedule);
+      window.removeEventListener("rosta:product-history-change", schedule);
       window.visualViewport?.removeEventListener("resize", schedule);
       window.visualViewport?.removeEventListener("scroll", schedule);
       if (frame) window.cancelAnimationFrame(frame);

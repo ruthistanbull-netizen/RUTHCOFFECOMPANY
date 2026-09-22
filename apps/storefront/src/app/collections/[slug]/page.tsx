@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     getCachedProductsByCollectionSlug(slug),
   ]);
   if (!collection) return { title: "Koleksiyon bulunamadı", robots: { index: false, follow: false } };
-  const summary = collection.description || `${collection.name} koleksiyonunu Ruth Istanbul’da keşfet.`;
+  const summary = collection.description || `${collection.name} koleksiyonunu ROSTA Coffee Co.’da keşfet.`;
   const canonical = `${SITE_URL}/collections/${encodeURIComponent(collection.slug)}`;
   return {
     title: collection.name,
@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     alternates: { canonical },
     robots: products.length ? { index: true, follow: true } : { index: false, follow: true, noarchive: true },
     openGraph: {
-      title: `${collection.name} | Ruth Istanbul`,
+      title: `${collection.name} | ROSTA Coffee Co.`,
       description: summary,
       url: canonical,
       images: collection.cover_image_url ? [{ url: collection.cover_image_url, alt: collection.name }] : undefined,
@@ -56,7 +56,7 @@ export default async function CollectionDetailPage({ params }: { params: Promise
               {collection.name}
             </h1>
             <p className="mt-6 max-w-2xl leading-8 text-muted-ruth">
-              {collection.description || "Ruth Istanbul seçili koleksiyonu."}
+              {collection.description || "ROSTA Coffee Co. seçili koleksiyonu."}
             </p>
           </AnimatedBlock>
 

@@ -95,17 +95,17 @@ async function readSiteSettings(): Promise<Record<string, SiteSetting["setting_v
   }, {});
 }
 
-const cachedCollections = unstable_cache(readCollections, ["ruth-live-collections-v1"], {
+const cachedCollections = unstable_cache(readCollections, ["rosta-live-collections-v1"], {
   revalidate: CACHE_REVALIDATE_SECONDS,
   tags: ["ruth-collections"],
 });
-const cachedCategories = unstable_cache(readCategories, ["ruth-live-categories-v1"], {
+const cachedCategories = unstable_cache(readCategories, ["rosta-live-categories-v1"], {
   revalidate: CACHE_REVALIDATE_SECONDS,
   tags: ["ruth-categories"],
 });
-const cachedSiteSettings = unstable_cache(readSiteSettings, ["ruth-public-site-settings-v1"], {
+const cachedSiteSettings = unstable_cache(readSiteSettings, ["rosta-public-site-settings-v1"], {
   revalidate: CACHE_REVALIDATE_SECONDS,
-  tags: ["ruth-theme"],
+  tags: ["rosta-theme"],
 });
 
 export function getCachedCollections() { return cachedCollections(); }

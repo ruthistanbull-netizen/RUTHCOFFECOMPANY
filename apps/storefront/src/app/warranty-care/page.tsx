@@ -1,7 +1,15 @@
 import { LegalDocument, LegalList } from "@/components/legal/LegalDocument";
-export const metadata={title:"Garanti ve Kullanım Talimatları",description:"Ruth Istanbul 45 günlük garanti ve takı kullanım talimatları."};
-export default function WarrantyCarePage(){return <LegalDocument title="Garanti ve Kullanım Talimatları" description="Takılarınızın garanti kapsamı ve uzun ömürlü kullanım önerileri." sections={[
- {title:"Garanti",content:<LegalList><li>Ürünlerimizin 45 gün garanti süresi vardır. Değişim veya iade taleplerinde ürün incelendikten sonra tarafınıza dönüş yapılır.</li><li>Garanti süresi içinde altın kaplama ürünlerde olağan kullanımda solma benzeri bir durum meydana gelirse inceleme sonucuna göre ücretsiz değişim yapılır.</li><li>45 günlük süre sonrasında uygun ürünler için ücretli bakım veya tamir seçeneği sunulabilir.</li><li>Kimyasal temas, darbe, kopma, ezilme, yanlış kullanım ve kullanım talimatlarına aykırı işlemler garanti değerlendirmesinde dikkate alınır.</li></LegalList>},
- {title:"Kullanım Talimatları",content:<LegalList><li>Ürünü kullanmadığınız zamanlarda kararmaması için size gönderilen kutusunda saklayınız.</li><li>Ürünü su, parfüm, krem, deterjan ve benzeri maddelere maruz bırakmayınız; duş, deniz, havuz ve spor sırasında çıkarınız.</li><li>Takıları birbirine sürtünmeyecek şekilde ayrı saklayınız ve yumuşak, kuru bir bezle nazikçe temizleyiniz.</li></LegalList>},
- {title:"Kanuni Haklar",content:<p>Bu 45 günlük ticari garanti, tüketicinin ayıplı mala ilişkin kanuni seçimlik haklarını ortadan kaldırmaz veya sınırlandırmaz.</p>}
- ]}/>}
+
+export const metadata = {
+  title: "Ürün Saklama ve Kullanım",
+  description: "ROSTA Coffee Co. ürün saklama ve kullanım bilgileri.",
+};
+
+export default function WarrantyCarePage() {
+  return <LegalDocument title="Ürün Saklama ve Kullanım" description="Kahve ve diğer ürünler için genel saklama, kullanım ve destek bilgileri." sections={[
+    {title:"Kahvenin Saklanması",content:<LegalList><li>Kahveyi serin, kuru ve doğrudan güneş almayan bir yerde saklayın.</li><li>Paketi açtıktan sonra hava ile teması azaltacak şekilde ağzını sıkıca kapatın.</li><li>Ürün etiketindeki son tüketim/tavsiye edilen tüketim ve saklama bilgilerini esas alın.</li></LegalList>},
+    {title:"Ürün Bilgileri",content:<p>Ürüne özgü içerik, gramaj, varyant, hazırlama veya kullanım bilgileri ilgili ürün sayfasında ve ürün ambalajında yer alır.</p>},
+    {title:"Hasarlı veya Hatalı Ürün",content:<p>Eksik, yanlış veya taşıma sırasında hasar görmüş bir ürün teslim alırsanız sipariş numaranızla iletişim formu üzerinden destek talebi oluşturabilirsiniz.</p>},
+    {title:"Kanuni Haklar",content:<p>Bu bilgilendirme tüketicinin ayıplı mala ve mesafeli satışlara ilişkin yürürlükteki kanuni haklarını ortadan kaldırmaz veya sınırlandırmaz.</p>},
+  ]} />;
+}

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
-import { RUTHIE_POINTS_PER_TL, RUTHIE_WELCOME_POINTS } from "@/lib/rewards";
+import { ROSTA_POINTS_PER_TL, ROSTA_WELCOME_POINTS } from "@/lib/rewards";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -19,24 +19,24 @@ export async function GET() {
       .eq("id", "default")
       .single();
 
-    if (error || !data) throw new Error(error?.message || "Ruthie Points ayarı bulunamadı.");
+    if (error || !data) throw new Error(error?.message || "ROSTA Points ayarı bulunamadı.");
 
     return NextResponse.json({
       ok: true,
-      signupPoints: nonNegativeInteger(data.signup_points, RUTHIE_WELCOME_POINTS),
+      signupPoints: nonNegativeInteger(data.signup_points, ROSTA_WELCOME_POINTS),
       birthdayPoints: nonNegativeInteger(data.birthday_points, 0),
-      pointsPerTl: RUTHIE_POINTS_PER_TL,
+      pointsPerTl: ROSTA_POINTS_PER_TL,
       updatedAt: data.updated_at || null,
     }, {
       headers: { "Cache-Control": "no-store, max-age=0" },
     });
   } catch (error) {
-    console.error("Public Ruthie Points settings could not be loaded", error);
+    console.error("Public ROSTA Points settings could not be loaded", error);
     return NextResponse.json({
       ok: true,
-      signupPoints: RUTHIE_WELCOME_POINTS,
+      signupPoints: ROSTA_WELCOME_POINTS,
       birthdayPoints: 0,
-      pointsPerTl: RUTHIE_POINTS_PER_TL,
+      pointsPerTl: ROSTA_POINTS_PER_TL,
       updatedAt: null,
       fallback: true,
     }, {

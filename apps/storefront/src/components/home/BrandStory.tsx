@@ -17,8 +17,8 @@ export default function BrandStory() {
           className="relative overflow-hidden rounded-lg ruth-glow"
         >
           <img
-            src="/brand-rings-story.jpg"
-            alt="Ruth Istanbul yüzükleri"
+            src="/home/rosta-under-hero-photo.jpg"
+            alt="ROSTA Coffee Co. kahve"
             className="aspect-[4/5] h-full w-full object-cover"
             loading="lazy"
           />
@@ -30,13 +30,13 @@ export default function BrandStory() {
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.8 }}
         >
-          <p className="mb-4 text-xs uppercase tracking-wide-luxe text-gold-dark">Ruth Istanbul’un Hikayesi</p>
+          <p className="mb-4 text-xs uppercase tracking-wide-luxe text-gold-dark">ROSTA’nın Hikayesi</p>
           <h2 className="font-heading font-editorial text-balance" style={{ fontSize: "clamp(2rem, 5vw, 4rem)", color: "var(--ink)" }}>
-            Antik semboller, modern anlar için yeniden yorumlandı.
+            Kahveyi sadeleştir, karakterini koru.
           </h2>
           <p className="mt-6 max-w-xl leading-8 text-muted-ruth">
-            Ruth Atelier; sıcak altın tonlarını, heykelsi formları ve sembolik detayları bir araya getirir.
-            Her parça kişisel, sade ve akılda kalıcı bir his bırakmak için tasarlanır.
+            ROSTA Coffee Co.; günlük kahve deneyimi, doğru ürün seçimi ve tutarlı lezzet üzerine kurulu.
+            Amacımız kahveyi gereksiz karmaşadan uzaklaştırıp çekirdeğin karakterini öne çıkarmak.
           </p>
 
           <button
@@ -58,21 +58,9 @@ export default function BrandStory() {
                 className="overflow-hidden"
               >
                 <div className="mt-6 rounded-2xl border border-gold/15 bg-cream/70 p-6 leading-8 text-muted-ruth">
-                  <p>
-                    Ruth Istanbul, 2023 yılında 925 ayar gümüş takıları mitolojik sembollerle buluşturma vizyonuyla kuruldu.
-                  </p>
-                  <p className="mt-4">
-                    Markanın çıkış noktası, yalnızca estetik bir takı üretmek değil; geçmişten gelen sembolleri, bugünün sade ve güçlü tasarım diliyle yeniden yorumlamaktı. Bu vizyon, Istanbul’un köklü zanaat kültürüyle ve Kapalıçarşı’daki ustaların el işçiliğiyle birleşti.
-                  </p>
-                  <p className="mt-4">
-                    Zamanla Ruth Istanbul, 925 ayar gümüş tasarımlarının yanında Brass ürünler de üretmeye başladı. Böylece markanın sembolik dünyası daha geniş formlara, daha sıcak altın tonlarına ve daha özgün tasarım detaylarına taşındı.
-                  </p>
-                  <p className="mt-4">
-                    Bugün Ruth Istanbul, özellikle Mısır mitolojisinden ilham alan yenilikçi ve tarihi parçalar üretmeye devam ediyor. Her tasarım; bir sembolün, bir hikâyenin ve zamansız bir estetik anlayışın modern takı formuna dönüşmüş halini taşıyor.
-                  </p>
-                  <p className="mt-4">
-                    Gelecekte ise Ruth Istanbul, farklı mitolojilerden ve temalardan ilham alarak bu hikâyeyi daha da genişletmeyi hedefliyor.
-                  </p>
+                  <p>ROSTA, kahveyi ürünün kendisinden başlayarak ele alır: doğru çekirdek, doğru kavrum ve doğru kullanım.</p>
+                  <p className="mt-4">Perakende tarafta evde iyi kahve hazırlamayı kolaylaştıran ürünler sunarken; profesyonel tarafta işletmelerin kahve standardını geliştirecek çözümler üretmeyi hedefler.</p>
+                  <p className="mt-4">Her ürünün arkasında anlaşılır bilgi, izlenebilir operasyon ve sürdürülebilir bir alışveriş deneyimi bulunması ROSTA’nın temel yaklaşımıdır.</p>
                 </div>
               </motion.div>
             )}

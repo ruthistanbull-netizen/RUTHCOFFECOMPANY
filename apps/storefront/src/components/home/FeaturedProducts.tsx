@@ -11,7 +11,7 @@ export default function FeaturedProducts({ products }: { products: Product[] }) 
         <div className="mb-9 flex items-end justify-between gap-4 px-3 md:mb-14 md:px-0">
           <div>
             <p className="mb-3 text-[10px] uppercase tracking-wide-luxe text-gold-dark">
-              Ruth Atelier
+              ROSTA Seçkisi
             </p>
             <h2
               className="font-heading"
@@ -24,7 +24,7 @@ export default function FeaturedProducts({ products }: { products: Product[] }) 
             </h2>
           </div>
           <Link
-            href="/collections/ruth-atelier"
+            href="/products"
             className="shrink-0 pb-1 text-[9px] uppercase tracking-[0.14em] text-gold-dark transition hover:text-ink sm:text-xs sm:tracking-wide-luxe"
           >
             Tümünü Gör

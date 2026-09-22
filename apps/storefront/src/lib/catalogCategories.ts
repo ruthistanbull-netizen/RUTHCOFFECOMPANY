@@ -43,7 +43,7 @@ export function categoryDisplayName(_value: unknown, fallback = "Kategori") {
   return String(fallback || "Kategori").trim();
 }
 
-export function categoryDescription(_value: unknown, fallback = "Ruth Istanbul seçili parçaları.") {
+export function categoryDescription(_value: unknown, fallback = "ROSTA Coffee Co. seçili ürünleri.") {
   return fallback;
 }
 

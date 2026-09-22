@@ -27,13 +27,10 @@ const EDITORIAL_SLIDES = [
   },
   {
     kind: "video",
-    src: "/home/rosta-under-hero-video.mp4",
     label: "Rosta Coffee Co kahve hazırlama videosu",
   },
   {
     kind: "image",
-    desktopSrc: "/home/rosta-under-hero-photo.jpg",
-    mobileSrc: "/home/rosta-under-hero-photo.jpg",
     alt: "Rosta Coffee Co kahve hazırlama editoryali",
     priority: false,
   },
@@ -100,17 +97,21 @@ function sampleMediaTone(media: SampledMedia, viewportX: number, viewportY: numb
 }
 
 function notifyHeroMediaReady() {
-  window.dispatchEvent(new Event("ruth:home-hero-media-changed"));
+  window.dispatchEvent(new Event("rosta:home-hero-media-changed"));
 }
 
 function EditorialMedia({
   slide,
   index,
   heroImages,
+  editorialVideo,
+  editorialImage,
 }: {
   slide: EditorialSlide;
   index: number;
   heroImages: HomepageHeroImages;
+  editorialVideo: string;
+  editorialImage: string;
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const reduceMotion = useReducedMotion();
@@ -167,9 +168,9 @@ function EditorialMedia({
             </div>
           ) : slide.kind === "image" ? (
             <picture className="block h-full w-full">
-              <source media="(min-width: 768px)" srcSet={slide.desktopSrc} />
+              <source media="(min-width: 768px)" srcSet={editorialImage} />
               <img
-                src={slide.mobileSrc}
+                src={editorialImage}
                 alt={slide.alt}
                 className="h-full w-full object-cover object-center"
                 loading="lazy"
@@ -184,7 +185,7 @@ function EditorialMedia({
           ) : (
             <video
               className="h-full w-full object-cover object-center"
-              src={slide.src}
+              src={editorialVideo}
               aria-label={slide.label}
               autoPlay
               loop
@@ -201,7 +202,15 @@ function EditorialMedia({
   );
 }
 
-export default function Hero({ heroImages }: { heroImages: HomepageHeroImages }) {
+export default function Hero({
+  heroImages,
+  editorialVideo,
+  editorialImage,
+}: {
+  heroImages: HomepageHeroImages;
+  editorialVideo: string;
+  editorialImage: string;
+}) {
   const reduceMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement | null>(null);
   const wordmarkRef = useRef<HTMLDivElement | null>(null);
@@ -264,16 +273,29 @@ export default function Hero({ heroImages }: { heroImages: HomepageHeroImages })
     update();
     window.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update);
-    window.addEventListener("ruth:home-hero-media-changed", update);
+    window.addEventListener("rosta:home-hero-media-changed", update);
     timer = window.setInterval(update, 420);
     return () => {
       window.cancelAnimationFrame(frame);
       window.clearInterval(timer);
       window.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
-      window.removeEventListener("ruth:home-hero-media-changed", update);
+      window.removeEventListener("rosta:home-hero-media-changed", update);
     };
   }, []);
+
+  const slides: EditorialSlide[] = [
+    { kind: "hero-image", alt: "Rosta Coffee Co ana sayfa görseli", priority: true },
+    {
+      kind: "video",
+      label: "Rosta Coffee Co kahve hazırlama videosu",
+    },
+    {
+      kind: "image",
+      alt: "Rosta Coffee Co kahve hazırlama editoryali",
+      priority: false,
+    },
+  ];
 
   return (
     <section
@@ -312,12 +334,14 @@ export default function Hero({ heroImages }: { heroImages: HomepageHeroImages })
         }}
       />
 
-      {EDITORIAL_SLIDES.map((slide, index) => (
+      {slides.map((slide, index) => (
         <EditorialMedia
-          key={slide.kind === "video" ? slide.src : `${slide.kind}-${index}`}
+          key={`${slide.kind}-${index}`}
           slide={slide}
           index={index}
           heroImages={liveHeroImages}
+          editorialVideo={editorialVideo}
+          editorialImage={editorialImage}
         />
       ))}
     </section>

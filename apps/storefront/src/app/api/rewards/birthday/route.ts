@@ -146,7 +146,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const { data: adjustment, error: adjustmentError } = await supabase.rpc("adjust_ruthie_points", {
+    const { data: adjustment, error: adjustmentError } = await supabase.rpc("adjust_rosta_points", {
       p_profile_id: data.id,
       p_amount: POINTS,
       p_reason: `${current.claimYear} doğum günü hediyesi`,
@@ -156,7 +156,7 @@ export async function POST(request: Request) {
       p_admin_profile_id: null,
     });
     if (adjustmentError) {
-      throw new Error(`${adjustmentError.message}. Supabase'te RUTHIE-POINTS-PANEL-ENTEGRASYONU.sql dosyasını çalıştır.`);
+      throw new Error(`${adjustmentError.message}.`);
     }
 
     const balance = Math.max(0, Number(adjustment?.[0]?.balance ?? data.reward_points_balance ?? 0));

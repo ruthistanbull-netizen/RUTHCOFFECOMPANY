@@ -1,9 +1,9 @@
 export const RUTHIE_WELCOME_POINTS = 1000;
 export const RUTHIE_POINTS_PER_TL = 10;
 
-const RUTHIE_REWARD_STORAGE_KEY = "ruthie-points-state-v1";
-export const RUTHIE_PENDING_ORDER_KEY = "ruthie-pending-order-reward-v1";
-export const RUTHIE_POINTS_UPDATED_EVENT = "ruthie-points-updated";
+const RUTHIE_REWARD_STORAGE_KEY = "rosta-points-state-v1";
+export const RUTHIE_PENDING_ORDER_KEY = "rosta-pending-order-reward-v1";
+export const RUTHIE_POINTS_UPDATED_EVENT = "rosta-points-updated";
 
 export type RuthieRewardState = {
   welcomeClaimed: boolean;
@@ -235,3 +235,29 @@ export function pointsToLira(points: number) {
 export function liraToPoints(lira: number) {
   return Math.max(0, Math.round(lira * RUTHIE_POINTS_PER_TL));
 }
+
+
+/**
+ * ROSTA Points public naming layer.
+ * Legacy Ruthie-named exports remain available for backward compatibility with
+ * historical modules, while all new storefront code should use these aliases.
+ */
+export const ROSTA_WELCOME_POINTS = RUTHIE_WELCOME_POINTS;
+export const ROSTA_POINTS_PER_TL = RUTHIE_POINTS_PER_TL;
+export const ROSTA_POINTS_UPDATED_EVENT = RUTHIE_POINTS_UPDATED_EVENT;
+export const ROSTA_PENDING_ORDER_KEY = RUTHIE_PENDING_ORDER_KEY;
+
+export type RostaPointsState = RuthieRewardState;
+export type PendingRostaOrderReward = PendingRuthieOrderReward;
+
+export const formatRostaPointsNumber = formatRuthieNumber;
+export const getRostaPointsState = getRuthieRewardState;
+export const setRostaPointsState = setRuthieRewardState;
+export const grantRostaWelcomePoints = grantRuthieWelcomePoints;
+export const makeRostaOrderRewardKey = makeRuthieOrderRewardKey;
+export const savePendingRostaOrderReward = savePendingRuthieOrderReward;
+export const getPendingRostaOrderReward = getPendingRuthieOrderReward;
+export const clearPendingRostaOrderReward = clearPendingRuthieOrderReward;
+export const grantRostaOrderPoints = grantRuthieOrderPoints;
+export const consumeRostaPoints = consumeRuthiePoints;
+export const calculateRostaPoints = calculateRuthiePoints;

@@ -91,8 +91,8 @@ export function ProductPurchasePanel({
   }, []);
 
   useEffect(() => {
-    document.documentElement.classList.add("ruth-product-purchase-active");
-    return () => document.documentElement.classList.remove("ruth-product-purchase-active");
+    document.documentElement.classList.add("rosta-product-purchase-active");
+    return () => document.documentElement.classList.remove("rosta-product-purchase-active");
   }, []);
 
   useEffect(() => {
@@ -132,7 +132,7 @@ export function ProductPurchasePanel({
   useEffect(() => {
     if (!selectedVariant?.image_url) return;
     window.dispatchEvent(
-      new CustomEvent("ruth:variant-image", {
+      new CustomEvent("rosta:variant-image", {
         detail: { productId: product.id, imageUrl: selectedVariant.image_url },
       }),
     );

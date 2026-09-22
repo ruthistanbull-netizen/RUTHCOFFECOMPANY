@@ -4,7 +4,7 @@ import { AccountActivationClient } from "@/components/auth/AccountActivationClie
 
 export const metadata: Metadata = {
   title: "Hesabını Aktifleştir",
-  description: "Taşınan Ruth Istanbul hesabın için yeni şifre oluştur.",
+  description: "ROSTA Coffee Co. hesabın için yeni şifre oluştur.",
 };
 
 export default function ActivateAccountPage() {

@@ -9,12 +9,12 @@ import { categoryHref, publicCategorySlug } from "@/lib/catalogCategories";
 import { SITE_URL } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Takı Kategorileri | Kolye, Yüzük, Bileklik ve Setler",
-  description: "Ruth Istanbul takı kategorilerini keşfet; kolye, yüzük, bileklik ve set seçeneklerini kategoriye göre incele.",
+  title: "Kahve Kategorileri | ROSTA Coffee Co.",
+  description: "ROSTA Coffee Co. ürünlerini kategoriye göre keşfet.",
   alternates: { canonical: `${SITE_URL}/categories` },
   openGraph: {
-    title: "Takı Kategorileri | Ruth Istanbul",
-    description: "Ruth Istanbul takı kategorilerini keşfet.",
+    title: "Kahve Kategorileri | ROSTA Coffee Co.",
+    description: "ROSTA Coffee Co. kahve ve ürün kategorilerini keşfet.",
     url: `${SITE_URL}/categories`,
   },
 };

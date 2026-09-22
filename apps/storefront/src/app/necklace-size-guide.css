@@ -1,4 +1,0 @@
-.product-desktop-details details:nth-child(3) p::before,
-#product-detail-size-usage::before {
-  background-image: url("/necklace-size-guide.jpg?v=20260801") !important;
-}

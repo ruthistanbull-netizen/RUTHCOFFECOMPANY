@@ -5,11 +5,12 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 COPY . .
 RUN npm install --no-audit --no-fund
-RUN npm run build
+RUN npm run build:storefront
 
 ENV NODE_ENV=production
 ENV HOSTNAME=0.0.0.0
 ENV PORT=3000
+ENV ROSTA_APP=storefront
 
 EXPOSE 3000
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "start:storefront"]

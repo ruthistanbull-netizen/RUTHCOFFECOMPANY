@@ -1,5 +1,5 @@
 export const SITE_NAME = "Rosta Coffee Co.";
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || "https://rostacoffecompany.zeabur.app";
 
 export const DEFAULT_SEO_TITLE = "Rosta Coffee Co. | Kahve, Danışmanlık & Tedarik";
 export const DEFAULT_SEO_DESCRIPTION =

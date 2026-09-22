@@ -6,8 +6,8 @@ import { LoadingIndicator } from "@ruth-commerce/ui";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { formatPrice } from "@/lib/formatPrice";
-import { RUTHIE_POINTS_UPDATED_EVENT, calculateRuthiePoints, grantRuthieWelcomePoints, pointsToLira } from "@/lib/rewards";
-import { useRuthieRewardSettings } from "@/lib/useRuthieRewardSettings";
+import { ROSTA_POINTS_UPDATED_EVENT, calculateRostaPoints, grantRostaWelcomePoints, pointsToLira } from "@/lib/rewards";
+import { useRostaPointsSettings } from "@/lib/useRostaPointsSettings";
 import { OrderReviewButton } from "@/components/reviews/OrderReviewButton";
 import { displayBirthDate, formatManualDateInput } from "@/lib/manualDate";
 
@@ -212,7 +212,7 @@ function translateReturnReason(value: string | null | undefined) {
 
 export function AccountClient({ ordersOnly = false }: { ordersOnly?: boolean }) {
   const { user, session, isLoading, signOut } = useAuth();
-  const rewardSettings = useRuthieRewardSettings();
+  const rewardSettings = useRostaPointsSettings();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [orders, setOrders] = useState<AccountOrder[]>([]);
   const [isFetching, setIsFetching] = useState(true);
@@ -261,16 +261,16 @@ export function AccountClient({ ordersOnly = false }: { ordersOnly?: boolean }) 
 
   useEffect(() => {
     if (!user) return;
-    grantRuthieWelcomePoints();
+    grantRostaWelcomePoints();
     setRewardRefreshKey((current) => current + 1);
   }, [user]);
 
   useEffect(() => {
     const refresh = () => setRewardRefreshKey((current) => current + 1);
-    window.addEventListener(RUTHIE_POINTS_UPDATED_EVENT, refresh);
+    window.addEventListener(ROSTA_POINTS_UPDATED_EVENT, refresh);
     window.addEventListener("storage", refresh);
     return () => {
-      window.removeEventListener(RUTHIE_POINTS_UPDATED_EVENT, refresh);
+      window.removeEventListener(ROSTA_POINTS_UPDATED_EVENT, refresh);
       window.removeEventListener("storage", refresh);
     };
   }, []);
@@ -307,9 +307,9 @@ export function AccountClient({ ordersOnly = false }: { ordersOnly?: boolean }) 
   const paidOrderTotal = orders
     .filter((order) => order.payment_status === "paid" || order.status === "paid" || order.status === "completed")
     .reduce((sum, order) => sum + Number(order.total_amount || 0), 0);
-  const rewardSummary = calculateRuthiePoints({ isLoggedIn: Boolean(user), paidOrderTotal, birthdayPoints: Number(profile?.birthday_reward_points || 0) });
+  const rewardSummary = calculateRostaPoints({ isLoggedIn: Boolean(user), paidOrderTotal, birthdayPoints: Number(profile?.birthday_reward_points || 0) });
   const ruthPoints = Math.max(0, Math.floor(Number(profile?.reward_points_balance ?? rewardSummary.totalPoints)));
-  const ruthPointDiscount = pointsToLira(ruthPoints);
+  const rostaPointDiscount = pointsToLira(ruthPoints);
   const configuredBirthdayPoints = Math.max(0, Math.floor(Number(rewardSettings.birthdayPoints || 0)));
   void rewardRefreshKey;
 
@@ -364,12 +364,12 @@ export function AccountClient({ ordersOnly = false }: { ordersOnly?: boolean }) 
             </div>
             <div className="group rounded-2xl border border-gold/15 bg-cream p-5 text-left transition hover:bg-ivory md:col-span-2">
               <div className="flex items-center justify-between gap-3">
-                <p className="text-xs uppercase tracking-wide-luxe text-muted-ruth">Ruthie Points</p>
+                <p className="text-xs uppercase tracking-wide-luxe text-muted-ruth">ROSTA Points</p>
                 <Gift size={18} className="text-gold-dark" />
               </div>
               <p className="mt-3 font-heading text-2xl text-ink">{ruthPoints.toLocaleString("tr-TR")}</p>
               <p className="mt-1 text-xs leading-5 text-muted-ruth">
-                Hesabında aktif Ruthie Points var. Ödeme adımında yaklaşık {ruthPointDiscount.toLocaleString("tr-TR")} TL indirim olarak kullanabilirsin.
+                Hesabında aktif ROSTA Points var. Ödeme adımında yaklaşık {rostaPointDiscount.toLocaleString("tr-TR")} TL indirim olarak kullanabilirsin.
               </p>
               <div className="mt-4 flex flex-col gap-2 sm:flex-row">
                 <Link
@@ -380,7 +380,7 @@ export function AccountClient({ ordersOnly = false }: { ordersOnly?: boolean }) 
                 </Link>
                 <button
                   type="button"
-                  onClick={() => window.dispatchEvent(new Event("ruth-open-rewards"))}
+                  onClick={() => window.dispatchEvent(new Event("rosta-open-points"))}
                   className="inline-flex items-center justify-center border border-gold/25 px-5 py-3 text-xs uppercase tracking-wide-luxe text-ink"
                 >
                   Nasıl Kazanılır?
@@ -417,7 +417,7 @@ export function AccountClient({ ordersOnly = false }: { ordersOnly?: boolean }) 
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
                 <p className="text-xs uppercase tracking-wide-luxe text-muted-ruth">Doğum Günü Avantajı</p>
-                <h2 className="mt-2 font-heading text-2xl">{configuredBirthdayPoints.toLocaleString("tr-TR")} Ruthie Points</h2>
+                <h2 className="mt-2 font-heading text-2xl">{configuredBirthdayPoints.toLocaleString("tr-TR")} ROSTA Points</h2>
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-ruth">Puan, doğum gününde ve onu izleyen 7 gün içinde Avantajlar alanından bir kez hesabına eklenebilir.</p>
               </div>
               <div className="flex flex-col gap-2 sm:flex-row">

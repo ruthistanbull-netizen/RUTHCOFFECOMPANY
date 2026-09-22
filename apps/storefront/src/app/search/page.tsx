@@ -3,7 +3,7 @@ import { StorefrontSearchClient } from "@/components/search/StorefrontSearchClie
 
 export const metadata: Metadata = {
   title: "Arama",
-  description: "Ruth Istanbul ürün, koleksiyon ve kategori araması.",
+  description: "ROSTA Coffee Co. ürün, koleksiyon ve kategori araması.",
 };
 
 export default async function SearchPage({

@@ -17,7 +17,7 @@ export default async function ProductLayout({
     {
       "@type": "ListItem",
       position: 1,
-      name: "Ruth Istanbul",
+      name: "ROSTA Coffee Co.",
       item: SITE_URL,
     },
     {
