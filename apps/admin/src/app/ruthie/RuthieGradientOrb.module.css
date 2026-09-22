@@ -1,0 +1,141 @@
+.root {
+  --orb-size: min(42vw, 430px);
+  position: relative;
+  width: var(--orb-size);
+  height: var(--orb-size);
+  min-width: 96px;
+  min-height: 96px;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.root[data-compact="true"] {
+  --orb-size: 126px;
+}
+
+.originalOrb {
+  width: 100%;
+  height: 100%;
+  transform: none !important;
+  filter: none !important;
+  opacity: 1 !important;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.originalOrb canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  transform: none !important;
+  filter: grayscale(.62) sepia(.92) saturate(2.05) hue-rotate(2deg) brightness(1.03) contrast(1.06);
+  opacity: 1;
+  transition:
+    filter .48s cubic-bezier(.2, .75, .2, 1),
+    opacity .42s cubic-bezier(.2, .75, .2, 1);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* State rim never changes layout or canvas position. Every visual phase stays
+   inside the #C9A23A gold family; only brightness/saturation and scale move. */
+.root::after {
+  content: "";
+  position: absolute;
+  inset: 8.5%;
+  z-index: 3;
+  border-radius: 50%;
+  border: 1px solid rgba(230, 210, 139, 0);
+  box-shadow:
+    inset 0 0 0 rgba(201, 162, 58, 0),
+    0 0 0 rgba(226, 199, 107, 0);
+  opacity: 0;
+  transform: scale(.91);
+  pointer-events: none;
+  transition:
+    opacity .5s cubic-bezier(.2, .75, .2, 1),
+    transform .56s cubic-bezier(.16, 1, .3, 1),
+    border-color .46s ease,
+    box-shadow .52s ease;
+}
+
+.root[data-phase="listening"] .originalOrb canvas {
+  filter: grayscale(.48) sepia(.95) saturate(2.38) hue-rotate(0deg) brightness(1.23) contrast(1.11);
+}
+
+.root[data-phase="listening"]::after {
+  opacity: .92;
+  transform: scale(1);
+  border-color: rgba(246, 235, 200, .82);
+  box-shadow:
+    inset 0 0 20px rgba(201, 162, 58, .12),
+    0 0 9px rgba(226, 199, 107, .08);
+  animation: ruthieListeningRim 1.42s .42s ease-in-out infinite;
+}
+
+.root[data-phase="thinking"] .originalOrb canvas {
+  filter: grayscale(.68) sepia(.94) saturate(1.86) hue-rotate(4deg) brightness(.96) contrast(1.05);
+}
+
+.root[data-phase="acting"] .originalOrb canvas {
+  filter: grayscale(.52) sepia(.96) saturate(2.22) hue-rotate(-2deg) brightness(1.12) contrast(1.1);
+}
+
+.root[data-phase="speaking"] .originalOrb canvas {
+  filter: grayscale(.54) sepia(.94) saturate(2.14) hue-rotate(2deg) brightness(1.16) contrast(1.08);
+}
+
+.root[data-phase="connecting"] .originalOrb canvas {
+  filter: grayscale(.76) sepia(.88) saturate(1.5) hue-rotate(2deg) brightness(.9) contrast(.99);
+  opacity: .78;
+}
+
+.root[data-phase="error"] .originalOrb canvas {
+  filter: grayscale(.72) sepia(.96) saturate(1.75) hue-rotate(-4deg) brightness(.82) contrast(1.08);
+  opacity: .88;
+}
+
+@keyframes ruthieListeningRim {
+  0%, 100% {
+    opacity: .68;
+    box-shadow:
+      inset 0 0 15px rgba(201, 162, 58, .08),
+      0 0 6px rgba(226, 199, 107, .05);
+  }
+  50% {
+    opacity: 1;
+    box-shadow:
+      inset 0 0 23px rgba(201, 162, 58, .15),
+      0 0 11px rgba(226, 199, 107, .10);
+  }
+}
+
+@media (max-width: 760px) {
+  .root {
+    --orb-size: min(88vw, 390px);
+  }
+
+  .root[data-compact="true"] {
+    --orb-size: 78px;
+  }
+
+  .originalOrb canvas {
+    transition-duration: .4s, .36s;
+  }
+
+  .root::after {
+    transition-duration: .42s, .48s, .4s, .44s;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root::after {
+    animation: none !important;
+    transition-duration: .18s !important;
+  }
+
+  .originalOrb canvas {
+    transition-duration: .18s !important;
+  }
+}
