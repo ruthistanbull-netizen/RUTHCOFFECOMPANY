@@ -2,10 +2,13 @@
   "name": "ruthcoffeecompany",
   "version": "0.1.0",
   "private": true,
-  "engines": { "node": "22.x" },
+  "engines": {
+    "node": "22.x"
+  },
   "packageManager": "npm@10.9.2",
   "workspaces": [
     "apps/storefront",
+    "apps/admin",
     "packages/contracts",
     "packages/commerce-core",
     "packages/ui"
@@ -14,6 +17,14 @@
     "dev": "npm --prefix apps/storefront run dev",
     "build": "npm --prefix apps/storefront run build",
     "start": "npm --prefix apps/storefront run start",
-    "typecheck": "npm --prefix apps/storefront run typecheck"
+    "typecheck": "npm --prefix apps/storefront run typecheck",
+    "dev:storefront": "npm --prefix apps/storefront run dev",
+    "build:storefront": "npm --prefix apps/storefront run build",
+    "start:storefront": "npm --prefix apps/storefront run start",
+    "typecheck:storefront": "npm --prefix apps/storefront run typecheck",
+    "dev:admin": "npm --prefix apps/admin run dev",
+    "build:admin": "npm --prefix apps/admin run build",
+    "start:admin": "npm --prefix apps/admin run start",
+    "typecheck:admin": "npm --prefix apps/admin run typecheck"
   }
 }
