@@ -231,13 +231,13 @@ export async function POST(request: Request) {
       currency: "TRY",
       // Canlı Supabase tablolarının eski kurulumlarında status CHECK constraint
       // sadece waiting/paid/failed/expired değerlerine izin veriyor.
-      // Bu yüzden iletişim bilgisi bırakılan terk sepeti ikas mantığında
-      // "waiting" olarak kaydediyoruz; panel bunu gerçek terk sepet olarak gösterir.
+      // Bu yüzden iletişim bilgisi bırakılan terk sepetini "waiting" olarak
+      // kaydediyoruz; panel bunu gerçek terk sepet olarak gösterir.
       status: "waiting",
       callback_payload: {
         source: clean(body.source) || "contact_captured",
         captured_at: now,
-        abandoned_logic: "ikas_contact_captured",
+        abandoned_logic: "rosta_contact_captured",
       },
       resume_token: token,
       ...(attribution ? { attribution } : {}),
