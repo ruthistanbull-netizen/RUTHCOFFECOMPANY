@@ -1,4 +1,4 @@
-/* Ruthie insight popup — soft premium visual layer.
+/* ROSTA Insight popup — soft premium visual layer.
    Interaction/data owners stay in ExactRuthieInsightPopup.tsx; this file only
    changes presentation so the assistant remains functionally identical. */
 
@@ -245,7 +245,7 @@
 }
 
 [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Görsel fiyatını göster"],
-[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ruthie’ye gönder"] {
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="ROSTA Insight’a gönder"] {
   width: 42px !important;
   height: 42px !important;
   border: 1px solid rgba(161, 123, 28, 0.28);
