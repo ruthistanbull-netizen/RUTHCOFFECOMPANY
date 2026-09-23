@@ -81,13 +81,13 @@ export function applyPointsEntry(input: ApplyPointsEntryInput): PointsMutationRe
   if (!Number.isSafeInteger(input.points) || input.points <= 0) {
     throw new CommerceInvariantError(
       "INVALID_POINTS_AMOUNT",
-      "Ruthie Points amount must be a positive safe integer.",
+      "ROSTA Points amount must be a positive safe integer.",
     );
   }
 
   const direction = creditTypes.has(input.type) ? 1 : debitTypes.has(input.type) ? -1 : 0;
   if (direction === 0) {
-    throw new CommerceInvariantError("UNSUPPORTED_POINTS_ENTRY", "Unsupported Ruthie Points entry type.");
+    throw new CommerceInvariantError("UNSUPPORTED_POINTS_ENTRY", "Unsupported ROSTA Points entry type.");
   }
 
   const balanceAfter = input.account.balance + input.points * direction;
