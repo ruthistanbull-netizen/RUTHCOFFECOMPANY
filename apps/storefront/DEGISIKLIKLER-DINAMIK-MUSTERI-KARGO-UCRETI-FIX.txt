@@ -1,4 +1,4 @@
-RUTH ISTANBUL WEBSITE - DINAMIK MUSTERI KARGO UCRETI
+ROSTA COFFEE COMPANY - DINAMIK MUSTERI KARGO UCRETI
 
 - Admin panel Kargo Yonetimi'nden kaydedilen musteri kargo ucreti checkout hesaplamasinda kullanilir.
 - Sepet tutari ucretsiz kargo limitinin altindaysa ayarlanan ucret uygulanir.
