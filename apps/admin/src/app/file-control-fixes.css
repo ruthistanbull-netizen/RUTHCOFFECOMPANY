@@ -1,0 +1,29 @@
+.cr-settings-upload,
+label.cr-icon-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.cr-settings-upload input[type="file"],
+label.cr-icon-button input[type="file"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.cr-settings-upload:has(input:disabled),
+label.cr-icon-button:has(input:disabled) {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+.cr-settings-upload:focus-within,
+label.cr-icon-button:focus-within {
+  outline: 3px solid rgba(49, 94, 251, .22);
+  outline-offset: 2px;
+}
