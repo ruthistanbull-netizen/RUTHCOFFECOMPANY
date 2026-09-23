@@ -1,0 +1,440 @@
+.cr-return-workspace {
+  margin-top: 16px;
+  overflow: hidden;
+}
+
+.cr-return-list {
+  display: grid;
+}
+
+.cr-return-card {
+  min-height: 104px;
+  padding: 13px 15px;
+  border-bottom: 1px solid var(--line);
+  background: #fff;
+  display: grid;
+  grid-template-columns: minmax(230px, 1.15fr) 145px 118px minmax(200px, .9fr) auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.cr-return-card:last-child {
+  border-bottom: 0;
+}
+
+.cr-return-card:hover {
+  background: #fafbfc;
+}
+
+.cr-return-card__identity {
+  min-width: 0;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.cr-return-card__identity > span:last-child {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.cr-return-card__identity small,
+.cr-return-card__identity strong,
+.cr-return-card__identity em {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cr-return-card__identity small {
+  color: var(--accent);
+  font-size: 9px;
+}
+
+.cr-return-card__identity strong {
+  font-size: 12px;
+}
+
+.cr-return-card__identity em {
+  color: var(--muted);
+  font-size: 9px;
+  font-style: normal;
+}
+
+.cr-return-card > div:nth-child(2) {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+  justify-items: start;
+}
+
+.cr-return-card > div:nth-child(2) > strong {
+  font-size: 12px;
+}
+
+.cr-return-card__cases {
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.cr-return-card__cases .cr-status {
+  min-width: 92px;
+}
+
+.cr-return-card > .cr-button {
+  min-height: 34px;
+  padding: 0 10px;
+  font-size: 10px;
+}
+
+.cr-drawer--return {
+  width: min(880px, 100%);
+}
+
+.cr-case-list {
+  display: grid;
+  gap: 9px;
+}
+
+.cr-case-list > article {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-2);
+  display: grid;
+  gap: 10px;
+}
+
+.cr-case-list > article > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.cr-case-list > article > div:first-child > strong {
+  font-size: 12px;
+}
+
+.cr-case-list > article > p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+.cr-reverse-code {
+  min-height: 54px;
+  padding: 9px 11px;
+  border: 1px solid #abefc6;
+  border-radius: 11px;
+  background: var(--success-soft);
+  color: var(--success);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.cr-reverse-code > svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+}
+
+.cr-reverse-code > span {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.cr-reverse-code small,
+.cr-reverse-code strong {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cr-reverse-code small {
+  font-size: 8px;
+}
+
+.cr-reverse-code strong {
+  font-size: 10px;
+}
+
+.cr-refund-reference {
+  flex: 1 1 210px;
+}
+
+.cr-return-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.cr-return-form-grid .cr-field--wide {
+  grid-column: 1 / -1;
+}
+
+.cr-return-items,
+.cr-exchange-builder {
+  padding: 11px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-2);
+  display: grid;
+  gap: 9px;
+}
+
+.cr-return-items > strong {
+  font-size: 10px;
+}
+
+.cr-return-items > button {
+  width: 100%;
+  min-height: 66px;
+  padding: 7px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: #fff;
+  color: inherit;
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) auto;
+  gap: 9px;
+  align-items: center;
+  text-align: left;
+  cursor: pointer;
+}
+
+.cr-return-items > button.is-selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(49, 94, 251, .1);
+}
+
+.cr-return-items > button > img,
+.cr-return-items > button > span,
+.cr-exchange-list > article > img,
+.cr-exchange-list > article > span,
+.cr-product-search-results > article > div > img,
+.cr-product-search-results > article > div > span {
+  width: 42px;
+  aspect-ratio: 3 / 4;
+  border-radius: 8px;
+  object-fit: cover;
+  background: var(--surface-2);
+  display: grid;
+  place-items: center;
+  font: 800 14px Georgia, serif;
+}
+
+.cr-return-items > button > div,
+.cr-exchange-list > article > div,
+.cr-product-search-results > article > div {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.cr-return-items > button strong,
+.cr-return-items > button small,
+.cr-exchange-list strong,
+.cr-exchange-list small,
+.cr-product-search-results strong,
+.cr-product-search-results small {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cr-return-items > button strong,
+.cr-exchange-list strong,
+.cr-product-search-results strong {
+  font-size: 10px;
+}
+
+.cr-return-items > button small,
+.cr-exchange-list small,
+.cr-product-search-results small {
+  color: var(--muted);
+  font-size: 8px;
+}
+
+.cr-return-total {
+  min-height: 42px;
+  padding: 8px 10px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.cr-return-total span {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.cr-return-total strong {
+  font-size: 11px;
+  text-align: right;
+}
+
+.cr-product-search-results {
+  display: grid;
+  gap: 7px;
+}
+
+.cr-product-search-results > article {
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.cr-product-search-results > article > div {
+  flex: 1 1 190px;
+  grid-template-columns: 42px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-items: center;
+}
+
+.cr-product-search-results > article > div > img,
+.cr-product-search-results > article > div > span {
+  grid-row: 1 / 3;
+}
+
+.cr-product-search-results > article .cr-button {
+  min-height: 31px;
+  padding: 0 9px;
+  font-size: 8px;
+}
+
+.cr-exchange-list {
+  display: grid;
+  gap: 7px;
+}
+
+.cr-exchange-list > article {
+  min-height: 68px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: #fff;
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) 82px auto 32px;
+  gap: 8px;
+  align-items: center;
+}
+
+.cr-exchange-list .cr-field input {
+  height: 34px;
+}
+
+.cr-exchange-list .cr-icon-button {
+  width: 30px;
+  height: 30px;
+  flex-basis: 30px;
+}
+
+@media (max-width: 1220px) {
+  .cr-return-card {
+    grid-template-columns: minmax(220px, 1fr) 135px minmax(180px, .85fr) auto;
+  }
+
+  .cr-return-card > .cr-status:nth-child(3) {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .cr-return-card {
+    min-height: 132px;
+    grid-template-columns: minmax(0, 1fr) 130px;
+    grid-template-rows: auto auto auto;
+  }
+
+  .cr-return-card__identity {
+    grid-column: 1;
+    grid-row: 1 / 3;
+  }
+
+  .cr-return-card > div:nth-child(2) {
+    grid-column: 2;
+    grid-row: 1;
+    justify-items: end;
+  }
+
+  .cr-return-card__cases {
+    grid-column: 2;
+    grid-row: 2;
+    justify-content: flex-end;
+  }
+
+  .cr-return-card > .cr-button {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    width: 100%;
+  }
+}
+
+@media (max-width: 680px) {
+  .cr-return-card {
+    min-height: 172px;
+    padding: 12px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto auto auto;
+    gap: 9px;
+  }
+
+  .cr-return-card__identity {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  .cr-return-card > div:nth-child(2) {
+    grid-column: 1;
+    grid-row: 2;
+    justify-items: start;
+  }
+
+  .cr-return-card__cases {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    justify-content: flex-start;
+  }
+
+  .cr-return-card > .cr-button {
+    grid-row: 4;
+  }
+
+  .cr-return-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cr-return-form-grid .cr-field--wide {
+    grid-column: auto;
+  }
+
+  .cr-exchange-list > article {
+    grid-template-columns: 38px minmax(0, 1fr) 74px 30px;
+    grid-template-rows: auto auto;
+  }
+
+  .cr-exchange-list > article > strong {
+    grid-column: 2 / 4;
+    grid-row: 2;
+  }
+}
