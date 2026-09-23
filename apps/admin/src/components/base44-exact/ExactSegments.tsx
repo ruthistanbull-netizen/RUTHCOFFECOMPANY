@@ -18,7 +18,7 @@ const segments: Segment[] = [
   { key: "loyal", label: "Sadık Müşteriler", description: "En az 3 tamamlanmış sipariş", icon: ShoppingBag, predicate: (customer) => customer.paid_order_count >= 3 },
   { key: "new", label: "Yeni Müşteriler", description: "Son 30 günde ilk siparişini verenler", icon: UserPlus, predicate: (customer) => customer.order_count > 0 && daysSince(customer.last_order_at) <= 30 },
   { key: "inactive", label: "Pasif Müşteriler", description: "90 gündür sipariş vermeyenler", icon: UsersRound, predicate: (customer) => customer.order_count > 0 && daysSince(customer.last_order_at) > 90 },
-  { key: "points", label: "Puan Bakiyesi Olanlar", description: "Ruthie Points bakiyesi sıfırdan büyük", icon: Coins, predicate: (customer) => customer.reward_points_balance > 0 },
+  { key: "points", label: "Puan Bakiyesi Olanlar", description: "ROSTA Points bakiyesi sıfırdan büyük", icon: Coins, predicate: (customer) => customer.reward_points_balance > 0 },
   { key: "guest", label: "Üye Olmayanlar", description: "Misafir alışveriş yapan müşteriler", icon: UsersRound, predicate: (customer) => !customer.is_member },
 ];
 
