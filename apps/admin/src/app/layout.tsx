@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import "@fontsource-variable/inter";
 import "@ruth-commerce/ui/semantic-tokens.css";
 import "@ruth-commerce/ui/typography.css";
 import "@ruth-commerce/ui/interaction.css";
