@@ -34,10 +34,10 @@ const ACTIONS: readonly ActionSpec[] = [
   action("orders.create", "Sipariş oluştur", "Paneldeki manuel sipariş akışını kullanarak sipariş oluşturur.", "high", true),
   action("orders.update", "Sipariş veya ödemeyi güncelle", "Sipariş alanları, durum, adres, not, ürün satırları, uzlaştırma ve para iadesi işlemlerini yürütür.", "high", true),
   action("orders.bulk", "Toplu sipariş işlemi", "Birden fazla siparişte durum veya kargo firması işlemi çalıştırır.", "critical", true),
-  action("products.search", "Ürün ve katalog verisi ara", "Ürün, varyant, stok, fiyat, görsel, materyal, kategori ve koleksiyon verilerini getirir.", "none", false),
+  action("products.search", "Ürün ve katalog verisi ara", "Ürün, varyant, stok, fiyat, görsel, çekirdek/içerik, kategori ve koleksiyon verilerini getirir.", "none", false),
   action("products.create", "Ürün oluştur", "Yeni tekil ürün veya set ürünü oluşturur.", "high", true),
-  action("products.update", "Ürünü güncelle", "Ürün, varyant, fiyat, stok, içerik, görsel, materyal ve yayın alanlarını günceller.", "high", true),
-  action("products.bulk", "Toplu ürün işlemi", "Birden fazla üründe fiyat, stok, katalog, materyal ve içerik işlemi çalıştırır.", "critical", true),
+  action("products.update", "Ürünü güncelle", "Ürün, varyant, fiyat, stok, içerik, görsel, çekirdek türü ve yayın alanlarını günceller.", "high", true),
+  action("products.bulk", "Toplu ürün işlemi", "Birden fazla üründe fiyat, stok, katalog, çekirdek/içerik ve ürün bilgisi işlemi çalıştırır.", "critical", true),
   action("customers.search", "Müşterileri getir", "Müşteri listeleme, arama, üyelik filtresi, sıralama, özet, izin segmenti, sipariş ve puan geçmişini getirir.", "none", false),
   action("returns.search", "İade ve değişim ara", "İade/değişim kayıtlarını, ters kargoyu, ödeme ve durum raporlarını getirir.", "none", false),
   action("returns.create", "İade veya değişim işlemi", "İade/değişim oluşturur, durumunu günceller, ters kargo veya para iadesi başlatır.", "critical", true),
@@ -415,7 +415,7 @@ function resolveAction(spec: ActionSpec, args: Record<string, unknown>): Resolve
     case "products.update":
       if (matches(operation, "materials", "material_options", "materyal seçenek")) {
         return resolved("PUT", "/api/product-settings/materials", {
-          title: "Materyal seçeneklerini güncelle",
+          title: "Çekirdek / içerik seçeneklerini güncelle",
         });
       }
       if (matches(operation, "variant_media", "media", "varyant görsel")) {
