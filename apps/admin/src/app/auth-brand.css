@@ -3,7 +3,7 @@
   height: 140px;
   border-radius: 20px;
   background: #fff url('/rosta-coffee-co.svg') center / contain no-repeat;
-  box-shadow: 0 18px 50px rgba(10, 15, 35, .22);
+  box-shadow: 0 18px 50px rgba(17, 17, 17, .22);
   overflow: hidden;
 }
 
@@ -16,7 +16,7 @@
   height: 125px;
   border-radius: 16px;
   background: #fff url('/rosta-coffee-co.svg') center / contain no-repeat;
-  box-shadow: 0 12px 34px rgba(16, 24, 40, .1);
+  box-shadow: 0 12px 34px rgba(17, 17, 17, .1);
   overflow: hidden;
 }
 
@@ -36,8 +36,8 @@
   min-height: 100dvh !important;
   overflow: hidden;
   isolation: isolate;
-  background: #0b0a07 !important;
-  color: #fbf8ef;
+  background: #111111 !important;
+  color: #F4F0E8;
 }
 
 [data-exact-base44-auth="login"]::before {
@@ -47,8 +47,8 @@
   z-index: -2;
   pointer-events: none;
   background:
-    radial-gradient(circle at 12% 9%, rgba(201, 162, 58, .27), transparent 32%),
-    radial-gradient(circle at 86% 88%, rgba(143, 110, 31, .19), transparent 30%),
+    radial-gradient(circle at 12% 9%, rgba(185, 86, 61, .27), transparent 32%),
+    radial-gradient(circle at 86% 88%, rgba(43, 27, 22, .19), transparent 30%),
     radial-gradient(circle at 50% 50%, rgba(255,255,255,.025), transparent 48%);
   filter: blur(4px);
 }
@@ -79,8 +79,8 @@
 
 [data-exact-base44-auth="login"] > section:first-child {
   background:
-    radial-gradient(circle at 14% 14%, rgba(201, 162, 58, .18), transparent 40%),
-    radial-gradient(circle at 88% 84%, rgba(143, 110, 31, .10), transparent 42%),
+    radial-gradient(circle at 14% 14%, rgba(185, 86, 61, .18), transparent 40%),
+    radial-gradient(circle at 88% 84%, rgba(43, 27, 22, .10), transparent 42%),
     rgba(255,255,255,.045) !important;
 }
 
@@ -89,7 +89,7 @@
 }
 
 [data-exact-base44-auth="login"] > section:first-child .absolute.inset-0 > div:last-child {
-  background: rgba(230, 210, 139, .25) !important;
+  background: rgba(244, 240, 232, .25) !important;
 }
 
 [data-exact-base44-auth="login"] > section:first-child .relative.z-10 > div:first-child {
@@ -141,7 +141,7 @@
 }
 
 [data-exact-base44-auth="login"] > section:last-child {
-  background: rgba(10,9,6,.50) !important;
+  background: rgba(17, 17, 17,.50) !important;
 }
 
 [data-exact-base44-auth="login"] > section:last-child > div {
@@ -160,12 +160,12 @@
   border: 1px solid rgba(255,255,255,.10) !important;
   border-radius: 15px !important;
   background: rgba(255,255,255,.055) !important;
-  color: rgba(230,210,139,.92) !important;
+  color: rgba(244, 240, 232,.92) !important;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.055);
 }
 
 [data-exact-base44-auth="login"] > section:last-child h2 {
-  color: #fbf8ef !important;
+  color: #F4F0E8 !important;
   font-size: 31px !important;
   line-height: 1.08 !important;
   letter-spacing: -.035em !important;
@@ -205,7 +205,7 @@
   border: 1px solid rgba(255,255,255,.10) !important;
   border-radius: 17px !important;
   background: rgba(255,255,255,.052) !important;
-  color: #fbf8ef !important;
+  color: #F4F0E8 !important;
   font-size: 13px !important;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.025) !important;
   outline: none !important;
@@ -226,9 +226,9 @@
 }
 
 [data-exact-base44-auth="login"] form .form-input:focus {
-  border-color: rgba(226,199,107,.62) !important;
+  border-color: rgba(244, 240, 232,.62) !important;
   background: rgba(255,255,255,.07) !important;
-  box-shadow: 0 0 0 4px rgba(201,162,58,.10) !important;
+  box-shadow: 0 0 0 4px rgba(185, 86, 61,.10) !important;
 }
 
 [data-exact-base44-auth="login"] form .relative > button[aria-label*="Şifreyi"] {
@@ -247,7 +247,7 @@
 }
 
 [data-exact-base44-auth="login"] form a[href="/forgot-password"] {
-  color: rgba(230,210,139,.88) !important;
+  color: rgba(244, 240, 232,.88) !important;
   font-size: 10px !important;
   text-decoration: none !important;
 }
@@ -256,15 +256,15 @@
   height: 52px !important;
   margin-top: 6px !important;
   border-radius: 17px !important;
-  background: #fffaf0 !important;
-  color: #211a08 !important;
+  background: #F4F0E8 !important;
+  color: #111111 !important;
   font-size: 12px !important;
   font-weight: 650 !important;
   box-shadow: 0 12px 30px rgba(255,255,255,.07) !important;
 }
 
 [data-exact-base44-auth="login"] form > button[type="submit"]:hover {
-  background: #f6edcf !important;
+  background: #AAA8A1 !important;
 }
 
 [data-exact-base44-auth="login"] > section:last-child > div > p:last-child {
@@ -309,7 +309,7 @@
     min-height: calc(100dvh - 36px) !important;
     border: 1px solid rgba(255,255,255,.085) !important;
     border-radius: 28px !important;
-    background: rgba(10,9,6,.52) !important;
+    background: rgba(17, 17, 17,.52) !important;
     box-shadow: 0 30px 90px rgba(0,0,0,.46) !important;
     padding: 24px !important;
   }
