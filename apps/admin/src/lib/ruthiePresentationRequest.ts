@@ -39,8 +39,8 @@ export function resolveRuthiePresentationRequest(input: string): RuthiePresentat
   if (hasAny(normalized, ["yorum", "review", "değerlendirme", "degerlendirme"])) {
     return read("reviews.search", { ...common, q: searchTerm(text, ["yorum", "review", "değerlendirme", "degerlendirme"]) }, text);
   }
-  if (hasAny(normalized, ["puan", "ruthie points", "points", "sadakat"])) {
-    return read("points.search", { ...common, q: searchTerm(text, ["puan", "ruthie points", "points", "sadakat"]) }, text);
+  if (hasAny(normalized, ["puan", "rosta points", "ruthie points", "points", "sadakat"])) {
+    return read("points.search", { ...common, q: searchTerm(text, ["puan", "rosta points", "ruthie points", "points", "sadakat"]) }, text);
   }
   if (hasAny(normalized, ["kategori", "koleksiyon", "catalog", "collection"])) {
     return read("catalog.groups.read", { ...common, type: normalized.includes("koleksiyon") ? "collection" : "category" }, text);
