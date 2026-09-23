@@ -14,7 +14,7 @@
   border: 1px solid var(--ruth-border);
   border-radius: var(--ruth-radius-md);
   background: var(--ruth-surface);
-  box-shadow: 0 10px 28px rgba(17, 17, 17, 0.05);
+  box-shadow: 0 10px 28px rgba(23, 21, 18, 0.05);
 }
 
 .ruth-search-shell__leading,

@@ -14,7 +14,7 @@
 .ruth-empty-state__action { margin-top: 2px; }
 
 .ruth-skeleton { position: relative; min-height: 12px; overflow: hidden; border-radius: var(--ruth-radius-sm); background: var(--ruth-color-surface-muted); }
-.ruth-skeleton::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(244, 240, 232, 0.68), transparent); transform: translateX(-100%); animation: ruth-skeleton-shimmer 1.5s infinite; }
+.ruth-skeleton::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.68), transparent); transform: translateX(-100%); animation: ruth-skeleton-shimmer 1.5s infinite; }
 .ruth-skeleton--rounded { border-radius: 999px; }
 @keyframes ruth-skeleton-shimmer { to { transform: translateX(100%); } }
 
@@ -105,7 +105,7 @@
 .ruth-segmented--compact button { min-height: 30px; padding-inline: 10px; }
 .ruth-segmented button:hover:not(:disabled) { color: var(--ruth-ink); }
 .ruth-segmented button:active:not(:disabled) { transform: scale(0.98); }
-.ruth-segmented button.is-active { background: var(--ruth-surface); color: var(--ruth-ink); box-shadow: 0 2px 8px rgba(17, 17, 17, 0.08); }
+.ruth-segmented button.is-active { background: var(--ruth-surface); color: var(--ruth-ink); box-shadow: 0 2px 8px rgba(23, 21, 18, 0.08); }
 .ruth-segmented button:focus-visible { outline: 2px solid var(--ruth-color-focus, var(--ruth-gold)); outline-offset: 2px; }
 .ruth-segmented button:disabled { cursor: not-allowed; opacity: 0.5; }
 
