@@ -35,7 +35,22 @@ import "./product-image-standard.css";
 import "./notification-mobile-position.css";
 import "./global-premium-motion.css";
 import "./rosta-exact-palette.css";
-import { AdminAuthGate } from "@/components/AdminAuthGate";
+import { AppFrame } from "@/components/AppFrame";
+import { AdminBackupProgress } from "@/components/AdminBackupProgress";
+import { AdminCacheEpoch } from "@/components/AdminCacheEpoch";
+import { AdminConfirmationProvider } from "@/components/AdminConfirmationProvider";
+import { AdminContactMessagePopup } from "@/components/AdminContactMessagePopup";
+import { AdminNativeDockBridge } from "@/components/AdminNativeDockBridge";
+import { AdminOrderStatusNormalizer } from "@/components/AdminOrderStatusNormalizer";
+import { AdminOrdersBulkActions } from "@/components/AdminOrdersBulkActions";
+import { AdminPanelUiRules } from "@/components/AdminPanelUiRules";
+import { AdminRuthieInsightPopupMotion } from "@/components/AdminRuthieInsightPopupMotion";
+import { AdminSavedViewControlsCleaner } from "@/components/AdminSavedViewControlsCleaner";
+import { AdminStorageQuotaGuard } from "@/components/AdminStorageQuotaGuard";
+import { AdminTodayDateDefaults } from "@/components/AdminTodayDateDefaults";
+import { GmailConnectionAutoRefresh } from "@/components/GmailConnectionAutoRefresh";
+import { MetaAdsInstantBootstrap } from "@/components/MetaAdsInstantBootstrap";
+import { PremiumPanelInteractionEnhancer } from "@/components/PremiumPanelInteractionEnhancer";
 import { ROSTA_PANEL_URL } from "@/lib/platform";
 
 export const metadata: Metadata = {
@@ -48,12 +63,14 @@ export const metadata: Metadata = {
     icon: "/icon.svg",
     apple: "/api/panel-home-icon",
   },
+  appleWebApp: { capable: true, title: "ROSTA Panel", statusBarStyle: "default" },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  interactiveWidget: "resizes-content",
   themeColor: "#F4F0E8",
 };
 
@@ -61,7 +78,24 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="tr">
       <body data-ruth-typography="admin" data-rosta-panel="true">
-        <AdminAuthGate>{children}</AdminAuthGate>
+        <AdminStorageQuotaGuard />
+        <AdminCacheEpoch />
+        <AdminTodayDateDefaults />
+        <GmailConnectionAutoRefresh />
+        <MetaAdsInstantBootstrap />
+        <AdminNativeDockBridge />
+        <AdminSavedViewControlsCleaner />
+        <AdminPanelUiRules />
+        <PremiumPanelInteractionEnhancer />
+        <AdminRuthieInsightPopupMotion />
+        <AdminConfirmationProvider />
+        <AdminOrderStatusNormalizer />
+        <AppFrame>
+          <AdminOrdersBulkActions />
+          <AdminBackupProgress />
+          <AdminContactMessagePopup />
+          {children}
+        </AppFrame>
       </body>
     </html>
   );
