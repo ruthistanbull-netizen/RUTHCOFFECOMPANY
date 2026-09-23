@@ -10,18 +10,6 @@ export function AdminDesktopBrandScaleV2() {
           padding-left: 14px !important;
           padding-right: 14px !important;
         }
-
-        aside[class*="z-sidebar"] a[href="/"] > div:has(img[src*="ruth-r-mark"]) {
-          width: 48px !important;
-          height: 48px !important;
-          border-radius: 14px !important;
-        }
-
-        aside[class*="z-sidebar"] img[src*="ruth-r-mark"] {
-          width: 44px !important;
-          height: 44px !important;
-        }
-
         aside[class*="z-sidebar"] a[href="/"] > div + div > p:first-child {
           font-size: 16px !important;
           line-height: 1.05 !important;
