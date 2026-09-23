@@ -98,15 +98,15 @@ const INSIGHT_QUESTIONS = [
   { label: "Kargo sorunlarını bul", text: "Bu dönem için kargo sorunlarını bul. Önce müdahale etmem gerekenleri sırala." },
 ];
 const SOURCE_COLORS: Record<string, string> = {
-  instagram: "#B9563D",
-  facebook: "#2B1B16",
-  tiktok: "#111111",
-  google_ads: "#AAA8A1",
-  organic: "#6F725B",
-  direct: "#B9563D",
-  referral: "#2B1B16",
-  email: "#6F725B",
-  other: "#AAA8A1",
+  instagram: "#E1306C",
+  facebook: "#1877F2",
+  tiktok: "#151515",
+  google_ads: "#4285F4",
+  organic: "#2E9E6F",
+  direct: "#765CFF",
+  referral: "#F59E0B",
+  email: "#0F9E9A",
+  other: "#8B8F98",
 };
 
 function money(value: number, digits = 0) {
@@ -406,7 +406,7 @@ export function ExactOverviewDashboardV4() {
   const [chartLoading, setChartLoading] = useState(true);
   const [sessionsOpen, setSessionsOpen] = useState(false);
   const [conversionOpen, setConversionOpen] = useState(false);
-  const [ruthieOpen, setROSTAOpen] = useState(false);
+  const [ruthieOpen, setRuthieOpen] = useState(false);
   const [autoPrompt, setAutoPrompt] = useState<RuthieInsightAutoPrompt | null>(null);
   const activeVisitors = useLiveVisitors();
 
@@ -457,8 +457,8 @@ export function ExactOverviewDashboardV4() {
   const summary = state.summary;
   const averageOrder = Number(summary.orders || 0) ? Number(summary.revenue || 0) / Number(summary.orders || 1) : 0;
   const attention = Number(state.operations.shippingAttention || 0) + state.openReturns;
-  const ask = (text: string) => { setAutoPrompt({ id: Date.now(), text }); setROSTAOpen(true); };
-  const openROSTA = () => { setAutoPrompt(null); setROSTAOpen(true); };
+  const ask = (text: string) => { setAutoPrompt({ id: Date.now(), text }); setRuthieOpen(true); };
+  const openRuthie = () => { setAutoPrompt(null); setRuthieOpen(true); };
 
   return (
     <div className="space-y-4 animate-fade-in" data-exact-base44-page="overview-v4" data-dashboard-range={range.range}>
@@ -471,9 +471,9 @@ export function ExactOverviewDashboardV4() {
       ) : (
         <div className="grid grid-cols-1 items-stretch gap-3 lg:grid-cols-3">
           <ExactMetricCard label="Net Satış" value={Number(summary.revenue || 0)} format="currency" icon={CircleDollarSign} accent className="h-full min-h-[132px]" />
-          <DashboardPressSurface ariaLabel="ROSTA Insight sohbetini aç" onActivate={openROSTA} className="lg:col-span-2">
+          <DashboardPressSurface ariaLabel="Ruthie Insight sohbetini aç" onActivate={openRuthie} className="lg:col-span-2">
             <ExactDataCard className="h-full min-h-[132px] transition-shadow hover:shadow-floating">
-              <div className="flex items-start gap-3"><div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent text-white shadow-floating"><RuthieBrandIcon size={23} /><span className="absolute inset-[-3px] rounded-full border border-accent/25" /></div><div className="min-w-0 flex-1"><div className="flex items-center justify-between gap-2"><p className="text-sm font-semibold text-main">ROSTA Insight</p><span className="inline-flex items-center gap-1 text-[9px] text-success-foreground"><span className="h-1.5 w-1.5 rounded-full bg-success" />hazır</span></div><p className="mt-1 text-[11px] text-muted">Bu dönemde {Number(summary.orders || 0)} sipariş ve {money(Number(summary.revenue || 0))} satış oluştu. {attention ? `${attention} işlem dikkat bekliyor.` : "Acil kontrol bekleyen işlem görünmüyor."}</p></div></div>
+              <div className="flex items-start gap-3"><div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent text-white shadow-floating"><RuthieBrandIcon size={23} /><span className="absolute inset-[-3px] rounded-full border border-accent/25" /></div><div className="min-w-0 flex-1"><div className="flex items-center justify-between gap-2"><p className="text-sm font-semibold text-main">Ruthie Insight</p><span className="inline-flex items-center gap-1 text-[9px] text-success-foreground"><span className="h-1.5 w-1.5 rounded-full bg-success" />hazır</span></div><p className="mt-1 text-[11px] text-muted">Bu dönemde {Number(summary.orders || 0)} sipariş ve {money(Number(summary.revenue || 0))} satış oluştu. {attention ? `${attention} işlem dikkat bekliyor.` : "Acil kontrol bekleyen işlem görünmüyor."}</p></div></div>
               <div className="mt-3 flex flex-wrap gap-2">{INSIGHT_QUESTIONS.map((question) => <button key={question.label} type="button" onClick={(event) => { event.stopPropagation(); ask(question.text); }} className="rounded-full bg-accent-soft px-3 py-1.5 text-[10px] font-medium text-accent transition-colors hover:bg-accent hover:text-white">{question.label}</button>)}</div>
             </ExactDataCard>
           </DashboardPressSurface>
@@ -528,13 +528,13 @@ export function ExactOverviewDashboardV4() {
           </div>
 
           <div className="grid gap-3 lg:grid-cols-3">
-            <ExactDataCard title="Son Siparişler" className="lg:col-span-2">{state.recentOrders.length ? <div className="divide-y divide-border-subtle">{state.recentOrders.slice(0, 6).map((order) => { const presentation = orderStatus(order); return <Link key={order.id} href={`/orders?order=${encodeURIComponent(order.id)}`} className="ruth-pressable flex items-center gap-3 py-3 hover:bg-surface-secondary/60" data-ruth-press-strength="subtle"><div className="min-w-0 flex-1"><p className="truncate text-xs font-semibold text-main">#{order.order_no} · {order.customer_name}</p><p className="text-[10px] text-subtle">{shortDate(order.created_at)}</p></div><ExactStatusBadge status={order.status} label={presentation.label} tone={presentation.tone} size="sm" /><strong className="text-xs text-main">{money(order.total_amount, 2)}</strong></Link>; })}</div> : <p className="py-8 text-center text-xs text-subtle">Henüz sipariş yok.</p>}<Link href="/orders" className="mt-3 flex items-center justify-center gap-1 text-[10px] font-semibold text-accent">Tüm siparişleri aç <ArrowRight className="h-3.5 w-3.5" /></Link></ExactDataCard>
+            <ExactDataCard title="Son Siparişler" className="lg:col-span-2">{state.recentOrders.length ? <div className="divide-y divide-border-subtle">{state.recentOrders.slice(0, 6).map((order) => { const presentation = orderStatus(order); return <Link key={order.id} href={`/orders/${order.id}`} className="ruth-pressable flex items-center gap-3 py-3 hover:bg-surface-secondary/60" data-ruth-press-strength="subtle"><div className="min-w-0 flex-1"><p className="truncate text-xs font-semibold text-main">#{order.order_no} · {order.customer_name}</p><p className="text-[10px] text-subtle">{shortDate(order.created_at)}</p></div><ExactStatusBadge status={order.status} label={presentation.label} tone={presentation.tone} size="sm" /><strong className="text-xs text-main">{money(order.total_amount, 2)}</strong></Link>; })}</div> : <p className="py-8 text-center text-xs text-subtle">Henüz sipariş yok.</p>}<Link href="/orders" className="mt-3 flex items-center justify-center gap-1 text-[10px] font-semibold text-accent">Tüm siparişleri aç <ArrowRight className="h-3.5 w-3.5" /></Link></ExactDataCard>
             <ExactDataCard title="İşlem Gerektirenler" action={<AlertCircle className="h-4 w-4 text-warning-foreground" />}><div className="space-y-2"><Link href="/shipping" className="ruth-pressable flex justify-between rounded-lg bg-surface-secondary p-3 text-xs" data-ruth-press-strength="subtle"><span>Kargo kontrolü</span><strong>{Number(state.operations.shippingAttention || 0)}</strong></Link><Link href="/returns" className="ruth-pressable flex justify-between rounded-lg bg-surface-secondary p-3 text-xs" data-ruth-press-strength="subtle"><span>Açık iade/değişim</span><strong>{state.openReturns}</strong></Link></div><Link href="/analytics" className="mt-3 block"><ExactButton variant="secondary" size="sm" className="w-full">Analitiği Aç <ArrowRight className="h-3.5 w-3.5" /></ExactButton></Link></ExactDataCard>
           </div>
         </>
       ) : null}
 
-      <ExactRuthieInsightPopup open={ruthieOpen} onClose={() => setROSTAOpen(false)} autoPrompt={autoPrompt} />
+      <ExactRuthieInsightPopup open={ruthieOpen} onClose={() => setRuthieOpen(false)} autoPrompt={autoPrompt} />
     </div>
   );
 }

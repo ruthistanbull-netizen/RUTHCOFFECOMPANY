@@ -136,22 +136,22 @@ const PURPOSES: Array<{ value: Exclude<ImagePurpose, "">; title: string; detail:
 ];
 
 const STYLE_GROUPS: StyleGroup[] = [
-  { id: "model", label: "Lifestyle / İnsanlı", description: "Kahveyi gerçek tüketim veya servis anında göster", options: ["Elde kahve fincanı", "Kahve içerken", "Barista servis anı", "Masa başı lifestyle", "Kafe ortamı", "Editorial lifestyle"] },
-  { id: "studio", label: "Stüdyo Ürün Fotoğrafı", description: "Temiz ve e-ticaret odaklı kahve ürün çekimi", options: ["Beyaz fon", "Krem fon", "Koyu premium fon", "Soft gölgeli", "E-ticaret uyumlu", "İzole paket görünümü"] },
-  { id: "campaign", label: "Premium Kampanya Görseli", description: "Marka kampanyası ve reklam hissi", options: ["Dramatik ışık", "Premium fon", "Reklam afiş hissi", "Güçlü gölge", "Marka kampanyası hissi"] },
-  { id: "lifestyle", label: "Kafe / Günlük Kullanım", description: "Doğal kahve tüketimi ve gerçek ortam hissi", options: ["Doğal masa", "Kafe masası", "Evde kahve anı", "Elde fincan", "Günlük ortam"] },
-  { id: "flatlay", label: "Flat Lay / Masa Üstü", description: "Yukarıdan düzenlenmiş kahve kompozisyonu", options: ["Yukarıdan çekim", "Çekirdeklerle dekorlu", "Sade", "Çoklu ürün yerleşimi", "Demleme seti"] },
-  { id: "macro", label: "Makro / Detay Çekim", description: "Çekirdek, crema, doku ve ambalaj detaylarını öne çıkar", options: ["Kahve çekirdeği detayı", "Crema detayı", "Ambalaj dokusu", "Öğütülmüş kahve", "Ultra yakın çekim"] },
-  { id: "hand", label: "Elde Ürün / Fincan", description: "Paketi veya fincanı elde doğal biçimde göster", options: ["Paketi elde tutma", "Fincanı elde tutma", "İki elde sunum", "Paketi açma anı"] },
-  { id: "mirror", label: "Yansımalı Ürün Çekimi", description: "Yansıma ile editoryal ve premium görünüm", options: ["Tam yansıma", "Kısmi yansıma", "Premium zemin yansıması"] },
-  { id: "stilllife", label: "Still Life / Obje Kompozisyonu", description: "Kahve ürünlerini seçili dekor objeleriyle kurgula", options: ["Kahve çekirdekleriyle", "Keten kumaşla", "Seramik fincanla", "Ahşap ekipmanla", "Bitkilerle"] },
-  { id: "editorial", label: "Editorial / Marka Çekimi", description: "Dergi ve marka kampanyası estetiği", options: ["Editorial çekim", "Dramatik kompozisyon", "Dergi tarzı", "Artistik ışık"] },
-  { id: "lookbook", label: "Koleksiyon Serisi", description: "Seri üretime uygun tutarlı ürün dili", options: ["Sade fon", "Seri ürün havası", "Temiz kadraj", "Premium katalog sunumu"] },
+  { id: "model", label: "Model Üzerinde", description: "Takının gerçek kullanımını model üzerinde göster", options: ["Yüz görünür", "Yüz yarım görünür", "Sadece boyun yakın plan", "Sadece kulak yakın plan", "Sadece el yakın plan", "Tek model", "Editorial model"] },
+  { id: "studio", label: "Stüdyo Ürün Fotoğrafı", description: "Temiz ve e-ticaret odaklı ürün çekimi", options: ["Beyaz fon", "Krem fon", "Koyu lüks fon", "Soft gölgeli", "E-ticaret uyumlu", "İzole ürün görünümü"] },
+  { id: "campaign", label: "Lüks Kampanya Görseli", description: "Marka kampanyası ve reklam hissi", options: ["Dramatik ışık", "Premium fon", "Reklam afiş hissi", "Güçlü gölge", "Marka kampanyası hissi"] },
+  { id: "lifestyle", label: "Lifestyle / Günlük Kullanım", description: "Doğal ve gerçek kullanım odaklı", options: ["Doğal masa", "Ayna önü", "Kumaş üstü", "Elde kullanım", "Günlük ortam"] },
+  { id: "flatlay", label: "Flat Lay / Masa Üstü", description: "Yukarıdan düzenlenmiş ürün kompozisyonu", options: ["Yukarıdan çekim", "Dekorlu", "Sade", "Çoklu ürün yerleşimi", "Set düzeni"] },
+  { id: "macro", label: "Makro / Detay Çekim", description: "Taş, metal ve işçilik detaylarını öne çıkar", options: ["Taş detayı", "Metal doku", "İşçilik yakın plan", "Ultra yakın çekim"] },
+  { id: "hand", label: "Elde Tutulan Ürün", description: "Ürünü elde doğal biçimde göster", options: ["Tek elde tutma", "İki elde sunum", "Kutudan çıkarma"] },
+  { id: "mirror", label: "Ayna Yansımalı", description: "Yansıma ile editoryal ve premium görünüm", options: ["Tam yansıma", "Kısmi yansıma", "Lüks zemin yansıması"] },
+  { id: "stilllife", label: "Still Life / Obje Kompozisyonu", description: "Ürünleri seçili dekor objeleriyle kurgula", options: ["Taşlarla", "Kumaşla", "Metal objelerle", "Çiçeklerle", "Deniz temalı objelerle"] },
+  { id: "editorial", label: "Editorial / Moda Çekimi", description: "Dergi ve moda kampanyası estetiği", options: ["Moda çekimi", "Dramatik kompozisyon", "Dergi tarzı", "Artistik ışık"] },
+  { id: "lookbook", label: "Lookbook Tarzı", description: "Seri üretime uygun temiz koleksiyon dili", options: ["Sade fon", "Koleksiyon havası", "Temiz kadraj", "Premium moda sunumu"] },
   { id: "poster", label: "Reklam Afişi Tarzı", description: "Performans reklamı ve hero kreatif", options: ["Yazısız afiş", "Yazılı afiş", "Hero ürün", "Dikkat çekici kompozisyon"] },
   { id: "ugc", label: "UGC / Sosyal Medya Tarzı", description: "Daha doğal ve kullanıcı çekimi hissi", options: ["Doğal çekim", "Telefon kamerası hissi", "Sosyal medya görünümü", "Kullanıcı deneyimi havası"] },
-  { id: "packaging", label: "Paket / Ambalaj", description: "ROSTA kahve ambalajını ve açılış deneyimini göster", options: ["Paket yakın plan", "Paketten dökülürken", "Kutu içinde", "Premium ambalaj"] },
-  { id: "set", label: "Set / Bundle Görseli", description: "Birden fazla kahve ürünü veya ekipmanı birlikte sun", options: ["Kahve + fincan", "Kahve + demleme ekipmanı", "Hediye seti", "Çoklu ürün premium sunum"] },
-  { id: "season", label: "Sezon Temalı", description: "Kampanya dönemine göre atmosfer oluştur", options: ["Yaz", "Sonbahar", "Kış", "Gece", "Özel gün", "Yılbaşı", "Bahar"] },
+  { id: "packaging", label: "Paketleme / Kutu İçinde", description: "Hediye ve kutu deneyimini göster", options: ["Kutu içinde", "Kutudan çıkarken", "Hediye paketi", "Premium ambalaj"] },
+  { id: "set", label: "Kombin / Set Görseli", description: "Birden fazla ürünü birlikte sun", options: ["Kolye + küpe", "Yüzük + küpe", "Tam set", "Çoklu ürün premium sunum"] },
+  { id: "season", label: "Sezon Temalı", description: "Kampanya dönemine göre atmosfer oluştur", options: ["Yaz", "Sonbahar", "Gece", "Beach", "Bridal", "Özel gün", "Yılbaşı", "Sevgililer günü"] },
 ];
 
 const EXTRA_GROUPS: Array<{ id: ExtraKey; label: string; options: string[] }> = [
@@ -171,7 +171,7 @@ const QUICK_PROMPTS = [
 ];
 
 function correlationId() {
-  return globalThis.crypto?.randomUUID?.() || `rosta-insight-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  return globalThis.crypto?.randomUUID?.() || `ruthie-insight-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 }
 
 function id(prefix: string) {
@@ -377,16 +377,16 @@ export function ExactRuthieInsightPopup({
     void (async () => {
       try {
         const headers = await adminAuthHeaders();
-        const response = await fetch("/api/rosta-insight/openai/status", { headers, cache: "no-store" });
+        const response = await fetch("/api/ruthie/openai/status", { headers, cache: "no-store" });
         const payload = await response.json().catch(() => null) as ProviderStatus | null;
         if (cancelled) return;
         const ready = Boolean(response.ok && payload?.ok && payload.configured && payload.capabilities?.chat);
         setProviderReady(ready);
-        setError(ready ? null : "ROSTA Insight şu anda sohbete hazır değil.");
+        setError(ready ? null : "Ruthie şu anda sohbete hazır değil.");
       } catch {
         if (!cancelled) {
           setProviderReady(false);
-          setError("ROSTA Insight bağlantı durumu alınamadı.");
+          setError("Ruthie bağlantı durumu alınamadı.");
         }
       } finally {
         if (!cancelled) setProviderChecked(true);
@@ -553,7 +553,7 @@ export function ExactRuthieInsightPopup({
 
     try {
       const headers = await adminAuthHeaders();
-      const response = await fetch("/api/rosta-insight/openai/chat", {
+      const response = await fetch("/api/ruthie/openai/chat", {
         method: "POST",
         cache: "no-store",
         headers: { ...headers, "Content-Type": "application/json", "x-correlation-id": correlationId() },
@@ -566,13 +566,13 @@ export function ExactRuthieInsightPopup({
       const reply = payload?.response?.text?.trim();
       if (!response.ok || !payload?.ok || !reply) {
         const apiError = typeof payload?.error === "string" ? payload.error : payload?.error?.message;
-        throw new Error(apiError || "ROSTA Insight yanıt veremedi.");
+        throw new Error(apiError || "Ruthie yanıt veremedi.");
       }
       const completed = [...outgoing, { role: "assistant" as const, text: reply }].slice(-16);
       messagesRef.current = completed;
       setMessages(completed);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "ROSTA Insight yanıt veremedi.");
+      setError(caught instanceof Error ? caught.message : "Ruthie yanıt veremedi.");
     } finally {
       setSending(false);
     }
@@ -591,7 +591,7 @@ export function ExactRuthieInsightPopup({
     setImageError(null);
     try {
       const headers = await adminAuthHeaders();
-      const response = await fetch("/api/rosta-insight/openai/image-v3", {
+      const response = await fetch("/api/ruthie/openai/image-v3", {
         method: "POST",
         cache: "no-store",
         headers: { ...headers, "Content-Type": "application/json" },
@@ -615,7 +615,7 @@ export function ExactRuthieInsightPopup({
     setImageError(null);
     try {
       const headers = await adminAuthHeaders();
-      const response = await fetch("/api/rosta-insight/openai/image-v3", {
+      const response = await fetch("/api/ruthie/openai/image-v3", {
         method: "POST",
         cache: "no-store",
         headers: { ...headers, "Content-Type": "application/json" },
@@ -768,7 +768,7 @@ export function ExactRuthieInsightPopup({
           <div className="fixed inset-0 flex items-end justify-center md:items-center md:p-4" style={{ zIndex: 2147483600 }}>
             <motion.button
               type="button"
-              aria-label="ROSTA Insight sohbetini kapat"
+              aria-label="Ruthie sohbetini kapat"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -798,7 +798,7 @@ export function ExactRuthieInsightPopup({
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <h2 id="ruthie-insight-popup-title" className="ruth-type-card-title text-main">ROSTA Insight</h2>
+                    <h2 id="ruthie-insight-popup-title" className="ruth-type-card-title text-main">Ruthie</h2>
                     <span className="inline-flex items-center gap-1 text-[10px] text-success-foreground"><span className={`h-1.5 w-1.5 rounded-full ${providerReady ? "bg-success" : "bg-subtle"}`} />{providerReady ? "hazır" : providerChecked ? "çevrimdışı" : "bağlanıyor"}</span>
                   </div>
                   <p className="ruth-type-caption mt-0.5 text-muted">Panel hakkında sor, dosya ekle veya @ ile araç seç</p>
@@ -810,7 +810,7 @@ export function ExactRuthieInsightPopup({
                 {!messages.length ? (
                   <div className="flex min-h-52 flex-col items-center justify-center text-center">
                     <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-accent-soft text-accent"><RuthieBrandIcon size={27} /></div>
-                    <p className="ruth-type-card-title text-main">ROSTA Insight’a ne sormak istiyorsun?</p>
+                    <p className="ruth-type-card-title text-main">Ruthie’ye ne sormak istiyorsun?</p>
                     <p className="ruth-type-caption mt-1 max-w-sm text-muted">Siparişleri, ödemeleri, kargoyu konuşabilir; fotoğraf veya dosya ekleyebilirsin.</p>
                     <div className="mt-4 grid w-full max-w-md gap-2 sm:grid-cols-2">
                       {QUICK_PROMPTS.map((prompt, index) => (
@@ -823,14 +823,14 @@ export function ExactRuthieInsightPopup({
                     {messages.map((message, index) => (
                       <motion.div key={`${message.role}-${index}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
                         <div className={message.role === "user" ? "max-w-[88%] rounded-[18px] rounded-br-[6px] bg-accent px-3.5 py-2.5 text-sm leading-relaxed text-accent-foreground" : "max-w-[92%] rounded-[18px] rounded-bl-[6px] bg-surface-secondary px-3.5 py-2.5 text-sm leading-relaxed text-main"}>
-                          {message.role === "assistant" ? <div className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold text-accent"><RuthieBrandIcon size={13} /> ROSTA Insight</div> : null}
-                          {message.imageDataUrl ? <motion.img src={message.imageDataUrl} alt="ROSTA Insight tarafından üretilen fotoğraf" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} className="mb-2 max-h-[360px] w-auto max-w-full rounded-xl object-contain" /> : null}
+                          {message.role === "assistant" ? <div className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold text-accent"><RuthieBrandIcon size={13} /> Ruthie</div> : null}
+                          {message.imageDataUrl ? <motion.img src={message.imageDataUrl} alt="Ruthie tarafından üretilen fotoğraf" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} className="mb-2 max-h-[360px] w-auto max-w-full rounded-xl object-contain" /> : null}
                           <p className="whitespace-pre-wrap">{message.text}</p>
                           {message.attachmentNames?.length ? <div className="mt-2 flex flex-wrap gap-1">{message.attachmentNames.map((name) => <span key={name} className="rounded-full bg-black/10 px-2 py-1 text-[9px]">{name}</span>)}</div> : null}
                         </div>
                       </motion.div>
                     ))}
-                    {sending ? <div className="flex justify-start"><motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="rounded-[18px] rounded-bl-[6px] bg-surface-secondary px-3.5 py-2.5 text-xs text-muted">ROSTA Insight yazıyor…</motion.div></div> : null}
+                    {sending ? <div className="flex justify-start"><motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="rounded-[18px] rounded-bl-[6px] bg-surface-secondary px-3.5 py-2.5 text-xs text-muted">Ruthie yazıyor…</motion.div></div> : null}
                   </div>
                 )}
                 <div ref={bottomRef} />
@@ -904,7 +904,7 @@ export function ExactRuthieInsightPopup({
                             <div className="flex gap-1.5"><motion.button type="button" whileTap={{ scale: 0.95 }} onClick={() => { setQuote(null); setImageStage("idle"); }} className="h-8 rounded-lg border border-border-subtle bg-surface-primary px-3 text-[8px] text-muted">İptal</motion.button><motion.button type="button" whileTap={{ scale: 0.95 }} onClick={() => void confirmImageGeneration()} className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-accent px-3 text-[8px] font-semibold text-accent-foreground"><Check className="h-3 w-3" />Kabul et ve üret</motion.button></div>
                           </motion.div>
                         ) : imageStage === "generating" ? (
-                          <motion.div key="generating" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="relative mt-2 flex min-h-9 items-center gap-2 overflow-hidden border-t border-border-subtle pt-2 text-[8px] text-muted"><LoaderCircle className="h-3.5 w-3.5 animate-spin text-accent" />ROSTA Insight fotoğrafı üretiyor. Seçili ürün referansları korunuyor.<motion.i className="absolute bottom-0 left-0 h-0.5 w-1/3 bg-accent" initial={{ x: "-100%" }} animate={{ x: "320%" }} transition={{ repeat: Infinity, duration: 1.2, ease: "easeInOut" }} /></motion.div>
+                          <motion.div key="generating" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="relative mt-2 flex min-h-9 items-center gap-2 overflow-hidden border-t border-border-subtle pt-2 text-[8px] text-muted"><LoaderCircle className="h-3.5 w-3.5 animate-spin text-accent" />Ruthie fotoğrafı üretiyor. Seçili ürün referansları korunuyor.<motion.i className="absolute bottom-0 left-0 h-0.5 w-1/3 bg-accent" initial={{ x: "-100%" }} animate={{ x: "320%" }} transition={{ repeat: Infinity, duration: 1.2, ease: "easeInOut" }} /></motion.div>
                         ) : (
                           <motion.div key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="mt-2 flex items-center justify-between gap-2 border-t border-border-subtle pt-2"><span className="text-[8px] leading-4 text-muted">Gönder’e basınca önce fiyat gösterilir. Onay vermeden ücretli üretim başlamaz.</span><motion.button type="button" whileTap={{ scale: 0.95 }} onClick={() => void requestImageQuote()} disabled={imageStage === "quoting"} className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg bg-surface-primary px-3 text-[8px] font-semibold text-main shadow-sm disabled:opacity-50">{imageStage === "quoting" ? <><LoaderCircle className="h-3 w-3 animate-spin" />Hesaplanıyor</> : <><Sparkles className="h-3 w-3" />Fiyatı göster</>}</motion.button></motion.div>
                         )}
@@ -917,7 +917,7 @@ export function ExactRuthieInsightPopup({
                   <AnimatePresence>
                     {(toolsOpen || mentionOpen) ? (
                       <motion.div initial={{ opacity: 0, y: 8, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 6, scale: 0.98 }} transition={{ duration: 0.16 }} className="absolute bottom-[calc(100%+8px)] left-0 z-30 w-[min(360px,calc(100vw-38px))] overflow-hidden rounded-2xl border border-border-subtle bg-surface-primary shadow-overlay">
-                        <div className="flex min-h-10 items-center gap-2 px-3 text-[9px] font-semibold text-muted">{mentionOpen ? <><span className="flex h-6 w-6 items-center justify-center rounded-lg bg-accent-soft text-xs font-bold text-accent">@</span>ROSTA Insight araçları</> : "Ekle ve oluştur"}</div>
+                        <div className="flex min-h-10 items-center gap-2 px-3 text-[9px] font-semibold text-muted">{mentionOpen ? <><span className="flex h-6 w-6 items-center justify-center rounded-lg bg-accent-soft text-xs font-bold text-accent">@</span>Ruthie araçları</> : "Ekle ve oluştur"}</div>
                         <div className="space-y-1 p-1.5 pt-0">
                           {(mentionOpen ? mentionItems : [
                             { id: "attach", label: "Fotoğraf veya dosya ekle", detail: "Görsel, PDF, Word, Excel ve daha fazlası", icon: Paperclip },
@@ -939,7 +939,7 @@ export function ExactRuthieInsightPopup({
                     onChange={(event) => onInputChange(event.target.value)}
                     onKeyDown={onComposerKeyDown}
                     rows={1}
-                    placeholder={providerReady ? "ROSTA Insight’a yaz veya @ ile araç seç…" : "ROSTA Insight hazırlanıyor..."}
+                    placeholder={providerReady ? "Ruthie’ye yaz veya @ ile araç seç…" : "Ruthie hazırlanıyor..."}
                     disabled={!providerReady || sending}
                     className="max-h-28 min-h-9 w-full resize-none bg-transparent px-2 py-2 text-sm text-main outline-none placeholder:text-subtle disabled:opacity-60"
                   />
@@ -949,11 +949,11 @@ export function ExactRuthieInsightPopup({
                       <motion.button type="button" whileTap={{ scale: 0.88 }} onClick={() => { setToolsOpen((current) => !current); setMentionOpen(false); }} aria-label="Ekle ve oluştur" className="flex h-9 w-9 items-center justify-center rounded-full text-muted hover:bg-surface-primary hover:text-main"><motion.span animate={{ rotate: toolsOpen ? 45 : 0 }} transition={{ duration: 0.17 }}><Plus className="h-4 w-4" /></motion.span></motion.button>
                       <span className="hidden text-[8px] text-muted sm:inline">@ yazınca araçlar açılır</span>
                     </div>
-                    <Pressable type="button" pressStrength="icon" onClick={primaryAction} disabled={!providerReady || sending || imageStage === "generating" || (!input.trim() && !attachments.length && !selectedProducts.length && !selectedStyle && !purpose)} aria-label={imageSelected ? "Görsel fiyatını göster" : "ROSTA Insight’a gönder"} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground disabled:opacity-35">{imageStage === "quoting" ? <LoaderCircle className="h-4 w-4 animate-spin" /> : imageSelected ? <Sparkles className="h-4 w-4" /> : <Send className="h-4 w-4" />}</Pressable>
+                    <Pressable type="button" pressStrength="icon" onClick={primaryAction} disabled={!providerReady || sending || imageStage === "generating" || (!input.trim() && !attachments.length && !selectedProducts.length && !selectedStyle && !purpose)} aria-label={imageSelected ? "Görsel fiyatını göster" : "Ruthie’ye gönder"} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground disabled:opacity-35">{imageStage === "quoting" ? <LoaderCircle className="h-4 w-4 animate-spin" /> : imageSelected ? <Sparkles className="h-4 w-4" /> : <Send className="h-4 w-4" />}</Pressable>
                   </div>
                 </div>
 
-                <div className="mt-2 flex justify-end"><Link href="/rosta-insight/chat" onClick={onClose} className="inline-flex items-center gap-1 text-[10px] font-medium text-muted hover:text-accent">Tam ROSTA Insight sohbetini aç <ExternalLink className="h-3 w-3" /></Link></div>
+                <div className="mt-2 flex justify-end"><Link href="/ruthie/chat" onClick={onClose} className="inline-flex items-center gap-1 text-[10px] font-medium text-muted hover:text-accent">Tam Ruthie sohbetini aç <ExternalLink className="h-3 w-3" /></Link></div>
               </div>
             </motion.section>
           </div>
