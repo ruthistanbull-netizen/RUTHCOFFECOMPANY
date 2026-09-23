@@ -4,16 +4,16 @@
 html:not(.dark) {
   --app-background: 40 35% 93% !important;
   --surface-primary: 40 35% 93% !important;
-  --surface-secondary: 40 35% 93% !important;
-  --surface-tertiary: 47 5% 65% !important;
+  --surface-secondary: 40 22% 89% !important;
+  --surface-tertiary: 40 12% 84% !important;
   --text-main: 0 0% 6.7% !important;
   --text-muted: 64 11% 40% !important;
   --text-subtle: 47 5% 65% !important;
-  --border-subtle: 47 5% 65% !important;
+  --border-subtle: 47 5% 76% !important;
   --border-strong: 47 5% 65% !important;
   --accent: 12 50% 48% !important;
   --accent-hover: 16 32% 13% !important;
-  --accent-soft: 40 35% 93% !important;
+  --accent-soft: 12 42% 90% !important;
   --accent-foreground: 40 35% 93% !important;
   --success: 64 11% 40% !important;
   --success-soft: 40 35% 93% !important;
@@ -40,12 +40,12 @@ html:not(.dark) {
 
   --ruth-color-canvas:#F4F0E8 !important;
   --ruth-color-surface:#F4F0E8 !important;
-  --ruth-color-surface-muted:#F4F0E8 !important;
+  --ruth-color-surface-muted:color-mix(in srgb,#F4F0E8 88%,#AAA8A1) !important;
   --ruth-color-text-primary:#111111 !important;
   --ruth-color-text-muted:#6F725B !important;
   --ruth-color-text-inverse:#F4F0E8 !important;
   --ruth-color-accent:#B9563D !important;
-  --ruth-color-accent-soft:#B9563D !important;
+  --ruth-color-accent-soft:color-mix(in srgb,#B9563D 18%,#F4F0E8) !important;
   --ruth-color-accent-strong:#2B1B16 !important;
   --ruth-color-border-subtle:#AAA8A1 !important;
   --ruth-color-border-strong:#AAA8A1 !important;
@@ -58,19 +58,6 @@ html:not(.dark) body {
   color:#111111;
 }
 
-html:not(.dark) [class~="bg-white"],
-html:not(.dark) [class*="bg-white/"] {
-  background-color:#F4F0E8 !important;
-}
-
-html:not(.dark) [class~="text-white"] {
-  color:#F4F0E8 !important;
-}
-
-html:not(.dark) [class~="border-white"],
-html:not(.dark) [class*="border-white/"] {
-  border-color:#F4F0E8 !important;
-}
 
 html.dark {
   --app-background:0 0% 6.7% !important;
