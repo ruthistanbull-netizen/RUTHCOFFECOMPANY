@@ -7,10 +7,10 @@
   --ri-gold-strong: #B9563D;
   --ri-gold-light: #F4F0E8;
   --ri-cream: #F4F0E8;
-  --ri-cream-2: #fbf6ea;
-  --ri-cream-3: #f5edda;
-  --ri-ink: #211d16;
-  --ri-muted: #77736d;
+  --ri-cream-2: #F4F0E8;
+  --ri-cream-3: #F4F0E8;
+  --ri-ink: #2B1B16;
+  --ri-muted: #6F725B;
   --ri-line: rgba(153, 126, 60, 0.16);
 
   border: 1px solid rgba(160, 132, 67, 0.14) !important;
@@ -48,7 +48,7 @@
 }
 
 [data-ruthie-insight-popup="true"] > header p {
-  color: #827c72 !important;
+  color: #6F725B !important;
   line-height: 1.45;
 }
 
@@ -98,7 +98,7 @@
 [data-ruthie-insight-popup="true"] [class*="min-h-52"] > p:nth-of-type(2) {
   margin-top: 8px !important;
   max-width: 470px;
-  color: #817c74 !important;
+  color: #6F725B !important;
   line-height: 1.6;
 }
 
@@ -123,7 +123,7 @@
 
 [data-ruthie-insight-popup="true"] [class*="max-w-md"][class*="grid"] > button:hover {
   border-color: rgba(185, 86, 61, 0.30) !important;
-  background: linear-gradient(180deg, #fffdf8, #fbf4e2) !important;
+  background: linear-gradient(180deg, #F4F0E8, #F4F0E8) !important;
   box-shadow: 0 10px 24px rgba(114, 87, 26, 0.09);
 }
 
@@ -151,7 +151,7 @@
 }
 
 [data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] span[class*="font-semibold"][class*="text-muted"] {
-  color: #746f67 !important;
+  color: #6F725B !important;
   letter-spacing: 0.01em;
 }
 
@@ -169,7 +169,7 @@
 [data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-7"][class*="bg-accent"] {
   border-color: rgba(43, 27, 22, 0.38) !important;
   background: linear-gradient(145deg, #F4F0E8 0%, #B9563D 56%, #2B1B16 100%) !important;
-  color: #2c220c !important;
+  color: #2B1B16 !important;
   box-shadow:
     0 8px 17px rgba(43, 27, 22, 0.20),
     inset 0 1px 0 rgba(255, 255, 255, 0.42),
@@ -179,7 +179,7 @@
 [data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-7"][class*="bg-surface-primary"] {
   border-color: rgba(126, 114, 88, 0.13) !important;
   background: rgba(255, 255, 255, 0.74) !important;
-  color: #78736c !important;
+  color: #6F725B !important;
   box-shadow:
     0 5px 13px rgba(52, 44, 27, 0.05),
     inset 0 1px 0 rgba(255, 255, 255, 0.88);
@@ -197,7 +197,7 @@
 
 [data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-8"][class*="bg-accent"] {
   background: linear-gradient(145deg, #F4F0E8, #B9563D 58%, #2B1B16) !important;
-  color: #251c08 !important;
+  color: #2B1B16 !important;
 }
 
 /* Composer */
@@ -250,7 +250,7 @@
   height: 42px !important;
   border: 1px solid rgba(161, 123, 28, 0.28);
   background: linear-gradient(145deg, #F4F0E8 0%, #B9563D 55%, #2B1B16 100%) !important;
-  color: #2b210b !important;
+  color: #2B1B16 !important;
   box-shadow:
     0 9px 21px rgba(43, 27, 22, 0.23),
     inset 0 1px 0 rgba(255, 255, 255, 0.48) !important;
@@ -258,7 +258,7 @@
 
 [data-ruthie-insight-popup="true"] a[href="/ruthie/chat"] {
   padding: 5px 4px 2px;
-  color: #7c766d !important;
+  color: #6F725B !important;
   letter-spacing: 0.01em;
 }
 
