@@ -1,4 +1,4 @@
-/* Ruthie insight popup — motion polish.
+/* ROSTA Insight popup — motion polish.
    Uses individual translate/scale properties so it composes with Framer Motion's
    transform animations instead of fighting them. */
 
@@ -16,7 +16,7 @@
   transform-origin: 50% 55%;
 }
 
-/* Header / Ruthie identity */
+/* Header / ROSTA Insight identity */
 [data-ruthie-insight-popup="true"] > header > div:first-of-type {
   animation: ri-avatar-enter 620ms cubic-bezier(.18, .9, .22, 1.16) both;
   transition: scale 220ms cubic-bezier(.22, 1, .36, 1),
@@ -51,7 +51,7 @@
   box-shadow: 0 3px 10px rgba(65, 51, 24, .08);
 }
 
-/* Empty-state Ruthie orb */
+/* Empty-state ROSTA Insight orb */
 [data-ruthie-insight-popup="true"] [class*="min-h-52"] > div[class*="mb-3"] {
   animation: ri-orb-enter 680ms cubic-bezier(.18, .9, .22, 1.12) both,
              ri-orb-float 5.2s ease-in-out 900ms infinite;
@@ -223,7 +223,7 @@
 
 /* Send / image quote main action */
 [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Görsel fiyatını göster"],
-[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ruthie’ye gönder"] {
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="ROSTA Insight’a gönder"] {
   position: relative;
   isolation: isolate;
   overflow: visible;
@@ -234,7 +234,7 @@
 }
 
 [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Görsel fiyatını göster"]::before,
-[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ruthie’ye gönder"]::before {
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="ROSTA Insight’a gönder"]::before {
   content: "";
   position: absolute;
   inset: -6px;
@@ -247,7 +247,7 @@
 }
 
 [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Görsel fiyatını göster"]:hover,
-[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ruthie’ye gönder"]:hover {
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="ROSTA Insight’a gönder"]:hover {
   translate: 0 -2px;
   scale: 1.065;
   filter: saturate(1.07);
@@ -255,13 +255,13 @@
 }
 
 [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Görsel fiyatını göster"]:hover::before,
-[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ruthie’ye gönder"]:hover::before {
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="ROSTA Insight’a gönder"]:hover::before {
   opacity: 1;
   scale: 1;
 }
 
 [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Görsel fiyatını göster"]:active,
-[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ruthie’ye gönder"]:active {
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="ROSTA Insight’a gönder"]:active {
   translate: 0 2px;
   scale: .90;
   box-shadow: 0 4px 11px rgba(168,131,38,.19), inset 0 2px 4px rgba(77,55,10,.12) !important;
@@ -269,11 +269,11 @@
 }
 
 [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Görsel fiyatını göster"] svg,
-[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ruthie’ye gönder"] svg {
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="ROSTA Insight’a gönder"] svg {
   transition: translate 200ms cubic-bezier(.22, 1, .36, 1), rotate 240ms cubic-bezier(.22, 1, .36, 1), scale 200ms cubic-bezier(.22, 1, .36, 1);
 }
 
-[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ruthie’ye gönder"]:hover svg {
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="ROSTA Insight’a gönder"]:hover svg {
   translate: 2px -2px;
   rotate: -8deg;
   scale: 1.08;
