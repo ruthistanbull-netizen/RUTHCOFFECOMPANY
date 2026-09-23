@@ -213,7 +213,7 @@ export function ExactOverview() {
 
   return (
     <div className="space-y-4 animate-fade-in" data-exact-base44-page="overview">
-      <ExactPageHeader title="Control Room" subtitle="Canlı ticaret ve operasyon özeti" actions={<><RangeSelect value={range} onChange={setRange} /><Link href="/ruthie"><ExactButton variant="secondary" size="sm"><Sparkles className="h-4 w-4" /> Ruthie’ye sor</ExactButton></Link></>} />
+      <ExactPageHeader title="Control Room" subtitle="Canlı ticaret ve operasyon özeti" actions={<><RangeSelect value={range} onChange={setRange} /><Link href="/rosta-insight"><ExactButton variant="secondary" size="sm"><Sparkles className="h-4 w-4" /> ROSTA Insight’a sor</ExactButton></Link></>} />
       {error ? <div className="radius-control bg-danger-soft border border-danger/20 px-4 py-3 text-xs text-danger-foreground flex items-center gap-2"><AlertCircle className="h-4 w-4" />{error}</div> : null}
 
       {loading ? (
@@ -224,7 +224,7 @@ export function ExactOverview() {
           <ExactDataCard className="lg:col-span-2">
             <div className="flex items-start gap-3 mb-3">
               <div className="relative h-11 w-11 shrink-0 rounded-full bg-gradient-to-br from-[hsl(var(--accent))] to-[hsl(var(--accent-hover))] shadow-floating flex items-center justify-center animate-orb-breathe"><Sparkles className="h-5 w-5 text-white" /><span className="absolute inset-[-4px] rounded-full border border-accent/30 animate-orb-rotate" /></div>
-              <div className="flex-1 min-w-0"><div className="flex items-center justify-between gap-2"><h3 className="text-sm font-semibold text-main">Ruthie Insight</h3><span className="inline-flex items-center gap-1 text-[10px] text-success-foreground"><span className="h-1.5 w-1.5 rounded-full bg-success" /> hazır</span></div><p className="text-xs text-muted mt-1 leading-relaxed">Bu dönemde {Number(summary.orders || 0).toLocaleString("tr-TR")} sipariş ve {money(Number(summary.revenue || 0))} satış oluştu. {attention > 0 ? `${attention} işlem kontrol bekliyor.` : "Acil kontrol bekleyen işlem görünmüyor."}</p></div>
+              <div className="flex-1 min-w-0"><div className="flex items-center justify-between gap-2"><h3 className="text-sm font-semibold text-main">ROSTA Insight</h3><span className="inline-flex items-center gap-1 text-[10px] text-success-foreground"><span className="h-1.5 w-1.5 rounded-full bg-success" /> hazır</span></div><p className="text-xs text-muted mt-1 leading-relaxed">Bu dönemde {Number(summary.orders || 0).toLocaleString("tr-TR")} sipariş ve {money(Number(summary.revenue || 0))} satış oluştu. {attention > 0 ? `${attention} işlem kontrol bekliyor.` : "Acil kontrol bekleyen işlem görünmüyor."}</p></div>
             </div>
             <div className="flex flex-wrap gap-1.5"><Link href="/orders" className="px-2.5 py-1 radius-small bg-accent-soft text-accent text-[11px] font-medium hover:bg-accent/10 transition-colors">Siparişleri özetle</Link><Link href="/payments" className="px-2.5 py-1 radius-small bg-accent-soft text-accent text-[11px] font-medium hover:bg-accent/10 transition-colors">Ödemeleri kontrol et</Link><Link href="/shipping/operations" className="px-2.5 py-1 radius-small bg-accent-soft text-accent text-[11px] font-medium hover:bg-accent/10 transition-colors">Kargo sorunlarını bul</Link></div>
           </ExactDataCard>
