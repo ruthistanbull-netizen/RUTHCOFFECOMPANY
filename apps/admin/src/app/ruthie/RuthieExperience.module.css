@@ -1,6 +1,6 @@
 .app {
-  --rx-bg: #090806;
-  --rx-bg-2: #0f0d08;
+  --rx-bg: #111111;
+  --rx-bg-2: #2B1B16;
   --rx-panel: rgba(24, 21, 14, .76);
   --rx-panel-strong: rgba(31, 27, 17, .92);
   --rx-line: rgba(255, 255, 255, .085);
@@ -23,7 +23,7 @@
   background:
     radial-gradient(circle at 79% 8%, rgba(185, 86, 61, .12), transparent 30%),
     radial-gradient(circle at 44% 86%, rgba(244, 240, 232, .07), transparent 34%),
-    linear-gradient(145deg, #070604 0%, #0c0a06 48%, #070604 100%);
+    linear-gradient(145deg, #111111 0%, #2B1B16 48%, #111111 100%);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
@@ -401,10 +401,10 @@
   border-radius: 13px;
   background: rgba(128, 91, 27, .08);
 }
-.approval strong { display: block; color: #f0d9aa; font-size: 10px; }
+.approval strong { display: block; color: #F4F0E8; font-size: 10px; }
 .approval p { margin: 5px 0 9px; color: rgba(237,218,177,.58); font-size: 9px; line-height: 1.5; }
 .approvalActions { display: flex; gap: 7px; }
-.approvalActions button { min-height: 31px; padding: 0 10px; border-radius: 8px; border: 1px solid rgba(236,203,139,.18); background: rgba(255,255,255,.025); color: #f0d9aa; font: inherit; font-size: 8px; cursor: pointer; }
+.approvalActions button { min-height: 31px; padding: 0 10px; border-radius: 8px; border: 1px solid rgba(236,203,139,.18); background: rgba(255,255,255,.025); color: #F4F0E8; font: inherit; font-size: 8px; cursor: pointer; }
 .approvalActions button:first-child { background: rgba(208,160,76,.12); }
 
 .rightRail {
