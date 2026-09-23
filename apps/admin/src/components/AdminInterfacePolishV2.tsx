@@ -3,27 +3,6 @@
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
-const EARRING_USAGE_VALUE = "Standart küpe ölçüsüdür. Rahat ve günlük kullanım için uygundur.";
-const EARRING_OPTION_VALUE = "__ruth_earring_usage__";
-
-function setNativeControlValue(element: HTMLSelectElement | HTMLTextAreaElement, value: string) {
-  const prototype = element instanceof HTMLTextAreaElement
-    ? HTMLTextAreaElement.prototype
-    : HTMLSelectElement.prototype;
-  const setter = Object.getOwnPropertyDescriptor(prototype, "value")?.set;
-  setter?.call(element, value);
-}
-
-function addOption(select: HTMLSelectElement, value: string, label: string) {
-  if ([...select.options].some((option) => option.value === value)) return;
-  const option = document.createElement("option");
-  option.value = value;
-  option.textContent = label;
-  const customOption = [...select.options].find((item) => item.value === "custom" || item.value === "__custom__");
-  if (customOption) select.insertBefore(option, customOption);
-  else select.appendChild(option);
-}
-
 function syncProductEditorTweaks(scope: ParentNode = document) {
   const directRoot = scope instanceof HTMLElement && scope.matches('[data-exact-base44-page="product-studio"]')
     ? scope
@@ -42,50 +21,8 @@ function syncProductEditorTweaks(scope: ParentNode = document) {
         field.dataset.ruthHideShortDescription = "true";
         return;
       }
-
-      const select = field.querySelector<HTMLSelectElement>("select");
-      if (!select) return;
-
-      if (text === "Ölçü ve kullanım şablonu") {
-        addOption(select, EARRING_USAGE_VALUE, "Küpe · standart kullanım");
-        return;
-      }
-
-      if (text !== "Ölçü ve kullanım") return;
-
-      addOption(select, EARRING_OPTION_VALUE, "Küpe · standart kullanım");
-      if (select.dataset.ruthEarringBound === "true") return;
-      select.dataset.ruthEarringBound = "true";
-
-      select.addEventListener("change", () => {
-        if (select.value !== EARRING_OPTION_VALUE) {
-          delete select.dataset.ruthEarringActive;
-          return;
-        }
-
-        select.dataset.ruthEarringActive = "true";
-        setNativeControlValue(select, "custom");
-
-        window.requestAnimationFrame(() => {
-          window.requestAnimationFrame(() => {
-            const currentField = label.parentElement;
-            const textarea = currentField?.querySelector<HTMLTextAreaElement>("textarea");
-            if (!textarea) return;
-            setNativeControlValue(textarea, EARRING_USAGE_VALUE);
-            textarea.dispatchEvent(new Event("input", { bubbles: true }));
-            textarea.dispatchEvent(new Event("change", { bubbles: true }));
-
-            window.requestAnimationFrame(() => {
-              if (!select.isConnected || select.dataset.ruthEarringActive !== "true") return;
-              addOption(select, EARRING_OPTION_VALUE, "Küpe · standart kullanım");
-              setNativeControlValue(select, EARRING_OPTION_VALUE);
-            });
-          });
-        });
-      }, true);
     });
-  });
-}
+  }
 
 export function AdminInterfacePolishV2() {
   const pathname = usePathname();
@@ -266,18 +203,6 @@ export function AdminInterfacePolishV2() {
           transform: none !important;
           transform-origin: left center;
         }
-
-        aside[class*="z-sidebar"] img[src*="ruth-commerce-panel-logo"],
-        aside[class*="z-sidebar"] img[alt="Ruth Commerce"] {
-          width: 100% !important;
-          max-width: none !important;
-          height: 100% !important;
-          max-height: none !important;
-          object-fit: contain !important;
-          transform: scale(1.65) !important;
-          transform-origin: left center !important;
-        }
-
         aside[class*="z-sidebar"] > div:first-child > a[href="/"] > div:first-child {
           transform: scale(1.22);
           transform-origin: left center;
