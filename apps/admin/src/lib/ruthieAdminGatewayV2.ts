@@ -913,10 +913,9 @@ function resolveAdminOrigins(request: Request) {
 
   const port = stringValue(process.env.PORT) || "3000";
   add(`http://127.0.0.1:${port}`);
-  add((process.env.ROSTA_INSIGHT_ADMIN_INTERNAL_ORIGIN || process.env.RUTHIE_ADMIN_INTERNAL_ORIGIN));
+  add(process.env.ROSTA_INSIGHT_ADMIN_INTERNAL_ORIGIN);
   add(process.env.ADMIN_APP_URL);
   add(process.env.NEXT_PUBLIC_ADMIN_URL);
-  add(process.env.RENDER_EXTERNAL_URL);
 
   const forwardedHost = request.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
   const forwardedProto = request.headers.get("x-forwarded-proto")?.split(",")[0]?.trim() || "https";
