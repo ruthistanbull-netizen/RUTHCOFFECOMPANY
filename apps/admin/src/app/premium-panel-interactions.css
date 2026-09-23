@@ -54,23 +54,23 @@
 
 /* Keep the liquid selection focused inside its own menu slot instead of a tall bubble. */
 @media (max-width: 1023px) {
-  nav[aria-label="Mobil ana menü"] {
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] {
     touch-action: pan-y !important;
   }
 
-  nav[aria-label="Mobil ana menü"] button[data-dock-index] {
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] button[data-dock-index] {
     min-height: 62px;
     pointer-events: auto !important;
     touch-action: manipulation !important;
   }
 
-  nav[aria-label="Mobil ana menü"] span[class*="indicatorSlot"] > span[class*="indicator"] {
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] span[class*="indicatorSlot"] > span[class*="indicator"] {
     inset: 7px 7px !important;
     border-radius: 19px !important;
     filter: drop-shadow(0 4px 9px rgba(31, 34, 40, 0.11)) drop-shadow(0 1px 1px rgba(31, 34, 40, 0.06)) !important;
   }
 
-  nav[aria-label="Mobil ana menü"] span[class*="indicatorSlot"] span[class*="glass"] {
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] span[class*="indicatorSlot"] span[class*="glass"] {
     border-color: rgba(255, 255, 255, 0.78) !important;
     background:
       radial-gradient(circle at 38% 2%, rgba(255, 255, 255, 0.54), transparent 33%),
@@ -82,19 +82,19 @@
       0 1px 5px rgba(28, 31, 37, 0.06) !important;
   }
 
-  nav[aria-label="Mobil ana menü"] button[data-dock-index]:not([aria-current="page"]) > span:last-child {
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] button[data-dock-index]:not([aria-current="page"]) > span:last-child {
     opacity: 0.78 !important;
     filter: saturate(0.85) brightness(0.94) contrast(0.97) !important;
     transform: translate3d(0, 0.5px, 0) scale(0.975) !important;
   }
 
-  nav[aria-label="Mobil ana menü"] button[data-dock-index][aria-current="page"] > span:last-child {
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] button[data-dock-index][aria-current="page"] > span:last-child {
     transform: translate3d(0, -0.2px, 0) scale(1.015) !important;
   }
 
-  nav[aria-label="Mobil ana menü"] button[data-dock-index] > span:last-child,
-  nav[aria-label="Mobil ana menü"] button[data-dock-index] img,
-  nav[aria-label="Mobil ana menü"] button[data-dock-index] > span:last-child > span:last-child {
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] button[data-dock-index] > span:last-child,
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] button[data-dock-index] img,
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] button[data-dock-index] > span:last-child > span:last-child {
     transition-duration: 115ms !important;
   }
 }

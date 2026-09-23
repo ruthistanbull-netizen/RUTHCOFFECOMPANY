@@ -4,26 +4,26 @@
    - centered nested variant popups */
 
 @media (max-width: 1023px) {
-  /* Remove the header ROSTA Insight shortcut to the right of search on mobile. */
-  header.z-header button[aria-label="ROSTA Insight"] {
+  /* Remove the header Ruthie shortcut to the right of search on mobile. */
+  header.z-header button[aria-label="Ruthie AI"] {
     display: none !important;
   }
 
   /* Reference-style active bubble: larger, flatter and clearer against content. */
-  nav[aria-label="Mobil ana menü"] div[class*="track"] > span:first-child {
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] div[class*="track"] > span:first-child {
     top: 0 !important;
     height: 62px !important;
     overflow: visible !important;
   }
 
-  nav[aria-label="Mobil ana menü"] div[class*="track"] > span:first-child > span {
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] div[class*="track"] > span:first-child > span {
     inset: 1px -5px !important;
     border-radius: 29px !important;
     overflow: hidden !important;
     filter: drop-shadow(0 5px 13px rgba(26, 36, 48, 0.12)) !important;
   }
 
-  nav[aria-label="Mobil ana menü"] div[class*="track"] > span:first-child > span > span:first-child {
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] div[class*="track"] > span:first-child > span > span:first-child {
     border: 1px solid rgba(255, 255, 255, 0.78) !important;
     border-radius: inherit !important;
     background:
@@ -39,14 +39,14 @@
 
   /* Remove the old heavy 3D/chromatic edge stack, but keep the runtime
      liquidGL host visible. */
-  nav[aria-label="Mobil ana menü"] div[class*="track"] > span:first-child > span > span:not(:first-child):not([data-ruth-liquidgl-lens="active"]) {
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] div[class*="track"] > span:first-child > span > span:not(:first-child):not([data-ruth-liquidgl-lens="active"]) {
     opacity: 0 !important;
     box-shadow: none !important;
     background: transparent !important;
     filter: none !important;
   }
 
-  nav[aria-label="Mobil ana menü"] [data-ruth-liquidgl-lens="active"] {
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] [data-ruth-liquidgl-lens="active"] {
     opacity: 1 !important;
     visibility: visible !important;
   }
@@ -80,13 +80,13 @@
       filter 180ms ease !important;
   }
 
-  nav[aria-label="Mobil ana menü"] button[data-dock-index][aria-current="page"] > span:last-child {
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] button[data-dock-index][aria-current="page"] > span:last-child {
     position: relative !important;
     z-index: 2147483647 !important;
     transform: translate3d(0, -0.2px, 0) scale(1.055) !important;
   }
 
-  /* ROSTA Insight now lives inside the actual header surface. In the collapsed state
+  /* Ruthie now lives inside the actual header surface. In the collapsed state
      there is no pill, floating card, halo or separate white plate around it. */
   [data-ruthie-quick-chat-v2="true"].ruthie-quick-v2 {
     left: 10px !important;
@@ -132,7 +132,7 @@
     border-color: hsl(var(--surface-primary)) !important;
   }
 
-  /* Only the composer gets its own surface after ROSTA Insight is explicitly opened;
+  /* Only the composer gets its own surface after Ruthie is explicitly opened;
      the resting logo remains visually part of the header. */
   [data-ruthie-quick-chat-v2="true"] .ruthie-quick-v2__composer {
     height: 40px !important;
@@ -146,15 +146,15 @@
     backdrop-filter: blur(18px) saturate(1.25) !important;
   }
 
-  /* Every visible ROSTA Insight mark on the mobile dashboard uses the supplied mark,
+  /* Every visible Ruthie mark on the mobile dashboard uses the supplied mark,
      not the generic sparkle glyph. */
-  header.z-header button[aria-label="ROSTA Insight"] > svg,
+  header.z-header button[aria-label="Ruthie AI"] > svg,
   [data-exact-base44-page="overview"] a[href="/ruthie"] button > svg,
   [data-exact-base44-page="overview"] .animate-orb-breathe > svg {
     display: none !important;
   }
 
-  header.z-header button[aria-label="ROSTA Insight"]::before,
+  header.z-header button[aria-label="Ruthie AI"]::before,
   [data-exact-base44-page="overview"] a[href="/ruthie"] button::before,
   [data-exact-base44-page="overview"] .animate-orb-breathe::before {
     content: "";
@@ -162,7 +162,7 @@
     background: url('/rosta-coffee-co.svg') center / contain no-repeat;
   }
 
-  header.z-header button[aria-label="ROSTA Insight"]::before {
+  header.z-header button[aria-label="Ruthie AI"]::before {
     width: 21px;
     height: 21px;
   }

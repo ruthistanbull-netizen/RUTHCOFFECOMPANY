@@ -8,7 +8,7 @@ html.ruth-navigation-v4 nav[aria-label="Mobil ana menü"] {
 
 html.ruth-navigation-v4 button[aria-label="Menüyü aç"],
 html.ruth-navigation-v4 button[aria-label="Kenar çubuğunu değiştir"],
-html.ruth-navigation-v4 button[aria-label="ROSTA Insight"] {
+html.ruth-navigation-v4 button[aria-label="Ruthie AI"] {
   display: none !important;
 }
 
@@ -42,23 +42,23 @@ html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > span[aria-hidde
 }
 
 html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-label="Panel menüsünü aç"],
-html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-label="ROSTA Insight’a mesaj gönder"],
-html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-label="ROSTA Insight hızlı mesajını kapat"] {
+html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-label="Ruthie'ye mesaj gönder"],
+html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-label="Ruthie hızlı mesajını kapat"] {
   width: 42px !important;
   height: 42px !important;
   min-width: 42px !important;
   flex: 0 0 42px !important;
   padding: 0 !important;
-  border: 1px solid rgba(43, 27, 22, 0.11) !important;
+  border: 1px solid rgba(15, 23, 42, 0.11) !important;
   border-radius: 50% !important;
   background: #fff !important;
-  color: #6F725B !important;
-  box-shadow: 0 4px 12px rgba(43, 27, 22,.06), inset 0 1px 0 #fff !important;
+  color: #555b64 !important;
+  box-shadow: 0 4px 12px rgba(15,23,42,.06), inset 0 1px 0 #fff !important;
 }
 
 html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-label="Panel menüsünü aç"] svg,
-html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-label="ROSTA Insight’a mesaj gönder"] svg,
-html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-label="ROSTA Insight hızlı mesajını kapat"] svg {
+html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-label="Ruthie'ye mesaj gönder"] svg,
+html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-label="Ruthie hızlı mesajını kapat"] svg {
   width: 21px !important;
   height: 21px !important;
   stroke-width: 1.8 !important;
@@ -68,28 +68,28 @@ html.ruth-navigation-v4 header[data-ruth-navigation-header="true"] > [data-ruth-
   width: min(326px, calc(100vw - 24px)) !important;
   height: 44px !important;
   padding: 1px !important;
-  border: 1px solid rgba(43, 27, 22, 0.10) !important;
+  border: 1px solid rgba(15, 23, 42, 0.10) !important;
   border-radius: 22px !important;
   background: #fff !important;
-  box-shadow: 0 8px 24px rgba(43, 27, 22, 0.09), inset 0 1px 0 #fff !important;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.09), inset 0 1px 0 #fff !important;
 }
 
-html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"][data-expanded="true"] > button[aria-label="ROSTA Insight hızlı mesajını kapat"] {
+html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"][data-expanded="true"] > button[aria-label="Ruthie hızlı mesajını kapat"] {
   background: #fff !important;
-  color: #2B1B16 !important;
-  border-color: rgba(185, 86, 61,.24) !important;
-  box-shadow: 0 0 0 2px rgba(185, 86, 61,.08), 0 4px 12px rgba(43, 27, 22,.08), inset 0 1px 0 #fff !important;
+  color: #30343a !important;
+  border-color: rgba(96,87,180,.24) !important;
+  box-shadow: 0 0 0 2px rgba(96,87,180,.08), 0 4px 12px rgba(15,23,42,.08), inset 0 1px 0 #fff !important;
 }
 
-html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] input[placeholder^="ROSTA Insight"] {
+html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] input[placeholder^="Ruthie"] {
   left: 48px !important;
 }
 
 html.dark.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-label="Panel menüsünü aç"],
-html.dark.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-label="ROSTA Insight’a mesaj gönder"],
-html.dark.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-label="ROSTA Insight hızlı mesajını kapat"] {
+html.dark.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-label="Ruthie'ye mesaj gönder"],
+html.dark.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-label="Ruthie hızlı mesajını kapat"] {
   background: rgba(255, 255, 255, 0.08) !important;
-  color: #AAA8A1 !important;
+  color: #d6d8dc !important;
   border-color: rgba(255,255,255,.09) !important;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
 }
@@ -99,7 +99,7 @@ html.ruth-navigation-v4 main {
 }
 
 @media (min-width: 1024px) {
-  html.ruth-navigation-v4 nav[aria-label="ROSTA Coffee masaüstü dock"] {
+  html.ruth-navigation-v4 nav[aria-label="ROSTA Coffee Co. masaüstü dock"] {
     display: none !important;
   }
 
@@ -115,7 +115,7 @@ html.ruth-navigation-v4 main {
 }
 
 @media (max-width: 1023px) {
-  html.ruth-navigation-v4 nav[aria-label="ROSTA Coffee mobil dock"] {
+  html.ruth-navigation-v4 nav[aria-label="ROSTA Coffee Co. mobil dock"] {
     display: none !important;
   }
 }

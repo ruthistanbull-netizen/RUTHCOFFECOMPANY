@@ -1,4 +1,4 @@
-/* ROSTA Coffee mobile-only integration fixes. */
+/* ROSTA Coffee Co. mobile-only integration fixes. */
 
 @media (max-width: 1023px) {
   /* Paint the iPhone safe area with the exact same opaque surface as the
@@ -18,23 +18,23 @@
     background: hsl(var(--surface-primary)) !important;
   }
 
-  html.ruth-admin-preparing nav[aria-label="Mobil ana menü"] {
+  html.ruth-admin-preparing nav[aria-label="ROSTA Coffee Co. mobil menü"] {
     display: none !important;
   }
 
   /* Persistent dock must leave the stage whenever an immersive overlay opens. */
-  body:has(aside[class~="z-drawer"]) nav[aria-label="Mobil ana menü"],
-  body:has([data-exact-workspace-layer]) nav[aria-label="Mobil ana menü"],
-  body:has([data-exact-select-layer]) nav[aria-label="Mobil ana menü"],
-  body:has([data-ruth-liquid-date-layer]) nav[aria-label="Mobil ana menü"],
-  body:has([role="dialog"][aria-modal="true"]) nav[aria-label="Mobil ana menü"] {
+  body:has(aside[class~="z-drawer"]) nav[aria-label="ROSTA Coffee Co. mobil menü"],
+  body:has([data-exact-workspace-layer]) nav[aria-label="ROSTA Coffee Co. mobil menü"],
+  body:has([data-exact-select-layer]) nav[aria-label="ROSTA Coffee Co. mobil menü"],
+  body:has([data-ruth-liquid-date-layer]) nav[aria-label="ROSTA Coffee Co. mobil menü"],
+  body:has([role="dialog"][aria-modal="true"]) nav[aria-label="ROSTA Coffee Co. mobil menü"] {
     pointer-events: none !important;
     opacity: 0 !important;
     filter: blur(4px) !important;
     transform: translate3d(0, calc(100% + 28px), 0) scale(0.97) !important;
   }
 
-  nav[aria-label="Mobil ana menü"] {
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] {
     transition:
       transform 340ms cubic-bezier(0.18, 0.92, 0.2, 1.08),
       opacity 190ms ease,
@@ -114,7 +114,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  nav[aria-label="Mobil ana menü"] {
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] {
     transition-duration: 1ms !important;
   }
 }
