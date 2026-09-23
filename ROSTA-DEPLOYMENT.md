@@ -138,6 +138,6 @@ Do not reuse secrets from Ruth Istanbul commerce.
 - Admin and storefront reject any Supabase hostname outside `fposvxuryzidmeuwytbg.supabase.co`.
 - Storefront Docker image no longer builds or starts the admin application.
 - Runtime catalog has no Ruth Istanbul static-product fallback.
-- Legacy ikas image-cache tooling is removed.
+- Legacy image-cache tooling is removed.
 - ROSTA Points uses the ROSTA-named public RPC layer.
 - Internal commerce queues, email queue, analytics and contact data are stored in the ROSTA Supabase project.
