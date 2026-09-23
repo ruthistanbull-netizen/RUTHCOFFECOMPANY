@@ -116,7 +116,7 @@ These values must intentionally match across services:
 2. Admin `GMAIL_TOKEN_ENCRYPTION_KEY` = storefront `GMAIL_TOKEN_ENCRYPTION_KEY`.
 3. Both services must use the same ROSTA Supabase project and service-role key.
 
-Do not reuse secrets from Ruth Istanbul commerce.
+Do not reuse secrets from any legacy commerce environment.
 
 ## First production activation order
 
@@ -137,7 +137,7 @@ Do not reuse secrets from Ruth Istanbul commerce.
 
 - Admin and storefront reject any Supabase hostname outside `fposvxuryzidmeuwytbg.supabase.co`.
 - Storefront Docker image no longer builds or starts the admin application.
-- Runtime catalog has no Ruth Istanbul static-product fallback.
+- Runtime catalog has no legacy static-product fallback.
 - Legacy image-cache tooling is removed.
 - ROSTA Points uses the ROSTA-named public RPC layer.
 - Internal commerce queues, email queue, analytics and contact data are stored in the ROSTA Supabase project.
