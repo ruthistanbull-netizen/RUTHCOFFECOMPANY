@@ -20,7 +20,7 @@ export function LegalDocument({
   return (
     <div className="min-h-screen bg-ivory px-4 pb-24 pt-32 md:px-8">
       <div className="mx-auto max-w-5xl">
-        <PageIntro eyebrow="Ruth Istanbul" title={title} description={description} align="left" />
+        <PageIntro eyebrow="ROSTA Coffee" title={title} description={description} align="left" />
         <p className="mt-5 text-xs uppercase tracking-wide-luxe text-muted-ruth">Son güncelleme: {updated}</p>
         <div className="mt-10 grid gap-6">
           {sections.map((section, index) => (
