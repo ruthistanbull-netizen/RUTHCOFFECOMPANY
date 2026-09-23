@@ -23,14 +23,13 @@ function clean(value: unknown, max = 500) {
 }
 
 function clientIp(request: Request) {
-  return request.headers.get("x-vercel-forwarded-for")?.split(",")[0]?.trim()
-    || request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
+  return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
     || request.headers.get("x-real-ip")
     || "unknown";
 }
 
 function rateHash(request: Request, orderNo: string) {
-  const salt = process.env.ORDER_TRACKING_RATE_LIMIT_SALT || "ruth-order-tracking-v1";
+  const salt = process.env.ORDER_TRACKING_RATE_LIMIT_SALT || "rosta-order-tracking-v1";
   return crypto.createHash("sha256").update(`${salt}|${clientIp(request)}|${orderNo.toLocaleUpperCase("tr-TR")}`).digest("hex");
 }
 
