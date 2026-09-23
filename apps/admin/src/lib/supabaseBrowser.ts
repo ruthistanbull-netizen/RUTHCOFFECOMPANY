@@ -16,6 +16,14 @@ function storage(kind:"local"|"session"){
   try{return kind==="local"?window.localStorage:window.sessionStorage;}catch{return null;}
 }
 
+export function clearAdminAuthPersistence(){
+  try{storage("local")?.removeItem(AUTH_STORAGE_KEY);}catch{}
+  try{storage("session")?.removeItem(AUTH_STORAGE_KEY);}catch{}
+  try{storage("local")?.removeItem(REMEMBER_KEY);}catch{}
+  try{storage("session")?.removeItem(REMEMBER_KEY);}catch{}
+  client=null;
+}
+
 export function adminRememberSessionEnabled(){
   try{return storage("local")?.getItem(REMEMBER_KEY)==="1";}catch{return false;}
 }
