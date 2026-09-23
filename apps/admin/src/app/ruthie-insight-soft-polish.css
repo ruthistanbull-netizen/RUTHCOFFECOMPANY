@@ -3,10 +3,10 @@
    changes presentation so the assistant remains functionally identical. */
 
 [data-ruthie-insight-popup="true"] {
-  --ri-gold: #c9a23a;
-  --ri-gold-strong: #a88326;
-  --ri-gold-light: #e6d28b;
-  --ri-cream: #fffaf0;
+  --ri-gold: #B9563D;
+  --ri-gold-strong: #B9563D;
+  --ri-gold-light: #F4F0E8;
+  --ri-cream: #F4F0E8;
   --ri-cream-2: #fbf6ea;
   --ri-cream-3: #f5edda;
   --ri-ink: #211d16;
@@ -15,7 +15,7 @@
 
   border: 1px solid rgba(160, 132, 67, 0.14) !important;
   background:
-    radial-gradient(circle at 50% -8%, rgba(230, 210, 139, 0.14), transparent 34%),
+    radial-gradient(circle at 50% -8%, rgba(244, 240, 232, 0.14), transparent 34%),
     linear-gradient(180deg, rgba(255, 253, 248, 0.99), rgba(255, 250, 241, 0.985)) !important;
   box-shadow:
     0 -2px 0 rgba(255, 255, 255, 0.92) inset,
@@ -36,10 +36,10 @@
 [data-ruthie-insight-popup="true"] > header > div:first-of-type {
   width: 46px !important;
   height: 46px !important;
-  background: linear-gradient(145deg, #e3bf57 0%, #c9a23a 46%, #a88326 100%) !important;
+  background: linear-gradient(145deg, #F4F0E8 0%, #B9563D 46%, #B9563D 100%) !important;
   box-shadow:
-    0 8px 22px rgba(201, 162, 58, 0.22),
-    0 0 0 5px rgba(201, 162, 58, 0.08),
+    0 8px 22px rgba(185, 86, 61, 0.22),
+    0 0 0 5px rgba(185, 86, 61, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.58) !important;
 }
 
@@ -65,7 +65,7 @@
 
 [data-ruthie-insight-popup="true"] > div[class*="min-h-0"][class*="flex-1"] {
   background:
-    radial-gradient(circle at 50% 10%, rgba(230, 210, 139, 0.10), transparent 26%),
+    radial-gradient(circle at 50% 10%, rgba(244, 240, 232, 0.10), transparent 26%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(255, 250, 240, 0.20));
 }
 
@@ -78,14 +78,14 @@
   width: 60px !important;
   height: 60px !important;
   margin-bottom: 17px !important;
-  border: 1px solid rgba(201, 162, 58, 0.15);
+  border: 1px solid rgba(185, 86, 61, 0.15);
   background:
     radial-gradient(circle at 36% 28%, rgba(255, 255, 255, 0.92), transparent 30%),
     linear-gradient(145deg, rgba(255, 253, 247, 0.98), rgba(246, 237, 207, 0.96)) !important;
   color: var(--ri-gold) !important;
   box-shadow:
-    0 10px 30px rgba(201, 162, 58, 0.12),
-    0 0 0 7px rgba(201, 162, 58, 0.045),
+    0 10px 30px rgba(185, 86, 61, 0.12),
+    0 0 0 7px rgba(185, 86, 61, 0.045),
     inset 0 1px 0 rgba(255, 255, 255, 0.96);
 }
 
@@ -122,7 +122,7 @@
 }
 
 [data-ruthie-insight-popup="true"] [class*="max-w-md"][class*="grid"] > button:hover {
-  border-color: rgba(201, 162, 58, 0.30) !important;
+  border-color: rgba(185, 86, 61, 0.30) !important;
   background: linear-gradient(180deg, #fffdf8, #fbf4e2) !important;
   box-shadow: 0 10px 24px rgba(114, 87, 26, 0.09);
 }
@@ -130,20 +130,20 @@
 /* Image-generation settings card */
 [data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] {
   padding: 14px !important;
-  border: 1px solid rgba(201, 162, 58, 0.25) !important;
+  border: 1px solid rgba(185, 86, 61, 0.25) !important;
   border-radius: 24px !important;
   background:
     radial-gradient(circle at 6% 0%, rgba(255, 255, 255, 0.82), transparent 30%),
     linear-gradient(145deg, rgba(255, 251, 241, 0.98), rgba(248, 240, 219, 0.94)) !important;
   box-shadow:
-    0 14px 34px rgba(143, 110, 31, 0.10),
+    0 14px 34px rgba(43, 27, 22, 0.10),
     inset 0 1px 0 rgba(255, 255, 255, 0.94) !important;
 }
 
 [data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] > div:first-child > span:first-child {
   height: 34px !important;
   padding-inline: 12px !important;
-  border-color: rgba(201, 162, 58, 0.18) !important;
+  border-color: rgba(185, 86, 61, 0.18) !important;
   background: rgba(255, 255, 255, 0.76) !important;
   box-shadow: 0 5px 16px rgba(100, 77, 21, 0.07);
   backdrop-filter: blur(10px);
@@ -167,11 +167,11 @@
 }
 
 [data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-7"][class*="bg-accent"] {
-  border-color: rgba(168, 131, 38, 0.38) !important;
-  background: linear-gradient(145deg, #dfbd58 0%, #c9a23a 56%, #b88d27 100%) !important;
+  border-color: rgba(43, 27, 22, 0.38) !important;
+  background: linear-gradient(145deg, #F4F0E8 0%, #B9563D 56%, #2B1B16 100%) !important;
   color: #2c220c !important;
   box-shadow:
-    0 8px 17px rgba(168, 131, 38, 0.20),
+    0 8px 17px rgba(43, 27, 22, 0.20),
     inset 0 1px 0 rgba(255, 255, 255, 0.42),
     inset 0 -1px 0 rgba(112, 80, 11, 0.14) !important;
 }
@@ -196,7 +196,7 @@
 }
 
 [data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-8"][class*="bg-accent"] {
-  background: linear-gradient(145deg, #dfbd58, #c9a23a 58%, #ad8122) !important;
+  background: linear-gradient(145deg, #F4F0E8, #B9563D 58%, #2B1B16) !important;
   color: #251c08 !important;
 }
 
@@ -213,7 +213,7 @@
   border: 1px solid rgba(146, 125, 80, 0.18) !important;
   border-radius: 22px !important;
   background:
-    radial-gradient(circle at 100% 100%, rgba(230, 210, 139, 0.12), transparent 32%),
+    radial-gradient(circle at 100% 100%, rgba(244, 240, 232, 0.12), transparent 32%),
     rgba(255, 255, 255, 0.73) !important;
   box-shadow:
     0 12px 26px rgba(68, 54, 27, 0.075),
@@ -223,10 +223,10 @@
 }
 
 [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] > div[class*="rounded-[18px]"]:focus-within {
-  border-color: rgba(201, 162, 58, 0.34) !important;
+  border-color: rgba(185, 86, 61, 0.34) !important;
   box-shadow:
     0 14px 30px rgba(96, 70, 17, 0.09),
-    0 0 0 4px rgba(201, 162, 58, 0.07),
+    0 0 0 4px rgba(185, 86, 61, 0.07),
     inset 0 1px 0 rgba(255, 255, 255, 0.96) !important;
 }
 
@@ -249,10 +249,10 @@
   width: 42px !important;
   height: 42px !important;
   border: 1px solid rgba(161, 123, 28, 0.28);
-  background: linear-gradient(145deg, #dfbd58 0%, #c9a23a 55%, #ae8121 100%) !important;
+  background: linear-gradient(145deg, #F4F0E8 0%, #B9563D 55%, #2B1B16 100%) !important;
   color: #2b210b !important;
   box-shadow:
-    0 9px 21px rgba(168, 131, 38, 0.23),
+    0 9px 21px rgba(43, 27, 22, 0.23),
     inset 0 1px 0 rgba(255, 255, 255, 0.48) !important;
 }
 
@@ -285,11 +285,11 @@
 }
 
 .dark [data-ruthie-insight-popup="true"] {
-  --ri-line: rgba(230, 210, 139, 0.12);
+  --ri-line: rgba(244, 240, 232, 0.12);
   background:
-    radial-gradient(circle at 50% -8%, rgba(201, 162, 58, 0.13), transparent 34%),
+    radial-gradient(circle at 50% -8%, rgba(185, 86, 61, 0.13), transparent 34%),
     linear-gradient(180deg, rgba(29, 27, 23, 0.99), rgba(24, 23, 20, 0.99)) !important;
-  border-color: rgba(230, 210, 139, 0.11) !important;
+  border-color: rgba(244, 240, 232, 0.11) !important;
 }
 
 .dark [data-ruthie-insight-popup="true"] > header,
