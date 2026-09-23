@@ -31,7 +31,7 @@ export function DesignSystemShowcase() {
   return (
     <PageShell as="div" width="wide" density="spacious" className="ds-page">
       <PageHeader
-        eyebrow="Ruth Commerce V2 · Faz 1A"
+        eyebrow="ROSTA Commerce · Design System"
         title="Ortak Tasarım Sistemi"
         description="Storefront ve operasyon panelinde aynı davranışları, boşlukları ve durum dilini kullanacak temel bileşenlerin canlı doğrulama sayfası."
         actions={(
@@ -69,8 +69,8 @@ export function DesignSystemShowcase() {
           description="Mobil ve masaüstünde aynı alan sırası korunur."
           actions={<Button size="sm" variant="ghost">Temizle</Button>}
         >
-          <Input label="Materyal" placeholder="925 Gümüş" />
-          <Input label="Koleksiyon" placeholder="Ruth Atelier" />
+          <Input label="Ürün tipi" placeholder="Çekirdek kahve" />
+          <Input label="Seri" placeholder="Street Blend" />
           <Input label="Fiyat aralığı" placeholder="₺0 – ₺3.000" />
         </FilterShell>
       </PageSection>
@@ -108,8 +108,8 @@ export function DesignSystemShowcase() {
         <div className="ds-card-grid">
           <ProductCard
             href="#product-card"
-            title="The Sacred Seal Ring"
-            material="925 Ayar Gümüş"
+            title="Street Blend 250 g"
+            material="Kavrulmuş çekirdek kahve"
             price="₺1.250,00"
             oldPrice="₺1.390,00"
             badge="Yeni"
@@ -118,17 +118,17 @@ export function DesignSystemShowcase() {
           />
           <ProductCard
             href="#product-card"
-            title="The Golden Relic Necklace"
-            material="Ruth Atelier · Pirinç"
+            title="House Blend 500 g"
+            material="Kavrulmuş çekirdek kahve"
             price="₺1.490,00"
-            badge="Atelier"
+            badge="Blend"
             favoriteAction={<button type="button" aria-label="Favorilere ekle">♡</button>}
           />
           <EditorialCard
             href="#collection-card"
             eyebrow="Yeni koleksiyon"
-            title="Ruth Atelier"
-            description="Mitolojiden ilham alan, elde şekillendirilen zamansız parçalar."
+            title="ROSTA Coffee Co."
+            description="Street kültürü, kahve zanaatı ve modern ROSTA karakterini buluşturan seçkiler."
           />
         </div>
         <div className="ds-info-grid">
@@ -176,7 +176,7 @@ export function DesignSystemShowcase() {
           </>
         )}
       >
-        <p>RUTH-2026-0219 numaralı sipariş hazırlanıyor durumuna geçirilecek.</p>
+        <p>ROSTA-2026-0219 numaralı sipariş hazırlanıyor durumuna geçirilecek.</p>
       </Modal>
 
       <Drawer
@@ -187,7 +187,7 @@ export function DesignSystemShowcase() {
         footer={<Button onClick={() => setDrawerOpen(false)}>Tamam</Button>}
       >
         <div className="ds-summary">
-          <div><span>Müşteri</span><strong>Ruth Müşterisi</strong></div>
+          <div><span>Müşteri</span><strong>ROSTA Müşterisi</strong></div>
           <div><span>Toplam</span><strong>₺2.450,00</strong></div>
           <div><span>Durum</span><StatusBadge tone="info">Hazırlanıyor</StatusBadge></div>
         </div>
