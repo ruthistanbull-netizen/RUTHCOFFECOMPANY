@@ -1,4 +1,6 @@
 :where([data-ruth-typography]) {
+  --font-inter: "Helvetica Neue", Arial, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-archivo: "Arial Black", "Helvetica Neue", Arial, sans-serif;
   font-synthesis: none;
   text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
