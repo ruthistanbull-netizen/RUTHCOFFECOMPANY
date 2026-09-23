@@ -102,19 +102,19 @@ type SizePreset = "none" | "adjustable-ring" | "necklace-guide" | "custom";
 type CarePreset = "none" | "standard" | "custom";
 type ProductSelectHandler = (productId: string, productType: "single" | "bundle") => void;
 
-const defaultMaterials = ["925 Ayar Gümüş", "Pirinç", "Çelik"];
-const defaultFinishes = ["Gümüş", "18K Altın Kaplama", "Altın Rengi", "Eskitme"];
-const STANDARD_CARE_VALUE = "Parfüm, su ve kimyasal temasından kaçının. Kullanmadığınızda kutusunda saklayın.";
-const ADJUSTABLE_RING_VALUE = "Ayarlanabilir Yüzük Gövdesi";
-const NECKLACE_SIZE_GUIDE_VALUE = "Kolye ölçü fotoğrafı";
+const defaultMaterials = ["Arabica", "Robusta", "Arabica + Robusta Blend", "Kafeinsiz"];
+const defaultFinishes = ["Açık Kavrum", "Orta Kavrum", "Koyu Kavrum", "Espresso Kavrum"];
+const STANDARD_CARE_VALUE = "Serin, kuru ve güneş almayan bir yerde; paketi hava almayacak şekilde kapalı saklayın.";
+const ADJUSTABLE_RING_VALUE = "250 g paket";
+const NECKLACE_SIZE_GUIDE_VALUE = "500 g paket";
 const necklaceGuideValues = new Set([
   NECKLACE_SIZE_GUIDE_VALUE,
-  "Kolye ölçü tablosu",
-  "Kolye / zincir ölçü tablosunu göster",
+  "500 g",
+  "500 gram paket",
 ]);
 const standardCareValues = new Set([
   STANDARD_CARE_VALUE,
-  "Parfüm, su ve kimyasal temasından kaçın. Kullanmadığında kutusunda sakla.",
+  "Paketi serin, kuru ve güneş almayan bir yerde kapalı saklayın.",
 ]);
 const emptyForm: ProductForm = {
   productType: "single",
@@ -122,7 +122,7 @@ const emptyForm: ProductForm = {
   slug: "",
   price: "",
   compare_at_price: "",
-  material: "925 Ayar Gümüş",
+  material: "Arabica",
   finish_color: "",
   short_description: "",
   description: "",
@@ -740,7 +740,7 @@ export function ExactProductStudioWorkspace({
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="ruth-type-card-title truncate text-main">{product.name}</p>
-                        <p className="ruth-type-caption truncate text-muted">{product.material || "Materyal yok"} · {product.product_variants?.length || 0} varyant</p>
+                        <p className="ruth-type-caption truncate text-muted">{product.material || "Kahve türü yok"} · {product.product_variants?.length || 0} varyant</p>
                         <p className="ruth-type-price mt-1 text-main">{money(product.price)}</p>
                       </div>
                       <ExactStatusBadge status={product.status} label={product.status === "active" ? "Aktif" : product.status === "archived" ? "Arşiv" : "Taslak"} size="sm" />
@@ -772,8 +772,8 @@ export function ExactProductStudioWorkspace({
                 <ExactField label="Slug"><input value={form.slug} onChange={(event) => updateForm({ slug: event.target.value })} className={exactFormInputClass} /></ExactField>
                 <ExactField label="Satış fiyatı" required><input type="number" min="0" step="0.01" value={form.price} onChange={(event) => updateForm({ price: event.target.value })} className={exactFormInputClass} /></ExactField>
                 <ExactField label="Karşılaştırma fiyatı"><input type="number" min="0" step="0.01" value={form.compare_at_price} onChange={(event) => updateForm({ compare_at_price: event.target.value })} className={exactFormInputClass} /></ExactField>
-                <ExactField label="Materyal"><select value={form.material} onChange={(event) => updateForm({ material: event.target.value })} className={exactFormInputClass}>{materials.map((item) => <option key={item} value={item}>{item}</option>)}</select></ExactField>
-                <ExactField label="Renk / kaplama"><select value={form.finish_color} onChange={(event) => updateForm({ finish_color: event.target.value })} className={exactFormInputClass}><option value="">Seçilmedi</option>{defaultFinishes.map((item) => <option key={item} value={item}>{item}</option>)}</select></ExactField>
+                <ExactField label="Kahve türü"><select value={form.material} onChange={(event) => updateForm({ material: event.target.value })} className={exactFormInputClass}>{materials.map((item) => <option key={item} value={item}>{item}</option>)}</select></ExactField>
+                <ExactField label="Kavrum profili"><select value={form.finish_color} onChange={(event) => updateForm({ finish_color: event.target.value })} className={exactFormInputClass}><option value="">Seçilmedi</option>{defaultFinishes.map((item) => <option key={item} value={item}>{item}</option>)}</select></ExactField>
                 <ExactField label="Yayın durumu"><select value={form.status} onChange={(event) => updateForm({ status: event.target.value })} className={exactFormInputClass}><option value="active">Aktif</option><option value="draft">Taslak</option><option value="archived">Arşiv</option></select></ExactField>
                 <ExactField label="Stok durumu"><select value={form.stock_status} onChange={(event) => updateForm({ stock_status: event.target.value })} className={exactFormInputClass}><option value="in_stock">Stokta</option><option value="out_of_stock">Stok yok</option><option value="preorder">Ön sipariş</option></select></ExactField>
               </div>
@@ -781,7 +781,7 @@ export function ExactProductStudioWorkspace({
                 <ExactField label="Kısa açıklama"><textarea value={form.short_description} onChange={(event) => updateForm({ short_description: event.target.value })} className={`${exactFormInputClass} min-h-20`} /></ExactField>
                 <ExactField label="Ürün açıklaması"><textarea value={form.description} onChange={(event) => updateForm({ description: event.target.value })} className={`${exactFormInputClass} min-h-32`} /></ExactField>
                 <div className="grid gap-3 md:grid-cols-2">
-                  <ExactField label="Ölçü ve kullanım">
+                  <ExactField label="Paket / gramaj">
                     <div className="grid gap-2">
                       <select
                         value={sizePreset}
@@ -795,25 +795,25 @@ export function ExactProductStudioWorkspace({
                         }}
                         className={exactFormInputClass}
                       >
-                        <option value="none">Ölçü bilgisi yok</option>
-                        <option value="adjustable-ring">Ayarlanabilir Yüzük Gövdesi</option>
-                        <option value="necklace-guide">Kolye ölçü tablosu</option>
-                        <option value="custom">Özel ölçü metni…</option>
+                        <option value="none">Paket bilgisi yok</option>
+                        <option value="adjustable-ring">250 g paket</option>
+                        <option value="necklace-guide">500 g paket</option>
+                        <option value="custom">Özel paket / kullanım metni…</option>
                       </select>
                       {sizePreset === "custom" ? (
                         <textarea
                           value={form.size_usage}
                           onChange={(event) => updateForm({ size_usage: event.target.value })}
                           className={`${exactFormInputClass} min-h-24`}
-                          placeholder="Özel ölçü ve kullanım metni"
+                          placeholder="Özel paket, gramaj veya kullanım metni"
                         />
                       ) : null}
                       {sizePreset === "necklace-guide" ? (
-                        <p className="ruth-type-caption leading-relaxed text-subtle">Sitedeki Ölçü ve Kullanım bölümünde kolye ölçü görseli gösterilir.</p>
+                        <p className="ruth-type-caption leading-relaxed text-subtle">Storefront ürün detayında 500 g paket seçeneği gösterilir.</p>
                       ) : null}
                     </div>
                   </ExactField>
-                  <ExactField label="Bakım önerisi">
+                  <ExactField label="Saklama / demleme önerisi">
                     <div className="grid gap-2">
                       <select
                         value={carePreset}
@@ -826,9 +826,9 @@ export function ExactProductStudioWorkspace({
                         }}
                         className={exactFormInputClass}
                       >
-                        <option value="none">Bakım önerisi yok</option>
-                        <option value="standard">Standart takı bakımı</option>
-                        <option value="custom">Özel bakım metni…</option>
+                        <option value="none">Öneri yok</option>
+                        <option value="standard">Standart kahve saklama önerisi</option>
+                        <option value="custom">Özel saklama / demleme metni…</option>
                       </select>
                       {carePreset === "standard" ? (
                         <p className="ruth-type-caption leading-relaxed text-subtle">{STANDARD_CARE_VALUE}</p>
@@ -838,7 +838,7 @@ export function ExactProductStudioWorkspace({
                           value={form.care_advice}
                           onChange={(event) => updateForm({ care_advice: event.target.value })}
                           className={`${exactFormInputClass} min-h-24`}
-                          placeholder="Özel bakım önerisi"
+                          placeholder="Özel saklama veya demleme önerisi"
                         />
                       ) : null}
                     </div>
