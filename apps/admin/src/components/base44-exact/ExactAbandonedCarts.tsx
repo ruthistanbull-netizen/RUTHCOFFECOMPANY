@@ -135,7 +135,7 @@ function phoneDigits(value?: string | null) {
 
 function membershipLabel(profile: CustomerProfile | null) {
   if (!profile?.is_member) return "Üye değil";
-  if (profile.membership_source === "ikas") return "Eski sistem üyesi";
+  if (profile.membership_source === "ikas") return "İkas üyesi";
   return "Site üyesi";
 }
 
@@ -148,6 +148,7 @@ function CartImage({ item }: { item: CartItem }) {
   const candidates = [...new Set([
     ...(item.imageCandidates || []),
     item.imageUrl,
+    item.productSlug ? `/products/ikas/${item.productSlug}-1.jpg` : null,
   ].filter(Boolean) as string[])];
   const [index, setIndex] = useState(0);
   const source = candidates[index];
@@ -448,7 +449,7 @@ export function ExactAbandonedCarts() {
                     <div className="flex items-center gap-2"><CalendarClock className="h-3.5 w-3.5 text-subtle" /><span>Üyelik/kayıt: <strong className="font-semibold text-main">{customerProfile?.created_at ? dateTime(customerProfile.created_at) : customerProfile?.is_member ? "Kayıt tarihi yok" : "Misafir checkout"}</strong></span></div>
                     <div className="flex items-center gap-2"><MapPin className="h-3.5 w-3.5 text-subtle" /><span>Konum: <strong className="font-semibold text-main">{locationLabel(customerProfile)}</strong></span></div>
                     <div className="flex items-center gap-2"><ShoppingBag className="h-3.5 w-3.5 text-subtle" /><span>Son sipariş: <strong className="font-semibold text-main">{customerProfile?.last_order_no ? `#${customerProfile.last_order_no}` : "—"}</strong>{customerProfile?.last_order_at ? ` · ${dateTime(customerProfile.last_order_at)}` : ""}</span></div>
-                    <div className="flex items-center gap-2"><UsersRound className="h-3.5 w-3.5 text-subtle" /><span>Kaynak: <strong className="font-semibold text-main">{customerProfile?.membership_source === "ikas" ? "Geçiş hesabı" : customerProfile?.is_member ? "ROSTA hesabı" : "Üye değil"}</strong></span></div>
+                    <div className="flex items-center gap-2"><UsersRound className="h-3.5 w-3.5 text-subtle" /><span>Kaynak: <strong className="font-semibold text-main">{customerProfile?.membership_source === "ikas" ? "İkas hesabı" : customerProfile?.is_member ? "Yeni site hesabı" : "Üye değil"}</strong></span></div>
                   </div>
                 ) : null}
 
