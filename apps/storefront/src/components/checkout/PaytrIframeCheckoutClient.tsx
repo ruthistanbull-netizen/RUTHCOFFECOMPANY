@@ -552,9 +552,9 @@ export function PaytrIframeCheckoutClient() {
               aria-expanded={isRuthiePointsOpen}
             >
               <span>
-                <span className="block font-heading text-sm text-ink">Ruthie Points Kullan</span>
+                <span className="block font-heading text-sm text-ink">ROSTA Points Kullan</span>
                 <span className="mt-1 block text-xs leading-5 text-muted-ruth">
-                  Hesabında {availableRuthiePoints.toLocaleString("tr-TR")} Ruthie Points var.
+                  Hesabında {availableRuthiePoints.toLocaleString("tr-TR")} ROSTA Points var.
                 </span>
                 {selectedRuthiePoints > 0 ? (
                   <span className="mt-1 block text-xs font-medium text-gold-dark">
@@ -605,7 +605,7 @@ export function PaytrIframeCheckoutClient() {
                   </div>
                 ) : (
                   <p className="rounded-lg border border-gold/10 bg-cream/70 px-3 py-2 text-xs leading-5 text-muted-ruth">
-                    Kullanılabilir Ruthie Points bulunmuyor. Alışveriş tamamladıkça puanın burada görünecek.
+                    Kullanılabilir ROSTA Points bulunmuyor. Alışveriş tamamladıkça puanın burada görünecek.
                   </p>
                 )}
               </div>
@@ -613,9 +613,9 @@ export function PaytrIframeCheckoutClient() {
           </>
         ) : (
           <div className="px-4 py-4 text-sm">
-            <p className="font-heading text-ink">Ruthie Points</p>
+            <p className="font-heading text-ink">ROSTA Points</p>
             <p className="mt-1 text-xs leading-5 text-muted-ruth">
-              Üye ol, {rewardSettings.signupPoints.toLocaleString("tr-TR")} Ruthie Points kazan ve ödeme adımında {formatPrice(pointsToLira(rewardSettings.signupPoints), "TRY")} indirim kullan.
+              Üye ol, {rewardSettings.signupPoints.toLocaleString("tr-TR")} ROSTA Points kazan ve ödeme adımında {formatPrice(pointsToLira(rewardSettings.signupPoints), "TRY")} indirim kullan.
             </p>
             <Link href="/login?redirect=/checkout" className="mt-3 inline-block text-xs uppercase tracking-wide-luxe text-gold-dark underline underline-offset-4">
               Giriş Yap / Üye Ol
@@ -730,7 +730,7 @@ export function PaytrIframeCheckoutClient() {
             {checkoutStep === 1
               ? "İletişim ve teslimat bilgilerini tek adımda tamamla."
               : checkoutStep === 2
-                ? "Ürünlerini kontrol et, Ruthie Points ve indirimlerini seç; ardından ödeme ekranına geç."
+                ? "Ürünlerini kontrol et, ROSTA Points ve indirimlerini seç; ardından ödeme ekranına geç."
                 : "Kart ve taksit seçeneklerini PayTR güvenli ödeme ekranında tamamla."}
           </p>
         </div>
@@ -934,7 +934,7 @@ export function PaytrIframeCheckoutClient() {
                         ) : null}
                         {ruthieDiscount > 0 ? (
                           <div className="flex justify-between text-gold-dark">
-                            <span>{selectedRuthiePoints.toLocaleString("tr-TR")} Ruthie Points</span><span>-{formatPrice(ruthieDiscount, "TRY")}</span>
+                            <span>{selectedRuthiePoints.toLocaleString("tr-TR")} ROSTA Points</span><span>-{formatPrice(ruthieDiscount, "TRY")}</span>
                           </div>
                         ) : null}
                         {couponDiscount > 0 ? (
