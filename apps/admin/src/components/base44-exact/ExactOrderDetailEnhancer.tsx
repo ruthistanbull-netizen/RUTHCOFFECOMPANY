@@ -578,7 +578,7 @@ export function ExactOrderDetailEnhancer() {
           <p className="mt-1 text-[9px] leading-relaxed text-muted">{customer.isMember ? "Sitede hesabı bulunuyor." : "Hesap oluşturmadan sipariş vermiş."}</p>
         </div>
         <div className="rounded-[var(--radius-small)] bg-surface-secondary p-3">
-          <p className="text-[9px] font-semibold uppercase tracking-wide text-subtle">Ruthie Points</p>
+          <p className="text-[9px] font-semibold uppercase tracking-wide text-subtle">ROSTA Points</p>
           <p className="mt-1 text-xs font-semibold text-main">{Math.max(0, Number(customer.rewardPoints || 0)).toLocaleString("tr-TR")} puan</p>
           <p className="mt-1 text-[9px] leading-relaxed text-muted">Şu an kullanılabilir puan bakiyesi.</p>
         </div>
@@ -598,7 +598,7 @@ export function ExactOrderDetailEnhancer() {
         <div className="mt-4 space-y-2 rounded-[var(--radius-small)] bg-surface-secondary p-3">
           <div className="flex items-center justify-between gap-3 text-xs"><span className="text-muted">Ara toplam</span><span className="font-medium text-main">{money(pricingSummary.subtotal, pricingSummary.currency)}</span></div>
           {pricingSummary.discount > 0 ? <div className="flex items-center justify-between gap-3 text-xs"><span className="text-muted">Uygulanan ürün indirimi</span><span className="font-semibold text-accent">−{money(pricingSummary.discount, pricingSummary.currency)}</span></div> : null}
-          {pricingSummary.points > 0 ? <div className="flex items-center justify-between gap-3 text-xs"><span className="text-muted">Ruthie Points indirimi</span><span className="font-semibold text-accent">−{money(pricingSummary.points, pricingSummary.currency)}</span></div> : null}
+          {pricingSummary.points > 0 ? <div className="flex items-center justify-between gap-3 text-xs"><span className="text-muted">ROSTA Points indirimi</span><span className="font-semibold text-accent">−{money(pricingSummary.points, pricingSummary.currency)}</span></div> : null}
           <div className="flex items-center justify-between gap-3 text-xs"><span className="text-muted">Kargo ücreti</span><span className="font-medium text-main">{pricingSummary.shipping > 0 ? money(pricingSummary.shipping, pricingSummary.currency) : "Ücretsiz"}</span></div>
           {pricingSummary.tax > 0 ? <div className="flex items-center justify-between gap-3 text-xs"><span className="text-muted">Vergi</span><span className="font-medium text-main">{money(pricingSummary.tax, pricingSummary.currency)}</span></div> : null}
         </div>
