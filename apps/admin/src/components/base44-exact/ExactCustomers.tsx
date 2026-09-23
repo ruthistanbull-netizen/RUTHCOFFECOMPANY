@@ -431,7 +431,7 @@ export function ExactCustomers() {
     if (!Number.isFinite(amount) || amount <= 0) { toast.error("Geçerli bir ROSTA Points miktarı gir."); return; }
     setBusy(true);
     try {
-      const result = await adminRequest<{ appliedAmount?: number; balance?: number }>("/api/ruthie-points", { method: "POST", body: JSON.stringify({ profileId: selected.profile_id || selected.id, operation: pointsOperation, points: amount, reason: pointsReason }) });
+      const result = await adminRequest<{ appliedAmount?: number; balance?: number }>("/api/rosta-points", { method: "POST", body: JSON.stringify({ profileId: selected.profile_id || selected.id, operation: pointsOperation, points: amount, reason: pointsReason }) });
       const applied = Number(result.appliedAmount || (pointsOperation === "add" ? amount : -amount));
       const balance = Number(result.balance ?? Math.max(0, selected.reward_points_balance + applied));
       setSelected((current) => current ? { ...current, reward_points_balance: balance } : current);
@@ -460,7 +460,7 @@ export function ExactCustomers() {
 
   return (
     <div className="space-y-4 animate-fade-in" data-exact-base44-page="customers">
-      <ExactPageHeader title="Müşteriler" subtitle={`${pagination.total} müşteri · ${customers.length} kayıt bu sayfada yüklü`} actions={<div className="flex flex-wrap items-center justify-end gap-2"><ExactButton variant="secondary" size="sm" onClick={toggleSelectionMode}>{selectionMode ? <X className="h-4 w-4" /> : <ListChecks className="h-4 w-4" />}{selectionMode ? "Seçimi Kapat" : "Toplu Seçim"}</ExactButton><Link href="/crm"><ExactButton variant="secondary" size="sm"><UserRound className="h-4 w-4" /> CRM</ExactButton></Link><Link href="/ruthie-points"><ExactButton variant="secondary" size="sm"><Coins className="h-4 w-4" /> ROSTA Points</ExactButton></Link><ExactIconButton icon={RefreshCw} label="Yenile" variant="secondary" onClick={() => void refreshCustomers()} loading={refreshing} disabled={loading} /></div>} />
+      <ExactPageHeader title="Müşteriler" subtitle={`${pagination.total} müşteri · ${customers.length} kayıt bu sayfada yüklü`} actions={<div className="flex flex-wrap items-center justify-end gap-2"><ExactButton variant="secondary" size="sm" onClick={toggleSelectionMode}>{selectionMode ? <X className="h-4 w-4" /> : <ListChecks className="h-4 w-4" />}{selectionMode ? "Seçimi Kapat" : "Toplu Seçim"}</ExactButton><Link href="/crm"><ExactButton variant="secondary" size="sm"><UserRound className="h-4 w-4" /> CRM</ExactButton></Link><Link href="/rosta-points"><ExactButton variant="secondary" size="sm"><Coins className="h-4 w-4" /> ROSTA Points</ExactButton></Link><ExactIconButton icon={RefreshCw} label="Yenile" variant="secondary" onClick={() => void refreshCustomers()} loading={refreshing} disabled={loading} /></div>} />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <ExactMetricCard label="Toplam Müşteri" value={summary.customerCount} icon={UsersRound} />
