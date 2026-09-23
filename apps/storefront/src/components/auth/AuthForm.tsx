@@ -178,7 +178,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
     <div className="min-h-screen bg-ivory px-4 pb-24 pt-28 md:px-8 md:pt-32">
       <div className="mx-auto max-w-md rounded-2xl border border-gold/15 bg-cream p-6 shadow-sm md:p-8">
         <p className="mb-3 text-xs uppercase tracking-wide-luxe text-gold-dark">
-          Ruth Istanbul
+          ROSTA Coffee
         </p>
         <h1 className="font-heading text-4xl">
           {isMigratedActivation ? "Yeni Şifreni Oluştur" : isRegister ? "Kayıt Ol" : "Giriş Yap"}
@@ -187,7 +187,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
           {isMigratedActivation
             ? "Önceki üyeliğinde kullandığın e-posta adresiyle yeni şifreni belirle. Mevcut müşteri kaydın ve geçmiş siparişlerin korunur."
             : isRegister
-              ? `Hesap oluştur, siparişlerini takip et ve ${rewardSettings.signupPoints.toLocaleString("tr-TR")} Ruthie Points avantajını aktifleştir.`
+              ? `Hesap oluştur, siparişlerini takip et ve ${rewardSettings.signupPoints.toLocaleString("tr-TR")} ROSTA Points avantajını aktifleştir.`
               : "Hesabına gir, siparişlerini ve bilgilerini görüntüle."}
         </p>
 
