@@ -24,7 +24,7 @@
 .ds-info-grid p,
 .ds-motion-sample p {
   margin: 8px 0 0;
-  color: #756d65;
+  color: #6F725B;
   font-size: 13px;
   line-height: 1.55;
 }
@@ -43,7 +43,7 @@
 .ds-motion-sample > span {
   display: block;
   margin-bottom: 20px;
-  color: #9a7b52;
+  color: #B9563D;
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.16em;
@@ -67,7 +67,7 @@
   bottom: 18px;
   left: 20px;
   height: 2px;
-  background: #b8976a;
+  background: #B9563D;
   transform: scaleX(0.28);
   transform-origin: left;
   transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
