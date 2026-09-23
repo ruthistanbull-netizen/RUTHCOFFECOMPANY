@@ -150,7 +150,7 @@ export function ProductReviewsSection({ productId, productSlug, productName }: {
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <div className="flex flex-wrap items-center gap-2">
-                        <p className="font-heading text-base">{review.reviewer_name || "Ruth Istanbul müşterisi"}</p>
+                        <p className="font-heading text-base">{review.reviewer_name || "ROSTA Coffee müşterisi"}</p>
                         {review.verified_purchase && (
                           <span className="inline-flex items-center gap-1 rounded-full border border-gold/20 bg-cream px-2 py-1 text-[10px] uppercase tracking-wide-luxe text-gold-dark">
                             <CheckCircle2 size={12} /> Satın alınmış
