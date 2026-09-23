@@ -4,7 +4,7 @@ import type { Product } from "@/types/site";
  * Product photo URLs are owned by the live catalog record.
  *
  * Older storefront builds carried a second, code-level map that silently
- * replaced catalog photos with files under /public/products/ikas. That made
+ * replaced catalog photos with local legacy files. That made
  * the same product render a different image depending on the surface. Keep
  * these compatibility helpers, but make the catalog the single source of
  * truth everywhere.
