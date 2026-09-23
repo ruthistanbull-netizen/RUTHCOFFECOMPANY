@@ -216,9 +216,7 @@ export async function POST(request: Request) {
   return NextResponse.json({ ok: true, product: hydrated[0] || data, variantMediaHandled: true, storefront });
 }
 
-export async function PATCH(request: Request) {
-  const auth = await requireAdmin(request);
-  if ("error" in auth) return auth.error;
+export async function updateProductWithAuth(request: Request, auth: any) {
   const body = await request.json().catch(() => ({}));
   const id = String(body.id || "").trim();
   if (!id) return NextResponse.json({ ok: false, error: "Ürün id eksik." }, { status: 400 });
@@ -243,8 +241,16 @@ export async function PATCH(request: Request) {
   }
 
   const hydrated = await hydrateProducts(auth.supabase, [data]);
-  const storefront = await revalidateStorefront("rosta-admin-product-update", "catalog");
+  const storefront = request.headers.get("x-rosta-skip-storefront-revalidate") === "1"
+    ? { ok: true, skipped: true, deferred: true }
+    : await revalidateStorefront("rosta-admin-product-update", "catalog");
   return NextResponse.json({ ok: true, product: hydrated[0] || data, variantMediaHandled: true, storefront });
+}
+
+export async function PATCH(request: Request) {
+  const auth = await requireAdmin(request);
+  if ("error" in auth) return auth.error;
+  return updateProductWithAuth(request, auth);
 }
 
 export async function DELETE(request: Request) {
