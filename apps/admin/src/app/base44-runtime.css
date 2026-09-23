@@ -165,7 +165,7 @@
     --sidebar-border: var(--border-subtle);
     --sidebar-ring: var(--accent);
   }
-}}
+}
 
 @layer base {
   * {
