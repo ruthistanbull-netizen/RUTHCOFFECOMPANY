@@ -1,0 +1,137 @@
+.cr-system-grid {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.cr-system-check {
+  min-height: 230px;
+  padding: 15px;
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.cr-system-check > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.cr-system-check__icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+}
+
+.cr-system-check__icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.cr-system-check__icon.is-healthy { background: var(--success-soft); color: var(--success); }
+.cr-system-check__icon.is-warning { background: var(--warning-soft); color: var(--warning); }
+.cr-system-check__icon.is-failed { background: var(--danger-soft); color: var(--danger); }
+.cr-system-check__icon.is-checking { background: var(--accent-soft); color: var(--accent); }
+
+.cr-system-check__service {
+  width: 25px;
+  height: 25px;
+  color: var(--accent);
+}
+
+.cr-system-check h2 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.cr-system-check p {
+  min-height: 34px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.55;
+}
+
+.cr-system-check > div:last-child {
+  margin-top: auto;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-2);
+  display: grid;
+  gap: 4px;
+}
+
+.cr-system-check > div:last-child strong {
+  font-size: 9px;
+  line-height: 1.45;
+}
+
+.cr-system-check > div:last-child small {
+  color: var(--muted);
+  font-size: 7px;
+}
+
+.cr-system-deploy-gate {
+  min-height: 96px;
+  margin-top: 14px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.cr-system-deploy-gate > div {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cr-system-deploy-gate > div > svg {
+  width: 28px;
+  height: 28px;
+  color: var(--accent);
+  flex: 0 0 28px;
+}
+
+.cr-system-deploy-gate > div > span {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.cr-system-deploy-gate small {
+  color: var(--accent);
+  font-size: 8px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.cr-system-deploy-gate strong {
+  font-size: 13px;
+}
+
+.cr-system-deploy-gate p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+@media (max-width: 1000px) {
+  .cr-system-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 620px) {
+  .cr-system-grid { grid-template-columns: 1fr; }
+  .cr-system-deploy-gate { align-items: stretch; flex-direction: column; }
+  .cr-system-deploy-gate .cr-button { width: 100%; }
+}

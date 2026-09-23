@@ -1,0 +1,54 @@
+input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="range"]),
+select,
+textarea,
+#control-room-search,
+input[aria-label="Mobil panel araması"],
+.cr-search-field input,
+.cr-search-field select,
+.cr-field input,
+.cr-field select,
+.cr-select-inline select,
+.cr-order-toolbar input,
+.cr-order-toolbar select,
+.cr-customer-toolbar input,
+.cr-customer-toolbar select,
+.cr-manual-order-layout input,
+.cr-manual-order-layout select {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  line-height: 1.25;
+}
+
+#control-room-search,
+input[aria-label="Mobil panel araması"] {
+  height: 40px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+#control-room-search::placeholder,
+input[aria-label="Mobil panel araması"]::placeholder,
+.cr-search-field input::placeholder,
+.cr-field input::placeholder {
+  line-height: 1.25;
+}
+
+@media (max-width: 700px) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="range"]),
+  select,
+  textarea,
+  .cr-search-field input,
+  .cr-search-field select,
+  .cr-field input,
+  .cr-field select,
+  .cr-select-inline select,
+  .cr-order-toolbar input,
+  .cr-order-toolbar select,
+  .cr-customer-toolbar input,
+  .cr-customer-toolbar select,
+  .cr-manual-order-layout input,
+  .cr-manual-order-layout select {
+    min-height: 44px;
+  }
+}
