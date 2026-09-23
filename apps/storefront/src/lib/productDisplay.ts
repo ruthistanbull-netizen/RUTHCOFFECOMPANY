@@ -54,7 +54,7 @@ export function displayCollectionName(value: string | null | undefined) {
   return titleCase(value.replace(/[-_]+/g, " "));
 }
 
-// Legacy copied UI contract. ROSTA has no alternate jewelry taxonomy.
+// Legacy copied UI contract. ROSTA keeps a single canonical product taxonomy.
 export function isRuthAtelierProduct(_product: Product) {
   return false;
 }
@@ -216,7 +216,7 @@ export function productKindText(product: Product) {
   );
 }
 
-// Legacy copied UI contracts; jewelry-specific behavior is disabled in ROSTA.
+// Legacy copied UI contracts; unsupported alternate product behavior stays disabled in ROSTA.
 export function isRingProduct(_product: Product) {
   return false;
 }
