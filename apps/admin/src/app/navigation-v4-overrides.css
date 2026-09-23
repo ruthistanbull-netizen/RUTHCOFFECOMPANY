@@ -49,11 +49,11 @@ html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-lab
   min-width: 42px !important;
   flex: 0 0 42px !important;
   padding: 0 !important;
-  border: 1px solid rgba(15, 23, 42, 0.11) !important;
+  border: 1px solid rgba(43, 27, 22, 0.11) !important;
   border-radius: 50% !important;
   background: #fff !important;
   color: #6F725B !important;
-  box-shadow: 0 4px 12px rgba(15,23,42,.06), inset 0 1px 0 #fff !important;
+  box-shadow: 0 4px 12px rgba(43, 27, 22,.06), inset 0 1px 0 #fff !important;
 }
 
 html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-label="Panel menüsünü aç"] svg,
@@ -68,17 +68,17 @@ html.ruth-navigation-v4 header[data-ruth-navigation-header="true"] > [data-ruth-
   width: min(326px, calc(100vw - 24px)) !important;
   height: 44px !important;
   padding: 1px !important;
-  border: 1px solid rgba(15, 23, 42, 0.10) !important;
+  border: 1px solid rgba(43, 27, 22, 0.10) !important;
   border-radius: 22px !important;
   background: #fff !important;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.09), inset 0 1px 0 #fff !important;
+  box-shadow: 0 8px 24px rgba(43, 27, 22, 0.09), inset 0 1px 0 #fff !important;
 }
 
 html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"][data-expanded="true"] > button[aria-label="ROSTA Insight hızlı mesajını kapat"] {
   background: #fff !important;
   color: #2B1B16 !important;
-  border-color: rgba(96,87,180,.24) !important;
-  box-shadow: 0 0 0 2px rgba(96,87,180,.08), 0 4px 12px rgba(15,23,42,.08), inset 0 1px 0 #fff !important;
+  border-color: rgba(185, 86, 61,.24) !important;
+  box-shadow: 0 0 0 2px rgba(185, 86, 61,.08), 0 4px 12px rgba(43, 27, 22,.08), inset 0 1px 0 #fff !important;
 }
 
 html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] input[placeholder^="ROSTA Insight"] {
