@@ -136,7 +136,7 @@ const PURPOSES: Array<{ value: Exclude<ImagePurpose, "">; title: string; detail:
 ];
 
 const STYLE_GROUPS: StyleGroup[] = [
-  { id: "model", label: "Model Üzerinde", description: "Takının gerçek kullanımını model üzerinde göster", options: ["Yüz görünür", "Yüz yarım görünür", "Sadece boyun yakın plan", "Sadece kulak yakın plan", "Sadece el yakın plan", "Tek model", "Editorial model"] },
+  { id: "model", label: "Lifestyle Kullanım", description: "Kahveyi gerçek kullanım ve servis anında göster", options: ["Masada servis", "Elde kahve paketi", "Kahve hazırlama anı", "Kafe ortamı", "Ev demleme", "Tek ürün", "Editorial lifestyle"] },
   { id: "studio", label: "Stüdyo Ürün Fotoğrafı", description: "Temiz ve e-ticaret odaklı ürün çekimi", options: ["Beyaz fon", "Krem fon", "Koyu lüks fon", "Soft gölgeli", "E-ticaret uyumlu", "İzole ürün görünümü"] },
   { id: "campaign", label: "Lüks Kampanya Görseli", description: "Marka kampanyası ve reklam hissi", options: ["Dramatik ışık", "Premium fon", "Reklam afiş hissi", "Güçlü gölge", "Marka kampanyası hissi"] },
   { id: "lifestyle", label: "Lifestyle / Günlük Kullanım", description: "Doğal ve gerçek kullanım odaklı", options: ["Doğal masa", "Ayna önü", "Kumaş üstü", "Elde kullanım", "Günlük ortam"] },
@@ -150,7 +150,7 @@ const STYLE_GROUPS: StyleGroup[] = [
   { id: "poster", label: "Reklam Afişi Tarzı", description: "Performans reklamı ve hero kreatif", options: ["Yazısız afiş", "Yazılı afiş", "Hero ürün", "Dikkat çekici kompozisyon"] },
   { id: "ugc", label: "UGC / Sosyal Medya Tarzı", description: "Daha doğal ve kullanıcı çekimi hissi", options: ["Doğal çekim", "Telefon kamerası hissi", "Sosyal medya görünümü", "Kullanıcı deneyimi havası"] },
   { id: "packaging", label: "Paketleme / Kutu İçinde", description: "Hediye ve kutu deneyimini göster", options: ["Kutu içinde", "Kutudan çıkarken", "Hediye paketi", "Premium ambalaj"] },
-  { id: "set", label: "Kombin / Set Görseli", description: "Birden fazla ürünü birlikte sun", options: ["Kolye + küpe", "Yüzük + küpe", "Tam set", "Çoklu ürün premium sunum"] },
+  { id: "set", label: "Ürün Seti Görseli", description: "Birden fazla kahve ürününü birlikte sun", options: ["Kahve + fincan", "Paket + çekirdek", "Tam set", "Çoklu ürün premium sunum"] },
   { id: "season", label: "Sezon Temalı", description: "Kampanya dönemine göre atmosfer oluştur", options: ["Yaz", "Sonbahar", "Gece", "Beach", "Bridal", "Özel gün", "Yılbaşı", "Sevgililer günü"] },
 ];
 
