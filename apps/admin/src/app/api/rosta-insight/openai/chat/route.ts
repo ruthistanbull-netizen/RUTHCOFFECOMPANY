@@ -73,7 +73,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       ok: false,
       error: {
-        code: usageGuard.limit === "daily" ? "ROSTA INSIGHT_DAILY_USAGE_LIMIT" : "ROSTA INSIGHT_RATE_LIMIT",
+        code: usageGuard.limit === "daily" ? "ROSTA_INSIGHT_DAILY_USAGE_LIMIT" : "ROSTA_INSIGHT_RATE_LIMIT",
         message: usageGuard.limit === "daily"
           ? "ROSTA Insight için günlük sohbet sınırına ulaşıldı."
           : "Çok sık ROSTA Insight isteği gönderildi. Kısa süre sonra yeniden dene.",
@@ -99,7 +99,7 @@ export async function POST(request: Request) {
       if (decision === "reject") {
         budget.pending = null;
         return budgetMessage(
-          `İptal edildi. Harcama ${formatROSTA InsightUsd(budget.spentUsd)}.`,
+          `İptal edildi. Harcama ${formatRuthieUsd(budget.spentUsd)}.`,
           budget,
           correlationId,
         );
@@ -272,7 +272,7 @@ function expirePendingBudgetRequest(state: ChatBudgetState) {
 function budgetApprovalMessage(state: ChatBudgetState, correlationId: string) {
   const nextLimit = state.approvedThroughUsd + RUTHIE_COST_CONFIRM_THRESHOLD_USD;
   return budgetMessage(
-    `Harcama ${formatROSTA InsightUsd(state.spentUsd)}. ${formatROSTA InsightUsd(nextLimit)} sınırına kadar devam edeyim mi? “Onaylıyorum” veya “İptal” yaz.`,
+    `Harcama ${formatRuthieUsd(state.spentUsd)}. ${formatRuthieUsd(nextLimit)} sınırına kadar devam edeyim mi? “Onaylıyorum” veya “İptal” yaz.`,
     state,
     correlationId,
     true,
@@ -335,40 +335,40 @@ function normalizeClientMessageId(value: unknown) {
 function normalizeAttachments(value: unknown): RuthieAttachmentInput[] {
   if (value == null) return [];
   if (!Array.isArray(value)) {
-    throw new RuthieRuntimeError({ code: "ROSTA INSIGHT_ATTACHMENTS_INVALID", message: "Dosya ekleri geçersiz.", status: 400 });
+    throw new RuthieRuntimeError({ code: "ROSTA_INSIGHT_ATTACHMENTS_INVALID", message: "Dosya ekleri geçersiz.", status: 400 });
   }
   if (value.length > MAX_ATTACHMENTS) {
-    throw new RuthieRuntimeError({ code: "ROSTA INSIGHT_ATTACHMENTS_LIMIT", message: `En fazla ${MAX_ATTACHMENTS} dosya ekleyebilirsin.`, status: 400 });
+    throw new RuthieRuntimeError({ code: "ROSTA_INSIGHT_ATTACHMENTS_LIMIT", message: `En fazla ${MAX_ATTACHMENTS} dosya ekleyebilirsin.`, status: 400 });
   }
 
   let totalBytes = 0;
   return value.map((item, index) => {
     if (!item || typeof item !== "object" || Array.isArray(item)) {
-      throw new RuthieRuntimeError({ code: "ROSTA INSIGHT_ATTACHMENT_INVALID", message: `${index + 1}. dosya geçersiz.`, status: 400 });
+      throw new RuthieRuntimeError({ code: "ROSTA_INSIGHT_ATTACHMENT_INVALID", message: `${index + 1}. dosya geçersiz.`, status: 400 });
     }
     const raw = item as Record<string, unknown>;
     const name = typeof raw.name === "string" ? raw.name.trim().slice(0, 180) : "";
     const mimeType = typeof raw.mimeType === "string" ? raw.mimeType.trim().toLowerCase() : "";
     const dataUrl = typeof raw.dataUrl === "string" ? raw.dataUrl.trim() : "";
     if (!name || !mimeType || !dataUrl) {
-      throw new RuthieRuntimeError({ code: "ROSTA INSIGHT_ATTACHMENT_FIELDS_REQUIRED", message: `${index + 1}. dosyanın bilgileri eksik.`, status: 400 });
+      throw new RuthieRuntimeError({ code: "ROSTA_INSIGHT_ATTACHMENT_FIELDS_REQUIRED", message: `${index + 1}. dosyanın bilgileri eksik.`, status: 400 });
     }
     if (!mimeType.startsWith("image/") && !ALLOWED_FILE_MIMES.has(mimeType)) {
-      throw new RuthieRuntimeError({ code: "ROSTA INSIGHT_ATTACHMENT_TYPE_UNSUPPORTED", message: `${name} dosya türü desteklenmiyor.`, status: 415 });
+      throw new RuthieRuntimeError({ code: "ROSTA_INSIGHT_ATTACHMENT_TYPE_UNSUPPORTED", message: `${name} dosya türü desteklenmiyor.`, status: 415 });
     }
     const match = /^data:([^;,]+);base64,([a-z0-9+/=\s]+)$/i.exec(dataUrl);
     if (!match || match[1].toLowerCase() !== mimeType) {
-      throw new RuthieRuntimeError({ code: "ROSTA INSIGHT_ATTACHMENT_DATA_INVALID", message: `${name} dosya verisi geçersiz.`, status: 400 });
+      throw new RuthieRuntimeError({ code: "ROSTA_INSIGHT_ATTACHMENT_DATA_INVALID", message: `${name} dosya verisi geçersiz.`, status: 400 });
     }
     const base64 = match[2].replace(/\s+/g, "");
     const padding = base64.endsWith("==") ? 2 : base64.endsWith("=") ? 1 : 0;
     const bytes = Math.max(0, Math.floor(base64.length * 3 / 4) - padding);
     if (!bytes || bytes > MAX_ATTACHMENT_BYTES) {
-      throw new RuthieRuntimeError({ code: "ROSTA INSIGHT_ATTACHMENT_TOO_LARGE", message: `${name} en fazla 8 MB olabilir.`, status: 413 });
+      throw new RuthieRuntimeError({ code: "ROSTA_INSIGHT_ATTACHMENT_TOO_LARGE", message: `${name} en fazla 8 MB olabilir.`, status: 413 });
     }
     totalBytes += bytes;
     if (totalBytes > MAX_TOTAL_BYTES) {
-      throw new RuthieRuntimeError({ code: "ROSTA INSIGHT_ATTACHMENTS_TOTAL_TOO_LARGE", message: "Eklenen dosyaların toplamı 20 MB'ı geçemez.", status: 413 });
+      throw new RuthieRuntimeError({ code: "ROSTA_INSIGHT_ATTACHMENTS_TOTAL_TOO_LARGE", message: "Eklenen dosyaların toplamı 20 MB'ı geçemez.", status: 413 });
     }
     return { name, mimeType, dataUrl: `data:${mimeType};base64,${base64}` };
   });
@@ -391,7 +391,7 @@ function runtimeErrorResponse(error: unknown, correlationId: string) {
   return NextResponse.json({
     ok: false,
     error: {
-      code: "ROSTA INSIGHT_CHAT_UNEXPECTED_ERROR",
+      code: "ROSTA_INSIGHT_CHAT_UNEXPECTED_ERROR",
       message: error instanceof Error ? error.message : "ROSTA Insight sohbet isteği başarısız oldu.",
       retryable: false,
       correlationId,
