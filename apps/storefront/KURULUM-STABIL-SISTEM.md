@@ -1,4 +1,4 @@
-# Ruth Istanbul Website Stabil Sistem
+# ROSTA Coffee Website Stabil Sistem
 
 Bu paket website tarafında tema ve ürün/koleksiyon verisini Supabase'den canlı okumaya öncelik verir.
 
