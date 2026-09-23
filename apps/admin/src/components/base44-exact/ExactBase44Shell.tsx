@@ -178,7 +178,7 @@ function ExactTopHeader({
         <kbd className="hidden md:inline-flex items-center gap-0.5 ml-auto text-[10px] font-mono bg-surface-tertiary px-1.5 py-0.5 rounded-md text-subtle">⌘K</kbd>
       </button>
 
-      <ExactIconButton icon={Sparkles} label="Ruthie AI" variant="ghost" size="icon-sm" className="text-accent" onClick={() => router.push("/ruthie")} />
+      <ExactIconButton icon={Sparkles} label="ROSTA Insight" variant="ghost" size="icon-sm" className="text-accent" onClick={() => router.push("/ruthie")} />
       <div className="relative">
         <ExactIconButton icon={Bell} label="Bildirimler" variant="ghost" size="icon-sm" onClick={() => router.push("/notifications")} />
         <span className="pointer-events-none absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-danger ring-2 ring-surface-primary" />
