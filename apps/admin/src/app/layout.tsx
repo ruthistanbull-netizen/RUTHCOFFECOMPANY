@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
 import "@ruth-commerce/ui/semantic-tokens.css";
 import "@ruth-commerce/ui/typography.css";
 import "@ruth-commerce/ui/interaction.css";
@@ -39,14 +38,6 @@ import "./rosta-exact-palette.css";
 import { AdminAuthGate } from "@/components/AdminAuthGate";
 import { ROSTA_PANEL_URL } from "@/lib/platform";
 
-const inter = Inter({
-  subsets: ["latin", "latin-ext"],
-  weight: ["400", "500", "700"],
-  display: "swap",
-  variable: "--font-inter",
-  preload: true,
-});
-
 export const metadata: Metadata = {
   metadataBase: new URL(ROSTA_PANEL_URL),
   applicationName: "ROSTA Panel",
@@ -69,7 +60,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="tr">
-      <body className={inter.variable} data-ruth-typography="admin" data-rosta-panel="true">
+      <body data-ruth-typography="admin" data-rosta-panel="true">
         <AdminAuthGate>{children}</AdminAuthGate>
       </body>
     </html>
