@@ -56,7 +56,7 @@ export class RuthieRuntimeError extends Error {
     requestId?: string | null;
   }) {
     super(options.message);
-    this.name = "ROSTA InsightRuntimeError";
+    this.name = "RostaInsightRuntimeError";
     this.code = options.code;
     this.status = options.status ?? 500;
     this.retryable = options.retryable ?? false;
@@ -107,7 +107,7 @@ export async function createRuthieAssistantResponse(options: {
   const extracted = extractResponse(payload);
   if (!extracted.text) {
     throw new RuthieRuntimeError({
-      code: "ROSTA INSIGHT_EMPTY_RESPONSE",
+      code: "ROSTA_INSIGHT_EMPTY_RESPONSE",
       message: "ROSTA Insight geçerli bir yanıt üretemedi.",
       status: 502,
       retryable: true,
@@ -196,7 +196,7 @@ export async function createRuthieRealtimeResponse(options: {
   const answerSdp = await response.text();
   if (!answerSdp.trim().startsWith("v=0")) {
     throw new RuthieRuntimeError({
-      code: "ROSTA INSIGHT_REALTIME_INVALID_ANSWER",
+      code: "ROSTA_INSIGHT_REALTIME_INVALID_ANSWER",
       message: "OpenAI Realtime geçerli bir SDP yanıtı döndürmedi.",
       status: 502,
       retryable: true,
@@ -221,7 +221,7 @@ function ruthieInstructions(snapshot: RuthiePanelSnapshot): string {
     "Webde güncel veya dış kaynak gerektiren bir soru varsa web_search aracını kullan. Panel verisini web sonucuymuş gibi sunma.",
     "Panelde değişiklik yapan komutları bu oturumda kendiliğinden çalıştırma. Böyle bir istek geldiğinde uygulanacak değişikliği net planla ve kritik işlemler için onay gerektiğini belirt.",
     "Yanıtta teknik hata mesajlarını gereksiz yere kopyalama; çözümü ve sonucu anlat.",
-    `PANEL_SNAPSHOT:\n${serializeROSTA InsightPanelSnapshot(snapshot)}`,
+    `PANEL_SNAPSHOT:\n${serializeRuthiePanelSnapshot(snapshot)}`,
   ].join("\n\n");
 }
 
@@ -263,7 +263,7 @@ function extractResponse(payload: Record<string, any>) {
 function normalizeSdp(value: unknown): string {
   if (typeof value !== "string") {
     throw new RuthieRuntimeError({
-      code: "ROSTA INSIGHT_SDP_REQUIRED",
+      code: "ROSTA_INSIGHT_SDP_REQUIRED",
       message: "WebRTC SDP teklifi gerekli.",
       status: 400,
     });
@@ -271,14 +271,14 @@ function normalizeSdp(value: unknown): string {
   const sdp = value.trim();
   if (!sdp.startsWith("v=0") || !sdp.includes("m=audio")) {
     throw new RuthieRuntimeError({
-      code: "ROSTA INSIGHT_SDP_INVALID",
+      code: "ROSTA_INSIGHT_SDP_INVALID",
       message: "Tarayıcı geçerli bir ses bağlantısı oluşturamadı.",
       status: 400,
     });
   }
   if (sdp.length > 250_000) {
     throw new RuthieRuntimeError({
-      code: "ROSTA INSIGHT_SDP_TOO_LARGE",
+      code: "ROSTA_INSIGHT_SDP_TOO_LARGE",
       message: "Ses bağlantısı teklifi izin verilen boyutu aşıyor.",
       status: 413,
     });
@@ -291,7 +291,7 @@ function runtimeConfig(env: NodeJS.ProcessEnv = process.env): RuntimeConfig {
   const chatModel = clean(env.RUTHIE_CHAT_MODEL);
   if (!apiKey || !chatModel) {
     throw new RuthieRuntimeError({
-      code: "ROSTA INSIGHT_OPENAI_NOT_CONFIGURED",
+      code: "ROSTA_INSIGHT_OPENAI_NOT_CONFIGURED",
       message: "ROSTA Insight OpenAI yapılandırması eksik.",
       status: 503,
     });
@@ -329,7 +329,7 @@ async function requestOpenAI(
     if (!response.ok) {
       const providerMessage = await providerError(response);
       throw new RuthieRuntimeError({
-        code: "ROSTA INSIGHT_OPENAI_PROVIDER_ERROR",
+        code: "ROSTA_INSIGHT_OPENAI_PROVIDER_ERROR",
         message: providerMessage || `OpenAI isteği ${response.status} durumuyla başarısız oldu.`,
         status: response.status === 429 ? 429 : response.status >= 500 || response.status === 401 || response.status === 403 ? 502 : 400,
         retryable: response.status === 408 || response.status === 409 || response.status === 429 || response.status >= 500,
@@ -341,14 +341,14 @@ async function requestOpenAI(
     if (error instanceof RuthieRuntimeError) throw error;
     if (error instanceof Error && error.name === "AbortError") {
       throw new RuthieRuntimeError({
-        code: "ROSTA INSIGHT_OPENAI_TIMEOUT",
+        code: "ROSTA_INSIGHT_OPENAI_TIMEOUT",
         message: "OpenAI isteği zaman aşımına uğradı.",
         status: 504,
         retryable: true,
       });
     }
     throw new RuthieRuntimeError({
-      code: "ROSTA INSIGHT_OPENAI_NETWORK_ERROR",
+      code: "ROSTA_INSIGHT_OPENAI_NETWORK_ERROR",
       message: error instanceof Error ? error.message : "OpenAI bağlantısı kurulamadı.",
       status: 502,
       retryable: true,
@@ -363,7 +363,7 @@ async function parseJson(response: Response): Promise<Record<string, any>> {
     return await response.json() as Record<string, any>;
   } catch {
     throw new RuthieRuntimeError({
-      code: "ROSTA INSIGHT_OPENAI_INVALID_JSON",
+      code: "ROSTA_INSIGHT_OPENAI_INVALID_JSON",
       message: "OpenAI geçerli JSON yanıtı döndürmedi.",
       status: 502,
       retryable: true,
