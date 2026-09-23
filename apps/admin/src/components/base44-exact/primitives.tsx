@@ -604,7 +604,7 @@ function exactFieldControl(label: string, children: ReactNode) {
   const options = isProductMaterial
     ? productMaterialOptions(sourceOptions.map((option) => option.value)).map((value) => ({ value, label: value }))
     : sourceOptions;
-  const value = isProductMaterial ? (normalizeProductMaterial(rawValue) || rawValue) : rawValue;
+  const value = isProductMaterial ? (normalizeProductMaterial(rawValue) || "") : rawValue;
 
   return (
     <Picker
