@@ -125,7 +125,7 @@ begin
   where id = 'default'
   for share;
 
-  if not found then raise exception 'Ruthie Points ödül ayarı bulunamadı.'; end if;
+  if not found then raise exception 'ROSTA Points ödül ayarı bulunamadı.'; end if;
 
   select auth_user_id
     into v_auth_user_id
@@ -219,7 +219,7 @@ begin
   where id = 'default'
   for share;
 
-  if not found then raise exception 'Ruthie Points ödül ayarı bulunamadı.'; end if;
+  if not found then raise exception 'ROSTA Points ödül ayarı bulunamadı.'; end if;
 
   select * into v_result
   from public.record_ruthie_reward_snapshot(
@@ -310,7 +310,7 @@ declare
 begin
   if p_signup_points is null or p_signup_points < 0 or p_signup_points > 10000000
     or p_birthday_points is null or p_birthday_points < 0 or p_birthday_points > 10000000 then
-    raise exception 'Ruthie Points ödül ayarı geçersiz.';
+    raise exception 'ROSTA Points ödül ayarı geçersiz.';
   end if;
 
   select * into v_before
@@ -318,7 +318,7 @@ begin
   where id = 'default'
   for update;
 
-  if not found then raise exception 'Ruthie Points ödül ayarı bulunamadı.'; end if;
+  if not found then raise exception 'ROSTA Points ödül ayarı bulunamadı.'; end if;
 
   update public.loyalty_reward_settings
   set signup_points = p_signup_points,
