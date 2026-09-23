@@ -12,7 +12,7 @@ ROSTA COFFEE CO. - PAYTR TAKSIT VE ROSTA POINTS
 - Canonical API: /api/rosta-points
 - Puan hareketleri ROSTA Supabase içindeki rosta_point_transactions ve ilgili profil bakiyesi üzerinden tutulur.
 - Eski /ruthie-points adresi yalnız geriye uyumluluk yönlendirmesidir; yeni kod bu yolu kullanmaz.
-- Ruth Istanbul müşteri veya ürün verisi bu sisteme aktarılmaz.
+- Legacy sistem müşteri veya ürün verisi bu sisteme aktarılmaz.
 
 3) ALTYAPI
 - Admin: https://rostapanel.zeabur.app
