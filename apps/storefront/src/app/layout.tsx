@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, Inter } from "next/font/google";
 import "@ruth-commerce/ui/styles.css";
 import "@ruth-commerce/ui/interaction.css";
 import "@ruth-commerce/ui/feedback.css";
@@ -43,22 +42,6 @@ import {
   SITE_URL,
   SOCIAL_PROFILES,
 } from "@/lib/seo";
-
-const inter = Inter({
-  subsets: ["latin", "latin-ext"],
-  weight: ["400", "500", "700"],
-  display: "swap",
-  variable: "--font-inter",
-  preload: true,
-});
-
-const archivo = Archivo({
-  subsets: ["latin", "latin-ext"],
-  weight: ["900"],
-  display: "swap",
-  variable: "--font-archivo",
-  preload: true,
-});
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -187,7 +170,7 @@ export default async function RootLayout({
     <html lang="tr" data-uppercase-locale="en-US">
       <body
         lang="tr"
-        className={`${inter.variable} ${archivo.variable} site-app-shell`}
+        className="site-app-shell"
         data-ruth-typography="storefront"
         style={themeStyle}
       >
