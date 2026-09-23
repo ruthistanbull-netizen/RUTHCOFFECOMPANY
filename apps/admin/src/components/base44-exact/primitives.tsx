@@ -599,11 +599,12 @@ function exactFieldControl(label: string, children: ReactNode) {
 
   const rawValue = Array.isArray(props.value) ? String(props.value[0] || "") : String(props.value ?? "");
   const sourceOptions = pickerOptionsFromSelect(props.children);
-  const isMaterial = label.trim().toLocaleLowerCase("tr-TR") === "materyal";
-  const options = isMaterial
+  const normalizedLabel = label.trim().toLocaleLowerCase("tr-TR");
+  const isProductMaterial = ["materyal", "çekirdek türü", "çekirdek / içerik"].includes(normalizedLabel);
+  const options = isProductMaterial
     ? productMaterialOptions(sourceOptions.map((option) => option.value)).map((value) => ({ value, label: value }))
     : sourceOptions;
-  const value = isMaterial ? (normalizeProductMaterial(rawValue) || rawValue) : rawValue;
+  const value = isProductMaterial ? (normalizeProductMaterial(rawValue) || rawValue) : rawValue;
 
   return (
     <Picker
