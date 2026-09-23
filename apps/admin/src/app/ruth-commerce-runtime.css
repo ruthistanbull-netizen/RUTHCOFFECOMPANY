@@ -43,7 +43,7 @@
 
 @layer base {
   :root {
-    /* Ruth Commerce panel geometry + motion, ROSTA palette only. */
+    /* ROSTA Coffee panel geometry + motion, ROSTA palette only. */
     --app-background: 40 35% 93%;
     --surface-primary: 40 35% 93%;
     --surface-secondary: 40 35% 93%;
