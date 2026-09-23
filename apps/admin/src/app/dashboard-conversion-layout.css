@@ -1,0 +1,241 @@
+.cr-dashboard-analytics--reordered {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 12px;
+}
+
+.cr-dashboard-analytics--reordered .cr-analytics-card {
+  min-width: 0;
+  width: 100%;
+  grid-column: auto !important;
+}
+
+.cr-analytics-card--conversion {
+  grid-column: 1 / -1 !important;
+  min-height: 0;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  color: inherit;
+  text-align: left;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+
+.cr-analytics-card--conversion:hover,
+.cr-analytics-card--conversion:focus-visible {
+  border-color: var(--accent);
+  box-shadow: 0 10px 28px rgba(46, 91, 255, .09);
+}
+
+.cr-analytics-card--conversion:focus-visible {
+  outline: 3px solid rgba(46, 91, 255, .18);
+  outline-offset: 2px;
+}
+
+.cr-conversion-card__summary {
+  min-width: 0;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.cr-conversion-card__summary > span:first-child {
+  min-width: 0;
+  display: grid;
+  gap: 7px;
+}
+
+.cr-conversion-card__summary small,
+.cr-conversion-details small {
+  color: var(--muted);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 760;
+}
+
+.cr-conversion-card__summary strong {
+  font-size: clamp(34px, 5vw, 54px);
+  line-height: .95;
+  letter-spacing: -.055em;
+}
+
+.cr-conversion-card__summary > span:first-child > span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.cr-conversion-card__toggle {
+  flex: 0 0 auto;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-2);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--ink);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.cr-conversion-card__toggle svg {
+  width: 16px;
+  height: 16px;
+  transition: transform .18s ease;
+}
+
+.cr-analytics-card--conversion.is-open .cr-conversion-card__toggle svg {
+  transform: rotate(180deg);
+}
+
+.cr-conversion-details {
+  padding: 14px 18px 18px;
+  border-top: 1px solid var(--line);
+  background: var(--surface-2);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  animation: cr-metric-change .2s ease-out both;
+}
+
+.cr-conversion-details > span {
+  min-width: 0;
+  min-height: 82px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  display: grid;
+  align-content: center;
+  gap: 5px;
+}
+
+.cr-conversion-details strong {
+  font-size: 23px;
+  line-height: 1;
+  letter-spacing: -.04em;
+}
+
+.cr-conversion-details em {
+  color: var(--accent);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.cr-analytics-card--session,
+.cr-analytics-card--revenue,
+.cr-analytics-card--cart,
+.cr-analytics-card--orders {
+  min-height: 142px;
+}
+
+.cr-analytics-card--revenue strong {
+  font-size: clamp(24px, 3.2vw, 42px) !important;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 700px) {
+  .cr-dashboard-analytics--reordered {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px;
+  }
+
+  .cr-dashboard-analytics--reordered .cr-analytics-card {
+    min-height: 118px;
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  .cr-dashboard-analytics--reordered .cr-analytics-card--conversion {
+    grid-column: 1 / -1 !important;
+    min-height: 0;
+    padding: 0;
+  }
+
+  .cr-conversion-card__summary {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .cr-conversion-card__summary strong {
+    font-size: 42px;
+  }
+
+  .cr-conversion-card__toggle {
+    min-width: 38px;
+    width: 38px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .cr-conversion-card__toggle {
+    font-size: 0;
+  }
+
+  .cr-conversion-card__toggle svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .cr-conversion-details {
+    padding: 10px 12px 14px;
+    gap: 7px;
+  }
+
+  .cr-conversion-details > span {
+    min-height: 72px;
+    padding: 9px;
+  }
+
+  .cr-conversion-details small {
+    font-size: 9px;
+  }
+
+  .cr-conversion-details strong {
+    font-size: 20px;
+  }
+
+  .cr-conversion-details em {
+    font-size: 10px;
+  }
+
+  .cr-analytics-card--session strong,
+  .cr-analytics-card--cart strong,
+  .cr-analytics-card--orders strong {
+    font-size: 34px !important;
+  }
+
+  .cr-analytics-card--revenue strong {
+    font-size: clamp(22px, 6.5vw, 31px) !important;
+    line-height: 1.02;
+  }
+
+  .cr-dashboard-analytics--reordered .cr-analytics-card > span {
+    font-size: 10px;
+    line-height: 1.35;
+  }
+}
+
+@media (max-width: 440px) {
+  .cr-dashboard-analytics--reordered {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .cr-dashboard-analytics--reordered .cr-analytics-card,
+  .cr-dashboard-analytics--reordered .cr-analytics-card:nth-child(3),
+  .cr-dashboard-analytics--reordered .cr-analytics-card.is-primary {
+    width: 100%;
+    grid-column: auto !important;
+  }
+
+  .cr-dashboard-analytics--reordered .cr-analytics-card--conversion {
+    grid-column: 1 / -1 !important;
+  }
+}
