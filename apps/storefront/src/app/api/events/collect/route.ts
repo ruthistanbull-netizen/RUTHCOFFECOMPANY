@@ -36,13 +36,12 @@ function clean(value: unknown, max = 500) {
 
 function hashIp(value: string) {
   if (!value) return "unknown";
-  const salt = process.env.ANALYTICS_IP_HASH_SALT || "ruth-analytics-rate-v1";
+  const salt = process.env.ANALYTICS_IP_HASH_SALT || "rosta-analytics-rate-v1";
   return crypto.createHash("sha256").update(`${salt}|${value}`).digest("hex");
 }
 
 function clientIp(request: Request) {
   return (
-    request.headers.get("x-vercel-forwarded-for")?.split(",")[0]?.trim() ||
     request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
     request.headers.get("x-real-ip") ||
     ""
