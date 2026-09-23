@@ -54,11 +54,6 @@ export function displayCollectionName(value: string | null | undefined) {
   return titleCase(value.replace(/[-_]+/g, " "));
 }
 
-// Legacy copied UI contract. ROSTA keeps a single canonical product taxonomy.
-export function isRuthAtelierProduct(_product: Product) {
-  return false;
-}
-
 export function productHasImage(product: Product) {
   return Boolean(
     product.main_image_url ||
@@ -144,11 +139,6 @@ export function productColorValues(product: Product) {
   return uniqueClean(values).sort((a, b) => a.localeCompare(b, "tr"));
 }
 
-// Legacy copied UI contract; ROSTA coffee catalog has no stone facet.
-export function productStoneValues(_product: Product) {
-  return [];
-}
-
 export function productCategoryValues(product: Product) {
   const values = [
     ...(product.category_names || []),
@@ -214,23 +204,6 @@ export function productKindText(product: Product) {
       .filter(Boolean)
       .join(" ")
   );
-}
-
-// Legacy copied UI contracts; unsupported alternate product behavior stays disabled in ROSTA.
-export function isRingProduct(_product: Product) {
-  return false;
-}
-
-export function isChainProduct(_product: Product) {
-  return false;
-}
-
-export function isNecklaceProduct(_product: Product) {
-  return false;
-}
-
-export function isNecklaceOrChainProduct(_product: Product) {
-  return false;
 }
 
 function cleanProductLine(line: string) {
