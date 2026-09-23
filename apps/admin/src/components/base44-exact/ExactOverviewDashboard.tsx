@@ -317,7 +317,7 @@ function RuthieInsightCard({
       {...restPressableProps}
       role="button"
       tabIndex={0}
-      aria-label="Ruthie sohbetini aç"
+      aria-label="ROSTA Insight sohbetini aç"
       data-ruth-press-strength="subtle"
       data-ruth-hover-lift="false"
       onClick={(event) => {
@@ -341,7 +341,7 @@ function RuthieInsightCard({
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex items-center justify-between gap-2">
-              <h3 className="text-sm font-semibold text-main">Ruthie Insight</h3>
+              <h3 className="text-sm font-semibold text-main">ROSTA Insight</h3>
               <span className="inline-flex items-center gap-1 text-[10px] text-success-foreground">
                 <span className="h-1.5 w-1.5 rounded-full bg-success" /> hazır
               </span>
@@ -748,9 +748,9 @@ export function ExactOverviewDashboard() {
         actions={
           <>
             <RangeSelect value={range} onChange={setRange} />
-            <Link href="/ruthie">
+            <Link href="/rosta-insight">
               <ExactButton variant="secondary" size="sm">
-                <Sparkles className="h-4 w-4" /> Ruthie’ye sor
+                <Sparkles className="h-4 w-4" /> ROSTA Insight’a sor
               </ExactButton>
             </Link>
           </>
