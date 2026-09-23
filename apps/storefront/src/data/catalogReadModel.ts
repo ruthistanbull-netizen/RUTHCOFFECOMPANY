@@ -56,7 +56,7 @@ function normalizeProduct(value: unknown): Product | null {
 
 const getCachedDiscountSettings = unstable_cache(
   async () => withTimeout(loadDiscountCampaignSettings(), 900, "İndirim read-model sorgusu").catch(() => EMPTY_DISCOUNTS),
-  ["ruth-storefront-discount-settings-v2"],
+  ["rosta-storefront-discount-settings-v2"],
   { revalidate: 300, tags: ["rosta-discounts"] },
 );
 
@@ -178,7 +178,7 @@ async function fetchCatalogCacheValue(): Promise<Product[]> {
 
 const getCachedCatalogReadModel = unstable_cache(
   fetchCatalogCacheValue,
-  ["ruth-storefront-catalog-read-model-v1"],
+  ["rosta-storefront-catalog-read-model-v1"],
   {
     revalidate: CACHE_REVALIDATE_SECONDS,
     tags: ["rosta-products"],
