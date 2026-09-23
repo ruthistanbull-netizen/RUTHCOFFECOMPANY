@@ -161,7 +161,7 @@ export function VariantStudioManager({ variants, setVariants, productPhotos, bas
             <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-5 sm:px-6 sm:py-7">
               <div className="mx-auto grid w-full max-w-2xl gap-5">
                 <ExactField label="Seçenek adı">
-                  <input value={optionName} onChange={(event) => setOptionName(event.target.value)} className={exactFormInputClass} placeholder="Örn. Renk, Zincir Uzunluğu, Beden" />
+                  <input value={optionName} onChange={(event) => setOptionName(event.target.value)} className={exactFormInputClass} placeholder="Örn. Öğütüm, Gramaj, Kavrum" />
                 </ExactField>
 
                 <div>
@@ -190,7 +190,7 @@ export function VariantStudioManager({ variants, setVariants, productPhotos, bas
                           ) : (
                             <span className="ruth-type-code flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-surface-primary font-bold tabular-nums text-subtle">{index + 1}</span>
                           )}
-                          <input value={option.label} onChange={(event) => setAddOptions((current) => current.map((item) => item.id === option.id ? { ...item, label: event.target.value } : item))} className={`${exactFormInputClass} h-10`} placeholder={displayType === "color" ? "Örn. Altın Kaplama" : "Örn. 45 cm"} autoFocus={index === 0} />
+                          <input value={option.label} onChange={(event) => setAddOptions((current) => current.map((item) => item.id === option.id ? { ...item, label: event.target.value } : item))} className={`${exactFormInputClass} h-10`} placeholder={displayType === "color" ? "Örn. Orta Kavrum" : "Örn. 250 g"} autoFocus={index === 0} />
                         </div>
                         <ExactIconButton icon={Trash2} label="Seçeneği sil" variant="ghost" size="icon-sm" onClick={() => setAddOptions((current) => current.length === 1 ? current : current.filter((item) => item.id !== option.id))} />
                       </motion.div>
