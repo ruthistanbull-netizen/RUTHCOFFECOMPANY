@@ -134,7 +134,7 @@ function normalizeChanges(value: unknown, legacyBody?: Record<string, unknown>) 
 function internalProductRequest(request: Request, body: unknown) {
   const headers = new Headers(request.headers);
   headers.set("content-type", "application/json");
-  headers.set("x-ruth-skip-storefront-revalidate", "1");
+  headers.set("x-rosta-skip-storefront-revalidate", "1");
   const url = new URL(request.url);
   url.pathname = "/api/products";
   return new Request(url, {
