@@ -8,7 +8,7 @@ html.ruth-navigation-v4 nav[aria-label="Mobil ana menü"] {
 
 html.ruth-navigation-v4 button[aria-label="Menüyü aç"],
 html.ruth-navigation-v4 button[aria-label="Kenar çubuğunu değiştir"],
-html.ruth-navigation-v4 button[aria-label="Ruthie AI"] {
+html.ruth-navigation-v4 button[aria-label="ROSTA Insight"] {
   display: none !important;
 }
 
@@ -42,8 +42,8 @@ html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > span[aria-hidde
 }
 
 html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-label="Panel menüsünü aç"],
-html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-label="Ruthie'ye mesaj gönder"],
-html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-label="Ruthie hızlı mesajını kapat"] {
+html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-label="ROSTA Insight’a mesaj gönder"],
+html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-label="ROSTA Insight hızlı mesajını kapat"] {
   width: 42px !important;
   height: 42px !important;
   min-width: 42px !important;
@@ -57,8 +57,8 @@ html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-lab
 }
 
 html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-label="Panel menüsünü aç"] svg,
-html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-label="Ruthie'ye mesaj gönder"] svg,
-html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-label="Ruthie hızlı mesajını kapat"] svg {
+html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-label="ROSTA Insight’a mesaj gönder"] svg,
+html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-label="ROSTA Insight hızlı mesajını kapat"] svg {
   width: 21px !important;
   height: 21px !important;
   stroke-width: 1.8 !important;
@@ -74,20 +74,20 @@ html.ruth-navigation-v4 header[data-ruth-navigation-header="true"] > [data-ruth-
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.09), inset 0 1px 0 #fff !important;
 }
 
-html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"][data-expanded="true"] > button[aria-label="Ruthie hızlı mesajını kapat"] {
+html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"][data-expanded="true"] > button[aria-label="ROSTA Insight hızlı mesajını kapat"] {
   background: #fff !important;
   color: #30343a !important;
   border-color: rgba(96,87,180,.24) !important;
   box-shadow: 0 0 0 2px rgba(96,87,180,.08), 0 4px 12px rgba(15,23,42,.08), inset 0 1px 0 #fff !important;
 }
 
-html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] input[placeholder^="Ruthie"] {
+html.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] input[placeholder^="ROSTA Insight"] {
   left: 48px !important;
 }
 
 html.dark.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-label="Panel menüsünü aç"],
-html.dark.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-label="Ruthie'ye mesaj gönder"],
-html.dark.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-label="Ruthie hızlı mesajını kapat"] {
+html.dark.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-label="ROSTA Insight’a mesaj gönder"],
+html.dark.ruth-navigation-v4 [data-ruth-nav-header-controls="true"] > button[aria-label="ROSTA Insight hızlı mesajını kapat"] {
   background: rgba(255, 255, 255, 0.08) !important;
   color: #d6d8dc !important;
   border-color: rgba(255,255,255,.09) !important;
@@ -99,7 +99,7 @@ html.ruth-navigation-v4 main {
 }
 
 @media (min-width: 1024px) {
-  html.ruth-navigation-v4 nav[aria-label="Ruth Commerce masaüstü dock"] {
+  html.ruth-navigation-v4 nav[aria-label="ROSTA Coffee masaüstü dock"] {
     display: none !important;
   }
 
@@ -115,7 +115,7 @@ html.ruth-navigation-v4 main {
 }
 
 @media (max-width: 1023px) {
-  html.ruth-navigation-v4 nav[aria-label="Ruth Commerce mobil dock"] {
+  html.ruth-navigation-v4 nav[aria-label="ROSTA Coffee mobil dock"] {
     display: none !important;
   }
 }
