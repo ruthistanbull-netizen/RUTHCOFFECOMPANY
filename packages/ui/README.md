@@ -1,6 +1,6 @@
 # @ruth-commerce/ui
 
-RUTH Commerce V2 storefront ve admin panelinin ortak görünüm, ölçü, erişilebilirlik ve etkileşim paketidir.
+ROSTA Commerce storefront ve admin panelinin ortak görünüm, ölçü, erişilebilirlik ve etkileşim paketidir.
 
 ## Değişmez kural
 
@@ -72,7 +72,7 @@ const status = normalizeOrderDisplayStatus(rawStatus, orderContext);
 const presentation = getOrderDisplayStatusPresentation(status);
 ```
 
-UI provider aliası, geçmiş IKAS istisnası veya domain kararı üretmez. Commerce Core kullanıcıya gösterilecek renk/CSS belirlemez.
+UI provider aliası, geçmiş sağlayıcı istisnası veya domain kararı üretmez. Commerce Core kullanıcıya gösterilecek renk/CSS belirlemez.
 
 ## Yeni sayfa bileşimi
 
