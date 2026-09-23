@@ -280,7 +280,7 @@ function maybeRequestVoiceBudgetApproval() {
   voiceBudgetState.awaiting = true;
   sendVoiceBudgetEvent({ type: "response.cancel" });
   speakVoiceBudgetPrompt(
-    `Gerçek API maliyeti ${formatROSTA InsightUsd(voiceBudgetState.totalUsd)} oldu ve 0,15 dolarlık sınırı geçti. `
+    `Gerçek API maliyeti ${formatRuthieUsd(voiceBudgetState.totalUsd)} oldu ve 0,15 dolarlık sınırı geçti. `
     + "Yeni 0,15 dolarlık bütçe dilimine devam etmemi onaylıyor musun? Lütfen evet veya hayır de.",
   );
 }
