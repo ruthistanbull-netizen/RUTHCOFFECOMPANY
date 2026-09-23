@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
-import { applyRange, getDateRange } from "@/lib/ranges";
+import { applyRange } from "@/lib/ranges";
 import { isHistoricalImportedOrder, normalizeOrderStatus } from "@/lib/statusLabels";
 
 export const runtime = "nodejs";
@@ -118,7 +118,6 @@ export async function GET(request: Request) {
   const { supabase } = auth;
   const url = new URL(request.url);
   const range = url.searchParams.get("range") || "today";
-  const bounds = getDateRange(range);
   const warnings: string[] = [];
 
   try {
