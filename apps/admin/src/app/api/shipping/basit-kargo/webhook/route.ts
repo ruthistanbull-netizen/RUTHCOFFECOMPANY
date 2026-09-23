@@ -73,7 +73,6 @@ function safeHeaders(request: Request) {
     "x-request-id",
     "x-event-id",
     "x-forwarded-for",
-    "x-vercel-id",
   ];
   return Object.fromEntries(
     allowed
