@@ -11,7 +11,6 @@ function clean(value: unknown, max: number) {
 
 function clientIp(request: Request) {
   return (
-    request.headers.get("x-vercel-forwarded-for")?.split(",")[0]?.trim() ||
     request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
     request.headers.get("x-real-ip")?.trim() ||
     "unknown"
@@ -19,7 +18,7 @@ function clientIp(request: Request) {
 }
 
 function ipHash(request: Request) {
-  const salt = process.env.CONTACT_IP_HASH_SALT || "ruth-contact-rate-limit-v1";
+  const salt = process.env.CONTACT_IP_HASH_SALT || "rosta-contact-rate-limit-v1";
   return crypto.createHash("sha256").update(`${salt}|${clientIp(request)}`).digest("hex");
 }
 
