@@ -1,0 +1,28 @@
+[data-ruth-theme="admin"] {
+  --ivory: var(--ruth-color-canvas);
+  --border: var(--ruth-color-border-subtle);
+  --surface: var(--ruth-color-surface);
+  --surface-2: var(--ruth-color-surface-muted);
+  --surface-3: var(--ruth-color-surface-muted);
+  --ink: var(--ruth-color-text-primary);
+  --muted: var(--ruth-color-text-muted);
+  --muted-2: var(--ruth-color-text-muted);
+  --accent: var(--ruth-color-accent);
+  --accent-strong: var(--ruth-color-accent-strong);
+  --accent-soft: var(--ruth-color-accent-soft);
+  --success: var(--ruth-color-success);
+  --success-soft: color-mix(in srgb, var(--ruth-color-success) 10%, var(--ruth-color-surface));
+  --warning: var(--ruth-color-warning);
+  --warning-soft: color-mix(in srgb, var(--ruth-color-warning) 10%, var(--ruth-color-surface));
+  --danger: var(--ruth-color-danger);
+  --danger-soft: color-mix(in srgb, var(--ruth-color-danger) 9%, var(--ruth-color-surface));
+  --info: var(--ruth-color-info);
+  --info-soft: color-mix(in srgb, var(--ruth-color-info) 9%, var(--ruth-color-surface));
+  color: var(--ruth-color-text-primary);
+  background: var(--ruth-color-canvas);
+}
+
+[data-ruth-theme="admin"] body {
+  color: var(--ruth-color-text-primary);
+  background: var(--ruth-color-canvas);
+}
