@@ -48,8 +48,8 @@ function normalizeProduct(value: unknown): Product | null {
 
 const getCachedDiscountSettings = unstable_cache(
   async () => withTimeout(loadDiscountCampaignSettings(), 900, "Ürün indirimi read-model sorgusu").catch(() => EMPTY_DISCOUNTS),
-  ["ruth-storefront-product-window-discounts-v2"],
-  { revalidate: 300, tags: ["ruth-discounts"] },
+  ["rosta-storefront-product-window-discounts-v2"],
+  { revalidate: 300, tags: ["rosta-discounts"] },
 );
 
 function applyDiscount(product: Product | null, settings: DiscountCampaignSettings): Product | null {
@@ -150,10 +150,10 @@ async function fetchProductWindowCacheValue(slug: string): Promise<ProductPageWi
 function cachedProductWindow(slug: string) {
   return unstable_cache(
     () => fetchProductWindowCacheValue(slug),
-    [`ruth-product-window-read-model-v2:${slug}`],
+    [`rosta-product-window-read-model-v2:${slug}`],
     {
       revalidate: CACHE_REVALIDATE_SECONDS,
-      tags: ["ruth-product-windows", `ruth-product-window:${slug}`],
+      tags: ["rosta-product-windows", `rosta-product-window:${slug}`],
     },
   )();
 }
