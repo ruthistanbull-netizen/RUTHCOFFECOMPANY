@@ -97,7 +97,7 @@ export async function createRuthieRealtimeCallV2(options: {
   const answerSdp = await response.text();
   if (!answerSdp.trim().startsWith("v=0") || !answerSdp.includes("m=audio")) {
     throw new RuthieRuntimeError({
-      code: "ROSTA INSIGHT_REALTIME_INVALID_ANSWER",
+      code: "ROSTA_INSIGHT_REALTIME_INVALID_ANSWER",
       message: "OpenAI Realtime geçerli bir SDP yanıtı döndürmedi.",
       status: 502,
       retryable: true,
@@ -146,20 +146,20 @@ function realtimeInstructions(snapshot: RuthiePanelSnapshot, actor: RuthieActorI
     "Genel olarak kısa konuş; fakat doğru ve eksiksiz cevap daha uzunsa bütün gerekli bilgileri söyle ve cümleyi bitirmeden durma.",
     "İlk bağlantıda yalnız dinlemeye hazır ol; kullanıcı konuşmadan giriş yapma.",
     "Kamera açıksa konuşma bağlamındaki en son görüntü karesini güncel görüntü olarak kabul et.",
-    `PANEL_SNAPSHOT:\n${serializeROSTA InsightPanelSnapshot(snapshot)}`,
+    `PANEL_SNAPSHOT:\n${serializeRuthiePanelSnapshot(snapshot)}`,
   ].join("\n\n");
 }
 
 function normalizeSdp(value: unknown) {
   if (typeof value !== "string") {
-    throw new RuthieRuntimeError({ code: "ROSTA INSIGHT_SDP_REQUIRED", message: "WebRTC SDP teklifi gerekli.", status: 400 });
+    throw new RuthieRuntimeError({ code: "ROSTA_INSIGHT_SDP_REQUIRED", message: "WebRTC SDP teklifi gerekli.", status: 400 });
   }
   const trimmed = value.trim();
   if (!trimmed.startsWith("v=0") || !trimmed.includes("m=audio") || trimmed.length < 80) {
-    throw new RuthieRuntimeError({ code: "ROSTA INSIGHT_SDP_INVALID", message: "Tarayıcı geçerli bir ses bağlantısı oluşturamadı.", status: 400 });
+    throw new RuthieRuntimeError({ code: "ROSTA_INSIGHT_SDP_INVALID", message: "Tarayıcı geçerli bir ses bağlantısı oluşturamadı.", status: 400 });
   }
   if (trimmed.length > 250_000) {
-    throw new RuthieRuntimeError({ code: "ROSTA INSIGHT_SDP_TOO_LARGE", message: "Ses bağlantısı teklifi izin verilen boyutu aşıyor.", status: 413 });
+    throw new RuthieRuntimeError({ code: "ROSTA_INSIGHT_SDP_TOO_LARGE", message: "Ses bağlantısı teklifi izin verilen boyutu aşıyor.", status: 413 });
   }
   return `${trimmed.replace(/\r?\n/g, "\r\n")}\r\n`;
 }
@@ -167,7 +167,7 @@ function normalizeSdp(value: unknown) {
 function runtimeConfig(env: NodeJS.ProcessEnv = process.env): RuntimeConfig {
   const apiKey = clean(env.OPENAI_API_KEY);
   if (!apiKey) {
-    throw new RuthieRuntimeError({ code: "ROSTA INSIGHT_OPENAI_NOT_CONFIGURED", message: "ROSTA Insight OpenAI yapılandırması eksik.", status: 503 });
+    throw new RuthieRuntimeError({ code: "ROSTA_INSIGHT_OPENAI_NOT_CONFIGURED", message: "ROSTA Insight OpenAI yapılandırması eksik.", status: 503 });
   }
   return {
     apiKey,
@@ -218,7 +218,7 @@ async function requestOpenAI(
         }
       }
       throw new RuthieRuntimeError({
-        code: "ROSTA INSIGHT_OPENAI_PROVIDER_ERROR",
+        code: "ROSTA_INSIGHT_OPENAI_PROVIDER_ERROR",
         message: providerMessage,
         status: response.status === 429 ? 429 : response.status >= 500 || response.status === 401 || response.status === 403 ? 502 : 400,
         retryable: response.status === 408 || response.status === 409 || response.status === 429 || response.status >= 500,
@@ -229,10 +229,10 @@ async function requestOpenAI(
   } catch (error) {
     if (error instanceof RuthieRuntimeError) throw error;
     if (error instanceof Error && error.name === "AbortError") {
-      throw new RuthieRuntimeError({ code: "ROSTA INSIGHT_OPENAI_TIMEOUT", message: "ROSTA Insight sesli bağlantısı zaman aşımına uğradı.", status: 504, retryable: true });
+      throw new RuthieRuntimeError({ code: "ROSTA_INSIGHT_OPENAI_TIMEOUT", message: "ROSTA Insight sesli bağlantısı zaman aşımına uğradı.", status: 504, retryable: true });
     }
     throw new RuthieRuntimeError({
-      code: "ROSTA INSIGHT_OPENAI_NETWORK_ERROR",
+      code: "ROSTA_INSIGHT_OPENAI_NETWORK_ERROR",
       message: error instanceof Error ? `OpenAI Realtime bağlantısı kurulamadı: ${error.message}` : "OpenAI Realtime bağlantısı kurulamadı.",
       status: 502,
       retryable: true,
