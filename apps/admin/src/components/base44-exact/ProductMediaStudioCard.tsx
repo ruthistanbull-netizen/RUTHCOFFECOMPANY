@@ -104,15 +104,149 @@ async function uploadFile(
 }
 
 async function uploadOneImage(file: File, onProgress: (progress: number) => void) {
-  return uploadFile(file, "/api/media/upload", "Görsel yüklenemedi.", onProgress);
+  return uploadFile(file, "/api/media/product-image", "Görsel yüklenemedi.", onProgress);
 }
 
-async function uploadOneVideo(file: File, onProgress: (progress: number) => void) {
+async function createVideoUploadSession(file: File) {
   if (file.size <= 0) throw new Error("Video dosyası boş görünüyor.");
   if (file.size > PRODUCT_VIDEO_MAX_BYTES) throw new Error("Video en fazla 60 MB olabilir.");
   const contentType = videoContentType(file);
   if (!contentType) throw new Error("Yalnız MP4, WebM veya MOV video yüklenebilir.");
-  return uploadFile(file, "/api/media/upload", "Video yüklenemedi.", onProgress);
+
+  const authHeaders = await adminAuthHeaders();
+  const response = await fetch(apiUrl("/api/media/product-video"), {
+    method: "POST",
+    headers: {
+      ...authHeaders,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      fileName: file.name,
+      fileSize: file.size,
+      contentType,
+    }),
+    cache: "no-store",
+  });
+  const payload = await response.json().catch(() => ({})) as VideoUploadSessionResponse;
+  if (!response.ok || !payload.ok || !payload.uploadUrl || !payload.url) {
+    throw new Error(payload.error || "Video yükleme oturumu oluşturulamadı.");
+  }
+  return payload;
+}
+
+async function readProxyOffset(uploadUrl: string) {
+  try {
+    const authHeaders = await adminAuthHeaders();
+    const response = await fetch(apiUrl("/api/media/product-video/chunk"), {
+      method: "GET",
+      headers: {
+        ...authHeaders,
+        "x-ruth-upload-url": uploadUrl,
+      },
+      cache: "no-store",
+    });
+    const payload = await response.json().catch(() => ({})) as ChunkUploadResponse;
+    const offset = Number(payload.offset);
+    if (!response.ok || !payload.ok || !Number.isFinite(offset) || offset < 0) return null;
+    return offset;
+  } catch {
+    return null;
+  }
+}
+
+async function patchProxyChunk(
+  uploadUrl: string,
+  chunk: Blob,
+  offset: number,
+  fileSize: number,
+  onProgress: (progress: number) => void,
+) {
+  const authHeaders = await adminAuthHeaders();
+
+  return new Promise<number>((resolve, reject) => {
+    const request = new XMLHttpRequest();
+    request.open("PATCH", apiUrl("/api/media/product-video/chunk"));
+    request.timeout = 90_000;
+    Object.entries(authHeaders).forEach(([key, value]) => request.setRequestHeader(key, String(value)));
+    request.setRequestHeader("Content-Type", "application/octet-stream");
+    request.setRequestHeader("x-ruth-upload-url", uploadUrl);
+    request.setRequestHeader("x-ruth-upload-offset", String(offset));
+
+    request.upload.onprogress = (event) => {
+      if (!event.lengthComputable || event.total <= 0) return;
+      const loaded = Math.min(fileSize, offset + event.loaded);
+      onProgress(Math.max(1, Math.min(99, Math.round((loaded / fileSize) * 100))));
+    };
+
+    request.onerror = () => reject(new Error("Video parçası panele gönderilirken bağlantı koptu."));
+    request.ontimeout = () => reject(new Error("Video parçası 90 saniye içinde tamamlanamadı."));
+    request.onabort = () => reject(new Error("Video yükleme iptal edildi."));
+    request.onload = () => {
+      let payload: ChunkUploadResponse = {};
+      try {
+        payload = JSON.parse(request.responseText || "{}") as ChunkUploadResponse;
+      } catch {}
+
+      const nextOffset = Number(payload.nextOffset);
+      if (
+        request.status >= 200 &&
+        request.status < 300 &&
+        payload.ok &&
+        Number.isFinite(nextOffset) &&
+        nextOffset > offset
+      ) {
+        resolve(nextOffset);
+        return;
+      }
+
+      reject(new Error(payload.error || `Video parçası yüklenemedi (${request.status}).`));
+    };
+
+    request.send(chunk);
+  });
+}
+
+async function uploadOneVideo(file: File, onProgress: (progress: number) => void) {
+  const session = await createVideoUploadSession(file);
+  const uploadUrl = String(session.uploadUrl);
+  let offset = 0;
+
+  while (offset < file.size) {
+    const chunkEnd = Math.min(file.size, offset + VIDEO_PROXY_CHUNK_BYTES);
+    const chunk = file.slice(offset, chunkEnd);
+    let uploaded = false;
+    let lastError: unknown = null;
+
+    for (let attempt = 0; attempt < VIDEO_RETRY_DELAYS.length; attempt += 1) {
+      if (VIDEO_RETRY_DELAYS[attempt]) await sleep(VIDEO_RETRY_DELAYS[attempt]);
+      try {
+        offset = await patchProxyChunk(
+          uploadUrl,
+          chunk,
+          offset,
+          file.size,
+          onProgress,
+        );
+        uploaded = true;
+        break;
+      } catch (caught) {
+        lastError = caught;
+        const remoteOffset = await readProxyOffset(uploadUrl);
+        if (remoteOffset != null && remoteOffset > offset) {
+          offset = remoteOffset;
+          uploaded = true;
+          break;
+        }
+      }
+    }
+
+    if (!uploaded) {
+      throw lastError instanceof Error ? lastError : new Error("Video yükleme devam ettirilemedi.");
+    }
+  }
+
+  onProgress(100);
+  return String(session.url);
 }
 
 export function ProductMediaStudioCard({
