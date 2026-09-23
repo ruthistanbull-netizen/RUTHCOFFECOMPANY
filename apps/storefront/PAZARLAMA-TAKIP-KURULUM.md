@@ -1,32 +1,32 @@
-# Ruth Istanbul Otomatik Pazarlama Takibi
+# ROSTA Coffee Company Otomatik Pazarlama Takibi
 
-Bu surumde su entegrasyonlar hazirdir:
+Hazır entegrasyonlar:
 
-- Meta Pixel (tarayici)
+- Meta Pixel (tarayıcı)
 - Meta Conversions API / CAPI (sunucu)
-- Google Analytics 4 (tarayici)
+- Google Analytics 4 (tarayıcı)
 - GA4 Measurement Protocol (sunucu)
 - UTM, fbclid, gclid, wbraid, gbraid ve ttclid kaynak tespiti
-- Siparis ile oturum ve trafik kaynagi eslestirmesi
+- Sipariş ile oturum ve trafik kaynağı eşleştirmesi
 
-## Vercel Environment Variables
+## Zeabur Environment Variables
 
-Vercel > Project > Settings > Environment Variables bolumune `.env.marketing.example` dosyasindaki degerleri ekle.
+ROSTA storefront servisinde Zeabur environment variables bölümüne `.env.marketing.example` dosyasındaki değerleri ekle.
 
 ### Meta
 
 1. Meta Events Manager'dan Pixel ID'yi al.
-2. `NEXT_PUBLIC_META_PIXEL_ID` ve `META_PIXEL_ID` alanlarina ayni ID'yi yaz.
-3. Events Manager > Settings > Conversions API > Generate access token bolumunden token olustur.
-4. Tokeni yalnizca `META_CAPI_ACCESS_TOKEN` alanina yaz. `NEXT_PUBLIC_` ile baslayan bir degiskene koyma.
+2. `NEXT_PUBLIC_META_PIXEL_ID` ve `META_PIXEL_ID` alanlarına aynı ID'yi yaz.
+3. Conversions API access token oluştur.
+4. Tokeni yalnızca `META_CAPI_ACCESS_TOKEN` alanına yaz; `NEXT_PUBLIC_` ile başlayan bir değişkene koyma.
 
 ### Google Analytics 4
 
-1. GA4 Web Data Stream icindeki Measurement ID'yi `NEXT_PUBLIC_GA_MEASUREMENT_ID` alanina yaz.
-2. Admin > Data Streams > Measurement Protocol API secrets bolumunden secret olustur.
-3. Secret'i `GA4_API_SECRET` alanina yaz.
+1. GA4 Web Data Stream içindeki Measurement ID'yi `NEXT_PUBLIC_GA_MEASUREMENT_ID` alanına yaz.
+2. Measurement Protocol API secret oluştur.
+3. Secret'i `GA4_API_SECRET` alanına yaz.
 
-## Otomatik gonderilen eventler
+## Otomatik eventler
 
 - PageView / page_view
 - AddToCart / add_to_cart
@@ -34,8 +34,4 @@ Vercel > Project > Settings > Environment Variables bolumune `.env.marketing.exa
 - AddPaymentInfo / add_payment_info
 - Purchase / purchase
 
-Meta tarayici ve CAPI eventleri ayni `event_id` ile gonderildigi icin Meta tarafinda tek event olarak tekillestirilir.
-
-## Kaynak tespiti
-
-UTM bulunmasa bile sistem referrer ve reklam click ID'lerinden kaynak tahmini yapar. Ancak Instagram uygulamasi referrer bilgisini bazen gizledigi icin reklam linklerinde UTM kullanmak en guvenilir yontemdir.
+Meta tarayıcı ve CAPI eventleri aynı `event_id` ile gönderildiği için Meta tarafında tekilleştirilebilir.
