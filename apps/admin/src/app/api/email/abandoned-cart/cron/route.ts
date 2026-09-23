@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
-import { loadRuthInlineLogo } from "@/lib/gmail";
+import { loadRostaInlineLogo } from "@/lib/gmail";
 import { getActiveEmailIntegration, sendEmailWithIntegration } from "@/lib/mailDelivery";
 import { buildMarketingEmailHtml, buildSubject, getReadyEmailTemplate } from "@/lib/emailTemplates";
 import { loadPurposeCoupon, purposeCouponLabel } from "@/lib/purposeCoupons";
@@ -219,8 +219,8 @@ async function runAbandonedCartEmails(request: Request) {
 
   const template = getReadyEmailTemplate("abandoned_cart");
   const logoUrl = integration.provider === "gmail"
-    ? "cid:ruth-email-logo"
-    : `${process.env.NEXT_PUBLIC_SITE_URL || process.env.PUBLIC_SITE_URL || "https://rostacoffecompany.zeabur.app"}/ruth-email-logo-card.png`;
+    ? "cid:rosta-email-logo"
+    : `${process.env.NEXT_PUBLIC_SITE_URL || process.env.PUBLIC_SITE_URL || "https://rostacoffecompany.zeabur.app"}/rosta-coffee-co.svg`;
 
   let sent = 0;
   let failed = 0;
@@ -304,7 +304,7 @@ async function runAbandonedCartEmails(request: Request) {
         to,
         subject,
         html,
-        inlineImages: integration.provider === "gmail" ? loadRuthInlineLogo() : [],
+        inlineImages: integration.provider === "gmail" ? loadRostaInlineLogo() : [],
       });
       const now = new Date().toISOString();
 
