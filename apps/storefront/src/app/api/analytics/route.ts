@@ -28,9 +28,9 @@ function clientIp(request: Request) {
 }
 function geoHeaders(request: Request) {
   return {
-    country: clean(request.headers.get("x-vercel-ip-country")),
-    city: clean(request.headers.get("x-vercel-ip-city")),
-    region: clean(request.headers.get("x-vercel-ip-country-region")),
+    country: clean(request.headers.get("cf-ipcountry") || request.headers.get("x-country-code")),
+    city: clean(request.headers.get("x-geo-city") || request.headers.get("x-city")),
+    region: clean(request.headers.get("x-geo-region") || request.headers.get("x-region")),
   };
 }
 
