@@ -1,0 +1,41 @@
+/* Final QA fixes for stable, accessible admin interactions. */
+
+main[class*="content"] > .cr-notice {
+  pointer-events: none;
+}
+
+main[class*="content"] > .cr-notice button,
+main[class*="content"] > .cr-notice a {
+  pointer-events: auto;
+}
+
+main[class*="content"] :is(button, a[href], input, select, textarea) {
+  scroll-margin-top: 96px;
+}
+
+.cr-ops-card__timeline-header a {
+  min-height: 28px;
+  padding-block: 6px;
+  display: inline-flex;
+  align-items: center;
+  touch-action: manipulation;
+}
+
+/* The operation palette uses gold for emphasis, but compact control text must
+   retain AA contrast on white and pale surfaces. */
+.cr-filter-row > button,
+.cr-order-card__number > span,
+.cr-conversion-card__toggle,
+.cr-shipping-recommendations small {
+  color: var(--ink) !important;
+}
+
+.cr-filter-row > button:not(.is-active) {
+  background: transparent !important;
+}
+
+@media (max-width: 700px) {
+  div[class*="mobileLayer"] {
+    z-index: 400 !important;
+  }
+}

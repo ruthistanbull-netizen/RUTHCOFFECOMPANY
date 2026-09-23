@@ -1,0 +1,52 @@
+.cr-number-skeleton {
+  position: relative;
+  display: inline-block;
+  min-width: 3.6ch;
+  min-height: 1em;
+  overflow: hidden;
+  border-radius: 8px;
+  color: transparent !important;
+  vertical-align: middle;
+  user-select: none;
+}
+
+.cr-number-skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 8% 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(152, 162, 179, .15), rgba(152, 162, 179, .34), rgba(152, 162, 179, .15));
+  background-size: 220% 100%;
+  animation: cr-number-skeleton-shimmer var(--ruth-motion-slow) linear infinite;
+}
+
+.cr-number-revealed {
+  animation: cr-number-reveal var(--ruth-motion-slow) var(--ruth-easing) both;
+  font-variant-numeric: tabular-nums;
+}
+
+.cr-dashboard-orders,
+.cr-payment-list,
+.cr-list,
+.cr-table-wrap,
+.cr-card-grid {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 520px;
+}
+
+@keyframes cr-number-skeleton-shimmer {
+  from { background-position: 180% 0; }
+  to { background-position: -40% 0; }
+}
+
+@keyframes cr-number-reveal {
+  from { opacity: .2; transform: translateY(5px) scale(.985); filter: blur(2px); }
+  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cr-number-skeleton::after,
+  .cr-number-revealed {
+    animation: none !important;
+  }
+}
