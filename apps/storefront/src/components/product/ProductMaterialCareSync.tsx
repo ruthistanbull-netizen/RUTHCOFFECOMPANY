@@ -20,10 +20,10 @@ function normalized(value: string | null | undefined) {
 function setSummaryLabel(summary: HTMLElement) {
   const textNode = [...summary.childNodes].find((node) => node.nodeType === Node.TEXT_NODE);
   if (textNode) {
-    textNode.textContent = "Materyal ve Bakım";
+    textNode.textContent = "Ürün Bilgisi";
     return;
   }
-  summary.prepend(document.createTextNode("Materyal ve Bakım"));
+  summary.prepend(document.createTextNode("Ürün Bilgisi"));
 }
 
 export function ProductMaterialCareSync() {
@@ -48,9 +48,9 @@ export function ProductMaterialCareSync() {
         if (!data.ok || controller.signal.aborted) return;
 
         const content = [
-          `Materyal: ${data.material || "—"}`,
-          `Kaplama: ${data.coating || "—"}`,
-          `Bakım: ${data.care || "—"}`,
+          `Çekirdek / İçerik: ${data.material || "—"}`,
+          `Kavrum: ${data.coating || "—"}`,
+          `Saklama / Kullanım: ${data.care || "—"}`,
         ].join("\n");
 
         const apply = () => {
@@ -60,7 +60,7 @@ export function ProductMaterialCareSync() {
               const summary = detail.querySelector<HTMLElement>("summary");
               if (!summary) return;
               const label = normalized(summary.textContent);
-              if (label !== "materyal" && label !== "materyal ve bakım") return;
+              if (label !== "materyal" && label !== "materyal ve bakım" && label !== "ürün bilgisi") return;
               setSummaryLabel(summary);
               const paragraph = detail.querySelector<HTMLElement>("p");
               if (paragraph && paragraph.textContent !== content) paragraph.textContent = content;
@@ -70,8 +70,8 @@ export function ProductMaterialCareSync() {
             .querySelectorAll<HTMLButtonElement>(".product-mobile-detail-tabs button")
             .forEach((button) => {
               const label = normalized(button.textContent);
-              if (label === "materyal" || label === "materyal ve bakım") {
-                button.textContent = "Materyal ve Bakım";
+              if (label === "materyal" || label === "materyal ve bakım" || label === "ürün bilgisi") {
+                button.textContent = "Ürün Bilgisi";
               }
             });
 
