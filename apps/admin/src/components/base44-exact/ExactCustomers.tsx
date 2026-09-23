@@ -104,8 +104,8 @@ type CustomersResponse = { customers?: Customer[]; summary?: Summary; pagination
 
 const emptySummary: Summary = { customerCount: 0, memberCount: 0, nonMemberCount: 0, customersWithOrders: 0, totalPaidRevenue: 0 };
 const emptyPagination: Pagination = { page: 1, pageSize: 25, total: 0, totalPages: 1 };
-const CUSTOMERS_CONTEXT_KEY = "rosta-customers-resource-context-v1";
-const CUSTOMERS_SAVED_VIEWS_KEY = "rosta-customers-saved-views-v1";
+const CUSTOMERS_CONTEXT_KEY = "ruth-customers-resource-context-v1";
+const CUSTOMERS_SAVED_VIEWS_KEY = "ruth-customers-saved-views-v1";
 const MEMBERSHIP_VALUES = new Set<MembershipFilter>(["all", "member", "non_member"]);
 const SORT_VALUES = new Set<SortOption>(["recent", "spent", "orders", "name"]);
 const DEFAULT_CUSTOMER_COLUMNS: CustomerColumnVisibility = {
@@ -431,7 +431,7 @@ export function ExactCustomers() {
     if (!Number.isFinite(amount) || amount <= 0) { toast.error("Geçerli bir ROSTA Points miktarı gir."); return; }
     setBusy(true);
     try {
-      const result = await adminRequest<{ appliedAmount?: number; balance?: number }>("/api/rosta-points", { method: "POST", body: JSON.stringify({ profileId: selected.profile_id || selected.id, operation: pointsOperation, points: amount, reason: pointsReason }) });
+      const result = await adminRequest<{ appliedAmount?: number; balance?: number }>("/api/ruthie-points", { method: "POST", body: JSON.stringify({ profileId: selected.profile_id || selected.id, operation: pointsOperation, points: amount, reason: pointsReason }) });
       const applied = Number(result.appliedAmount || (pointsOperation === "add" ? amount : -amount));
       const balance = Number(result.balance ?? Math.max(0, selected.reward_points_balance + applied));
       setSelected((current) => current ? { ...current, reward_points_balance: balance } : current);

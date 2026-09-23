@@ -309,8 +309,7 @@ export function ExactCatalog() {
       const headers = await adminAuthHeaders();
       const body = new FormData();
       body.append("file", file);
-      body.append("folder", "catalog");
-      const response = await fetch("/api/media/upload", { method: "POST", headers, body });
+      const response = await fetch("/api/products/upload-image", { method: "POST", headers, body });
       const result = await response.json().catch(() => ({}));
       if (!response.ok || !result.ok) throw new Error(result.error || "Kapak görseli yüklenemedi.");
       setForm((current) => ({ ...current, cover_image_url: String(result.url || "") }));

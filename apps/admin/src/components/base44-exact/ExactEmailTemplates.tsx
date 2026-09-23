@@ -85,7 +85,7 @@ const previewVariables = {
   last_order_no: "RTH-1234",
   checkout_url: "https://rostacoffecompany.zeabur.app/checkout",
   review_url: "https://rostacoffecompany.zeabur.app/account/orders",
-  activation_url: "https://rostacoffecompany.zeabur.app/activate-account",
+  activation_url: "https://rostacoffecompany.zeabur.app/account/activate",
 };
 
 function typeFromCategory(category: string): TemplateType {
@@ -397,7 +397,7 @@ export function ExactEmailTemplates() {
         templatesRef.current = nextTemplates;
         setTemplates(nextTemplates);
         acceptTemplate(restored);
-        toast.success("Şablon hazır ROSTA tasarımına döndürüldü.");
+        toast.success("Şablon hazır Ruth tasarımına döndürüldü.");
       } else {
         const remaining = currentTemplates.filter((item) => item.template_key !== currentEditor.templateKey && item.id !== currentEditor.id);
         templatesRef.current = remaining;
