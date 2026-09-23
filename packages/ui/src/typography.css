@@ -12,6 +12,7 @@
  * Touch target size is deliberately independent from text size.
  */
 [data-ruth-typography="admin"] {
+  --font-inter: "Inter Variable";
   --ruth-font-display: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --ruth-font-body: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --ruth-font-ui: var(--ruth-font-body);
