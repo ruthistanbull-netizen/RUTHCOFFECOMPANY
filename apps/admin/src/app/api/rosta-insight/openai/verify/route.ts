@@ -105,7 +105,7 @@ function providerError(error: unknown) {
   const normalized = error instanceof RuthieOpenAIError
     ? error
     : new RuthieOpenAIError({
-        code: "ROSTA INSIGHT_OPENAI_VERIFY_FAILED",
+        code: "ROSTA_INSIGHT_OPENAI_VERIFY_FAILED",
         message: error instanceof Error ? error.message : "OpenAI yapılandırması doğrulanamadı.",
         status: 503,
       });
