@@ -50,9 +50,9 @@ test("link overrides keep safe contact protocols", () => {
     selector: "[data-theme-id=email]",
     label: "E-posta",
     kind: "link",
-    href: "mailto:hello@ruthistanbul.com",
+    href: "mailto:hello@rosta.example",
   });
-  assert.equal(themePage(email, "/contact").overrides[0].href, "mailto:hello@ruthistanbul.com");
+  assert.equal(themePage(email, "/contact").overrides[0].href, "mailto:hello@rosta.example");
 
   const phone = upsertThemeElementOverride(defaultThemeCustomizerSettings, "/contact", {
     id: "phone",
