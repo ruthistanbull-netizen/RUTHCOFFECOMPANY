@@ -51,7 +51,7 @@ export function normalizeProductMaterial(value: unknown): string | null {
 export function productMaterialFormValue(value: unknown, fallback = "") {
   const raw = String(value || "").trim();
   if (!raw) return fallback;
-  return normalizeProductMaterial(raw) ?? raw;
+  return normalizeProductMaterial(raw) ?? fallback;
 }
 
 export function productMaterialOptions(values: Array<unknown> = []) {
