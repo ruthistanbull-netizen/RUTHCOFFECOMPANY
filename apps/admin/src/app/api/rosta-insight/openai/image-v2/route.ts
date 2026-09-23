@@ -237,7 +237,7 @@ export async function POST(request: Request) {
     image: {
       dataUrl,
       mimeType: "image/png",
-      name: `ruthie-${Date.now()}.png`,
+      name: `rosta-insight-${Date.now()}.png`,
       model: MODEL,
       quality: normalized.quality,
       size: normalized.size,
@@ -382,10 +382,10 @@ function buildFinalPrompt(request: NormalizedRequest, products: ProductRow[]) {
   });
 
   return [
-    "ROSTA Coffee Co. için premium, foto-gerçekçi bir takı görseli oluştur.",
+    "ROSTA Coffee Co. için premium, foto-gerçekçi bir kahve ürünü, içecek veya kafe/stüdyo görseli oluştur.",
     products.length
-      ? "Eklenen referans görseller seçili katalog ürünleridir. Her ürünün gerçek tasarımını, siluetini, taşlarını, metal rengini, oranlarını, yüzey dokusunu ve ayırt edici detaylarını mümkün olan en yüksek sadakatle koru. Ürünleri başka tasarımlarla değiştirme, yeni taş/aksesuar ekleme ve seçilen hiçbir ürünü atlama. Birden fazla referans varsa hepsini nihai kompozisyona dahil et."
-      : "Takıların oranlarını ve malzeme gerçekçiliğini koru; premium ticari fotoğraf kalitesi hedefle.",
+      ? "Eklenen referans görseller seçili ROSTA katalog ürünleridir. Paket/fincan/şişe tasarımını, logoyu, etiketi, ürün adını, renkleri, oranları, yüzey dokusunu ve ayırt edici ambalaj detaylarını mümkün olan en yüksek sadakatle koru. Ürünü başka bir markaya veya farklı ambalaja dönüştürme; kullanıcı istemedikçe yeni etiket, içerik, tat notu, sertifika ya da ticari iddia uydurma. Birden fazla referans varsa seçilen ürünlerin hiçbirini atlama."
+      : "Kahve paketi, fincan, ekipman veya içecek görselleştiriliyorsa gerçekçi malzeme, köpük, sıvı, baskı ve ambalaj dokusu kullan; premium ticari fotoğraf kalitesi hedefle.",
     ...productParts,
     ...styleParts,
     `Kullanıcı isteği: ${request.prompt}`,
