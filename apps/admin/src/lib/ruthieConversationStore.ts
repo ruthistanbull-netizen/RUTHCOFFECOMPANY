@@ -394,10 +394,10 @@ export async function buildRuthieUnifiedContext(options: {
     loadRuthieMemories({ supabase: options.supabase, profileId: options.profileId }),
   ]);
   const memoryText = memories.length
-    ? `ORTAK ROSTA INSIGHT HAFIZASI:\n${memories.map((memory: ROSTA InsightStoredMemory, index: number) => `${index + 1}. ${memory.content}`).join("\n")}`
+    ? `ORTAK ROSTA INSIGHT HAFIZASI:\n${memories.map((memory: RuthieStoredMemory, index: number) => `${index + 1}. ${memory.content}`).join("\n")}`
     : "";
   const conversationText = messages.length
-    ? `ORTAK CHAT + VOICE SOHBETİ:\n${messages.map((message: ROSTA InsightStoredMessage) => `${message.role === "user" ? "Kullanıcı" : message.role === "assistant" ? "ROSTA Insight" : "Sistem"}: ${message.text}`).join("\n")}`
+    ? `ORTAK CHAT + VOICE SOHBETİ:\n${messages.map((message: RuthieStoredMessage) => `${message.role === "user" ? "Kullanıcı" : message.role === "assistant" ? "ROSTA Insight" : "Sistem"}: ${message.text}`).join("\n")}`
     : "";
   return {
     messages,
