@@ -48,7 +48,7 @@ function SearchResultRow({ result }: { result: SearchResult }) {
           )}
           <span className="grid min-w-0 gap-1">
             <strong className="truncate font-heading text-base font-medium">{result.name}</strong>
-            <small className="truncate text-muted-ruth">{result.material || "Ruth Istanbul"} · {result.stock_status === "out_of_stock" ? "Tükendi" : "Stokta"}</small>
+            <small className="truncate text-muted-ruth">{result.material || "ROSTA Coffee"} · {result.stock_status === "out_of_stock" ? "Tükendi" : "Stokta"}</small>
           </span>
         </span>
         <strong className="shrink-0 text-sm">{formatPrice(result.price)}</strong>
