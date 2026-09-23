@@ -340,7 +340,7 @@ function ExactMobileDrawer({ open, onClose }: { open: boolean; onClose: () => vo
                 <div className="h-8 w-8 rounded-[var(--radius-small)] bg-gradient-to-br from-[hsl(var(--accent))] to-[hsl(var(--accent-hover))] flex items-center justify-center">
                   <span className="text-white font-bold text-xs">R</span>
                 </div>
-                <span className="text-sm font-bold text-main">Ruth Commerce</span>
+                <span className="text-sm font-bold text-main">ROSTA Coffee</span>
               </div>
               <ExactIconButton icon={X} label="Kapat" variant="ghost" size="icon-sm" onClick={onClose} />
             </div>
