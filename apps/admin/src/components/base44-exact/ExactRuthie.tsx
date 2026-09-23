@@ -75,7 +75,7 @@ const STORAGE_KEY = "ruthie-exact-conversation-v1";
 const initialMessage: Message = {
   id: "welcome",
   role: "assistant",
-  text: "Merhaba, ben Ruthie. Sipariş, ödeme, stok, müşteri, kargo ve panel operasyonlarında sana yardımcı olabilirim.",
+  text: "Merhaba, ben ROSTA Insight. Sipariş, ödeme, stok, müşteri, kargo ve panel operasyonlarında sana yardımcı olabilirim.",
   createdAt: new Date().toISOString(),
 };
 const suggestions = [
@@ -127,7 +127,7 @@ function ExactRuthieOrb({ state, size = 112 }: { state: RuthieState; size?: numb
   const deforming = state === "listening" || state === "speaking";
   const glow = state === "listening" ? "var(--info)" : state === "thinking" || state === "waiting_approval" ? "var(--warning)" : state === "speaking" || state === "success" ? "var(--success)" : state === "error" ? "var(--danger)" : "var(--accent)";
   const animation = deforming ? "orb-breathe 4s ease-in-out infinite, orb-deform 2.5s ease-in-out infinite" : state === "thinking" ? "orb-breathe 3s ease-in-out infinite" : "orb-breathe 5s ease-in-out infinite";
-  return <div className="relative shrink-0" style={{ width: size, height: size }} role="img" aria-label={`Ruthie: ${statusLabel(state)}`}>
+  return <div className="relative shrink-0" style={{ width: size, height: size }} role="img" aria-label={`ROSTA Insight: ${statusLabel(state)}`}>
     <div className="absolute inset-0 rounded-full pointer-events-none" style={{ background: `radial-gradient(circle, hsl(${glow} / .5) 0%, transparent 65%)`, filter: `blur(${size * 0.15}px)`, transform: "scale(1.35)", animation: active ? "orb-glow-pulse 2s ease-in-out infinite" : undefined, opacity: active ? undefined : 0.45 }} />
     <div className="absolute inset-0 rounded-full overflow-hidden" style={{ background: "radial-gradient(circle at 35% 28%, hsl(244 89% 78%) 0%, hsl(var(--accent)) 42%, hsl(245 82% 40%) 100%)", boxShadow: `inset 0 ${size * .1}px ${size * .18}px rgba(255,255,255,.25), inset 0 -${size * .08}px ${size * .14}px rgba(20,20,60,.22)`, animation }}>
       <div className="absolute rounded-full pointer-events-none" style={{ top: "7%", left: "18%", width: "46%", height: "35%", background: "radial-gradient(ellipse, rgba(255,255,255,.55) 0%, transparent 70%)", filter: "blur(1px)" }} />
@@ -219,7 +219,7 @@ export function ExactRuthie() {
       else if (response.actionResult) { setState("success"); window.setTimeout(() => setState("idle"), 1200); }
       else speak(assistant.text);
     } catch (caught) {
-      const error = caught instanceof Error ? caught.message : "Ruthie yanıt veremedi.";
+      const error = caught instanceof Error ? caught.message : "ROSTA Insight yanıt veremedi.";
       setMessages((current) => [...current, { id: `error-${Date.now()}`, role: "assistant", text: error, createdAt: new Date().toISOString() }]);
       setState("error");
       toast.error(error);
@@ -281,7 +281,7 @@ export function ExactRuthie() {
     const canvas = document.createElement("canvas"); canvas.width = video.videoWidth; canvas.height = video.videoHeight;
     canvas.getContext("2d")?.drawImage(video, 0, 0);
     setAttachments((current) => [...current, { name: `ruthie-camera-${Date.now()}.jpg`, type: "image/jpeg", dataUrl: canvas.toDataURL("image/jpeg", 0.86) }].slice(0, 8));
-    closeCamera(); toast.success("Kamera görüntüsü Ruthie mesajına eklendi.");
+    closeCamera(); toast.success("Kamera görüntüsü ROSTA Insight mesajına eklendi.");
   };
 
   const reset = () => {
@@ -293,12 +293,12 @@ export function ExactRuthie() {
 
   return <div className="min-h-screen p-4 md:p-6 bg-gradient-to-br from-background via-surface-primary to-accent-soft/30 overflow-y-auto" data-exact-base44-page="ruthie">
     <div className="max-w-[1480px] mx-auto space-y-4 animate-fade-in">
-      <ExactPageHeader title="Ruthie AI" subtitle="Operasyonel ticaret asistanın" actions={<><Link href="/"><ExactButton variant="secondary" size="sm"><ArrowLeft className="h-4 w-4" /> Panele dön</ExactButton></Link><ExactSegmentedControl size="sm" value={mode} onChange={(value) => setMode(value as Mode)} options={[{ value: "chat", label: "Yazılı" }, { value: "voice", label: "Sesli", icon: Mic }]} /><ExactIconButton icon={ttsEnabled ? Volume2 : VolumeX} label="Sesli yanıtı değiştir" variant="secondary" onClick={() => { window.speechSynthesis?.cancel(); setTtsEnabled((current) => !current); }} /><ExactIconButton icon={Settings2} label="Sohbeti sıfırla" variant="secondary" onClick={reset} /></>} />
+      <ExactPageHeader title="ROSTA Insight" subtitle="Operasyonel ticaret asistanın" actions={<><Link href="/"><ExactButton variant="secondary" size="sm"><ArrowLeft className="h-4 w-4" /> Panele dön</ExactButton></Link><ExactSegmentedControl size="sm" value={mode} onChange={(value) => setMode(value as Mode)} options={[{ value: "chat", label: "Yazılı" }, { value: "voice", label: "Sesli", icon: Mic }]} /><ExactIconButton icon={ttsEnabled ? Volume2 : VolumeX} label="Sesli yanıtı değiştir" variant="secondary" onClick={() => { window.speechSynthesis?.cancel(); setTtsEnabled((current) => !current); }} /><ExactIconButton icon={Settings2} label="Sohbeti sıfırla" variant="secondary" onClick={reset} /></>} />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 min-h-[calc(100vh-130px)]">
         <div className="lg:col-span-2 flex flex-col bg-surface-primary radius-card shadow-card overflow-hidden min-h-[620px]">
           <div className="flex flex-col items-center justify-center py-6 px-4 border-b border-border-subtle bg-gradient-to-b from-accent-soft/30 to-transparent">
             <ExactRuthieOrb state={state} size={mode === "voice" ? 132 : 94} />
-            <div className="mt-3 text-center"><p className="text-base font-bold text-main tracking-tight">Ruthie</p><span className={`inline-flex items-center gap-1.5 mt-1 text-xs font-medium text-${tone}-foreground`}><span className={`h-2 w-2 rounded-full bg-${tone} ${["listening", "thinking", "speaking", "executing"].includes(state) ? "animate-pulse-soft" : ""}`} />{statusLabel(state)}{online === false ? " · OpenAI bağlantısı kontrol edilmeli" : ""}</span></div>
+            <div className="mt-3 text-center"><p className="text-base font-bold text-main tracking-tight">ROSTA Insight</p><span className={`inline-flex items-center gap-1.5 mt-1 text-xs font-medium text-${tone}-foreground`}><span className={`h-2 w-2 rounded-full bg-${tone} ${["listening", "thinking", "speaking", "executing"].includes(state) ? "animate-pulse-soft" : ""}`} />{statusLabel(state)}{online === false ? " · OpenAI bağlantısı kontrol edilmeli" : ""}</span></div>
             <div className="mt-2 min-w-36"><ExactRuthieWaveform active={["listening", "thinking", "speaking", "executing"].includes(state)} tone={tone} /></div>
           </div>
 
@@ -320,7 +320,7 @@ export function ExactRuthie() {
           <div className="border-t border-border-subtle p-3">
             <div className="flex items-end gap-2">
               <button type="button" onClick={toggleListening} className={`flex items-center justify-center h-11 w-11 rounded-full shrink-0 transition-all ${listening ? "bg-info text-white animate-pulse-soft" : "bg-surface-secondary text-muted hover:text-main"}`} aria-label={listening ? "Dinlemeyi durdur" : "Sesli yazmayı başlat"}>{listening ? <Square className="h-4 w-4" /> : <Mic className="h-5 w-5" />}</button>
-              <div className="flex-1 min-w-0"><textarea value={input} onChange={(event) => setInput(event.target.value)} onKeyDown={onKeyDown} rows={mode === "voice" ? 2 : 3} placeholder={mode === "voice" ? "Mikrofona dokun veya mesaj yaz…" : "Ruthie’ye bir şey sor…"} className="form-input min-h-11 max-h-32" /></div>
+              <div className="flex-1 min-w-0"><textarea value={input} onChange={(event) => setInput(event.target.value)} onKeyDown={onKeyDown} rows={mode === "voice" ? 2 : 3} placeholder={mode === "voice" ? "Mikrofona dokun veya mesaj yaz…" : "ROSTA Insight’a bir şey sor…"} className="form-input min-h-11 max-h-32" /></div>
               <input ref={fileRef} type="file" multiple accept="image/*,.pdf,.txt,.csv,.json" hidden onChange={(event) => void attachFiles(event)} />
               <ExactIconButton icon={Paperclip} label="Dosya ekle" variant="secondary" onClick={() => fileRef.current?.click()} />
               <ExactIconButton icon={Camera} label="Kamera" variant="secondary" onClick={() => void openCamera()} />
@@ -348,6 +348,6 @@ export function ExactRuthie() {
       </div>
     </div>
 
-    {cameraOpen ? <div className="fixed inset-0 z-modal bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"><div className="w-full max-w-2xl bg-surface-primary radius-card shadow-overlay overflow-hidden animate-fade-in"><header className="flex items-center justify-between px-4 py-3 border-b border-border-subtle"><div><p className="text-sm font-semibold text-main">Ruthie Kamera</p><p className="text-[10px] text-muted">Görüntüyü mesajına eklemek için fotoğraf çek.</p></div><ExactIconButton icon={X} label="Kamerayı kapat" variant="ghost" onClick={closeCamera} /></header><div className="bg-black aspect-video"><video ref={videoRef} muted playsInline className="h-full w-full object-contain" /></div><footer className="flex items-center justify-center gap-3 p-4"><ExactButton variant="secondary" onClick={closeCamera}><MicOff className="h-4 w-4" /> Vazgeç</ExactButton><ExactButton onClick={capture}><Camera className="h-4 w-4" /> Fotoğraf çek</ExactButton></footer></div></div> : null}
+    {cameraOpen ? <div className="fixed inset-0 z-modal bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"><div className="w-full max-w-2xl bg-surface-primary radius-card shadow-overlay overflow-hidden animate-fade-in"><header className="flex items-center justify-between px-4 py-3 border-b border-border-subtle"><div><p className="text-sm font-semibold text-main">ROSTA Insight Kamera</p><p className="text-[10px] text-muted">Görüntüyü mesajına eklemek için fotoğraf çek.</p></div><ExactIconButton icon={X} label="Kamerayı kapat" variant="ghost" onClick={closeCamera} /></header><div className="bg-black aspect-video"><video ref={videoRef} muted playsInline className="h-full w-full object-contain" /></div><footer className="flex items-center justify-center gap-3 p-4"><ExactButton variant="secondary" onClick={closeCamera}><MicOff className="h-4 w-4" /> Vazgeç</ExactButton><ExactButton onClick={capture}><Camera className="h-4 w-4" /> Fotoğraf çek</ExactButton></footer></div></div> : null}
   </div>;
 }
