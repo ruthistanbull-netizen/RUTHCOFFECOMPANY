@@ -94,9 +94,9 @@ export async function GET(request:Request){
     customers:(result.data||[]).map((row:any)=>({
       id:row.profile_id||row.id,
       auth_user_id:null,
-      is_legacy_member:row.membership_source==="ikas",
+      is_legacy_member:["legacy","ikas"].includes(String(row.membership_source||"").toLowerCase()),
       is_member:Boolean(row.is_member),
-      membership_source:row.membership_source||null,
+      membership_source:row.membership_source==="ikas"?"legacy":row.membership_source||null,
       full_name:row.full_name||null,
       email:row.email||null,
       phone:row.phone||null,
