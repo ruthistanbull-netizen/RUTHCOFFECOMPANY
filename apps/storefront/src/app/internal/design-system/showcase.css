@@ -3,8 +3,8 @@
   padding: 48px 16px 88px;
   background:
     radial-gradient(circle at top right, rgba(184, 151, 106, 0.14), transparent 34%),
-    linear-gradient(180deg, #fbf8f3 0%, #f5efe6 100%);
-  color: #171513;
+    linear-gradient(180deg, #F4F0E8 0%, #F4F0E8 100%);
+  color: #111111;
   font-size: 15px;
   line-height: 1.65;
 }
@@ -27,7 +27,7 @@
   line-height: 1.4;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #9a7b52;
+  color: #B9563D;
 }
 
 .ds-hero h1 {
@@ -44,7 +44,7 @@
   margin: 20px 0 0;
   font-size: 15px;
   line-height: 1.65;
-  color: #655e57;
+  color: #6F725B;
 }
 
 .ds-section {
@@ -65,7 +65,7 @@
   padding-top: 2px;
   font-family: Georgia, "Times New Roman", serif;
   font-size: 14px;
-  color: #b8976a;
+  color: #B9563D;
 }
 
 .ds-section__heading h2 {
@@ -80,7 +80,7 @@
 .ds-section__heading p {
   margin: 7px 0 0;
   max-width: 680px;
-  color: #756d65;
+  color: #6F725B;
   font-size: 14px;
   line-height: 1.6;
 }
@@ -125,7 +125,7 @@
 }
 
 .ds-summary span {
-  color: #756d65;
+  color: #6F725B;
   font-size: 14px;
 }
 
