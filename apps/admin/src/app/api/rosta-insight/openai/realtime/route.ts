@@ -22,7 +22,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       ok: false,
       error: {
-        code: usage.limit === "daily" ? "ROSTA INSIGHT_DAILY_USAGE_LIMIT" : "ROSTA INSIGHT_RATE_LIMIT",
+        code: usage.limit === "daily" ? "ROSTA_INSIGHT_DAILY_USAGE_LIMIT" : "ROSTA_INSIGHT_RATE_LIMIT",
         message: usage.limit === "daily"
           ? "ROSTA Insight için günlük sesli bağlantı sınırına ulaşıldı."
           : "Çok sık sesli bağlantı başlatıldı. Kısa süre sonra yeniden dene.",
@@ -40,7 +40,7 @@ export async function POST(request: Request) {
     const contentType = request.headers.get("content-type") || "";
     if (!contentType.toLowerCase().includes("application/sdp")) {
       throw new RuthieRuntimeError({
-        code: "ROSTA INSIGHT_REALTIME_CONTENT_TYPE_REQUIRED",
+        code: "ROSTA_INSIGHT_REALTIME_CONTENT_TYPE_REQUIRED",
         message: "Realtime bağlantısı application/sdp içeriğiyle başlatılmalıdır.",
         status: 415,
       });
@@ -104,7 +104,7 @@ function runtimeErrorResponse(error: unknown, correlationId: string) {
   return NextResponse.json({
     ok: false,
     error: {
-      code: "ROSTA INSIGHT_REALTIME_UNEXPECTED_ERROR",
+      code: "ROSTA_INSIGHT_REALTIME_UNEXPECTED_ERROR",
       message: error instanceof Error ? error.message : "ROSTA Insight sesli bağlantısı başlatılamadı.",
       retryable: false,
       correlationId,
