@@ -3,7 +3,7 @@
 export function AdminMobileUiPolish() {
   return (
     <style jsx global>{`
-      header [aria-label="Ruthie AI"] {
+      header [aria-label="ROSTA Insight"] {
         display: none !important;
       }
 
