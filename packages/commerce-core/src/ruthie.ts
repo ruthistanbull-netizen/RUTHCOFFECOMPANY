@@ -53,8 +53,8 @@ export const RUTHIE_DEFAULT_TOOLS: readonly RuthieToolDefinition[] = Object.free
   tool("shipping.cancel", "Kargoyu iptal et", "Aktif gönderiyi sağlayıcı ve yerel kayıtlarla birlikte iptal eder.", "shipping", "command", "shipping.write", "critical", "always", false),
   tool("customer.read", "Müşteriyi görüntüle", "Müşteri profili, adresleri, izinleri ve sipariş özetini getirir.", "customer", "query", "customers.read", "none", "never", true),
   tool("customer.update", "Müşteriyi düzenle", "Müşteri profilindeki izin verilen alanları günceller.", "customer", "command", "customers.write", "high", "risk_based", true),
-  tool("loyalty.read", "Ruthie Points görüntüle", "Müşterinin puan bakiyesi ve hareketlerini getirir.", "loyalty", "query", "loyalty.read", "none", "never", true),
-  tool("loyalty.adjust", "Ruthie Points düzenle", "Gerekçeli puan ekleme veya çıkarma hareketi oluşturur.", "loyalty", "command", "loyalty.adjust", "high", "always", true),
+  tool("loyalty.read", "ROSTA Points görüntüle", "Müşterinin puan bakiyesi ve hareketlerini getirir.", "loyalty", "query", "loyalty.read", "none", "never", true),
+  tool("loyalty.adjust", "ROSTA Points düzenle", "Gerekçeli puan ekleme veya çıkarma hareketi oluşturur.", "loyalty", "command", "loyalty.adjust", "high", "always", true),
   tool("return.read", "İade ve değişimi görüntüle", "İade/değişim vakasını, ürünleri ve durum geçmişini getirir.", "return", "query", "returns.read", "none", "never", true),
   tool("return.approve", "İade veya değişimi onayla", "İade/değişim sürecini onaylar ve bağlı operasyonları başlatır.", "return", "command", "returns.approve", "critical", "always", true),
   tool("notification.whatsapp.draft", "WhatsApp yanıtı hazırla", "Müşteri ve sipariş bağlamına göre gönderilmemiş WhatsApp taslağı oluşturur.", "notification", "command", "messages.draft", "low", "risk_based", true),
@@ -69,8 +69,7 @@ export const RUTHIE_CONNECTOR_CATALOG: readonly RuthieConnectorDefinition[] = Ob
   connector("openai", "OpenAI", "ai", ["chat", "realtime_voice", "vision", "files", "tool_calling"], "api_key", true),
   connector("whatsapp-business", "WhatsApp Business", "messaging", ["send_message", "templates", "webhooks", "delivery_status"], "oauth2", true),
   connector("github", "GitHub", "development", ["repositories", "issues", "pull_requests", "actions"], "platform_connection", false),
-  connector("vercel", "Vercel", "infrastructure", ["projects", "deployments", "domains", "logs"], "oauth2", false),
-  connector("render", "Render", "infrastructure", ["services", "deployments", "logs", "metrics"], "api_key", false),
+  connector("zeabur", "Zeabur", "infrastructure", ["services", "deployments", "domains", "logs"], "api_key", false),
   connector("supabase", "Supabase", "commerce", ["database", "auth", "storage", "edge_functions"], "platform_connection", false),
   connector("canva", "Canva", "design", ["designs", "templates", "exports"], "oauth2", false),
   connector("figma", "Figma", "design", ["files", "components", "comments", "design_context"], "oauth2", false),
@@ -107,7 +106,7 @@ export function createRuthieToolRegistry(
   for (const definition of definitions) {
     validateTool(definition);
     if (registry.has(definition.id)) {
-      throw new CommerceInvariantError("RUTHIE_DUPLICATE_TOOL", `Ruthie tool ${definition.id} is defined more than once.`);
+      throw new CommerceInvariantError("RUTHIE_DUPLICATE_TOOL", `ROSTA Insight tool ${definition.id} is defined more than once.`);
     }
     registry.set(definition.id, Object.freeze({ ...definition }));
   }
