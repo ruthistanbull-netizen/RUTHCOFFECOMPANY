@@ -1,9 +1,0 @@
-PAYTR DIRECT API - TEK ODEME SISTEMI
-
-- Odeme akisi yalnizca PayTR Direct API kullanir.
-- Kart formu Ruth Istanbul sitesinde gorunur ve kart bilgilerini dogrudan PayTR odeme adresine POST eder.
-- Tam kart numarasi, son kullanma tarihi ve CVV site API route'larina veya Supabase'e gonderilmez.
-- Sunucu yalnizca siparis alanlarini imzalar; 3D Secure zorunludur.
-- BIN ve taksit uygunlugu PayTR servislerinden canli alinir. Banka kartinda veya taksite uygun olmayan kartta taksit alani gosterilmez.
-- Kesin odeme sonucu PayTR callback ile dogrulanir ve tekrar bildirimler idempotent islenir.
-- Panelden olusturulan odeme linki musteri ve adres bilgileri hazir halde dogrudan kart ekranini acar.
