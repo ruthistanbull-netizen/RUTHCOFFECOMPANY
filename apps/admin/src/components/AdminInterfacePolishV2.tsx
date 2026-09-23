@@ -22,7 +22,8 @@ function syncProductEditorTweaks(scope: ParentNode = document) {
         return;
       }
     });
-  }
+  });
+}
 
 export function AdminInterfacePolishV2() {
   const pathname = usePathname();
