@@ -159,10 +159,10 @@ export function AccountActivationClient() {
   return (
     <div className="min-h-screen bg-ivory px-4 pb-24 pt-28 md:px-8 md:pt-32">
       <div className="mx-auto max-w-md rounded-2xl border border-gold/15 bg-cream p-6 shadow-sm md:p-8">
-        <p className="mb-3 text-xs uppercase tracking-wide-luxe text-gold-dark">Ruth Istanbul</p>
+        <p className="mb-3 text-xs uppercase tracking-wide-luxe text-gold-dark">ROSTA Coffee</p>
         <h1 className="font-heading text-4xl">Hesabını Aktifleştir</h1>
         <p className="mt-3 text-sm leading-7 text-muted-ruth">
-          Eski Ruth Istanbul hesabın yeni sitemize taşındı. Yeni şifreni belirlediğinde geçmiş siparişlerin ve Ruthie Points bakiyen korunur.
+          ROSTA hesabını etkinleştirmek için yeni şifreni belirle. Hesabına bağlı sipariş ve ROSTA Points bilgilerin erişilebilir kalır.
         </p>
 
         {checking ? (
