@@ -223,7 +223,7 @@
   color: currentColor;
 }
 
-/* The standalone R mark is intentionally removed; Ruth Commerce remains the brand. */
+/* The standalone R mark is intentionally removed; ROSTA Coffee remains the brand. */
 a:has(img[src="/brand/ruth-r-mark.webp"]) > div:has(img[src="/brand/ruth-r-mark.webp"]) {
   display: none !important;
 }
