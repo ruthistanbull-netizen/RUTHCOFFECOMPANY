@@ -39,17 +39,17 @@
 }
 
 /* State rim never changes layout or canvas position. Every visual phase stays
-   inside the #C9A23A gold family; only brightness/saturation and scale move. */
+   inside the #B9563D gold family; only brightness/saturation and scale move. */
 .root::after {
   content: "";
   position: absolute;
   inset: 8.5%;
   z-index: 3;
   border-radius: 50%;
-  border: 1px solid rgba(230, 210, 139, 0);
+  border: 1px solid rgba(244, 240, 232, 0);
   box-shadow:
-    inset 0 0 0 rgba(201, 162, 58, 0),
-    0 0 0 rgba(226, 199, 107, 0);
+    inset 0 0 0 rgba(185, 86, 61, 0),
+    0 0 0 rgba(244, 240, 232, 0);
   opacity: 0;
   transform: scale(.91);
   pointer-events: none;
@@ -69,8 +69,8 @@
   transform: scale(1);
   border-color: rgba(246, 235, 200, .82);
   box-shadow:
-    inset 0 0 20px rgba(201, 162, 58, .12),
-    0 0 9px rgba(226, 199, 107, .08);
+    inset 0 0 20px rgba(185, 86, 61, .12),
+    0 0 9px rgba(244, 240, 232, .08);
   animation: ruthieListeningRim 1.42s .42s ease-in-out infinite;
 }
 
@@ -100,14 +100,14 @@
   0%, 100% {
     opacity: .68;
     box-shadow:
-      inset 0 0 15px rgba(201, 162, 58, .08),
-      0 0 6px rgba(226, 199, 107, .05);
+      inset 0 0 15px rgba(185, 86, 61, .08),
+      0 0 6px rgba(244, 240, 232, .05);
   }
   50% {
     opacity: 1;
     box-shadow:
-      inset 0 0 23px rgba(201, 162, 58, .15),
-      0 0 11px rgba(226, 199, 107, .10);
+      inset 0 0 23px rgba(185, 86, 61, .15),
+      0 0 11px rgba(244, 240, 232, .10);
   }
 }
 
