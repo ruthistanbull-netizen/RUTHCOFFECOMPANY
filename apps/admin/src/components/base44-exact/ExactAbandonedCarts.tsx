@@ -433,7 +433,7 @@ export function ExactAbandonedCarts() {
                       <p className="ruth-type-metric mt-1 text-main">{money(customerProfile?.total_spent || 0)}</p>
                     </div>
                     <div className="rounded-[var(--radius-small)] bg-surface-primary p-2.5">
-                      <p className="ruth-type-label uppercase text-subtle">Ruthie Points</p>
+                      <p className="ruth-type-label uppercase text-subtle">ROSTA Points</p>
                       <p className="ruth-type-metric mt-1 flex items-center gap-1 text-accent"><Star className="h-3 w-3" /> {Math.max(0, Number(customerProfile?.reward_points_balance || 0)).toLocaleString("tr-TR")}</p>
                     </div>
                     <div className="rounded-[var(--radius-small)] bg-surface-primary p-2.5">
