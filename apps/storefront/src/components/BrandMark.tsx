@@ -23,7 +23,7 @@ export default function BrandMark({
   className = "",
   size = "md",
   centered = false,
-  text = "RUTH ISTANBUL",
+  text = "ROSTA COFFEE",
 }: BrandMarkProps) {
   return (
     <div className={`${centered ? "text-center" : ""} ${className}`}>
