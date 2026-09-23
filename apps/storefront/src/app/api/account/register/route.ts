@@ -27,14 +27,13 @@ function validBirth(value: string) {
 }
 
 function clientIp(request: Request) {
-  return request.headers.get("x-vercel-forwarded-for")?.split(",")[0]?.trim()
-    || request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
+  return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
     || request.headers.get("x-real-ip")
     || "unknown";
 }
 
 function rateHash(request: Request) {
-  const salt = process.env.ACCOUNT_RATE_LIMIT_SALT || "ruth-account-register-v1";
+  const salt = process.env.ACCOUNT_RATE_LIMIT_SALT || "rosta-account-register-v1";
   return crypto.createHash("sha256").update(`${salt}|${clientIp(request)}`).digest("hex");
 }
 
