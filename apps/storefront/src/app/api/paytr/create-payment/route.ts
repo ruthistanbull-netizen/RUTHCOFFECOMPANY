@@ -28,7 +28,7 @@ function envChoice(name: string, fallback: string, allowed: string[]) {
 }
 
 function getClientIp(request: Request) {
-  const forwarded = request.headers.get("x-vercel-forwarded-for") || request.headers.get("x-forwarded-for");
+  const forwarded = request.headers.get("x-forwarded-for");
   const candidate = forwarded?.split(",")[0]?.trim() || request.headers.get("x-real-ip")?.trim();
   return (candidate || "127.0.0.1").replace(/^::ffff:/i, "").slice(0, 39);
 }
