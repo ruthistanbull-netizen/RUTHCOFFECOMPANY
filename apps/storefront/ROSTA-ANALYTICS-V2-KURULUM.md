@@ -22,4 +22,4 @@ Kullanılan entegrasyona göre ilgili servislerde şu değişkenler tanımlanabi
 
 ## Veri kapsamı
 
-Analytics; mevcut ROSTA ziyaretleri ve olaylarından ilk/son temas, oturum, sayfa/ürün görüntüleme, sepete ekleme, checkout ve sipariş yolculuğu gibi metrikleri üretir. Eski Ruth Istanbul sipariş veya müşteri geçmişi ROSTA analytics verisine aktarılmaz.
+Analytics; mevcut ROSTA ziyaretleri ve olaylarından ilk/son temas, oturum, sayfa/ürün görüntüleme, sepete ekleme, checkout ve sipariş yolculuğu gibi metrikleri üretir. Eski sistemdeki sipariş veya müşteri geçmişi ROSTA analytics verisine aktarılmaz.
