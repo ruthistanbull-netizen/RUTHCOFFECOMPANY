@@ -1,0 +1,19 @@
+/* Ruthie liquid-gold renderer guardrails.
+   Layout and sizing now live with the voice component so the selected visual
+   remains consistent across desktop, mobile and the compact chat mark. */
+
+[data-ruthie-orb-shell] > canvas[data-ruthie-liquid-orb] {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+  visibility: visible;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-ruthie-orb-shell] {
+    transition: none;
+  }
+}

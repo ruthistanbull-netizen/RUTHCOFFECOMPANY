@@ -1,0 +1,39 @@
+/* Keeps the live voice-profile status away from Ruthie's central conversation area. */
+[data-ruthie-voice-analysis] {
+  top: calc(72px + env(safe-area-inset-top)) !important;
+  right: max(18px, env(safe-area-inset-right)) !important;
+  left: auto !important;
+  transform: none !important;
+  width: auto !important;
+  max-width: min(340px, calc(100vw - 36px)) !important;
+  justify-content: flex-end !important;
+}
+
+[data-ruthie-voice-analysis] > button {
+  max-width: 100% !important;
+  min-height: 38px !important;
+  padding: 7px 12px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .28) !important;
+}
+
+@media (max-width: 720px) {
+  [data-ruthie-voice-analysis] {
+    top: calc(58px + env(safe-area-inset-top)) !important;
+    right: max(10px, env(safe-area-inset-right)) !important;
+    max-width: min(76vw, 270px) !important;
+  }
+
+  [data-ruthie-voice-analysis] > button {
+    min-height: 34px !important;
+    padding: 5px 9px !important;
+    gap: 7px !important;
+  }
+
+  [data-ruthie-voice-analysis] strong {
+    font-size: 10px !important;
+  }
+
+  [data-ruthie-voice-analysis] small {
+    display: none !important;
+  }
+}
