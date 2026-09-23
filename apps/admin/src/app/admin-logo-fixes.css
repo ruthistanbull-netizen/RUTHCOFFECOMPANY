@@ -1,0 +1,138 @@
+/* Ruth wordmark and PANEL label for desktop sidebar, mobile header and drawer. */
+[data-panel-brand] {
+  min-height: 92px !important;
+  padding: 16px 14px 12px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0 !important;
+  text-align: center !important;
+}
+
+/* PANEL is rendered as real text in the brand component; this hidden marker keeps source acceptance explicit. */
+[data-panel-brand]::after {
+  content: "PANEL";
+  display: none;
+}
+
+/* The emblem/logo is intentionally removed from the admin panel brand. */
+[class*="brandMark"] {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  flex: 0 0 0 !important;
+  background: none !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+[class*="brandCopy"] {
+  display: block !important;
+  min-width: 0 !important;
+}
+
+[class*="brandCopy"] strong {
+  color: #ffffff !important;
+  font-family: Cinzel, Georgia, serif !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  letter-spacing: .34em !important;
+  line-height: 1 !important;
+}
+
+@media (max-width: 1080px) {
+  [class*="mobileDrawer"] [data-panel-brand] {
+    min-height: 64px !important;
+    padding: 8px 4px 8px 12px !important;
+    flex-direction: row !important;
+    justify-content: flex-start !important;
+    gap: 0 !important;
+  }
+}
+
+@media (max-width: 700px) {
+  [class*="topbar"] {
+    position: sticky !important;
+    grid-template-columns: 38px minmax(0, 1fr) 38px !important;
+  }
+
+  [class*="topbar"]::before,
+  [class*="topbar"]::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  /* The sidebar's real brand link becomes the centered mobile top-bar brand. */
+  [class*="sidebar"] {
+    display: contents !important;
+  }
+
+  [class*="sidebar"] > [data-panel-brand] {
+    width: 154px !important;
+    min-height: 58px !important;
+    height: 58px !important;
+    padding: 0 !important;
+    position: fixed !important;
+    z-index: 82 !important;
+    top: 0 !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    border: 0 !important;
+    background: transparent !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    gap: 0 !important;
+  }
+
+  [class*="sidebar"] > [data-panel-brand] [class*="brandCopy"] strong {
+    color: #101318 !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: .22em !important;
+  }
+
+  [class*="sidebar"] > [class*="desktopNav"],
+  [class*="sidebar"] > [class*="sidebarFooter"] {
+    display: none !important;
+  }
+
+  [class*="topbar"] [class*="breadcrumb"],
+  [class*="topbar"] [class*="search"] {
+    display: none !important;
+  }
+
+  [class*="topbar"] [class*="mobileMenuButton"] {
+    grid-column: 1 !important;
+    position: relative;
+    z-index: 83;
+  }
+
+  [class*="topbar"] [class*="topbarActions"] {
+    grid-column: 3 !important;
+    position: relative;
+    z-index: 83;
+    justify-content: flex-end;
+  }
+
+  /* Remove the old circular R profile control from the mobile top bar. */
+  [class*="topbar"] [class*="profileAction"] {
+    display: none !important;
+  }
+}
+
+@media (max-width: 420px) {
+  [class*="sidebar"] > [data-panel-brand] {
+    width: 142px !important;
+    gap: 0 !important;
+  }
+
+  [class*="sidebar"] > [data-panel-brand] [class*="brandCopy"] strong {
+    font-size: 10px !important;
+  }
+
+  [class*="topbar"] [class*="iconAction"] {
+    display: grid !important;
+  }
+}

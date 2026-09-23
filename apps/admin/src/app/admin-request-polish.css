@@ -1,0 +1,535 @@
+/* Request-specific admin polish: selectable care presets, bulk variants,
+   anchored order previews, mobile action layout and panel-toned lists. */
+
+html[data-ruth-theme="admin"] :where(
+  .cr-field select,
+  .cr-select-inline select,
+  .cr-toolbar select,
+  .cr-product-toolbar select,
+  .ruth-drawer select,
+  .cr-drawer select
+) {
+  min-height: 42px;
+  padding: 9px 38px 9px 12px;
+  border: 1px solid var(--line, var(--ruth-color-border-subtle));
+  border-radius: 12px;
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: var(--surface-2, var(--ruth-color-surface-muted));
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--accent-strong, #9d7745) 50%),
+    linear-gradient(135deg, var(--accent-strong, #9d7745) 50%, transparent 50%);
+  background-position:
+    calc(100% - 17px) 50%,
+    calc(100% - 12px) 50%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  color: var(--ink, var(--ruth-color-text-primary));
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .72);
+  transition: border-color .16s ease, box-shadow .16s ease, background-color .16s ease;
+}
+
+html[data-ruth-theme="admin"] :where(
+  .cr-field select,
+  .cr-select-inline select,
+  .cr-toolbar select,
+  .cr-product-toolbar select,
+  .ruth-drawer select,
+  .cr-drawer select
+):focus-visible {
+  outline: 0;
+  border-color: var(--accent, #b99568);
+  background-color: #fff;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent, #b99568) 18%, transparent);
+}
+
+html[data-ruth-theme="admin"] :where(.cr-card, .ruth-drawer, .cr-drawer) details {
+  overflow: clip;
+  border: 1px solid var(--line, var(--ruth-color-border-subtle));
+  border-radius: 14px;
+  background: var(--surface-2, var(--ruth-color-surface-muted));
+}
+
+html[data-ruth-theme="admin"] :where(.cr-card, .ruth-drawer, .cr-drawer) details > summary {
+  min-height: 46px;
+  padding: 12px 42px 12px 14px;
+  list-style: none;
+  cursor: pointer;
+  color: var(--ink, var(--ruth-color-text-primary));
+  font-size: 11px;
+  font-weight: 780;
+  position: relative;
+}
+
+html[data-ruth-theme="admin"] :where(.cr-card, .ruth-drawer, .cr-drawer) details > summary::-webkit-details-marker {
+  display: none;
+}
+
+html[data-ruth-theme="admin"] :where(.cr-card, .ruth-drawer, .cr-drawer) details > summary::after {
+  content: "⌄";
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  translate: 0 -54%;
+  color: var(--accent-strong, #9d7745);
+  font-size: 18px;
+  transition: rotate .16s ease;
+}
+
+html[data-ruth-theme="admin"] :where(.cr-card, .ruth-drawer, .cr-drawer) details[open] > summary::after {
+  rotate: 180deg;
+}
+
+html[data-ruth-theme="admin"] :where(.cr-card, .ruth-drawer, .cr-drawer) details > :not(summary) {
+  margin: 0;
+  padding: 0 14px 14px;
+}
+
+/* Contact values are deliberately compact; the physical address receives
+   stronger visual weight so long customer records remain scannable. */
+.cr-contact-value {
+  min-height: 50px !important;
+  padding: 8px 11px !important;
+  font-size: 12px !important;
+  font-weight: 720 !important;
+}
+
+.cr-contact-copy-button {
+  min-height: 50px !important;
+}
+
+.cr-address-label {
+  color: var(--muted, var(--ruth-color-text-muted)) !important;
+  font-size: 9px !important;
+  font-weight: 820 !important;
+  letter-spacing: .09em !important;
+  text-transform: uppercase !important;
+}
+
+.cr-address-value,
+.cr-address-block {
+  color: var(--ink, var(--ruth-color-text-primary)) !important;
+  font-size: 15px !important;
+  font-weight: 720 !important;
+  line-height: 1.55 !important;
+}
+
+/* Care advice becomes a preset list while keeping a custom textarea available. */
+.cr-care-advice-picker {
+  gap: 8px !important;
+}
+
+.cr-care-preset-select {
+  width: 100%;
+}
+
+.cr-care-advice-picker textarea[hidden] {
+  display: none !important;
+}
+
+/* Variant bulk selection and update bar. */
+.cr-variant-bulk-toolbar {
+  display: grid;
+  grid-template-columns: minmax(150px, 1.15fr) repeat(3, minmax(110px, .78fr)) auto;
+  align-items: end;
+  gap: 9px;
+  margin: 0 0 11px;
+  padding: 11px;
+  border: 1px solid var(--line, var(--ruth-color-border-subtle));
+  border-radius: 15px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent-soft, #efe3d2) 56%, #fff), #fff 72%);
+  box-shadow: var(--shadow-sm, 0 8px 22px rgba(41, 32, 24, .06));
+  transition: border-color .16s ease, box-shadow .16s ease, transform .16s ease;
+}
+
+.cr-variant-bulk-toolbar.is-applied {
+  border-color: var(--accent, #b99568);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent, #b99568) 17%, transparent);
+  transform: translateY(-1px);
+}
+
+.cr-variant-bulk-toolbar__select {
+  display: grid;
+  align-content: center;
+  gap: 4px;
+  min-height: 43px;
+}
+
+.cr-variant-bulk-toolbar__select > label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.cr-variant-bulk-toolbar__select input,
+.cr-variant-bulk-select input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.cr-variant-bulk-toolbar__select label > span,
+.cr-variant-bulk-select > span {
+  display: grid;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  place-items: center;
+  border: 1px solid var(--line-strong, #cbbda9);
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9);
+}
+
+.cr-variant-bulk-toolbar__select input:checked + span,
+.cr-variant-bulk-select input:checked + span {
+  border-color: var(--accent-strong, #9d7745);
+  background: var(--accent-strong, #9d7745);
+}
+
+.cr-variant-bulk-toolbar__select input:checked + span::after,
+.cr-variant-bulk-select input:checked + span::after {
+  content: "✓";
+  color: #fff;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.cr-variant-bulk-toolbar__select input:indeterminate + span {
+  border-color: var(--accent-strong, #9d7745);
+  background: var(--accent-soft, #efe3d2);
+}
+
+.cr-variant-bulk-toolbar__select input:indeterminate + span::after {
+  content: "−";
+  color: var(--accent-strong, #9d7745);
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.cr-variant-bulk-toolbar__select strong {
+  color: var(--ink, var(--ruth-color-text-primary));
+  font-size: 11px;
+}
+
+.cr-variant-bulk-toolbar__select small {
+  color: var(--muted, var(--ruth-color-text-muted));
+  font-size: 9px;
+  font-weight: 720;
+}
+
+.cr-variant-bulk-field {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.cr-variant-bulk-field > span {
+  color: var(--muted, var(--ruth-color-text-muted));
+  font-size: 8px;
+  font-weight: 820;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.cr-variant-bulk-field input,
+.cr-variant-bulk-field select {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 1px solid var(--line, var(--ruth-color-border-subtle));
+  border-radius: 11px;
+  background: #fff;
+  color: var(--ink, var(--ruth-color-text-primary));
+  font: inherit;
+  font-size: 11px;
+}
+
+.cr-variant-bulk-toolbar__actions {
+  display: flex;
+  gap: 7px;
+}
+
+.cr-variant-bulk-toolbar__actions .cr-button {
+  min-height: 40px;
+  white-space: nowrap;
+}
+
+.cr-variant-list > article {
+  position: relative;
+  transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
+}
+
+.cr-variant-list > article.is-bulk-selected {
+  border-color: var(--accent, #b99568) !important;
+  background: color-mix(in srgb, var(--accent-soft, #efe3d2) 26%, #fff) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent, #b99568) 14%, transparent);
+}
+
+.cr-variant-bulk-select {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 7;
+  display: inline-flex;
+  cursor: pointer;
+}
+
+.cr-variant-bulk-select > span {
+  width: 22px;
+  height: 22px;
+  flex-basis: 22px;
+  box-shadow: 0 5px 16px rgba(39, 28, 18, .13);
+}
+
+/* Product image follows the pointer while sorting instead of only jumping
+   between grid slots. */
+[data-ruth-dragging="true"] {
+  z-index: 20 !important;
+  opacity: .94 !important;
+  pointer-events: auto;
+  filter: drop-shadow(0 22px 26px rgba(39, 28, 18, .22));
+  will-change: transform;
+}
+
+/* Anchored order image preview: desktop ≈4–5× thumbnail, mobile ≈3–4×. */
+.cr-order-inline-preview {
+  position: fixed;
+  z-index: calc(var(--ruth-layer-modal, 5000) + 650);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(132px, .62fr);
+  overflow: hidden;
+  max-height: calc(100dvh - 20px);
+  border: 1px solid color-mix(in srgb, var(--accent, #b99568) 42%, transparent);
+  border-radius: 17px;
+  background: #fff;
+  box-shadow: 0 28px 72px rgba(25, 21, 17, .28);
+  animation: cr-order-preview-in .16s ease both;
+}
+
+@keyframes cr-order-preview-in {
+  from { opacity: 0; transform: translateY(5px) scale(.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.cr-order-inline-preview > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 260px;
+  max-height: min(540px, 68dvh);
+  object-fit: contain;
+  background: radial-gradient(circle at 50% 42%, #fff, #f2ede5 76%, #e9dfd1);
+}
+
+.cr-order-inline-preview__copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0;
+  padding: 17px;
+  border-left: 1px solid var(--line, #e7dfd4);
+}
+
+.cr-order-inline-preview__copy > strong {
+  margin-bottom: 10px;
+  color: var(--ink, #1c1915);
+  font-size: 14px;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.cr-order-inline-preview__copy > span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 0;
+  border-top: 1px solid var(--line, #e7dfd4);
+  color: var(--ink, #1c1915);
+  font-size: 10px;
+  font-weight: 710;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.cr-order-inline-preview__copy > span b {
+  color: var(--muted, #766b60);
+  font-size: 8px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.cr-order-inline-preview__copy > span em {
+  color: var(--ink, #1c1915);
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 820;
+}
+
+.cr-order-inline-preview__close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border: 1px solid rgba(26, 22, 18, .12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .94);
+  color: var(--ink, #1c1915);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(25, 21, 17, .15);
+}
+
+/* Mobile action groups remain readable and aligned instead of overflowing. */
+@media (max-width: 760px) {
+  .cr-contact-value {
+    min-height: 46px !important;
+    padding: 7px 9px !important;
+    font-size: 11px !important;
+  }
+
+  .cr-contact-copy-button {
+    min-height: 46px !important;
+  }
+
+  .cr-address-value,
+  .cr-address-block {
+    font-size: 14px !important;
+  }
+
+  .cr-variant-bulk-toolbar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+  }
+
+  .cr-variant-bulk-toolbar__select,
+  .cr-variant-bulk-toolbar__actions {
+    grid-column: 1 / -1;
+  }
+
+  .cr-variant-bulk-toolbar__actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cr-variant-bulk-toolbar__actions .cr-button {
+    min-width: 0;
+    padding-inline: 8px;
+    white-space: normal;
+    text-align: center;
+  }
+
+  .cr-variant-list > article {
+    padding-top: 38px !important;
+  }
+
+  .cr-order-inline-preview {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(210px, 48dvh) auto;
+  }
+
+  .cr-order-inline-preview > img {
+    min-height: 210px;
+    max-height: 48dvh;
+  }
+
+  .cr-order-inline-preview__copy {
+    max-height: 30dvh;
+    justify-content: flex-start;
+    overflow-y: auto;
+    padding: 13px;
+    border-top: 1px solid var(--line, #e7dfd4);
+    border-left: 0;
+  }
+
+  .cr-order-inline-preview__copy > strong {
+    font-size: 13px;
+  }
+
+  .cr-page-header .cr-actions {
+    display: grid !important;
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px !important;
+  }
+
+  .cr-page-header .cr-actions > * {
+    min-width: 0 !important;
+    width: 100% !important;
+    justify-content: center;
+  }
+
+  .cr-product-editor-footer {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    align-items: stretch !important;
+  }
+
+  .cr-product-editor-footer > div {
+    display: contents !important;
+  }
+
+  .cr-product-editor-footer .cr-button {
+    min-width: 0 !important;
+    width: 100% !important;
+    min-height: 42px !important;
+    padding: 8px !important;
+    justify-content: center !important;
+    white-space: normal !important;
+    text-align: center !important;
+    font-size: 9px !important;
+    line-height: 1.25 !important;
+  }
+
+  html[data-ruth-theme="admin"] .ruth-drawer > .ruth-overlay__footer,
+  .cr-drawer-layer > .cr-drawer > .cr-drawer__footer {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px !important;
+  }
+
+  html[data-ruth-theme="admin"] .ruth-drawer > .ruth-overlay__footer > *,
+  .cr-drawer-layer > .cr-drawer > .cr-drawer__footer > * {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .cr-variant-bulk-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .cr-variant-bulk-toolbar__select,
+  .cr-variant-bulk-toolbar__actions {
+    grid-column: 1;
+  }
+
+  .cr-page-header .cr-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cr-order-inline-preview,
+  .cr-variant-bulk-toolbar,
+  .cr-variant-list > article {
+    animation: none !important;
+    transition: none !important;
+  }
+}

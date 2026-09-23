@@ -1,0 +1,35 @@
+/* User-requested order and payment color system. */
+.cr-status--new {
+  background: #f4ebff !important;
+  color: #6941c6 !important;
+}
+
+.cr-status--ready {
+  background: #eff8ff !important;
+  color: #175cd3 !important;
+}
+
+.cr-status--shipped {
+  background: #ecfdf3 !important;
+  color: #067647 !important;
+}
+
+.cr-status--delivered {
+  background: #fdf2fa !important;
+  color: #c11574 !important;
+}
+
+.cr-payment-pill--info {
+  background: #eff8ff !important;
+  color: #175cd3 !important;
+}
+
+.cr-payment-pill--success {
+  background: #ecfdf3 !important;
+  color: #067647 !important;
+}
+
+.cr-payment-pill--danger {
+  background: #fef3f2 !important;
+  color: #b42318 !important;
+}

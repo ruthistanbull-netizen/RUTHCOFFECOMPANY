@@ -1,0 +1,108 @@
+.cr-route-date-bar {
+  margin: 0 0 16px;
+  padding: 13px 16px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: var(--shadow-sm);
+}
+.cr-route-date-bar > div:first-child { display: grid; gap: 3px; }
+.cr-route-date-bar > div:first-child strong { font-size: 13px; }
+
+.cr-preparation-sheet .cr-variant-picker__options { padding: 16px; }
+.cr-preparation-item {
+  min-height: 86px;
+  padding: 11px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 13px;
+}
+.cr-preparation-item > span,
+.cr-preparation-item .cr-image-button,
+.cr-preparation-item img {
+  width: 64px;
+  height: 64px;
+  border-radius: 11px;
+  object-fit: cover;
+  background: #eef1f5;
+  display: grid;
+  place-items: center;
+}
+.cr-preparation-item > div { min-width: 0; display: grid; gap: 5px; }
+.cr-preparation-item > div strong { font-size: 13px; line-height: 1.35; }
+.cr-preparation-item > div small { color: var(--muted); font-size: 11px; }
+.cr-preparation-item > b { min-width: 72px; padding: 8px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-strong); text-align: center; font-size: 12px; }
+
+.cr-transactional-mails { margin: 18px 0; }
+.cr-transactional-mail-grid {
+  padding: 14px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 11px;
+  background: #f7f8fa;
+}
+.cr-transactional-mail-grid > article {
+  min-width: 0;
+  padding: 17px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+.cr-transactional-mail-grid > article > header { display: flex; align-items: center; justify-content: space-between; gap: 9px; }
+.cr-transactional-mail-grid > article > header > span:first-child { width: 38px; height: 38px; border-radius: 11px; background: #eef3ff; color: var(--accent); display: grid; place-items: center; }
+.cr-transactional-mail-grid > article > header svg { width: 18px; height: 18px; }
+.cr-transactional-mail-grid h3 { margin: 0; font-size: 15px; }
+.cr-transactional-mail-grid p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.55; }
+.cr-transactional-mail-grid dl { margin: 0; display: grid; gap: 7px; }
+.cr-transactional-mail-grid dl div { display: flex; justify-content: space-between; gap: 10px; color: var(--muted); font-size: 10px; }
+.cr-transactional-mail-grid dd { margin: 0; color: var(--ink); font-weight: 750; text-align: right; }
+.cr-transactional-mail-grid footer { margin-top: auto; padding-top: 10px; border-top: 1px solid var(--line); display: flex; align-items: flex-start; gap: 7px; color: var(--muted); font-size: 9px; line-height: 1.45; }
+.cr-transactional-mail-grid footer svg { width: 13px; height: 13px; flex: 0 0 13px; }
+
+.cr-core-package { display: flex; align-items: center; gap: 10px; }
+.cr-core-package > svg { width: 30px; height: 30px; padding: 7px; border-radius: 9px; background: #eef3ff; color: var(--accent); }
+.cr-core-package > span { display: grid; gap: 2px; }
+.cr-core-package strong { font-size: 11px; }
+.cr-core-package small { color: var(--muted); font-size: 9px; }
+.cr-core-health { margin-top: 18px; }
+.cr-core-health-list summary > span:first-child { min-width: 0; display: grid; gap: 3px; }
+.cr-core-health-list summary > span:first-child strong { font-size: 13px; }
+.cr-core-health-list summary > span:first-child small { color: var(--muted); font-size: 10px; }
+.cr-core-health-list summary > svg { width: 16px; height: 16px; color: var(--muted); transition: transform .16s ease; }
+.cr-core-health-list details[open] summary > svg { transform: rotate(180deg); }
+.cr-core-health-list details > div > p { margin: 0 0 10px; }
+
+.cr-payment-row,
+.cr-shipping-row,
+.cr-return-row,
+.cr-customer-row {
+  padding: 15px 17px !important;
+}
+
+@media (max-width: 1180px) {
+  .cr-transactional-mail-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 720px) {
+  .cr-route-date-bar { align-items: stretch; flex-direction: column; padding: 13px; }
+  .cr-route-date-bar .cr-date-range { width: 100%; }
+  .cr-transactional-mail-grid { grid-template-columns: 1fr; padding: 9px; gap: 9px; }
+  .cr-preparation-item { grid-template-columns: 58px minmax(0, 1fr) auto; padding: 9px; gap: 10px; }
+  .cr-preparation-item > span,
+  .cr-preparation-item .cr-image-button,
+  .cr-preparation-item img { width: 58px; height: 58px; }
+  .cr-core-health-list { padding: 9px; }
+  .cr-core-health-list summary { min-height: 68px; padding: 9px 11px; display: grid; grid-template-columns: minmax(0, 1fr) auto 16px; }
+  .cr-core-health-list .cr-status { min-width: 86px; }
+}
