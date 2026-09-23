@@ -17,13 +17,13 @@ ROSTA Coffee Co. için bağımsız storefront + admin commerce monoreposu.
 
 ## Isolation contract
 
-ROSTA runtime, Ruth Istanbul commerce servislerinden bağımsızdır.
+ROSTA runtime, legacy commerce servislerinden bağımsızdır.
 
 - Admin ve storefront yalnızca ROSTA Supabase project ref'ine bağlanabilir.
 - Service-role anahtarı yalnızca server runtime'da kullanılır.
 - Admin storefront revalidation yalnızca ROSTA storefront URL'sine gider.
 - Commerce worker, order confirmation queue ve analytics ROSTA Supabase içinde çalışır.
-- Kopyalanmış Ruth Istanbul statik ürün kataloğu runtime fallback olarak kullanılmaz.
+- Legacy statik ürün kataloğu runtime fallback olarak kullanılmaz.
 - Sosyal hesaplar yalnızca `NEXT_PUBLIC_ROSTA_*` env değişkenleri üzerinden etkinleşir.
 
 ## Zeabur build
