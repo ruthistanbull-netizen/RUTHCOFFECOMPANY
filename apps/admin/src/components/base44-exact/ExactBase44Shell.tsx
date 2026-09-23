@@ -54,7 +54,7 @@ function ExactSidebar({ collapsed }: { collapsed: boolean }) {
         </div>
         {!collapsed ? (
           <div className="min-w-0">
-            <p className="text-sm font-bold text-main leading-tight truncate">Ruth Commerce</p>
+            <p className="text-sm font-bold text-main leading-tight truncate">ROSTA Coffee</p>
             <p className="text-[10px] text-subtle leading-tight">Control Room</p>
           </div>
         ) : null}
