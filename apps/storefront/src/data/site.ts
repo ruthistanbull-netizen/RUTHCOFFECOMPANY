@@ -840,11 +840,10 @@ function bundleItemSlugs(product: Product) {
 function inferBundleItemsFromName(product: Product, products: Product[]) {
   const name = product.name || "";
   const lowerName = name.toLocaleLowerCase("tr-TR");
-  if (!lowerName.includes("set")) return [];
+  if (!/(^|\s)(set|seti|paket|paketi|bundle)(\s|$)/i.test(lowerName)) return [];
 
   const base = name
-    .replace(/\s+ring\s+seti?$/i, "")
-    .replace(/\s+seti?$/i, "")
+    .replace(/\s+(?:seti?|paketi?|bundle)$/i, "")
     .trim();
 
   if (!base || base === name) return [];
@@ -852,24 +851,19 @@ function inferBundleItemsFromName(product: Product, products: Product[]) {
   const lowerBase = base.toLocaleLowerCase("tr-TR");
   return products
     .filter((item) => item.slug !== product.slug)
-    .filter((item) => !item.name.toLocaleLowerCase("tr-TR").includes(" set"))
+    .filter((item) => !/(^|\s)(set|seti|paket|paketi|bundle)(\s|$)/i.test(item.name.toLocaleLowerCase("tr-TR")))
     .filter((item) =>
       item.name.toLocaleLowerCase("tr-TR").startsWith(lowerBase),
     )
     .sort((a, b) => {
-      const order = (value: Product) => {
-        const name = value.name.toLocaleLowerCase("tr-TR");
-        if (name.includes("necklace") || name.includes("kolye")) return 1;
-        if (name.includes("bracelet") || name.includes("bileklik")) return 2;
-        if (
-          name.includes("ring") ||
-          name.includes("yüzük") ||
-          name.includes("yuzuk")
-        )
-          return 3;
-        return 9;
+      const packageWeightGrams = (value: Product) => {
+        const match = value.name.toLocaleLowerCase("tr-TR").match(/(\d+(?:[.,]\d+)?)\s*(kg|gr|g)\b/i);
+        if (!match) return Number.MAX_SAFE_INTEGER;
+        const amount = Number(match[1].replace(",", "."));
+        if (!Number.isFinite(amount)) return Number.MAX_SAFE_INTEGER;
+        return match[2].toLowerCase() === "kg" ? amount * 1000 : amount;
       };
-      return order(a) - order(b) || a.name.localeCompare(b.name, "tr");
+      return packageWeightGrams(a) - packageWeightGrams(b) || a.name.localeCompare(b.name, "tr");
     });
 }
 
