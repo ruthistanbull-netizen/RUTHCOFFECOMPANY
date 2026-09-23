@@ -44,7 +44,7 @@
   > div:first-child {
   min-height: 41px !important;
   padding: 0 13px !important;
-  color: #7d776e !important;
+  color: #6F725B !important;
   font-size: 9.5px !important;
   font-weight: 620 !important;
   letter-spacing: -0.005em;
@@ -59,7 +59,7 @@
   > span {
   border: 1px solid rgba(185, 86, 61, 0.13);
   background: linear-gradient(145deg, rgba(255,255,255,.94), rgba(246,237,207,.9)) !important;
-  color: #b88f2d !important;
+  color: #B9563D !important;
   box-shadow: 0 4px 12px rgba(94, 72, 21, 0.07);
 }
 
@@ -142,7 +142,7 @@
   background:
     radial-gradient(circle at 30% 22%, rgba(255,255,255,.94), transparent 38%),
     linear-gradient(145deg, rgba(255,255,255,.94), rgba(246, 240, 226, .94)) !important;
-  color: #2b2822 !important;
+  color: #2B1B16 !important;
   box-shadow:
     0 5px 14px rgba(65, 52, 27, 0.055),
     inset 0 1px 0 rgba(255,255,255,.94);
@@ -159,8 +159,8 @@
   border-color: rgba(185, 86, 61, 0.17);
   background:
     radial-gradient(circle at 28% 20%, rgba(255,255,255,.92), transparent 38%),
-    linear-gradient(145deg, #fbf5e4, #f1e2b6) !important;
-  color: #b18727 !important;
+    linear-gradient(145deg, #F4F0E8, #F4F0E8) !important;
+  color: #B9563D !important;
 }
 
 [data-ruthie-insight-popup="true"]
@@ -189,7 +189,7 @@
   font-weight: 650 !important;
   line-height: 1.25;
   letter-spacing: -0.018em;
-  color: #25221d !important;
+  color: #2B1B16 !important;
 }
 
 [data-ruthie-insight-popup="true"]
@@ -203,7 +203,7 @@
   margin-top: 3px;
   font-size: 8.25px !important;
   line-height: 1.35;
-  color: #8a847b !important;
+  color: #6F725B !important;
 }
 
 /* Selected / keyboard item */
@@ -298,8 +298,8 @@
   height: 44px !important;
   border: 1px solid rgba(148, 125, 74, 0.10);
   border-radius: 11px !important;
-  background: linear-gradient(145deg, #fffdf7, #f2ead5) !important;
-  color: #a7832c !important;
+  background: linear-gradient(145deg, #F4F0E8, #F4F0E8) !important;
+  color: #B9563D !important;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.95);
 }
 
@@ -311,7 +311,7 @@
   p {
   font-size: 9px !important;
   font-weight: 650 !important;
-  color: #2d2923 !important;
+  color: #2B1B16 !important;
 }
 
 [data-ruthie-insight-popup="true"]
@@ -321,7 +321,7 @@
   > div:nth-child(2)
   span {
   font-size: 7.75px !important;
-  color: #8a8378 !important;
+  color: #6F725B !important;
 }
 
 [data-ruthie-insight-popup="true"]
@@ -352,7 +352,7 @@
     > button:hover {
     border-color: rgba(139, 118, 72, 0.12);
     background: rgba(255,255,255,.88) !important;
-    color: #302b23 !important;
+    color: #2B1B16 !important;
   }
 }
 
@@ -454,7 +454,7 @@
   > div:nth-child(2)
   > button:nth-child(2)
   > span:first-child {
-  color: #d6b357 !important;
+  color: #B9563D !important;
   background: linear-gradient(145deg, rgba(185, 86, 61,.12), rgba(185, 86, 61,.06)) !important;
 }
 
@@ -508,7 +508,7 @@
   > div:first-child {
   border-color: rgba(216, 184, 99, .09);
   background: rgba(255,255,255,.045) !important;
-  color: #d2ad50 !important;
+  color: #B9563D !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
