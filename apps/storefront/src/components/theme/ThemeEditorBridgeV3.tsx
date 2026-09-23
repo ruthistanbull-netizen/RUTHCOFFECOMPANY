@@ -299,7 +299,7 @@ function applyGlobal(settings: ThemeCustomizerSettings) {
   if (whatsapp) {
     whatsapp.style.display = settings.whatsapp.enabled ? "" : "none";
     const phone = String(settings.whatsapp.phone || "").replace(/\D/g, "");
-    if (phone) whatsapp.href = `https://wa.me/${phone}?text=${encodeURIComponent("Merhaba, Ruth Istanbul destek ekibinden yardım almak istiyorum.")}`;
+    if (phone) whatsapp.href = `https://wa.me/${phone}?text=${encodeURIComponent("Merhaba, ROSTA Coffee destek ekibinden yardım almak istiyorum.")}`;
     const label = whatsapp.querySelector("span:last-child");
     if (label) label.textContent = settings.whatsapp.label || "WhatsApp";
   }
