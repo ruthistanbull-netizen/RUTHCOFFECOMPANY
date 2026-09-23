@@ -18,7 +18,7 @@ import SearchShellDemo from "./SearchShellDemo";
 
 const exampleOrder = {
   id: "demo-order",
-  order_no: "RUTH-1042",
+  order_no: "ROSTA-1042",
   customer_name: "Elif Kaya",
   customer_email: "elif@example.com",
   customer_phone: null,
