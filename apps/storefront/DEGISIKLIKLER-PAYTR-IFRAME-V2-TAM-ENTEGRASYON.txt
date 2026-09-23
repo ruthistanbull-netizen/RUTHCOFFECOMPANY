@@ -4,7 +4,7 @@ PAYTR IFRAME V2 TAM ENTEGRASYON
 - Eski Direct API/kart alanı akışı kaldırıldı.
 - PayTR iFrame V2 güvenli ödeme formu site içine gömüldü.
 - Token ve HMAC yalnızca sunucu tarafında üretiliyor.
-- Kart bilgileri Ruth Istanbul koduna veya veritabanına gelmiyor.
+- Kart bilgileri ROSTA Coffee koduna veya veritabanına gelmiyor.
 - Sipariş ürünleri, varyantları, adetleri, indirim ve kargo PayTR sepetine aktarılıyor.
 - Callback hash ve sipariş tutarı doğrulanıyor.
 - Tekrarlı callback güvenli/idempotent işleniyor.
