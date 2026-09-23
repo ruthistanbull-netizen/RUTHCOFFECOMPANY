@@ -1,13 +1,13 @@
 .app {
   --rx-bg: #111111;
   --rx-bg-2: #2B1B16;
-  --rx-panel: rgba(24, 21, 14, .76);
-  --rx-panel-strong: rgba(31, 27, 17, .92);
+  --rx-panel: rgba(43, 27, 22, .76);
+  --rx-panel-strong: rgba(43, 27, 22, .92);
   --rx-line: rgba(255, 255, 255, .085);
   --rx-line-strong: rgba(244, 240, 232, .22);
   --rx-text: #F4F0E8;
-  --rx-muted: rgba(242, 235, 214, .5);
-  --rx-muted-2: rgba(242, 235, 214, .34);
+  --rx-muted: rgba(244, 240, 232, .5);
+  --rx-muted-2: rgba(244, 240, 232, .34);
   --rx-purple: #B9563D;
   --rx-purple-2: #2B1B16;
   --rx-pink: #F4F0E8;
@@ -67,7 +67,7 @@
   gap: 12px;
   padding: 18px 14px 16px;
   border-right: 1px solid var(--rx-line);
-  background: linear-gradient(180deg, rgba(12,10,6,.94), rgba(9,7,4,.83));
+  background: linear-gradient(180deg, rgba(17, 17, 17,.94), rgba(17, 17, 17,.83));
   backdrop-filter: blur(28px) saturate(1.12);
   -webkit-backdrop-filter: blur(28px) saturate(1.12);
 }
@@ -97,7 +97,7 @@
   border-radius: 11px;
   border: 1px solid rgba(244, 240, 232, .19);
   background: linear-gradient(145deg, rgba(244, 240, 232, .18), rgba(43, 27, 22, .05));
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 10px 28px rgba(112,83,20,.13);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 10px 28px rgba(185, 86, 61,.13);
 }
 
 .brandMark::after {
@@ -184,7 +184,7 @@
 .historyItem:hover { background: rgba(255,255,255,.025); }
 .historyMain, .historyDelete { border: 0; background: transparent; color: inherit; cursor: pointer; }
 .historyMain { min-width: 0; padding: 8px 7px 8px 10px; text-align: left; }
-.historyMain strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: rgba(250,247,237,.82); font-size: 10px; font-weight: 550; }
+.historyMain strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: rgba(244, 240, 232,.82); font-size: 10px; font-weight: 550; }
 .historyMain small { display: block; margin-top: 4px; color: var(--rx-muted-2); font-size: 8px; }
 .historyDelete { width: 28px; height: 28px; display: grid; place-items: center; opacity: .28; }
 .historyDelete:hover { opacity: .82; color: #ff8ca5; }
@@ -220,7 +220,7 @@
   gap: 16px;
   padding: 0 22px;
   border-bottom: 1px solid var(--rx-line);
-  background: rgba(11,9,5,.58);
+  background: rgba(17, 17, 17,.58);
   backdrop-filter: blur(22px);
   -webkit-backdrop-filter: blur(22px);
 }
@@ -240,7 +240,7 @@
   border: 1px solid var(--rx-line);
   border-radius: 10px;
   background: rgba(255,255,255,.025);
-  color: rgba(250,247,237,.68);
+  color: rgba(244, 240, 232,.68);
   text-decoration: none;
   font: inherit;
   font-size: 9px;
@@ -294,7 +294,7 @@
 .messageAvatar::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: linear-gradient(135deg,#fff,#F4F0E8 55%,#2B1B16); box-shadow: 0 0 12px rgba(185, 86, 61,.7); }
 
 .assistantMessage { min-width: 0; padding: 4px 0 0; }
-.assistantMessage p { margin: 0; color: rgba(250,247,237,.88); font-size: 12px; line-height: 1.72; white-space: pre-wrap; overflow-wrap: anywhere; }
+.assistantMessage p { margin: 0; color: rgba(244, 240, 232,.88); font-size: 12px; line-height: 1.72; white-space: pre-wrap; overflow-wrap: anywhere; }
 .messageMeta { margin-top: 7px; color: var(--rx-muted-2); font-size: 8px; }
 .userBubble {
   max-width: min(78%, 620px);
@@ -303,7 +303,7 @@
   border-radius: 17px 17px 4px 17px;
   background: linear-gradient(135deg, rgba(185, 86, 61,.15), rgba(255,255,255,.045));
   box-shadow: inset 0 1px 0 rgba(255,255,255,.025);
-  color: rgba(252,249,239,.91);
+  color: rgba(244, 240, 232,.91);
   font-size: 12px;
   line-height: 1.55;
   white-space: pre-wrap;
@@ -361,14 +361,14 @@
 .composerArea {
   position: relative;
   padding: 10px clamp(20px, 4vw, 58px) 22px;
-  background: linear-gradient(to top, rgba(9,8,6,.98) 40%, rgba(9,8,6,.78) 72%, transparent);
+  background: linear-gradient(to top, rgba(17, 17, 17,.98) 40%, rgba(17, 17, 17,.78) 72%, transparent);
 }
 .composer {
   width: min(100%, 820px);
   margin: 0 auto;
   border: 1px solid rgba(244, 240, 232,.16);
   border-radius: 18px;
-  background: linear-gradient(145deg, rgba(31,27,17,.88), rgba(17,15,10,.92));
+  background: linear-gradient(145deg, rgba(43, 27, 22,.88), rgba(43, 27, 22,.92));
   box-shadow: 0 20px 70px rgba(0,0,0,.31), inset 0 1px 0 rgba(255,255,255,.035), 0 0 0 1px rgba(185, 86, 61,.018);
   backdrop-filter: blur(28px) saturate(1.1);
   -webkit-backdrop-filter: blur(28px) saturate(1.1);
@@ -397,15 +397,15 @@
 .approval {
   margin-top: 12px;
   padding: 12px;
-  border: 1px solid rgba(234, 192, 118, .21);
+  border: 1px solid rgba(185, 86, 61, .21);
   border-radius: 13px;
-  background: rgba(128, 91, 27, .08);
+  background: rgba(185, 86, 61, .08);
 }
 .approval strong { display: block; color: #F4F0E8; font-size: 10px; }
-.approval p { margin: 5px 0 9px; color: rgba(237,218,177,.58); font-size: 9px; line-height: 1.5; }
+.approval p { margin: 5px 0 9px; color: rgba(244, 240, 232,.58); font-size: 9px; line-height: 1.5; }
 .approvalActions { display: flex; gap: 7px; }
-.approvalActions button { min-height: 31px; padding: 0 10px; border-radius: 8px; border: 1px solid rgba(236,203,139,.18); background: rgba(255,255,255,.025); color: #F4F0E8; font: inherit; font-size: 8px; cursor: pointer; }
-.approvalActions button:first-child { background: rgba(208,160,76,.12); }
+.approvalActions button { min-height: 31px; padding: 0 10px; border-radius: 8px; border: 1px solid rgba(185, 86, 61,.18); background: rgba(255,255,255,.025); color: #F4F0E8; font: inherit; font-size: 8px; cursor: pointer; }
+.approvalActions button:first-child { background: rgba(185, 86, 61,.12); }
 
 .rightRail {
   min-width: 0;
@@ -415,7 +415,7 @@
   gap: 12px;
   padding: 13px 13px 15px;
   border-left: 1px solid var(--rx-line);
-  background: linear-gradient(180deg, rgba(12,10,6,.72), rgba(9,8,6,.86));
+  background: linear-gradient(180deg, rgba(17, 17, 17,.72), rgba(17, 17, 17,.86));
   backdrop-filter: blur(26px);
   -webkit-backdrop-filter: blur(26px);
 }
@@ -437,7 +437,7 @@
 }
 .orbCard::after { content: "Çift tıkla · Sesli moda geç"; position: absolute; bottom: 11px; left: 0; right: 0; text-align: center; color: var(--rx-muted-2); font-size: 8px; opacity: .8; }
 .orbButton { position: relative; width: 126px; height: 126px; display: grid; place-items: center; border: 0; background: transparent; cursor: pointer; }
-.orbCaption { margin-top: -7px; color: rgba(247,241,221,.62); font-size: 9px; }
+.orbCaption { margin-top: -7px; color: rgba(244, 240, 232,.62); font-size: 9px; }
 
 .resultRail {
   min-height: 0;
@@ -465,23 +465,23 @@
 .voiceStage::before { content: ""; position: absolute; width: min(72vw, 860px); aspect-ratio: 1; border-radius: 50%; border: 1px solid rgba(255,255,255,.025); box-shadow: 0 0 0 88px rgba(255,255,255,.007), 0 0 0 176px rgba(255,255,255,.004); pointer-events: none; }
 .voiceCenter { position: relative; z-index: 1; width: min(760px, 92%); display: grid; justify-items: center; align-content: center; gap: 4px; text-align: center; }
 .voiceOrbWrap { width: min(45vw, 440px); height: min(45vw, 440px); display: grid; place-items: center; }
-.voiceStatus { margin-top: -18px; display: inline-flex; align-items: center; gap: 7px; color: rgba(242,235,214,.62); font-size: 9px; letter-spacing: .04em; }
+.voiceStatus { margin-top: -18px; display: inline-flex; align-items: center; gap: 7px; color: rgba(244, 240, 232,.62); font-size: 9px; letter-spacing: .04em; }
 .voiceStatus i { width: 6px; height: 6px; border-radius: 50%; background: #B9563D; box-shadow: 0 0 12px rgba(185, 86, 61,.7); animation: dotPulse 1.8s ease-in-out infinite; }
-.voiceHeadline { max-width: 720px; min-height: 52px; margin: 14px 0 0; color: rgba(252,249,239,.94); font-size: clamp(18px, 2.1vw, 30px); font-weight: 440; line-height: 1.32; letter-spacing: -.03em; text-wrap: balance; }
+.voiceHeadline { max-width: 720px; min-height: 52px; margin: 14px 0 0; color: rgba(244, 240, 232,.94); font-size: clamp(18px, 2.1vw, 30px); font-weight: 440; line-height: 1.32; letter-spacing: -.03em; text-wrap: balance; }
 .voiceDescription { max-width: 560px; margin: 7px 0 0; color: var(--rx-muted); font-size: 10px; line-height: 1.6; }
 .voiceControls { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 19px; }
-.voiceControl { min-width: 39px; height: 39px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 0 12px; border: 1px solid var(--rx-line); border-radius: 12px; background: rgba(255,255,255,.027); color: rgba(250,247,237,.69); font: inherit; font-size: 9px; text-decoration: none; cursor: pointer; transition: transform .18s ease, border-color .18s ease, color .18s ease, background .18s ease; }
+.voiceControl { min-width: 39px; height: 39px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 0 12px; border: 1px solid var(--rx-line); border-radius: 12px; background: rgba(255,255,255,.027); color: rgba(244, 240, 232,.69); font: inherit; font-size: 9px; text-decoration: none; cursor: pointer; transition: transform .18s ease, border-color .18s ease, color .18s ease, background .18s ease; }
 .voiceControl:hover { transform: translateY(-1px); color: #fff; border-color: rgba(244, 240, 232,.25); background: rgba(185, 86, 61,.07); }
 .voiceControl[data-primary="true"] { border-color: rgba(244, 240, 232,.24); background: linear-gradient(145deg, rgba(244, 240, 232,.18), rgba(43, 27, 22,.11)); color: #F4F0E8; }
 .voiceControl svg { width: 14px; height: 14px; }
-.voiceRail { min-width: 0; min-height: 0; display: grid; grid-template-rows: auto minmax(0,1fr) auto; gap: 11px; padding: 13px; border-left: 1px solid var(--rx-line); background: rgba(9,7,4,.78); backdrop-filter: blur(26px); -webkit-backdrop-filter: blur(26px); }
+.voiceRail { min-width: 0; min-height: 0; display: grid; grid-template-rows: auto minmax(0,1fr) auto; gap: 11px; padding: 13px; border-left: 1px solid var(--rx-line); background: rgba(17, 17, 17,.78); backdrop-filter: blur(26px); -webkit-backdrop-filter: blur(26px); }
 .voiceRailCard { min-height: 110px; padding: 14px; border: 1px solid var(--rx-line); border-radius: 16px; background: rgba(255,255,255,.022); }
 .voiceRailCard small { color: var(--rx-muted-2); font-size: 8px; letter-spacing: .08em; text-transform: uppercase; }
 .voiceRailCard strong { display: block; margin-top: 6px; font-size: 11px; font-weight: 570; }
 .voiceRailCard p { margin: 6px 0 0; color: var(--rx-muted); font-size: 9px; line-height: 1.55; }
 .voiceTranscript { display: grid; gap: 8px; margin-top: 9px; max-height: 98px; overflow: hidden; }
-.voiceTranscript span { display: block; color: rgba(242,235,214,.55); font-size: 8px; line-height: 1.45; }
-.voiceTranscript b { color: rgba(248,241,220,.78); font-weight: 560; }
+.voiceTranscript span { display: block; color: rgba(244, 240, 232,.55); font-size: 8px; line-height: 1.45; }
+.voiceTranscript b { color: rgba(244, 240, 232,.78); font-weight: 560; }
 .voiceResultHost { min-height: 0; overflow-y: auto; display: grid; align-content: start; gap: 9px; scrollbar-width: thin; scrollbar-color: rgba(244, 240, 232,.16) transparent; }
 .voiceBottom { display: grid; gap: 7px; }
 .voiceBottom a { min-height: 42px; display: flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid var(--rx-line-strong); border-radius: 12px; background: linear-gradient(145deg, rgba(185, 86, 61,.14), rgba(255,255,255,.025)); color: #F4F0E8; text-decoration: none; font-size: 9px; }
@@ -534,7 +534,7 @@
   .emptyState p { font-size: 10px; }
   .suggestions { display: grid; width: min(100%, 390px); grid-template-columns: 1fr 1fr; gap: 6px; }
   .suggestion { min-height: 39px; padding: 5px 8px; font-size: 8px; line-height: 1.35; }
-  .composerArea { padding: 7px 10px 10px; background: linear-gradient(to top, rgba(9,8,6,1) 58%, rgba(9,8,6,.78), transparent); }
+  .composerArea { padding: 7px 10px 10px; background: linear-gradient(to top, rgba(17, 17, 17,1) 58%, rgba(17, 17, 17,.78), transparent); }
   .composer { border-radius: 17px; }
   .composer textarea { min-height: 47px; max-height: 110px; padding: 13px 13px 5px; font-size: 11px; }
   .composerToolbar { min-height: 40px; padding: 3px 5px 5px 7px; }
@@ -553,7 +553,7 @@
     padding: 5px;
     border: 1px solid rgba(255,255,255,.11);
     border-radius: 18px;
-    background: rgba(22,18,10,.86);
+    background: rgba(43, 27, 22,.86);
     box-shadow: 0 16px 45px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.045);
     backdrop-filter: blur(26px) saturate(1.16);
     -webkit-backdrop-filter: blur(26px) saturate(1.16);
