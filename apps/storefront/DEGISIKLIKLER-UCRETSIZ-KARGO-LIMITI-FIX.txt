@@ -1,4 +1,4 @@
-RUTH ISTANBUL WEBSITE - DINAMIK UCRETSIZ KARGO LIMITI
+ROSTA COFFEE WEBSITE - DINAMIK UCRETSIZ KARGO LIMITI
 
 - Admin panel Kargo Yonetimi ekraninda kaydedilen ucretsiz kargo limiti checkout hesaplamasinda kullanilir.
 - Anasayfa guven karti ve urun detay sayfasindaki ucretsiz kargo metni yeni limite gore guncellenir.
