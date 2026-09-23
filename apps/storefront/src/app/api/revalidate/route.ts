@@ -124,7 +124,7 @@ export async function POST(request: Request) {
       if (targets.broad) {
         revalidateTag("rosta-product-windows", IMMEDIATE_EXPIRY);
       } else {
-        for (const slug of targets.slugs) revalidateTag(`ruth-product-window:${slug}`, IMMEDIATE_EXPIRY);
+        for (const slug of targets.slugs) revalidateTag(`rosta-product-window:${slug}`, IMMEDIATE_EXPIRY);
       }
     } else {
       revalidateTag("rosta-product-windows", IMMEDIATE_EXPIRY);
@@ -134,7 +134,7 @@ export async function POST(request: Request) {
   }
 
   if (scope === "all" || scope === "discounts" || scope === "catalog") {
-    revalidateTag("ruth-discounts", IMMEDIATE_EXPIRY);
+    revalidateTag("rosta-discounts", IMMEDIATE_EXPIRY);
   }
 
   if (scope === "all" || scope === "theme") {
