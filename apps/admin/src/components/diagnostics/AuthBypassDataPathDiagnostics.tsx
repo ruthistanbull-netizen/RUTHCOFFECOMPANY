@@ -111,9 +111,6 @@ async function fetchJsonWithToken(path: string, token: string, timeoutMs = 6000)
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
-        "X-Ruth-Admin-Request": "1",
-        "X-Ruth-Cache-Bypass": "1",
-        "X-Ruth-Continuity-Probe": "1",
       },
       cache: "no-store",
       signal: controller.signal,
