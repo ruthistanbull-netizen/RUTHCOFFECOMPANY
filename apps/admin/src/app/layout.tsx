@@ -5,7 +5,6 @@ import "@ruth-commerce/ui/typography.css";
 import "@ruth-commerce/ui/interaction.css";
 import "@ruth-commerce/ui/feedback.css";
 import "@ruth-commerce/ui/picker.css";
-import "./globals.css";
 import "./base44-runtime.css";
 import "./base44-mobile-fixes.css";
 import "./mobile-panel-fixes.css";
