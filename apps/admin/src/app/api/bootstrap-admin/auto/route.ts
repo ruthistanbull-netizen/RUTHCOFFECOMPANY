@@ -4,8 +4,8 @@ import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const BOOTSTRAP_EMAIL = "ruthistanbull@gmail.com";
-const BOOTSTRAP_NAME = "Görkem Çirik";
+const BOOTSTRAP_EMAIL = String(process.env.ROSTA_ADMIN_EMAIL || process.env.ADMIN_BOOTSTRAP_EMAIL || "").trim().toLowerCase();
+const BOOTSTRAP_NAME = String(process.env.ROSTA_ADMIN_NAME || "ROSTA Admin").trim();
 
 export async function POST() {
   const enabled = String(process.env.ADMIN_BOOTSTRAP_SECRET || "").trim();
@@ -79,6 +79,13 @@ export async function POST() {
     }
 
     return NextResponse.json({ ok: true, existing: true });
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(BOOTSTRAP_EMAIL)) {
+    return NextResponse.json(
+      { ok: false, error: "ROSTA_ADMIN_EMAIL veya ADMIN_BOOTSTRAP_EMAIL env tanımlı değil." },
+      { status: 503 },
+    );
   }
 
   const created = await supabase.auth.admin.createUser({
