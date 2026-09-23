@@ -126,7 +126,7 @@ export async function createRuthieAdminAgentResponseV2(options: {
       const actionId = typeof args.action === "string" ? args.action : "ruthie_admin";
       if (!toolsExecuted.includes(actionId)) toolsExecuted.push(actionId);
       if (result.pendingAction) {
-        const prefix = extracted.text ? `${compactROSTA InsightText(extracted.text, latestUserText)} ` : "";
+        const prefix = extracted.text ? `${compactRuthieText(extracted.text, latestUserText)} ` : "";
         return buildResult(
           payload,
           config.model,
@@ -234,7 +234,7 @@ function agentInstructions(snapshot: RuthiePanelSnapshot, actor: { fullName?: st
     "Kullanıcının eksik verdiği zorunlu alanları uydurma. Yalnız gerekli tek kısa soruyu sor.",
     "Webde güncel ya da dış kaynak gerektiren sorularda web_search kullan. Araştırma tamamlanınca aynı turda doğrudan cevabı ver.",
     "Para iadesi, toplu silme, kargo iptali, toplu e-posta ve benzeri kritik işlemleri mutlaka onay kartına bırak.",
-    `PANEL_SNAPSHOT:\n${serializeROSTA InsightPanelSnapshot(snapshot)}`,
+    `PANEL_SNAPSHOT:\n${serializeRuthiePanelSnapshot(snapshot)}`,
   ].join("\n\n");
 }
 
@@ -282,7 +282,7 @@ function parseArguments(value: string): Record<string, unknown> {
 function runtimeConfig(env: NodeJS.ProcessEnv = process.env): RuntimeConfig {
   const apiKey = clean(env.OPENAI_API_KEY);
   const model = clean(env.RUTHIE_CHAT_MODEL);
-  if (!apiKey || !model) throw new RuthieRuntimeError({ code: "ROSTA INSIGHT_OPENAI_NOT_CONFIGURED", message: "ROSTA Insight OpenAI yapılandırması eksik.", status: 503 });
+  if (!apiKey || !model) throw new RuthieRuntimeError({ code: "ROSTA_INSIGHT_OPENAI_NOT_CONFIGURED", message: "ROSTA Insight OpenAI yapılandırması eksik.", status: 503 });
   return {
     apiKey,
     model,
@@ -311,7 +311,7 @@ async function requestOpenAI(config: RuntimeConfig, body: Record<string, unknown
       const payload = await response.json().catch(() => null) as any;
       const message = payload?.error?.message || `OpenAI isteği ${response.status} durumuyla başarısız oldu.`;
       throw new RuthieRuntimeError({
-        code: "ROSTA INSIGHT_OPENAI_PROVIDER_ERROR",
+        code: "ROSTA_INSIGHT_OPENAI_PROVIDER_ERROR",
         message,
         status: response.status === 429 ? 429 : response.status >= 500 || response.status === 401 || response.status === 403 ? 502 : 400,
         retryable: response.status === 408 || response.status === 409 || response.status === 429 || response.status >= 500,
@@ -322,7 +322,7 @@ async function requestOpenAI(config: RuntimeConfig, body: Record<string, unknown
   } catch (error) {
     if (error instanceof RuthieRuntimeError) throw error;
     if (error instanceof Error && error.name === "AbortError") {
-      throw new RuthieRuntimeError({ code: "ROSTA INSIGHT_OPENAI_TIMEOUT", message: "ROSTA Insight yanıtı zaman aşımına uğradı.", status: 504, retryable: true });
+      throw new RuthieRuntimeError({ code: "ROSTA_INSIGHT_OPENAI_TIMEOUT", message: "ROSTA Insight yanıtı zaman aşımına uğradı.", status: 504, retryable: true });
     }
     throw error;
   } finally {
@@ -332,7 +332,7 @@ async function requestOpenAI(config: RuntimeConfig, body: Record<string, unknown
 
 async function parseJson(response: Response): Promise<Record<string, any>> {
   const payload = await response.json().catch(() => null);
-  if (!payload || typeof payload !== "object") throw new RuthieRuntimeError({ code: "ROSTA INSIGHT_INVALID_PROVIDER_RESPONSE", message: "OpenAI geçerli bir yanıt döndürmedi.", status: 502, retryable: true });
+  if (!payload || typeof payload !== "object") throw new RuthieRuntimeError({ code: "ROSTA_INSIGHT_INVALID_PROVIDER_RESPONSE", message: "OpenAI geçerli bir yanıt döndürmedi.", status: 502, retryable: true });
   return payload as Record<string, any>;
 }
 
