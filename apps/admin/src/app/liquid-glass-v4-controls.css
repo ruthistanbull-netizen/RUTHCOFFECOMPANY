@@ -1,0 +1,575 @@
+/* Liquid controls v4: dock contrast, selects, date/time pickers and native field polish. */
+
+body.ruth-admin-liquid-v3 [data-exact-select-layer] > button,
+body.ruth-admin-liquid-v3 [data-ruth-liquid-date-layer] > button {
+  border: 0;
+  background: rgba(40, 46, 61, 0.16);
+  backdrop-filter: blur(13px) saturate(1.18);
+  -webkit-backdrop-filter: blur(13px) saturate(1.18);
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-select-panel],
+body.ruth-admin-liquid-v3 [data-ruth-liquid-date-panel] {
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.94);
+  border-radius: 25px;
+  color: var(--liquid-ink);
+  background:
+    radial-gradient(circle at 18% -18%, rgba(255, 255, 255, 0.98), transparent 37%),
+    radial-gradient(circle at 86% 118%, rgba(118, 151, 220, 0.18), transparent 45%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.68), rgba(218, 229, 247, 0.34)),
+    rgba(235, 242, 252, 0.66);
+  box-shadow:
+    0 28px 72px rgba(36, 45, 66, 0.24),
+    0 7px 20px rgba(36, 45, 66, 0.12),
+    inset 0 1.5px 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 0 rgba(83, 99, 132, 0.17),
+    inset 1px 0 0 rgba(255, 216, 98, 0.14),
+    inset -1px 0 0 rgba(62, 212, 255, 0.18);
+  backdrop-filter: blur(36px) saturate(1.68) brightness(1.04);
+  -webkit-backdrop-filter: blur(36px) saturate(1.68) brightness(1.04);
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-select-panel]::before,
+body.ruth-admin-liquid-v3 [data-ruth-liquid-date-panel]::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    linear-gradient(112deg, transparent 20%, rgba(255, 255, 255, 0.11) 39%, rgba(255, 255, 255, 0.58) 49%, rgba(255, 255, 255, 0.08) 59%, transparent 76%),
+    radial-gradient(ellipse at 75% 0%, rgba(255, 255, 255, 0.44), transparent 31%);
+  mix-blend-mode: screen;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-select-header] {
+  display: flex;
+  min-height: 51px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 16px;
+  border-bottom: 1px solid rgba(101, 116, 147, 0.15);
+  background: rgba(255, 255, 255, 0.22);
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.44);
+  backdrop-filter: blur(18px) saturate(1.34);
+  -webkit-backdrop-filter: blur(18px) saturate(1.34);
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-select-header] span {
+  overflow: hidden;
+  color: var(--liquid-muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-select-header] svg {
+  width: 15px;
+  height: 15px;
+  color: var(--liquid-muted);
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-select-options] {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 7px;
+  scrollbar-width: thin;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-option-group] {
+  margin: 0;
+  padding: 11px 12px 4px;
+  color: var(--liquid-muted);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-select-option] {
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-height: 45px;
+  align-items: center;
+  gap: 12px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 15px;
+  color: var(--liquid-ink);
+  background: transparent;
+  padding: 0 13px;
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 180ms ease, transform 210ms var(--liquid-spring);
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-select-option]:active {
+  transform: scale(0.975);
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-select-option] > span:not([data-ruth-liquid-option-lens]) {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: 550;
+  letter-spacing: 0.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-select-option] > svg {
+  position: relative;
+  z-index: 2;
+  width: 16px;
+  height: 16px;
+  color: hsl(var(--accent));
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-select-option][data-active="true"] {
+  color: hsl(var(--accent));
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-option-lens],
+body.ruth-admin-liquid-v3 [data-ruth-liquid-calendar-lens] {
+  position: absolute;
+  inset: 1px;
+  z-index: 1;
+  border: 1px solid rgba(255, 255, 255, 0.91);
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at 67% -18%, rgba(255, 255, 255, 0.98), transparent 40%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.62), rgba(218, 224, 251, 0.42));
+  box-shadow:
+    0 7px 18px rgba(78, 66, 168, 0.13),
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    inset 1px 0 0 rgba(255, 216, 94, 0.16),
+    inset -1px 0 0 rgba(61, 214, 255, 0.2);
+  backdrop-filter: blur(17px) saturate(1.5) brightness(1.07);
+  -webkit-backdrop-filter: blur(17px) saturate(1.5) brightness(1.07);
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-date-layer] {
+  display: grid;
+  place-items: center;
+  padding: max(16px, env(safe-area-inset-top)) 14px max(16px, env(safe-area-inset-bottom));
+  pointer-events: none;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-date-layer] > * {
+  pointer-events: auto;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-date-panel] {
+  position: relative;
+  width: min(410px, calc(100vw - 28px));
+  max-height: min(760px, calc(100dvh - 32px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-date-header] {
+  position: sticky;
+  top: 0;
+  z-index: 8;
+  display: flex;
+  min-height: 72px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 14px 11px 16px;
+  border-bottom: 1px solid rgba(101, 116, 147, 0.14);
+  background: rgba(247, 250, 255, 0.62);
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(24px) saturate(1.48);
+  -webkit-backdrop-filter: blur(24px) saturate(1.48);
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-date-header] > div {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 11px;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-date-header] > div > span,
+body.ruth-admin-liquid-v3 [data-ruth-liquid-date-header] > button {
+  display: flex;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.82);
+  border-radius: 14px;
+  color: var(--liquid-ink);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.58), rgba(220, 228, 244, 0.28));
+  box-shadow: 0 5px 15px rgba(53, 63, 84, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(14px) saturate(1.35);
+  -webkit-backdrop-filter: blur(14px) saturate(1.35);
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-date-header] svg {
+  width: 18px;
+  height: 18px;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-date-header] p {
+  margin: 0;
+  overflow: hidden;
+  color: var(--liquid-ink);
+  font-size: 14px;
+  font-weight: 720;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-date-header] small {
+  display: block;
+  margin-top: 2px;
+  overflow: hidden;
+  color: var(--liquid-muted);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-calendar] {
+  padding: 14px 14px 8px;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-calendar-toolbar] {
+  display: grid;
+  grid-template-columns: 38px 1fr 38px;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-calendar-toolbar] strong {
+  color: var(--liquid-ink);
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-calendar-toolbar] button {
+  display: flex;
+  width: 38px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 14px;
+  color: var(--liquid-ink);
+  background: rgba(255, 255, 255, 0.31);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.84), 0 4px 12px rgba(53, 63, 84, 0.06);
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-calendar-toolbar] svg {
+  width: 17px;
+  height: 17px;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-weekdays],
+body.ruth-admin-liquid-v3 [data-ruth-liquid-days-grid] {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-weekdays] {
+  margin-bottom: 4px;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-weekdays] span {
+  padding: 5px 0;
+  color: var(--liquid-muted);
+  font-size: 9px;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-calendar-viewport] {
+  overflow: hidden;
+  touch-action: pan-y;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-days-grid] button,
+body.ruth-admin-liquid-v3 [data-ruth-liquid-month-grid] button {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 0;
+  color: var(--liquid-ink);
+  background: transparent;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 180ms var(--liquid-spring), opacity 160ms ease;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-days-grid] button {
+  aspect-ratio: 1;
+  border-radius: 14px;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-days-grid] button:active,
+body.ruth-admin-liquid-v3 [data-ruth-liquid-month-grid] button:active {
+  transform: scale(0.9);
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-days-grid] button > span:not([data-ruth-liquid-calendar-lens]),
+body.ruth-admin-liquid-v3 [data-ruth-liquid-month-grid] button > span:not([data-ruth-liquid-calendar-lens]) {
+  position: relative;
+  z-index: 2;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-days-grid] button[aria-pressed="true"] > span:not([data-ruth-liquid-calendar-lens]),
+body.ruth-admin-liquid-v3 [data-ruth-liquid-month-grid] button[aria-pressed="true"] > span:not([data-ruth-liquid-calendar-lens]) {
+  color: hsl(var(--accent));
+  font-weight: 750;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-days-grid] button[data-outside="true"] {
+  opacity: 0.34;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-days-grid] button:disabled {
+  opacity: 0.18;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-days-grid] button > i {
+  position: absolute;
+  bottom: 4px;
+  z-index: 2;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: hsl(var(--accent));
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-month-grid] {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-month-grid] button {
+  min-height: 48px;
+  border-radius: 15px;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-time-picker] {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 9px;
+  margin: 7px 14px 13px;
+  padding: 11px;
+  border: 1px solid rgba(255, 255, 255, 0.74);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.84), 0 7px 20px rgba(53, 63, 84, 0.07);
+  backdrop-filter: blur(18px) saturate(1.38);
+  -webkit-backdrop-filter: blur(18px) saturate(1.38);
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-time-picker] > span {
+  color: var(--liquid-muted);
+  font-size: 24px;
+  font-weight: 700;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-time-unit] {
+  display: grid;
+  grid-template-columns: 32px 1fr 32px;
+  align-items: center;
+  gap: 5px;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-time-unit] button {
+  display: flex;
+  width: 32px;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 12px;
+  color: var(--liquid-ink);
+  background: rgba(255, 255, 255, 0.32);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.84);
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-time-unit] button:active {
+  transform: scale(0.88);
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-time-unit] svg {
+  width: 14px;
+  height: 14px;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-time-unit] > div {
+  text-align: center;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-time-unit] strong {
+  display: block;
+  color: var(--liquid-ink);
+  font-size: 22px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-time-unit] span {
+  display: block;
+  margin-top: 4px;
+  color: var(--liquid-muted);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-date-footer] {
+  position: sticky;
+  bottom: 0;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 11px 14px max(11px, env(safe-area-inset-bottom));
+  border-top: 1px solid rgba(101, 116, 147, 0.14);
+  background: rgba(246, 249, 254, 0.65);
+  backdrop-filter: blur(24px) saturate(1.48);
+  -webkit-backdrop-filter: blur(24px) saturate(1.48);
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-date-footer] > div {
+  display: flex;
+  gap: 7px;
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-date-footer] button {
+  display: inline-flex;
+  min-height: 39px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.76);
+  border-radius: 14px;
+  color: var(--liquid-ink);
+  background: rgba(255, 255, 255, 0.32);
+  padding: 0 13px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.84), 0 5px 14px rgba(53, 63, 84, 0.06);
+  font-size: 11px;
+  font-weight: 650;
+  backdrop-filter: blur(14px) saturate(1.32);
+  -webkit-backdrop-filter: blur(14px) saturate(1.32);
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-date-footer] button:last-child {
+  border-color: rgba(255, 255, 255, 0.36);
+  color: white;
+  background:
+    radial-gradient(circle at 72% -28%, rgba(255, 255, 255, 0.36), transparent 38%),
+    linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-hover)));
+  box-shadow: 0 9px 21px rgba(84, 66, 211, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.36);
+}
+
+body.ruth-admin-liquid-v3 [data-ruth-liquid-date-footer] svg {
+  width: 15px;
+  height: 15px;
+}
+
+body.ruth-admin-liquid-v3 input:is([type="date"], [type="datetime-local"], [type="time"], [type="month"]) {
+  cursor: pointer;
+  color: var(--liquid-ink) !important;
+  color-scheme: light;
+}
+
+body.ruth-admin-liquid-v3 input:is([type="date"], [type="datetime-local"], [type="time"], [type="month"])::-webkit-calendar-picker-indicator {
+  width: 18px;
+  height: 18px;
+  opacity: 0.52;
+  cursor: pointer;
+}
+
+html.dark body.ruth-admin-liquid-v3 [data-ruth-liquid-select-panel],
+html.dark body.ruth-admin-liquid-v3 [data-ruth-liquid-date-panel] {
+  color: rgba(255, 255, 255, 0.94);
+  border-color: rgba(255, 255, 255, 0.2);
+  background:
+    radial-gradient(circle at 18% -18%, rgba(255, 255, 255, 0.18), transparent 37%),
+    linear-gradient(145deg, rgba(70, 75, 90, 0.68), rgba(23, 27, 35, 0.62)),
+    rgba(28, 32, 41, 0.76);
+  box-shadow: 0 30px 78px rgba(0, 0, 0, 0.52), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+html.dark body.ruth-admin-liquid-v3 [data-ruth-liquid-select-header],
+html.dark body.ruth-admin-liquid-v3 [data-ruth-liquid-date-header],
+html.dark body.ruth-admin-liquid-v3 [data-ruth-liquid-date-footer] {
+  background: rgba(30, 34, 43, 0.66);
+}
+
+html.dark body.ruth-admin-liquid-v3 [data-ruth-liquid-option-lens],
+html.dark body.ruth-admin-liquid-v3 [data-ruth-liquid-calendar-lens] {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, rgba(112, 102, 220, 0.42), rgba(57, 62, 81, 0.54));
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+html.dark body.ruth-admin-liquid-v3 input:is([type="date"], [type="datetime-local"], [type="time"], [type="month"]) {
+  color-scheme: dark;
+}
+
+@media (max-width: 767px) {
+  body.ruth-admin-liquid-v3 [data-ruth-liquid-select-panel] {
+    top: auto !important;
+    right: 12px !important;
+    bottom: max(12px, env(safe-area-inset-bottom)) !important;
+    left: 12px !important;
+    width: auto !important;
+    max-height: min(62dvh, 520px) !important;
+    border-radius: 28px;
+  }
+
+  body.ruth-admin-liquid-v3 [data-ruth-liquid-date-layer] {
+    place-items: end center;
+    padding: 12px 10px max(10px, env(safe-area-inset-bottom));
+  }
+
+  body.ruth-admin-liquid-v3 [data-ruth-liquid-date-panel] {
+    width: 100%;
+    max-height: min(82dvh, 720px);
+    border-radius: 30px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.ruth-admin-liquid-v3 [data-ruth-liquid-select-option],
+  body.ruth-admin-liquid-v3 [data-ruth-liquid-days-grid] button,
+  body.ruth-admin-liquid-v3 [data-ruth-liquid-month-grid] button,
+  body.ruth-admin-liquid-v3 [data-ruth-liquid-date-footer] button,
+  body.ruth-admin-liquid-v3 [data-ruth-liquid-time-unit] button {
+    transition-duration: 1ms !important;
+  }
+}
