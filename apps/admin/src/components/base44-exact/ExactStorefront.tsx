@@ -33,8 +33,8 @@ import {
 } from "./primitives";
 
 type PreviewMode = "desktop" | "mobile";
-const DRAFT_KEY = "rosta_exact_base44_storefront_draft";
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://rostacoffecompany.zeabur.app";
+const DRAFT_KEY = "ruth_exact_base44_storefront_draft";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://ruthistanbull.tr";
 
 function safeDraft(value: string | null) {
   if (!value) return null;
@@ -317,7 +317,7 @@ export function ExactStorefront() {
                   <span className="h-2.5 w-2.5 rounded-full bg-danger/40" />
                   <span className="h-2.5 w-2.5 rounded-full bg-warning/40" />
                   <span className="h-2.5 w-2.5 rounded-full bg-success/40" />
-                  <span className="ml-2 text-[10px] text-subtle">rostacoffecompany.zeabur.app</span>
+                  <span className="ml-2 text-[10px] text-subtle">ruthistanbull.tr</span>
                 </div>
                 <div
                   className="relative min-h-[260px] p-6 text-center flex flex-col items-center justify-center overflow-hidden"
@@ -327,10 +327,10 @@ export function ExactStorefront() {
                   <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${settings.colors.gold}22, transparent)` }} />
                   <div className="relative z-10">
                     {settings.logo.src ? <img src={settings.logo.src} alt="ROSTA Coffee Co." className="mx-auto max-h-10 max-w-[190px] object-contain mb-3" /> : null}
-                    <p className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: settings.colors.goldDark }}>ROSTA COFFEE CO.</p>
-                    <h2 className="text-2xl font-bold mt-2" style={{ color: settings.colors.ink }}>Coffee, Made With Character</h2>
-                    <p className="text-xs mt-1" style={{ color: settings.colors.muted }}>{settings.announcement.text || "Specialty coffee, wholesale and consulting"}</p>
-                    <button type="button" className="mt-4 px-5 py-2 rounded-full text-white text-xs font-medium" style={{ backgroundColor: settings.colors.gold }}>Kahveleri Keşfet</button>
+                    <p className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: settings.colors.goldDark }}>Ruth Atelier</p>
+                    <h2 className="text-2xl font-bold mt-2" style={{ color: settings.colors.ink }}>Wear Your Story</h2>
+                    <p className="text-xs mt-1" style={{ color: settings.colors.muted }}>{settings.announcement.text || "Handcrafted jewelry, made in Istanbul"}</p>
+                    <button type="button" className="mt-4 px-5 py-2 rounded-full text-white text-xs font-medium" style={{ backgroundColor: settings.colors.gold }}>Koleksiyonu Keşfet</button>
                   </div>
                 </div>
                 <div className="grid grid-cols-3 gap-2 p-4" style={{ backgroundColor: settings.colors.cream }}>

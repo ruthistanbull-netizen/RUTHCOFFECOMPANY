@@ -399,7 +399,7 @@ export function ExactShipping() {
     const url = URL.createObjectURL(new Blob([`\ufeff${csv}`], { type: "text/csv;charset=utf-8" }));
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = `rosta-kargo-${new Date().toISOString().slice(0, 10)}.csv`;
+    anchor.download = `ruth-kargo-${new Date().toISOString().slice(0, 10)}.csv`;
     anchor.click();
     URL.revokeObjectURL(url);
   };
