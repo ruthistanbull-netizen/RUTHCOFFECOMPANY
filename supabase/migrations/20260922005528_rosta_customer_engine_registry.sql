@@ -627,7 +627,7 @@ select
   (c.membership_status = 'member') as is_member,
   case
     when p.auth_user_id is not null then 'new_site'
-    when coalesce(p.is_legacy_member, false) then 'ikas'
+    when coalesce(p.is_legacy_member, false) then 'legacy'
     else null
   end as membership_source,
   p.ikas_account_status,
