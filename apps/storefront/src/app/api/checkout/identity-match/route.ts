@@ -8,14 +8,13 @@ export const runtime = "nodejs";
 const clean = (value: unknown) => typeof value === "string" ? value.trim() : "";
 
 function clientIp(request: Request) {
-  return request.headers.get("x-vercel-forwarded-for")?.split(",")[0]?.trim()
-    || request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
+  return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
     || request.headers.get("x-real-ip")
     || "unknown";
 }
 
 function rateHash(request: Request) {
-  const salt = process.env.ACCOUNT_RATE_LIMIT_SALT || "ruth-checkout-identity-v1";
+  const salt = process.env.ACCOUNT_RATE_LIMIT_SALT || "rosta-checkout-identity-v1";
   return crypto.createHash("sha256").update(`${salt}|${clientIp(request)}`).digest("hex");
 }
 
