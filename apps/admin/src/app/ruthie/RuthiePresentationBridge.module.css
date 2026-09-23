@@ -20,8 +20,8 @@
   margin-top: 2px;
   border-radius: 10px;
   color: #B9563D;
-  background: rgba(155, 100, 255, .09);
-  border: 1px solid rgba(190, 151, 255, .16);
+  background: rgba(185, 86, 61, .09);
+  border: 1px solid rgba(185, 86, 61, .16);
 }
 
 .avatar svg { width: 15px; height: 15px; }
@@ -42,9 +42,9 @@
   gap: 9px;
   align-items: start;
   padding: 12px;
-  border: 1px solid rgba(194, 155, 255, .15);
+  border: 1px solid rgba(185, 86, 61, .15);
   border-radius: 14px;
-  background: linear-gradient(145deg, rgba(155,100,255,.09), rgba(255,255,255,.022));
+  background: linear-gradient(145deg, rgba(185, 86, 61,.09), rgba(255,255,255,.022));
   color: #F4F0E8;
   overflow: hidden;
 }
@@ -58,10 +58,10 @@
 }
 
 .experienceLoading div { min-width: 0; }
-.experienceLoading small { display: block; color: rgba(204,170,255,.56); font-size: 7px; letter-spacing: .12em; }
+.experienceLoading small { display: block; color: rgba(170, 168, 161,.56); font-size: 7px; letter-spacing: .12em; }
 .experienceLoading strong { display: block; margin-top: 3px; font-size: 10px; font-weight: 600; }
-.experienceLoading p { margin: 7px 0 0; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; color: rgba(242,235,249,.5); font-size: 8px; line-height: 1.45; }
-.experienceLoading button { width: 26px; height: 26px; display: grid; place-items: center; border: 0; border-radius: 8px; background: rgba(255,255,255,.035); color: rgba(245,240,250,.45); cursor: pointer; }
+.experienceLoading p { margin: 7px 0 0; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; color: rgba(244, 240, 232,.5); font-size: 8px; line-height: 1.45; }
+.experienceLoading button { width: 26px; height: 26px; display: grid; place-items: center; border: 0; border-radius: 8px; background: rgba(255,255,255,.035); color: rgba(244, 240, 232,.45); cursor: pointer; }
 .experienceLoading button:hover { color: #fff; background: rgba(255,255,255,.06); }
 .experienceLoading button svg { width: 12px; height: 12px; }
 
@@ -82,10 +82,10 @@
   overflow: hidden;
   pointer-events: auto;
   color: #F4F0E8;
-  border: 1px solid rgba(194, 155, 255, .18);
+  border: 1px solid rgba(185, 86, 61, .18);
   border-radius: 22px;
-  background: linear-gradient(155deg, rgba(24, 20, 31, .96), rgba(10, 8, 14, .97));
-  box-shadow: 0 24px 70px rgba(0, 0, 0, .42), 0 0 60px rgba(118,70,239,.08);
+  background: linear-gradient(155deg, rgba(43, 27, 22, .96), rgba(17, 17, 17, .97));
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .42), 0 0 60px rgba(185, 86, 61,.08);
   backdrop-filter: blur(24px);
 }
 
@@ -103,19 +103,19 @@
   place-items: center;
   color: #B9563D;
   border-radius: 12px;
-  background: rgba(155, 100, 255, .10);
-  border: 1px solid rgba(194, 155, 255, .15);
+  background: rgba(185, 86, 61, .10);
+  border: 1px solid rgba(185, 86, 61, .15);
 }
 
 .loadingPanel header > span svg { width: 18px; height: 18px; animation: ruthiePresentationSpin .75s linear infinite; }
 .loadingPanel header div { min-width: 0; display: grid; gap: 3px; }
-.loadingPanel header small { color: rgba(202, 166, 255, .7); font-size: 9px; letter-spacing: .16em; }
+.loadingPanel header small { color: rgba(170, 168, 161, .7); font-size: 9px; letter-spacing: .16em; }
 .loadingPanel header strong { font-size: 17px; font-weight: 600; }
-.loadingPanel button { width: 34px; height: 34px; display: grid; place-items: center; color: rgba(248, 242, 252, .72); border: 0; border-radius: 10px; background: rgba(255, 255, 255, .05); cursor: pointer; }
+.loadingPanel button { width: 34px; height: 34px; display: grid; place-items: center; color: rgba(244, 240, 232, .72); border: 0; border-radius: 10px; background: rgba(255, 255, 255, .05); cursor: pointer; }
 .loadingPanel button svg { width: 15px; height: 15px; }
-.loadingPanel p { margin: 18px 0 14px; overflow: hidden; color: rgba(248, 242, 252, .7); font-size: 13px; line-height: 1.45; text-overflow: ellipsis; white-space: nowrap; }
+.loadingPanel p { margin: 18px 0 14px; overflow: hidden; color: rgba(244, 240, 232, .7); font-size: 13px; line-height: 1.45; text-overflow: ellipsis; white-space: nowrap; }
 .loadingBars { display: grid; gap: 7px; }
-.loadingBars i { height: 8px; border-radius: 999px; background: linear-gradient(90deg, rgba(155,100,255,.06), rgba(185,137,255,.28), rgba(155,100,255,.06)); background-size: 200% 100%; animation: ruthiePresentationPulse .95s ease-in-out infinite; }
+.loadingBars i { height: 8px; border-radius: 999px; background: linear-gradient(90deg, rgba(185, 86, 61,.06), rgba(185, 86, 61,.28), rgba(185, 86, 61,.06)); background-size: 200% 100%; animation: ruthiePresentationPulse .95s ease-in-out infinite; }
 .loadingBars i:nth-child(2) { width: 82%; animation-delay: .08s; }
 .loadingBars i:nth-child(3) { width: 64%; animation-delay: .16s; }
 
