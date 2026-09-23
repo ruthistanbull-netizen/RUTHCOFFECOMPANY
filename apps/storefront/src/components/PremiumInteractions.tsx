@@ -25,7 +25,7 @@ function syncRuthieOfferPoints() {
   if (!isGuestOffer) return;
 
   const heading = modal.querySelector<HTMLElement>(".ruthie-offer-copy h2")?.textContent || "";
-  const match = heading.match(/([\d.,]+)\s+Ruthie\s+Points/i);
+  const match = heading.match(/([\d.,]+)\s+(?:ROSTA|Ruthie)\s+Points/i);
   if (!match) return;
 
   const points = match[1];
