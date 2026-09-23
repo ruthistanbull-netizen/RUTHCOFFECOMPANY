@@ -2,7 +2,7 @@
   --ruth-panel-user-logo: url('/ruth-commerce-user-logo.svg?v=20260901-1');
 }
 
-/* Canonical Ruth Commerce wordmark supplied by the user. Keep one visual source
+/* Canonical ROSTA Coffee wordmark supplied by the user. Keep one visual source
    for the panel shell, auth screens and loading/preparing states. */
 [data-panel-brand] [class*="brandMark"] {
   width: 148px !important;
@@ -36,7 +36,7 @@ img[src*="/panel-r-logo.png"] {
 }
 
 /* Base44 compact brand used a square R tile plus separate copy. Turn that tile
-   into the full wordmark and remove the duplicate Ruth Commerce text. */
+   into the full wordmark and remove the duplicate ROSTA Coffee text. */
 div:has(> img[src*="/brand/ruth-r-mark.webp"]) {
   width: 150px !important;
   height: 58px !important;
