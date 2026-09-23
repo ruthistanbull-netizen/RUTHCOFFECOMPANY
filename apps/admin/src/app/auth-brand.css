@@ -340,7 +340,7 @@
   }
 }
 
-/* Desktop sidebar: use the exact Ruth Commerce logo shown while the panel is preparing. */
+/* Desktop sidebar: use the exact ROSTA Coffee logo shown while the panel is preparing. */
 @media (min-width: 1024px) {
   aside[class*="z-sidebar"] > div:first-child > a {
     position: relative;
