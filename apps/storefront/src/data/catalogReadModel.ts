@@ -4,12 +4,7 @@ import {
   loadDiscountCampaignSettings,
   type DiscountCampaignSettings,
 } from "@/lib/discountCampaigns";
-import {
-  isNecklaceProduct,
-  isRingProduct,
-  isRuthAtelierProduct,
-  productHasImage,
-} from "@/lib/productDisplay";
+import { productHasImage } from "@/lib/productDisplay";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 import type { Product } from "@/types/site";
 
@@ -233,15 +228,6 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
 
 export async function getFeaturedProducts(): Promise<Product[]> {
   const products = await getProducts();
-  const atelierPieces = products
-    .filter((product) => isRuthAtelierProduct(product) && (isRingProduct(product) || isNecklaceProduct(product)))
-    .sort((a, b) => {
-      const newScore = Number(Boolean(b.is_new)) - Number(Boolean(a.is_new));
-      if (newScore !== 0) return newScore;
-      const featuredScore = Number(Boolean(b.is_featured)) - Number(Boolean(a.is_featured));
-      if (featuredScore !== 0) return featuredScore;
-      return (a.sort_order ?? Number.MAX_SAFE_INTEGER) - (b.sort_order ?? Number.MAX_SAFE_INTEGER);
-    });
   const featured = products
     .filter((product) => product.is_featured)
     .sort((a, b) => (a.sort_order ?? Number.MAX_SAFE_INTEGER) - (b.sort_order ?? Number.MAX_SAFE_INTEGER));
@@ -253,7 +239,7 @@ export async function getFeaturedProducts(): Promise<Product[]> {
     });
 
   const bySlug = new Map<string, Product>();
-  for (const product of [...atelierPieces, ...featured, ...rest]) {
+  for (const product of [...featured, ...rest]) {
     if (!productHasImage(product)) continue;
     if (!bySlug.has(product.slug)) bySlug.set(product.slug, product);
     if (bySlug.size >= 12) break;
