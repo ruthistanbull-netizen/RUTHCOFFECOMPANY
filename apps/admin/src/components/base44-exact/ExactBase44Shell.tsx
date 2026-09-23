@@ -121,9 +121,9 @@ function ExactSidebar({ collapsed }: { collapsed: boolean }) {
       {!collapsed ? (
         <div className="p-3 border-t border-border-subtle shrink-0">
           <div className="flex items-center gap-2.5 p-2 radius-small bg-surface-tertiary">
-            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-accent to-[hsl(var(--accent-hover))] flex items-center justify-center text-white text-xs font-semibold shrink-0">RA</div>
+            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-accent to-[hsl(var(--accent-hover))] flex items-center justify-center text-white text-xs font-semibold shrink-0">RO</div>
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-semibold text-main truncate">Ruth Atelier</p>
+              <p className="text-xs font-semibold text-main truncate">ROSTA Coffee Co.</p>
               <p className="text-[10px] text-subtle truncate">Admin</p>
             </div>
           </div>
