@@ -39,7 +39,7 @@ export default function AdminDesignSystemPage() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   return (
     <PageShell width="standard" density="spacious">
-      <PageHeader eyebrow="Ruth Commerce" title="Ortak UI doğrulama alanı" description="Panelin ortak sayfa, filtre, arama, sipariş kartı, geri bildirim ve onay bileşenlerini tek yerde doğrular." actions={<Button onClick={() => setConfirmOpen(true)}>Onay dialogu</Button>} />
+      <PageHeader eyebrow="ROSTA Coffee" title="Ortak UI doğrulama alanı" description="Panelin ortak sayfa, filtre, arama, sipariş kartı, geri bildirim ve onay bileşenlerini tek yerde doğrular." actions={<Button onClick={() => setConfirmOpen(true)}>Onay dialogu</Button>} />
       <Notice tone="info" variant="banner" title="İç doğrulama ekranı" description="Bu sayfa production iş kuralı çalıştırmaz; ortak UI sözleşmelerini gösterir." />
       <PageSection title="Sayfa ve filtre iskeleti" surface="surface">
         <Toolbar leading={<Input aria-label="Örnek arama" placeholder="Sipariş ara" />} trailing={<Button>Yeni kayıt</Button>} />
