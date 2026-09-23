@@ -19,7 +19,7 @@
   place-items: center;
   margin-top: 2px;
   border-radius: 10px;
-  color: #b88aff;
+  color: #B9563D;
   background: rgba(155, 100, 255, .09);
   border: 1px solid rgba(190, 151, 255, .16);
 }
@@ -45,7 +45,7 @@
   border: 1px solid rgba(194, 155, 255, .15);
   border-radius: 14px;
   background: linear-gradient(145deg, rgba(155,100,255,.09), rgba(255,255,255,.022));
-  color: #f4effa;
+  color: #F4F0E8;
   overflow: hidden;
 }
 
@@ -53,7 +53,7 @@
   width: 16px;
   height: 16px;
   margin: 3px auto 0;
-  color: #b783ff;
+  color: #B9563D;
   animation: ruthiePresentationSpin .8s linear infinite;
 }
 
@@ -81,7 +81,7 @@
   padding: 18px;
   overflow: hidden;
   pointer-events: auto;
-  color: #f7f2fb;
+  color: #F4F0E8;
   border: 1px solid rgba(194, 155, 255, .18);
   border-radius: 22px;
   background: linear-gradient(155deg, rgba(24, 20, 31, .96), rgba(10, 8, 14, .97));
@@ -101,7 +101,7 @@
   height: 38px;
   display: grid;
   place-items: center;
-  color: #b783ff;
+  color: #B9563D;
   border-radius: 12px;
   background: rgba(155, 100, 255, .10);
   border: 1px solid rgba(194, 155, 255, .15);
