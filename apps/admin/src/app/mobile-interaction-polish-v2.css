@@ -132,7 +132,7 @@
     border-color: hsl(var(--surface-primary)) !important;
   }
 
-  /* Only the composer gets its own surface after Ruthie is explicitly opened;
+  /* Only the composer gets its own surface after ROSTA Insight is explicitly opened;
      the resting logo remains visually part of the header. */
   [data-ruthie-quick-chat-v2="true"] .ruthie-quick-v2__composer {
     height: 40px !important;
