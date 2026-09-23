@@ -241,8 +241,8 @@ export async function GET(request: Request) {
   }, {
     headers: {
       ...NO_STORE_HEADERS,
-      "X-Ruth-Data-Path-State": state,
-      "X-Ruth-Data-Path-Fingerprint": fingerprint(identityMaterial),
+      "X-ROSTA-Data-Path-State": state,
+      "X-ROSTA-Data-Path-Fingerprint": fingerprint(identityMaterial),
       "Server-Timing": `auth;dur=${authMs}, total;dur=${Math.max(0, Math.round(nowMs() - requestStarted))}`,
     },
   });
