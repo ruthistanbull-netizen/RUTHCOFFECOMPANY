@@ -67,7 +67,7 @@ export async function PUT(request: Request) {
     source: "admin-theme-sections",
     scope: "theme",
     paths: ["/", "/products", "/collections", "/categories"],
-    tags: ["ruth-theme"],
+    tags: ["rosta-theme"],
   });
   return NextResponse.json({ ok: true, settings: persisted, persistedAt: data.updated_at, revalidate }, { headers: noStoreHeaders() });
 }
