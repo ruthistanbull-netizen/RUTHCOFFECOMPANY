@@ -57,7 +57,7 @@ function normalizeProduct(value: unknown): Product | null {
 const getCachedDiscountSettings = unstable_cache(
   async () => withTimeout(loadDiscountCampaignSettings(), 900, "İndirim read-model sorgusu").catch(() => EMPTY_DISCOUNTS),
   ["ruth-storefront-discount-settings-v2"],
-  { revalidate: 300, tags: ["ruth-discounts"] },
+  { revalidate: 300, tags: ["rosta-discounts"] },
 );
 
 async function applyAutomaticDiscounts(products: Product[]) {
