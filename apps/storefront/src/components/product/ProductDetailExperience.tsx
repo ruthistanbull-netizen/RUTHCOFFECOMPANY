@@ -358,7 +358,7 @@ export function ProductDetailExperience({
   useEffect(() => {
     browserWindowRef.current = browserWindow;
     rememberWindow(browserWindow);
-    document.title = `${browserWindow.current.name} | Ruth Istanbul`;
+    document.title = `${browserWindow.current.name} | ROSTA Coffee`;
   }, [browserWindow, rememberWindow]);
 
   useEffect(() => {
@@ -715,7 +715,7 @@ export function ProductDetailExperience({
   const images = useMemo(() => productImages(product), [product]);
   const details = useMemo(() => productDetails(product), [product]);
   const collectionName =
-    displayCollectionName(product.collections?.name) || "Ruth Istanbul";
+    displayCollectionName(product.collections?.name) || "ROSTA Coffee";
   const productPrice = Number(product.price ?? 0);
   const compareAt = Number(product.compare_at_price ?? 0);
   const hasDiscount =
