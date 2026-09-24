@@ -39,6 +39,7 @@ const themeSections = file("apps/admin/src/app/api/theme-sections/route.ts");
 const storefrontRevalidate = file("apps/storefront/src/app/api/revalidate/route.ts");
 const adminEnv = file("apps/admin/.env.example");
 const storefrontEnv = file("apps/storefront/.env.example");
+const adminNextConfig = file("apps/admin/next.config.mjs");
 const analyticsMigration = file("supabase/migrations/20260924170000_rosta_dashboard_session_accuracy.sql");
 const compactOrderMigration = file("supabase/migrations/20260924180000_compact_rosta_order_numbers.sql");
 const emailCronMigration = file("supabase/migrations/20260924181500_rosta_customer_email_automation_crons.sql");
@@ -49,6 +50,8 @@ const bootstrapSeed = file("supabase/migrations/20260922014705_rosta_bootstrap_s
 const sharedDocker = file("Dockerfile");
 const panelDocker = file("Dockerfile.rostapanel");
 const storefrontDocker = file("Dockerfile.rostacoffecompany");
+const actualServiceDocker = file("Dockerfile.ruthcoffeecompany");
+const canonicalStorefrontDocker = file("Dockerfile.rostacoffeecompany");
 const adminManifest = file("apps/admin/src/app/manifest.ts");
 const adminLayout = file("apps/admin/src/app/layout.tsx");
 const notificationCenter = file("apps/admin/src/components/base44-exact/ExactNotificationCenter.tsx");
@@ -123,6 +126,15 @@ expect(sharedDocker.includes("ZEABUR_SERVICE_NAME") && sharedDocker.includes("ZE
 expect(sharedDocker.includes("/app/.rosta-app-target"), "shared Dockerfile must persist the build target for runtime startup");
 expect(panelDocker.includes("RUN npm run build:admin"), "panel Dockerfile must build only admin");
 expect(storefrontDocker.includes("RUN npm run build:storefront"), "storefront Dockerfile must build only storefront");
+expect(actualServiceDocker.includes("RUN npm run build:storefront"), "actual Zeabur storefront service Dockerfile must build storefront");
+expect(actualServiceDocker.includes('CMD ["npm","run","start:storefront"]'), "actual Zeabur storefront service Dockerfile must start storefront");
+expect(canonicalStorefrontDocker.includes("RUN npm run build:storefront"), "canonical storefront Docker alias must build storefront");
+expect(!sharedDocker.includes("rostacoffecompany"), "shared Dockerfile still contains the misspelled storefront service/domain hint");
+
+expect(adminNextConfig.includes("https://rostacoffeecompany.zeabur.app"), "admin Next config must use the actual storefront Zeabur domain");
+expect(!adminNextConfig.includes('output: "standalone"'), "admin Docker runtime uses next start, so standalone output must not be enabled");
+expect(adminEnv.includes("https://rostacoffeecompany.zeabur.app/"), "admin env example must use the actual storefront Zeabur domain");
+expect(storefrontEnv.includes("https://rostacoffeecompany.zeabur.app/"), "storefront env example must use the actual storefront Zeabur domain");
 
 expect(adminManifest.includes('name: "ROSTA Coffee Co. Control Room"'), "admin dynamic PWA manifest must be ROSTA branded");
 expect(adminManifest.includes('url: "/icon-192.png?v=25"'), "admin manifest 192px ROSTA icon missing");
