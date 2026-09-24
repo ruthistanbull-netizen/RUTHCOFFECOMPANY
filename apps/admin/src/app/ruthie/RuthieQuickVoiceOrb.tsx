@@ -470,7 +470,7 @@ export function RuthieQuickVoiceOrb() {
     void (async () => {
       try {
         const headers = await adminAuthHeaders();
-        const response = await fetch("/api/ruthie/openai/status", { headers, cache: "no-store" });
+        const response = await fetch("/api/rosta-insight/openai/status", { headers, cache: "no-store" });
         const payload = await response.json() as ProviderStatus;
         setStatus(payload);
       } catch {
