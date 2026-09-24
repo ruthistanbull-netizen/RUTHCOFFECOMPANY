@@ -509,9 +509,9 @@ export function StorefrontLightboxPolish() {
 
       @media (min-width: 768px) {
         .ruth-product-lightbox {
-          background: rgba(246, 240, 231, .10) !important;
-          backdrop-filter: blur(30px) saturate(.9) brightness(.98) !important;
-          -webkit-backdrop-filter: blur(30px) saturate(.9) brightness(.98) !important;
+          background: var(--ruth-color-overlay) !important;
+          backdrop-filter: blur(18px) saturate(.9) !important;
+          -webkit-backdrop-filter: blur(18px) saturate(.9) !important;
         }
 
         .ruth-product-lightbox__surface,
