@@ -236,7 +236,7 @@ export function AccountActivationClient() {
               type="submit"
               disabled={saving}
               aria-busy={saving || undefined}
-              className="flex w-full items-center justify-center gap-2 bg-brick px-8 py-4 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)] transition hover:bg-brick-dark disabled:cursor-not-allowed disabled:opacity-60"
+              className="flex w-full items-center justify-center gap-2 bg-brick px-8 py-4 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)] transition active:bg-espresso disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
             >
               {saving ? <LoadingIndicator size="sm" /> : null}
               {saving ? "Kaydediliyor" : "Hesabımı Aktifleştir"}
