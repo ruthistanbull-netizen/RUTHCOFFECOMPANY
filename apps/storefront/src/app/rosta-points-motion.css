@@ -66,10 +66,6 @@
     background-color 180ms ease !important;
 }
 
-.rosta-points-offer-modal .rewards-close:hover {
-  transform: rotate(7deg) scale(1.07);
-}
-
 .rosta-points-offer-modal .rewards-close:active {
   transform: rotate(-4deg) scale(.88);
 }
@@ -90,26 +86,13 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(105deg, transparent 24%, rgba(244,240,232,.13) 48%, transparent 72%);
+  background: linear-gradient(105deg, transparent 24%, color-mix(in srgb, var(--rosta-cream) 13%, transparent) 48%, transparent 72%);
   transform: translateX(-135%);
   transition: transform 620ms cubic-bezier(.16, 1, .3, 1);
 }
 
-.rosta-points-offer-modal .rosta-points-offer-cta:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(17,17,17,.14);
-}
-
-.rosta-points-offer-modal .rosta-points-offer-cta:hover::before {
-  transform: translateX(135%);
-}
-
 .rosta-points-offer-modal .rosta-points-offer-cta svg {
   transition: transform 260ms cubic-bezier(.16, 1, .3, 1);
-}
-
-.rosta-points-offer-modal .rosta-points-offer-cta:hover svg {
-  transform: translateX(4px);
 }
 
 .rosta-points-offer-modal .rosta-points-offer-cta:active {
@@ -123,21 +106,11 @@
     box-shadow 260ms ease !important;
 }
 
-.rosta-points-offer-modal .rosta-points-offer-balance:hover {
-  transform: translateY(-2px);
-  border-color: #AAA8A1;
-  box-shadow: 0 8px 22px rgba(17,17,17,.055);
-}
-
 /* Accordion row motion and stagger once a section mounts. */
 .rosta-points-offer-modal .rosta-points-offer-accordion-trigger {
   transition:
     color 180ms ease,
     transform 180ms cubic-bezier(.16, 1, .3, 1) !important;
-}
-
-.rosta-points-offer-modal .rosta-points-offer-accordion-trigger:hover {
-  transform: translateX(3px);
 }
 
 .rosta-points-offer-modal .rosta-points-offer-accordion-trigger:active {
@@ -148,11 +121,6 @@
   transition:
     transform 300ms cubic-bezier(.16, 1, .3, 1),
     background-color 220ms ease !important;
-}
-
-.rosta-points-offer-modal .rosta-points-offer-accordion-trigger:hover .rosta-points-offer-accordion-icon {
-  transform: rotate(-7deg) scale(1.07);
-  background: #F4F0E8;
 }
 
 .rosta-points-offer-modal .rosta-points-offer-accordion-content .rosta-points-offer-action-item {
@@ -171,10 +139,6 @@
     background-color 180ms ease !important;
 }
 
-button.rosta-points-offer-action-item:not(:disabled):hover {
-  transform: translateX(4px);
-}
-
 /* Floating entry button feels alive without looping aggressively. */
 .rosta-points-offer-trigger {
   transition:
@@ -184,10 +148,6 @@ button.rosta-points-offer-action-item:not(:disabled):hover {
 
 .rosta-points-offer-trigger .rewards-floating-icon svg {
   transition: transform 360ms cubic-bezier(.16, 1, .3, 1);
-}
-
-.rosta-points-offer-trigger:hover .rewards-floating-icon svg {
-  transform: rotate(18deg) scale(1.1);
 }
 
 @keyframes rosta-points-offer-logo-in {
@@ -224,6 +184,49 @@ button.rosta-points-offer-action-item:not(:disabled):hover {
 @keyframes rosta-points-offer-row-in {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+
+@media (hover: hover) and (pointer: fine) {
+  .rosta-points-offer-modal .rewards-close:hover {
+    transform: rotate(7deg) scale(1.07);
+  }
+
+  .rosta-points-offer-modal .rosta-points-offer-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px color-mix(in srgb, var(--rosta-carbon) 42%, transparent);
+  }
+
+  .rosta-points-offer-modal .rosta-points-offer-cta:hover::before {
+    transform: translateX(135%);
+  }
+
+  .rosta-points-offer-modal .rosta-points-offer-cta:hover svg {
+    transform: translateX(4px);
+  }
+
+  .rosta-points-offer-modal .rosta-points-offer-balance:hover {
+    transform: translateY(-2px);
+    border-color: var(--rosta-kraft);
+    box-shadow: 0 8px 22px color-mix(in srgb, var(--rosta-carbon) 28%, transparent);
+  }
+
+  .rosta-points-offer-modal .rosta-points-offer-accordion-trigger:hover {
+    transform: translateX(3px);
+  }
+
+  .rosta-points-offer-modal .rosta-points-offer-accordion-trigger:hover .rosta-points-offer-accordion-icon {
+    transform: rotate(-7deg) scale(1.07);
+    background: var(--rosta-carbon-soft);
+  }
+
+  button.rosta-points-offer-action-item:not(:disabled):hover {
+    transform: translateX(4px);
+  }
+
+  .rosta-points-offer-trigger:hover .rewards-floating-icon svg {
+    transform: rotate(18deg) scale(1.1);
+  }
 }
 
 @media (max-width: 767px) {
