@@ -109,11 +109,12 @@ export function proxy(request: NextRequest) {
   if (!request.nextUrl.pathname.startsWith("/api/")) return NextResponse.next();
 
   // Basit Kargo reconcile is an expensive maintenance operation. The server
-  // maintenance worker sends X-Ruth-Panel-Maintenance: 1 and remains the sole
+  // maintenance worker sends X-Rosta-Panel-Maintenance: 1 and remains the sole
   // execution owner. The legacy orders-page minute heartbeat is acknowledged
   // without touching Supabase or the remote carrier API.
   if (
     request.nextUrl.pathname === SHIPPING_RECONCILE_PATH
+    && request.headers.get("x-rosta-panel-maintenance") !== "1"
     && request.headers.get("x-ruth-panel-maintenance") !== "1"
   ) {
     return NextResponse.json(
