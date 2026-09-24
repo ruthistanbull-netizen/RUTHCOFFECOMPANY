@@ -147,7 +147,7 @@ export function OrderTrackingClient() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full rounded-full bg-brick px-8 py-4 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)] transition hover:bg-brick-dark disabled:opacity-60"
+                  className="w-full rounded-full bg-brick px-8 py-4 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)] transition active:bg-espresso disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
                 >
                   {loading ? "Sorgulanıyor..." : "Siparişimi Sorgula"}
                 </button>
@@ -266,7 +266,7 @@ export function OrderTrackingClient() {
           </AnimatedBlock>
 
           <AnimatedBlock delay={0.12}>
-            <div className="flex h-full flex-col justify-between rounded-3xl bg-brick p-6 text-[var(--rosta-action-text)] md:p-10">
+            <div className="flex h-full flex-col justify-between rounded-3xl bg-brick p-6 text-[var(--rosta-action-text)] md:p-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick">
               <div>
                 <p className="mb-5 text-xs uppercase tracking-wide-luxe text-brick">ROSTA Coffee Co.</p>
                 <h2 className="font-heading text-4xl md:text-5xl">Sipariş durumunu anlık kontrol et.</h2>
@@ -283,7 +283,7 @@ export function OrderTrackingClient() {
 
               <Link
                 href="/contact"
-                className="mt-10 inline-flex w-fit rounded-full bg-carbon-soft px-7 py-3 text-xs uppercase tracking-wide-luxe text-cream transition hover:bg-brick hover:text-[var(--rosta-action-text)]"
+                className="mt-10 inline-flex w-fit rounded-full bg-carbon-soft px-7 py-3 text-xs uppercase tracking-wide-luxe text-cream transition active:bg-brick active:text-[var(--rosta-action-text)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
               >
                 Destek Al
               </Link>
