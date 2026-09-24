@@ -1,0 +1,285 @@
+.voiceShell,
+.chatShell {
+  --ruthie-unified-bg: var(--ruth-color-text-primary);
+  --ruthie-unified-panel: color-mix(in srgb, var(--ruth-color-text-primary) 92%, var(--ruth-color-accent-strong));
+  --ruthie-unified-line: color-mix(in srgb, var(--ruth-color-accent-soft) 16%, transparent);
+  --ruthie-unified-line-strong: color-mix(in srgb, var(--ruth-color-accent-soft) 34%, transparent);
+  --ruthie-unified-text: color-mix(in srgb, var(--ruth-color-text-inverse) 94%, var(--ruth-color-accent-soft));
+  --ruthie-unified-muted: color-mix(in srgb, var(--ruth-color-text-inverse) 48%, transparent);
+  --ruthie-unified-gold: color-mix(in srgb, var(--ruth-color-accent) 72%, var(--ruth-color-warning));
+  --ruthie-unified-gold-soft: color-mix(in srgb, var(--ruth-color-accent-soft) 86%, var(--ruth-color-text-inverse));
+  --ruthie-unified-gold-white: var(--ruth-color-text-inverse);
+}
+
+.voiceShell {
+  background:
+    radial-gradient(ellipse 66% 62% at 50% 35%, color-mix(in srgb, var(--ruth-color-accent-strong) 18%, transparent), transparent 69%),
+    linear-gradient(145deg, var(--ruth-color-text-primary) 0%, color-mix(in srgb, var(--ruth-color-text-primary) 92%, var(--ruth-color-accent-strong)) 52%, var(--ruth-color-text-primary) 100%) !important;
+}
+
+.voiceShell::before,
+.voiceShell::after {
+  background: none !important;
+  background-color: transparent !important;
+}
+
+.voiceShell :global([data-ruthie-voice-app]) {
+  --voice-bg: var(--ruthie-unified-bg);
+  --voice-panel: var(--ruthie-unified-panel);
+  --voice-line: var(--ruthie-unified-line);
+  --voice-line-strong: var(--ruthie-unified-line-strong);
+  --voice-text: var(--ruthie-unified-text);
+  --voice-muted: var(--ruthie-unified-muted);
+  --voice-gold: var(--ruthie-unified-gold);
+  --voice-gold-light: var(--ruthie-unified-gold-soft);
+  --voice-gold-white: var(--ruthie-unified-gold-white);
+  background:
+    radial-gradient(ellipse 68% 64% at 50% 34%, color-mix(in srgb, var(--ruth-color-accent-strong) 17%, transparent), transparent 69%),
+    linear-gradient(145deg, var(--ruth-color-text-primary) 0%, color-mix(in srgb, var(--ruth-color-text-primary) 92%, var(--ruth-color-accent-strong)) 52%, var(--ruth-color-text-primary) 100%) !important;
+}
+
+.voiceShell :global([data-ruthie-voice-app])::before {
+  background:
+    linear-gradient(90deg, transparent 0 17%, color-mix(in srgb, var(--ruth-color-accent-soft) 2%, transparent) 50%, transparent 83%),
+    radial-gradient(circle at 50% 38%, color-mix(in srgb, var(--ruth-color-accent) 8%, transparent), transparent 48%) !important;
+}
+
+.voiceShell :global([data-ruthie-voice-app] > header) {
+  grid-template-columns: minmax(170px, 1fr) auto minmax(170px, 1fr) !important;
+  border-bottom-color: color-mix(in srgb, var(--ruth-color-accent-soft) 13%, transparent) !important;
+  background: color-mix(in srgb, var(--ruth-color-text-primary) 72%, transparent) !important;
+  box-shadow: 0 18px 48px color-mix(in srgb, var(--ruth-color-text-primary) 18%, transparent) !important;
+  backdrop-filter: blur(28px) saturate(1.12) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(1.12) !important;
+}
+
+.voiceShell :global([data-ruthie-voice-app] > header > div:first-child) {
+  position: relative !important;
+  grid-column: 1 !important;
+  justify-self: start !important;
+  width: clamp(128px, 12vw, 178px) !important;
+  height: 62px !important;
+  padding: 0 !important;
+  display: block !important;
+  gap: 0 !important;
+}
+
+.voiceShell :global([data-ruthie-voice-app] > header > div:first-child > span),
+.voiceShell :global([data-ruthie-voice-app] > header > div:first-child > div) {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+.voiceShell :global([data-ruthie-voice-app] > header > div:first-child)::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 5px;
+  width: 100%;
+  height: 38px;
+  background: url("/ruthie-wordmark-white.svg") left center / contain no-repeat;
+  filter: brightness(0) invert(1) drop-shadow(0 0 14px color-mix(in srgb, var(--ruth-color-accent-soft) 12%, transparent));
+}
+
+.voiceShell :global([data-ruthie-voice-app] > header > div:first-child)::after {
+  content: "NEURAL VOICE ASSISTANT";
+  position: absolute;
+  left: 2px;
+  bottom: 5px;
+  color: color-mix(in srgb, var(--ruth-color-accent-soft) 62%, transparent);
+  font-size: 8px;
+  font-weight: 680;
+  letter-spacing: .17em;
+  white-space: nowrap;
+}
+
+.voiceShell :global([data-ruthie-voice-app] > header > div:nth-child(2)) {
+  grid-column: 2 !important;
+  justify-self: center !important;
+}
+
+.voiceShell :global([data-ruthie-voice-app] > header > div:last-child) {
+  grid-column: 3 !important;
+  justify-self: end !important;
+}
+
+.voiceShell :global([data-ruthie-voice-app] [data-ruthie-voice-stage])::before {
+  background: radial-gradient(circle, color-mix(in srgb, var(--ruth-color-accent) 11%, transparent), color-mix(in srgb, var(--ruth-color-accent-strong) 4%, transparent) 48%, transparent 73%) !important;
+}
+
+.voiceShell :global([data-ruthie-voice-app] [data-ruthie-orb-shell]) {
+  width: min(540px, 58vw, 61vh) !important;
+  height: min(540px, 58vw, 61vh) !important;
+  min-width: 300px !important;
+  min-height: 300px !important;
+  max-width: calc(100vw - 32px) !important;
+  max-height: calc(100dvh - 230px) !important;
+}
+
+.chatShell {
+  background:
+    radial-gradient(ellipse 72% 66% at 50% 30%, color-mix(in srgb, var(--ruth-color-accent-strong) 15%, transparent), transparent 70%),
+    linear-gradient(145deg, var(--ruth-color-text-primary) 0%, color-mix(in srgb, var(--ruth-color-text-primary) 92%, var(--ruth-color-accent-strong)) 50%, var(--ruth-color-text-primary) 100%) !important;
+}
+
+.chatShell::before {
+  z-index: 1 !important;
+}
+
+.chatShell::after {
+  z-index: 2 !important;
+}
+
+.chatShell :global([data-ruthie-chat-orb-background]) {
+  position: fixed;
+  z-index: 3;
+  left: calc(50% - 39px);
+  top: 45%;
+  width: min(530px, 44vw, 61vh);
+  height: min(530px, 44vw, 61vh);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  opacity: .78;
+  filter: saturate(.96) contrast(1.04);
+}
+
+.chatShell > :global(section) {
+  z-index: 4 !important;
+  background: transparent !important;
+}
+
+.chatShell > :global(section > main) {
+  background:
+    radial-gradient(ellipse 70% 66% at 50% 31%, color-mix(in srgb, var(--ruth-color-accent-strong) 8%, transparent), transparent 70%),
+    linear-gradient(180deg, color-mix(in srgb, var(--ruth-color-text-primary) 22%, transparent), color-mix(in srgb, var(--ruth-color-text-primary) 36%, transparent)) !important;
+}
+
+.chatShell > :global(section [aria-live="polite"]) {
+  position: relative;
+  z-index: 5;
+}
+
+.chatShell > :global(section [aria-live="polite"] [data-ruthie-visual-root]) {
+  display: none !important;
+}
+
+.chatShell > :global(section [aria-live="polite"] article),
+.chatShell > :global(section [aria-live="polite"] h1),
+.chatShell > :global(section [aria-live="polite"] p),
+.chatShell > :global(section [aria-live="polite"] button) {
+  position: relative;
+  z-index: 6;
+}
+
+.voiceShell :global(button),
+.voiceShell :global(a),
+.chatShell :global(button),
+.chatShell :global(a) {
+  box-sizing: border-box;
+}
+
+.voiceShell :global(button > svg),
+.voiceShell :global(a > svg),
+.chatShell :global(button > svg),
+.chatShell :global(a > svg) {
+  display: block;
+  flex: none;
+  margin: 0;
+  transform: none !important;
+  transform-origin: center;
+}
+
+.voiceShell :global([data-ruthie-voice-app] > header button),
+.voiceShell :global([data-ruthie-voice-app] > header a),
+.chatShell :global(section > main > header > button),
+.chatShell :global(section > main > header > a) {
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 0 !important;
+}
+
+@media (max-width: 1180px) {
+  .chatShell :global([data-ruthie-chat-orb-background]) {
+    left: 50%;
+    width: min(500px, 50vw, 58vh);
+    height: min(500px, 50vw, 58vh);
+  }
+}
+
+@media (max-width: 860px) {
+  .chatShell :global([data-ruthie-chat-orb-background]) {
+    left: 50%;
+    top: 41%;
+    width: min(410px, 82vw, 50vh);
+    height: min(410px, 82vw, 50vh);
+    opacity: .64;
+  }
+
+  .chatShell > :global(section > main) {
+    background:
+      radial-gradient(ellipse 90% 66% at 50% 30%, color-mix(in srgb, var(--ruth-color-accent-strong) 7%, transparent), transparent 72%),
+      linear-gradient(180deg, color-mix(in srgb, var(--ruth-color-text-primary) 30%, transparent), color-mix(in srgb, var(--ruth-color-text-primary) 46%, transparent)) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .voiceShell :global([data-ruthie-voice-app] > header) {
+    grid-template-columns: minmax(112px, 1fr) auto !important;
+  }
+
+  .voiceShell :global([data-ruthie-voice-app] > header > div:first-child) {
+    grid-column: 1 !important;
+    width: 122px !important;
+    height: 52px !important;
+  }
+
+  .voiceShell :global([data-ruthie-voice-app] > header > div:first-child)::before {
+    top: 5px;
+    height: 30px;
+  }
+
+  .voiceShell :global([data-ruthie-voice-app] > header > div:first-child)::after {
+    left: 1px;
+    bottom: 4px;
+    font-size: 6.5px;
+    letter-spacing: .12em;
+  }
+
+  .voiceShell :global([data-ruthie-voice-app] > header > div:nth-child(2)) {
+    display: none !important;
+  }
+
+  .voiceShell :global([data-ruthie-voice-app] > header > div:last-child) {
+    grid-column: 2 !important;
+    gap: 5px !important;
+  }
+
+  .voiceShell :global([data-ruthie-voice-app] > header button),
+  .voiceShell :global([data-ruthie-voice-app] > header a),
+  .chatShell :global(section > main > header > button),
+  .chatShell :global(section > main > header > a) {
+    display: inline-flex !important;
+    width: 38px !important;
+    min-width: 38px !important;
+    height: 38px !important;
+    padding: 0 !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .voiceShell :global([data-ruthie-voice-app] > header svg),
+  .chatShell :global(section > main > header svg) {
+    width: 17px !important;
+    height: 17px !important;
+  }
+
+  .voiceShell :global([data-ruthie-voice-app] [data-ruthie-orb-shell]) {
+    width: min(390px, 88vw, 49vh) !important;
+    height: min(390px, 88vw, 49vh) !important;
+    min-width: 260px !important;
+    min-height: 260px !important;
+    max-width: calc(100vw - 18px) !important;
+    max-height: calc(100dvh - 230px) !important;
+  }
+}

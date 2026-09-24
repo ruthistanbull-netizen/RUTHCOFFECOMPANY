@@ -1,0 +1,96 @@
+.voiceFinal {
+  color: color-mix(in srgb, var(--ruth-color-text-inverse) 94%, var(--ruth-color-accent-soft)) !important;
+  background:
+    radial-gradient(ellipse 64% 58% at 50% 34%, color-mix(in srgb, var(--ruth-color-accent-strong) 17%, transparent), transparent 70%),
+    black !important;
+}
+
+.voiceFinal > main {
+  background: transparent !important;
+}
+
+.voiceFinal > main > section {
+  border-color: color-mix(in srgb, var(--ruth-color-accent-soft) 18%, transparent) !important;
+  background:
+    radial-gradient(ellipse 58% 52% at 50% 35%, color-mix(in srgb, var(--ruth-color-accent-strong) 15%, transparent), transparent 72%),
+    linear-gradient(145deg, color-mix(in srgb, black 96%, var(--ruth-color-accent-strong)), black 64%, color-mix(in srgb, black 97%, var(--ruth-color-accent))) !important;
+  box-shadow:
+    0 38px 120px color-mix(in srgb, black 60%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--ruth-color-accent-soft) 5%, transparent),
+    inset 0 0 70px color-mix(in srgb, var(--ruth-color-accent) 3%, transparent) !important;
+}
+
+.voiceFinal > main > section::before {
+  background:
+    linear-gradient(110deg, transparent 10%, color-mix(in srgb, var(--ruth-color-accent-soft) 3%, transparent) 48%, transparent 82%),
+    radial-gradient(circle at 50% 43%, color-mix(in srgb, var(--ruth-color-accent) 7%, transparent), transparent 46%) !important;
+}
+
+.voiceFinal [data-ruthie-voice-app] > header {
+  border-bottom-color: color-mix(in srgb, var(--ruth-color-accent-soft) 13%, transparent) !important;
+  background: linear-gradient(180deg, color-mix(in srgb, black 74%, transparent), color-mix(in srgb, black 12%, transparent)) !important;
+}
+
+.voiceFinal [data-ruthie-voice-app] [data-ruthie-voice-stage] {
+  background: transparent !important;
+}
+
+.voiceFinal [data-ruthie-voice-app] [data-ruthie-voice-stage]::before {
+  background: radial-gradient(circle, color-mix(in srgb, var(--ruth-color-accent) 10%, transparent), transparent 72%) !important;
+}
+
+.chatFinal {
+  background:
+    radial-gradient(ellipse 68% 62% at 50% 30%, color-mix(in srgb, var(--ruth-color-accent-strong) 13%, transparent), transparent 70%),
+    black !important;
+}
+
+.chatFinal::before {
+  z-index: 1 !important;
+}
+
+.chatFinal::after {
+  z-index: 2 !important;
+}
+
+.chatFinal > [data-ruthie-chat-orb-background] {
+  z-index: 103 !important;
+  opacity: .98 !important;
+  filter: saturate(1) brightness(1.12) contrast(1.08) !important;
+}
+
+.chatFinal > section {
+  z-index: 104 !important;
+  background: transparent !important;
+}
+
+.chatFinal > section > main {
+  background: transparent !important;
+}
+
+.chatFinal > section > main [aria-live="polite"] {
+  position: relative;
+  background: transparent !important;
+}
+
+.chatFinal > section > main [aria-live="polite"]::before {
+  opacity: .18 !important;
+}
+
+.chatFinal > section > main [aria-live="polite"] > * {
+  position: relative;
+  z-index: 2;
+}
+
+.chatFinal > section > main > header,
+.chatFinal > section > main > div:last-child {
+  position: relative;
+  z-index: 5;
+}
+
+@media (max-width: 860px) {
+  .chatFinal > [data-ruthie-chat-orb-background] {
+    opacity: .86 !important;
+    filter: saturate(1) brightness(1.1) contrast(1.06) !important;
+  }
+}
