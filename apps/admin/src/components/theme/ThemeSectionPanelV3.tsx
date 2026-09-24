@@ -210,7 +210,7 @@ function ImageUpload({ onChange }: { onChange: (url: string) => void }) {
   };
 
   return (
-    <label className="flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-border-strong bg-surface-secondary text-[9px] font-semibold hover:border-black/35">
+    <label className="flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-border-strong bg-surface-secondary text-[9px] font-semibold focus-within:border-accent">
       <ImagePlus className="h-4 w-4" />
       {busy ? "Yükleniyor…" : "Görsel Değiştir"}
       <input
@@ -255,7 +255,7 @@ function SectionSettings({
                 key={item.id}
                 type="button"
                 onClick={() => onEditInner(item.id)}
-                className="flex w-full items-center gap-3 rounded-xl border border-border-subtle bg-surface-secondary px-3 py-2.5 text-left hover:border-border-strong"
+                className="flex w-full items-center gap-3 rounded-xl border border-border-subtle bg-surface-secondary px-3 py-2.5 text-left focus-visible:border-border-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-surface-primary text-[9px] shadow-sm">
                   {item.kind === "image" ? "▧" : item.kind === "button" ? "●" : item.kind === "link" ? "↗" : "T"}
@@ -520,7 +520,7 @@ export function ThemeSectionPanelV3() {
           type="button"
           onClick={() => setOpen(true)}
           data-theme-sections-launcher
-          className="fixed left-[54px] top-[10px] z-[2147483600] flex h-9 items-center gap-2 rounded-xl border border-border-subtle bg-surface-primary px-3 text-[9px] font-semibold shadow-sm hover:border-border-strong"
+          className="fixed left-[54px] top-[10px] z-[2147483600] flex h-9 items-center gap-2 rounded-xl border border-border-subtle bg-surface-primary px-3 text-[9px] font-semibold shadow-sm focus-visible:border-border-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
           <Layers3 className="h-4 w-4" />
           Bölümler
@@ -644,7 +644,7 @@ export function ThemeSectionPanelV3() {
             </div>
             <div className="space-y-2">
               {LIBRARY.map((item) => (
-                <button key={item.type} type="button" onClick={() => addSection(item.type)} className="w-full rounded-2xl border border-border-subtle p-4 text-left hover:border-black/25">
+                <button key={item.type} type="button" onClick={() => addSection(item.type)} className="w-full rounded-2xl border border-border-subtle p-4 text-left focus-visible:border-border-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
                   <b className="block text-[10px]">{item.title}</b>
                   <span className="mt-1 block text-[8px] leading-relaxed text-muted">{item.detail}</span>
                 </button>
