@@ -10,7 +10,13 @@ import { ThemeEditorEnhancements } from "@/components/theme/ThemeEditorEnhanceme
 import { ThemeEditorNativeNavigation } from "@/components/theme/ThemeEditorNativeNavigation";
 import { ROSTA_WORDMARK_SRC } from "@/components/brand/rostaWordmark";
 
-const SOCIAL_LINKS = [
+type SocialLink = {
+  label: string;
+  href: string;
+  icon: JSX.Element;
+};
+
+const SOCIAL_LINKS: SocialLink[] = [
   ...(process.env.NEXT_PUBLIC_ROSTA_WHATSAPP_URL
     ? [{ label: "WhatsApp", href: process.env.NEXT_PUBLIC_ROSTA_WHATSAPP_URL, icon: <WhatsAppIcon /> }]
     : []),
