@@ -522,7 +522,7 @@ export function RuthieChatComposerEnhancerV2() {
     setImageError(null);
     try {
       const headers = await adminAuthHeaders();
-      const response = await fetch("/api/ruthie/openai/image-v2", {
+      const response = await fetch("/api/rosta-insight/openai/image-v2", {
         method: "POST",
         cache: "no-store",
         headers: { ...headers, "Content-Type": "application/json" },
@@ -580,7 +580,7 @@ export function RuthieChatComposerEnhancerV2() {
     setImageError(null);
     try {
       const headers = await adminAuthHeaders();
-      const response = await fetch("/api/ruthie/openai/image-v2", {
+      const response = await fetch("/api/rosta-insight/openai/image-v2", {
         method: "POST",
         cache: "no-store",
         headers: { ...headers, "Content-Type": "application/json" },
