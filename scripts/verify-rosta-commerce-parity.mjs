@@ -132,9 +132,12 @@ expect(shippingHardening.includes("reconcile_basit_kargo_delivery_evidence"), "B
 expect(panelDocker.includes("COPY apps/admin/package.json") && panelDocker.includes("COPY apps/storefront/package.json"), "panel Docker workspace manifests incomplete");
 expect(storefrontDocker.includes("COPY apps/admin/package.json") && storefrontDocker.includes("COPY apps/storefront/package.json"), "storefront Docker workspace manifests incomplete");
 expect(!sharedDocker.includes("npm run build:all"), "root Dockerfile must not hide per-app build failures behind build:all");
-expect(sharedDocker.includes("RUN npm run build:admin"), "root Dockerfile must build admin");
-expect(sharedDocker.includes("RUN npm run build:storefront"), "root Dockerfile must build storefront");
-expect(sharedDocker.includes("ZEABUR_WEB_DOMAIN") && sharedDocker.includes("ZEABUR_WEB_URL"), "root Dockerfile runtime must select app from Zeabur domain hints");
+expect(sharedDocker.includes("ARG ZEABUR_SERVICE_ID"), "root Dockerfile must consume Zeabur's stable service ID during build");
+expect(sharedDocker.includes("6ab1db67afd7153d77b410bb"), "root Dockerfile must recognize the panel service ID");
+expect(sharedDocker.includes("6ab040b5477bfd0030149f96"), "root Dockerfile must recognize the storefront service ID");
+expect(sharedDocker.includes("npm run build:admin"), "root Dockerfile must be able to build admin");
+expect(sharedDocker.includes("npm run build:storefront"), "root Dockerfile must be able to build storefront");
+expect(sharedDocker.includes("ZEABUR_WEB_DOMAIN") && sharedDocker.includes("ZEABUR_WEB_URL"), "root Dockerfile runtime must retain domain-hint fallback");
 expect(sharedDocker.includes("ENV PORT=8080") && sharedDocker.includes("EXPOSE 8080"), "root Dockerfile must use Zeabur Git-service port 8080");
 expect(!sharedDocker.includes("test -f apps/admin/.next/BUILD_ID"), "root Dockerfile must not add a false admin BUILD_ID gate");
 expect(!sharedDocker.includes("test -f apps/storefront/.next/BUILD_ID"), "root Dockerfile must not add a false storefront BUILD_ID gate");
