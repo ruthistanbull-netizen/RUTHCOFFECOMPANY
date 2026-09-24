@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import {
   resilientFetch,
   resolveInternalServiceBaseUrl,
@@ -12,11 +12,11 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 55;
 
+const PRIMARY_TIMEOUT_MS = 30_000;
 const DELIVERY_TIMEOUT_MS = 10_000;
 const PAYMENT_RECOVERY_TIMEOUT_MS = 15_000;
 const SELF_HEAL_TIMEOUT_MS = 8_000;
 const PUSH_TIMEOUT_MS = 8_000;
-const DEFAULT_ADMIN_BASE_URL = "https://rostapanel.zeabur.app";
 
 function internalBaseCandidates(configuredBaseUrl: string): string[] {
   const preferLoopback = Boolean(
@@ -143,41 +143,28 @@ async function run(request: Request) {
     );
   }
 
-  const [{ data: cronConfig, error: cronError }, { data: workerConfig, error: workerError }] = await Promise.all([
-    auth.supabase
-      .from("automation_cron_config")
-      .select("secret")
-      .eq("id", true)
-      .maybeSingle(),
-    auth.supabase
-      .from("commerce_worker_config")
-      .select("admin_internal_url")
-      .eq("id", true)
-      .maybeSingle(),
-  ]);
+  const { data: runtimeConfig, error: runtimeConfigError } = await auth.supabase
+    .from("automation_cron_config")
+    .select("admin_base_url,secret")
+    .eq("id", true)
+    .maybeSingle();
 
-  const secret = String(cronConfig?.secret || auth.internalSecret || "").trim();
-  const baseUrl = String(
-    workerConfig?.admin_internal_url
-      || process.env.NEXT_PUBLIC_PANEL_URL
-      || process.env.NEXT_PUBLIC_ADMIN_URL
-      || DEFAULT_ADMIN_BASE_URL,
-  ).trim().replace(/\/$/, "");
-
-  if (cronError || workerError || !secret || !baseUrl) {
+  if (runtimeConfigError || !runtimeConfig?.admin_base_url || !runtimeConfig?.secret) {
     return NextResponse.json(
       {
         ok: false,
-        error: cronError?.message
-          || workerError?.message
-          || "ROSTA canonical platform runtime configuration is missing.",
+        error: runtimeConfigError?.message || "ROSTA canonical platform runtime configuration is missing.",
       },
       { status: 503, headers: { "Cache-Control": "no-store" } },
     );
   }
 
+  const baseUrl = String(runtimeConfig.admin_base_url).replace(/\/$/, "");
+  const secret = String(runtimeConfig.secret);
   const now = new Date();
+  const minute = now.getUTCMinutes();
   const bucket = Math.floor(now.getTime() / 60_000);
+  const maintenanceDue = minute % 5 === 3;
 
   const [delivery, paymentRecovery, selfHeal, push] = await Promise.all([
     callInternal(
@@ -204,6 +191,40 @@ async function run(request: Request) {
     boundedPushWorker(),
   ]);
 
+  after(async () => {
+    const tasks = [
+      {
+        path: "/api/internal/service-health-monitor-v4",
+        name: "health-v4",
+        source: `rosta_platform_tick:${bucket}:health-v4`,
+      },
+      ...(maintenanceDue
+        ? [{
+            path: "/api/internal/panel-maintenance",
+            name: "maintenance",
+            source: `rosta_platform_tick:${bucket}:maintenance`,
+          }]
+        : []),
+    ];
+
+    const results = await Promise.all(
+      tasks.map(async (task) => ({
+        task: task.name,
+        result: await callInternal(baseUrl, secret, task.path, task.source, PRIMARY_TIMEOUT_MS),
+      })),
+    );
+
+    for (const item of results) {
+      if (!item.result.ok) {
+        console.warn("[rosta-platform-tick] background task failed", {
+          bucket,
+          task: item.task,
+          result: item.result,
+        });
+      }
+    }
+  });
+
   const durableOk = delivery.ok && paymentRecovery.ok && selfHeal.ok && push.ok;
   if (!durableOk) {
     console.warn("[rosta-platform-tick] durable task failed", {
@@ -220,6 +241,8 @@ async function run(request: Request) {
       ok: durableOk,
       accepted: true,
       bucket,
+      healthMonitor: "v4",
+      maintenanceDue,
       durableDelivery: delivery,
       durablePaymentRecovery: paymentRecovery,
       durableSelfHeal: selfHeal,
