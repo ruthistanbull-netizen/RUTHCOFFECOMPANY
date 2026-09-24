@@ -214,7 +214,7 @@ export default function Hero({
   const reduceMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement | null>(null);
   const wordmarkRef = useRef<HTMLDivElement | null>(null);
-  const [wordmarkColor, setWordmarkColor] = useState("#F4F0E8");
+  const [wordmarkColor, setWordmarkColor] = useState("#FBF3E6");
   const [wordmarkVisible, setWordmarkVisible] = useState(true);
   const [liveHeroImages, setLiveHeroImages] = useState(heroImages);
 
@@ -266,7 +266,7 @@ export default function Hero({
         if (!media) return;
         const luminance = sampleMediaTone(media, pointX, pointY);
         if (luminance == null) return;
-        setWordmarkColor(luminance > 148 ? "#111111" : "#F4F0E8");
+        setWordmarkColor(luminance > 148 ? "#111111" : "#FBF3E6");
       });
     };
 
