@@ -191,23 +191,32 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
         : "Hesabınız için yeni bir şifre belirleyin.";
 
   const fieldClass =
-    "h-[54px] w-full rounded-[4px] border border-white/28 bg-[#333]/85 px-4 text-[15px] text-white outline-none transition placeholder:text-white/48 focus:border-white/65 focus:bg-[#383838] disabled:opacity-50";
+    "h-[54px] w-full rounded-[4px] border border-white/14 bg-[#242424] px-4 text-[15px] text-[#F4F0E8] outline-none transition placeholder:text-[#F4F0E8]/36 focus:border-[#F4F0E8]/55 focus:bg-[#292929] focus:ring-2 focus:ring-[#F4F0E8]/10 disabled:opacity-50";
 
   return (
     <main className="relative min-h-[100dvh] overflow-hidden bg-[#141414] text-white" data-exact-base44-auth={mode}>
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_-10%,rgba(255,255,255,.075),transparent_34%),linear-gradient(180deg,rgba(0,0,0,.04),rgba(0,0,0,.34))]" />
 
       <header className="relative z-20 flex h-[72px] items-center px-5 pt-[env(safe-area-inset-top)] sm:h-[86px] sm:px-10 lg:px-12">
-        <div className="text-[20px] font-black tracking-[0.04em] text-white sm:text-[23px]">
-          RR HUB
-        </div>
+        <img
+          src="/rr-hub-cream.svg"
+          alt="RR HUB"
+          draggable={false}
+          className="h-[30px] w-auto select-none object-contain sm:h-[34px]"
+        />
       </header>
 
       <section className="relative z-10 flex min-h-[calc(100dvh-72px)] items-start justify-center px-5 pb-[max(2rem,env(safe-area-inset-bottom))] pt-8 sm:min-h-[calc(100dvh-86px)] sm:items-center sm:pb-16 sm:pt-0">
-        <div className="w-full max-w-[450px] rounded-[6px] bg-black/72 px-6 py-8 shadow-[0_30px_80px_rgba(0,0,0,.38)] backdrop-blur-[2px] sm:px-14 sm:py-12">
-          <div className="mb-7">
-            <h1 className="text-[30px] font-bold tracking-[-0.035em] text-white sm:text-[34px]">{title}</h1>
-            <p className="mt-2 text-[12px] leading-relaxed text-white/42 sm:text-[13px]">{subtitle}</p>
+        <div className="w-full max-w-[450px] rounded-[8px] border border-white/[0.08] bg-[#1b1b1b]/92 px-6 py-8 shadow-[0_30px_80px_rgba(0,0,0,.38)] backdrop-blur-[6px] sm:px-14 sm:py-12">
+          <div className="mb-8">
+            <img
+              src="/rr-hub-cream.svg"
+              alt="RR HUB"
+              draggable={false}
+              className="mx-auto mb-8 h-auto w-[184px] select-none object-contain sm:w-[210px]"
+            />
+            <h1 className="text-[30px] font-bold tracking-[-0.035em] text-[#F4F0E8] sm:text-[34px]">{title}</h1>
+            <p className="mt-2 text-[12px] leading-relaxed text-[#F4F0E8]/46 sm:text-[13px]">{subtitle}</p>
           </div>
 
           {checkingRecovery ? (
@@ -305,11 +314,11 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
                       checked={rememberSession}
                       onChange={(event) => setRememberSession(event.target.checked)}
                       disabled={loading}
-                      className="h-4 w-4 rounded border-white/35 bg-transparent accent-white"
+                      className="h-4 w-4 rounded border-white/35 bg-transparent accent-[#F4F0E8]"
                     />
                     <span>Oturumu açık tut</span>
                   </label>
-                  <Link href="/forgot-password" className="text-[12px] text-white/58 transition hover:text-white hover:underline">
+                  <Link href="/forgot-password" className="text-[12px] text-[#F4F0E8]/58 transition hover:text-[#F4F0E8] hover:underline">
                     Şifremi unuttum
                   </Link>
                 </div>
@@ -319,7 +328,7 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="mt-1 flex h-[48px] w-full touch-manipulation select-none items-center justify-center rounded-[4px] bg-white text-[14px] font-bold text-[#141414] transition-[transform,background,filter] duration-150 hover:bg-white/90 active:scale-[0.965] active:brightness-75 disabled:cursor-wait disabled:opacity-55 [-webkit-tap-highlight-color:transparent]"
+                  className="mt-1 flex h-[48px] w-full touch-manipulation select-none items-center justify-center rounded-[4px] bg-[#F4F0E8] text-[14px] font-bold text-[#141414] transition-[transform,background,filter] duration-150 hover:bg-[#e9e3d8] active:scale-[0.965] active:brightness-90 disabled:cursor-wait disabled:opacity-55 [-webkit-tap-highlight-color:transparent]"
                 >
                   {loading
                     ? "Kontrol ediliyor…"
@@ -345,7 +354,7 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
             </form>
           )}
 
-          <p className="mt-8 text-center text-[10px] leading-relaxed text-white/20">
+          <p className="mt-8 text-center text-[10px] leading-relaxed tracking-[0.03em] text-[#F4F0E8]/28">
             RR HUB · Güvenli yönetim erişimi
           </p>
         </div>
