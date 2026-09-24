@@ -250,7 +250,6 @@
   height: 100%;
 }
 .phase1d-home-collection-card > img { object-fit: cover; transition: transform var(--ruth-motion-slow) var(--ruth-easing); }
-.phase1d-home-collection-card:hover > img { transform: scale(1.025); }
 .phase1d-home-collection-card__overlay { background: linear-gradient(0deg, var(--ruth-overlay-strong), transparent 58%); }
 .phase1d-home-collection-card__copy {
   position: absolute;
@@ -312,6 +311,10 @@
   .phase1d-home-service { grid-template-columns: minmax(0, 1fr); }
   .phase1d-home-service > div { border-right: 0; border-bottom: 1px solid var(--ruth-border); }
   .phase1d-home-service > div:last-child { border-bottom: 0; }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .phase1d-home-collection-card:hover > img { transform: scale(1.025); }
 }
 
 @media (prefers-reduced-motion: reduce) {
