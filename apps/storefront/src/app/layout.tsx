@@ -12,6 +12,8 @@ import "@ruth-commerce/ui/operations.css";
 import "@ruth-commerce/ui/order-card.css";
 import "@ruth-commerce/ui/search-shell.css";
 import "./globals.css";
+import "./theme.css";
+import "./storefront-backgrounds.css";
 import "./rosta-points-motion.css";
 import "./product-image-standard.css";
 import "./product-header-contrast.css";
