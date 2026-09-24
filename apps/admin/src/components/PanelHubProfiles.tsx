@@ -31,6 +31,10 @@ export function PanelHubProfiles() {
       setActive(null);
       setError(null);
       document.documentElement.style.removeProperty("pointer-events");
+      try {
+        window.sessionStorage.removeItem(ROSTA_ENTERED_KEY);
+        window.sessionStorage.removeItem(RUTH_ENTERED_KEY);
+      } catch {}
     };
 
     const onPageShow = () => resetSelection();
