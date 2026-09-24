@@ -106,9 +106,9 @@ const definitions: Definition[] = [
   {
     id: "basit-kargo",
     overrideFlag: "ROSTA_INSIGHT_BASIT_KARGO_CONNECTED",
-    requirementGroups: [["BASIT_KARGO_API_TOKEN"], ["BASIT_KARGO_API_BASE_URL"]],
-    connectedDetail: "Basit Kargo API bağlantısı tanımlı.",
-    disconnectedDetail: "Basit Kargo API tokenı veya servis adresi eksik.",
+    requirementGroups: [["BASIT_KARGO_API_TOKEN"]],
+    connectedDetail: "Basit Kargo API erişimi tanımlı.",
+    disconnectedDetail: "Basit Kargo API tokenı henüz tanımlı değil.",
   },
   {
     id: "gmail",
@@ -167,6 +167,16 @@ export async function GET(request: Request) {
   const integrations = Object.fromEntries(
     definitions.map((definition) => [definition.id, environmentState(definition)]),
   ) as Record<IntegrationId, IntegrationState>;
+
+  // OAuth istemci ayarları altyapıyı hazırlar; gerçek Gmail bağlantısı ayrı tutulur.
+  const gmailOauthReady = ["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "GMAIL_REDIRECT_URI"].every(hasValue);
+  integrations.gmail = {
+    connected: false,
+    detail: gmailOauthReady
+      ? "Gmail OAuth altyapısı hazır; panelden bir Gmail hesabı bağlanmayı bekliyor."
+      : "Gmail OAuth yapılandırması eksik; bağlantı henüz kurulmadı.",
+  };
+
   const live: Record<string, unknown> = {};
   const searchParams = new URL(request.url).searchParams;
   const requestedProvider = searchParams.get("provider")?.trim().toLowerCase();
