@@ -335,7 +335,7 @@ export function AccountClient({ ordersOnly = false }: { ordersOnly?: boolean }) 
               await signOut();
               window.location.href = "/";
             }}
-            className="inline-flex items-center justify-center gap-2 border border-kraft/45 px-6 py-3 text-xs uppercase tracking-wide-luxe text-cream transition hover:bg-carbon-soft"
+            className="inline-flex items-center justify-center gap-2 border border-kraft/45 px-6 py-3 text-xs uppercase tracking-wide-luxe text-cream transition active:bg-brick/10"
           >
             <LogOut size={15} />
             Çıkış Yap
@@ -343,7 +343,7 @@ export function AccountClient({ ordersOnly = false }: { ordersOnly?: boolean }) 
         </div>
 
         {error && (
-          <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          <div className="mb-6 rounded-xl border border-[var(--ruth-color-danger)]/40 bg-[var(--ruth-color-danger-soft)] px-4 py-3 text-sm text-[var(--ruth-color-danger-text)]">
             {error}
           </div>
         )}
@@ -362,7 +362,7 @@ export function AccountClient({ ordersOnly = false }: { ordersOnly?: boolean }) 
               <p className="text-xs uppercase tracking-wide-luxe text-cream/70">Sipariş</p>
               <p className="mt-3 text-sm">{orders.length} kayıt</p>
             </div>
-            <div className="group rounded-2xl border border-kraft/35 bg-carbon-soft p-5 text-left transition hover:bg-carbon md:col-span-2">
+            <div className="group rounded-2xl border border-kraft/35 bg-carbon-soft p-5 text-left transition active:bg-brick/10 md:col-span-2">
               <div className="flex items-center justify-between gap-3">
                 <p className="text-xs uppercase tracking-wide-luxe text-cream/70">ROSTA Points</p>
                 <Gift size={18} className="text-brick" />
@@ -390,7 +390,7 @@ export function AccountClient({ ordersOnly = false }: { ordersOnly?: boolean }) 
 
             <Link
               href="/account/addresses"
-              className="group rounded-2xl border border-kraft/35 bg-carbon-soft p-5 transition hover:bg-carbon"
+              className="group rounded-2xl border border-kraft/35 bg-carbon-soft p-5 transition active:bg-brick/10"
             >
               <div className="flex items-center justify-between gap-3">
                 <p className="text-xs uppercase tracking-wide-luxe text-cream/70">Adreslerim</p>
@@ -401,7 +401,7 @@ export function AccountClient({ ordersOnly = false }: { ordersOnly?: boolean }) 
 
             <Link
               href="/account/discounts"
-              className="group rounded-2xl border border-kraft/35 bg-carbon-soft p-5 transition hover:bg-carbon"
+              className="group rounded-2xl border border-kraft/35 bg-carbon-soft p-5 transition active:bg-brick/10"
             >
               <div className="flex items-center justify-between gap-3">
                 <p className="text-xs uppercase tracking-wide-luxe text-cream/70">İndirimlerim</p>
