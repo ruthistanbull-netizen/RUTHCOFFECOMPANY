@@ -16,7 +16,7 @@ function trustItems(freeShippingThreshold: number) {
 export default function TrustSection({ freeShippingThreshold = 2000 }: { freeShippingThreshold?: number }) {
   const TRUST = trustItems(freeShippingThreshold);
   return (
-    <section className="bg-cream px-4 py-16 md:px-8 md:py-20" style={{ borderTop: "1px solid rgba(184,151,106,0.12)", borderBottom: "1px solid rgba(184,151,106,0.12)" }}>
+    <section className="bg-carbon-soft px-4 py-16 text-cream md:px-8 md:py-20" style={{ borderTop: "1px solid color-mix(in srgb, var(--rosta-kraft) 38%, transparent)", borderBottom: "1px solid color-mix(in srgb, var(--rosta-kraft) 38%, transparent)" }}>
       <div className="mx-auto max-w-6xl">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-5 md:gap-4">
           {TRUST.map((item, index) => (
@@ -28,13 +28,13 @@ export default function TrustSection({ freeShippingThreshold = 2000 }: { freeShi
               transition={{ delay: index * 0.06, duration: 0.55 }}
               className={`text-center ${index === TRUST.length - 1 ? "col-span-2 md:col-span-1" : ""}`}
             >
-              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-gold/20">
-                <item.icon size={20} className="text-gold-dark" />
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-kraft/40 bg-carbon">
+                <item.icon size={20} className="text-brick" />
               </div>
-              <h3 className="font-heading text-sm" style={{ color: "var(--ink)" }}>{item.title}</h3>
+              <h3 className="font-heading text-sm" style={{ color: "var(--rosta-cream)" }}>{item.title}</h3>
               <div className="mt-2 space-y-1">
                 {item.lines.map((line) => (
-                  <p key={line} className="mx-auto max-w-[13rem] text-xs leading-5 text-muted-ruth">{line}</p>
+                  <p key={line} className="mx-auto max-w-[13rem] text-xs leading-5 text-cream/70">{line}</p>
                 ))}
               </div>
             </motion.div>
