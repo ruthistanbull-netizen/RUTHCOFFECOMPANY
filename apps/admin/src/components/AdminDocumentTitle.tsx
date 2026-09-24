@@ -17,6 +17,7 @@ const HUB_ROUTES = new Set([
 
 function titleForPath(pathname: string) {
   if (HUB_ROUTES.has(pathname)) return "RR HUB";
+  if (pathname === "/ruth") return "Ruth Istanbul · RR HUB";
 
   const item = exactCurrentItem(pathname);
   if (item?.label) return `${item.label} · ROSTA`;
