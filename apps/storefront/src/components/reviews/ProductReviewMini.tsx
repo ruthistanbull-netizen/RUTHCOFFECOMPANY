@@ -86,8 +86,8 @@ export function ProductReviewMini({ productId, productSlug }: { productId: strin
   if (!summary || summary.reviewCount <= 0) return null;
 
   return (
-    <div className="mt-2 flex w-full flex-col items-center justify-center gap-1 text-center text-[0.65rem] leading-none text-ink sm:text-[0.72rem]">
-      <span className="flex items-center justify-center gap-0.5 text-ink" aria-label={`${summary.averageRating.toFixed(1)} yıldız`}>
+    <div className="mt-2 flex w-full flex-col items-center justify-center gap-1 text-center text-[0.65rem] leading-none text-cream sm:text-[0.72rem]">
+      <span className="flex items-center justify-center gap-0.5 text-cream" aria-label={`${summary.averageRating.toFixed(1)} yıldız`}>
         {Array.from({ length: 5 }).map((_, index) => (
           <Star key={index} size={12} className={index < Math.round(summary.averageRating) ? "fill-current" : ""} strokeWidth={1.6} />
         ))}
