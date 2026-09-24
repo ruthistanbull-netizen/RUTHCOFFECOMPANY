@@ -197,7 +197,7 @@ export function AdminRuthieQuickChatV2() {
             border: 1px solid color-mix(in srgb, hsl(var(--accent)) 20%, hsl(var(--border-subtle)));
             border-radius: 27px;
             background: hsl(var(--surface-primary) / .96);
-            box-shadow: 0 10px 30px rgba(28, 25, 55, .13), 0 0 0 1px rgba(255,255,255,.76) inset;
+            box-shadow: 0 10px 30px color-mix(in srgb, var(--rosta-carbon) 46%, transparent), 0 0 0 1px color-mix(in srgb, var(--rosta-cream) 18%, transparent) inset;
             backdrop-filter: blur(18px) saturate(1.3);
             -webkit-backdrop-filter: blur(18px) saturate(1.3);
           }
@@ -212,7 +212,7 @@ export function AdminRuthieQuickChatV2() {
             display: grid;
             place-items: center;
             color: hsl(var(--accent));
-            background: radial-gradient(circle at 38% 30%, rgba(255,255,255,.98) 0 24%, color-mix(in srgb, hsl(var(--accent)) 8%, white) 58%, hsl(var(--surface-primary)) 100%);
+            background: radial-gradient(circle at 38% 30%, color-mix(in srgb, var(--rosta-cream) 98%, transparent) 0 24%, color-mix(in srgb, hsl(var(--accent)) 8%, white) 58%, hsl(var(--surface-primary)) 100%);
             touch-action: manipulation;
             overflow:hidden;
           }
@@ -232,7 +232,7 @@ export function AdminRuthieQuickChatV2() {
             height:auto !important;
             border:0 !important;
             border-radius:50% !important;
-            background:conic-gradient(from 220deg, transparent 0 24%, color-mix(in srgb, hsl(var(--accent)) 64%, transparent) 38%, transparent 53%, color-mix(in srgb, #ef9fd1 55%, transparent) 72%, transparent 88%) !important;
+            background:conic-gradient(from 220deg, transparent 0 24%, color-mix(in srgb, hsl(var(--accent)) 64%, transparent) 38%, transparent 53%, color-mix(in srgb, var(--rosta-brick-b) 55%, transparent) 72%, transparent 88%) !important;
             opacity:.34;
             -webkit-mask:radial-gradient(circle, transparent 66%, #000 68%);
             mask:radial-gradient(circle, transparent 66%, #000 68%);
@@ -249,8 +249,8 @@ export function AdminRuthieQuickChatV2() {
             border:2px solid hsl(var(--surface-primary));
             z-index:3;
           }
-          .ruthie-quick-v2__bot > span.is-online { background:#20bf79; }
-          .ruthie-quick-v2__bot > span.is-offline { background:#a8adb8; }
+          .ruthie-quick-v2__bot > span.is-online { background:var(--ruth-color-success); }
+          .ruthie-quick-v2__bot > span.is-offline { background:var(--ruth-color-neutral); }
           .ruthie-quick-v2__composer {
             min-width: 0;
             flex: 1;
@@ -291,7 +291,7 @@ export function AdminRuthieQuickChatV2() {
             border:1px solid hsl(var(--border-subtle));
             border-radius:16px;
             background:hsl(var(--surface-primary) / .98);
-            box-shadow:0 14px 40px rgba(25,28,42,.16);
+            box-shadow:0 14px 40px color-mix(in srgb, var(--rosta-carbon) 50%, transparent);
             backdrop-filter:blur(18px);
           }
           .ruthie-quick-v2__reply > div { display:flex;align-items:center;gap:6px;color:hsl(var(--accent));font-size:12px; }
