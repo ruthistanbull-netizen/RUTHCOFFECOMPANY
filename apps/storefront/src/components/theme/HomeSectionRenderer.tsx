@@ -82,11 +82,11 @@ export function HomeSectionRenderer({
     const desktopItems = Math.max(1, Math.round(section.desktopItems || 4));
     const mobileItems = Math.max(1, Math.round(section.mobileItems || 2));
     const gap = section.gap ?? 12;
-    const sectionBackground = sanitizeRostaPaletteColor(section.backgroundColor, ROSTA_PALETTE.bone);
-    const darkBackground = sectionBackground === ROSTA_PALETTE.carbon || sectionBackground === ROSTA_PALETTE.espresso;
+    const sectionBackground = sanitizeRostaPaletteColor(section.backgroundColor, ROSTA_PALETTE.carbon);
+    const darkBackground = sectionBackground === ROSTA_PALETTE.carbon || sectionBackground === ROSTA_PALETTE.carbonSoft || sectionBackground === ROSTA_PALETTE.espresso || sectionBackground === ROSTA_PALETTE.cocoa;
     const sectionText = sanitizeRostaPaletteColor(
       section.textColor,
-      darkBackground ? ROSTA_PALETTE.bone : ROSTA_PALETTE.carbon,
+      darkBackground ? ROSTA_PALETTE.cream : ROSTA_PALETTE.carbon,
     );
     const textVars = section.textColor ? {
       ["--ink" as string]: sectionText,
@@ -114,7 +114,7 @@ export function HomeSectionRenderer({
           {(section.eyebrow || section.title || section.linkLabel) ? (
             <div className="mb-7 flex items-end justify-between gap-4 px-4 md:mb-10 md:px-8">
               <div>
-                {section.eyebrow ? <p data-theme-section-eyebrow className="mb-2 whitespace-pre-wrap text-[9px] uppercase tracking-[0.16em]" style={{ color: section.textColor ? sectionText : ROSTA_PALETTE.espresso }}>{section.eyebrow}</p> : null}
+                {section.eyebrow ? <p data-theme-section-eyebrow className="mb-2 whitespace-pre-wrap text-[9px] uppercase tracking-[0.16em]" style={{ color: section.textColor ? sectionText : ROSTA_PALETTE.brickB }}>{section.eyebrow}</p> : null}
                 {section.title ? <h2 data-theme-section-title className="whitespace-pre-wrap font-heading text-[clamp(1.4rem,2.6vw,2.6rem)] leading-tight">{section.title}</h2> : null}
               </div>
               {section.linkLabel && section.linkHref ? <Link data-theme-section-link href={section.linkHref} className="whitespace-pre-wrap text-[9px] uppercase tracking-[0.12em]">{section.linkLabel}</Link> : null}
@@ -134,11 +134,11 @@ export function HomeSectionRenderer({
   }
 
   if (section.type === "image-banner") {
-    const sectionBackground = sanitizeRostaPaletteColor(section.backgroundColor, ROSTA_PALETTE.bone);
-    const darkBackground = sectionBackground === ROSTA_PALETTE.carbon || sectionBackground === ROSTA_PALETTE.espresso;
+    const sectionBackground = sanitizeRostaPaletteColor(section.backgroundColor, ROSTA_PALETTE.carbon);
+    const darkBackground = sectionBackground === ROSTA_PALETTE.carbon || sectionBackground === ROSTA_PALETTE.carbonSoft || sectionBackground === ROSTA_PALETTE.espresso || sectionBackground === ROSTA_PALETTE.cocoa;
     const sectionText = sanitizeRostaPaletteColor(
       section.textColor,
-      darkBackground ? ROSTA_PALETTE.bone : ROSTA_PALETTE.carbon,
+      darkBackground ? ROSTA_PALETTE.cream : ROSTA_PALETTE.carbon,
     );
     return (
       <section
@@ -166,11 +166,11 @@ export function HomeSectionRenderer({
   }
 
   if (section.type === "rich-text") {
-    const sectionBackground = sanitizeRostaPaletteColor(section.backgroundColor, ROSTA_PALETTE.bone);
-    const darkBackground = sectionBackground === ROSTA_PALETTE.carbon || sectionBackground === ROSTA_PALETTE.espresso;
+    const sectionBackground = sanitizeRostaPaletteColor(section.backgroundColor, ROSTA_PALETTE.carbon);
+    const darkBackground = sectionBackground === ROSTA_PALETTE.carbon || sectionBackground === ROSTA_PALETTE.carbonSoft || sectionBackground === ROSTA_PALETTE.espresso || sectionBackground === ROSTA_PALETTE.cocoa;
     const sectionText = sanitizeRostaPaletteColor(
       section.textColor,
-      darkBackground ? ROSTA_PALETTE.bone : ROSTA_PALETTE.carbon,
+      darkBackground ? ROSTA_PALETTE.cream : ROSTA_PALETTE.carbon,
     );
     return (
       <section
