@@ -186,9 +186,12 @@ export function PanelHubProfiles() {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_-12%,rgba(255,255,255,.075),transparent_37%),linear-gradient(180deg,rgba(0,0,0,.04),rgba(0,0,0,.32))]" />
 
       <header className="relative z-20 flex h-[68px] items-center justify-between px-5 pt-[env(safe-area-inset-top)] sm:h-[72px] sm:px-8 lg:px-12">
-        <div className="text-[18px] font-black tracking-[0.035em] text-white sm:text-[20px]">
-          RR HUB
-        </div>
+        <img
+          src="/rr-hub-cream.svg"
+          alt="RR HUB"
+          draggable={false}
+          className="h-[27px] w-auto select-none object-contain sm:h-[30px]"
+        />
         <button
           type="button"
           onClick={() => void signOut()}
