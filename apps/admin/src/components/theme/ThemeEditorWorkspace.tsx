@@ -107,22 +107,22 @@ export function ThemeEditorWorkspace() {
 
   if (bootState !== "ready") {
     return (
-      <div className="fixed inset-0 z-[90] grid place-items-center bg-white px-5">
-        <div className="w-full max-w-sm rounded-xl border border-black/10 bg-white p-5 text-center shadow-xl">
+      <div className="fixed inset-0 z-[90] grid place-items-center bg-background px-5 text-main">
+        <div className="w-full max-w-sm rounded-xl border border-border-subtle bg-surface-primary p-5 text-center shadow-xl">
           {bootState === "checking" ? (
             <div role="status" aria-busy="true" aria-live="polite">
               <LoadingIndicator size="md" label="Tema düzenleyici hazırlanıyor" className="mx-auto" />
               <p className="mt-3 text-[12px] font-semibold">Tema düzenleyici hazırlanıyor…</p>
-              <p className="mt-1 text-[10px] leading-5 text-black/45">Oturum ve tema servisi kontrol ediliyor.</p>
+              <p className="mt-1 text-[10px] leading-5 text-muted">Oturum ve tema servisi kontrol ediliyor.</p>
             </div>
           ) : (
             <>
               <p className="text-[12px] font-semibold">Tema düzenleyici açılamadı</p>
-              <p className="mt-2 text-[10px] leading-5 text-black/50">{errorMessage}</p>
+              <p className="mt-2 text-[10px] leading-5 text-muted">{errorMessage}</p>
               <button
                 type="button"
                 onClick={() => setAttempt((value) => value + 1)}
-                className="mt-4 inline-flex h-10 items-center gap-2 rounded-md bg-black px-4 text-[10px] font-semibold text-white"
+                className="mt-4 inline-flex h-10 items-center gap-2 rounded-md bg-accent px-4 text-[10px] font-semibold text-[var(--rosta-action-text)] active:bg-[var(--rosta-espresso)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 <RefreshCw className="h-3.5 w-3.5" />
                 Tekrar dene
