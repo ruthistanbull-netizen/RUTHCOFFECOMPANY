@@ -52,6 +52,7 @@ const panelDocker = file("Dockerfile.rostapanel");
 const storefrontDocker = file("Dockerfile.rostacoffecompany");
 const actualServiceDocker = file("Dockerfile.ruthcoffeecompany");
 const canonicalStorefrontDocker = file("Dockerfile.rostacoffeecompany");
+const exactRuntimeServiceDocker = file("Dockerfile.ruthcoffecompany");
 const adminManifest = file("apps/admin/src/app/manifest.ts");
 const adminLayout = file("apps/admin/src/app/layout.tsx");
 const notificationCenter = file("apps/admin/src/components/base44-exact/ExactNotificationCenter.tsx");
@@ -65,6 +66,8 @@ const runtimeConvergence = file("supabase/migrations/20260924184500_rosta_platfo
 
 expect(Boolean(rootPkg.scripts?.["typecheck:all"]), "root typecheck:all script missing");
 expect(Boolean(rootPkg.scripts?.["build:all"]), "root build:all script missing");
+expect(String(rootPkg.scripts?.["start:storefront"] || "").includes("apps/storefront/.next/BUILD_ID"), "storefront runtime start must self-heal a missing .next build");
+expect(String(rootPkg.scripts?.["start:admin"] || "").includes("apps/admin/.next/BUILD_ID"), "admin runtime start must self-heal a missing .next build");
 
 expect(adminPkg.dependencies?.["@supabase/supabase-js"] === "2.110.8", "admin Supabase client must match current Commerce lock (2.110.8)");
 expect(storefrontPkg.dependencies?.["@supabase/supabase-js"] === "2.110.8", "storefront Supabase client must match current Commerce lock (2.110.8)");
@@ -129,6 +132,10 @@ expect(storefrontDocker.includes("RUN npm run build:storefront"), "storefront Do
 expect(actualServiceDocker.includes("RUN npm run build:storefront"), "actual Zeabur storefront service Dockerfile must build storefront");
 expect(actualServiceDocker.includes('CMD ["npm","run","start:storefront"]'), "actual Zeabur storefront service Dockerfile must start storefront");
 expect(canonicalStorefrontDocker.includes("RUN npm run build:storefront"), "canonical storefront Docker alias must build storefront");
+expect(exactRuntimeServiceDocker.includes("RUN npm run build:storefront"), "exact runtime service Docker alias must build storefront");
+expect(exactRuntimeServiceDocker.includes("apps/storefront/.next/BUILD_ID"), "exact runtime service Docker alias must verify the storefront build artifact");
+expect(panelDocker.includes("apps/admin/.next/BUILD_ID"), "panel Dockerfile must verify the admin build artifact");
+expect(sharedDocker.includes("apps/storefront/.next/BUILD_ID") && sharedDocker.includes("apps/admin/.next/BUILD_ID"), "shared Dockerfile must verify app build artifacts");
 expect(!sharedDocker.includes("rostacoffecompany"), "shared Dockerfile still contains the misspelled storefront service/domain hint");
 
 expect(adminNextConfig.includes("https://rostacoffeecompany.zeabur.app"), "admin Next config must use the actual storefront Zeabur domain");
