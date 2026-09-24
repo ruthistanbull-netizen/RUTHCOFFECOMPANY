@@ -186,14 +186,14 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
   };
 
   const title = mode === "login"
-    ? "Control Hub’a giriş yap"
+    ? "Backstage’e giriş yap"
     : mode === "forgot"
       ? "Şifreni yenile"
       : resetComplete
         ? "Şifren güncellendi"
         : "Yeni şifre oluştur";
   const subtitle = mode === "login"
-    ? "ROSTA Coffee Co. ve Ruth Istanbul panelleri"
+    ? "ROSTA Coffee Co. ve Ruth Istanbul çalışma alanları"
     : mode === "forgot"
       ? "Yenileme bağlantısını e-posta adresine göndereceğiz."
       : resetComplete
@@ -210,7 +210,7 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
         <div className="relative z-10 flex flex-col justify-between w-full max-w-xl">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center h-11 w-11 rounded-[14px] bg-white/15 border border-white/20 backdrop-blur"><span className="font-bold text-lg">R</span></div>
-            <div><p className="font-bold text-lg">Control Hub</p><p className="text-xs text-white/65">ROSTA × Ruth</p></div>
+            <div><p className="font-bold text-lg">Backstage</p><p className="text-xs text-white/65">ROSTA × Ruth</p></div>
           </div>
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs backdrop-blur"><Sparkles className="h-3.5 w-3.5" /> Yeni nesil ticaret operasyonu</div>
@@ -232,7 +232,7 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
         <div className="w-full max-w-md animate-fade-in">
           <div className="lg:hidden flex items-center gap-3 mb-10">
             <div className="flex items-center justify-center h-10 w-10 radius-small bg-accent text-white font-bold">R</div>
-            <div><p className="font-bold text-main">Control Hub</p><p className="text-[10px] text-subtle">ROSTA × Ruth</p></div>
+            <div><p className="font-bold text-main">Backstage</p><p className="text-[10px] text-subtle">ROSTA × Ruth</p></div>
           </div>
 
           <div className="mb-8">
