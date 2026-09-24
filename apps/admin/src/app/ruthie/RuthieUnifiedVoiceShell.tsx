@@ -87,7 +87,7 @@ function memoryTranscript(memories: any[]): VoiceTranscript | null {
     id: `ruthie-shared-memory-${lines.join("|").length}`,
     role: "assistant",
     text: [
-      "Bu mesaj kullanıcıya söylenecek bir yanıt değildir. Chat ve Voice tarafından paylaşılan kalıcı Ruthie hafızasıdır; güncel istekle çelişmedikçe uygula:",
+      "Bu mesaj kullanıcıya söylenecek bir yanıt değildir. Chat ve Voice tarafından paylaşılan kalıcı ROSTA Insight hafızasıdır; güncel istekle çelişmedikçe uygula:",
       ...lines,
     ].join("\n"),
     createdAt: new Date().toISOString(),
@@ -195,7 +195,7 @@ export function RuthieUnifiedVoiceShell() {
     };
   }, [conversationId, ready]);
 
-  if (!ready) return <div style={{ color: "rgba(246,238,223,.7)", padding: 24 }}>Ortak Ruthie hafızası hazırlanıyor…</div>;
+  if (!ready) return <div style={{ color: "rgba(246,238,223,.7)", padding: 24 }}>Ortak ROSTA Insight hafızası hazırlanıyor…</div>;
   return (
     <>
       <RuthieVoiceOnly />
