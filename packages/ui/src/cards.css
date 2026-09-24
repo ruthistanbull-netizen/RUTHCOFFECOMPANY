@@ -31,12 +31,6 @@
   transition: transform var(--ruth-motion-normal) var(--ruth-easing), box-shadow var(--ruth-motion-normal) var(--ruth-easing), border-color var(--ruth-motion-normal) ease;
 }
 
-.ruth-card--interactive:hover {
-  transform: translateY(-2px);
-  border-color: var(--ruth-gold-light);
-  box-shadow: var(--ruth-shadow-soft);
-}
-
 .ruth-card-link {
   position: absolute;
   z-index: 2;
@@ -61,12 +55,6 @@
 
 .ruth-product-card--linked { cursor: pointer; }
 
-.ruth-product-card--linked:hover {
-  transform: translateY(-3px);
-  border-color: rgba(184, 151, 106, 0.5);
-  box-shadow: 0 18px 44px rgba(23, 21, 18, 0.1);
-}
-
 .ruth-product-card__media {
   position: relative;
   aspect-ratio: 4 / 5;
@@ -81,20 +69,11 @@
   transition: transform var(--ruth-motion-slow) var(--ruth-easing);
 }
 
-.ruth-product-card:hover .ruth-product-card__media > img {
-  transform: scale(1.025);
-}
-
 .ruth-product-card__placeholder {
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at 50% 36%, rgba(212, 184, 150, 0.6), transparent 18%), linear-gradient(145deg, #f7f0e8, #e7d8c7);
+  background: radial-gradient(circle at 50% 36%, color-mix(in srgb, var(--rosta-kraft) 60%, transparent), transparent 18%), linear-gradient(145deg, var(--rosta-cream), color-mix(in srgb, var(--rosta-kraft) 58%, var(--rosta-cream)));
   transition: transform var(--ruth-motion-slow) var(--ruth-easing), filter var(--ruth-motion-slow) var(--ruth-easing);
-}
-
-.ruth-product-card:hover .ruth-product-card__placeholder {
-  transform: scale(1.02);
-  filter: saturate(1.04);
 }
 
 .ruth-product-card__badge {
@@ -104,7 +83,7 @@
   z-index: 3;
   padding: 6px 9px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.9);
+  background: color-mix(in srgb, var(--rosta-cream) 92%, transparent);
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.08em;
@@ -127,11 +106,11 @@
   place-items: center;
   width: var(--ruth-control-sm);
   height: var(--ruth-control-sm);
-  border: 1px solid rgba(23, 21, 18, 0.1);
+  border: 1px solid color-mix(in srgb, var(--rosta-carbon) 14%, transparent);
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.9);
+  background: color-mix(in srgb, var(--rosta-cream) 92%, transparent);
   color: var(--ruth-ink);
-  box-shadow: 0 8px 20px rgba(23, 21, 18, 0.08);
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--rosta-carbon) 18%, transparent);
   cursor: pointer;
 }
 
@@ -177,13 +156,12 @@
   min-height: 420px;
   overflow: hidden;
   border-radius: var(--ruth-radius-md);
-  color: white;
-  background: var(--ruth-ink);
+  color: var(--rosta-cream);
+  background: var(--rosta-carbon);
   transition: transform var(--ruth-motion-slow) var(--ruth-easing), box-shadow var(--ruth-motion-slow) var(--ruth-easing);
 }
 
 .ruth-editorial-card--linked { cursor: pointer; }
-.ruth-editorial-card--linked:hover { transform: translateY(-3px); box-shadow: var(--ruth-shadow-elevated); }
 
 .ruth-editorial-card__media,
 .ruth-editorial-card__placeholder {
@@ -198,20 +176,16 @@
   transition: transform 700ms var(--ruth-easing);
 }
 
-.ruth-editorial-card:hover .ruth-editorial-card__media > img { transform: scale(1.035); }
-
 .ruth-editorial-card__placeholder {
-  background: linear-gradient(155deg, #d7b995, #6e5944 72%, #2a241f);
+  background: linear-gradient(155deg, var(--rosta-kraft), var(--rosta-cocoa) 72%, var(--rosta-espresso));
   transition: transform 700ms var(--ruth-easing);
 }
-
-.ruth-editorial-card:hover .ruth-editorial-card__placeholder { transform: scale(1.025); }
 
 .ruth-editorial-card__media::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, transparent 28%, rgba(23, 21, 18, 0.82));
+  background: linear-gradient(180deg, transparent 28%, color-mix(in srgb, var(--rosta-carbon) 82%, transparent));
 }
 
 .ruth-editorial-card__content {
@@ -263,7 +237,7 @@
   margin-top: 10px;
   font-size: 13px;
   line-height: 1.55;
-  color: rgba(255, 255, 255, 0.8);
+  color: color-mix(in srgb, var(--rosta-cream) 80%, transparent);
 }
 
 .ruth-editorial-card__content > div:last-child { position: relative; z-index: 4; margin-top: 18px; pointer-events: auto; }
@@ -287,4 +261,22 @@
   .ruth-editorial-card__media > img,
   .ruth-editorial-card__placeholder,
   .ruth-editorial-card__arrow { transition: none; }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ruth-card--interactive:hover {
+    transform: translateY(-2px);
+    border-color: var(--ruth-color-accent);
+    box-shadow: var(--ruth-shadow-soft);
+  }
+  .ruth-product-card--linked:hover {
+    transform: translateY(-3px);
+    border-color: var(--ruth-color-accent);
+    box-shadow: var(--ruth-shadow-soft);
+  }
+  .ruth-product-card:hover .ruth-product-card__media > img { transform: scale(1.025); }
+  .ruth-product-card:hover .ruth-product-card__placeholder { transform: scale(1.02); filter: saturate(1.04); }
+  .ruth-editorial-card--linked:hover { transform: translateY(-3px); box-shadow: var(--ruth-shadow-elevated); }
+  .ruth-editorial-card:hover .ruth-editorial-card__media > img { transform: scale(1.035); }
+  .ruth-editorial-card:hover .ruth-editorial-card__placeholder { transform: scale(1.025); }
 }
