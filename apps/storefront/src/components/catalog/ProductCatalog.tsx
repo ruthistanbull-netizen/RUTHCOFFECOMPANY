@@ -397,7 +397,7 @@ export function ProductCatalog({
           <select
             value={sort}
             onChange={(event) => setSort(event.target.value)}
-            className="cursor-pointer border-b border-kraft/45 bg-carbon pb-1 text-sm text-cream outline-none focus:border-brick"
+            className="cursor-pointer border-b border-kraft/45 bg-carbon pb-1 text-sm text-cream outline-none focus:border-brick focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
             aria-label="Ürünleri sırala"
           >
             <option value="featured">Öne çıkanlar</option>
@@ -430,7 +430,7 @@ export function ProductCatalog({
               <button
                 type="button"
                 onClick={() => setFilters(EMPTY_FILTERS)}
-                className="mt-5 text-xs uppercase tracking-wide-luxe text-gold-dark"
+                className="mt-5 text-xs uppercase tracking-wide-luxe text-brick focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
               >
                 Filtreleri Temizle
               </button>
