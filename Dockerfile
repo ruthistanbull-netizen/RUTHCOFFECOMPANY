@@ -20,8 +20,8 @@ RUN target="$ROSTA_APP"; \
       else target="storefront"; \
       fi; \
     fi; \
-    if [ "$target" = "admin" ]; then npm run build:admin; \
-    elif [ "$target" = "storefront" ]; then npm run build:storefront; \
+    if [ "$target" = "admin" ]; then npm run build:admin && test -f apps/admin/.next/BUILD_ID; \
+    elif [ "$target" = "storefront" ]; then npm run build:storefront && test -f apps/storefront/.next/BUILD_ID; \
     else echo "Invalid ROSTA_APP: $target (expected admin or storefront)" >&2; exit 2; \
     fi; \
     printf '%s' "$target" > /app/.rosta-app-target
