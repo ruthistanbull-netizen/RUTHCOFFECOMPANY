@@ -753,7 +753,7 @@ export function VisualThemeCustomizerV4() {
                           {section.enabled ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
                         </button>
                         {!["hero", "scroll-story", "collections", "featured-products", "brand-story", "trust"].includes(section.type) ? (
-                          <button type="button" onClick={() => removeSection(section.id)} className="grid h-8 w-8 shrink-0 place-items-center rounded-md text-subtle opacity-0 transition active:bg-danger-soft active:text-danger focus-visible:bg-danger-soft focus-visible:text-danger group-focus-within:opacity-100 md:group-hover:opacity-100" aria-label="Sil"><Trash2 className="h-3.5 w-3.5" /></button>
+                          <button type="button" onClick={() => removeSection(section.id)} className="grid h-8 w-8 shrink-0 place-items-center rounded-md text-subtle opacity-0 transition active:bg-danger-soft active:text-danger focus-visible:bg-danger-soft focus-visible:text-danger group-focus-within:opacity-100 md:opacity-100" aria-label="Sil"><Trash2 className="h-3.5 w-3.5" /></button>
                         ) : null}
                       </div>
                     ))}
