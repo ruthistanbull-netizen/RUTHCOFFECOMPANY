@@ -165,7 +165,7 @@ export function DesktopUnifiedNavigation() {
       { label: "Ürünler", groups: ["ÜRÜN VE STOK"], primaryPath: "/products" },
       { label: "Müşteriler", groups: ["MÜŞTERİ"], primaryPath: "/customers" },
       { label: "E-posta", groups: ["PAZARLAMA"], primaryPath: "/email" },
-      { label: "ROSTA Insight", groups: ["ROSTA Insight"], primaryPath: "/ruthie/chat" },
+      { label: "ROSTA Insight", groups: ["ROSTA Insight"], primaryPath: "/rosta-insight/chat" },
       { label: "Meta Reklamları", groups: ["Meta Reklamları"], primaryPath: "/meta-ads" },
       { label: "Ayarlar", groups: ["MAĞAZA", "SİSTEM"], primaryPath: "/settings" },
     ];
