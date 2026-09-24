@@ -65,6 +65,8 @@ async function writeHealth(
     attempted: number;
     failed: number;
     storefrontBase: string;
+    detail?: string;
+    configured?: boolean;
   },
 ) {
   const nowIso = new Date().toISOString();
@@ -83,9 +85,9 @@ async function writeHealth(
       : String(previous.first_seen_at || nowIso);
   const recovered = healthy && previous && previous.status !== "healthy";
   const oldestSeconds = Number.isFinite(input.oldestAgeMs) ? Math.round(input.oldestAgeMs / 1000) : null;
-  const detail = healthy
+  const detail = input.detail || (healthy
     ? "PayTR tahsilatları ile sipariş finalizasyonu uyumlu."
-    : `${input.pending} tahsil edilmiş ödeme sipariş finalizasyonu bekliyor${oldestSeconds == null ? "" : ` · en eski ${oldestSeconds} sn`}.`;
+    : `${input.pending} tahsil edilmiş ödeme sipariş finalizasyonu bekliyor${oldestSeconds == null ? "" : ` · en eski ${oldestSeconds} sn`}.`);
 
   await supabase.from("panel_service_health_state").upsert({
     service_key: "payment-order-finalization",
@@ -104,6 +106,7 @@ async function writeHealth(
       failed: input.failed,
       storefrontBase: input.storefrontBase,
       verifiedPaymentFinalizationWatch: true,
+      providerConfigured: input.configured ?? true,
     },
     updated_at: nowIso,
   }, { onConflict: "service_key" });
@@ -133,6 +136,33 @@ async function run(request: Request) {
 
   const { supabase } = auth;
   const storefrontBase = storefrontBaseUrl();
+  const paytrConfigured = ["PAYTR_MERCHANT_ID", "PAYTR_MERCHANT_KEY", "PAYTR_MERCHANT_SALT"]
+    .every((name) => Boolean(process.env[name]?.trim()));
+
+  if (!paytrConfigured) {
+    const detail = "PayTR entegrasyonu henüz bağlı değil; tahsilat sonrası sipariş recovery workerı beklemede.";
+    await writeHealth(supabase, {
+      status: "healthy",
+      pending: 0,
+      oldestAgeMs: 0,
+      attempted: 0,
+      failed: 0,
+      storefrontBase,
+      detail,
+      configured: false,
+    }).catch(() => undefined);
+    return NextResponse.json({
+      ok: true,
+      skipped: true,
+      status: "not_configured",
+      detail,
+      processed: 0,
+      succeeded: 0,
+      failed: 0,
+      pending: 0,
+    }, { status: 200, headers: { "Cache-Control": "no-store" } });
+  }
+
   const { data: drafts, error } = await supabase
     .from("checkout_drafts")
     .select("id,order_no,merchant_oid,paid_at,updated_at")
