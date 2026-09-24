@@ -269,7 +269,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
           )}
 
           {error && (
-            <div role="alert" className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <div role="alert" className="rounded-lg border border-[var(--ruth-color-danger)]/40 bg-[var(--ruth-color-danger-soft)] px-4 py-3 text-sm text-[var(--ruth-color-danger-text)]">
               {error}
             </div>
           )}
