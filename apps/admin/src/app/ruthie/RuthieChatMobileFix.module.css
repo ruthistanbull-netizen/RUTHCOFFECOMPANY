@@ -1,0 +1,165 @@
+.scope {
+  display: contents;
+}
+
+/* Keep the supplied Ruthie wordmark readable on desktop without disturbing the three-column shell. */
+@media (min-width: 981px) {
+  .scope :global(aside[aria-label="ROSTA Insight Chat menüsü"] > header:has(> img[alt="ROSTA Insight Chat"])) {
+    justify-content: center !important;
+  }
+
+  .scope :global(aside[aria-label="ROSTA Insight Chat menüsü"] > header > img[alt="ROSTA Insight Chat"]) {
+    width: 205px !important;
+    height: 62px !important;
+    object-position: center !important;
+  }
+}
+
+@media (max-width: 980px) {
+  /* The drawer is fixed to the viewport so iOS cannot leave it behind the dimmer. */
+  .scope :global(aside[aria-label="ROSTA Insight Chat menüsü"]) {
+    position: fixed !important;
+    inset: 0 auto 0 0 !important;
+    z-index: 2147483600 !important;
+    width: min(92vw, 420px) !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    transform: translate3d(-110%, 0, 0) !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+    -webkit-overflow-scrolling: touch;
+    background:
+      radial-gradient(circle at 50% 0, rgba(201, 139, 55, .12), transparent 34%),
+      #080604 !important;
+    box-shadow: 30px 0 90px rgba(0, 0, 0, .78) !important;
+    transition:
+      transform 340ms cubic-bezier(.2, .8, .2, 1),
+      opacity 180ms linear,
+      visibility 0s linear 340ms !important;
+  }
+
+  .scope :global(aside[aria-label="ROSTA Insight Chat menüsü"][class*="sidebarOpen"]) {
+    transform: translate3d(0, 0, 0) !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transition-delay: 0s !important;
+  }
+
+  /* The direct child is the drawer dimmer; the close button inside the drawer is not affected. */
+  .scope :global(section > button[aria-label="Menüyü kapat"]) {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 2147483500 !important;
+  }
+
+  .scope :global(aside[aria-label="ROSTA Insight Chat menüsü"] > header:has(> img[alt="ROSTA Insight Chat"])) {
+    position: relative !important;
+    min-height: 82px !important;
+    display: grid !important;
+    grid-template-columns: 48px minmax(0, 1fr) 48px !important;
+    align-items: center !important;
+    justify-content: stretch !important;
+    gap: 8px !important;
+  }
+
+  .scope :global(aside[aria-label="ROSTA Insight Chat menüsü"] > header > img[alt="ROSTA Insight Chat"]) {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    justify-self: center !important;
+    width: min(235px, 62vw) !important;
+    height: 72px !important;
+    object-position: center !important;
+  }
+
+  .scope :global(aside[aria-label="ROSTA Insight Chat menüsü"] > header > button[aria-label="Menüyü kapat"]) {
+    grid-column: 3 !important;
+    grid-row: 1 !important;
+    justify-self: end !important;
+    display: grid !important;
+    width: 46px !important;
+    height: 46px !important;
+  }
+
+  /* Force a single, stable header row: menu left, enlarged logo center, exit right. */
+  .scope :global(main > header:has(> button[aria-label="Menüyü aç"])) {
+    position: relative !important;
+    z-index: 50 !important;
+    min-height: calc(82px + env(safe-area-inset-top)) !important;
+    padding: env(safe-area-inset-top) 14px 0 !important;
+    display: grid !important;
+    grid-template-columns: 52px minmax(0, 1fr) 52px !important;
+    grid-template-rows: 82px !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+
+  .scope :global(main > header > button[aria-label="Menüyü aç"]) {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    justify-self: start !important;
+    align-self: center !important;
+    display: grid !important;
+    width: 48px !important;
+    height: 48px !important;
+  }
+
+  .scope :global(main > header > img[alt="ROSTA Insight Chat"]) {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    justify-self: center !important;
+    align-self: center !important;
+    width: min(230px, 58vw) !important;
+    height: 70px !important;
+    object-position: center !important;
+  }
+
+  .scope :global(main > header > div) {
+    display: none !important;
+  }
+
+  .scope :global(main > header > a[aria-label="Panele dön"]) {
+    grid-column: 3 !important;
+    grid-row: 1 !important;
+    justify-self: end !important;
+    align-self: center !important;
+    display: grid !important;
+    width: 48px !important;
+    height: 48px !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .scope :global(aside[aria-label="ROSTA Insight Chat menüsü"]) {
+    width: min(94vw, 400px) !important;
+  }
+
+  .scope :global(main > header:has(> button[aria-label="Menüyü aç"])) {
+    min-height: calc(78px + env(safe-area-inset-top)) !important;
+    grid-template-columns: 50px minmax(0, 1fr) 50px !important;
+    grid-template-rows: 78px !important;
+    padding-right: 10px !important;
+    padding-left: 10px !important;
+  }
+
+  .scope :global(main > header > img[alt="ROSTA Insight Chat"]) {
+    width: min(215px, 57vw) !important;
+    height: 66px !important;
+  }
+
+  .scope :global(main > header > button[aria-label="Menüyü aç"]),
+  .scope :global(main > header > a[aria-label="Panele dön"]) {
+    width: 46px !important;
+    height: 46px !important;
+  }
+
+  .scope :global(aside[aria-label="ROSTA Insight Chat menüsü"] > header > img[alt="ROSTA Insight Chat"]) {
+    width: min(225px, 64vw) !important;
+    height: 70px !important;
+  }
+}

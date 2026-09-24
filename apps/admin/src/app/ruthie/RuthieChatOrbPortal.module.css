@@ -1,0 +1,36 @@
+.orb {
+  position: absolute;
+  z-index: 0;
+  left: 50%;
+  top: 38%;
+  width: min(520px, 58vw, 61vh);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  color: color-mix(in srgb, var(--ruth-color-accent-soft) 88%, var(--ruth-color-text-inverse));
+  opacity: .76;
+}
+.haze {
+  position: absolute;
+  inset: 7%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 42% 38%, color-mix(in srgb, var(--ruth-color-accent-soft) 24%, transparent), transparent 35%), radial-gradient(circle, color-mix(in srgb, var(--ruth-color-accent) 18%, transparent), transparent 69%);
+  filter: blur(20px);
+}
+.sphere {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 0 12px color-mix(in srgb, var(--ruth-color-accent-soft) 30%, transparent)) drop-shadow(0 0 38px color-mix(in srgb, var(--ruth-color-accent) 20%, transparent));
+}
+.dot { fill: currentColor; }
+.orbit, .orbitSoft { fill: none; stroke: color-mix(in srgb, var(--ruth-color-accent-soft) 36%, transparent); stroke-width: .22; }
+.orbitSoft { stroke: color-mix(in srgb, var(--ruth-color-accent) 20%, transparent); stroke-width: .16; }
+:global([data-ruthie-chat-messages="true"]) { position: relative !important; isolation: isolate; background: transparent !important; }
+:global([data-ruthie-chat-messages="true"]) > :not([data-ruthie-chat-orb-background]) { position: relative; z-index: 2; }
+@media (max-width: 860px) {
+  .orb { top: 30%; width: min(330px, 82vw, 42vh); opacity: .48; }
+  .haze { filter: blur(16px); }
+}

@@ -1,0 +1,58 @@
+.hardOpen {
+  display: contents;
+}
+
+@media (max-width: 980px) {
+  .hardOpen :global(section > button[aria-label="Menüyü kapat"][class*="scrimOpen"] + aside[aria-label="ROSTA Insight Chat menüsü"]) {
+    position: fixed !important;
+    inset: 0 auto 0 0 !important;
+    z-index: 2147483646 !important;
+    display: grid !important;
+    width: min(92vw, 420px) !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    transform: translate3d(0, 0, 0) !important;
+    translate: 0 0 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    background:
+      radial-gradient(circle at 50% 0, rgba(201, 139, 55, .14), transparent 34%),
+      #080604 !important;
+    color: #f6eedf !important;
+    box-shadow: 32px 0 90px rgba(0, 0, 0, .82) !important;
+  }
+
+  .hardOpen :global(aside[aria-label="ROSTA Insight Chat menüsü"][class*="sidebarOpen"]) {
+    position: fixed !important;
+    inset: 0 auto 0 0 !important;
+    z-index: 2147483646 !important;
+    display: grid !important;
+    transform: translate3d(0, 0, 0) !important;
+    translate: 0 0 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  .hardOpen :global(section > button[aria-label="Menüyü kapat"][class*="scrimOpen"]) {
+    z-index: 2147483600 !important;
+  }
+
+  .hardOpen :global(aside[aria-label="ROSTA Insight Chat menüsü"] > *) {
+    position: relative;
+    z-index: 1;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .hardOpen :global(section > button[aria-label="Menüyü kapat"][class*="scrimOpen"] + aside[aria-label="ROSTA Insight Chat menüsü"]),
+  .hardOpen :global(aside[aria-label="ROSTA Insight Chat menüsü"][class*="sidebarOpen"]) {
+    width: min(94vw, 400px) !important;
+  }
+}
