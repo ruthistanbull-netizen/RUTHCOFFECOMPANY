@@ -281,7 +281,7 @@ function parseArguments(value: string): Record<string, unknown> {
 
 function runtimeConfig(env: NodeJS.ProcessEnv = process.env): RuntimeConfig {
   const apiKey = clean(env.OPENAI_API_KEY);
-  const model = clean(env.RUTHIE_CHAT_MODEL);
+  const model = clean(env.ROSTA_INSIGHT_CHAT_MODEL) || clean(env.RUTHIE_CHAT_MODEL);
   if (!apiKey || !model) throw new RuthieRuntimeError({ code: "ROSTA_INSIGHT_OPENAI_NOT_CONFIGURED", message: "ROSTA Insight OpenAI yapılandırması eksik.", status: 503 });
   return {
     apiKey,
