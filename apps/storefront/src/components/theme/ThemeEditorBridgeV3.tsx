@@ -36,6 +36,7 @@ type EditorElement = {
     height: number;
     fontSize: number;
     lineHeight: number | null;
+    letterSpacing: number;
     paddingX: number;
     paddingY: number;
     marginTop: number;
@@ -329,6 +330,7 @@ function metadata(element: Element): EditorElement {
       height: Math.round(rect.height),
       fontSize: Math.round(cssNumber(computed.fontSize)),
       lineHeight: computed.lineHeight === "normal" ? null : cssNumber(computed.lineHeight),
+      letterSpacing: cssNumber(computed.letterSpacing, 0),
       paddingX: Math.round(cssNumber(computed.paddingLeft)),
       paddingY: Math.round(cssNumber(computed.paddingTop)),
       marginTop: Math.round(cssNumber(computed.marginTop)),
