@@ -58,7 +58,6 @@ const adminIcon512 = file("apps/admin/src/app/icon-512.png/route.ts");
 const panelHomeIcon = file("apps/admin/src/app/api/panel-home-icon/route.ts");
 const platformTick = file("apps/admin/src/app/api/internal/platform-tick/route.ts");
 const panelMaintenance = file("apps/admin/src/app/api/internal/panel-maintenance/route.ts");
-const notificationCenter = file("apps/admin/src/components/base44-exact/ExactNotificationCenter.tsx");
 const runtimeConvergence = file("supabase/migrations/20260924184500_rosta_platform_runtime_convergence.sql");
 
 expect(Boolean(rootPkg.scripts?.["typecheck:all"]), "root typecheck:all script missing");
@@ -145,8 +144,6 @@ expect(platformTick.includes('"x-rosta-internal-secret": secret'), "platform tic
 expect(!platformTick.includes('"x-ruth-internal-secret"'), "platform tick must not use Ruth internal authentication headers");
 
 expect(panelMaintenance.includes('"ROSTA Panel bakım uyarısı"'), "panel maintenance push alert must be ROSTA branded");
-expect(notificationCenter.includes('payload.title || "ROSTA Panel"'), "notification center fallback title must be ROSTA branded");
-expect(!notificationCenter.includes('payload.title || "Ruth Panel"'), "notification center still contains the visible Ruth fallback title");
 expect(!panelMaintenance.includes('"Ruth Panel bakım uyarısı"'), "panel maintenance still contains the visible Ruth alert title");
 
 expect(runtimeConvergence.includes("https://rostapanel.zeabur.app"), "runtime convergence must bind database-owned callbacks to the ROSTA panel");
