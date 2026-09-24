@@ -241,7 +241,7 @@ export function AddressClient() {
           <div className="flex flex-col gap-3 sm:flex-row">
             <Link
               href="/account"
-              className="inline-flex items-center justify-center border border-kraft/45 px-6 py-3 text-xs uppercase tracking-wide-luxe text-cream transition hover:bg-carbon-soft"
+              className="inline-flex items-center justify-center border border-kraft/45 px-6 py-3 text-xs uppercase tracking-wide-luxe text-cream transition active:bg-brick/10"
             >
               Hesabıma Dön
             </Link>
@@ -251,7 +251,7 @@ export function AddressClient() {
                 await signOut();
                 window.location.href = "/";
               }}
-              className="inline-flex items-center justify-center gap-2 border border-kraft/45 px-6 py-3 text-xs uppercase tracking-wide-luxe text-cream transition hover:bg-carbon-soft"
+              className="inline-flex items-center justify-center gap-2 border border-kraft/45 px-6 py-3 text-xs uppercase tracking-wide-luxe text-cream transition active:bg-brick/10"
             >
               <LogOut size={15} />
               Çıkış Yap
@@ -260,7 +260,7 @@ export function AddressClient() {
         </div>
 
         {error && (
-          <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
+          <div className="mb-6 rounded-xl border border-[var(--ruth-color-danger)]/40 bg-[var(--ruth-color-danger-soft)] px-4 py-3 text-sm text-[var(--ruth-color-danger-text)]" role="alert">
             {error}
           </div>
         )}
@@ -327,12 +327,12 @@ export function AddressClient() {
                     {address.email && <p className="mt-3 text-xs text-cream/70">{address.email}</p>}
                     <div className="mt-5 flex flex-wrap gap-2">
                       {!address.is_default && (
-                        <button type="button" disabled={Boolean(pendingAddressAction)} aria-busy={makingDefault || undefined} onClick={() => void makeDefault(address.id)} className="inline-flex items-center gap-2 border border-kraft/40 px-4 py-2 text-[10px] uppercase tracking-[0.16em] text-cream transition hover:bg-carbon-soft disabled:opacity-50">
+                        <button type="button" disabled={Boolean(pendingAddressAction)} aria-busy={makingDefault || undefined} onClick={() => void makeDefault(address.id)} className="inline-flex items-center gap-2 border border-kraft/40 px-4 py-2 text-[10px] uppercase tracking-[0.16em] text-cream transition active:bg-brick/10 disabled:opacity-50">
                           {makingDefault ? <LoadingIndicator size="sm" /> : <Star size={13} />}
                           Varsayılan Yap
                         </button>
                       )}
-                      <button type="button" disabled={Boolean(pendingAddressAction)} aria-busy={deleting || undefined} onClick={() => void deleteAddress(address.id)} className="inline-flex items-center gap-2 border border-red-200 px-4 py-2 text-[10px] uppercase tracking-[0.16em] text-red-700 transition hover:bg-red-50 disabled:opacity-50">
+                      <button type="button" disabled={Boolean(pendingAddressAction)} aria-busy={deleting || undefined} onClick={() => void deleteAddress(address.id)} className="inline-flex items-center gap-2 border border-[var(--ruth-color-danger)]/40 px-4 py-2 text-[10px] uppercase tracking-[0.16em] text-[var(--ruth-color-danger-text)] transition hover:bg-[var(--ruth-color-danger-soft)] disabled:opacity-50">
                         {deleting ? <LoadingIndicator size="sm" /> : <Trash2 size={13} />}
                         Sil
                       </button>
