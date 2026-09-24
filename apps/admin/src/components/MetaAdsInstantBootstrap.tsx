@@ -153,19 +153,24 @@ export function MetaAdsInstantBootstrap() {
     };
     window.addEventListener("ruth-admin-api-cache-updated", onCacheUpdated as EventListener);
 
-    // Highest-priority warmup: prime both Meta pages immediately after admin boot.
-    // These requests dedupe with page requests inside adminRequest, so opening a
-    // Meta page while warmup is running does not create another blocking fetch.
-    void Promise.allSettled([
-      adminRequest(PRIORITY_META_PATHS[0]),
-      adminRequest(PRIORITY_META_PATHS[1]),
-    ]);
-    window.setTimeout(() => {
-      void Promise.allSettled([
-        adminRequest(PRIORITY_META_PATHS[2]),
-        adminRequest(PRIORITY_META_PATHS[3]),
-      ]);
-    }, 120);
+    // Warm Meta only after ROSTA's own account credentials are configured.
+    // An intentionally unbound integration must stay silent and must not create
+    // failed provider calls during normal panel startup.
+    void adminRequest<{ integrations?: { meta?: { connected?: boolean } } }>("/api/rosta-insight/integrations/status-v2")
+      .then((status) => {
+        if (!status.integrations?.meta?.connected) return;
+        void Promise.allSettled([
+          adminRequest(PRIORITY_META_PATHS[0]),
+          adminRequest(PRIORITY_META_PATHS[1]),
+        ]);
+        window.setTimeout(() => {
+          void Promise.allSettled([
+            adminRequest(PRIORITY_META_PATHS[2]),
+            adminRequest(PRIORITY_META_PATHS[3]),
+          ]);
+        }, 120);
+      })
+      .catch(() => undefined);
 
     const supabase = getSupabaseBrowser();
     const { data } = supabase.auth.onAuthStateChange((event) => {
