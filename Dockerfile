@@ -4,8 +4,6 @@ WORKDIR /app
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Keep the deployment contract intentionally simple and Ruth-compatible.
-# Root Dockerfile owns the admin/panel service only.
 COPY package.json ./package.json
 COPY apps/admin/package.json ./apps/admin/package.json
 COPY apps/storefront/package.json ./apps/storefront/package.json
@@ -17,12 +15,15 @@ RUN npm install --no-audit --no-fund
 
 COPY . .
 
-RUN npm run build:admin && test -f apps/admin/.next/BUILD_ID
+# Zeabur currently resolves both ROSTA services through the root Dockerfile.
+# Build both apps once in the image so runtime can safely select the correct one.
+RUN npm run build:admin
+RUN npm run build:storefront
 
 ENV NODE_ENV=production
 ENV HOSTNAME=0.0.0.0
-ENV PORT=3000
+ENV PORT=8080
 
-EXPOSE 3000
+EXPOSE 8080
 
-CMD ["npm","run","start:admin"]
+CMD ["sh","-c","hint=\"$ROSTA_APP $ZEABUR_WEB_DOMAIN $ZEABUR_WEB_URL\"; if printf '%s' \"$hint\" | grep -qi 'admin\|panel\|rostapanel'; then exec npm run start:admin; elif printf '%s' \"$hint\" | grep -Eqi 'storefront|rostacoffecompany|rostacoffeecompany|ruthcoffecompany|ruthcoffeecompany'; then exec npm run start:storefront; else echo '[ROSTA] No explicit service hint; defaulting to storefront'; exec npm run start:storefront; fi"]
