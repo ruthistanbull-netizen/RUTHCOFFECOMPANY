@@ -15,7 +15,7 @@ type ResponseSnapshot = {
 
 type CacheState = "HIT" | "STALE" | "DEDUPED" | "MUTATION_DEDUPED" | "SERVER_SNAPSHOT" | "SEEDED";
 
-const CACHE_PREFIX = "ruth_admin_fetch_cache_v4:";
+const CACHE_PREFIX = "rosta_admin_fetch_cache_v4:";
 const MAX_MEMORY_ENTRIES = 220;
 const MAX_PERSISTED_BODY_CHARS = 900_000;
 const SERVER_SNAPSHOT_TIMEOUT_MS = 1_000;
@@ -38,7 +38,7 @@ function ttlFor(pathname: string) {
   if (pathname === "/api/payments/list" || pathname === "/api/payments") return 35_000;
   if (pathname === "/api/products" || pathname.startsWith("/api/product-")) return 90_000;
   if (pathname.startsWith("/api/customers")) return 90_000;
-  if (pathname.startsWith("/api/ruthie-points")) return 30_000;
+  if (pathname.startsWith("/api/rosta-points") || pathname.startsWith("/api/ruthie-points")) return 30_000;
   if (pathname.startsWith("/api/shipping") || pathname.startsWith("/api/returns")) return 35_000;
   if (pathname.startsWith("/api/reviews") || pathname.startsWith("/api/discount") || pathname.startsWith("/api/email")) return 60_000;
   if (pathname === "/api/theme" || pathname.startsWith("/api/site-settings")) return 120_000;
@@ -70,7 +70,7 @@ function mutationInvalidation(pathname: string) {
   if (pathname.startsWith("/api/payments") || pathname.startsWith("/api/paytr")) return ["/api/payments", "/api/paytr", "/api/orders", "/api/summary", "/api/dashboard/", "/api/returns"];
   if (pathname.startsWith("/api/shipping")) return ["/api/shipping", "/api/orders", "/api/summary", "/api/returns"];
   if (pathname.startsWith("/api/returns")) return ["/api/returns", "/api/orders", "/api/payments", "/api/summary"];
-  if (pathname.startsWith("/api/customers") || pathname.startsWith("/api/ruthie-points")) return ["/api/customers", "/api/ruthie-points", "/api/orders", "/api/summary"];
+  if (pathname.startsWith("/api/customers") || pathname.startsWith("/api/rosta-points") || pathname.startsWith("/api/ruthie-points")) return ["/api/customers", "/api/rosta-points", "/api/ruthie-points", "/api/orders", "/api/summary"];
   if (pathname.startsWith("/api/email") || pathname.startsWith("/api/reviews") || pathname.startsWith("/api/contact")) return ["/api/email", "/api/reviews", "/api/contact", "/api/customers"];
   if (pathname.startsWith("/api/discount")) return ["/api/discount", "/api/products", "/api/theme"];
   if (pathname.startsWith("/api/theme") || pathname.startsWith("/api/site-settings")) return ["/api/theme", "/api/site-settings"];
