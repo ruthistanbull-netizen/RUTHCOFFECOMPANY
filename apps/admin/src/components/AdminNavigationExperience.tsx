@@ -244,7 +244,7 @@ function HeaderQuickControls({ onOpenMenu }: { onOpenMenu: () => void }) {
         className={`${styles.headerRuthie} ${expanded ? styles.headerRuthieActive : ""}`}
         onClick={() => setExpanded((value) => !value)}
         whileTap={{ scale: 0.92 }}
-        aria-label={expanded ? "Ruthie hızlı mesajını kapat" : "Ruthie'ye mesaj gönder"}
+        aria-label={expanded ? "ROSTA Insight hızlı mesajını kapat" : "ROSTA Insight'a mesaj gönder"}
         aria-expanded={expanded}
       >
         <Bot aria-hidden="true" />
@@ -258,7 +258,7 @@ function HeaderQuickControls({ onOpenMenu }: { onOpenMenu: () => void }) {
             value={message}
             onChange={(event) => setMessage(event.target.value)}
             onKeyDown={onInputKeyDown}
-            placeholder={providerReady ? "Ruthie'ye yaz..." : "Ruthie hazır değil"}
+            placeholder={providerReady ? "ROSTA Insight'a yaz..." : "ROSTA Insight hazır değil"}
             disabled={!providerReady || sending}
             autoComplete="off"
             initial={{ opacity: 0, x: 12 }}
@@ -274,7 +274,7 @@ function HeaderQuickControls({ onOpenMenu }: { onOpenMenu: () => void }) {
             className={styles.headerSend}
             onClick={() => void sendMessage()}
             disabled={!providerReady || !message.trim() || sending}
-            aria-label="Ruthie'ye gönder"
+            aria-label="ROSTA Insight'a gönder"
             initial={{ opacity: 0, scale: 0.3, rotate: -70 }}
             animate={{ opacity: 1, scale: 1, rotate: 0, transition: { delay: 0.13, type: "spring", stiffness: 430, damping: 28 } }}
             exit={{ opacity: 0, scale: 0.4, rotate: 70, transition: { duration: 0.08 } }}
