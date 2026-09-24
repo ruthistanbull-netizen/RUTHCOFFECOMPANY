@@ -1,7 +1,16 @@
 import type { NextConfig } from "next";
 
-const themeEditorOrigins = "https://rostapanel.zeabur.app http://localhost:* https://localhost:*";
-const supabaseHttpOrigin = "https://fposvxuryzidmeuwytbg.supabase.co";
+const themeEditorOrigins = (
+  process.env.THEME_EDITOR_ORIGINS ||
+  process.env.NEXT_PUBLIC_ADMIN_URL ||
+  process.env.NEXT_PUBLIC_PANEL_URL ||
+  "https://rostapanel.zeabur.app http://localhost:* https://localhost:*"
+)
+  .split(/[\\s,]+/)
+  .map((value) => value.trim())
+  .filter(Boolean)
+  .join(" ");
+const supabaseHttpOrigin = (process.env.NEXT_PUBLIC_SUPABASE_URL || "https://fposvxuryzidmeuwytbg.supabase.co").replace(/\/$/, "");
 
 const supabaseWsOrigin = supabaseHttpOrigin.replace(/^http/, "ws");
 const contentSecurityPolicy = [
@@ -30,7 +39,6 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  typescript: { ignoreBuildErrors: true },
   compress: true,
   poweredByHeader: false,
   env: {
