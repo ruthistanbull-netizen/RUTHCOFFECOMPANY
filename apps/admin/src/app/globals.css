@@ -2,37 +2,72 @@
 
 :root {
   --rosta-carbon: #111111;
-  --rosta-bone: #F4F0E8;
-  --rosta-espresso: #2B1B16;
-  --rosta-oxide: #B9563D;
-  --rosta-olive: #6F725B;
-  --rosta-steel: #AAA8A1;
-  --panel-canvas: var(--rosta-bone);
-  --panel-surface: var(--rosta-bone);
-  --panel-surface-2: var(--rosta-bone);
-  --panel-ink: var(--rosta-carbon);
-  --panel-muted: var(--rosta-olive);
-  --panel-line: var(--rosta-steel);
-  --panel-accent: var(--rosta-oxide);
+  --rosta-carbon-soft: #242424;
+  --rosta-cream: #FBF3E6;
+  --rosta-espresso: #38251C;
+  --rosta-brick-b: #C94A40;
+  --rosta-cocoa: #6B4638;
+  --rosta-kraft: #C8A77D;
+  --rosta-action-text: #FFFFFF;
+
+  /* Legacy aliases stay inside the locked palette. */
+  --rosta-bone: var(--rosta-cream);
+  --rosta-oxide: var(--rosta-brick-b);
+  --rosta-olive: var(--rosta-cocoa);
+  --rosta-steel: var(--rosta-kraft);
+
+  --panel-canvas: var(--rosta-carbon);
+  --panel-surface: var(--rosta-carbon-soft);
+  --panel-surface-2: var(--rosta-carbon-soft);
+  --panel-ink: var(--rosta-cream);
+  --panel-muted: color-mix(in srgb, var(--rosta-cream) 70%, transparent);
+  --panel-line: color-mix(in srgb, var(--rosta-kraft) 42%, transparent);
+  --panel-accent: var(--rosta-brick-b);
   --panel-accent-strong: var(--rosta-espresso);
 
-  --ruth-color-canvas: var(--rosta-bone);
-  --ruth-color-surface: var(--rosta-bone);
-  --ruth-color-surface-muted: var(--rosta-bone);
-  --ruth-color-text-primary: var(--rosta-carbon);
-  --ruth-color-text-muted: var(--rosta-olive);
-  --ruth-color-text-inverse: var(--rosta-bone);
-  --ruth-color-accent: var(--rosta-oxide);
-  --ruth-color-accent-soft: var(--rosta-oxide);
+  --ruth-color-canvas: var(--rosta-carbon);
+  --ruth-color-surface: var(--rosta-carbon-soft);
+  --ruth-color-surface-muted: var(--rosta-carbon-soft);
+  --ruth-color-surface-elevated: var(--rosta-carbon-soft);
+  --ruth-color-surface-inverse: var(--rosta-cream);
+  --ruth-color-text-primary: var(--rosta-cream);
+  --ruth-color-text-muted: color-mix(in srgb, var(--rosta-cream) 70%, transparent);
+  --ruth-color-text-inverse: var(--rosta-cream);
+  --ruth-color-text-on-light: var(--rosta-carbon);
+  --ruth-color-text-on-action: var(--rosta-action-text);
+  --ruth-color-accent: var(--rosta-brick-b);
+  --ruth-color-accent-soft: color-mix(in srgb, var(--rosta-brick-b) 15%, transparent);
   --ruth-color-accent-strong: var(--rosta-espresso);
-  --ruth-color-border-subtle: var(--rosta-steel);
-  --ruth-color-border-strong: var(--rosta-steel);
-  --ruth-color-focus: var(--rosta-oxide);
-  --ruth-color-overlay: rgb(17 17 17 / 44%);
+  --ruth-color-accent-wash: color-mix(in srgb, var(--rosta-brick-b) 15%, transparent);
+  --ruth-color-border-subtle: color-mix(in srgb, var(--rosta-kraft) 42%, transparent);
+  --ruth-color-border-strong: var(--rosta-kraft);
+  --ruth-color-focus: var(--rosta-brick-b);
+  --ruth-color-selected: var(--rosta-brick-b);
+  --ruth-color-overlay: color-mix(in srgb, var(--rosta-carbon) 72%, transparent);
+
+  --ruth-color-success: #1BA786;
+  --ruth-color-success-soft: #E3F8ED;
+  --ruth-color-success-text: #147B63;
+  --ruth-color-warning: #D99620;
+  --ruth-color-warning-soft: #FFF4D6;
+  --ruth-color-warning-text: #9B6B17;
+  --ruth-color-danger: #E1606B;
+  --ruth-color-danger-soft: #FFE5E8;
+  --ruth-color-danger-text: #D62937;
+  --ruth-color-info: #4F94E8;
+  --ruth-color-info-soft: #EBF3FF;
+  --ruth-color-info-text: #1C71D9;
+  --ruth-color-neutral: #858993;
+  --ruth-color-neutral-soft: #EBECF0;
+  --ruth-color-neutral-text: #60636C;
+  --ruth-color-status-accent: #C9A33B;
+  --ruth-color-status-accent-soft: #F6EBC6;
+  --ruth-color-status-accent-text: #3B2D0D;
+
   --ruth-font-display: var(--font-archivo), "Arial Black", "Helvetica Neue", Arial, sans-serif;
   --ruth-font-body: var(--font-inter), "Helvetica Neue", Arial, sans-serif;
   --panel-radius: 16px;
-  --panel-shadow: 0 18px 55px rgba(17,17,17,.08);
+  --panel-shadow: 0 18px 55px color-mix(in srgb, var(--rosta-carbon) 42%, transparent);
 }
 
 * { box-sizing: border-box; }
@@ -209,4 +244,154 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 @media(max-width:620px){
   .admin-theme-savebar { bottom:90px; align-items:flex-start; flex-direction:column; }
   .admin-theme-savebar .admin-primary-button { width:100%; justify-content:center; }
+}
+
+
+/* ROSTA Global Color System v2.3 - admin compatibility lock.
+   Keeps legacy admin classes inside the same semantic palette. */
+html,
+body {
+  background: var(--panel-canvas);
+  color: var(--panel-ink);
+}
+
+.admin-sidebar {
+  background: var(--rosta-carbon);
+  color: var(--rosta-cream);
+}
+
+.admin-sidebar-mark {
+  background: var(--rosta-brick-b);
+  color: var(--rosta-action-text);
+}
+
+.admin-nav-link {
+  color: color-mix(in srgb, var(--rosta-cream) 72%, transparent);
+}
+
+.admin-nav-link.is-active {
+  color: var(--rosta-cream);
+  background: color-mix(in srgb, var(--rosta-brick-b) 16%, var(--rosta-carbon-soft));
+  box-shadow: inset 3px 0 0 var(--rosta-brick-b);
+}
+
+.admin-sidebar-footer a,
+.admin-sidebar-footer button {
+  border-color: color-mix(in srgb, var(--rosta-kraft) 36%, transparent);
+  color: var(--rosta-cream);
+}
+
+.admin-topbar {
+  background: color-mix(in srgb, var(--rosta-carbon) 94%, transparent);
+  color: var(--rosta-cream);
+  border-bottom-color: var(--panel-line);
+}
+
+.admin-topbar > div,
+.admin-page-header p,
+.admin-metric span,
+.admin-table th,
+.admin-toolbar span,
+.admin-inline-message,
+.admin-row-actions button,
+.admin-check,
+.admin-login-form label span,
+.admin-loading-screen {
+  color: var(--panel-muted);
+}
+
+.admin-card,
+.admin-inline-message,
+.admin-login-form input[type="email"],
+.admin-login-form input[type="password"] {
+  background: var(--panel-surface);
+  color: var(--panel-ink);
+  border-color: var(--panel-line);
+}
+
+.admin-table th,
+.admin-table td {
+  border-bottom-color: var(--panel-line);
+}
+
+.admin-primary-button {
+  border-color: var(--rosta-brick-b);
+  background: var(--rosta-brick-b);
+  color: var(--rosta-action-text);
+}
+
+.admin-primary-button:active {
+  border-color: var(--rosta-espresso);
+  background: var(--rosta-espresso);
+}
+
+.admin-secondary-button {
+  border-color: var(--panel-line);
+  background: var(--rosta-carbon-soft);
+  color: var(--rosta-cream);
+}
+
+.admin-pill {
+  border: 1px solid color-mix(in srgb, var(--rosta-kraft) 34%, transparent);
+  background: var(--rosta-carbon-soft);
+  color: var(--rosta-cream);
+}
+
+.admin-error {
+  border-color: color-mix(in srgb, var(--ruth-color-danger) 44%, transparent);
+  background: color-mix(in srgb, var(--ruth-color-danger) 14%, var(--rosta-carbon-soft));
+  color: var(--ruth-color-danger-soft);
+}
+
+.admin-login,
+.admin-loading-screen {
+  background: var(--rosta-carbon);
+}
+
+.admin-login-brand {
+  background: var(--rosta-carbon);
+  color: var(--rosta-cream);
+}
+
+.admin-loader {
+  border-color: color-mix(in srgb, var(--rosta-kraft) 42%, transparent);
+  border-top-color: var(--rosta-brick-b);
+}
+
+::selection {
+  background: var(--rosta-brick-b);
+  color: var(--rosta-action-text);
+}
+
+* {
+  scrollbar-color: var(--rosta-kraft) var(--rosta-carbon);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .admin-nav-link:hover {
+    color: var(--rosta-cream);
+    background: var(--rosta-carbon-soft);
+  }
+
+  .admin-primary-button:hover {
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--rosta-cream) 74%, transparent);
+  }
+
+  .admin-secondary-button:hover,
+  .admin-row-actions button:hover {
+    color: var(--rosta-brick-b);
+    border-color: var(--rosta-brick-b);
+  }
+}
+
+@media (max-width: 620px) {
+  .admin-nav-link.is-active {
+    box-shadow: inset 0 -3px 0 var(--rosta-brick-b);
+  }
+}
+
+@media (forced-colors: active) {
+  :where(button, a[href], input, select, textarea):focus-visible {
+    outline: 2px solid Highlight !important;
+  }
 }
