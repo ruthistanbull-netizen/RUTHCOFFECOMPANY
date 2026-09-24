@@ -326,6 +326,10 @@ export function ExactShipping() {
   };
 
   const saveSettings = async () => {
+    if (!freeShippingThreshold.trim() || !customerShippingFee.trim()) {
+      toast.error("Ücretsiz kargo limiti ve müşteri kargo ücreti doldurulmalı.");
+      return;
+    }
     const threshold = Number(freeShippingThreshold);
     const fee = Number(customerShippingFee);
     if (!Number.isFinite(threshold) || threshold < 0 || !Number.isFinite(fee) || fee < 0) {
