@@ -51,11 +51,8 @@ a:has(> div > img[src*="/brand/ruth-r-mark.webp"]) > div:not(:has(img)) {
   display: none !important;
 }
 
-/* Legacy auth CSS paints logos as backgrounds instead of <img>. */
-[data-exact-base44-auth] > section:first-child .relative.z-10 > div:first-child,
-[data-exact-base44-auth] > section:last-child > div > div:first-child,
-[data-exact-base44-auth="login"] > section:first-child .relative.z-10 > div:first-child,
-[data-exact-base44-auth="login"] > section:last-child > div > div:first-child,
+/* Keep the ROSTA wordmark inside the ROSTA workspace only.
+   RR HUB auth screens own their own branding in ExactAuth.tsx. */
 aside[class*="z-sidebar"] > div:first-child > a::after {
   background-color: transparent !important;
   background-image: var(--ruth-panel-user-logo) !important;
@@ -96,8 +93,6 @@ html.dark img[src*="/rosta-coffee-co.svg"],
 html.dark img[src*="/brand/ruth-r-mark.webp"],
 html.dark [data-panel-brand] [class*="brandMark"],
 html.dark aside[class*="z-sidebar"] > div:first-child > a::after,
-[data-exact-base44-auth="login"] > section:first-child .relative.z-10 > div:first-child,
-[data-exact-base44-auth="login"] > section:last-child > div > div:first-child,
 .cr-login__brand-mark {
   filter: invert(1) !important;
 }
