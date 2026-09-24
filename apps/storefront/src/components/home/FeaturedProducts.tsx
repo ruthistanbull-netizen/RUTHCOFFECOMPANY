@@ -6,18 +6,18 @@ export default function FeaturedProducts({ products }: { products: Product[] }) 
   const visibleProducts = products.slice(0, 8);
 
   return (
-    <section className="home-featured-products bg-cream px-0 py-16 sm:px-4 md:px-8 md:py-28">
+    <section className="home-featured-products bg-carbon px-0 py-16 text-cream sm:px-4 md:px-8 md:py-28">
       <div className="mx-auto max-w-[1500px]">
         <div className="mb-9 flex items-end justify-between gap-4 px-3 md:mb-14 md:px-0">
           <div>
-            <p className="mb-3 text-[10px] uppercase tracking-wide-luxe text-gold-dark">
+            <p className="mb-3 text-[10px] uppercase tracking-wide-luxe text-brick">
               ROSTA Seçkisi
             </p>
             <h2
               className="font-heading"
               style={{
                 fontSize: "clamp(1.55rem, 3.2vw, 2.8rem)",
-                color: "var(--ink)",
+                color: "var(--rosta-cream)",
               }}
             >
               Öne Çıkarılan Ürünler
@@ -25,7 +25,7 @@ export default function FeaturedProducts({ products }: { products: Product[] }) 
           </div>
           <Link
             href="/products"
-            className="shrink-0 pb-1 text-[9px] uppercase tracking-[0.14em] text-gold-dark transition hover:text-ink sm:text-xs sm:tracking-wide-luxe"
+            className="home-featured-all-link shrink-0 pb-1 text-[9px] uppercase tracking-[0.14em] text-brick transition sm:text-xs sm:tracking-wide-luxe"
           >
             Tümünü Gör
           </Link>
@@ -44,7 +44,7 @@ export default function FeaturedProducts({ products }: { products: Product[] }) 
         </div>
 
         {visibleProducts.length === 0 && (
-          <div className="rounded-2xl border border-gold/15 bg-ivory p-8 text-center text-sm text-muted-ruth">
+          <div className="rounded-2xl border border-kraft/40 bg-carbon-soft p-8 text-center text-sm text-cream/70">
             Öne çıkarılan ürün bulunamadı.
           </div>
         )}
@@ -59,6 +59,15 @@ export default function FeaturedProducts({ products }: { products: Product[] }) 
 
         .home-featured-product-card {
           min-width: 0;
+        }
+
+        .home-featured-all-link:focus-visible {
+          outline: 2px solid var(--rosta-brick-b);
+          outline-offset: 3px;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+          .home-featured-all-link:hover { color: var(--rosta-cream); }
         }
 
         @media (max-width: 767px) {
