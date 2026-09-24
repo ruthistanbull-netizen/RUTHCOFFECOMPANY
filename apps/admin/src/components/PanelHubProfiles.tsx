@@ -13,6 +13,7 @@ const RUTH_ADMIN_URL = (
   process.env.NEXT_PUBLIC_RUTH_ADMIN_URL || "https://ruthcommerce.zeabur.app"
 ).replace(/\/$/, "");
 const ROSTA_ENTERED_KEY = "rosta_panel_hub_entered_v1";
+const PROFILE_NAME_KEY = "rr_hub_profile_name";
 
 type PanelKey = "rosta" | "ruth";
 
@@ -40,6 +41,7 @@ function submitRuthSso(accessToken: string, remember: boolean) {
 
 export function PanelHubProfiles() {
   const [email, setEmail] = useState("");
+  const [fullName, setFullName] = useState("");
   const [active, setActive] = useState<PanelKey | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [signingOut, setSigningOut] = useState(false);
@@ -61,16 +63,46 @@ export function PanelHubProfiles() {
     document.addEventListener("visibilitychange", onVisibility);
     resetSelection();
 
-    setRemember(adminRememberSessionEnabled());
+    const remembered = adminRememberSessionEnabled();
+    setRemember(remembered);
+
+    try {
+      const primary = remembered ? window.localStorage : window.sessionStorage;
+      const secondary = remembered ? window.sessionStorage : window.localStorage;
+      setFullName(primary.getItem(PROFILE_NAME_KEY) || secondary.getItem(PROFILE_NAME_KEY) || "");
+    } catch {}
+
     let alive = true;
-    void getSupabaseBrowser().auth.getSession().then(({ data }) => {
+    void getSupabaseBrowser().auth.getSession().then(async ({ data }) => {
       if (!alive) return;
       if (!data.session) {
         window.location.replace("/login");
         return;
       }
+
       setEmail(data.session.user.email || "");
+
+      try {
+        const response = await fetch("/api/me", {
+          headers: { Authorization: `Bearer ${data.session.access_token}` },
+          cache: "no-store",
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!alive) return;
+
+        const profileName = String(result?.profile?.full_name || "").trim();
+        if (profileName) {
+          setFullName(profileName);
+          try {
+            const target = remembered ? window.localStorage : window.sessionStorage;
+            const other = remembered ? window.sessionStorage : window.localStorage;
+            target.setItem(PROFILE_NAME_KEY, profileName);
+            other.removeItem(PROFILE_NAME_KEY);
+          } catch {}
+        }
+      } catch {}
     });
+
     return () => {
       alive = false;
       window.removeEventListener("pageshow", onPageShow);
@@ -87,7 +119,7 @@ export function PanelHubProfiles() {
     } catch {}
     window.setTimeout(() => {
       window.location.assign("/dashboard");
-    }, 360);
+    }, 330);
   };
 
   const enterRuth = async () => {
@@ -104,7 +136,7 @@ export function PanelHubProfiles() {
 
       window.setTimeout(() => {
         submitRuthSso(data.session!.access_token, remember);
-      }, 360);
+      }, 330);
     } catch (caught) {
       setActive(null);
       setError(caught instanceof Error ? caught.message : "Ruth çalışma alanına güvenli geçiş başlatılamadı.");
@@ -121,6 +153,8 @@ export function PanelHubProfiles() {
       setAdminRememberSession(false);
       try {
         window.sessionStorage.removeItem(ROSTA_ENTERED_KEY);
+        window.sessionStorage.removeItem(PROFILE_NAME_KEY);
+        window.localStorage.removeItem(PROFILE_NAME_KEY);
       } catch {}
       window.location.replace("/login");
     }
@@ -130,7 +164,7 @@ export function PanelHubProfiles() {
     {
       key: "rosta" as const,
       label: "ROSTA Coffee Co.",
-      caption: "Workspace",
+      caption: "Yönetim Alanı",
       image: "/rosta-coffee-co.svg",
       imageClass: "h-[62%] w-[78%] object-contain",
       surface: "bg-[#F4F0E8]",
@@ -139,7 +173,7 @@ export function PanelHubProfiles() {
     {
       key: "ruth" as const,
       label: "Ruth Istanbul",
-      caption: "Workspace",
+      caption: "Yönetim Alanı",
       image: `${RUTH_ADMIN_URL}/ruth-commerce-panel-logo.png?v=20260807-3`,
       imageClass: "h-[72%] w-[84%] object-contain",
       surface: "bg-[linear-gradient(145deg,#171717,#28231a)]",
@@ -152,14 +186,14 @@ export function PanelHubProfiles() {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_-12%,rgba(255,255,255,.075),transparent_37%),linear-gradient(180deg,rgba(0,0,0,.04),rgba(0,0,0,.32))]" />
 
       <header className="relative z-20 flex h-[68px] items-center justify-between px-5 pt-[env(safe-area-inset-top)] sm:h-[72px] sm:px-8 lg:px-12">
-        <div className="text-[17px] font-semibold tracking-[-0.03em] text-white/92">
-          Backstage
+        <div className="text-[18px] font-black tracking-[0.035em] text-white sm:text-[20px]">
+          RR HUB
         </div>
         <button
           type="button"
           onClick={() => void signOut()}
           disabled={signingOut}
-          className="group inline-flex h-9 items-center gap-2 rounded-md px-2.5 text-[12px] font-medium text-white/55 transition hover:bg-white/[0.055] hover:text-white disabled:opacity-40"
+          className="group inline-flex h-9 items-center gap-2 rounded-md px-2.5 text-[12px] font-medium text-white/55 transition hover:bg-white/[0.055] hover:text-white active:scale-[0.97] disabled:opacity-40"
         >
           <LogOut className="h-3.5 w-3.5 transition-transform duration-200 group-hover:-translate-x-0.5" />
           {signingOut ? "Çıkılıyor…" : "Oturumu kapat"}
@@ -169,18 +203,21 @@ export function PanelHubProfiles() {
       <motion.section
         initial={{ opacity: 0 }}
         animate={{ opacity: active ? 0.82 : 1 }}
-        transition={{ duration: 0.28 }}
+        transition={{ duration: 0.24 }}
         className="relative z-10 mx-auto flex min-h-[calc(100dvh-132px)] w-full max-w-[1120px] flex-col items-center justify-center px-5 pb-[max(3rem,env(safe-area-inset-bottom))] pt-4 sm:min-h-[calc(100dvh-144px)] sm:pb-16 sm:pt-5"
       >
         <motion.div
           animate={active ? { opacity: 0.28, y: -8, scale: 0.985 } : { opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.3, ease: [0.2, 0.8, 0.2, 1] }}
-          className="mb-8 max-w-[620px] text-center sm:mb-12"
+          transition={{ duration: 0.26, ease: [0.2, 0.8, 0.2, 1] }}
+          className="mb-8 max-w-[720px] text-center sm:mb-12"
         >
-          <h1 className="text-[31px] font-normal leading-[1.05] tracking-[-0.045em] sm:text-[46px] lg:text-[54px]">
-            Hangi markayla devam etmek istiyorsun?
+          <p className="mb-3 text-[13px] font-medium tracking-[-0.015em] text-white/48 sm:mb-4 sm:text-[15px]">
+            Hoş geldiniz{fullName ? `, ${fullName}` : ""}
+          </p>
+          <h1 className="text-[30px] font-normal leading-[1.08] tracking-[-0.045em] text-white/94 sm:text-[45px] lg:text-[53px]">
+            Hangi markayla devam etmek istiyorsunuz?
           </h1>
-          <p className="mt-3 text-[12px] text-white/38 sm:text-[13px]">
+          <p className="mt-3 text-[10px] text-white/22 sm:text-[11px]">
             {email || "Yönetici hesabı"}
           </p>
         </motion.div>
@@ -199,15 +236,18 @@ export function PanelHubProfiles() {
                 initial={{ opacity: 0, y: 18, scale: 0.96 }}
                 animate={
                   selected
-                    ? { opacity: 1, y: 0, scale: 1.14 }
+                    ? { opacity: 1, y: 0, scale: 1.12 }
                     : dimmed
-                      ? { opacity: 0.16, y: 8, scale: 0.88 }
-                      : { opacity: 1, y: 0, scale: 1 }
+                      ? { opacity: 0.15, y: 7, scale: 0.89 }
+                      : { opacity: 1, y: 0, scale: 1, filter: "brightness(1)" }
                 }
-                transition={{ duration: 0.24, ease: [0.2, 0.8, 0.2, 1] }}
+                transition={{ type: "spring", stiffness: 360, damping: 30, mass: 0.78 }}
                 whileHover={active ? undefined : { scale: 1.055, y: -2 }}
-                whileTap={active ? undefined : { scale: 0.985 }}
-                className="group w-[140px] touch-manipulation text-left outline-none sm:w-[188px] lg:w-[208px]"
+                whileTap={active ? undefined : { scale: 0.925, y: 1, filter: "brightness(.76)" }}
+                onPointerUp={(event) => event.currentTarget.blur()}
+                onPointerCancel={(event) => event.currentTarget.blur()}
+                onContextMenu={(event) => event.preventDefault()}
+                className="group w-[140px] touch-manipulation select-none text-left outline-none [-webkit-tap-highlight-color:transparent] sm:w-[188px] lg:w-[208px]"
               >
                 <div
                   className={[
@@ -222,7 +262,7 @@ export function PanelHubProfiles() {
                       src={card.image}
                       alt={card.label}
                       draggable={false}
-                      className={`${card.imageClass} select-none transition-transform duration-300 group-hover:scale-[1.035]`}
+                      className={`${card.imageClass} pointer-events-none select-none transition-transform duration-200 group-hover:scale-[1.035]`}
                     />
                   </div>
                   <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(145deg,rgba(255,255,255,.06),transparent_38%,rgba(0,0,0,.08))]" />
@@ -232,7 +272,7 @@ export function PanelHubProfiles() {
                   <p className="truncate text-[14px] font-normal text-[#808080] transition-colors duration-200 group-hover:text-white group-focus-visible:text-white sm:text-[18px]">
                     {card.label}
                   </p>
-                  <p className="mt-0.5 text-[9px] uppercase tracking-[0.18em] text-white/24 sm:text-[10px]">
+                  <p className="mt-1 text-[8px] font-medium uppercase tracking-[0.16em] text-white/24 sm:text-[9px]">
                     {card.caption}
                   </p>
                 </div>
