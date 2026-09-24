@@ -141,14 +141,14 @@ export function MobileMenuAccordion({
             overflow-x:hidden;
             overflow-y:auto;
             padding:0 0 calc(42px + env(safe-area-inset-bottom));
-            background:var(--ivory)!important;
-            color:var(--ink);
+            background:var(--ruth-color-surface)!important;
+            color:var(--ruth-color-text-primary);
             -webkit-overflow-scrolling:touch;
             overscroll-behavior:contain;
           }
           .ruth-mobile-link-accordion__links{
             padding:0 18px 0 36px;
-            background:var(--ivory)!important;
+            background:var(--ruth-color-surface)!important;
           }
           .ruth-mobile-link-accordion__item,
           .ruth-mobile-link-accordion__row,
@@ -157,7 +157,7 @@ export function MobileMenuAccordion({
           .ruth-mobile-link-accordion__children,
           .ruth-mobile-link-accordion__children-inner,
           .ruth-mobile-link-accordion__child{
-            background:var(--ivory)!important;
+            background:var(--ruth-color-surface)!important;
           }
           .ruth-mobile-link-accordion__item{border:0}
           .ruth-mobile-link-accordion__row{
@@ -170,7 +170,7 @@ export function MobileMenuAccordion({
             display:flex;
             min-height:31px;
             align-items:flex-start;
-            color:var(--ink);
+            color:var(--ruth-color-text-primary);
             font-family:var(--font-heading)!important;
             font-size:24px;
             font-weight:900;
@@ -185,7 +185,7 @@ export function MobileMenuAccordion({
             height:31px;
             place-items:center;
             border:0;
-            color:var(--ink);
+            color:var(--ruth-color-text-primary);
             -webkit-tap-highlight-color:transparent;
           }
           .ruth-mobile-link-accordion__toggle svg{
@@ -194,6 +194,13 @@ export function MobileMenuAccordion({
             transition:transform 220ms ease;
           }
           .ruth-mobile-link-accordion__toggle[aria-expanded="true"] svg{transform:rotate(45deg)}
+          .ruth-mobile-link-accordion__toggle:focus-visible,
+          .ruth-mobile-link-accordion__title:focus-visible,
+          .ruth-mobile-link-accordion__child:focus-visible,
+          .ruth-mobile-photo-collection-card:focus-visible{
+            outline:2px solid var(--ruth-color-focus);
+            outline-offset:2px;
+          }
           .ruth-mobile-link-accordion__children{
             display:grid;
             grid-template-rows:0fr;
@@ -206,7 +213,7 @@ export function MobileMenuAccordion({
             min-height:34px;
             align-items:center;
             padding:6px 0 6px 18px;
-            color:var(--ink);
+            color:var(--ruth-color-text-primary);
             font-family:var(--font-body)!important;
             font-size:11px;
             font-weight:400;
@@ -224,7 +231,7 @@ export function MobileMenuAccordion({
             padding:0 16px 8px;
             overflow-x:auto;
             overflow-y:hidden;
-            background:var(--ivory)!important;
+            background:var(--ruth-color-surface)!important;
             overscroll-behavior-x:contain;
             scrollbar-width:none;
             -webkit-overflow-scrolling:touch;
@@ -234,8 +241,8 @@ export function MobileMenuAccordion({
             display:block;
             width:92px;
             min-width:92px;
-            color:var(--ink);
-            background:var(--ivory)!important;
+            color:var(--ruth-color-text-primary);
+            background:var(--ruth-color-surface)!important;
             text-decoration:none;
           }
           .ruth-mobile-photo-collection-card__media{
@@ -243,7 +250,7 @@ export function MobileMenuAccordion({
             width:100%;
             aspect-ratio:2/3;
             overflow:hidden;
-            background:var(--cream);
+            background:var(--ruth-color-surface-inverse);
           }
           .ruth-mobile-photo-collection-card__media img{
             display:block;
@@ -255,8 +262,8 @@ export function MobileMenuAccordion({
           .ruth-mobile-photo-collection-card__label{
             display:block;
             margin-top:4px;
-            color:var(--ink);
-            background:var(--ivory)!important;
+            color:var(--ruth-color-text-primary);
+            background:var(--ruth-color-surface)!important;
             font-family:var(--font-body)!important;
             font-size:9px;
             font-weight:400;
@@ -265,6 +272,12 @@ export function MobileMenuAccordion({
             overflow-wrap:anywhere;
             text-transform:uppercase;
           }
+        }
+        @media(forced-colors:active){
+          .ruth-mobile-link-accordion__toggle:focus-visible,
+          .ruth-mobile-link-accordion__title:focus-visible,
+          .ruth-mobile-link-accordion__child:focus-visible,
+          .ruth-mobile-photo-collection-card:focus-visible{outline-color:Highlight}
         }
         @media(prefers-reduced-motion:reduce){
           .ruth-mobile-link-accordion__children,
