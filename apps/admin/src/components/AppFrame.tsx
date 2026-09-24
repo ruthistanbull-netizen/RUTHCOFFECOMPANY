@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { AdminDesktopBrandScaleV2 } from "@/components/AdminDesktopBrandScaleV2";
 import { AdminInterfacePolishV2 } from "@/components/AdminInterfacePolishV2";
 import { AdminLiveDataBoundary } from "@/components/AdminLiveDataBoundary";
+import { AdminPanelHubEntryGuard } from "@/components/AdminPanelHubEntryGuard";
 import { AdminMobileQuarterMenu } from "@/components/AdminMobileQuarterMenu";
 import { AdminMobileQuarterMenuPolish } from "@/components/AdminMobileQuarterMenuPolish";
 import { AdminMobileNavPolishV2 } from "@/components/AdminMobileNavPolishV2";
@@ -46,6 +47,7 @@ export function AppFrame({ children }: { children: ReactNode }) {
 
   const providers = (
     <>
+      <AdminPanelHubEntryGuard />
       <AdminNavigationRecovery />
       <AdminNotificationSounds />
       <AdminPerformanceBootstrap />
@@ -65,6 +67,30 @@ export function AppFrame({ children }: { children: ReactNode }) {
       <AdminUnifiedMotionEnhancer />
     </>
   );
+
+  if (pathname === "/profiles") {
+    return (
+      <RequireAdmin>
+        {providers}
+        <div
+          data-panel-hub-immersive-root
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 2147483000,
+            width: "100vw",
+            height: "100dvh",
+            minHeight: "100dvh",
+            overflow: "auto",
+            transform: "none",
+            background: "#141414",
+          }}
+        >
+          {children}
+        </div>
+      </RequireAdmin>
+    );
+  }
 
   if (pathname === "/rosta-insight" || pathname.startsWith("/rosta-insight/") || pathname === "/ruthie" || pathname.startsWith("/ruthie/")) {
     return (
