@@ -2,17 +2,15 @@
 -- storefront_product_read_models RLS is intentionally NOT changed here.
 -- It needs an explicit read/write policy decision before enabling RLS.
 
-insert into storage.buckets (id,name,public,file_size_limit,allowed_mime_types)
+insert into storage.buckets (id,name,public,allowed_mime_types)
 values (
   'rosta-media',
   'rosta-media',
   true,
-  15728640,
-  array['image/jpeg','image/png','image/webp','image/avif','video/mp4','video/webm']
+  array['image/jpeg','image/png','image/webp','image/avif','video/mp4','video/webm','video/quicktime']
 )
 on conflict (id) do update
 set public=excluded.public,
-    file_size_limit=excluded.file_size_limit,
     allowed_mime_types=excluded.allowed_mime_types;
 
 insert into public.site_settings (setting_key, setting_value, is_public, updated_at)
