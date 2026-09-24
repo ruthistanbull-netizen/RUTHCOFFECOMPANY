@@ -98,7 +98,7 @@ function Accordion({ title, open, onToggle, children }: { title: string; open: b
       <button type="button" onClick={onToggle} className="flex h-11 w-full items-center justify-between px-3.5 text-left text-[11px] font-semibold active:bg-accent-soft focus-visible:bg-accent-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
         <span>{title}</span>{open ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
       </button>
-      {open ? <div className="border-t border-black/[0.06] p-3">{children}</div> : null}
+      {open ? <div className="border-t border-border-subtle p-3">{children}</div> : null}
     </div>
   );
 }
@@ -458,7 +458,7 @@ export function VisualThemeCustomizerV3() {
 
           <div ref={stageRef} className="flex h-full w-full items-center justify-center overflow-hidden p-4 pt-12">
             {mobile ? <div className="relative" style={{ width: PHONE.width * phoneScale, height: PHONE.height * phoneScale }}>
-              <div className="absolute left-0 top-0 origin-top-left overflow-hidden rounded-[34px] border-[8px] border-black bg-surface-primary shadow-[0_22px_70px_rgba(0,0,0,.18)]" style={{ width: PHONE.width, height: PHONE.height, transform: `scale(${phoneScale})` }}>
+              <div className="absolute left-0 top-0 origin-top-left overflow-hidden rounded-[34px] border-[8px] border-[var(--rosta-carbon)] bg-surface-primary shadow-[0_22px_70px_color-mix(in srgb,var(--rosta-carbon) 54%,transparent)]" style={{ width: PHONE.width, height: PHONE.height, transform: `scale(${phoneScale})` }}>
                 <iframe key={`${pageKey}-${nonce}-mobile`} ref={iframeRef} src={previewUrl} title="Mobil ROSTA Coffee Co. önizlemesi" className="h-full w-full border-0 bg-surface-primary" onLoad={() => iframeRef.current?.contentWindow?.postMessage({ type: "RUTH_THEME_EDITOR_SETTINGS", settings }, "*")} />
               </div>
             </div> : <div className="h-full w-full max-w-[1600px] overflow-hidden rounded-xl border border-border-subtle bg-surface-primary shadow-[0_20px_65px_rgba(0,0,0,.12)]">
