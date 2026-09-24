@@ -1,13 +1,5 @@
-import { RuthieMobileNavPolish } from "../RuthieMobileNavPolish";
-import { RuthiePresentationBridge } from "../RuthiePresentationBridge";
-import { RuthieVoiceExperience } from "../RuthieVoiceExperience";
+import { redirect } from "next/navigation";
 
-export default function RuthieVoicePage() {
-  return (
-    <>
-      <RuthieMobileNavPolish />
-      <RuthieVoiceExperience />
-      <RuthiePresentationBridge mode="voice" placement="experience" />
-    </>
-  );
+export default function LegacyRuthieVoicePage(){
+  redirect("/rosta-insight/voice");
 }
