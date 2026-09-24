@@ -4,6 +4,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 COPY package.json ./package.json
 COPY apps/storefront/package.json ./apps/storefront/package.json
+COPY apps/admin/package.json ./apps/admin/package.json
 COPY packages/commerce-core/package.json ./packages/commerce-core/package.json
 COPY packages/contracts/package.json ./packages/contracts/package.json
 COPY packages/ui/package.json ./packages/ui/package.json
