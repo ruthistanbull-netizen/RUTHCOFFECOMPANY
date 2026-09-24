@@ -13,8 +13,8 @@ import styles from "./AdminCurtainCommandMenu.module.css";
 
 const COMMAND_MENU_EVENT = "ruth:command-menu-toggle";
 const COMMAND_MENU_CLASS = "ruth-command-menu-open";
-const NAVY = "#21264b";
-const PINK = "#E81B59";
+const NAVY = "#111111";
+const PINK = "#C94A40";
 
 const GROUP_LABELS: Record<string, string> = {
   GENEL: "Genel",
@@ -184,9 +184,9 @@ export function AdminCurtainCommandMenu() {
           >
             <defs>
               <radialGradient id="ruth-mudrenok-shadow">
-                <stop offset="0" stopColor="rgba(0,0,0,0)" />
-                <stop offset="0.85" stopColor="rgba(0,0,0,0.82)" />
-                <stop offset="1" stopColor="rgba(0,0,0,0)" />
+                <stop offset="0" stopColor="rgba(17,17,17,0)" />
+                <stop offset="0.85" stopColor="rgba(17,17,17,0.82)" />
+                <stop offset="1" stopColor="rgba(17,17,17,0)" />
               </radialGradient>
             </defs>
 
@@ -195,7 +195,7 @@ export function AdminCurtainCommandMenu() {
               cx="0"
               cy="0"
               r="100"
-              fill="#fff"
+              fill="#FBF3E6"
               initial={{ scale: 1 }}
               animate={reduceMotion ? { scale: 2.5 } : { scale: [1, 2.76, 2.36, 2.58, 2.47, 2.5] }}
               exit={reduceMotion ? { scale: 1 } : { scale: [2.5, 2.64, 1] }}
@@ -234,9 +234,9 @@ export function AdminCurtainCommandMenu() {
               cx="0"
               cy="0"
               r="100"
-              initial={{ scale: 1, fill: "#fff" }}
+              initial={{ scale: 1, fill: "#FBF3E6" }}
               animate={reduceMotion ? { scale: 1.3, fill: NAVY } : { scale: [1, 1.44, 1.23, 1.32, 1.28, 1.3], fill: NAVY }}
-              exit={{ scale: 1, fill: "#fff" }}
+              exit={{ scale: 1, fill: "#FBF3E6" }}
               transition={reduceMotion ? { duration: 0.01 } : { duration: 0.8, delay: 0.1 }}
             />
 
@@ -252,7 +252,7 @@ export function AdminCurtainCommandMenu() {
                 x1="-26" y1="-12" x2="0" y2="-12"
                 strokeWidth="5.5" strokeLinecap="round"
                 initial={{ y: 0, rotate: 0, stroke: NAVY }}
-                animate={{ y: 12, rotate: 45, stroke: "#fff" }}
+                animate={{ y: 12, rotate: 45, stroke: "#FBF3E6" }}
                 exit={{ y: 0, rotate: 0, stroke: NAVY }}
                 transition={{ duration: reduceMotion ? 0.01 : 0.4, delay: reduceMotion ? 0 : 0.1 }}
               />
@@ -261,7 +261,7 @@ export function AdminCurtainCommandMenu() {
                 x1="-26" y1="0" x2="0" y2="0"
                 strokeWidth="5.5" strokeLinecap="round"
                 initial={{ rotate: 0, stroke: NAVY, opacity: 1 }}
-                animate={{ rotate: 45, stroke: "#fff", opacity: 0 }}
+                animate={{ rotate: 45, stroke: "#FBF3E6", opacity: 0 }}
                 exit={{ rotate: 0, stroke: NAVY, opacity: 1 }}
                 transition={{ duration: reduceMotion ? 0.01 : 0.35, delay: reduceMotion ? 0 : 0.1 }}
               />
@@ -270,7 +270,7 @@ export function AdminCurtainCommandMenu() {
                 x1="-26" y1="12" x2="0" y2="12"
                 strokeWidth="5.5" strokeLinecap="round"
                 initial={{ y: 0, rotate: 0, stroke: NAVY }}
-                animate={{ y: -12, rotate: -45, stroke: "#fff" }}
+                animate={{ y: -12, rotate: -45, stroke: "#FBF3E6" }}
                 exit={{ y: 0, rotate: 0, stroke: NAVY }}
                 transition={{ duration: reduceMotion ? 0.01 : 0.4, delay: reduceMotion ? 0 : 0.1 }}
               />
@@ -338,7 +338,7 @@ export function AdminCurtainCommandMenu() {
                   aria-hidden="true"
                 >
                   <motion.circle
-                    cx="0" cy="0" r="42" fill="#fff"
+                    cx="0" cy="0" r="42" fill="#FBF3E6"
                     initial={{ scale: 0.75 }}
                     animate={reduceMotion ? { scale: subBgScale } : { scale: [0.75, subBgScale * 1.12, subBgScale * 0.94, subBgScale * 1.025, subBgScale] }}
                     exit={{ scale: 0.75 }}
