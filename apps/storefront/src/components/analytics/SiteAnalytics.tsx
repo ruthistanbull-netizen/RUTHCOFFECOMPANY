@@ -397,7 +397,7 @@ function initializeMarketingTags() {
     const script = document.createElement("script"); script.async = true; script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(gaId)}`; document.head.appendChild(script);
   }
 
-  const clarityProjectId = (process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID || "xmf3s5ab62").trim();
+  const clarityProjectId = (process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID || "").trim();
   if (clarityProjectId && !window.clarity) {
     window.clarity = (...args: unknown[]) => {
       const clarityQueue = window.clarity as unknown as { q?: unknown[] };
