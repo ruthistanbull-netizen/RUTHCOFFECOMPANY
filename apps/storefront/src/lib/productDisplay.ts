@@ -139,6 +139,29 @@ export function productColorValues(product: Product) {
   return uniqueClean(values).sort((a, b) => a.localeCompare(b, "tr"));
 }
 
+export function productStoneValues(product: Product) {
+  const values: string[] = [];
+
+  for (const [name, value] of variantOptionEntries(product)) {
+    const optionName = normalized(name);
+    if (
+      optionName.includes("ogut") ||
+      optionName.includes("grind") ||
+      optionName.includes("cekim") ||
+      optionName.includes("demleme") ||
+      optionName.includes("paket") ||
+      optionName.includes("gramaj") ||
+      optionName.includes("weight") ||
+      optionName.includes("boyut")
+    ) {
+      const cleaned = value?.trim().replace(/\s+/g, " ");
+      if (cleaned) values.push(titleCase(cleaned));
+    }
+  }
+
+  return uniqueClean(values).sort((a, b) => a.localeCompare(b, "tr"));
+}
+
 export function productCategoryValues(product: Product) {
   const values = [
     ...(product.category_names || []),
