@@ -14,17 +14,16 @@
 .ruth-empty-state__action { margin-top: 2px; }
 
 .ruth-skeleton { position: relative; min-height: 12px; overflow: hidden; border-radius: var(--ruth-radius-sm); background: var(--ruth-color-surface-muted); }
-.ruth-skeleton::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.68), transparent); transform: translateX(-100%); animation: ruth-skeleton-shimmer 1.5s infinite; }
+.ruth-skeleton::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--rosta-cream) 68%, transparent), transparent); transform: translateX(-100%); animation: ruth-skeleton-shimmer 1.5s infinite; }
 .ruth-skeleton--rounded { border-radius: 999px; }
 @keyframes ruth-skeleton-shimmer { to { transform: translateX(100%); } }
 
 .ruth-tabs { width: 100%; overflow-x: auto; }
 .ruth-tabs__list { display: flex; width: max-content; min-width: 100%; gap: 4px; border-bottom: 1px solid var(--ruth-border); }
 .ruth-tabs__trigger { position: relative; min-height: 42px; border: 0; background: transparent; color: var(--ruth-ink-muted); padding: 0 14px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
-.ruth-tabs__trigger::after { content: ""; position: absolute; right: 12px; bottom: -1px; left: 12px; height: 2px; background: var(--ruth-ink); transform: scaleX(0); transition: transform var(--ruth-motion-normal) var(--ruth-easing); }
-.ruth-tabs__trigger:hover:not(:disabled) { color: var(--ruth-ink); }
+.ruth-tabs__trigger::after { content: ""; position: absolute; right: 12px; bottom: -1px; left: 12px; height: 2px; background: var(--ruth-color-accent); transform: scaleX(0); transition: transform var(--ruth-motion-normal) var(--ruth-easing); }
 .ruth-tabs__trigger:focus-visible { outline: 2px solid var(--ruth-color-focus); outline-offset: -2px; border-radius: var(--ruth-radius-xs); }
-.ruth-tabs__trigger--active { color: var(--ruth-ink); }
+.ruth-tabs__trigger--active { color: var(--ruth-color-accent); }
 .ruth-tabs__trigger--active::after { transform: scaleX(1); }
 .ruth-tabs__trigger:disabled { cursor: not-allowed; opacity: 0.45; }
 
@@ -39,7 +38,6 @@
 .ruth-data-table--compact td { padding: 9px 12px; }
 .ruth-data-table tbody tr:last-child td { border-bottom: 0; }
 .ruth-data-table tbody tr { transition: background var(--ruth-motion-fast) ease; }
-.ruth-data-table tbody tr:hover { background: var(--ruth-color-accent-wash); }
 .ruth-data-table__row--interactive { cursor: pointer; }
 .ruth-data-table__row--interactive:focus-visible { outline: 2px solid var(--ruth-color-focus); outline-offset: -2px; }
 .ruth-data-table__loading { color: var(--ruth-ink-muted); text-align: center; }
@@ -116,4 +114,9 @@
 
 @media (prefers-reduced-motion: reduce) {
   .ruth-segmented button { transition: none; }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ruth-tabs__trigger:hover:not(:disabled) { color: var(--ruth-color-accent); }
+  .ruth-data-table tbody tr:hover { background: var(--ruth-color-accent-wash); }
 }
