@@ -13,31 +13,10 @@ const RUTH_ADMIN_URL = (
   process.env.NEXT_PUBLIC_RUTH_ADMIN_URL || "https://ruthcommerce.zeabur.app"
 ).replace(/\/$/, "");
 const ROSTA_ENTERED_KEY = "rosta_panel_hub_entered_v1";
+const RUTH_ENTERED_KEY = "rr_hub_ruth_entered_v1";
 const PROFILE_NAME_KEY = "rr_hub_profile_name";
 
 type PanelKey = "rosta" | "ruth";
-
-function submitRuthSso(accessToken: string, remember: boolean) {
-  const form = document.createElement("form");
-  form.method = "POST";
-  form.action = `${RUTH_ADMIN_URL}/api/panel-hub/sso`;
-  form.style.display = "none";
-
-  const token = document.createElement("input");
-  token.type = "hidden";
-  token.name = "access_token";
-  token.value = accessToken;
-  form.appendChild(token);
-
-  const rememberField = document.createElement("input");
-  rememberField.type = "hidden";
-  rememberField.name = "remember";
-  rememberField.value = remember ? "1" : "0";
-  form.appendChild(rememberField);
-
-  document.body.appendChild(form);
-  form.submit();
-}
 
 export function PanelHubProfiles() {
   const [email, setEmail] = useState("");
@@ -122,25 +101,16 @@ export function PanelHubProfiles() {
     }, 330);
   };
 
-  const enterRuth = async () => {
+  const enterRuth = () => {
     if (active) return;
     setError(null);
     setActive("ruth");
-
     try {
-      const supabase = getSupabaseBrowser();
-      const { data, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError || !data.session?.access_token) {
-        throw sessionError || new Error("Oturum bulunamadı.");
-      }
-
-      window.setTimeout(() => {
-        submitRuthSso(data.session!.access_token, remember);
-      }, 330);
-    } catch (caught) {
-      setActive(null);
-      setError(caught instanceof Error ? caught.message : "Ruth çalışma alanına güvenli geçiş başlatılamadı.");
-    }
+      window.sessionStorage.setItem(RUTH_ENTERED_KEY, "1");
+    } catch {}
+    window.setTimeout(() => {
+      window.location.assign("/ruth");
+    }, 330);
   };
 
   const signOut = async () => {
@@ -153,6 +123,7 @@ export function PanelHubProfiles() {
       setAdminRememberSession(false);
       try {
         window.sessionStorage.removeItem(ROSTA_ENTERED_KEY);
+        window.sessionStorage.removeItem(RUTH_ENTERED_KEY);
         window.sessionStorage.removeItem(PROFILE_NAME_KEY);
         window.localStorage.removeItem(PROFILE_NAME_KEY);
       } catch {}
