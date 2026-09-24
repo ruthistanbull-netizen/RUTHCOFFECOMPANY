@@ -30,6 +30,9 @@ import { RostaPointsWidget } from "@/components/RostaPointsWidget";
 import { MobileMenuAccordion } from "@/components/MobileMenuAccordion";
 import { HomepageHeaderLogoVisibility } from "@/components/HomepageHeaderLogoVisibility";
 import { StorefrontMotionProvider } from "@/components/StorefrontMotionProvider";
+import { ThemeEditorBridgeV3 } from "@/components/theme/ThemeEditorBridgeV3";
+import { ThemeEditorContextGestureBridge } from "@/components/theme/ThemeEditorContextGestureBridge";
+import { ThemeEditorDirectImageBridge } from "@/components/theme/ThemeEditorDirectImageBridge";
 import { getThemeCustomizerSettings } from "@/data/site";
 import { getCachedCategories, getCachedCollections } from "@/data/catalogCache";
 import {
@@ -266,6 +269,9 @@ export default async function RootLayout({
             letter-spacing: normal;
           }
         `}</style>
+        <ThemeEditorBridgeV3 settings={themeSettings} />
+        <ThemeEditorContextGestureBridge />
+        <ThemeEditorDirectImageBridge />
         <StorefrontMotionProvider>
           <AuthProvider>
             <AnalyticsConsentGate />
