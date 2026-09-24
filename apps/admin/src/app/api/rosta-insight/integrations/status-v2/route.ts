@@ -187,6 +187,7 @@ export async function GET(request: Request) {
     const { data } = await auth.supabase
       .from("email_integrations")
       .select("provider, status, email, updated_at")
+      .eq("profile_id", auth.profile.id)
       .eq("provider", "gmail")
       .eq("status", "active")
       .order("updated_at", { ascending: false })
