@@ -226,7 +226,7 @@ export function RequireAdmin({ children }: { children: ReactNode }) {
       <div className="relative w-full max-w-md animate-fade-in text-center">
         <div className="mx-auto flex w-full max-w-[320px] items-center justify-center overflow-visible px-4">
           <img
-            src="/ruth-commerce-panel-logo.png?v=20260807-3"
+            src="/rosta-coffee-co.svg"
             alt="ROSTA Coffee Co."
             data-ruth-loading-logo
             width={1000}
