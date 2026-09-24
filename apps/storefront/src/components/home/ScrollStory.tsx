@@ -118,7 +118,7 @@ export default function ScrollStory({ images }: { images?: string[] | null }) {
   return (
     <section
       ref={sectionRef}
-      className="scroll-story-section scroll-story-same-animation relative bg-ivory"
+      className="scroll-story-section scroll-story-same-animation relative bg-carbon text-cream"
       style={{ height: sectionHeight }}
     >
       <div className="scroll-story-sticky sticky top-0 flex h-[100svh] min-h-[560px] items-center justify-center overflow-hidden">
@@ -150,11 +150,11 @@ export default function ScrollStory({ images }: { images?: string[] | null }) {
                   key={`img-${slide.image}-${index}`}
                   href={slide.href}
                   aria-label={`${slide.title} ürününü incele`}
-                  className="absolute inset-0 overflow-hidden rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4"
+                  className="absolute inset-0 overflow-hidden rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brick"
                   style={{
                     opacity,
                     transform: `scale(${scale})`,
-                    boxShadow: "0 30px 80px rgba(61,46,34,0.22)",
+                    boxShadow: "0 30px 80px color-mix(in srgb, var(--rosta-carbon) 72%, transparent)",
                     willChange: "transform, opacity",
                     pointerEvents: opacity > 0.5 ? "auto" : "none",
                     cursor: "pointer",
@@ -193,15 +193,15 @@ export default function ScrollStory({ images }: { images?: string[] | null }) {
                   className="font-heading font-editorial text-balance"
                   style={{
                     fontSize: "clamp(1.3rem, 3.5vw, 2.2rem)",
-                    color: "var(--ink)",
+                    color: "var(--rosta-cream)",
                     lineHeight: 1.4,
                     letterSpacing: "0.01em",
                   }}
                 >
                   {slide.title}
                 </h2>
-                <p className="mx-auto mt-4 max-w-lg leading-7 text-muted-ruth">{slide.body}</p>
-                <div className="mx-auto mt-4 h-px" style={{ width: 40, background: "var(--gold)" }} />
+                <p className="mx-auto mt-4 max-w-lg leading-7 text-cream/70">{slide.body}</p>
+                <div className="mx-auto mt-4 h-px" style={{ width: 40, background: "var(--rosta-brick-b)" }} />
               </div>
             );
           })}
