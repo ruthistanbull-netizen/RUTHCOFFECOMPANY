@@ -1,5 +1,4 @@
 import Link from "next/link";
-import type { ReactNode } from "react";
 import { Mail } from "lucide-react";
 import { categoryHref } from "@/lib/catalogCategories";
 import type { Category, Collection } from "@/types/site";
@@ -12,16 +11,16 @@ import { ThemeEditorNativeNavigation } from "@/components/theme/ThemeEditorNativ
 import { ROSTA_WORDMARK_SRC } from "@/components/brand/rostaWordmark";
 
 const SOCIAL_LINKS = [
-  process.env.NEXT_PUBLIC_ROSTA_WHATSAPP_URL
-    ? { label: "WhatsApp", href: process.env.NEXT_PUBLIC_ROSTA_WHATSAPP_URL, icon: <WhatsAppIcon /> }
-    : null,
-  process.env.NEXT_PUBLIC_ROSTA_INSTAGRAM_URL
-    ? { label: "Instagram", href: process.env.NEXT_PUBLIC_ROSTA_INSTAGRAM_URL, icon: <InstagramIcon /> }
-    : null,
-  process.env.NEXT_PUBLIC_ROSTA_TIKTOK_URL
-    ? { label: "TikTok", href: process.env.NEXT_PUBLIC_ROSTA_TIKTOK_URL, icon: <TikTokIcon /> }
-    : null,
-].filter((social): social is { label: string; href: string; icon: ReactNode } => Boolean(social));
+  ...(process.env.NEXT_PUBLIC_ROSTA_WHATSAPP_URL
+    ? [{ label: "WhatsApp", href: process.env.NEXT_PUBLIC_ROSTA_WHATSAPP_URL, icon: <WhatsAppIcon /> }]
+    : []),
+  ...(process.env.NEXT_PUBLIC_ROSTA_INSTAGRAM_URL
+    ? [{ label: "Instagram", href: process.env.NEXT_PUBLIC_ROSTA_INSTAGRAM_URL, icon: <InstagramIcon /> }]
+    : []),
+  ...(process.env.NEXT_PUBLIC_ROSTA_TIKTOK_URL
+    ? [{ label: "TikTok", href: process.env.NEXT_PUBLIC_ROSTA_TIKTOK_URL, icon: <TikTokIcon /> }]
+    : []),
+];
 
 const PAYMENT_LOGOS = [
   { label: "Visa", src: "/payments/visa.png" },
