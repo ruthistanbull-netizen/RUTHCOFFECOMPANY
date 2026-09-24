@@ -37,7 +37,7 @@ export function ContactForm() {
   };
 
   return (
-    <form className="grid gap-5" onSubmit={submit} noValidate>
+    <form className="grid gap-5 text-cream" onSubmit={submit} noValidate>
       <div className="absolute -left-[9999px] h-px w-px overflow-hidden" aria-hidden="true">
         <label>
           Şirket
@@ -53,7 +53,7 @@ export function ContactForm() {
 
       <div className="grid gap-5 md:grid-cols-2">
         <label className="block">
-          <span className="mb-2 block text-[10px] uppercase tracking-[0.28em] text-gold-dark">Ad Soyad</span>
+          <span className="mb-2 block text-[10px] uppercase tracking-[0.28em] text-brick">Ad Soyad</span>
           <input
             name="name"
             type="text"
@@ -63,11 +63,11 @@ export function ContactForm() {
             value={form.name}
             onChange={(event) => setForm({ ...form, name: event.target.value })}
             placeholder="Adınız Soyadınız"
-            className="w-full rounded-full border border-gold/15 bg-ivory px-5 py-4 text-sm text-ink outline-none transition placeholder:text-muted-ruth/55 focus:border-gold"
+            className="w-full rounded-full border border-kraft/35 bg-carbon px-5 py-4 text-sm text-[var(--rosta-action-text)] outline-none transition placeholder:text-[var(--rosta-action-text)]/40 focus:border-brick"
           />
         </label>
         <label className="block">
-          <span className="mb-2 block text-[10px] uppercase tracking-[0.28em] text-gold-dark">E-posta</span>
+          <span className="mb-2 block text-[10px] uppercase tracking-[0.28em] text-brick">E-posta</span>
           <input
             name="email"
             type="email"
@@ -76,13 +76,13 @@ export function ContactForm() {
             value={form.email}
             onChange={(event) => setForm({ ...form, email: event.target.value })}
             placeholder="ornek@mail.com"
-            className="w-full rounded-full border border-gold/15 bg-ivory px-5 py-4 text-sm text-ink outline-none transition placeholder:text-muted-ruth/55 focus:border-gold"
+            className="w-full rounded-full border border-kraft/35 bg-carbon px-5 py-4 text-sm text-[var(--rosta-action-text)] outline-none transition placeholder:text-[var(--rosta-action-text)]/40 focus:border-brick"
           />
         </label>
       </div>
 
       <label className="block">
-        <span className="mb-2 block text-[10px] uppercase tracking-[0.28em] text-gold-dark">Telefon Numarası</span>
+        <span className="mb-2 block text-[10px] uppercase tracking-[0.28em] text-brick">Telefon Numarası</span>
         <input
           name="phone"
           type="tel"
@@ -90,12 +90,12 @@ export function ContactForm() {
           value={form.phone}
           onChange={(event) => setForm({ ...form, phone: event.target.value })}
           placeholder="05xx xxx xx xx"
-          className="w-full rounded-full border border-gold/15 bg-ivory px-5 py-4 text-sm text-ink outline-none transition placeholder:text-muted-ruth/55 focus:border-gold"
+          className="w-full rounded-full border border-kraft/35 bg-carbon px-5 py-4 text-sm text-[var(--rosta-action-text)] outline-none transition placeholder:text-[var(--rosta-action-text)]/40 focus:border-brick"
         />
       </label>
 
       <label className="block">
-        <span className="mb-2 block text-[10px] uppercase tracking-[0.28em] text-gold-dark">Mesajınız</span>
+        <span className="mb-2 block text-[10px] uppercase tracking-[0.28em] text-brick">Mesajınız</span>
         <textarea
           name="message"
           rows={6}
@@ -105,19 +105,19 @@ export function ContactForm() {
           value={form.message}
           onChange={(event) => setForm({ ...form, message: event.target.value })}
           placeholder="Bize yazmak istediğiniz konuyu buraya yazın."
-          className="w-full resize-none rounded-[1.6rem] border border-gold/15 bg-ivory px-5 py-4 text-sm leading-7 text-ink outline-none transition placeholder:text-muted-ruth/55 focus:border-gold"
+          className="w-full resize-none rounded-[1.6rem] border border-kraft/35 bg-carbon px-5 py-4 text-sm leading-7 text-[var(--rosta-action-text)] outline-none transition placeholder:text-[var(--rosta-action-text)]/40 focus:border-brick"
         />
       </label>
 
       <div aria-live="polite">
-        {error ? <p className="mb-4 text-sm text-red-700">{error}</p> : null}
-        {success ? <p className="mb-4 text-sm text-emerald-800">Mesajınız alındı. En kısa sürede size dönüş yapacağız.</p> : null}
+        {error ? <p className="mb-4 text-sm text-[var(--ruth-color-danger-text)]">{error}</p> : null}
+        {success ? <p className="mb-4 text-sm text-[var(--ruth-color-success-text)]">Mesajınız alındı. En kısa sürede size dönüş yapacağız.</p> : null}
       </div>
 
       <button
         type="submit"
         disabled={sending}
-        className="w-full rounded-full bg-ink px-8 py-4 text-xs uppercase tracking-wide-luxe text-cream transition hover:bg-gold-dark disabled:cursor-not-allowed disabled:opacity-60 md:w-auto"
+        className="w-full rounded-full bg-brick px-8 py-4 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)] transition active:bg-espresso disabled:cursor-not-allowed disabled:opacity-60 md:w-auto"
       >
         {sending ? "Gönderiliyor…" : "Mesajı Gönder"}
       </button>
