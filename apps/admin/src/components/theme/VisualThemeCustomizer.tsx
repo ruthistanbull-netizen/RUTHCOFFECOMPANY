@@ -84,7 +84,6 @@ const RAW_STOREFRONT_URL = process.env.NEXT_PUBLIC_STOREFRONT_URL || "https://ro
 const STOREFRONT_URL = RAW_STOREFRONT_URL
   .replace(/^https:\/\/ruthistanbul\.com(?=\/|$)/, "https://rostacoffecompany.zeabur.app")
   .replace(/\/$/, "");
-const THEME_IMAGE_ACCEPT = "image/*,.jpg,.jpeg,.png,.webp,.avif,.heic,.heif";
 const THEME_MEDIA_ACCEPT = "image/*,video/*,.jpg,.jpeg,.png,.webp,.avif,.heic,.heif,.mp4,.m4v,.mov,.webm";
 
 function mediaTypeForFile(file: File): "image" | "video" {
