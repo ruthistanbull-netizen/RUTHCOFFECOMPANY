@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
-import { applyRange } from "@/lib/ranges";
+import { applyRange, getDateRange } from "@/lib/ranges";
 import { isHistoricalImportedOrder, normalizeOrderStatus } from "@/lib/statusLabels";
 
 export const runtime = "nodejs";
@@ -118,6 +118,7 @@ export async function GET(request: Request) {
   const { supabase } = auth;
   const url = new URL(request.url);
   const range = url.searchParams.get("range") || "today";
+  const bounds = getDateRange(range);
   const warnings: string[] = [];
 
   try {
@@ -132,49 +133,10 @@ export async function GET(request: Request) {
       true,
     );
 
-    const analyticsPromise = Promise.all([
-      rows<{ session_id: string | null }>(
-        (applyRange(
-          supabase.from("analytics_events").select("session_id").eq("event_name", "session_start"),
-          "created_at",
-          range,
-        ) as any).limit(5000),
-        "Oturum olayları",
-        warnings,
-      ),
-      rows<{ session_id: string | null }>(
-        (applyRange(
-          supabase.from("analytics_events").select("session_id").in("event_name", ["cart_created", "cart_add"]),
-          "created_at",
-          range,
-        ) as any).limit(5000),
-        "Sepet olayları",
-        warnings,
-      ),
-      rows<{ session_id: string | null }>(
-        (applyRange(
-          supabase.from("analytics_events").select("session_id").in("event_name", ["checkout_view", "payment_start"]),
-          "created_at",
-          range,
-        ) as any).limit(5000),
-        "Ödeme adımı olayları",
-        warnings,
-      ),
-    ]).then(([sessionRows, cartRows, checkoutRows]) => {
-      const uniqueSessions = (rows: Array<{ session_id: string | null }>) =>
-        new Set(rows.map((row) => String(row.session_id || "").trim()).filter(Boolean)).size;
-      return {
-        data: [{
-          total_sessions: uniqueSessions(sessionRows),
-          cart_sessions: uniqueSessions(cartRows),
-          checkout_sessions: uniqueSessions(checkoutRows),
-        }],
-        error: null as QueryError,
-      };
-    }).catch((error) => ({
-      data: null,
-      error: { message: error instanceof Error ? error.message : "Analitik özeti alınamadı." },
-    }));
+    const analyticsPromise = Promise.resolve(supabase.rpc("admin_analytics_summary", {
+      p_from: bounds.from?.toISOString() || null,
+      p_to: bounds.to?.toISOString() || null,
+    })).catch((error) => ({ data: null, error: { message: error instanceof Error ? error.message : "Analitik özeti alınamadı." } }));
 
     const [
       selectedOrders,
