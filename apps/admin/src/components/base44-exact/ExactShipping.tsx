@@ -159,7 +159,7 @@ export function ExactShipping() {
     try {
       const [ordersData, handlersData, settingsData] = await Promise.all([
         adminRequest<{ orders?: ShippingOrder[] }>("/api/shipping/basit-kargo/orders"),
-        adminRequest<{ handlers?: Handler[] }>("/api/shipping/basit-kargo/handlers"),
+        adminRequest<{ handlers?: Handler[]; configured?: boolean }>("/api/shipping/basit-kargo/handlers"),
         adminRequest<{ settings?: { freeShippingThreshold?: number | null; customerShippingFee?: number | null; configured?: boolean } }>("/api/shipping/settings"),
       ]);
       const live = handlersData.handlers || [];
@@ -184,12 +184,15 @@ export function ExactShipping() {
   const loadQuotes = useCallback(async (quiet = false) => {
     if (!quiet) setBusy("quotes");
     try {
-      const result = await adminRequest<{ quotes?: Quote[] }>("/api/shipping/basit-kargo/quotes", {
+      const result = await adminRequest<{ quotes?: Quote[]; configured?: boolean }>("/api/shipping/basit-kargo/quotes", {
         method: "POST",
         body: JSON.stringify({ packages }),
       });
       setQuotes(result.quotes || []);
-      if (!quiet) toast.success(`${result.quotes?.length || 0} canlı kargo fiyatı getirildi.`);
+      if (!quiet) {
+        if (result.configured === false) toast.error("Basit Kargo henüz bağlı değil. Entegrasyonlar ekranından bağlantı adımlarını tamamla.");
+        else toast.success(`${result.quotes?.length || 0} canlı kargo fiyatı getirildi.`);
+      }
     } catch (caught) {
       if (!quiet) toast.error(caught instanceof Error ? caught.message : "Canlı fiyatlar alınamadı.");
     } finally {
