@@ -58,7 +58,7 @@ export type ExactNavGroup = { label: string; items: ExactNavItem[] };
 export const exactNavStructure: ExactNavGroup[] = [
   {
     label: "GENEL",
-    items: [{ label: "Genel Bakış", path: "/", icon: LayoutDashboard, exact: true }],
+    items: [{ label: "Genel Bakış", path: "/dashboard", icon: LayoutDashboard, exact: true }],
   },
   {
     label: "SİPARİŞ VE OPERASYON",
@@ -145,7 +145,7 @@ export const exactNavStructure: ExactNavGroup[] = [
 ];
 
 export const exactMobileNav: ExactNavItem[] = [
-  { label: "Genel", path: "/", icon: LayoutDashboard, exact: true },
+  { label: "Genel", path: "/dashboard", icon: LayoutDashboard, exact: true },
   { label: "Siparişler", path: "/orders", icon: ShoppingBag, aliases: ["/cart-activity", "/abandoned-carts", "/preparing-products"] },
   { label: "Ürünler", path: "/products", icon: Package },
   { label: "Müşteriler", path: "/customers", icon: Contact },
