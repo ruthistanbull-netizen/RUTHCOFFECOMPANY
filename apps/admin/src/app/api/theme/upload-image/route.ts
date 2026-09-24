@@ -42,7 +42,7 @@ function fileKind(file: File) {
   const passthrough = PASSTHROUGH_TYPES[type];
   if (passthrough) return { mode: "passthrough" as const, ...passthrough };
   if (CONVERT_TYPES.has(type) || /\.(avif|heic|heif)$/.test(name)) {
-    return { mode: "convert" as const, extension: "webp", contentType: "image/webp" };
+    return { mode: "convert" as const, extension: "webp", contentType: "image/webp", mediaType: "image" as const };
   }
   return null;
 }
@@ -53,7 +53,7 @@ export async function POST(request: Request) {
 
   const contentLength = Number(request.headers.get("content-length") || 0);
   if (contentLength > MAX_BYTES + 1_000_000) {
-    return NextResponse.json({ ok: false, error: "Görsel en fazla 24 MB olabilir." }, { status: 413 });
+    return NextResponse.json({ ok: false, error: "Dosya boyutu en fazla 80 MB olabilir." }, { status: 413 });
   }
 
   const form = await request.formData();
@@ -116,7 +116,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         ok: false,
-        error: error instanceof Error ? `Görsel işlenemedi: ${error.message}` : "Görsel işlenemedi.",
+        error: error instanceof Error ? `Medya işlenemedi: ${error.message}` : "Medya işlenemedi.",
       },
       { status: 400 },
     );
