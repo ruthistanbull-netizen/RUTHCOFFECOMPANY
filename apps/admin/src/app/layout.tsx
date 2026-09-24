@@ -36,6 +36,7 @@ import "./notification-mobile-position.css";
 import "./global-premium-motion.css";
 import "./rosta-exact-palette.css";
 import { AppFrame } from "@/components/AppFrame";
+import { AdminDocumentTitle } from "@/components/AdminDocumentTitle";
 import { AdminBackupProgress } from "@/components/AdminBackupProgress";
 import { AdminCacheEpoch } from "@/components/AdminCacheEpoch";
 import { AdminConfirmationProvider } from "@/components/AdminConfirmationProvider";
@@ -55,9 +56,9 @@ import { ROSTA_PANEL_URL } from "@/lib/platform";
 
 export const metadata: Metadata = {
   metadataBase: new URL(ROSTA_PANEL_URL),
-  applicationName: "ROSTA Panel",
-  title: { default: "ROSTA Control Room", template: "%s | ROSTA" },
-  description: "ROSTA Coffee Co. yönetim paneli",
+  applicationName: "RR HUB",
+  title: "RR HUB",
+  description: "ROSTA Coffee Co. ve Ruth Istanbul güvenli yönetim erişimi",
   manifest: "/manifest.webmanifest?v=25",
   icons: {
     icon: [
@@ -68,7 +69,7 @@ export const metadata: Metadata = {
     apple: [{ url: "/api/panel-home-icon?v=25", sizes: "180x180", type: "image/png" }],
     shortcut: ["/icon.svg"],
   },
-  appleWebApp: { capable: true, title: "ROSTA Panel", statusBarStyle: "default" },
+  appleWebApp: { capable: true, title: "RR HUB", statusBarStyle: "default" },
 };
 
 export const viewport: Viewport = {
@@ -83,6 +84,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="tr">
       <body data-ruth-typography="admin" data-rosta-panel="true">
+        <AdminDocumentTitle />
         <AdminStorageQuotaGuard />
         <AdminCacheEpoch />
         <AdminTodayDateDefaults />
