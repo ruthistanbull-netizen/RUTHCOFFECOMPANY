@@ -13,7 +13,7 @@ export default function manifest(): MetadataRoute.Manifest {
     orientation: "portrait-primary",
     icons: [
       {
-        src: "/rr-hub-icon-180.png?v=26",
+        src: "/rr-hub-icon-180.png?v=27",
         sizes: "180x180",
         type: "image/png",
         purpose: "any",
