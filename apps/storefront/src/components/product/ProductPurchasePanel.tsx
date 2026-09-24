@@ -385,20 +385,20 @@ export function ProductPurchasePanel({
             data-product-page-swipe-ignore
           >
             <motion.div
-              className="product-variant-sheet w-full overflow-y-auto px-5 pb-[calc(24px+env(safe-area-inset-bottom))] pt-5 sm:px-7 sm:pb-8 sm:pt-7"
+              className="product-variant-sheet w-full overflow-y-auto px-5 pb-[calc(24px+env(safe-area-inset-bottom))] pt-5 text-cream sm:px-7 sm:pb-8 sm:pt-7"
               initial={desktopPicker ? { x: "100%" } : { y: "100%" }}
               animate={{ x: 0, y: 0 }}
               exit={desktopPicker ? { x: "100%" } : { y: "100%" }}
               transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
               onClick={(event) => event.stopPropagation()}
             >
-              <div className="mb-7 flex items-start justify-between gap-4 border-b border-gold/20 pb-5">
+              <div className="mb-7 flex items-start justify-between gap-4 border-b border-kraft/40 pb-5">
                 <div>
-                  <p className="text-[9px] uppercase tracking-[0.22em] text-gold-dark">Seçenekleri Belirle</p>
-                  <h2 className="mt-2 font-heading text-2xl text-ink">{product.name}</h2>
-                  <div className="mt-2 flex items-center gap-2 text-sm text-muted-ruth">{salePrice}</div>
+                  <p className="text-[9px] uppercase tracking-[0.22em] text-brick">Seçenekleri Belirle</p>
+                  <h2 className="mt-2 font-heading text-2xl text-cream">{product.name}</h2>
+                  <div className="mt-2 flex items-center gap-2 text-sm text-cream/70">{salePrice}</div>
                 </div>
-                <button type="button" onClick={() => setPickerOpen(false)} className="grid h-10 w-10 place-items-center border border-gold/25" aria-label="Kapat">
+                <button type="button" onClick={() => setPickerOpen(false)} className="grid h-10 w-10 place-items-center border border-kraft/45 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick" aria-label="Kapat">
                   <X size={18} />
                 </button>
               </div>
@@ -406,7 +406,7 @@ export function ProductPurchasePanel({
               <div className="space-y-7">
                 {names.map((name) => (
                   <fieldset key={name}>
-                    <legend className="mb-3 text-[10px] uppercase tracking-[0.18em] text-gold-dark">{name}</legend>
+                    <legend className="mb-3 text-[10px] uppercase tracking-[0.18em] text-brick">{name}</legend>
                     <div className="grid grid-cols-2 gap-2">
                       {optionValues(name).map((value) => {
                         const active = selectedOptions[name] === value;
@@ -428,12 +428,12 @@ export function ProductPurchasePanel({
                 ))}
               </div>
 
-              <div className="mt-8 flex items-center justify-between border-t border-gold/20 pt-5">
-                <span className="text-[10px] uppercase tracking-[0.18em] text-muted-ruth">Adet</span>
-                <div className="flex items-center gap-2 border border-gold/25 px-2 py-1">
-                  <button type="button" onClick={() => setQuantity((value) => Math.max(1, value - 1))} className="grid h-8 w-8 place-items-center" aria-label="Adedi azalt"><Minus size={14} /></button>
+              <div className="mt-8 flex items-center justify-between border-t border-kraft/40 pt-5">
+                <span className="text-[10px] uppercase tracking-[0.18em] text-cream/70">Adet</span>
+                <div className="flex items-center gap-2 border border-kraft/45 px-2 py-1">
+                  <button type="button" onClick={() => setQuantity((value) => Math.max(1, value - 1))} className="grid h-8 w-8 place-items-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick" aria-label="Adedi azalt"><Minus size={14} /></button>
                   <output className="w-6 text-center text-sm">{quantity}</output>
-                  <button type="button" onClick={() => setQuantity((value) => Math.min(10, value + 1))} className="grid h-8 w-8 place-items-center" aria-label="Adedi artır"><Plus size={14} /></button>
+                  <button type="button" onClick={() => setQuantity((value) => Math.min(10, value + 1))} className="grid h-8 w-8 place-items-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick" aria-label="Adedi artır"><Plus size={14} /></button>
                 </div>
               </div>
 
