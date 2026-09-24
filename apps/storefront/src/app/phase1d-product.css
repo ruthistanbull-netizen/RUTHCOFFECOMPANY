@@ -276,17 +276,13 @@
     transform var(--ruth-motion-fast) var(--ruth-easing);
 }
 
-.product-option-button:hover {
-  background: var(--ruth-color-surface-muted);
-}
-
 .product-option-button:active {
   transform: scale(var(--ruth-motion-pressed-scale, 0.97));
 }
 
 .product-option-button.is-active {
-  background: var(--ruth-color-text-primary);
-  color: var(--ruth-color-text-inverse);
+  background: var(--rosta-brick-b);
+  color: var(--rosta-action-text);
 }
 
 .product-option-button:focus-visible {
@@ -364,8 +360,9 @@
 .product-add-button.ruth-button {
   width: 100%;
   border-radius: 0;
-  background: var(--ruth-color-text-primary);
-  color: var(--ruth-color-text-inverse);
+  border-color: var(--rosta-brick-b);
+  background: var(--rosta-brick-b);
+  color: var(--rosta-action-text);
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
@@ -383,8 +380,20 @@
   stroke-width: 1.45;
 }
 
-.product-add-button.ruth-button:hover:not(:disabled) {
-  background: var(--ruth-color-accent-strong);
+.product-add-button.ruth-button:active:not(:disabled),
+.product-option-button.is-active:active {
+  border-color: var(--rosta-espresso);
+  background: var(--rosta-espresso);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .product-option-button:hover {
+    background: var(--ruth-color-surface-muted);
+  }
+
+  .product-add-button.ruth-button:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--rosta-brick-b) 88%, var(--rosta-cocoa));
+  }
 }
 
 .phase1d-purchase-links {
@@ -408,8 +417,8 @@
   display: none;
   padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
   border-top: 1px solid var(--ruth-color-border-subtle);
-  background: color-mix(in srgb, var(--ruth-color-canvas) 94%, transparent);
-  backdrop-filter: blur(16px);
+  background: var(--ruth-color-canvas);
+  backdrop-filter: none;
 }
 
 .phase1d-floating-spacer {
