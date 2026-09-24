@@ -32,6 +32,7 @@ const storefrontPkg = json("apps/storefront/package.json");
 const storefrontNext = file("apps/storefront/next.config.ts");
 const storefrontLayout = file("apps/storefront/src/app/layout.tsx");
 const storefrontHome = file("apps/storefront/src/app/page.tsx");
+const homeSectionRenderer = file("apps/storefront/src/components/theme/HomeSectionRenderer.tsx");
 const adminShell = file("apps/admin/src/components/base44-exact/ExactBase44ShellV2.tsx");
 const recovery = file("apps/storefront/src/app/api/auth/password-recovery/route.ts");
 const rostaPoints = file("apps/admin/src/app/api/rosta-points/route.ts");
@@ -85,6 +86,13 @@ expect(!storefrontNext.includes("ignoreBuildErrors"), "storefront build must not
 expect(storefrontNext.includes("analytics.tiktok.com"), "TikTok analytics domains missing from storefront CSP");
 expect(storefrontNext.includes(".split(/[\\s,]+/)"), "theme editor origins must split on whitespace/comma");
 
+expect(homeSectionRenderer.includes('editorialVideo?: string;'), "HomeSectionRenderer editorialVideo prop must remain backward-compatible");
+expect(homeSectionRenderer.includes('editorialImage?: string;'), "HomeSectionRenderer editorialImage prop must remain backward-compatible");
+expect(homeSectionRenderer.includes('editorialVideo = "/home/rosta-under-hero-video.mp4"'), "HomeSectionRenderer must provide the ROSTA editorial video fallback");
+expect(homeSectionRenderer.includes('editorialImage = "/home/rosta-under-hero-photo.jpg"'), "HomeSectionRenderer must provide the ROSTA editorial image fallback");
+expect(storefrontHome.includes("editorialVideo={"), "storefront homepage should pass editorialVideo explicitly when available");
+expect(storefrontHome.includes("editorialImage={"), "storefront homepage should pass editorialImage explicitly when available");
+
 for (const [name, source] of [["layout", storefrontLayout], ["homepage", storefrontHome]]) {
   expect(source.includes("export const revalidate = 10;"), `storefront ${name} must use 10s revalidation`);
   expect(!source.includes('export const dynamic = "force-dynamic"'), `storefront ${name} must not force dynamic rendering`);
@@ -137,6 +145,8 @@ expect(sharedDocker.includes("6ab1db67afd7153d77b410bb"), "root Dockerfile must 
 expect(sharedDocker.includes("6ab040b5477bfd0030149f96"), "root Dockerfile must recognize the storefront service ID");
 expect(sharedDocker.includes("npm run build:admin"), "root Dockerfile must be able to build admin");
 expect(sharedDocker.includes("npm run build:storefront"), "root Dockerfile must be able to build storefront");
+expect(!sharedDocker.includes("building both apps as safe fallback"), "root Dockerfile must never cross-build panel and storefront as fallback");
+expect(sharedDocker.includes("Unable to resolve Zeabur service role"), "root Dockerfile must fail closed when service role cannot be resolved");
 expect(sharedDocker.includes("ZEABUR_WEB_DOMAIN") && sharedDocker.includes("ZEABUR_WEB_URL"), "root Dockerfile runtime must retain domain-hint fallback");
 expect(sharedDocker.includes("ENV PORT=8080") && sharedDocker.includes("EXPOSE 8080"), "root Dockerfile must use Zeabur Git-service port 8080");
 expect(!sharedDocker.includes("test -f apps/admin/.next/BUILD_ID"), "root Dockerfile must not add a false admin BUILD_ID gate");
