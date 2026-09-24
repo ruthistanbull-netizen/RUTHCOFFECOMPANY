@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactElement } from "react";
 import { Mail } from "lucide-react";
 import { categoryHref } from "@/lib/catalogCategories";
 import type { Category, Collection } from "@/types/site";
@@ -13,7 +14,7 @@ import { ROSTA_WORDMARK_SRC } from "@/components/brand/rostaWordmark";
 type SocialLink = {
   label: string;
   href: string;
-  icon: JSX.Element;
+  icon: ReactElement;
 };
 
 const SOCIAL_LINKS: SocialLink[] = [
