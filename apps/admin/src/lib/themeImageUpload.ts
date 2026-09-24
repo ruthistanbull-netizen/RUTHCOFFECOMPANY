@@ -1,11 +1,17 @@
 import { adminAuthHeaders, apiUrl } from "@/lib/adminApi";
 
 const MAX_THEME_IMAGE_BYTES = 24 * 1024 * 1024;
+const MAX_THEME_VIDEO_BYTES = 80 * 1024 * 1024;
 const MAX_BROWSER_IMAGE_EDGE = 4096;
 
 function looksLikeThemeImage(file: File) {
   if (file.type.startsWith("image/")) return true;
   return /\.(avif|heic|heif|jpe?g|png|webp)$/i.test(file.name || "");
+}
+
+function looksLikeThemeVideo(file: File) {
+  if (file.type.startsWith("video/")) return true;
+  return /\.(mp4|m4v|mov|webm)$/i.test(file.name || "");
 }
 
 function isIphonePhoto(file: File) {
@@ -57,12 +63,15 @@ async function normalizedUploadFile(file: File) {
 }
 
 export async function uploadThemeImage(file: File) {
-  if (!file || file.size <= 0) throw new Error("Bir görsel dosyası seç.");
-  if (!looksLikeThemeImage(file)) throw new Error("Bir görsel dosyası seç.");
-  if (file.size > MAX_THEME_IMAGE_BYTES) throw new Error("Görsel en fazla 24 MB olabilir.");
+  if (!file || file.size <= 0) throw new Error("Bir fotoğraf veya video seç.");
+  const isImage = looksLikeThemeImage(file);
+  const isVideo = looksLikeThemeVideo(file);
+  if (!isImage && !isVideo) throw new Error("JPG, PNG, WebP, AVIF, HEIC, MP4, MOV veya WebM yükleyebilirsin.");
+  const maxBytes = isVideo ? MAX_THEME_VIDEO_BYTES : MAX_THEME_IMAGE_BYTES;
+  if (file.size > maxBytes) throw new Error(isVideo ? "Video en fazla 80 MB olabilir." : "Görsel en fazla 24 MB olabilir.");
 
-  const uploadFile = await normalizedUploadFile(file);
-  if (uploadFile.size > MAX_THEME_IMAGE_BYTES) throw new Error("Görsel en fazla 24 MB olabilir.");
+  const uploadFile = isImage ? await normalizedUploadFile(file) : file;
+  if (uploadFile.size > maxBytes) throw new Error(isVideo ? "Video en fazla 80 MB olabilir." : "Görsel en fazla 24 MB olabilir.");
 
   const headers = await adminAuthHeaders();
   const body = new FormData();
