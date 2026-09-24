@@ -199,11 +199,11 @@ function HeaderQuickControls({ onOpenMenu }: { onOpenMenu: () => void }) {
       });
       const payload = await response.json().catch(() => null) as ChatPayload | null;
       const responseText = payload?.response?.text?.trim();
-      if (!response.ok || !payload?.ok || !responseText) throw new Error(payload?.error?.message || "Ruthie yanıt veremedi.");
+      if (!response.ok || !payload?.ok || !responseText) throw new Error(payload?.error?.message || "ROSTA Insight yanıt veremedi.");
       historyRef.current = [...outgoing, { role: "assistant" as const, text: responseText }].slice(-16);
       setReply(responseText);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Ruthie yanıt veremedi.");
+      setError(caught instanceof Error ? caught.message : "ROSTA Insight yanıt veremedi.");
     } finally {
       setSending(false);
     }
@@ -296,7 +296,7 @@ function HeaderQuickControls({ onOpenMenu }: { onOpenMenu: () => void }) {
           >
             <header>
               <Bot aria-hidden="true" />
-              <strong>Ruthie</strong>
+              <strong>ROSTA Insight</strong>
               <button type="button" onClick={() => { setReply(null); setError(null); }} aria-label="Yanıtı kapat">
                 <X aria-hidden="true" />
               </button>
