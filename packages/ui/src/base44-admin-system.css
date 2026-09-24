@@ -269,7 +269,7 @@ html[data-ruth-theme="admin"] .cr-analytics-card::after {
 }
 html[data-ruth-theme="admin"] .cr-analytics-card.is-primary {
   border-color: hsl(var(--base44-accent) / .24) !important;
-  background: linear-gradient(145deg, hsl(var(--base44-surface-primary)), hsl(var(--base44-accent-soft) / .72)) !important;
+  background: linear-gradient(145deg, hsl(var(--base44-surface-primary)), hsl(var(--base44-accent) / .15)) !important;
 }
 html[data-ruth-theme="admin"] :where(.cr-analytics-card, .cr-metric) small {
   color: hsl(var(--base44-text-muted)) !important;
