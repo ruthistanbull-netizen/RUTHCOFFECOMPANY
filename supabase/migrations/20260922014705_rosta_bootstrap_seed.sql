@@ -18,7 +18,7 @@ values
 (
   'theme_customizer',
   '{
-    "announcement":{"enabled":false,"text":"2000 TL ve üzeri alışverişlerde ücretsiz kargo ✦","text2":"","href":"/products","intervalSeconds":5},
+    "announcement":{"enabled":false,"text":"","text2":"","href":"/products","intervalSeconds":5},
     "logo":{"src":"/rosta-coffee-co.svg","desktopWidth":180,"mobileWidth":120},
     "colors":{"ivory":"#F4F0E8","cream":"#F4F0E8","ink":"#111111","gold":"#B9563D","goldDark":"#2B1B16","muted":"#6F725B"},
     "header":{"links":[
@@ -53,12 +53,6 @@ values
     {"id":"home-brand-story","type":"brand-story","enabled":true},
     {"id":"home-trust","type":"trust","enabled":true}
   ]}}}'::jsonb,
-  true,
-  now()
-),
-(
-  'shipping_settings',
-  '{"freeShippingThreshold":2000,"customerShippingFee":79.9}'::jsonb,
   true,
   now()
 ),
