@@ -117,7 +117,11 @@ expect(shippingHardening.includes("reconcile_basit_kargo_delivery_evidence"), "B
 
 expect(panelDocker.includes("COPY apps/admin/package.json") && panelDocker.includes("COPY apps/storefront/package.json"), "panel Docker workspace manifests incomplete");
 expect(storefrontDocker.includes("COPY apps/admin/package.json") && storefrontDocker.includes("COPY apps/storefront/package.json"), "storefront Docker workspace manifests incomplete");
-expect(sharedDocker.includes("npm run build:all"), "shared Dockerfile must safely build both apps when target detection is unavailable");
+expect(!sharedDocker.includes("npm run build:all"), "shared Dockerfile must never couple panel and storefront builds");
+expect(sharedDocker.includes('target="storefront"'), "shared Dockerfile must use storefront as the safe default when Zeabur target hints are unavailable");
+expect(sharedDocker.includes("ZEABUR_SERVICE_NAME") && sharedDocker.includes("ZEABUR_SERVICE_DOMAIN"), "shared Dockerfile must inspect Zeabur service hints");
+expect(panelDocker.includes("RUN npm run build:admin"), "panel Dockerfile must build only admin");
+expect(storefrontDocker.includes("RUN npm run build:storefront"), "storefront Dockerfile must build only storefront");
 
 expect(adminManifest.includes('name: "ROSTA Coffee Co. Control Room"'), "admin dynamic PWA manifest must be ROSTA branded");
 expect(adminManifest.includes('url: "/icon-192.png?v=25"'), "admin manifest 192px ROSTA icon missing");
