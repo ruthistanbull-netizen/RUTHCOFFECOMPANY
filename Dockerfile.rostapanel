@@ -11,7 +11,7 @@ COPY packages/ui/package.json ./packages/ui/package.json
 RUN npm install --no-audit --no-fund
 
 COPY . .
-RUN npm run build:admin
+RUN npm run build:admin && test -f apps/admin/.next/BUILD_ID
 
 ENV NODE_ENV=production
 ENV HOSTNAME=0.0.0.0
