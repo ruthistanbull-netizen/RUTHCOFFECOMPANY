@@ -6,21 +6,30 @@ import { Check, SlidersHorizontal, X } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 import type { Product } from "@/types/site";
 import {
+  materialFilterValue,
   productCategoryValues,
   productCollectionFilterValue,
+  productColorValues,
   productSearchText,
+  productStoneValues,
   uniqueClean,
 } from "@/lib/productDisplay";
 
-type FilterKey = "categories" | "collections" | "prices";
+type FilterKey = "materials" | "colors" | "stones" | "categories" | "collections" | "prices";
 
 type Filters = {
+  materials: string[];
+  colors: string[];
+  stones: string[];
   categories: string[];
   collections: string[];
   prices: string[];
 };
 
 const EMPTY_FILTERS: Filters = {
+  materials: [],
+  colors: [],
+  stones: [],
   categories: [],
   collections: [],
   prices: [],
@@ -115,6 +124,18 @@ export function ProductCatalog({
     [products]
   );
 
+  const materials = useMemo(
+    () => uniqueClean(searchableProducts.map((product) => materialFilterValue(product))).sort((a, b) => a.localeCompare(b, "tr")),
+    [searchableProducts]
+  );
+  const colors = useMemo(
+    () => uniqueClean(searchableProducts.flatMap((product) => productColorValues(product))).sort((a, b) => a.localeCompare(b, "tr")),
+    [searchableProducts]
+  );
+  const stones = useMemo(
+    () => uniqueClean(searchableProducts.flatMap((product) => productStoneValues(product))).sort((a, b) => a.localeCompare(b, "tr")),
+    [searchableProducts]
+  );
   const categories = useMemo(
     () => uniqueClean(searchableProducts.flatMap((product) => productCategoryValues(product))).sort((a, b) => a.localeCompare(b, "tr")),
     [searchableProducts]
@@ -142,6 +163,18 @@ export function ProductCatalog({
       result = result.filter((product) => searchMatches(productSearchText(product), query));
     }
 
+    if (filters.materials.length) {
+      result = result.filter((product) => {
+        const material = materialFilterValue(product);
+        return Boolean(material && filters.materials.includes(material));
+      });
+    }
+    if (filters.colors.length) {
+      result = result.filter((product) => hasAny(productColorValues(product), filters.colors));
+    }
+    if (filters.stones.length) {
+      result = result.filter((product) => hasAny(productStoneValues(product), filters.stones));
+    }
     if (filters.categories.length) {
       result = result.filter((product) => hasAny(productCategoryValues(product), filters.categories));
     }
@@ -205,6 +238,60 @@ export function ProductCatalog({
 
   const filterContent = (
     <div className="space-y-8">
+      {materials.length > 0 && (
+        <div>
+          <h3 className="mb-4 font-heading text-xs uppercase tracking-wide-luxe">
+            Materyal
+          </h3>
+          <div className="space-y-3">
+            {materials.map((material) => (
+              <FilterOption
+                key={material}
+                label={material}
+                checked={filters.materials.includes(material)}
+                onClick={() => toggleFilter("materials", material)}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {colors.length > 0 && (
+        <div>
+          <h3 className="mb-4 font-heading text-xs uppercase tracking-wide-luxe">
+            Renk / Kaplama
+          </h3>
+          <div className="space-y-3">
+            {colors.map((color) => (
+              <FilterOption
+                key={color}
+                label={color}
+                checked={filters.colors.includes(color)}
+                onClick={() => toggleFilter("colors", color)}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {stones.length > 0 && (
+        <div>
+          <h3 className="mb-4 font-heading text-xs uppercase tracking-wide-luxe">
+            Taş / Seçenek
+          </h3>
+          <div className="space-y-3">
+            {stones.map((stone) => (
+              <FilterOption
+                key={stone}
+                label={stone}
+                checked={filters.stones.includes(stone)}
+                onClick={() => toggleFilter("stones", stone)}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
       {categories.length > 0 && (
         <div>
           <h3 className="mb-4 font-heading text-xs uppercase tracking-wide-luxe">
