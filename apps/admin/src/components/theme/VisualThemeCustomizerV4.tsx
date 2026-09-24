@@ -112,7 +112,7 @@ function cleanPath(value: string) {
 }
 
 function fieldClass() {
-  return "h-10 w-full rounded-lg border border-black/10 bg-[#fafafa] px-3 text-[12px] outline-none transition focus:border-[#C9A23A]/55 focus:bg-white";
+  return "h-10 w-full rounded-lg border border-border-subtle bg-surface-secondary px-3 text-[12px] outline-none transition focus:border-accent focus:bg-surface-primary";
 }
 
 function TextField({
@@ -130,17 +130,17 @@ function TextField({
 }) {
   return (
     <label className="block">
-      <span className="mb-1.5 block text-[10px] font-semibold text-black/60">{label}</span>
+      <span className="mb-1.5 block text-[10px] font-semibold text-muted">{label}</span>
       {multiline ? (
         <textarea
           rows={4}
           value={value}
           placeholder={placeholder}
           onChange={(event) => onChange(event.target.value)}
-          className="w-full resize-y rounded-lg border border-black/10 bg-[#fafafa] p-3 text-[12px] leading-5 outline-none transition focus:border-[#C9A23A]/55 focus:bg-white"
+          className="w-full resize-y rounded-lg border border-border-subtle bg-surface-secondary p-3 text-[12px] leading-5 outline-none transition focus:border-accent focus:bg-surface-primary"
         />
       ) : (
-        <input value={value} placeholder={placeholder} onChange={(event) => onChange(event.target.value)} className={fieldClass()} />
+        <input value={value} placeholder={placeholder} onChange={(event) => onChange(event.target.value)} className={cx(fieldClass(), "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent")} />
       )}
     </label>
   );
@@ -163,7 +163,7 @@ function NumberField({
 }) {
   return (
     <label className="block">
-      <span className="mb-1.5 block text-[10px] font-semibold text-black/60">{label}</span>
+      <span className="mb-1.5 block text-[10px] font-semibold text-muted">{label}</span>
       <div className="relative">
         <input
           type="number"
@@ -173,7 +173,7 @@ function NumberField({
           onChange={(event) => onChange(Math.min(max, Math.max(min, Number(event.target.value) || min)))}
           className={cx(fieldClass(), suffix && "pr-12")}
         />
-        {suffix ? <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-[9px] text-black/35">{suffix}</span> : null}
+        {suffix ? <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-[9px] text-subtle">{suffix}</span> : null}
       </div>
     </label>
   );
@@ -194,14 +194,14 @@ function Toggle({
     <button
       type="button"
       onClick={() => onChange(!value)}
-      className="flex min-h-12 w-full items-center gap-3 rounded-lg border border-black/[0.08] bg-white px-3.5 text-left transition hover:border-black/15"
+      className="flex min-h-12 w-full items-center gap-3 rounded-lg border border-border-subtle bg-surface-primary px-3.5 text-left transition hover:border-border-strong"
     >
       <span className="min-w-0 flex-1">
         <b className="block text-[11px] font-medium">{label}</b>
-        {detail ? <small className="mt-0.5 block text-[9px] leading-4 text-black/38">{detail}</small> : null}
+        {detail ? <small className="mt-0.5 block text-[9px] leading-4 text-muted">{detail}</small> : null}
       </span>
-      <span className={cx("relative block h-6 w-11 shrink-0 rounded-full transition-colors", value ? "bg-[#C9A23A]" : "bg-black/15")}>
-        <span className={cx("absolute left-1 top-1 h-4 w-4 rounded-full bg-white shadow-sm transition-transform", value ? "translate-x-5" : "translate-x-0")} />
+      <span className={cx("relative block h-6 w-11 shrink-0 rounded-full transition-colors", value ? "bg-accent" : "bg-black/15")}>
+        <span className={cx("absolute left-1 top-1 h-4 w-4 rounded-full bg-surface-primary shadow-sm transition-transform", value ? "translate-x-5" : "translate-x-0")} />
       </span>
     </button>
   );
@@ -227,8 +227,8 @@ function Range({
   return (
     <div>
       <div className="mb-2 flex items-center justify-between gap-3">
-        <span className="text-[10px] font-semibold text-black/60">{label}</span>
-        <span className="text-[9px] tabular-nums text-black/35">{Math.round(value * 10) / 10}{suffix}</span>
+        <span className="text-[10px] font-semibold text-muted">{label}</span>
+        <span className="text-[9px] tabular-nums text-subtle">{Math.round(value * 10) / 10}{suffix}</span>
       </div>
       <input
         type="range"
@@ -237,7 +237,7 @@ function Range({
         step={step}
         value={Math.min(max, Math.max(min, value))}
         onChange={(event) => onChange(Number(event.target.value))}
-        className="h-5 w-full cursor-ew-resize accent-[#C9A23A]"
+        className="h-5 w-full cursor-ew-resize accent-[#C94A40]"
       />
     </div>
   );
@@ -245,9 +245,9 @@ function Range({
 
 function Group({ title, children, description }: { title: string; children: ReactNode; description?: string }) {
   return (
-    <section className="border-b border-black/[0.065] bg-white px-4 py-4">
+    <section className="border-b border-black/[0.065] bg-surface-primary px-4 py-4">
       <h3 className="text-[11px] font-semibold">{title}</h3>
-      {description ? <p className="mt-1 text-[9px] leading-4 text-black/38">{description}</p> : null}
+      {description ? <p className="mt-1 text-[9px] leading-4 text-muted">{description}</p> : null}
       <div className="mt-3 space-y-3">{children}</div>
     </section>
   );
@@ -289,25 +289,25 @@ function ImageUpload({
   };
 
   return (
-    <div className={cx("rounded-lg border border-black/[0.08] bg-[#fafafa]", compact ? "p-2" : "p-3")}>
+    <div className={cx("rounded-lg border border-border-subtle bg-surface-secondary", compact ? "p-2" : "p-3")}>
       <div className="flex items-center gap-3">
         {value ? (
-          <img src={value} alt="" className={cx("shrink-0 rounded-md border border-black/[0.06] object-cover", compact ? "h-12 w-12" : "h-16 w-16")} />
+          <img src={value} alt="" className={cx("shrink-0 rounded-md border border-border-subtle object-cover", compact ? "h-12 w-12" : "h-16 w-16")} />
         ) : (
-          <div className={cx("grid shrink-0 place-items-center rounded-md bg-black/[0.035] text-black/25", compact ? "h-12 w-12" : "h-16 w-16")}>
+          <div className={cx("grid shrink-0 place-items-center rounded-md bg-black/[0.035] text-subtle", compact ? "h-12 w-12" : "h-16 w-16")}>
             <ImagePlus className="h-4 w-4" />
           </div>
         )}
         <div className="min-w-0 flex-1">
           <p className="truncate text-[10px] font-medium">{label}</p>
-          <p className="mt-0.5 truncate text-[8px] text-black/32">{value || "Görsel seçilmedi"}</p>
-          <label className="mt-2 inline-flex h-7 cursor-pointer items-center rounded-md border border-black/10 bg-white px-2.5 text-[9px] font-medium hover:border-[#C9A23A]/35">
+          <p className="mt-0.5 truncate text-[8px] text-subtle">{value || "Görsel seçilmedi"}</p>
+          <label className="mt-2 inline-flex h-7 cursor-pointer items-center rounded-md border border-border-subtle bg-surface-primary px-2.5 text-[9px] font-medium focus-visible:border-accent">
             {busy ? "Yükleniyor…" : value ? "Değiştir" : "Görsel seç"}
             <input hidden type="file" accept="image/*" disabled={busy} onChange={(event) => { const file = event.target.files?.[0]; if (file) void upload(file); }} />
           </label>
         </div>
         {value ? (
-          <button type="button" onClick={() => onChange("")} className="grid h-8 w-8 shrink-0 place-items-center rounded-md text-black/35 hover:bg-black/[0.04] hover:text-black">
+          <button type="button" onClick={() => onChange("")} className="grid h-8 w-8 shrink-0 place-items-center rounded-md text-subtle active:bg-accent-soft focus-visible:bg-accent-soft focus-visible:text-main">
             <Trash2 className="h-3.5 w-3.5" />
           </button>
         ) : null}
@@ -318,12 +318,12 @@ function ImageUpload({
 
 function ThemeMenuItem({ title, detail, onClick }: { title: string; detail: string; onClick: () => void }) {
   return (
-    <button type="button" onClick={onClick} className="flex min-h-14 w-full items-center gap-3 border-b border-black/[0.06] px-4 text-left transition hover:bg-[#faf9f6]">
+    <button type="button" onClick={onClick} className="flex min-h-14 w-full items-center gap-3 border-b border-border-subtle px-4 text-left transition hover:bg-accent-soft">
       <span className="min-w-0 flex-1">
         <b className="block text-[11px] font-medium">{title}</b>
-        <small className="mt-0.5 block text-[9px] leading-4 text-black/38">{detail}</small>
+        <small className="mt-0.5 block text-[9px] leading-4 text-muted">{detail}</small>
       </span>
-      <ChevronRight className="h-4 w-4 shrink-0 text-black/25" />
+      <ChevronRight className="h-4 w-4 shrink-0 text-subtle" />
     </button>
   );
 }
@@ -666,15 +666,15 @@ export function VisualThemeCustomizerV4() {
   const previewUrl = `${STOREFRONT_URL}${previewPath === "/" ? "/" : previewPath}?themeEditor=1&themePreview=${nonce}`;
 
   return (
-    <div className="fixed inset-0 z-[90] flex min-h-0 flex-col bg-[#eef0f3]" data-theme-customizer-v4>
-      <header className="flex h-[64px] min-h-[64px] shrink-0 items-center border-b border-black/10 bg-white px-3 md:px-4">
+    <div className="fixed inset-0 z-[90] flex min-h-0 flex-col bg-background text-main" data-theme-customizer-v4>
+      <header className="flex h-[64px] min-h-[64px] shrink-0 items-center border-b border-border-subtle bg-surface-primary px-3 md:px-4">
         <div className="flex min-w-0 flex-1 items-center gap-3">
-          <a href="/" aria-label="Panele dön" className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-black/[0.08] hover:bg-black/[0.025]">
+          <a href="/" aria-label="Panele dön" className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-border-subtle active:bg-accent-soft focus-visible:bg-accent-soft">
             <X className="h-4 w-4" />
           </a>
           <div className="hidden min-w-0 sm:block">
             <p className="truncate text-[12px] font-semibold">Mağaza Tasarımı</p>
-            <p className="mt-0.5 text-[8px] text-black/35">İçerik ve görünüm</p>
+            <p className="mt-0.5 text-[8px] text-subtle">İçerik ve görünüm</p>
           </div>
         </div>
 
@@ -682,7 +682,7 @@ export function VisualThemeCustomizerV4() {
           <select
             value={activePageKey}
             onChange={(event) => changePage(event.target.value)}
-            className="h-9 w-full max-w-[330px] rounded-lg border border-black/10 bg-white px-3 text-[11px] font-medium outline-none hover:border-black/20"
+            className="h-9 w-full max-w-[330px] rounded-lg border border-border-subtle bg-surface-primary px-3 text-[11px] font-medium outline-none hover:border-border-strong"
             aria-label="Düzenlenecek sayfa"
           >
             {groupedPages.map(([group, items]) => (
@@ -692,14 +692,14 @@ export function VisualThemeCustomizerV4() {
             ))}
           </select>
           <div className="hidden rounded-lg bg-black/[0.045] p-1 sm:flex">
-            <button type="button" onClick={() => setDevice("desktop")} className={cx("grid h-7 w-8 place-items-center rounded-md", device === "desktop" ? "bg-white shadow-sm" : "text-black/40")} aria-label="Masaüstü önizleme"><Monitor className="h-3.5 w-3.5" /></button>
-            <button type="button" onClick={() => setDevice("mobile")} className={cx("grid h-7 w-8 place-items-center rounded-md", device === "mobile" ? "bg-white shadow-sm" : "text-black/40")} aria-label="Mobil önizleme"><Smartphone className="h-3.5 w-3.5" /></button>
+            <button type="button" onClick={() => setDevice("desktop")} className={cx("grid h-7 w-8 place-items-center rounded-md", device === "desktop" ? "bg-surface-primary shadow-sm" : "text-muted")} aria-label="Masaüstü önizleme"><Monitor className="h-3.5 w-3.5" /></button>
+            <button type="button" onClick={() => setDevice("mobile")} className={cx("grid h-7 w-8 place-items-center rounded-md", device === "mobile" ? "bg-surface-primary shadow-sm" : "text-muted")} aria-label="Mobil önizleme"><Smartphone className="h-3.5 w-3.5" /></button>
           </div>
         </div>
 
         <div className="flex flex-1 items-center justify-end gap-2">
-          {lifecycleDirty ? <button type="button" onClick={discardAll} disabled={lifecycleSaving} className="hidden h-9 rounded-lg border border-black/10 px-3 text-[9px] font-medium hover:bg-black/[0.025] disabled:opacity-40 sm:inline-flex sm:items-center">Geri al</button> : null}
-          <button type="button" onClick={() => void saveAll()} disabled={!lifecycleDirty || loading || lifecycleSaving} className="inline-flex h-9 items-center gap-2 rounded-lg bg-[#211a08] px-3.5 text-[9px] font-semibold text-white disabled:cursor-default disabled:opacity-35">
+          {lifecycleDirty ? <button type="button" onClick={discardAll} disabled={lifecycleSaving} className="hidden h-9 rounded-lg border border-border-subtle px-3 text-[9px] font-medium active:bg-accent-soft focus-visible:bg-accent-soft disabled:opacity-40 sm:inline-flex sm:items-center">Geri al</button> : null}
+          <button type="button" onClick={() => void saveAll()} disabled={!lifecycleDirty || loading || lifecycleSaving} className="inline-flex h-9 items-center gap-2 rounded-lg bg-accent px-3.5 text-[9px] font-semibold text-[var(--rosta-action-text)] active:bg-[var(--rosta-espresso)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-default disabled:opacity-35">
             {lifecycleSaving ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
             Kaydet
           </button>
@@ -707,26 +707,26 @@ export function VisualThemeCustomizerV4() {
       </header>
 
       <div className="flex min-h-0 flex-1 flex-col md:flex-row">
-        <aside className="order-2 flex h-[48dvh] w-full shrink-0 flex-col border-t border-black/10 bg-white md:order-1 md:h-full md:w-[360px] md:border-r md:border-t-0">
-          <div className="flex h-[54px] shrink-0 items-center gap-2 border-b border-black/[0.07] px-3">
+        <aside className="order-2 flex h-[48dvh] w-full shrink-0 flex-col border-t border-border-subtle bg-surface-primary md:order-1 md:h-full md:w-[360px] md:border-r md:border-t-0">
+          <div className="flex h-[54px] shrink-0 items-center gap-2 border-b border-border-subtle px-3">
             {view !== "sections" ? (
-              <button type="button" onClick={back} className="grid h-8 w-8 shrink-0 place-items-center rounded-md hover:bg-black/[0.035]"><ArrowLeft className="h-4 w-4" /></button>
+              <button type="button" onClick={back} className="grid h-8 w-8 shrink-0 place-items-center rounded-md active:bg-accent-soft focus-visible:bg-accent-soft"><ArrowLeft className="h-4 w-4" /></button>
             ) : (
-              <Layers3 className="ml-1 h-4 w-4 shrink-0 text-black/50" />
+              <Layers3 className="ml-1 h-4 w-4 shrink-0 text-muted" />
             )}
             <div className="min-w-0 flex-1">
               <p className="truncate text-[12px] font-semibold">{titleForView()}</p>
-              {view === "sections" ? <p className="mt-0.5 truncate text-[8px] text-black/35">{managedPage.sections.length} bölüm</p> : null}
+              {view === "sections" ? <p className="mt-0.5 truncate text-[8px] text-subtle">{managedPage.sections.length} bölüm</p> : null}
             </div>
             {view === "sections" && canManageSections ? (
-              <button type="button" onClick={() => setView("library")} className="inline-flex h-8 items-center gap-1.5 rounded-md border border-black/10 px-2.5 text-[9px] font-medium hover:border-[#C9A23A]/35"><Plus className="h-3.5 w-3.5" />Ekle</button>
+              <button type="button" onClick={() => setView("library")} className="inline-flex h-8 items-center gap-1.5 rounded-md border border-border-subtle px-2.5 text-[9px] font-medium focus-visible:border-accent"><Plus className="h-3.5 w-3.5" />Ekle</button>
             ) : null}
           </div>
 
           <div className="min-h-0 flex-1 overflow-y-auto">
             {loading ? (
               <div className="grid h-full place-items-center p-6 text-center">
-                <div><RefreshCw className="mx-auto h-5 w-5 animate-spin text-black/35" /><p className="mt-3 text-[10px] text-black/45">Tema ayarları hazırlanıyor…</p></div>
+                <div><RefreshCw className="mx-auto h-5 w-5 animate-spin text-subtle" /><p className="mt-3 text-[10px] text-muted">Tema ayarları hazırlanıyor…</p></div>
               </div>
             ) : null}
 
@@ -742,29 +742,29 @@ export function VisualThemeCustomizerV4() {
                         onDragEnd={() => setDragId(null)}
                         onDragOver={(event) => event.preventDefault()}
                         onDrop={() => dropSection(section.id)}
-                        className={cx("group flex min-h-[50px] items-center gap-1 rounded-lg border bg-white px-1.5 transition", dragId === section.id ? "border-[#C9A23A]/45 opacity-55" : "border-black/[0.075] hover:border-[#C9A23A]/28")}
+                        className={cx("group flex min-h-[50px] items-center gap-1 rounded-lg border bg-surface-primary px-1.5 transition", dragId === section.id ? "border-accent/45 opacity-55" : "border-border-subtle focus-visible:border-accent")}
                       >
-                        <span className="grid h-9 w-7 shrink-0 cursor-grab place-items-center text-black/20 active:cursor-grabbing"><GripVertical className="h-4 w-4" /></span>
+                        <span className="grid h-9 w-7 shrink-0 cursor-grab place-items-center text-subtle active:cursor-grabbing"><GripVertical className="h-4 w-4" /></span>
                         <button type="button" onClick={() => { setSelectedSectionId(section.id); setView("section"); }} className="min-w-0 flex-1 py-2 text-left">
                           <b className="block truncate text-[10px] font-medium">{SECTION_LABELS[section.type]}</b>
-                          <small className="mt-0.5 block truncate text-[8px] text-black/34">{section.enabled ? "Gösteriliyor" : "Gizli"}</small>
+                          <small className="mt-0.5 block truncate text-[8px] text-subtle">{section.enabled ? "Gösteriliyor" : "Gizli"}</small>
                         </button>
-                        <button type="button" onClick={() => toggleSection(section.id)} className="grid h-8 w-8 shrink-0 place-items-center rounded-md text-black/40 hover:bg-black/[0.035]" aria-label={section.enabled ? "Gizle" : "Göster"}>
+                        <button type="button" onClick={() => toggleSection(section.id)} className="grid h-8 w-8 shrink-0 place-items-center rounded-md text-muted active:bg-accent-soft focus-visible:bg-accent-soft" aria-label={section.enabled ? "Gizle" : "Göster"}>
                           {section.enabled ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
                         </button>
                         {!["hero", "scroll-story", "collections", "featured-products", "brand-story", "trust"].includes(section.type) ? (
-                          <button type="button" onClick={() => removeSection(section.id)} className="grid h-8 w-8 shrink-0 place-items-center rounded-md text-black/25 opacity-0 transition hover:bg-red-50 hover:text-red-600 group-hover:opacity-100" aria-label="Sil"><Trash2 className="h-3.5 w-3.5" /></button>
+                          <button type="button" onClick={() => removeSection(section.id)} className="grid h-8 w-8 shrink-0 place-items-center rounded-md text-subtle opacity-0 transition active:bg-danger-soft active:text-danger focus-visible:bg-danger-soft focus-visible:text-danger group-focus-within:opacity-100 md:group-hover:opacity-100" aria-label="Sil"><Trash2 className="h-3.5 w-3.5" /></button>
                         ) : null}
                       </div>
                     ))}
                   </div>
-                  <button type="button" onClick={() => setView("library")} className="mx-3 flex h-10 w-[calc(100%-24px)] items-center justify-center gap-2 rounded-lg border border-dashed border-black/15 text-[9px] font-medium text-black/60 hover:border-[#C9A23A]/40 hover:bg-[#fffdf7]"><Plus className="h-3.5 w-3.5" />Yeni Bölüm Ekle</button>
+                  <button type="button" onClick={() => setView("library")} className="mx-3 flex h-10 w-[calc(100%-24px)] items-center justify-center gap-2 rounded-lg border border-dashed border-border-strong text-[9px] font-medium text-muted focus-visible:border-accent hover:bg-accent-soft"><Plus className="h-3.5 w-3.5" />Yeni Bölüm Ekle</button>
                 </div>
               ) : (
                 <div className="p-4">
-                  <div className="rounded-xl border border-black/[0.08] bg-[#fafafa] p-4">
+                  <div className="rounded-xl border border-border-subtle bg-surface-secondary p-4">
                     <p className="text-[11px] font-semibold">Bu sayfa hazır tema şablonunu kullanıyor</p>
-                    <p className="mt-2 text-[9px] leading-5 text-black/45">Bu ekranda tek tek site öğelerine ayrı override vermiyoruz. Sayfanın düzeni tema bileşenlerinden gelir; ortak görünümü Tema Ayarları’ndan yönetebilirsin.</p>
+                    <p className="mt-2 text-[9px] leading-5 text-muted">Bu ekranda tek tek site öğelerine ayrı override vermiyoruz. Sayfanın düzeni tema bileşenlerinden gelir; ortak görünümü Tema Ayarları’ndan yönetebilirsin.</p>
                   </div>
                 </div>
               )
@@ -772,12 +772,12 @@ export function VisualThemeCustomizerV4() {
 
             {!loading && view === "library" ? (
               <div className="p-3">
-                <p className="px-1 pb-3 text-[9px] leading-4 text-black/40">Sayfaya eklemek istediğin hazır bölümü seç. Eklendikten sonra yalnızca o bölümün gerekli ayarları gösterilir.</p>
+                <p className="px-1 pb-3 text-[9px] leading-4 text-muted">Sayfaya eklemek istediğin hazır bölümü seç. Eklendikten sonra yalnızca o bölümün gerekli ayarları gösterilir.</p>
                 <div className="space-y-2">
                   {SECTION_LIBRARY.map((item) => (
-                    <button key={item.type} type="button" onClick={() => addSection(item.type)} className="flex min-h-[62px] w-full items-center gap-3 rounded-lg border border-black/[0.08] bg-white px-3 text-left hover:border-[#C9A23A]/35 hover:bg-[#fffdf8]">
-                      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-[#f5eed8] text-[#8b6a1d]"><Plus className="h-4 w-4" /></span>
-                      <span className="min-w-0 flex-1"><b className="block text-[10px] font-medium">{item.title}</b><small className="mt-1 block text-[8px] leading-4 text-black/38">{item.detail}</small></span>
+                    <button key={item.type} type="button" onClick={() => addSection(item.type)} className="flex min-h-[62px] w-full items-center gap-3 rounded-lg border border-border-subtle bg-surface-primary px-3 text-left focus-visible:border-accent hover:bg-accent-soft">
+                      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-accent-soft text-accent"><Plus className="h-4 w-4" /></span>
+                      <span className="min-w-0 flex-1"><b className="block text-[10px] font-medium">{item.title}</b><small className="mt-1 block text-[8px] leading-4 text-muted">{item.detail}</small></span>
                     </button>
                   ))}
                 </div>
@@ -790,38 +790,38 @@ export function VisualThemeCustomizerV4() {
 
                 {selectedSection.type === "hero" ? (
                   <Group title="İçerik" description="Ana görsel bu temada ortak anasayfa görsel ayarından gelir.">
-                    <button type="button" onClick={() => setView("theme-home-media")} className="flex h-11 w-full items-center justify-between rounded-lg border border-black/10 px-3 text-[10px] font-medium hover:border-[#C9A23A]/35"><span>Anasayfa görsellerini düzenle</span><ChevronRight className="h-4 w-4 text-black/25" /></button>
+                    <button type="button" onClick={() => setView("theme-home-media")} className="flex h-11 w-full items-center justify-between rounded-lg border border-border-subtle px-3 text-[10px] font-medium focus-visible:border-accent"><span>Anasayfa görsellerini düzenle</span><ChevronRight className="h-4 w-4 text-subtle" /></button>
                   </Group>
                 ) : null}
 
                 {selectedSection.type === "scroll-story" ? (
                   <Group title="İçerik" description="Kayan görseller tek bir yerde yönetilir.">
-                    <button type="button" onClick={() => setView("theme-home-media")} className="flex h-11 w-full items-center justify-between rounded-lg border border-black/10 px-3 text-[10px] font-medium hover:border-[#C9A23A]/35"><span>Kayan görselleri düzenle</span><ChevronRight className="h-4 w-4 text-black/25" /></button>
+                    <button type="button" onClick={() => setView("theme-home-media")} className="flex h-11 w-full items-center justify-between rounded-lg border border-border-subtle px-3 text-[10px] font-medium focus-visible:border-accent"><span>Kayan görselleri düzenle</span><ChevronRight className="h-4 w-4 text-subtle" /></button>
                   </Group>
                 ) : null}
 
                 {selectedSection.type === "collections" ? (
-                  <Group title="İçerik"><p className="rounded-lg bg-[#fafafa] p-3 text-[9px] leading-5 text-black/45">Bu bölüm paneldeki koleksiyon kayıtlarından otomatik beslenir. Burada yalnızca sıralama ve görünürlük yönetilir.</p></Group>
+                  <Group title="İçerik"><p className="rounded-lg bg-surface-secondary p-3 text-[9px] leading-5 text-muted">Bu bölüm paneldeki koleksiyon kayıtlarından otomatik beslenir. Burada yalnızca sıralama ve görünürlük yönetilir.</p></Group>
                 ) : null}
                 {selectedSection.type === "brand-story" ? (
-                  <Group title="İçerik"><p className="rounded-lg bg-[#fafafa] p-3 text-[9px] leading-5 text-black/45">Marka hikayesi hazır tema bileşenidir. DOM öğesi seçip stil override etme mantığı bu editörden kaldırıldı.</p></Group>
+                  <Group title="İçerik"><p className="rounded-lg bg-surface-secondary p-3 text-[9px] leading-5 text-muted">Marka hikayesi hazır tema bileşenidir. DOM öğesi seçip stil override etme mantığı bu editörden kaldırıldı.</p></Group>
                 ) : null}
                 {selectedSection.type === "trust" ? (
-                  <Group title="İçerik"><p className="rounded-lg bg-[#fafafa] p-3 text-[9px] leading-5 text-black/45">Kargo ve güven bilgileri mağaza ayarlarından beslenir. Bu bölümde görünürlük ve sıralama yönetilir.</p></Group>
+                  <Group title="İçerik"><p className="rounded-lg bg-surface-secondary p-3 text-[9px] leading-5 text-muted">Kargo ve güven bilgileri mağaza ayarlarından beslenir. Bu bölümde görünürlük ve sıralama yönetilir.</p></Group>
                 ) : null}
 
                 {sliderSection ? (
                   <>
                     <Group title="Ürün kaynağı">
                       <label className="block">
-                        <span className="mb-1.5 block text-[10px] font-semibold text-black/60">Gösterilecek ürünler</span>
+                        <span className="mb-1.5 block text-[10px] font-semibold text-muted">Gösterilecek ürünler</span>
                         <select
                           value={selectedSection.productSource || "featured"}
                           onChange={(event) => {
                             const next = event.target.value as ThemeProductSource;
                             patchSection({ productSource: next, productSourceId: next === "collection" ? collections[0]?.id : next === "category" ? categories[0]?.id : undefined });
                           }}
-                          className={fieldClass()}
+                          className={cx(fieldClass(), "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent")}
                         >
                           <option value="featured">Öne Çıkanlar</option>
                           <option value="all">Tüm Ürünler</option>
@@ -830,10 +830,10 @@ export function VisualThemeCustomizerV4() {
                         </select>
                       </label>
                       {selectedSection.productSource === "collection" ? (
-                        <label className="block"><span className="mb-1.5 block text-[10px] font-semibold text-black/60">Koleksiyon</span><select value={selectedSection.productSourceId || collections[0]?.id || ""} onChange={(event) => patchSection({ productSourceId: event.target.value })} className={fieldClass()}>{collections.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
+                        <label className="block"><span className="mb-1.5 block text-[10px] font-semibold text-muted">Koleksiyon</span><select value={selectedSection.productSourceId || collections[0]?.id || ""} onChange={(event) => patchSection({ productSourceId: event.target.value })} className={cx(fieldClass(), "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent")}>{collections.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
                       ) : null}
                       {selectedSection.productSource === "category" ? (
-                        <label className="block"><span className="mb-1.5 block text-[10px] font-semibold text-black/60">Kategori</span><select value={selectedSection.productSourceId || categories[0]?.id || ""} onChange={(event) => patchSection({ productSourceId: event.target.value })} className={fieldClass()}>{categories.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
+                        <label className="block"><span className="mb-1.5 block text-[10px] font-semibold text-muted">Kategori</span><select value={selectedSection.productSourceId || categories[0]?.id || ""} onChange={(event) => patchSection({ productSourceId: event.target.value })} className={cx(fieldClass(), "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent")}>{categories.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
                       ) : null}
                     </Group>
                     <Group title="Başlık">
@@ -887,8 +887,8 @@ export function VisualThemeCustomizerV4() {
                 {customSection ? (
                   <Group title="Renkler">
                     <div className="grid grid-cols-2 gap-2">
-                      <label className="rounded-lg border border-black/[0.08] bg-[#fafafa] p-2.5"><span className="mb-2 block text-[9px] text-black/45">Arka plan</span><div className="flex items-center gap-2"><input type="color" value={selectedSection.backgroundColor || "#ffffff"} onChange={(event) => patchSection({ backgroundColor: event.target.value })} className="h-7 w-9 border-0 bg-transparent p-0" /><span className="text-[8px] text-black/35">{selectedSection.backgroundColor || "Tema rengi"}</span></div></label>
-                      <label className="rounded-lg border border-black/[0.08] bg-[#fafafa] p-2.5"><span className="mb-2 block text-[9px] text-black/45">Yazı</span><div className="flex items-center gap-2"><input type="color" value={selectedSection.textColor || "#211912"} onChange={(event) => patchSection({ textColor: event.target.value })} className="h-7 w-9 border-0 bg-transparent p-0" /><span className="text-[8px] text-black/35">{selectedSection.textColor || "Tema rengi"}</span></div></label>
+                      <label className="rounded-lg border border-border-subtle bg-surface-secondary p-2.5"><span className="mb-2 block text-[9px] text-muted">Arka plan</span><div className="flex items-center gap-2"><input type="color" value={selectedSection.backgroundColor || "#ffffff"} onChange={(event) => patchSection({ backgroundColor: event.target.value })} className="h-7 w-9 border-0 bg-transparent p-0" /><span className="text-[8px] text-subtle">{selectedSection.backgroundColor || "Tema rengi"}</span></div></label>
+                      <label className="rounded-lg border border-border-subtle bg-surface-secondary p-2.5"><span className="mb-2 block text-[9px] text-muted">Yazı</span><div className="flex items-center gap-2"><input type="color" value={selectedSection.textColor || "#111111"} onChange={(event) => patchSection({ textColor: event.target.value })} className="h-7 w-9 border-0 bg-transparent p-0" /><span className="text-[8px] text-subtle">{selectedSection.textColor || "Tema rengi"}</span></div></label>
                     </div>
                   </Group>
                 ) : null}
@@ -909,10 +909,10 @@ export function VisualThemeCustomizerV4() {
             {!loading && view === "theme-colors" ? (
               <Group title="Tema renkleri" description="Bu renkler bağlı tüm tema alanlarında tek noktadan kullanılır.">
                 {COLOR_FIELDS.map(([key, label]) => (
-                  <label key={key} className="flex h-11 items-center gap-3 rounded-lg border border-black/[0.08] bg-[#fafafa] px-3">
+                  <label key={key} className="flex h-11 items-center gap-3 rounded-lg border border-border-subtle bg-surface-secondary px-3">
                     <input type="color" value={visual.colors[key]} onChange={(event) => patchVisual({ colors: { ...visual.colors, [key]: event.target.value } })} className="h-7 w-9 border-0 bg-transparent p-0" />
                     <span className="min-w-0 flex-1 text-[10px] font-medium">{label}</span>
-                    <span className="text-[8px] uppercase text-black/35">{visual.colors[key]}</span>
+                    <span className="text-[8px] uppercase text-subtle">{visual.colors[key]}</span>
                   </label>
                 ))}
               </Group>
@@ -939,18 +939,18 @@ export function VisualThemeCustomizerV4() {
               <div className="pb-16">
                 <Group title="Üst menü" description="Yalnızca mağaza sahibinin ihtiyacı olan bağlantı alanları gösterilir.">
                   {visual.header.links.map((item) => (
-                    <div key={item.id} className="rounded-lg border border-black/[0.08] bg-[#fafafa] p-3">
+                    <div key={item.id} className="rounded-lg border border-border-subtle bg-surface-secondary p-3">
                       <div className="grid grid-cols-[1fr_auto] gap-2">
                         <TextField label="Başlık" value={item.label} onChange={(label) => patchMenuLink(item.id, { label })} />
-                        <button type="button" onClick={() => removeMenuLink(item.id)} className="mt-[18px] grid h-10 w-10 place-items-center rounded-lg text-black/30 hover:bg-red-50 hover:text-red-600"><Trash2 className="h-4 w-4" /></button>
+                        <button type="button" onClick={() => removeMenuLink(item.id)} className="mt-[18px] grid h-10 w-10 place-items-center rounded-lg text-black/30 active:bg-danger-soft active:text-danger focus-visible:bg-danger-soft focus-visible:text-danger"><Trash2 className="h-4 w-4" /></button>
                       </div>
                       <div className="mt-3 grid grid-cols-[1fr_110px] gap-2">
                         <TextField label="Bağlantı" value={item.path} onChange={(path) => patchMenuLink(item.id, { path })} />
-                        <label className="block"><span className="mb-1.5 block text-[10px] font-semibold text-black/60">Konum</span><select value={item.side || "left"} onChange={(event) => patchMenuLink(item.id, { side: event.target.value === "right" ? "right" : "left" })} className={fieldClass()}><option value="left">Sol</option><option value="right">Sağ</option></select></label>
+                        <label className="block"><span className="mb-1.5 block text-[10px] font-semibold text-muted">Konum</span><select value={item.side || "left"} onChange={(event) => patchMenuLink(item.id, { side: event.target.value === "right" ? "right" : "left" })} className={cx(fieldClass(), "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent")}><option value="left">Sol</option><option value="right">Sağ</option></select></label>
                       </div>
                     </div>
                   ))}
-                  <button type="button" onClick={addMenuLink} className="flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-dashed border-black/15 text-[9px] font-medium hover:border-[#C9A23A]/40"><Plus className="h-3.5 w-3.5" />Bağlantı ekle</button>
+                  <button type="button" onClick={addMenuLink} className="flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border-strong text-[9px] font-medium focus-visible:border-accent"><Plus className="h-3.5 w-3.5" />Bağlantı ekle</button>
                 </Group>
               </div>
             ) : null}
@@ -984,19 +984,19 @@ export function VisualThemeCustomizerV4() {
             ) : null}
           </div>
 
-          <div className="shrink-0 border-t border-black/[0.07] bg-white p-3">
-            <button type="button" onClick={() => setView(view === "theme" ? "sections" : "theme")} className={cx("flex h-10 w-full items-center gap-2 rounded-lg px-3 text-[10px] font-medium transition", view.startsWith("theme") ? "bg-[#f5eed8] text-[#755714]" : "hover:bg-black/[0.035]")}><Palette className="h-4 w-4" />Tema Ayarları</button>
+          <div className="shrink-0 border-t border-border-subtle bg-surface-primary p-3">
+            <button type="button" onClick={() => setView(view === "theme" ? "sections" : "theme")} className={cx("flex h-10 w-full items-center gap-2 rounded-lg px-3 text-[10px] font-medium transition", view.startsWith("theme") ? "bg-accent-soft text-accent" : "active:bg-accent-soft focus-visible:bg-accent-soft")}><Palette className="h-4 w-4" />Tema Ayarları</button>
           </div>
         </aside>
 
-        <main className="order-1 flex min-h-0 flex-1 items-center justify-center overflow-hidden bg-[#e9ebee] p-3 md:order-2 md:p-5">
-          <div className={cx("relative overflow-hidden bg-white shadow-[0_10px_40px_rgba(15,23,42,.08)] transition-all duration-300", device === "mobile" ? "h-full max-h-[820px] w-[430px] max-w-full rounded-[24px] border border-black/10" : "h-full w-full rounded-xl border border-black/[0.08]")}>
+        <main className="order-1 flex min-h-0 flex-1 items-center justify-center overflow-hidden bg-background p-3 md:order-2 md:p-5">
+          <div className={cx("relative overflow-hidden bg-surface-primary shadow-[0_10px_40px_rgba(15,23,42,.08)] transition-all duration-300", device === "mobile" ? "h-full max-h-[820px] w-[430px] max-w-full rounded-[24px] border border-border-subtle" : "h-full w-full rounded-xl border border-border-subtle")}>
             <iframe
               ref={iframeRef}
               key={`${previewPath}-${nonce}`}
               src={previewUrl}
               title="Mağaza önizleme"
-              className="h-full w-full border-0 bg-white"
+              className="h-full w-full border-0 bg-surface-primary"
               onLoad={() => {
                 window.setTimeout(() => {
                   sendVisualDraft(visual);
