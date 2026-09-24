@@ -122,10 +122,10 @@ export function ThemeEditorDevicePreview() {
         height: ${DESKTOP_VIEWPORT.height}px !important;
         padding: 0 !important;
         overflow: hidden !important;
-        border: 1px solid rgba(15, 23, 42, .11) !important;
+        border: 1px solid var(--ruth-color-border-subtle) !important;
         border-radius: 16px !important;
-        background: #fff !important;
-        box-shadow: 0 18px 55px rgba(15, 23, 42, .12) !important;
+        background: var(--rosta-carbon) !important;
+        box-shadow: 0 18px 55px color-mix(in srgb, var(--rosta-carbon) 58%, transparent) !important;
       }
 
       [data-theme-customizer-v4] main > [data-ruth-preview-shell="mobile"] {
@@ -134,13 +134,13 @@ export function ThemeEditorDevicePreview() {
         height: ${IPHONE_FRAME.height}px !important;
         padding: 12px !important;
         overflow: visible !important;
-        border: 6px solid #111214 !important;
+        border: 6px solid var(--rosta-carbon) !important;
         border-radius: 62px !important;
-        background: #111214 !important;
+        background: var(--rosta-carbon) !important;
         box-shadow:
-          0 0 0 1px rgba(255,255,255,.2) inset,
-          0 22px 65px rgba(15, 23, 42, .28),
-          0 3px 10px rgba(15, 23, 42, .18) !important;
+          0 0 0 1px color-mix(in srgb, var(--rosta-cream) 20%, transparent) inset,
+          0 22px 65px color-mix(in srgb, var(--rosta-carbon) 72%, transparent),
+          0 3px 10px color-mix(in srgb, var(--rosta-carbon) 52%, transparent) !important;
       }
 
       [data-theme-customizer-v4] main > [data-ruth-preview-shell="mobile"] iframe {
@@ -161,8 +161,8 @@ export function ThemeEditorDevicePreview() {
         height: 34px;
         transform: translateX(-50%);
         border-radius: 999px;
-        background: #050506;
-        box-shadow: 0 1px 1px rgba(255,255,255,.08) inset, 0 1px 3px rgba(0,0,0,.28);
+        background: var(--rosta-carbon);
+        box-shadow: 0 1px 1px color-mix(in srgb, var(--rosta-cream) 8%, transparent) inset, 0 1px 3px color-mix(in srgb, var(--rosta-carbon) 62%, transparent);
         pointer-events: none;
       }
 
@@ -176,7 +176,7 @@ export function ThemeEditorDevicePreview() {
         height: 5px;
         transform: translateX(-50%);
         border-radius: 999px;
-        background: #fff;
+        background: var(--rosta-cream);
         mix-blend-mode: difference;
         opacity: .88;
         pointer-events: none;
@@ -190,8 +190,8 @@ export function ThemeEditorDevicePreview() {
         z-index: 3;
         display: block;
         width: 4px;
-        background: linear-gradient(180deg, #303236, #17181a);
-        box-shadow: 0 0 0 1px rgba(255,255,255,.08) inset;
+        background: linear-gradient(180deg, var(--rosta-carbon-soft), var(--rosta-carbon));
+        box-shadow: 0 0 0 1px color-mix(in srgb, var(--rosta-cream) 8%, transparent) inset;
         pointer-events: none;
       }
 
@@ -230,10 +230,10 @@ export function ThemeEditorDevicePreview() {
           transform: translateX(-50%) !important;
           gap: 3px !important;
           padding: 4px !important;
-          border: 1px solid rgba(15,23,42,.09) !important;
+          border: 1px solid var(--ruth-color-border-subtle) !important;
           border-radius: 11px !important;
-          background: rgba(255,255,255,.94) !important;
-          box-shadow: 0 7px 24px rgba(15,23,42,.1) !important;
+          background: color-mix(in srgb, var(--rosta-carbon-soft) 96%, transparent) !important;
+          box-shadow: 0 7px 24px color-mix(in srgb, var(--rosta-carbon) 52%, transparent) !important;
           backdrop-filter: blur(14px) !important;
           -webkit-backdrop-filter: blur(14px) !important;
         }
