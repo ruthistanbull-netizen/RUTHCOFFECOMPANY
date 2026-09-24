@@ -43,7 +43,7 @@ export function AdminRuthieQuickChatV2() {
     void (async () => {
       try {
         const headers = await adminAuthHeaders();
-        const response = await fetch("/api/ruthie/openai/status", { headers, cache: "no-store" });
+        const response = await fetch("/api/rosta-insight/openai/status", { headers, cache: "no-store" });
         const payload = await response.json().catch(() => null) as ProviderStatus | null;
         if (!cancelled) setProviderReady(Boolean(response.ok && payload?.ok && payload.configured && payload.capabilities?.chat));
       } catch {
@@ -83,7 +83,7 @@ export function AdminRuthieQuickChatV2() {
     setSending(true);
     try {
       const headers = await adminAuthHeaders();
-      const response = await fetch("/api/ruthie/openai/chat", {
+      const response = await fetch("/api/rosta-insight/openai/chat", {
         method: "POST",
         cache: "no-store",
         headers: {
