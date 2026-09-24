@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { RuthieVoiceOrbReference3D } from "../RuthieVoiceOrbReference3D";
 
 export const metadata: Metadata = {
-  title: "Ruthie Reference v11 Preview",
+  title: "ROSTA Insight Reference v11 Preview",
   robots: { index: false, follow: false },
 };
 
@@ -48,7 +48,7 @@ export default function RuthieReferenceV11PreviewPage() {
           textTransform: "uppercase",
         }}
       >
-        Ruthie v11 · Reference QA
+        ROSTA Insight v11 · Reference QA
       </div>
     </main>
   );
