@@ -553,7 +553,7 @@ export function PaytrIframeCheckoutClient() {
             <button
               type="button"
               onClick={() => setIsRuthiePointsOpen((current) => !current)}
-              className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left transition hover:bg-carbon-soft/70"
+              className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left transition active:bg-brick/10"
               aria-expanded={isRuthiePointsOpen}
             >
               <span>
@@ -583,7 +583,7 @@ export function PaytrIframeCheckoutClient() {
                       <button
                         type="button"
                         onClick={() => selectRuthiePointAmount(0)}
-                        className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs transition ${selectedRuthiePoints === 0 ? "border-brick bg-carbon-soft text-cream" : "border-kraft/35 bg-carbon-soft text-cream hover:border-brick"}`}
+                        className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs transition ${selectedRuthiePoints === 0 ? "border-brick bg-carbon-soft text-cream" : "border-kraft/35 bg-carbon-soft text-cream focus-visible:border-brick"}`}
                       >
                         <span>Puan kullanma</span><span>0 TL</span>
                       </button>
@@ -592,7 +592,7 @@ export function PaytrIframeCheckoutClient() {
                           key={amount}
                           type="button"
                           onClick={() => selectRuthiePointAmount(amount)}
-                          className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs transition ${selectedRuthiePoints === amount ? "border-brick bg-brick text-[var(--rosta-action-text)]" : "border-kraft/35 bg-carbon-soft text-cream hover:border-brick"}`}
+                          className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs transition ${selectedRuthiePoints === amount ? "border-brick bg-brick text-[var(--rosta-action-text)]" : "border-kraft/35 bg-carbon-soft text-cream focus-visible:border-brick"}`}
                         >
                           <span>{amount.toLocaleString("tr-TR")} Points</span>
                           <span>-{formatPrice(pointsToLira(amount), "TRY")}</span>
@@ -601,7 +601,7 @@ export function PaytrIframeCheckoutClient() {
                       <button
                         type="button"
                         onClick={() => selectRuthiePointAmount(availableRuthiePoints)}
-                        className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs font-medium uppercase tracking-wide-luxe transition ${selectedRuthiePoints === availableRuthiePoints ? "border-brick bg-brick text-[var(--rosta-action-text)]" : "border-kraft/35 bg-carbon-soft text-cream hover:border-brick"}`}
+                        className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs font-medium uppercase tracking-wide-luxe transition ${selectedRuthiePoints === availableRuthiePoints ? "border-brick bg-brick text-[var(--rosta-action-text)]" : "border-kraft/35 bg-carbon-soft text-cream focus-visible:border-brick"}`}
                       >
                         <span>Hepsini Kullan</span>
                         <span>{availableRuthiePoints.toLocaleString("tr-TR")} Points</span>
@@ -670,7 +670,7 @@ export function PaytrIframeCheckoutClient() {
                     disabled={quoteLoading}
                     aria-busy={applying || undefined}
                     onClick={() => selected ? clearCoupon() : void selectAccountDiscount(discount)}
-                    className={`w-full rounded-lg border px-3 py-3 text-left transition disabled:opacity-50 ${selected ? "border-brick bg-brick text-[var(--rosta-action-text)]" : "border-kraft/35 bg-carbon-soft text-cream hover:border-brick"}`}
+                    className={`w-full rounded-lg border px-3 py-3 text-left transition disabled:opacity-50 ${selected ? "border-brick bg-brick text-[var(--rosta-action-text)]" : "border-kraft/35 bg-carbon-soft text-cream focus-visible:border-brick"}`}
                   >
                     <span className="flex items-center gap-2 font-heading text-sm">{applying ? <LoadingIndicator size="sm" label={`${discount.title || "İndirim"} uygulanıyor`} /> : null}{discount.title || "Yorum indirimi"}</span>
                     <span className={`mt-1 block text-xs ${selected ? "text-cream/75" : "text-cream/70"}`}>
@@ -830,7 +830,7 @@ export function PaytrIframeCheckoutClient() {
                 </div>
 
                 {error ? (
-                  <p className="mt-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-xs leading-5 text-red-700">{error}</p>
+                  <p className="mt-5 rounded-lg border border-[var(--ruth-color-danger)]/40 bg-[var(--ruth-color-danger-soft)] px-4 py-3 text-xs leading-5 text-[var(--ruth-color-danger-text)]">{error}</p>
                 ) : null}
 
                 <button
@@ -913,7 +913,7 @@ export function PaytrIframeCheckoutClient() {
                 <button
                   type="button"
                   onClick={() => goToCheckoutStep(1)}
-                  className="rounded-full border border-kraft/45 px-5 py-3 text-[11px] uppercase tracking-wide-luxe text-cream transition hover:border-brick"
+                  className="rounded-full border border-kraft/45 px-5 py-3 text-[11px] uppercase tracking-wide-luxe text-cream transition focus-visible:border-brick"
                 >
                   Bilgileri Düzenle
                 </button>
@@ -973,10 +973,10 @@ export function PaytrIframeCheckoutClient() {
                   </div>
 
                   {draftNotice ? (
-                    <p className="mt-5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-xs leading-5 text-green-700">{draftNotice}</p>
+                    <p className="mt-5 rounded-lg border border-[var(--ruth-color-success)]/40 bg-[var(--ruth-color-success-soft)] px-4 py-3 text-xs leading-5 text-[var(--ruth-color-success-text)]">{draftNotice}</p>
                   ) : null}
                   {error ? (
-                    <p className="mt-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-xs leading-5 text-red-700">{error}</p>
+                    <p className="mt-5 rounded-lg border border-[var(--ruth-color-danger)]/40 bg-[var(--ruth-color-danger-soft)] px-4 py-3 text-xs leading-5 text-[var(--ruth-color-danger-text)]">{error}</p>
                   ) : null}
 
                   <button
