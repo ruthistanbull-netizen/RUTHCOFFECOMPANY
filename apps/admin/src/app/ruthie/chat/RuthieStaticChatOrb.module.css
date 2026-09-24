@@ -1,0 +1,46 @@
+.staticCore.staticCore > :global(section > main [aria-live="polite"]) {
+  position: relative !important;
+  isolation: isolate !important;
+  background: transparent !important;
+}
+
+.staticCore.staticCore > :global(section > main [aria-live="polite"])::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+  background-image:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, black 8%, transparent),
+      transparent 18%,
+      transparent 66%,
+      color-mix(in srgb, black 34%, transparent)
+    ),
+    url("/ruthie-static-neural-core.svg") !important;
+  background-repeat: no-repeat !important;
+  background-position: center, center 27% !important;
+  background-size: cover, min(590px, 64vw, 72vh) auto !important;
+  opacity: 0.76 !important;
+  filter: saturate(0.76) contrast(1.04) brightness(0.94) !important;
+}
+
+.staticCore.staticCore > :global(section > main [aria-live="polite"]) > * {
+  position: relative;
+  z-index: 1;
+}
+
+.staticCore.staticCore :global([aria-live="polite"] [data-ruthie-visual-root]),
+.staticCore.staticCore :global([aria-live="polite"] canvas[data-ruthie-particle-spheres]) {
+  display: none !important;
+}
+
+@media (max-width: 860px) {
+  .staticCore.staticCore > :global(section > main [aria-live="polite"])::before {
+    background-position: center, center 22% !important;
+    background-size: cover, min(430px, 112vw, 56vh) auto !important;
+    opacity: 0.64 !important;
+    filter: saturate(0.72) contrast(1.02) brightness(0.9) !important;
+  }
+}
