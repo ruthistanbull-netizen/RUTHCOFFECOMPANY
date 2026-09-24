@@ -1,24 +1,50 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useLayoutEffect } from "react";
-import { adminRememberSessionEnabled } from "@/lib/supabaseBrowser";
+import { type ReactNode, useLayoutEffect, useState } from "react";
 
 const ROSTA_ENTERED_KEY = "rosta_panel_hub_entered_v1";
 
-export function AdminPanelHubEntryGuard() {
+export function AdminPanelHubEntryGuard({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const [allowed, setAllowed] = useState(false);
 
   useLayoutEffect(() => {
-    if (pathname !== "/") return;
-    if (!adminRememberSessionEnabled()) return;
+    if (pathname === "/profiles") {
+      setAllowed(true);
+      return;
+    }
 
+    if (pathname === "/") {
+      window.location.replace("/profiles");
+      return;
+    }
+
+    let entered = false;
     try {
-      if (window.sessionStorage.getItem(ROSTA_ENTERED_KEY) === "1") return;
+      entered = window.sessionStorage.getItem(ROSTA_ENTERED_KEY) === "1";
     } catch {}
 
-    window.location.replace("/profiles");
+    if (!entered) {
+      window.location.replace("/profiles");
+      return;
+    }
+
+    setAllowed(true);
   }, [pathname]);
 
-  return null;
+  if (!allowed) {
+    return (
+      <div
+        aria-label="Backstage açılıyor"
+        className="fixed inset-0 z-[2147483647] bg-[#141414]"
+      >
+        <div className="absolute left-5 top-[max(1.25rem,env(safe-area-inset-top))] text-[15px] font-semibold tracking-[-0.03em] text-white/72 sm:left-8">
+          Backstage
+        </div>
+      </div>
+    );
+  }
+
+  return <>{children}</>;
 }
