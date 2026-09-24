@@ -15,6 +15,8 @@ RUN npm install --no-audit --no-fund
 
 COPY . .
 
+RUN rm -rf apps/admin/.next apps/storefront/.next
+
 RUN npm run build:storefront
 
 ENV NODE_ENV=production
