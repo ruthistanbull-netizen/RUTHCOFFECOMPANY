@@ -9,11 +9,6 @@
       border-color 160ms ease;
   }
 
-  [data-exact-base44-page] [class*="border-border-subtle"][class*="bg-surface-primary"]:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 28px color-mix(in srgb, var(--rosta-carbon) 30%, transparent);
-  }
-
   /* Buttons: tactile hover/press feedback without changing layout. */
   [data-exact-base44-page] button:not(:disabled),
   [data-exact-base44-page] a[role="button"] {
@@ -23,11 +18,6 @@
       background-color 140ms ease,
       border-color 140ms ease,
       color 140ms ease;
-  }
-
-  [data-exact-base44-page] button:not(:disabled):hover,
-  [data-exact-base44-page] a[role="button"]:hover {
-    transform: translateY(-.5px);
   }
 
   [data-exact-base44-page] button:not(:disabled):active,
@@ -64,10 +54,6 @@
     transform-origin: top right;
   }
 
-  [role="dialog"][aria-label="Bildirimler"] button:hover {
-    transform: translateX(1px);
-  }
-
   [role="dialog"][aria-label="Bildirimler"] button[class*="bg-accent-soft"] {
     box-shadow: inset 3px 0 0 hsl(var(--accent) / .7);
   }
@@ -78,6 +64,22 @@
   }
 }
 
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
+  [data-exact-base44-page] [class*="border-border-subtle"][class*="bg-surface-primary"]:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 28px color-mix(in srgb, var(--rosta-carbon) 30%, transparent);
+  }
+
+  [data-exact-base44-page] button:not(:disabled):hover,
+  [data-exact-base44-page] a[role="button"]:hover {
+    transform: translateY(-.5px);
+  }
+
+  [role="dialog"][aria-label="Bildirimler"] button:hover {
+    transform: translateX(1px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   [data-exact-base44-page] *,
   [role="dialog"][aria-label="Bildirimler"] * {
@@ -85,12 +87,4 @@
   }
 }
 
-/* Keep interactive surfaces stable on touch devices. */
-@media (hover: none) {
-  [data-exact-base44-page] [class*="border-border-subtle"][class*="bg-surface-primary"]:hover,
-  [data-exact-base44-page] button:not(:disabled):hover,
-  [data-exact-base44-page] a[role="button"]:hover {
-    transform: none;
-    box-shadow: none;
-  }
-}
+
