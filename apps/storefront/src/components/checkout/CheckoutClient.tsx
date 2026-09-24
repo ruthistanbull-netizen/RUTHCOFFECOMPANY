@@ -1523,7 +1523,7 @@ export function CheckoutClient() {
                                     setDirectPayment(null);
                                     setSelectedInstallment(option.count);
                                   }}
-                                  className="accent-[#9A7B52]"
+                                  className="accent-[#C94A40]"
                                 />
                                 <span className="text-sm font-medium text-ink">
                                   {option.count === 0 ? "Tek çekim" : `${option.count} taksit`}
