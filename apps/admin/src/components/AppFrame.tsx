@@ -67,6 +67,29 @@ export function AppFrame({ children }: { children: ReactNode }) {
     </>
   );
 
+  if (pathname === "/ruth") {
+    return (
+      <RequireAdmin>
+        <div
+          data-ruth-workspace-immersive-root
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 2147483500,
+            width: "100vw",
+            height: "100dvh",
+            minHeight: "100dvh",
+            overflow: "hidden",
+            transform: "none",
+            background: "#141414",
+          }}
+        >
+          {children}
+        </div>
+      </RequireAdmin>
+    );
+  }
+
   if (pathname === "/profiles") {
     return (
       <RequireAdmin>
