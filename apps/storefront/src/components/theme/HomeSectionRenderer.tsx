@@ -54,8 +54,8 @@ export function HomeSectionRenderer({
   allProducts,
   collections,
   heroImages,
-  editorialVideo,
-  editorialImage,
+  editorialVideo = "/home/rosta-under-hero-video.mp4",
+  editorialImage = "/home/rosta-under-hero-photo.jpg",
   scrollImages,
   freeShippingThreshold,
 }: {
@@ -64,8 +64,8 @@ export function HomeSectionRenderer({
   allProducts: Product[];
   collections: Collection[];
   heroImages: HomepageHeroImages;
-  editorialVideo: string;
-  editorialImage: string;
+  editorialVideo?: string;
+  editorialImage?: string;
   scrollImages: string[];
   freeShippingThreshold: number;
 }) {
