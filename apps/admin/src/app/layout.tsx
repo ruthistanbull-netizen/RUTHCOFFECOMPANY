@@ -58,10 +58,15 @@ export const metadata: Metadata = {
   applicationName: "ROSTA Panel",
   title: { default: "ROSTA Control Room", template: "%s | ROSTA" },
   description: "ROSTA Coffee Co. yönetim paneli",
-  manifest: "/manifest.webmanifest?v=24",
+  manifest: "/manifest.webmanifest?v=25",
   icons: {
-    icon: "/icon.svg",
-    apple: "/api/panel-home-icon",
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icon-192.png?v=25", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png?v=25", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/api/panel-home-icon?v=25", sizes: "180x180", type: "image/png" }],
+    shortcut: ["/icon.svg"],
   },
   appleWebApp: { capable: true, title: "ROSTA Panel", statusBarStyle: "default" },
 };
