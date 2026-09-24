@@ -606,7 +606,7 @@ export function RuthieDockedQuickVoiceOrb() {
     const chatContext = currentChat?.messages.slice(-14) || [];
     const voiceContext = transcripts.slice(-18);
     return [...chatContext, ...voiceContext]
-      .map((item) => `${item.role === "user" ? "Kullanıcı" : "Ruthie"}: ${item.text}`)
+      .map((item) => `${item.role === "user" ? "Kullanıcı" : "ROSTA Insight"}: ${item.text}`)
       .join("\n")
       .slice(-18_000);
   }, [transcripts]);
@@ -920,14 +920,14 @@ export function RuthieDockedQuickVoiceOrb() {
                 : "idle";
 
   const ariaLabel = dragging || gliding
-    ? "Ruthie küresi hareket ediyor"
+    ? "ROSTA Insight küresi hareket ediyor"
     : realtime.phase === "speaking"
-      ? "Ruthie konuşuyor"
+      ? "ROSTA Insight konuşuyor"
       : realtime.phase === "thinking" || realtime.phase === "acting"
-        ? "Ruthie düşünüyor"
+        ? "ROSTA Insight düşünüyor"
         : activelyListening
-          ? "Ruthie dinliyor; kapatmak için bir kez dokun"
-          : "Ruthie sesli modu açmak için dokun; basılı tutarak da konuşabilirsin";
+          ? "ROSTA Insight dinliyor; kapatmak için bir kez dokun"
+          : "ROSTA Insight sesli modu açmak için dokun; basılı tutarak da konuşabilirsin";
 
   if (!portalReady) return null;
 
