@@ -200,7 +200,7 @@ function Toggle({
         <b className="block text-[11px] font-medium">{label}</b>
         {detail ? <small className="mt-0.5 block text-[9px] leading-4 text-muted">{detail}</small> : null}
       </span>
-      <span className={cx("relative block h-6 w-11 shrink-0 rounded-full transition-colors", value ? "bg-accent" : "bg-black/15")}>
+      <span className={cx("relative block h-6 w-11 shrink-0 rounded-full transition-colors", value ? "bg-accent" : "bg-surface-tertiary")}>
         <span className={cx("absolute left-1 top-1 h-4 w-4 rounded-full bg-surface-primary shadow-sm transition-transform", value ? "translate-x-5" : "translate-x-0")} />
       </span>
     </button>
@@ -245,7 +245,7 @@ function Range({
 
 function Group({ title, children, description }: { title: string; children: ReactNode; description?: string }) {
   return (
-    <section className="border-b border-black/[0.065] bg-surface-primary px-4 py-4">
+    <section className="border-b border-border-subtle bg-surface-primary px-4 py-4">
       <h3 className="text-[11px] font-semibold">{title}</h3>
       {description ? <p className="mt-1 text-[9px] leading-4 text-muted">{description}</p> : null}
       <div className="mt-3 space-y-3">{children}</div>
@@ -294,7 +294,7 @@ function ImageUpload({
         {value ? (
           <img src={value} alt="" className={cx("shrink-0 rounded-md border border-border-subtle object-cover", compact ? "h-12 w-12" : "h-16 w-16")} />
         ) : (
-          <div className={cx("grid shrink-0 place-items-center rounded-md bg-black/[0.035] text-subtle", compact ? "h-12 w-12" : "h-16 w-16")}>
+          <div className={cx("grid shrink-0 place-items-center rounded-md bg-surface-secondary text-subtle", compact ? "h-12 w-12" : "h-16 w-16")}>
             <ImagePlus className="h-4 w-4" />
           </div>
         )}
@@ -691,7 +691,7 @@ export function VisualThemeCustomizerV4() {
               </optgroup>
             ))}
           </select>
-          <div className="hidden rounded-lg bg-black/[0.045] p-1 sm:flex">
+          <div className="hidden rounded-lg bg-surface-secondary p-1 sm:flex">
             <button type="button" onClick={() => setDevice("desktop")} className={cx("grid h-7 w-8 place-items-center rounded-md", device === "desktop" ? "bg-surface-primary shadow-sm" : "text-muted")} aria-label="Masaüstü önizleme"><Monitor className="h-3.5 w-3.5" /></button>
             <button type="button" onClick={() => setDevice("mobile")} className={cx("grid h-7 w-8 place-items-center rounded-md", device === "mobile" ? "bg-surface-primary shadow-sm" : "text-muted")} aria-label="Mobil önizleme"><Smartphone className="h-3.5 w-3.5" /></button>
           </div>
@@ -942,7 +942,7 @@ export function VisualThemeCustomizerV4() {
                     <div key={item.id} className="rounded-lg border border-border-subtle bg-surface-secondary p-3">
                       <div className="grid grid-cols-[1fr_auto] gap-2">
                         <TextField label="Başlık" value={item.label} onChange={(label) => patchMenuLink(item.id, { label })} />
-                        <button type="button" onClick={() => removeMenuLink(item.id)} className="mt-[18px] grid h-10 w-10 place-items-center rounded-lg text-black/30 active:bg-danger-soft active:text-danger focus-visible:bg-danger-soft focus-visible:text-danger"><Trash2 className="h-4 w-4" /></button>
+                        <button type="button" onClick={() => removeMenuLink(item.id)} className="mt-[18px] grid h-10 w-10 place-items-center rounded-lg text-subtle active:bg-danger-soft active:text-danger focus-visible:bg-danger-soft focus-visible:text-danger"><Trash2 className="h-4 w-4" /></button>
                       </div>
                       <div className="mt-3 grid grid-cols-[1fr_110px] gap-2">
                         <TextField label="Bağlantı" value={item.path} onChange={(path) => patchMenuLink(item.id, { path })} />
