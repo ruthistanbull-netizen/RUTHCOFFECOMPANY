@@ -168,7 +168,7 @@ export function RuthieChatWorkspace() {
     void (async () => {
       try {
         const headers = await adminAuthHeaders();
-        const response = await fetch("/api/ruthie/openai/status", { headers, cache: "no-store" });
+        const response = await fetch("/api/rosta-insight/openai/status", { headers, cache: "no-store" });
         const payload = await response.json() as ProviderStatus;
         if (!response.ok || !payload.ok) throw new Error("ROSTA Insight bağlantı durumu alınamadı.");
         setStatus(payload);
@@ -270,7 +270,7 @@ export function RuthieChatWorkspace() {
     setSending(true);
     try {
       const headers = await adminAuthHeaders();
-      const response = await fetch("/api/ruthie/openai/chat", {
+      const response = await fetch("/api/rosta-insight/openai/chat", {
         method: "POST",
         cache: "no-store",
         headers: { ...headers, "Content-Type": "application/json", "x-correlation-id": makeId("chat") },
@@ -298,7 +298,7 @@ export function RuthieChatWorkspace() {
     updateConversation(conversationId, (conversation) => ({ ...conversation, messages: conversation.messages.map((item) => item.id === messageId ? { ...item, actionState: "executing", actionError: undefined } : item) }));
     try {
       const headers = await adminAuthHeaders();
-      const response = await fetch("/api/ruthie/admin/execute", { method: "POST", cache: "no-store", headers: { ...headers, "Content-Type": "application/json" }, body: JSON.stringify({ token: action.token }) });
+      const response = await fetch("/api/rosta-insight/admin/execute", { method: "POST", cache: "no-store", headers: { ...headers, "Content-Type": "application/json" }, body: JSON.stringify({ token: action.token }) });
       const payload = await response.json().catch(() => null) as { ok?: boolean; result?: { title?: string; error?: string }; error?: { message?: string } } | null;
       if (!response.ok || !payload?.ok) throw new Error(payload?.result?.error || payload?.error?.message || "Panel işlemi uygulanamadı.");
       updateConversation(conversationId, (conversation) => ({ ...conversation, messages: conversation.messages.map((item) => item.id === messageId ? { ...item, actionState: "completed" } : item) }));
