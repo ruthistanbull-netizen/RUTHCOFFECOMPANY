@@ -186,7 +186,11 @@
   ::-webkit-scrollbar { width: 8px; height: 8px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: hsl(var(--border-strong)); border-radius: var(--radius-pill); }
+}
+
+@media (hover: hover) and (pointer: fine) {
   ::-webkit-scrollbar-thumb:hover { background: hsl(var(--text-subtle)); }
+  .form-input:hover { border-color: hsl(var(--border-strong)); }
 }
 
 @layer utilities {
@@ -302,7 +306,6 @@
     color: hsl(var(--text-main));
     transition: all 0.15s ease;
   }
-  .form-input:hover { border-color: hsl(var(--border-strong)); }
   .form-input:focus {
     outline: none;
     border-color: transparent;
