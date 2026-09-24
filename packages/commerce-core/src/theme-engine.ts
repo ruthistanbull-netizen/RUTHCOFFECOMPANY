@@ -41,6 +41,7 @@ export type ThemeElementOverride = {
   hidden?: boolean;
   text?: string;
   imageSrc?: string;
+  mediaType?: "image" | "video";
   href?: string;
   desktop?: ThemeDeviceStyle;
   mobile?: ThemeDeviceStyle;
@@ -191,6 +192,7 @@ function normalizeElementOverride(input: unknown, index: number): ThemeElementOv
     hidden: typeof raw.hidden === "boolean" ? raw.hidden : undefined,
     text: typeof raw.text === "string" ? raw.text.slice(0, 16000) : undefined,
     imageSrc: typeof raw.imageSrc === "string" ? safeUrl(raw.imageSrc, "", "image") : undefined,
+    mediaType: raw.mediaType === "video" ? "video" : raw.mediaType === "image" ? "image" : undefined,
     href: typeof raw.href === "string" ? safeUrl(raw.href, "", "link") : undefined,
     desktop: normalizeThemeDeviceStyle(raw.desktop),
     mobile: normalizeThemeDeviceStyle(raw.mobile),
