@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { LogOut } from "lucide-react";
+import { LoaderCircle, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   adminRememberSessionEnabled,
@@ -102,7 +102,7 @@ export function PanelHubProfiles() {
     } catch {}
     window.setTimeout(() => {
       window.location.assign("/dashboard");
-    }, 330);
+    }, 720);
   };
 
   const enterRuth = () => {
@@ -276,6 +276,34 @@ export function PanelHubProfiles() {
           {remember ? "Oturum bu cihazda açık tutuluyor." : "Bu oturum tarayıcı kapatıldığında sona erebilir."}
         </p>
       </motion.section>
+
+      <AnimatePresence>
+        {active ? (
+          <motion.div
+            key={active}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.22 }}
+            className="fixed inset-0 z-[2147483645] flex items-center justify-center bg-[#141414] px-6 text-[#F4F0E8]"
+            aria-live="polite"
+            aria-busy="true"
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 8, scale: 0.985 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.24, ease: [0.2, 0.8, 0.2, 1] }}
+              className="text-center"
+            >
+              <LoaderCircle className="mx-auto h-7 w-7 animate-spin opacity-60" />
+              <p className="mt-4 text-[13px] font-medium tracking-[-0.01em] opacity-72">
+                {active === "rosta" ? "ROSTA Coffee Co. açılıyor" : "Ruth Istanbul açılıyor"}
+              </p>
+              <p className="mt-1 text-[10px] opacity-32">RR HUB güvenli oturumu hazırlanıyor.</p>
+            </motion.div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </main>
   );
 }
