@@ -69,7 +69,7 @@ export function PanelHubProfiles() {
       window.sessionStorage.setItem(ROSTA_ENTERED_KEY, "1");
     } catch {}
     window.setTimeout(() => {
-      window.location.assign("/");
+      window.location.assign("/dashboard");
     }, 360);
   };
 
