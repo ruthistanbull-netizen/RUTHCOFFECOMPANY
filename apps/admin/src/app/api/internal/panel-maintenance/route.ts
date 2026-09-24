@@ -148,7 +148,7 @@ async function updateHealth(supabase: any, result: MaintenanceResult) {
   await supabase.from("panel_service_health_state").upsert({ service_key: result.key, status, detail: result.detail, first_seen_at: previous?.first_seen_at || now.toISOString(), last_seen_at: now.toISOString(), last_alerted_at: shouldAlert ? now.toISOString() : previous?.last_alerted_at || null, recovered_at: result.ok && wasProblem ? now.toISOString() : null, metadata: { path: result.path, durationMs: result.durationMs, changedCount: changedCount(result) }, updated_at: now.toISOString() }, { onConflict: "service_key" });
   if (shouldAlert) {
     const bucket = Math.floor(now.getTime() / (30 * 60_000));
-    await supabase.from("admin_push_jobs").insert({ kind: "health", dedupe_key: `health:${result.key}:degraded:${bucket}`, payload: { service_key: result.key, status: "degraded", title: "Ruth Panel bakım uyarısı", body: result.detail }, target_url: "/system" });
+    await supabase.from("admin_push_jobs").insert({ kind: "health", dedupe_key: `health:${result.key}:degraded:${bucket}`, payload: { service_key: result.key, status: "degraded", title: "ROSTA Panel bakım uyarısı", body: result.detail }, target_url: "/system" });
   }
   return shouldAlert;
 }
