@@ -43,6 +43,8 @@ const analyticsMigration = file("supabase/migrations/20260924170000_rosta_dashbo
 const compactOrderMigration = file("supabase/migrations/20260924180000_compact_rosta_order_numbers.sql");
 const emailCronMigration = file("supabase/migrations/20260924181500_rosta_customer_email_automation_crons.sql");
 const orderServer = file("apps/storefront/src/lib/orderServer.ts");
+const checkoutDraftSave = file("apps/storefront/src/app/api/checkout-draft/save/route.ts");
+const shippingHardening = file("supabase/migrations/20260924183000_rosta_basit_kargo_lifecycle_hardening.sql");
 const bootstrapSeed = file("supabase/migrations/20260922014705_rosta_bootstrap_seed.sql");
 const sharedDocker = file("Dockerfile");
 const panelDocker = file("Dockerfile.rostapanel");
@@ -89,6 +91,7 @@ expect(analyticsMigration.includes("public.admin_analytics_summary"), "dashboard
 expect(analyticsMigration.includes("analytics_events_session_created_at_idx"), "dashboard analytics session index missing");
 
 expect(orderServer.includes('return `RST${year}${random}`;'), "storefront must generate compact ROSTA order numbers");
+expect(checkoutDraftSave.includes('return `RST${year}${random}`;'), "checkout draft API must generate the same compact ROSTA order number format");
 expect(compactOrderMigration.includes("generate_compact_rosta_order_no"), "compact ROSTA order number DB guard missing");
 expect(compactOrderMigration.includes("new.merchant_oid := new.order_no"), "checkout merchant_oid must stay synchronized with the compact order number");
 
@@ -96,6 +99,11 @@ expect(emailCronMigration.includes("'rosta-abandoned-cart-email'"), "abandoned-c
 expect(emailCronMigration.includes("'rosta-review-request-email'"), "review-request customer email scheduler missing");
 expect(emailCronMigration.includes("'x-automation-cron-secret'"), "customer email schedulers must authenticate by header");
 expect(!emailCronMigration.includes("?kind=review&secret="), "review scheduler must never expose its secret in the URL");
+
+expect(shippingHardening.includes("force_order_lifecycle_from_shipping_status"), "shipping lifecycle force-sync guard missing");
+expect(shippingHardening.includes("normalize_basit_kargo_status"), "Basit Kargo status normalizer missing");
+expect(shippingHardening.includes("reconcile_order_from_basit_kargo_event"), "Basit Kargo event reconciliation trigger missing");
+expect(shippingHardening.includes("reconcile_basit_kargo_delivery_evidence"), "Basit Kargo delivery evidence guard missing");
 
 expect(panelDocker.includes("COPY apps/admin/package.json") && panelDocker.includes("COPY apps/storefront/package.json"), "panel Docker workspace manifests incomplete");
 expect(storefrontDocker.includes("COPY apps/admin/package.json") && storefrontDocker.includes("COPY apps/storefront/package.json"), "storefront Docker workspace manifests incomplete");
