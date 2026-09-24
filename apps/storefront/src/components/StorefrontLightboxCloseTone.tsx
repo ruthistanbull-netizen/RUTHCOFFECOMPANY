@@ -46,20 +46,20 @@ export function StorefrontLightboxCloseTone() {
       /* Use the exact same contrast token as the product-page header:
          light image/background -> black X, dark image/background -> white X. */
       html.ruth-product-page-active .ruth-product-lightbox__close {
-        color: var(--ruth-product-header-ink, #111111) !important;
+        color: var(--ruth-product-header-ink, var(--rosta-carbon)) !important;
         border-color: color-mix(
           in srgb,
-          var(--ruth-product-header-ink, #111111) 28%,
+          var(--ruth-product-header-ink, var(--rosta-carbon)) 28%,
           transparent
         ) !important;
         background: color-mix(
           in srgb,
-          var(--ruth-product-header-ink, #111111) 9%,
+          var(--ruth-product-header-ink, var(--rosta-carbon)) 9%,
           transparent
         ) !important;
         box-shadow: 0 8px 28px color-mix(
           in srgb,
-          var(--ruth-product-header-ink, #111111) 10%,
+          var(--ruth-product-header-ink, var(--rosta-carbon)) 10%,
           transparent
         ) !important;
         transition:
@@ -75,11 +75,11 @@ export function StorefrontLightboxCloseTone() {
         stroke: currentColor !important;
       }
 
-      @media (hover: hover) {
+      @media (hover: hover) and (pointer: fine) {
         html.ruth-product-page-active .ruth-product-lightbox__close:hover {
           background: color-mix(
             in srgb,
-            var(--ruth-product-header-ink, #111111) 15%,
+            var(--ruth-product-header-ink, var(--rosta-carbon)) 15%,
             transparent
           ) !important;
         }
@@ -95,7 +95,7 @@ export function StorefrontLightboxCloseTone() {
          there is deliberately no black overlay. */
       @media (min-width: 768px) {
         html.ruth-product-page-active .ruth-product-lightbox {
-          background: rgba(246, 240, 231, .06) !important;
+          background: color-mix(in srgb, var(--rosta-carbon) 24%, transparent) !important;
           -webkit-backdrop-filter: blur(30px) saturate(.9) brightness(.98) !important;
           backdrop-filter: blur(30px) saturate(.9) brightness(.98) !important;
         }
