@@ -1,83 +1,90 @@
 [data-ruth-theme="storefront"] {
-  --ruth-storefront-canvas: #F4F0E8;
-  --ruth-storefront-surface: #F4F0E8;
-  --ruth-storefront-surface-muted: #F4F0E8;
-  --ruth-storefront-surface-soft: #F4F0E8;
-  --ruth-storefront-ink: #111111;
-  --ruth-storefront-muted-ink: #6F725B;
-  --ruth-storefront-border: #AAA8A1;
-  --ruth-storefront-border-strong: #AAA8A1;
-  --ruth-storefront-sale: #B9563D;
-  --ruth-storefront-logo-light: #F4F0E8;
-  --ruth-storefront-logo-dark: #111111;
-  --ruth-storefront-translucent: rgb(244 240 232 / 78%);
-  --ruth-storefront-overlay-copy: rgb(17 17 17 / 74%);
+  --ruth-storefront-canvas: var(--rosta-carbon);
+  --ruth-storefront-surface: var(--rosta-carbon-soft);
+  --ruth-storefront-surface-muted: var(--rosta-carbon-soft);
+  --ruth-storefront-surface-soft: var(--rosta-carbon-soft);
+  --ruth-storefront-ink: var(--rosta-cream);
+  --ruth-storefront-muted-ink: color-mix(in srgb, var(--rosta-cream) 72%, transparent);
+  --ruth-storefront-border: color-mix(in srgb, var(--rosta-kraft) 42%, transparent);
+  --ruth-storefront-border-strong: var(--rosta-kraft);
+  --ruth-storefront-sale: var(--rosta-brick-b);
+  --ruth-storefront-logo-light: var(--rosta-cream);
+  --ruth-storefront-logo-dark: var(--rosta-carbon);
+  --ruth-storefront-translucent: color-mix(in srgb, var(--rosta-carbon-soft) 94%, transparent);
+  --ruth-storefront-overlay-copy: color-mix(in srgb, var(--rosta-cream) 74%, transparent);
 
-  --ruth-color-canvas: var(--ruth-storefront-canvas);
-  --ruth-color-surface: var(--ruth-storefront-surface);
-  --ruth-color-surface-muted: var(--ruth-storefront-surface-muted);
-  --ruth-color-text-primary: var(--ruth-storefront-ink);
-  --ruth-color-text-muted: var(--ruth-storefront-muted-ink);
-  --ruth-color-text-inverse: var(--ruth-storefront-logo-light);
-  --ruth-color-accent: #B9563D;
-  --ruth-color-accent-soft: #B9563D;
-  --ruth-color-accent-strong: #2B1B16;
-  --ruth-color-accent-wash: rgb(185 86 61 / 18%);
-  --ruth-color-border-subtle: var(--ruth-storefront-border);
-  --ruth-color-border-strong: var(--ruth-storefront-border-strong);
-  --ruth-color-focus: #B9563D;
-  --ruth-color-overlay: rgb(17 17 17 / 44%);
-  --ruth-color-sale: var(--ruth-storefront-sale);
+  --ruth-color-canvas: var(--rosta-carbon);
+  --ruth-color-surface: var(--rosta-carbon-soft);
+  --ruth-color-surface-muted: var(--rosta-carbon-soft);
+  --ruth-color-surface-elevated: var(--rosta-carbon-soft);
+  --ruth-color-surface-inverse: var(--rosta-cream);
+  --ruth-color-text-primary: var(--rosta-cream);
+  --ruth-color-text-muted: color-mix(in srgb, var(--rosta-cream) 72%, transparent);
+  --ruth-color-text-inverse: var(--rosta-cream);
+  --ruth-color-text-on-light: var(--rosta-carbon);
+  --ruth-color-text-on-action: var(--rosta-action-text);
+  --ruth-color-accent: var(--rosta-brick-b);
+  --ruth-color-accent-soft: color-mix(in srgb, var(--rosta-brick-b) 15%, transparent);
+  --ruth-color-accent-strong: var(--rosta-espresso);
+  --ruth-color-accent-wash: color-mix(in srgb, var(--rosta-brick-b) 15%, transparent);
+  --ruth-color-border-subtle: color-mix(in srgb, var(--rosta-kraft) 42%, transparent);
+  --ruth-color-border-strong: var(--rosta-kraft);
+  --ruth-color-focus: var(--rosta-brick-b);
+  --ruth-color-selected: var(--rosta-brick-b);
+  --ruth-color-overlay: color-mix(in srgb, var(--rosta-carbon) 72%, transparent);
+  --ruth-color-sale: var(--rosta-brick-b);
   --ruth-font-display: var(--font-archivo), "Arial Black", "Helvetica Neue", Arial, sans-serif;
   --ruth-font-body: var(--font-inter), "Helvetica Neue", Arial, sans-serif;
   --ruth-font-logo: var(--font-archivo), "Arial Black", "Helvetica Neue", Arial, sans-serif;
 
   --ruth-ink: var(--ruth-color-text-primary);
   --ruth-ink-muted: var(--ruth-color-text-muted);
-  --ruth-paper: var(--ruth-storefront-surface-soft);
+  --ruth-paper: var(--ruth-color-surface);
   --ruth-surface: var(--ruth-color-surface);
-  --ruth-gold: #B9563D;
-  --ruth-gold-light: #B9563D;
-  --ruth-gold-dark: #2B1B16;
+  --ruth-gold: var(--rosta-brick-b);
+  --ruth-gold-light: color-mix(in srgb, var(--rosta-brick-b) 15%, transparent);
+  --ruth-gold-dark: var(--rosta-brick-b);
   --ruth-border: var(--ruth-color-border-subtle);
-  --ruth-shadow-soft: 0 12px 32px rgb(17 17 17 / 6%);
-  --ruth-shadow-elevated: 0 22px 58px rgb(17 17 17 / 12%);
+  --ruth-shadow-soft: 0 12px 32px color-mix(in srgb, var(--rosta-carbon) 34%, transparent);
+  --ruth-shadow-elevated: 0 22px 58px color-mix(in srgb, var(--rosta-carbon) 52%, transparent);
 
-  --ivory: #F4F0E8;
-  --cream: #F4F0E8;
-  --ink: #111111;
-  --gold: #B9563D;
-  --gold-dark: #2B1B16;
-  --bronze: #2B1B16;
-  --muted-foreground: #6F725B;
-  --background: #F4F0E8;
-  --foreground: #111111;
+  --ivory: var(--rosta-cream);
+  --cream: var(--rosta-cream);
+  --ink: var(--rosta-carbon);
+  --gold: var(--rosta-brick-b);
+  --gold-dark: var(--rosta-espresso);
+  --bronze: var(--rosta-cocoa);
+  --muted-foreground: var(--rosta-cocoa);
+  --background: var(--rosta-carbon);
+  --foreground: var(--rosta-cream);
   --font-heading: var(--ruth-font-display);
   --font-body: var(--ruth-font-body);
 }
 
 /* Keep the private design-system verification route on its established baseline. */
 body:has(.ds-page) {
-  --ruth-storefront-canvas: #F4F0E8;
-  --ruth-storefront-accent: #B9563D;
-  --ruth-color-surface: #F4F0E8;
-  --ruth-color-surface-muted: #F4F0E8;
-  --ruth-color-text-primary: #111111;
-  --ruth-color-text-muted: #6F725B;
-  --ruth-color-text-inverse: #F4F0E8;
-  --ruth-color-accent: #B9563D;
-  --ruth-color-accent-soft: #B9563D;
-  --ruth-color-accent-strong: #2B1B16;
-  --ruth-color-accent-wash: rgb(185 86 61 / 18%);
-  --ruth-color-border-subtle: #AAA8A1;
-  --ruth-color-border-strong: #AAA8A1;
-  --ruth-color-focus: #B9563D;
-  --ruth-color-overlay: rgb(17 17 17 / 46%);
+  --ruth-storefront-canvas: var(--rosta-carbon);
+  --ruth-storefront-accent: var(--rosta-brick-b);
+  --ruth-color-canvas: var(--rosta-carbon);
+  --ruth-color-surface: var(--rosta-carbon-soft);
+  --ruth-color-surface-muted: var(--rosta-carbon-soft);
+  --ruth-color-surface-inverse: var(--rosta-cream);
+  --ruth-color-text-primary: var(--rosta-cream);
+  --ruth-color-text-muted: color-mix(in srgb, var(--rosta-cream) 72%, transparent);
+  --ruth-color-text-inverse: var(--rosta-cream);
+  --ruth-color-accent: var(--rosta-brick-b);
+  --ruth-color-accent-soft: color-mix(in srgb, var(--rosta-brick-b) 15%, transparent);
+  --ruth-color-accent-strong: var(--rosta-espresso);
+  --ruth-color-accent-wash: color-mix(in srgb, var(--rosta-brick-b) 15%, transparent);
+  --ruth-color-border-subtle: color-mix(in srgb, var(--rosta-kraft) 42%, transparent);
+  --ruth-color-border-strong: var(--rosta-kraft);
+  --ruth-color-focus: var(--rosta-brick-b);
+  --ruth-color-overlay: color-mix(in srgb, var(--rosta-carbon) 72%, transparent);
   --ruth-font-display: var(--font-archivo), "Arial Black", "Helvetica Neue", Arial, sans-serif;
   --ruth-font-body: var(--font-inter), "Helvetica Neue", Arial, sans-serif;
   --ruth-font-logo: var(--font-archivo), "Arial Black", "Helvetica Neue", Arial, sans-serif;
-  --ruth-shadow-soft: 0 12px 36px rgb(17 17 17 / 8%);
-  --ruth-shadow-elevated: 0 24px 64px rgb(17 17 17 / 14%);
+  --ruth-shadow-soft: 0 12px 36px color-mix(in srgb, var(--rosta-carbon) 34%, transparent);
+  --ruth-shadow-elevated: 0 24px 64px color-mix(in srgb, var(--rosta-carbon) 54%, transparent);
 }
 
 .site-app-shell:not(:has(.ds-page)) {
@@ -87,9 +94,9 @@ body:has(.ds-page) {
   --ruth-border: var(--ruth-storefront-border);
   --ruth-ink: var(--ruth-storefront-ink);
   --ruth-ink-muted: var(--ruth-storefront-muted-ink);
-  --ruth-gold: var(--ruth-storefront-ink);
-  --ruth-gold-dark: var(--ruth-storefront-ink);
-  --ruth-gold-light: var(--ruth-storefront-border);
+  --ruth-gold: var(--rosta-brick-b);
+  --ruth-gold-dark: var(--rosta-brick-b);
+  --ruth-gold-light: color-mix(in srgb, var(--rosta-brick-b) 15%, transparent);
   background: var(--ruth-color-canvas);
   color: var(--ruth-color-text-primary);
   font-family: var(--ruth-font-body);
@@ -105,29 +112,22 @@ body:has(.ds-page) {
   font-weight: 400;
 }
 
-.site-app-shell:not(:has(.ds-page)) :where(.bg-cream, .bg-ivory, .ruth-card, .ruth-drawer, .ruth-modal, .ruth-page-section) {
+.site-app-shell:not(:has(.ds-page)) :where(.ruth-card, .ruth-drawer, .ruth-modal) {
   background: var(--ruth-color-surface) !important;
+}
+.site-app-shell:not(:has(.ds-page)) :where(.bg-cream, .bg-ivory) {
+  background: var(--rosta-cream) !important;
+  color: var(--rosta-carbon);
 }
 
 .site-app-shell:not(:has(.ds-page)) footer {
   border-top: 1px solid var(--ruth-color-border-subtle) !important;
-  background: var(--ruth-color-surface) !important;
+  background: var(--rosta-carbon) !important;
+  color: var(--rosta-cream);
 }
 
 .site-app-shell:not(:has(.ds-page)) footer :where(.border-gold\/15, .border-gold\/20, .border-gold\/10) {
   border-color: var(--ruth-color-border-subtle) !important;
-}
-
-.site-app-shell:not(:has(.ds-page)) .ruth-status--info,
-.site-app-shell:not(:has(.ds-page)) .ruth-status--success,
-.site-app-shell:not(:has(.ds-page)) .ruth-status--warning {
-  border-color: var(--ruth-color-text-primary) !important;
-  background: var(--ruth-color-text-primary) !important;
-  color: var(--ruth-color-text-inverse) !important;
-}
-
-.site-app-shell:not(:has(.ds-page)) .ruth-status__dot {
-  background: currentColor !important;
 }
 
 .site-app-shell:not(:has(.ds-page)) :where(.ruth-field, .ruth-input-wrap, .ruth-input, .ruth-search-shell, .ruth-search-shell__form) {
@@ -237,7 +237,7 @@ body:has(.ds-page) {
   min-height: 0 !important;
   aspect-ratio: 3 / 4 !important;
   overflow: hidden;
-  background: var(--ruth-color-surface-muted);
+  background: var(--ruth-color-surface-inverse);
 }
 
 .product-zara-gallery-shell [data-product-gallery] > button[data-product-swipe-surface] img {
@@ -261,7 +261,7 @@ body:has(.ds-page) {
 
 .product-zara-gallery-shell [aria-label="Diğer ürün görselleri"] > button {
   aspect-ratio: 3 / 4 !important;
-  background: var(--ruth-color-surface-muted);
+  background: var(--ruth-color-surface-inverse);
 }
 
 .product-zara-gallery-shell [aria-label="Diğer ürün görselleri"] img {
@@ -283,7 +283,7 @@ body:has(.ds-page) {
   min-height: 0;
   aspect-ratio: 3 / 4;
   border-radius: 0;
-  background: var(--ruth-color-surface-muted);
+  background: var(--ruth-color-surface-inverse);
 }
 
 .phase1d-cart-item__media img {
@@ -300,7 +300,7 @@ body:has(.ds-page) {
 }
 
 .site-app-shell:not(:has(.ds-page)) header[data-scrolled="false"] [class*="bar"] {
-  background: var(--ruth-color-canvas) !important;
+  background: transparent !important;
   color: var(--ruth-color-text-primary) !important;
 }
 
@@ -355,7 +355,7 @@ span[class*="collectionImage"] {
   aspect-ratio: 3 / 4;
   margin-bottom: 9px;
   overflow: hidden;
-  background: var(--ruth-color-surface-muted);
+  background: var(--ruth-color-surface-inverse);
 }
 
 span[class*="collectionImage"] img {
