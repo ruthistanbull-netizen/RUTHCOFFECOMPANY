@@ -111,7 +111,7 @@ export function HomeHeroRuntimeAdjustments() {
         }
 
         html.ruth-home-page-active .ruth-zara-header .ruth-zara-header-inner {
-          color: var(--ruth-home-header-ink, #111111) !important;
+          color: var(--ruth-home-header-ink, var(--rosta-cream)) !important;
           mix-blend-mode: normal !important;
         }
 
@@ -121,7 +121,7 @@ export function HomeHeroRuntimeAdjustments() {
 
         html.ruth-home-page-active:has(.ruth-zara-header[data-menu-open="false"])
           .ruth-zara-menu-button {
-          color: var(--ruth-home-header-ink, #111111) !important;
+          color: var(--ruth-home-header-ink, var(--rosta-cream)) !important;
           mix-blend-mode: normal !important;
         }
       }
