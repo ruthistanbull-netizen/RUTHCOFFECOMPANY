@@ -189,20 +189,10 @@
   color: var(--ruth-color-text-primary);
 }
 
-.card:hover .remove,
-.card:hover .edit,
 .card:focus-within .remove,
 .card:focus-within .edit {
   opacity: 1;
   transform: translateY(0) scale(1);
-}
-
-.remove:hover {
-  background: #fff;
-}
-
-.edit:hover {
-  background: var(--ruth-color-surface);
 }
 
 .remove svg,
