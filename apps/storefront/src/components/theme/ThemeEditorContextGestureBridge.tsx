@@ -32,7 +32,7 @@ const TARGET_QUERY = [
 
 const CONTEXT_ID_ATTR = "data-ruth-theme-context-id";
 const CONTEXT_TIME_ATTR = "data-ruth-theme-context-time";
-const LONG_PRESS_MS = 430;
+const LONG_PRESS_MS = 340;
 const LONG_PRESS_MOVE_TOLERANCE_PX = 18;
 
 function hash(value: string) {
@@ -140,10 +140,19 @@ export function ThemeEditorContextGestureBridge() {
       html[data-ruth-theme-gesture-active] video,
       html[data-ruth-theme-gesture-active] a {
         -webkit-user-drag: none !important;
+        -webkit-touch-callout: none !important;
+        -webkit-user-select: none !important;
+        user-select: none !important;
+        touch-action: pan-x pan-y !important;
+      }
+      html[data-ruth-theme-gesture-active] img,
+      html[data-ruth-theme-gesture-active] video {
+        -webkit-tap-highlight-color: transparent !important;
       }
     `;
     document.documentElement.setAttribute("data-ruth-theme-gesture-active", "true");
     document.head.appendChild(style);
+    document.querySelectorAll<HTMLImageElement>("img").forEach((image) => image.setAttribute("draggable", "false"));
 
     const clearPress = () => {
       window.clearTimeout(longPressTimer);
