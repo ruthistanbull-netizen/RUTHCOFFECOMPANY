@@ -369,7 +369,7 @@ export function ControlRoomShell({ children }: { children: ReactNode }) {
 
         <div className={styles.sidebarFooter}>
           <Link className={styles.adminIdentity} href="/settings">
-            <span>RA</span>
+            <span>RC</span>
             <span><strong>ROSTA COFFEE CO.</strong><small>Admin</small></span>
           </Link>
           <Link className={styles.newOrderButton} href="/orders/new"><PackagePlus aria-hidden="true" /><span>Manuel Sipariş</span></Link>
@@ -463,9 +463,9 @@ export function ControlRoomShell({ children }: { children: ReactNode }) {
                 <button type="button" onClick={() => setRuthieDockOpen(false)} aria-label="ROSTA Insight hızlı panelini kapat"><X aria-hidden="true" /></button>
               </header>
               <div className={styles.ruthieDockBody}>
-                <p>Bu sayfadaki işlemleri değiştirmeden Ruthie sesli asistanına veya sohbete geçebilirsin.</p>
-                <Link href="/ruthie" onClick={() => setRuthieDockOpen(false)}><Headphones aria-hidden="true" /><span><strong>Sesli Ruthie</strong><small>Konuşarak işlem ve analiz başlat</small></span></Link>
-                <Link href="/ruthie/chat" onClick={() => setRuthieDockOpen(false)}><MessageSquareText aria-hidden="true" /><span><strong>Ruthie Chat</strong><small>Dosya, fotoğraf ve panel bağlamıyla sohbet et</small></span></Link>
+                <p>Bu sayfadaki işlemleri değiştirmeden ROSTA Insight sesli asistanına veya sohbete geçebilirsin.</p>
+                <Link href="/ruthie" onClick={() => setRuthieDockOpen(false)}><Headphones aria-hidden="true" /><span><strong>Sesli ROSTA Insight</strong><small>Konuşarak işlem ve analiz başlat</small></span></Link>
+                <Link href="/ruthie/chat" onClick={() => setRuthieDockOpen(false)}><MessageSquareText aria-hidden="true" /><span><strong>ROSTA Insight Chat</strong><small>Dosya, fotoğraf ve panel bağlamıyla sohbet et</small></span></Link>
               </div>
             </motion.aside>
           </>
