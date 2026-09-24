@@ -186,12 +186,12 @@ export function ThemeEditorPageCoordinator() {
         body.ruth-theme-live-sections [data-theme-sections-launcher]{display:none!important}
       `}</style>
 
-      <div data-theme-editor-page-coordinator className="fixed left-0 top-0 z-[2147483610] flex h-[70px] w-[390px] items-center border-r border-b border-black/10 bg-white px-4 max-md:h-[70px] max-md:w-[calc(100vw-176px)] max-md:border-r-0 max-md:px-2">
+      <div data-theme-editor-page-coordinator className="fixed left-0 top-0 z-[2147483610] flex h-[70px] w-[390px] items-center border-r border-b border-border-subtle bg-surface-primary px-4 text-main max-md:h-[70px] max-md:w-[calc(100vw-176px)] max-md:border-r-0 max-md:px-2">
         <div className="min-w-0 flex-1">
           <select
             value={selectedValue}
             onChange={(event) => changePage(event.target.value)}
-            className="h-9 w-full rounded-md border border-black/10 bg-white px-3 text-[12px] font-semibold outline-none hover:border-black/20 max-md:h-8 max-md:text-[10px]"
+            className="h-9 w-full rounded-md border border-border-subtle bg-surface-secondary px-3 text-[12px] font-semibold text-main outline-none focus:border-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent max-md:h-8 max-md:text-[10px]"
             aria-label="Düzenlenecek sayfa"
           >
             {grouped.map(([group, items]) => (
@@ -201,34 +201,34 @@ export function ThemeEditorPageCoordinator() {
             ))}
           </select>
           {dynamicPage ? (
-            <label className="mt-1 flex cursor-pointer items-center gap-2 truncate text-[9px] text-black/50">
-              <input type="checkbox" checked={exactPageOnly} onChange={(event) => setExactPageOnly(event.target.checked)} className="h-3.5 w-3.5 shrink-0 accent-[#C9A23A]" />
+            <label className="mt-1 flex cursor-pointer items-center gap-2 truncate text-[9px] text-muted">
+              <input type="checkbox" checked={exactPageOnly} onChange={(event) => setExactPageOnly(event.target.checked)} className="h-3.5 w-3.5 shrink-0 accent-[#C94A40]" />
               <span className="shrink-0">Sadece bu sayfayı düzenle</span>
-              <span className="truncate text-black/28 max-md:hidden">· {pageDetail(path)}</span>
+              <span className="truncate text-subtle max-md:hidden">· {pageDetail(path)}</span>
             </label>
           ) : null}
         </div>
       </div>
 
       {!coreManaged && panelOpen ? (
-        <aside className="fixed bottom-0 left-0 top-[70px] z-[2147483595] flex w-[390px] flex-col border-r border-black/10 bg-white shadow-xl max-md:top-auto max-md:h-[52dvh] max-md:w-full max-md:border-r-0 max-md:border-t">
-          <header className="flex h-[54px] shrink-0 items-center gap-2 border-b border-black/[0.08] px-3">
-            <Layers3 className="ml-1 h-4 w-4 text-black/55" />
+        <aside className="fixed bottom-0 left-0 top-[70px] z-[2147483595] flex w-[390px] flex-col border-r border-border-subtle bg-surface-primary text-main shadow-xl max-md:top-auto max-md:h-[52dvh] max-md:w-full max-md:border-r-0 max-md:border-t">
+          <header className="flex h-[54px] shrink-0 items-center gap-2 border-b border-border-subtle px-3">
+            <Layers3 className="ml-1 h-4 w-4 text-muted" />
             <div className="min-w-0 flex-1">
               <p className="truncate text-[12px] font-semibold">Bölümler · {sections.length}</p>
-              <p className="mt-0.5 truncate text-[9px] text-black/38">{dynamicPage ? `${selectedValue} şablonu` : path}</p>
+              <p className="mt-0.5 truncate text-[9px] text-subtle">{dynamicPage ? `${selectedValue} şablonu` : path}</p>
             </div>
             <button
               type="button"
               onClick={refreshSections}
               disabled={loadingSections}
-              className="grid h-8 w-8 place-items-center rounded-md hover:bg-black/[0.04] disabled:cursor-wait disabled:opacity-60"
+              className="grid h-8 w-8 place-items-center rounded-md active:bg-accent-soft focus-visible:bg-accent-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-wait disabled:opacity-60"
               aria-label="Bölümleri yenile"
               aria-busy={loadingSections || undefined}
             >
               {loadingSections ? <LoadingIndicator size="sm" /> : <RefreshCw className="h-4 w-4" />}
             </button>
-            <button type="button" onClick={() => setPanelOpen(false)} className="h-8 rounded-md border border-black/10 px-3 text-[9px]">Kapat</button>
+            <button type="button" onClick={() => setPanelOpen(false)} className="h-8 rounded-md border border-border-subtle px-3 text-[9px] text-main focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">Kapat</button>
           </header>
 
           <div className="min-h-0 flex-1 overflow-y-auto p-3">
@@ -237,17 +237,17 @@ export function ThemeEditorPageCoordinator() {
                 key={section.id}
                 type="button"
                 onClick={() => { editSection(section.id); setPanelOpen(false); }}
-                className="flex min-h-[48px] w-full items-center gap-3 rounded-md border border-black/[0.08] bg-white px-3 text-left hover:border-[#C9A23A]/35 hover:bg-[#fffaf0]"
+                className="flex min-h-[48px] w-full items-center gap-3 rounded-md border border-border-subtle bg-surface-primary px-3 text-left active:bg-accent-soft focus-visible:border-accent focus-visible:bg-accent-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
-                <span className="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-[#f6edcf] text-[9px] font-semibold text-[#8f6e1f]">{index + 1}</span>
+                <span className="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-accent-soft text-[9px] font-semibold text-accent">{index + 1}</span>
                 <span className="min-w-0 flex-1">
                   <b className="block truncate text-[10px] font-medium">{section.label}</b>
-                  <small className="mt-0.5 block text-[8px] text-black/35">Bölümü düzenle</small>
+                  <small className="mt-0.5 block text-[8px] text-subtle">Bölümü düzenle</small>
                 </span>
-                <ChevronRight className="h-4 w-4 text-black/25" />
+                <ChevronRight className="h-4 w-4 text-subtle" />
               </button>
             ))}</div> : (
-              <div className="rounded-md border border-dashed border-black/12 bg-[#fafafa] p-4 text-center text-[10px] leading-5 text-black/50">
+              <div className="rounded-md border border-dashed border-border-subtle bg-surface-secondary p-4 text-center text-[10px] leading-5 text-muted">
                 {loadingSections ? "Sayfadaki bölümler okunuyor…" : "Bu sayfada ayrı bir bölüm bulunamadı. Önizlemedeki öğelere tıklayarak yine düzenleyebilirsin."}
               </div>
             )}
@@ -256,7 +256,7 @@ export function ThemeEditorPageCoordinator() {
       ) : null}
 
       {!coreManaged && !panelOpen ? (
-        <button type="button" onClick={() => { setPanelOpen(true); setLoadingSections(true); requestSections(); }} className="fixed bottom-[66px] left-3 z-[2147483595] flex h-9 items-center gap-2 rounded-md border border-black/10 bg-white px-3 text-[10px] font-semibold shadow-sm max-md:bottom-3 max-md:bottom-3"><Layers3 className="h-4 w-4" />Bölümler</button>
+        <button type="button" onClick={() => { setPanelOpen(true); setLoadingSections(true); requestSections(); }} className="fixed bottom-[66px] left-3 z-[2147483595] flex h-9 items-center gap-2 rounded-md border border-border-subtle bg-surface-primary px-3 text-[10px] font-semibold text-main shadow-sm active:bg-accent-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent max-md:bottom-3"><Layers3 className="h-4 w-4" />Bölümler</button>
       ) : null}
     </>
   );
