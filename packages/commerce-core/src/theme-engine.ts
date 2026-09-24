@@ -77,7 +77,7 @@ export const defaultThemeCustomizerSettings: ThemeCustomizerSettings = {
     { id: "contact", label: "İletişim", path: "/contact", side: "right", children: [] },
   ] },
   whatsapp: { enabled: false, phone: "", label: "WhatsApp" },
-  homepageImages: { heroImage: "", heroDesktopImage: "", heroMobileImage: "", editorialVideo: "/home/rosta-under-hero-video.mp4", editorialImage: "/home/rosta-under-hero-photo.jpg", scrollImages: ["/scroll-product-1.png", "/scroll-product-2.png", "/scroll-product-3.png", "/scroll-product-4.png", "/scroll-product-5.png", "/scroll-product-6.png"] },
+  homepageImages: { heroImage: "", heroDesktopImage: "", heroMobileImage: "", editorialVideo: "/home/rosta-under-hero-video.mp4", editorialImage: "/home/rosta-under-hero-photo.jpg", scrollImages: ["/home/rosta-hero-current.webp", "/home/rosta-espresso.webp", "/home/rosta-hero-v4.webp", "/home/rosta-under-hero-photo.jpg", "/home/rosta-under-hero-v4.jpg", "/home/rosta-hero.webp"] },
   editor: { pages: {} },
 };
 
