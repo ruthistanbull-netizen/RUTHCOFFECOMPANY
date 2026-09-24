@@ -90,6 +90,7 @@ function requestContext(element: Element, clientX: number, clientY: number, poin
   const rect = element.getBoundingClientRect();
   const section = element.closest<HTMLElement>("[data-theme-section-id]");
   const sectionId = section?.getAttribute("data-theme-section-id") || null;
+  const sectionTarget = Boolean(section && (element === section || element.getAttribute("data-theme-section-id") === sectionId));
 
   document.documentElement.setAttribute(CONTEXT_ID_ATTR, id);
   document.documentElement.setAttribute(CONTEXT_TIME_ATTR, String(Date.now()));
@@ -99,6 +100,7 @@ function requestContext(element: Element, clientX: number, clientY: number, poin
     pathname: themePageKey(window.location.pathname),
     id,
     sectionId,
+    sectionTarget,
     pointerType,
     point: {
       x: Math.max(0, clientX),
