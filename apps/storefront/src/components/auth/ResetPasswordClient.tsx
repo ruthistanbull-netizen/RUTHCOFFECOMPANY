@@ -177,26 +177,26 @@ export function ResetPasswordClient() {
   };
 
   return (
-    <div className="min-h-screen bg-ivory px-4 pb-24 pt-28 md:px-8 md:pt-32">
-      <div className="mx-auto max-w-md rounded-2xl border border-gold/15 bg-cream p-6 shadow-sm md:p-8">
-        <p className="mb-3 text-xs uppercase tracking-wide-luxe text-gold-dark">ROSTA Coffee Co.</p>
+    <div className="min-h-screen bg-carbon px-4 pb-24 pt-28 text-cream md:px-8 md:pt-32">
+      <div className="mx-auto max-w-md rounded-2xl border border-kraft/35 bg-carbon-soft p-6 shadow-sm md:p-8">
+        <p className="mb-3 text-xs uppercase tracking-wide-luxe text-brick">ROSTA Coffee Co.</p>
 
         {checking ? (
           <>
             <h1 className="font-heading text-4xl">Şifre Yenileme</h1>
-            <div className="mt-8 flex items-center gap-3 rounded-xl border border-gold/15 bg-ivory p-4 text-sm text-muted-ruth" role="status" aria-busy="true">
+            <div className="mt-8 flex items-center gap-3 rounded-xl border border-kraft/35 bg-carbon p-4 text-sm text-cream/70" role="status" aria-busy="true">
               <LoadingIndicator size="sm" /> Bağlantı doğrulanıyor…
             </div>
           </>
         ) : ready ? (
           <>
             <h1 className="font-heading text-4xl">Yeni Şifreni Belirle</h1>
-            <p className="mt-3 text-sm leading-7 text-muted-ruth">
+            <p className="mt-3 text-sm leading-7 text-cream/70">
               {recoveryEmail} hesabın için yeni şifreni oluştur.
             </p>
 
             <form onSubmit={submit} className="mt-7 space-y-4">
-              <label className="block text-xs uppercase tracking-wide-luxe text-muted-ruth">
+              <label className="block text-xs uppercase tracking-wide-luxe text-cream/70">
                 Yeni Şifre
                 <input
                   required
@@ -205,10 +205,10 @@ export function ResetPasswordClient() {
                   autoComplete="new-password"
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
-                  className="mt-2 w-full rounded-lg border border-gold/20 bg-ivory px-4 py-3 text-sm normal-case tracking-normal text-ink outline-none transition focus:border-gold-dark"
+                  className="mt-2 w-full rounded-lg border border-kraft/40 bg-carbon px-4 py-3 text-sm normal-case tracking-normal text-cream outline-none transition focus:border-brick focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
                 />
               </label>
-              <label className="block text-xs uppercase tracking-wide-luxe text-muted-ruth">
+              <label className="block text-xs uppercase tracking-wide-luxe text-cream/70">
                 Şifreyi Tekrarla
                 <input
                   required
@@ -217,17 +217,17 @@ export function ResetPasswordClient() {
                   autoComplete="new-password"
                   value={confirmPassword}
                   onChange={(event) => setConfirmPassword(event.target.value)}
-                  className="mt-2 w-full rounded-lg border border-gold/20 bg-ivory px-4 py-3 text-sm normal-case tracking-normal text-ink outline-none transition focus:border-gold-dark"
+                  className="mt-2 w-full rounded-lg border border-kraft/40 bg-carbon px-4 py-3 text-sm normal-case tracking-normal text-cream outline-none transition focus:border-brick focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
                 />
               </label>
 
-              {error ? <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div> : null}
+              {error ? <div className="rounded-lg border border-[var(--ruth-color-danger)]/40 bg-[var(--ruth-color-danger-soft)] px-4 py-3 text-sm text-[var(--ruth-color-danger-text)]">{error}</div> : null}
 
               <button
                 type="submit"
                 disabled={saving}
                 aria-busy={saving || undefined}
-                className="flex w-full items-center justify-center gap-2 bg-ink px-8 py-4 text-xs uppercase tracking-wide-luxe text-cream transition hover:bg-gold-dark disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex w-full items-center justify-center gap-2 bg-brick px-8 py-4 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)] transition active:bg-espresso disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
               >
                 {saving ? <LoadingIndicator size="sm" /> : null}
                 {saving ? "Kaydediliyor" : "Şifremi Yenile"}
@@ -238,22 +238,22 @@ export function ResetPasswordClient() {
         ) : recoveryAttempted ? (
           <>
             <h1 className="font-heading text-4xl">Bağlantı Geçersiz</h1>
-            <div className="mt-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm leading-6 text-red-700">
+            <div className="mt-6 rounded-xl border border-[var(--ruth-color-danger)]/40 bg-[var(--ruth-color-danger-soft)] p-4 text-sm leading-6 text-[var(--ruth-color-danger-text)]">
               {error || "Bu şifre yenileme bağlantısının süresi dolmuş veya bağlantı daha önce kullanılmış."}
             </div>
-            <Link href="/reset-password" className="mt-5 inline-flex text-xs uppercase tracking-wide-luxe text-gold-dark underline-offset-4 hover:underline">
+            <Link href="/reset-password" className="mt-5 inline-flex text-xs uppercase tracking-wide-luxe text-brick underline-offset-4 focus-visible:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick">
               Yeni bağlantı iste
             </Link>
           </>
         ) : (
           <>
             <h1 className="font-heading text-4xl">Şifreni mi Unuttun?</h1>
-            <p className="mt-3 text-sm leading-7 text-muted-ruth">
+            <p className="mt-3 text-sm leading-7 text-cream/70">
               Hesabına bağlı e-posta adresini gir. Sana güvenli bir şifre yenileme bağlantısı gönderelim.
             </p>
 
             <form onSubmit={requestReset} className="mt-7 space-y-4">
-              <label className="block text-xs uppercase tracking-wide-luxe text-muted-ruth">
+              <label className="block text-xs uppercase tracking-wide-luxe text-cream/70">
                 E-posta
                 <input
                   required
@@ -261,22 +261,22 @@ export function ResetPasswordClient() {
                   autoComplete="email"
                   value={requestEmail}
                   onChange={(event) => setRequestEmail(event.target.value)}
-                  className="mt-2 w-full rounded-lg border border-gold/20 bg-ivory px-4 py-3 text-sm normal-case tracking-normal text-ink outline-none transition focus:border-gold-dark"
+                  className="mt-2 w-full rounded-lg border border-kraft/40 bg-carbon px-4 py-3 text-sm normal-case tracking-normal text-cream outline-none transition focus:border-brick focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
                 />
               </label>
 
               {requestSent ? (
-                <div className="rounded-lg border border-gold/20 bg-ivory px-4 py-3 text-sm leading-6 text-muted-ruth">
+                <div className="rounded-lg border border-kraft/40 bg-carbon px-4 py-3 text-sm leading-6 text-cream/70">
                   Bu e-posta ile bir hesap varsa şifre yenileme bağlantısı gönderildi. Gelen kutunu ve spam klasörünü kontrol et.
                 </div>
               ) : null}
-              {error ? <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div> : null}
+              {error ? <div className="rounded-lg border border-[var(--ruth-color-danger)]/40 bg-[var(--ruth-color-danger-soft)] px-4 py-3 text-sm text-[var(--ruth-color-danger-text)]">{error}</div> : null}
 
               <button
                 type="submit"
                 disabled={requesting}
                 aria-busy={requesting || undefined}
-                className="flex w-full items-center justify-center gap-2 bg-ink px-8 py-4 text-xs uppercase tracking-wide-luxe text-cream transition hover:bg-gold-dark disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex w-full items-center justify-center gap-2 bg-brick px-8 py-4 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)] transition active:bg-espresso disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
               >
                 {requesting ? <LoadingIndicator size="sm" /> : <Mail size={15} />}
                 {requesting ? "Gönderiliyor" : requestSent ? "Tekrar Gönder" : "Bağlantı Gönder"}
