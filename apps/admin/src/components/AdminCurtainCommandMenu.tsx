@@ -25,7 +25,7 @@ const GROUP_LABELS: Record<string, string> = {
   "Meta Reklamları": "Meta Reklamları",
   MAĞAZA: "Mağaza",
   RAPORLAMA: "Analitik",
-  Ruthie: "Ruthie",
+  Ruthie: "ROSTA Insight",
   "YAPAY ZEKA": "Yapay Zeka",
   SİSTEM: "Sistem",
 };
