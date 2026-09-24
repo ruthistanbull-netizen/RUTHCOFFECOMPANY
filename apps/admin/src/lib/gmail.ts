@@ -67,6 +67,8 @@ export function encryptRefreshToken(token: string) {
   return `${TOKEN_PREFIX}${iv.toString("base64url")}:${tag.toString("base64url")}:${ciphertext.toString("base64url")}`;
 }
 
+export const encryptGmailRefreshToken = encryptRefreshToken;
+
 export function decryptRefreshToken(stored: string) {
   const value = String(stored || "").trim();
   if (!value) return "";
@@ -308,6 +310,17 @@ export function loadRostaInlineLogo(): InlineEmailImage[] {
 
 export const loadRuthInlineLogo = loadRostaInlineLogo;
 
+
+export async function getGmailMessage(accessToken: string, messageId: string, format: "full" | "metadata" = "full") {
+  const params = new URLSearchParams({ format });
+  const response = await fetch(
+    `https://gmail.googleapis.com/gmail/v1/users/me/messages/${encodeURIComponent(messageId)}?${params.toString()}`,
+    { headers: { Authorization: `Bearer ${accessToken}` }, cache: "no-store" },
+  );
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error?.message || "Gmail mesajı okunamadı.");
+  return data as GmailMessage;
+}
 
 export async function getGmailThread(accessToken: string, threadId: string) {
   const response = await fetch(
