@@ -33,28 +33,28 @@ export default async function CategoriesPage() {
   const countMap = new Map(counts);
 
   return (
-    <div className="min-h-screen bg-ivory pt-[calc(var(--announcement-height,0px)+96px)]">
+    <div className="min-h-screen bg-carbon pt-[calc(var(--announcement-height,0px)+96px)] text-cream">
       <div className="mx-auto max-w-7xl px-4 py-12 md:px-8 md:py-20">
         <PageIntro eyebrow="Kategoriler" title="Ürünleri kategoriye göre keşfet" className="mb-14 md:mb-20" />
 
         {categories.length === 0 ? (
-          <p className="text-center text-muted-ruth">Henüz aktif kategori bulunmuyor.</p>
+          <p className="text-center text-cream/70">Henüz aktif kategori bulunmuyor.</p>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {categories.map((category, index) => (
               <AnimatedBlock key={category.id} delay={index * 0.06}>
                 <Link
                   href={categoryHref(category.public_slug || category.slug)}
-                  className="group flex min-h-[280px] flex-col justify-between overflow-hidden rounded-2xl bg-cream p-6 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-ink/8"
-                  style={{ border: "1px solid rgba(184,151,106,0.14)" }}
+                  className="group flex min-h-[280px] flex-col justify-between overflow-hidden rounded-2xl bg-carbon-soft p-6 transition duration-300   "
+                  style={{ border: "1px solid color-mix(in srgb, var(--rosta-kraft) 30%, transparent)" }}
                 >
                   <div>
-                    <p className="mb-5 text-[10px] uppercase tracking-wide-luxe text-gold-dark">
+                    <p className="mb-5 text-[10px] uppercase tracking-wide-luxe text-brick">
                       {String(countMap.get(String(category.id)) || 0).padStart(2, "0")} Ürün
                     </p>
-                    <h2 className="font-heading text-4xl text-ink">{category.name}</h2>
+                    <h2 className="font-heading text-4xl text-cream">{category.name}</h2>
                   </div>
-                  <span className="mt-10 text-xs uppercase tracking-wide-luxe text-gold-dark">Görüntüle</span>
+                  <span className="mt-10 text-xs uppercase tracking-wide-luxe text-brick">Görüntüle</span>
                 </Link>
               </AnimatedBlock>
             ))}
