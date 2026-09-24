@@ -172,7 +172,7 @@ export function ExactIntegrationsPanelV2() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-2"><h3 className="text-sm font-semibold text-main">{item.label}</h3><ExactStatusBadge status={state.connected ? "active" : "archived"} label={state.connected ? "Bağlı" : "Bağlı değil"} size="sm" /></div>
                   <p className="mt-1 text-xs leading-relaxed text-muted">{item.description}</p>
-                  <div className="mt-2 flex flex-wrap gap-1">{item.scopes.map((entry) => <span key={entry} className="rounded-full bg-accent-soft px-2 py-0.5 text-[8px] font-semibold uppercase text-accent">{entry}</span>)}</div>
+                  <div className="mt-2 flex flex-wrap gap-1">{item.scopes.map((entry) => <span key={entry} className="rounded-full bg-accent-soft px-2 py-0.5 text-[8px] font-semibold uppercase text-accent">{entry === "ruthie" ? "ROSTA Insight" : entry}</span>)}</div>
                 </div>
               </div>
               <div className="mt-4 rounded-[var(--radius-small)] bg-surface-secondary p-3"><p className="text-[9px] font-semibold uppercase tracking-wide text-subtle">Durum</p><p className="mt-1 text-xs text-main">{state.detail}</p></div>
