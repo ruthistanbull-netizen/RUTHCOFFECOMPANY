@@ -240,7 +240,7 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
           {sent ? (
             <div>
               <p className="text-[15px] leading-relaxed text-muted">
-                Şifre yenileme bağlantısı <strong className="font-medium text-white">{email}</strong> adresine gönderildi.
+                Şifre yenileme bağlantısı <strong className="font-medium text-main">{email}</strong> adresine gönderildi.
               </p>
               <Link href="/login" className="mt-7 inline-flex h-11 w-full items-center justify-center rounded-[4px] bg-accent text-[14px] font-semibold text-[var(--rosta-action-text)] transition active:scale-[0.985] active:bg-[var(--rosta-espresso)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
                 Giriş ekranına dön
@@ -308,13 +308,13 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
 
               {mode === "login" ? (
                 <div className="flex items-center justify-between gap-4 pt-0.5">
-                  <label className="inline-flex min-h-9 cursor-pointer items-center gap-2 text-[12px] text-white/58">
+                  <label className="inline-flex min-h-9 cursor-pointer items-center gap-2 text-[12px] text-muted">
                     <input
                       type="checkbox"
                       checked={rememberSession}
                       onChange={(event) => setRememberSession(event.target.checked)}
                       disabled={loading}
-                      className="h-4 w-4 rounded border-white/35 bg-transparent accent-[#C94A40]"
+                      className="h-4 w-4 rounded border-border-strong bg-transparent accent-[#C94A40]"
                     />
                     <span>Oturumu açık tut</span>
                   </label>
@@ -341,7 +341,7 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
               ) : null}
 
               {mode === "reset" && !checkingRecovery && !recoveryReady ? (
-                <Link href="/forgot-password" className="flex h-[48px] w-full items-center justify-center rounded-[4px] bg-white text-[14px] font-bold text-black transition active:scale-[0.98]">
+                <Link href="/forgot-password" className="flex h-[48px] w-full items-center justify-center rounded-[4px] bg-accent text-[14px] font-bold text-[var(--rosta-action-text)] transition active:scale-[0.98] active:bg-[var(--rosta-espresso)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
                   Yeni bağlantı iste
                 </Link>
               ) : null}
