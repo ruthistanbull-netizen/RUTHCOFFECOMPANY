@@ -81,7 +81,7 @@ export function AppFrame({ children }: { children: ReactNode }) {
             minHeight: "100dvh",
             overflow: "hidden",
             transform: "none",
-            background: "#141414",
+            background: "#111111",
           }}
         >
           {children}
