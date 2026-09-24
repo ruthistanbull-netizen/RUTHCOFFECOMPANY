@@ -130,7 +130,7 @@ function EditorialMedia({
       className={`home-editorial-slide relative h-[108svh] ${index ? "-mt-[8svh]" : ""}`}
       data-editorial-kind={slide.kind}
     >
-      <div className="sticky top-0 h-[100svh] min-h-[560px] overflow-hidden bg-ivory lg:min-h-[700px]">
+      <div className="sticky top-0 h-[100svh] min-h-[560px] overflow-hidden bg-carbon lg:min-h-[700px]">
         <motion.div
           className={wrapperClass}
           style={reduceMotion ? undefined : { y, scale, opacity, willChange: "transform, opacity" }}
