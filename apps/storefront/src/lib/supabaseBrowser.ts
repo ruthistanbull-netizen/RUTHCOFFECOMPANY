@@ -33,7 +33,11 @@ export function getSupabaseBrowser() {
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
   )?.trim();
 
-  if (!supabaseAnonKey) {\n    throw new Error("Supabase env eksik: public anon/publishable key gerekli.");\n  }\n\n  if (!browserClient) {
+  if (!supabaseAnonKey) {
+    throw new Error("Supabase env eksik: public anon/publishable key gerekli.");
+  }
+
+  if (!browserClient) {
     browserClient = installPasswordResetEmailBridge(createClient(supabaseUrl, supabaseAnonKey));
   }
 
