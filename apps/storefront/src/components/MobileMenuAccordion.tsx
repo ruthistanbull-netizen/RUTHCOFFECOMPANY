@@ -16,17 +16,6 @@ import type { Category, Collection } from "@/types/site";
 type NavChild = { label: string; path: string };
 type AccordionItem = ThemeNavItem & { children?: NavChild[] };
 
-const COLLECTION_ORDER = [
-  "ruthatelier",
-  "ateliersetleri",
-  "sunkissed",
-  "nazar",
-  "handmadespecials",
-  "arya",
-  "mantra",
-  "huna",
-];
-
 function uniqueChildren(items: NavChild[]) {
   const byPath = new Map<string, NavChild>();
   for (const item of items) {
@@ -36,25 +25,8 @@ function uniqueChildren(items: NavChild[]) {
   return [...byPath.values()];
 }
 
-function collectionKey(collection: Collection) {
-  return collection.slug
-    .toLocaleLowerCase("tr-TR")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]/g, "");
-}
-
 function orderedCollections(collections: Collection[]) {
-  return collections
-    .map((item, sourceIndex) => ({ item, sourceIndex }))
-    .sort((a, b) => {
-      const aIndex = COLLECTION_ORDER.indexOf(collectionKey(a.item));
-      const bIndex = COLLECTION_ORDER.indexOf(collectionKey(b.item));
-      const safeA = aIndex === -1 ? COLLECTION_ORDER.length + a.sourceIndex : aIndex;
-      const safeB = bIndex === -1 ? COLLECTION_ORDER.length + b.sourceIndex : bIndex;
-      return safeA - safeB;
-    })
-    .map(({ item }) => item);
+  return collections;
 }
 
 export function MobileMenuAccordion({
