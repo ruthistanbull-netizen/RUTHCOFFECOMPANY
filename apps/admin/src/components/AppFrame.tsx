@@ -107,32 +107,6 @@ export function AppFrame({ children }: { children: ReactNode }) {
             transform: "none",
           }}
         >
-          <a
-            href="/"
-            aria-label="Panele dön"
-            title="Panele dön"
-            style={{
-              position: "fixed",
-              left: 10,
-              top: 10,
-              zIndex: 2147483647,
-              width: 36,
-              height: 36,
-              borderRadius: 12,
-              border: "1px solid rgba(0,0,0,.12)",
-              background: "rgba(255,255,255,.94)",
-              boxShadow: "0 6px 24px rgba(0,0,0,.10)",
-              display: "grid",
-              placeItems: "center",
-              color: "#111",
-              fontSize: 18,
-              lineHeight: 1,
-              textDecoration: "none",
-              backdropFilter: "blur(12px)",
-            }}
-          >
-            ←
-          </a>
           {children}
         </div>
       </RequireAdmin>
