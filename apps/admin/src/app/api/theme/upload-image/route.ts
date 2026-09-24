@@ -6,11 +6,17 @@ import { RUTH_PRODUCT_PHOTO_BUCKET } from "@/lib/productPhotoStorage";
 
 export const runtime = "nodejs";
 
-const MAX_BYTES = 24 * 1024 * 1024;
-const PASSTHROUGH_TYPES: Record<string, { extension: string; contentType: string }> = {
+const MAX_IMAGE_BYTES = 24 * 1024 * 1024;
+const MAX_VIDEO_BYTES = 80 * 1024 * 1024;
+const MAX_BYTES = MAX_VIDEO_BYTES;
+const PASSTHROUGH_TYPES: Record<string, { extension: string; contentType: string; mediaType?: "image" | "video" }> = {
   "image/jpeg": { extension: "jpg", contentType: "image/jpeg" },
   "image/png": { extension: "png", contentType: "image/png" },
   "image/webp": { extension: "webp", contentType: "image/webp" },
+  "video/mp4": { extension: "mp4", contentType: "video/mp4", mediaType: "video" },
+  "video/webm": { extension: "webm", contentType: "video/webm", mediaType: "video" },
+  "video/quicktime": { extension: "mov", contentType: "video/quicktime", mediaType: "video" },
+  "video/x-m4v": { extension: "m4v", contentType: "video/x-m4v", mediaType: "video" },
 };
 const CONVERT_TYPES = new Set([
   "image/avif",
@@ -55,14 +61,16 @@ export async function POST(request: Request) {
   if (!(file instanceof File)) {
     return NextResponse.json({ ok: false, error: "Dosya bulunamadı." }, { status: 400 });
   }
-  if (file.size <= 0 || file.size > MAX_BYTES) {
-    return NextResponse.json({ ok: false, error: "Görsel en fazla 24 MB olabilir." }, { status: 413 });
+  const isVideo = String(file.type || "").toLowerCase().startsWith("video/") || /\.(mp4|m4v|mov|webm)$/i.test(file.name || "");
+  const fileLimit = isVideo ? MAX_VIDEO_BYTES : MAX_IMAGE_BYTES;
+  if (file.size <= 0 || file.size > fileLimit) {
+    return NextResponse.json({ ok: false, error: isVideo ? "Video en fazla 80 MB olabilir." : "Görsel en fazla 24 MB olabilir." }, { status: 413 });
   }
 
   const kind = fileKind(file);
   if (!kind) {
     return NextResponse.json(
-      { ok: false, error: "JPG, PNG, WebP, AVIF, HEIC veya HEIF görsel yükleyebilirsin." },
+      { ok: false, error: "JPG, PNG, WebP, AVIF, HEIC, MP4, MOV veya WebM yükleyebilirsin." },
       { status: 415 },
     );
   }
@@ -99,6 +107,7 @@ export async function POST(request: Request) {
         ok: true,
         url: data.publicUrl,
         converted: kind.mode === "convert",
+        mediaType: kind.mediaType || "image",
         preservedAspectRatio: true,
       },
       { headers: { "Cache-Control": "no-store" } },
