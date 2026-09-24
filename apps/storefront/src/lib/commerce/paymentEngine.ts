@@ -45,6 +45,7 @@ export function safeText(value: unknown, maxLength: number) {
 export function getClientIp(request: Request) {
   const candidate =
     request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    request.headers.get("x-vercel-forwarded-for")?.split(",")[0]?.trim() ||
     request.headers.get("x-real-ip")?.trim() ||
     "127.0.0.1";
   return candidate.replace(/^::ffff:/i, "").slice(0, 39);
