@@ -31,12 +31,6 @@
   transition: transform var(--ruth-motion-normal) var(--ruth-easing), box-shadow var(--ruth-motion-normal) var(--ruth-easing), border-color var(--ruth-motion-normal) ease;
 }
 
-.ruth-order-card--linked:hover {
-  transform: translateY(-2px);
-  border-color: var(--ruth-gold-light);
-  box-shadow: var(--ruth-shadow-soft);
-}
-
 .ruth-order-card__header {
   display: flex;
   align-items: flex-start;
@@ -102,11 +96,12 @@
   position: relative;
   z-index: 3;
   padding: 11px 13px;
-  border: 1px solid rgba(184, 151, 106, 0.36);
+  border: 1px solid color-mix(in srgb, var(--ruth-color-warning) 42%, transparent);
   border-radius: var(--ruth-radius-sm);
-  background: rgba(212, 184, 150, 0.12);
+  background: var(--ruth-color-warning-soft);
   font-size: 13px;
   line-height: 1.5;
+  color: var(--ruth-color-warning-text);
 }
 
 .ruth-order-card__statuses {
@@ -283,4 +278,12 @@
 
 @media (prefers-reduced-motion: reduce) {
   .ruth-order-card--linked { transition: none; }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ruth-order-card--linked:hover {
+    transform: translateY(-2px);
+    border-color: var(--ruth-color-accent);
+    box-shadow: var(--ruth-shadow-soft);
+  }
 }
