@@ -141,12 +141,49 @@ function UploadCard({ title, value, busy, onFile }: { title: string; value: stri
   );
 }
 
-function ColorField({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
+const ROSTA_EDITOR_COLORS = [
+  { label: "Carbon", value: "#111111" },
+  { label: "Carbon Soft", value: "#242424" },
+  { label: "Cream", value: "#FBF3E6" },
+  { label: "Brick B", value: "#C94A40" },
+  { label: "Espresso", value: "#38251C" },
+  { label: "Cocoa", value: "#6B4638" },
+  { label: "Kraft", value: "#C8A77D" },
+  { label: "Action White", value: "#FFFFFF" },
+] as const;
+
+function LockedColorField({ label, value }: { label: string; value: string }) {
   return (
-    <label className="flex h-11 items-center gap-2 rounded-xl border border-black/[0.08] bg-[#fafafa] px-3">
-      <input type="color" value={value} onChange={(event) => onChange(event.target.value)} className="h-7 w-8 border-0 bg-transparent p-0" />
+    <div className="flex h-11 items-center gap-2 rounded-xl border border-black/[0.08] bg-[#fafafa] px-3">
+      <span className="h-7 w-8 rounded-md border border-black/10" style={{ background: value }} aria-hidden="true" />
       <span className="min-w-0 flex-1 text-[10px] font-medium">{label}</span>
       <span className="text-[8px] uppercase text-black/35">{value}</span>
+    </div>
+  );
+}
+
+function BrandColorSelect({
+  label,
+  value,
+  onChange,
+  allowDefault = true,
+}: {
+  label: string;
+  value: string | null | undefined;
+  onChange: (value: string | null) => void;
+  allowDefault?: boolean;
+}) {
+  return (
+    <label className="block">
+      <span className="mb-1 block text-[8px] text-black/45">{label}</span>
+      <select
+        value={value || ""}
+        onChange={(event) => onChange(event.target.value || null)}
+        className="h-10 w-full rounded-lg border border-black/[0.08] bg-[#fafafa] px-2.5 text-[9px] outline-none focus:border-[#C94A40]/60"
+      >
+        {allowDefault ? <option value="">Varsayılan</option> : null}
+        {ROSTA_EDITOR_COLORS.map((color) => <option key={color.value} value={color.value}>{color.label} · {color.value}</option>)}
+      </select>
     </label>
   );
 }
@@ -524,7 +561,7 @@ export function VisualThemeCustomizer() {
 
             {!loading && sideView === "theme" ? (
               <div className="space-y-3">
-                <div className={panelCard()}><p className="mb-3 text-[10px] font-semibold">Site renkleri</p><div className="space-y-2"><ColorField label="Ana arka plan" value={settings.colors.ivory} onChange={(ivory) => setSettings((current) => ({ ...current, colors: { ...current.colors, ivory } }))} /><ColorField label="İkincil arka plan" value={settings.colors.cream} onChange={(cream) => setSettings((current) => ({ ...current, colors: { ...current.colors, cream } }))} /><ColorField label="Ana yazı" value={settings.colors.ink} onChange={(ink) => setSettings((current) => ({ ...current, colors: { ...current.colors, ink } }))} /><ColorField label="Vurgu" value={settings.colors.gold} onChange={(gold) => setSettings((current) => ({ ...current, colors: { ...current.colors, gold } }))} /></div></div>
+                <div className={panelCard()}><div className="mb-3"><p className="text-[10px] font-semibold">ROSTA renk sistemi</p><p className="mt-1 text-[8px] leading-4 text-black/40">Marka paleti kilitli. Tema düzenleyici içerik, görsel, ölçü ve yerleşimi değiştirir; marka renkleri bu sistemin dışına çıkmaz.</p></div><div className="space-y-2"><LockedColorField label="Ana arka plan · Carbon" value="#111111" /><LockedColorField label="İkincil yüzey · Carbon Soft" value="#242424" /><LockedColorField label="Ana yazı · Cream" value="#FBF3E6" /><LockedColorField label="Ana aksiyon · Brick B" value="#C94A40" /><LockedColorField label="Basılı / güçlü · Espresso" value="#38251C" /><LockedColorField label="İkincil kahve · Cocoa" value="#6B4638" /><LockedColorField label="Sınır · Kraft" value="#C8A77D" /></div></div>
                 <div className={panelCard()}><p className="mb-2 text-[10px] font-semibold">WhatsApp</p><label className="block"><span className="mb-1 block text-[8px] text-black/40">Buton yazısı</span><input value={settings.whatsapp.label} onChange={(event) => setSettings((current) => ({ ...current, whatsapp: { ...current.whatsapp, label: event.target.value } }))} className={fieldClass()} /></label><label className="mt-2 block"><span className="mb-1 block text-[8px] text-black/40">Telefon</span><input value={settings.whatsapp.phone} onChange={(event) => setSettings((current) => ({ ...current, whatsapp: { ...current.whatsapp, phone: event.target.value.replace(/\D/g, "") } }))} className={fieldClass()} /></label></div>
               </div>
             ) : null}
@@ -597,11 +634,11 @@ export function VisualThemeCustomizer() {
               </div>
               <div className="mt-3">
                 <div className="mb-1 flex justify-between text-[8px] text-black/45"><span>Yatay odak</span><span>{Math.round(numberStyle("objectPositionX", selectedMetrics?.objectPositionX ?? 50))}%</span></div>
-                <input type="range" min={0} max={100} value={numberStyle("objectPositionX", selectedMetrics?.objectPositionX ?? 50)} onChange={(event) => patchDeviceStyle({ objectPositionX: Number(event.target.value) })} className="w-full accent-[#b28c43]" />
+                <input type="range" min={0} max={100} value={numberStyle("objectPositionX", selectedMetrics?.objectPositionX ?? 50)} onChange={(event) => patchDeviceStyle({ objectPositionX: Number(event.target.value) })} className="w-full accent-[#C94A40]" />
               </div>
               <div className="mt-2">
                 <div className="mb-1 flex justify-between text-[8px] text-black/45"><span>Dikey odak</span><span>{Math.round(numberStyle("objectPositionY", selectedMetrics?.objectPositionY ?? 50))}%</span></div>
-                <input type="range" min={0} max={100} value={numberStyle("objectPositionY", selectedMetrics?.objectPositionY ?? 50)} onChange={(event) => patchDeviceStyle({ objectPositionY: Number(event.target.value) })} className="w-full accent-[#b28c43]" />
+                <input type="range" min={0} max={100} value={numberStyle("objectPositionY", selectedMetrics?.objectPositionY ?? 50)} onChange={(event) => patchDeviceStyle({ objectPositionY: Number(event.target.value) })} className="w-full accent-[#C94A40]" />
               </div>
             </section>
           ) : null}
@@ -643,11 +680,9 @@ export function VisualThemeCustomizer() {
                   </select>
                 </label>
               </div>
-              <label className="mt-2 flex h-10 items-center gap-2 rounded-lg border border-black/[0.08] bg-[#fafafa] px-2.5">
-                <input type="color" value={selectedDeviceStyle?.color || selectedMetrics?.color || "#111111"} onChange={(event) => patchDeviceStyle({ color: event.target.value })} className="h-6 w-8 border-0 bg-transparent p-0" />
-                <span className="text-[8px] font-medium text-black/50">Yazı rengi</span>
-                <span className="ml-auto text-[8px] uppercase text-black/35">{selectedDeviceStyle?.color || selectedMetrics?.color || "#111111"}</span>
-              </label>
+              <div className="mt-2">
+                <BrandColorSelect label="Yazı rengi" value={selectedDeviceStyle?.color} onChange={(color) => patchDeviceStyle({ color })} />
+              </div>
             </section>
           ) : null}
 
@@ -691,10 +726,7 @@ export function VisualThemeCustomizer() {
                 </label>
               </div>
               <div className="mt-2 grid grid-cols-2 gap-2">
-                <label className="flex h-10 items-center gap-2 rounded-lg border border-black/[0.08] bg-[#fafafa] px-2.5">
-                  <input type="color" value={selectedDeviceStyle?.backgroundColor || selectedMetrics?.backgroundColor || "#ffffff"} onChange={(event) => patchDeviceStyle({ backgroundColor: event.target.value })} className="h-6 w-8 border-0 bg-transparent p-0" />
-                  <span className="text-[8px] font-medium text-black/50">Arka plan</span>
-                </label>
+                <BrandColorSelect label="Arka plan" value={selectedDeviceStyle?.backgroundColor} onChange={(backgroundColor) => patchDeviceStyle({ backgroundColor })} />
                 <label className="block">
                   <span className="mb-1 block text-[8px] text-black/45">Köşe</span>
                   <input type="number" min={0} max={1000} value={Math.round(numberStyle("borderRadius", selectedMetrics?.borderRadius || 0))} onChange={(event) => patchDeviceStyle({ borderRadius: Number(event.target.value) || 0 })} className="h-9 w-full rounded-lg border border-black/10 bg-[#fafafa] px-2 text-[9px] outline-none" />
@@ -702,7 +734,7 @@ export function VisualThemeCustomizer() {
               </div>
               <div className="mt-3">
                 <div className="mb-1 flex justify-between text-[8px] text-black/45"><span>Opaklık</span><span>{Math.round(numberStyle("opacity", selectedMetrics?.opacity ?? 1) * 100)}%</span></div>
-                <input type="range" min={0.05} max={1} step={0.05} value={numberStyle("opacity", selectedMetrics?.opacity ?? 1)} onChange={(event) => patchDeviceStyle({ opacity: Number(event.target.value) })} className="w-full accent-[#b28c43]" />
+                <input type="range" min={0.05} max={1} step={0.05} value={numberStyle("opacity", selectedMetrics?.opacity ?? 1)} onChange={(event) => patchDeviceStyle({ opacity: Number(event.target.value) })} className="w-full accent-[#C94A40]" />
               </div>
             </section>
           ) : null}
