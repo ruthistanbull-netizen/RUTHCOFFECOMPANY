@@ -277,24 +277,24 @@ export function AccountClient({ ordersOnly = false }: { ordersOnly?: boolean }) 
 
   if (isLoading || isFetching) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-ivory px-4 pt-20" role="status" aria-busy="true">
-        <LoadingIndicator size="lg" className="text-gold-dark" label={ordersOnly ? "Siparişler yükleniyor" : "Hesap bilgileri yükleniyor"} />
+      <div className="flex min-h-screen items-center justify-center bg-carbon px-4 pt-20" role="status" aria-busy="true">
+        <LoadingIndicator size="lg" className="text-brick" label={ordersOnly ? "Siparişler yükleniyor" : "Hesap bilgileri yükleniyor"} />
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-ivory px-4 pt-20 text-center">
-        <div className="max-w-md rounded-2xl border border-gold/15 bg-cream p-8">
-          <UserRound className="mx-auto mb-5 text-gold-dark" size={34} />
+      <div className="flex min-h-screen items-center justify-center bg-carbon px-4 pt-20 text-center">
+        <div className="max-w-md rounded-2xl border border-kraft/35 bg-carbon-soft p-8">
+          <UserRound className="mx-auto mb-5 text-brick" size={34} />
           <h1 className="font-heading text-4xl">Giriş yapman gerekiyor</h1>
-          <p className="mt-4 text-sm leading-7 text-muted-ruth">
+          <p className="mt-4 text-sm leading-7 text-cream/70">
             Hesabını ve siparişlerini görmek için giriş yap.
           </p>
           <Link
             href={`/login?redirect=${ordersOnly ? "/account/orders" : "/account"}`}
-            className="mt-7 inline-block bg-ink px-8 py-4 text-xs uppercase tracking-wide-luxe text-cream"
+            className="mt-7 inline-block bg-brick px-8 py-4 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)]"
           >
             Giriş Yap
           </Link>
@@ -314,17 +314,17 @@ export function AccountClient({ ordersOnly = false }: { ordersOnly?: boolean }) 
   void rewardRefreshKey;
 
   return (
-    <div className="min-h-screen bg-ivory px-4 pb-24 pt-28 md:px-8 md:pt-32">
+    <div className="min-h-screen bg-carbon px-4 pb-24 pt-28 md:px-8 md:pt-32">
       <div className="mx-auto max-w-6xl">
         <div className="mb-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="mb-3 text-xs uppercase tracking-wide-luxe text-gold-dark">
+            <p className="mb-3 text-xs uppercase tracking-wide-luxe text-brick">
               Hesabım
             </p>
             <h1 className="font-heading text-4xl md:text-5xl">
               {ordersOnly ? "Siparişlerim" : "Merhaba"}
             </h1>
-            <p className="mt-4 text-sm leading-7 text-muted-ruth">
+            <p className="mt-4 text-sm leading-7 text-cream/70">
               {profile?.full_name || user.email}
             </p>
           </div>
@@ -335,7 +335,7 @@ export function AccountClient({ ordersOnly = false }: { ordersOnly?: boolean }) 
               await signOut();
               window.location.href = "/";
             }}
-            className="inline-flex items-center justify-center gap-2 border border-gold/25 px-6 py-3 text-xs uppercase tracking-wide-luxe text-ink transition hover:bg-cream"
+            className="inline-flex items-center justify-center gap-2 border border-kraft/45 px-6 py-3 text-xs uppercase tracking-wide-luxe text-cream transition hover:bg-carbon-soft"
           >
             <LogOut size={15} />
             Çıkış Yap
@@ -350,38 +350,38 @@ export function AccountClient({ ordersOnly = false }: { ordersOnly?: boolean }) 
 
         {!ordersOnly && (
           <div className="mb-8 grid gap-5 md:grid-cols-5">
-            <div className="rounded-2xl border border-gold/15 bg-cream p-5">
-              <p className="text-xs uppercase tracking-wide-luxe text-muted-ruth">E-posta</p>
+            <div className="rounded-2xl border border-kraft/35 bg-carbon-soft p-5">
+              <p className="text-xs uppercase tracking-wide-luxe text-cream/70">E-posta</p>
               <p className="mt-3 text-sm">{profile?.email || user.email}</p>
             </div>
-            <div className="rounded-2xl border border-gold/15 bg-cream p-5">
-              <p className="text-xs uppercase tracking-wide-luxe text-muted-ruth">Telefon</p>
+            <div className="rounded-2xl border border-kraft/35 bg-carbon-soft p-5">
+              <p className="text-xs uppercase tracking-wide-luxe text-cream/70">Telefon</p>
               <p className="mt-3 text-sm">{profile?.phone || "Henüz eklenmedi"}</p>
             </div>
-            <div className="rounded-2xl border border-gold/15 bg-cream p-5">
-              <p className="text-xs uppercase tracking-wide-luxe text-muted-ruth">Sipariş</p>
+            <div className="rounded-2xl border border-kraft/35 bg-carbon-soft p-5">
+              <p className="text-xs uppercase tracking-wide-luxe text-cream/70">Sipariş</p>
               <p className="mt-3 text-sm">{orders.length} kayıt</p>
             </div>
-            <div className="group rounded-2xl border border-gold/15 bg-cream p-5 text-left transition hover:bg-ivory md:col-span-2">
+            <div className="group rounded-2xl border border-kraft/35 bg-carbon-soft p-5 text-left transition hover:bg-carbon md:col-span-2">
               <div className="flex items-center justify-between gap-3">
-                <p className="text-xs uppercase tracking-wide-luxe text-muted-ruth">ROSTA Points</p>
-                <Gift size={18} className="text-gold-dark" />
+                <p className="text-xs uppercase tracking-wide-luxe text-cream/70">ROSTA Points</p>
+                <Gift size={18} className="text-brick" />
               </div>
-              <p className="mt-3 font-heading text-2xl text-ink">{ruthPoints.toLocaleString("tr-TR")}</p>
-              <p className="mt-1 text-xs leading-5 text-muted-ruth">
+              <p className="mt-3 font-heading text-2xl text-cream">{ruthPoints.toLocaleString("tr-TR")}</p>
+              <p className="mt-1 text-xs leading-5 text-cream/70">
                 Hesabında aktif ROSTA Points var. Ödeme adımında yaklaşık {rostaPointDiscount.toLocaleString("tr-TR")} TL indirim olarak kullanabilirsin.
               </p>
               <div className="mt-4 flex flex-col gap-2 sm:flex-row">
                 <Link
                   href="/products"
-                  className="inline-flex items-center justify-center bg-ink px-5 py-3 text-xs uppercase tracking-wide-luxe text-cream"
+                  className="inline-flex items-center justify-center bg-brick px-5 py-3 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)]"
                 >
                   Puanı Kullan
                 </Link>
                 <button
                   type="button"
                   onClick={() => window.dispatchEvent(new Event("rosta-open-points"))}
-                  className="inline-flex items-center justify-center border border-gold/25 px-5 py-3 text-xs uppercase tracking-wide-luxe text-ink"
+                  className="inline-flex items-center justify-center border border-kraft/45 px-5 py-3 text-xs uppercase tracking-wide-luxe text-cream"
                 >
                   Nasıl Kazanılır?
                 </button>
@@ -390,67 +390,67 @@ export function AccountClient({ ordersOnly = false }: { ordersOnly?: boolean }) 
 
             <Link
               href="/account/addresses"
-              className="group rounded-2xl border border-gold/15 bg-cream p-5 transition hover:bg-ivory"
+              className="group rounded-2xl border border-kraft/35 bg-carbon-soft p-5 transition hover:bg-carbon"
             >
               <div className="flex items-center justify-between gap-3">
-                <p className="text-xs uppercase tracking-wide-luxe text-muted-ruth">Adreslerim</p>
-                <MapPin size={18} className="text-gold-dark" />
+                <p className="text-xs uppercase tracking-wide-luxe text-cream/70">Adreslerim</p>
+                <MapPin size={18} className="text-brick" />
               </div>
-              <p className="mt-3 text-sm text-ink">Adres ekle / yönet</p>
+              <p className="mt-3 text-sm text-cream">Adres ekle / yönet</p>
             </Link>
 
             <Link
               href="/account/discounts"
-              className="group rounded-2xl border border-gold/15 bg-cream p-5 transition hover:bg-ivory"
+              className="group rounded-2xl border border-kraft/35 bg-carbon-soft p-5 transition hover:bg-carbon"
             >
               <div className="flex items-center justify-between gap-3">
-                <p className="text-xs uppercase tracking-wide-luxe text-muted-ruth">İndirimlerim</p>
-                <BadgePercent size={18} className="text-gold-dark" />
+                <p className="text-xs uppercase tracking-wide-luxe text-cream/70">İndirimlerim</p>
+                <BadgePercent size={18} className="text-brick" />
               </div>
-              <p className="mt-3 text-sm text-ink">Aktif indirimleri gör / kullan</p>
+              <p className="mt-3 text-sm text-cream">Aktif indirimleri gör / kullan</p>
             </Link>
           </div>
         )}
 
         {!ordersOnly && (
-          <section className="mb-8 rounded-2xl border border-gold/15 bg-cream p-5 md:p-6">
+          <section className="mb-8 rounded-2xl border border-kraft/35 bg-carbon-soft p-5 md:p-6">
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
-                <p className="text-xs uppercase tracking-wide-luxe text-muted-ruth">Doğum Günü Avantajı</p>
+                <p className="text-xs uppercase tracking-wide-luxe text-cream/70">Doğum Günü Avantajı</p>
                 <h2 className="mt-2 font-heading text-2xl">{configuredBirthdayPoints.toLocaleString("tr-TR")} ROSTA Points</h2>
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-ruth">Puan, doğum gününde ve onu izleyen 7 gün içinde Avantajlar alanından bir kez hesabına eklenebilir.</p>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-cream/70">Puan, doğum gününde ve onu izleyen 7 gün içinde Avantajlar alanından bir kez hesabına eklenebilir.</p>
               </div>
               <div className="flex flex-col gap-2 sm:flex-row">
-                <input type="text" inputMode="numeric" maxLength={10} placeholder="GG.AA.YYYY" value={birthDateInput} disabled={Boolean(profile?.birth_date)} onChange={(e)=>setBirthDateInput(formatManualDateInput(e.target.value))} className="rounded-lg border border-gold/20 bg-ivory px-4 py-3 text-sm" />
-                <button type="button" disabled={savingBirthday||Boolean(profile?.birth_date)||!birthDateInput} onClick={async()=>{if(!session?.access_token)return;setSavingBirthday(true);setBirthdayMessage(null);const r=await fetch("/api/account/birth-date",{method:"POST",headers:{"Content-Type":"application/json",Authorization:`Bearer ${session.access_token}`},body:JSON.stringify({birthDate:birthDateInput})});const d=await r.json();setSavingBirthday(false);setBirthdayMessage(d.ok?"Doğum tarihin kaydedildi.":d.error||"Kaydedilemedi.");if(d.ok){setProfile(p=>p?{...p,birth_date:d.birthDate}:p);setBirthDateInput(displayBirthDate(d.birthDate))}}} className="bg-ink px-5 py-3 text-xs uppercase tracking-wide-luxe text-cream disabled:opacity-50">{profile?.birth_date?"Kaydedildi":savingBirthday?"Kaydediliyor":"Kaydet"}</button>
+                <input type="text" inputMode="numeric" maxLength={10} placeholder="GG.AA.YYYY" value={birthDateInput} disabled={Boolean(profile?.birth_date)} onChange={(e)=>setBirthDateInput(formatManualDateInput(e.target.value))} className="rounded-lg border border-kraft/40 bg-carbon px-4 py-3 text-sm" />
+                <button type="button" disabled={savingBirthday||Boolean(profile?.birth_date)||!birthDateInput} onClick={async()=>{if(!session?.access_token)return;setSavingBirthday(true);setBirthdayMessage(null);const r=await fetch("/api/account/birth-date",{method:"POST",headers:{"Content-Type":"application/json",Authorization:`Bearer ${session.access_token}`},body:JSON.stringify({birthDate:birthDateInput})});const d=await r.json();setSavingBirthday(false);setBirthdayMessage(d.ok?"Doğum tarihin kaydedildi.":d.error||"Kaydedilemedi.");if(d.ok){setProfile(p=>p?{...p,birth_date:d.birthDate}:p);setBirthDateInput(displayBirthDate(d.birthDate))}}} className="bg-brick px-5 py-3 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)] disabled:opacity-50">{profile?.birth_date?"Kaydedildi":savingBirthday?"Kaydediliyor":"Kaydet"}</button>
               </div>
             </div>
-            {birthdayMessage&&<p className="mt-3 text-sm text-gold-dark">{birthdayMessage}</p>}
+            {birthdayMessage&&<p className="mt-3 text-sm text-brick">{birthdayMessage}</p>}
           </section>
         )}
 
-        <section className="rounded-2xl border border-gold/15 bg-cream p-5 md:p-6">
+        <section className="rounded-2xl border border-kraft/35 bg-carbon-soft p-5 md:p-6">
           <div className="mb-5 flex items-center justify-between gap-4">
             <h2 className="font-heading text-sm uppercase tracking-wide-luxe">
               {ordersOnly ? "Tüm Siparişler" : "Son Siparişler"}
             </h2>
             {!ordersOnly && orders.length > 3 && (
-              <Link href="/account/orders" className="text-xs uppercase tracking-wide-luxe text-gold-dark">
+              <Link href="/account/orders" className="text-xs uppercase tracking-wide-luxe text-brick">
                 Tümünü Gör
               </Link>
             )}
           </div>
 
           {visibleOrders.length === 0 ? (
-            <div className="rounded-xl border border-gold/10 bg-ivory p-8 text-center">
-              <PackageCheck className="mx-auto mb-4 text-gold-dark" size={30} />
+            <div className="rounded-xl border border-kraft/25 bg-carbon p-8 text-center">
+              <PackageCheck className="mx-auto mb-4 text-brick" size={30} />
               <p className="font-heading text-xl">Henüz sipariş yok</p>
-              <p className="mt-3 text-sm text-muted-ruth">
+              <p className="mt-3 text-sm text-cream/70">
                 İlk siparişini verdiğinde burada gözükecek.
               </p>
               <Link
                 href="/products"
-                className="mt-6 inline-block bg-ink px-7 py-4 text-xs uppercase tracking-wide-luxe text-cream"
+                className="mt-6 inline-block bg-brick px-7 py-4 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)]"
               >
                 Ürünleri Keşfet
               </Link>
@@ -458,11 +458,11 @@ export function AccountClient({ ordersOnly = false }: { ordersOnly?: boolean }) 
           ) : (
             <div className="space-y-4">
               {visibleOrders.map((order) => (
-                <div key={order.id} className="rounded-xl border border-gold/10 bg-ivory p-4">
+                <div key={order.id} className="rounded-xl border border-kraft/25 bg-carbon p-4">
                   <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                     <div>
                       <p className="font-heading text-sm">{order.order_no}</p>
-                      <p className="mt-1 text-xs text-muted-ruth">
+                      <p className="mt-1 text-xs text-cream/70">
                         {new Date(order.created_at).toLocaleDateString("tr-TR")}
                       </p>
                     </div>
@@ -470,54 +470,54 @@ export function AccountClient({ ordersOnly = false }: { ordersOnly?: boolean }) 
                       <p className="font-heading text-lg">
                         {formatPrice(Number(order.total_amount), order.currency || "TRY")}
                       </p>
-                      <p className="mt-1 text-xs text-muted-ruth">
+                      <p className="mt-1 text-xs text-cream/70">
                         {translateStatus(order.status, statusLabels, "Sipariş güncellendi")} · {translateStatus(order.payment_status, paymentLabels, "Ödeme güncellendi")}
                       </p>
                     </div>
                   </div>
 
                   {(order.cargo_company || order.cargo_tracking_no || order.shipping_address_text || order.shipping_status) && (
-                    <div className="mt-4 grid gap-2 rounded-xl border border-gold/10 bg-cream/60 p-3 text-xs text-muted-ruth sm:grid-cols-2">
-                      <p><span className="font-medium text-ink">Kargo:</span> {order.cargo_company || "Hazırlanıyor"}</p>
-                      <p><span className="font-medium text-ink">Takip no:</span> {order.cargo_tracking_no || "Henüz girilmedi"}</p>
-                      <p><span className="font-medium text-ink">Kargo durumu:</span> {translateStatus(order.shipping_events?.[0]?.status_label || order.shipping_events?.[0]?.status || order.shipping_status, shippingLabels, "Kargo güncellendi")}</p>
-                      <p><span className="font-medium text-ink">Barkod:</span> {order.basit_kargo_barcode || "Henüz oluşturulmadı"}</p>
-                      {order.basit_kargo_return_barcode && <p className="sm:col-span-2"><span className="font-medium text-ink">İade barkodu:</span> {order.basit_kargo_return_barcode}</p>}
-                      {order.shipping_address_text && <p className="sm:col-span-2"><span className="font-medium text-ink">Teslimat:</span> {order.shipping_address_text}</p>}
+                    <div className="mt-4 grid gap-2 rounded-xl border border-kraft/25 bg-carbon-soft/60 p-3 text-xs text-cream/70 sm:grid-cols-2">
+                      <p><span className="font-medium text-cream">Kargo:</span> {order.cargo_company || "Hazırlanıyor"}</p>
+                      <p><span className="font-medium text-cream">Takip no:</span> {order.cargo_tracking_no || "Henüz girilmedi"}</p>
+                      <p><span className="font-medium text-cream">Kargo durumu:</span> {translateStatus(order.shipping_events?.[0]?.status_label || order.shipping_events?.[0]?.status || order.shipping_status, shippingLabels, "Kargo güncellendi")}</p>
+                      <p><span className="font-medium text-cream">Barkod:</span> {order.basit_kargo_barcode || "Henüz oluşturulmadı"}</p>
+                      {order.basit_kargo_return_barcode && <p className="sm:col-span-2"><span className="font-medium text-cream">İade barkodu:</span> {order.basit_kargo_return_barcode}</p>}
+                      {order.shipping_address_text && <p className="sm:col-span-2"><span className="font-medium text-cream">Teslimat:</span> {order.shipping_address_text}</p>}
                       {order.shipping_events?.length ? (
-                        <div className="sm:col-span-2 mt-1 space-y-1 border-t border-gold/10 pt-2">
-                          {order.shipping_events.slice(0, 3).map((event) => <p key={event.id}><span className="font-medium text-ink">{translateStatus(event.status_label || event.status || event.event_type, shippingLabels, "Kargo güncellendi")}</span> · {new Date(event.event_time || event.created_at).toLocaleString("tr-TR")}</p>)}
+                        <div className="sm:col-span-2 mt-1 space-y-1 border-t border-kraft/25 pt-2">
+                          {order.shipping_events.slice(0, 3).map((event) => <p key={event.id}><span className="font-medium text-cream">{translateStatus(event.status_label || event.status || event.event_type, shippingLabels, "Kargo güncellendi")}</span> · {new Date(event.event_time || event.created_at).toLocaleString("tr-TR")}</p>)}
                         </div>
                       ) : null}
                     </div>
                   )}
 
                   {order.return_cases?.length ? (
-                    <div className="mt-4 space-y-2 rounded-xl border border-gold/15 bg-cream/70 p-3 text-xs">
-                      <p className="font-heading text-sm text-ink">İade / Değişim Durumu</p>
+                    <div className="mt-4 space-y-2 rounded-xl border border-kraft/35 bg-carbon-soft/70 p-3 text-xs">
+                      <p className="font-heading text-sm text-cream">İade / Değişim Durumu</p>
                       {order.return_cases.map((returnCase) => (
-                        <div key={returnCase.id} className="flex flex-col gap-1 border-t border-gold/10 pt-2 first:border-0 first:pt-0 sm:flex-row sm:items-center sm:justify-between">
+                        <div key={returnCase.id} className="flex flex-col gap-1 border-t border-kraft/25 pt-2 first:border-0 first:pt-0 sm:flex-row sm:items-center sm:justify-between">
                           <span>
                             {normalizeStatusKey(returnCase.type) === "exchange" ? "Değişim" : "İade"} · {translateReturnReason(returnCase.reason)}
                             {normalizeStatusKey(returnCase.type) !== "exchange" && returnCase.refund_status ? (
-                              <small className="mt-1 block text-muted-ruth">
+                              <small className="mt-1 block text-cream/70">
                                 {translateStatus(returnCase.refund_status, refundStatusLabels, "Para iadesi güncellendi")}
                                 {returnCase.refund_reference ? ` · Referans: ${returnCase.refund_reference}` : ""}
                               </small>
                             ) : null}
                           </span>
-                          <strong className="text-gold-dark">{translateStatus(returnCase.status, returnStatusLabels, "Talep güncellendi")}</strong>
+                          <strong className="text-brick">{translateStatus(returnCase.status, returnStatusLabels, "Talep güncellendi")}</strong>
                         </div>
                       ))}
                     </div>
                   ) : null}
 
                   {order.order_items?.length ? (
-                    <div className="mt-4 space-y-2 border-t border-gold/10 pt-4">
+                    <div className="mt-4 space-y-2 border-t border-kraft/25 pt-4">
                       {order.order_items.map((item) => (
-                        <div key={item.id} className="grid gap-3 rounded-xl border border-gold/10 bg-ivory/40 p-3 text-sm sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
+                        <div key={item.id} className="grid gap-3 rounded-xl border border-kraft/25 bg-carbon/40 p-3 text-sm sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
                           <div className="min-w-0">
-                            <p className="break-words leading-6 text-muted-ruth">
+                            <p className="break-words leading-6 text-cream/70">
                               {item.product_name}
                               {item.variant_name ? ` · ${item.variant_name}` : ""} × {item.quantity}
                             </p>
