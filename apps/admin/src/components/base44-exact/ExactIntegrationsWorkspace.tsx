@@ -13,7 +13,6 @@ import {
   Megaphone,
   Plug,
   RefreshCw,
-  Server,
   Sparkles,
   Tag,
   Truck,
@@ -35,7 +34,7 @@ import {
 } from "./primitives";
 import { ExactDataCard, ExactMetricCard } from "./data";
 
-type ProviderKey = "search-console" | "google-analytics" | "google-tag-manager" | "clarity" | "meta" | "tiktok" | "supabase" | "paytr" | "basit-kargo" | "gmail" | "openai" | "vercel" | "render" | "github";
+type ProviderKey = "search-console" | "google-analytics" | "google-tag-manager" | "clarity" | "meta" | "tiktok" | "supabase" | "paytr" | "basit-kargo" | "gmail" | "openai" | "zeabur" | "github";
 type Scope = "all" | "panel" | "ruthie" | "marketing";
 type ProviderState = { connected: boolean; detail: string };
 type Definition = {
@@ -54,7 +53,7 @@ const integrations: Definition[] = [
   { key: "paytr", label: "PayTR", description: "Ödeme, callback, taksit ve iade işlemleri", scopes: ["panel", "ruthie"], icon: CreditCard, mode: "server", href: "/payments", setup: ["PayTR mağaza panelinden entegrasyon bilgilerini al.", "Bilgileri storefront ve admin servisinin güvenli ayarlarına ekle.", "Bildirim adresini production callback adresine yönlendir."] },
   { key: "basit-kargo", label: "Basit Kargo", description: "Kargo fiyatı, barkod, etiket ve ters kargo", scopes: ["panel", "ruthie"], icon: Truck, mode: "server", href: "/shipping", setup: ["Basit Kargo hesabından API erişimini etkinleştir.", "Erişim bilgisini admin servisinin güvenli ayarlarına ekle.", "Kargo ekranından barkod ve etiket üretimini test et."] },
   { key: "gmail", label: "Gmail", description: "Hizmet, pazarlama ve müşteri iletişimi e-postaları", scopes: ["panel", "ruthie", "marketing"], icon: Mail, mode: "gmail", href: "/email", setup: ["Google Cloud'da Gmail API'yi etkinleştir.", "Panel OAuth callback adresini istemciye ekle.", "Bağla düğmesine basıp Google hesabında izin ver."] },
-  { key: "openai", label: "OpenAI · ROSTA Insight", description: "ROSTA Insight sohbeti, analiz ve onaylı panel işlemleri", scopes: ["ruthie"], icon: Sparkles, mode: "server", href: "/rosta-insight", setup: ["OpenAI projesi için sunucu API erişimi oluştur.", "Erişimi yalnız Render admin servisinde sakla.", "ROSTA Insight ekranından sohbet ve onay akışını test et."] },
+  { key: "openai", label: "OpenAI · ROSTA Insight", description: "ROSTA Insight sohbeti, analiz ve onaylı panel işlemleri", scopes: ["ruthie"], icon: Sparkles, mode: "server", href: "/rosta-insight", setup: ["OpenAI projesi için sunucu API erişimi oluştur.", "Erişimi yalnız ROSTA admin Zeabur servisinde sakla.", "ROSTA Insight ekranından sohbet ve onay akışını test et."] },
   { key: "meta", label: "Meta Marketing", description: "Reklam hesabı raporlama ve kampanya analizi", scopes: ["ruthie", "marketing"], icon: Megaphone, mode: "server", setup: ["Business Manager'da sistem kullanıcısı oluştur.", "Reklam hesabına gerekli raporlama izinlerini ver.", "Uzun ömürlü erişimi admin servisinin güvenli ayarlarına ekle."] },
   { key: "tiktok", label: "TikTok Ads", description: "TikTok reklam raporları ve performans analizi", scopes: ["ruthie", "marketing"], icon: Megaphone, mode: "server", setup: ["TikTok for Business geliştirici uygulaması oluştur.", "Reklam hesabı erişimini uygulamaya bağla.", "Sunucu erişimini Render'a ekleyip servisi yeniden yayınla."] },
   { key: "google-analytics", label: "Google Analytics 4", description: "Oturum, dönüşüm ve davranış analizi", scopes: ["ruthie", "marketing"], icon: BarChart3, mode: "server", setup: ["GA4 mülkünden ölçüm kimliğini al.", "Kimliği storefront ayarlarına ekle.", "Analytics ve ROSTA Insight raporlarında veri akışını doğrula."] },
@@ -62,8 +61,7 @@ const integrations: Definition[] = [
   { key: "search-console", label: "Search Console", description: "SEO performansı ve arama görünürlüğü", scopes: ["ruthie", "marketing"], icon: BarChart3, mode: "server", setup: ["Web site mülkünü doğrula.", "Google raporlama yetkilendirmesini hazırla.", "Sunucu bağlantısını ekleyip ROSTA Insight SEO analizini yenile."] },
   { key: "clarity", label: "Microsoft Clarity", description: "Isı haritası ve ziyaretçi oturum kayıtları", scopes: ["marketing"], icon: BarChart3, mode: "server", setup: ["Clarity projesi oluştur.", "Proje kimliğini storefront ayarlarına ekle.", "Production ortamında yeni oturumları doğrula."] },
   { key: "github", label: "GitHub", description: "Kod, commit, PR ve ROSTA Insight geliştirme araçları", scopes: ["panel", "ruthie"], icon: Github, mode: "server", setup: ["Yalnız ROSTA Coffee Co. reposuna yetkili erişim oluştur.", "Repo ve erişim bilgisini admin servisine ekle.", "ROSTA Insight geliştirme işlemlerinde bağlantıyı test et."] },
-  { key: "vercel", label: "Vercel", description: "Storefront deploy, önizleme ve cache yenileme", scopes: ["panel", "ruthie"], icon: Cloud, mode: "server", setup: ["Vercel hesabında güvenli API erişimi oluştur.", "Storefront proje bilgisini admin servisine ekle.", "Yayınlama ve cache yenileme durumunu test et."] },
-  { key: "render", label: "Render", description: "Admin panel deploy ve servis durumu", scopes: ["panel", "ruthie"], icon: Server, mode: "server", setup: ["Render hesabında API erişimi oluştur.", "Admin servis kimliğini güvenli ayarlara ekle.", "Servis durumu ve yeniden yayınlama erişimini doğrula."] },
+  { key: "zeabur", label: "Zeabur", description: "Panel ve storefront deploy, servis durumu ve çalışma ortamı", scopes: ["panel", "ruthie"], icon: Cloud, mode: "server", setup: ["ROSTA Zeabur proje ve servis kimliklerini hazırla.", "ZEABUR_PROJECT_ID, ZEABUR_SERVICE_ID ve ZEABUR_WEB_URL değerlerini admin servisine ekle.", "Servis Sağlığı ekranından çalışma durumunu doğrula."] },
 ];
 
 export function ExactIntegrationsWorkspace() {
@@ -126,5 +124,5 @@ export function ExactIntegrationsWorkspace() {
 
 function HelpContent({ item, onConnect, busy }: { item: Definition; onConnect: () => void; busy: boolean }) {
   const Icon = item.icon;
-  return <div className="space-y-4"><div className="flex items-center gap-3 rounded-[var(--radius-control)] bg-accent-soft p-3"><div className="flex h-10 w-10 items-center justify-center radius-small bg-accent text-white"><Icon className="h-5 w-5" /></div><div><p className="text-sm font-semibold text-main">{item.label}</p><p className="text-xs text-muted">{item.description}</p></div></div><ol className="space-y-2">{item.setup.map((step, index) => <li key={step} className="flex gap-3 rounded-[var(--radius-small)] bg-surface-secondary p-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-white">{index + 1}</span><span className="text-xs leading-relaxed text-main">{step}</span></li>)}</ol>{item.mode === "server" ? <div className="rounded-[var(--radius-control)] bg-warning-soft p-3 text-xs leading-relaxed text-warning-foreground">Bu sağlayıcının gizli sunucu erişimi panel formuna yazılmaz. Bağlamak veya kesmek için Render/Vercel güvenli ayarını değiştirip yeniden yayınla.</div> : null}{item.mode === "gmail" ? <ExactButton className="w-full" onClick={onConnect} loading={busy}><Plug className="h-4 w-4" /> Gmail OAuth ile Bağla</ExactButton> : null}</div>;
+  return <div className="space-y-4"><div className="flex items-center gap-3 rounded-[var(--radius-control)] bg-accent-soft p-3"><div className="flex h-10 w-10 items-center justify-center radius-small bg-accent text-white"><Icon className="h-5 w-5" /></div><div><p className="text-sm font-semibold text-main">{item.label}</p><p className="text-xs text-muted">{item.description}</p></div></div><ol className="space-y-2">{item.setup.map((step, index) => <li key={step} className="flex gap-3 rounded-[var(--radius-small)] bg-surface-secondary p-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-white">{index + 1}</span><span className="text-xs leading-relaxed text-main">{step}</span></li>)}</ol>{item.mode === "server" ? <div className="rounded-[var(--radius-control)] bg-warning-soft p-3 text-xs leading-relaxed text-warning-foreground">Bu sağlayıcının gizli sunucu erişimi panel formuna yazılmaz. Bağlamak veya kesmek için Zeabur güvenli ortam değişkenlerini güncelleyip ilgili servisi yeniden yayınla.</div> : null}{item.mode === "gmail" ? <ExactButton className="w-full" onClick={onConnect} loading={busy}><Plug className="h-4 w-4" /> Gmail OAuth ile Bağla</ExactButton> : null}</div>;
 }
