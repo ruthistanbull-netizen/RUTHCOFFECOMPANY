@@ -194,7 +194,7 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
     "h-[54px] w-full rounded-[4px] border border-white/14 bg-[#242424] px-4 text-[15px] text-[#F4F0E8] outline-none transition placeholder:text-[#F4F0E8]/36 focus:border-[#F4F0E8]/55 focus:bg-[#292929] focus:ring-2 focus:ring-[#F4F0E8]/10 disabled:opacity-50";
 
   return (
-    <main className="relative min-h-[100dvh] overflow-hidden bg-[#141414] text-white" data-exact-base44-auth={mode}>
+    <main className="relative min-h-[100dvh] overflow-hidden bg-[#141414] text-[#F4F0E8]" data-exact-base44-auth={mode}>
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_-10%,rgba(255,255,255,.075),transparent_34%),linear-gradient(180deg,rgba(0,0,0,.04),rgba(0,0,0,.34))]" />
 
       <header className="relative z-20 flex h-[72px] items-center px-5 pt-[env(safe-area-inset-top)] sm:h-[86px] sm:px-10 lg:px-12">
@@ -242,14 +242,14 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
               <p className="text-[15px] leading-relaxed text-white/72">
                 Şifre yenileme bağlantısı <strong className="font-medium text-white">{email}</strong> adresine gönderildi.
               </p>
-              <Link href="/login" className="mt-7 inline-flex h-11 w-full items-center justify-center rounded-[4px] bg-white text-[14px] font-semibold text-black transition hover:bg-white/88 active:scale-[0.985]">
+              <Link href="/login" className="mt-7 inline-flex h-11 w-full items-center justify-center rounded-[4px] bg-[#F4F0E8] text-[14px] font-semibold text-[#141414] transition hover:bg-[#e9e3d8] active:scale-[0.985]">
                 Giriş ekranına dön
               </Link>
             </div>
           ) : resetComplete ? (
             <div>
               <p className="text-[15px] leading-relaxed text-white/72">Yeni şifreniz kaydedildi.</p>
-              <Link href="/login" className="mt-7 inline-flex h-11 w-full items-center justify-center rounded-[4px] bg-white text-[14px] font-semibold text-black transition hover:bg-white/88 active:scale-[0.985]">
+              <Link href="/login" className="mt-7 inline-flex h-11 w-full items-center justify-center rounded-[4px] bg-[#F4F0E8] text-[14px] font-semibold text-[#141414] transition hover:bg-[#e9e3d8] active:scale-[0.985]">
                 Giriş ekranına dön
               </Link>
             </div>
@@ -341,13 +341,13 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
               ) : null}
 
               {mode === "reset" && !checkingRecovery && !recoveryReady ? (
-                <Link href="/forgot-password" className="flex h-[48px] w-full items-center justify-center rounded-[4px] bg-white text-[14px] font-bold text-black transition active:scale-[0.98]">
+                <Link href="/forgot-password" className="flex h-[48px] w-full items-center justify-center rounded-[4px] bg-[#F4F0E8] text-[14px] font-bold text-[#141414] transition hover:bg-[#e9e3d8] active:scale-[0.98]">
                   Yeni bağlantı iste
                 </Link>
               ) : null}
 
               {mode !== "login" ? (
-                <Link href="/login" className="block pt-2 text-center text-[12px] text-white/48 transition hover:text-white">
+                <Link href="/login" className="block pt-2 text-center text-[12px] text-[#F4F0E8]/48 transition hover:text-[#F4F0E8]">
                   Giriş ekranına dön
                 </Link>
               ) : null}
