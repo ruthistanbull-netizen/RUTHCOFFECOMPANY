@@ -10,7 +10,7 @@ export function UniversalPopoverStyles() {
         .ruth-universal-overlay,
         .product-variant-overlay,
         [data-ruth-overlay-backdrop="true"] {
-          background: rgba(35, 27, 20, 0.34) !important;
+          background: var(--ruth-color-overlay) !important;
           -webkit-backdrop-filter: blur(6px) !important;
           backdrop-filter: blur(6px) !important;
         }
@@ -20,12 +20,12 @@ export function UniversalPopoverStyles() {
         [data-ruth-overlay-surface="dialog"],
         [data-ruth-overlay-surface="drawer"],
         [data-ruth-overlay-surface="popover"] {
-          border: 1px solid rgba(184, 151, 106, 0.24) !important;
-          background: linear-gradient(180deg, rgba(255, 250, 242, 0.985), rgba(250, 247, 242, 0.985)) !important;
-          color: var(--ink) !important;
-          box-shadow: 0 26px 80px rgba(35, 27, 20, 0.2) !important;
-          -webkit-backdrop-filter: blur(20px) !important;
-          backdrop-filter: blur(20px) !important;
+          border: 1px solid var(--ruth-color-border-subtle) !important;
+          background: var(--ruth-color-surface-elevated) !important;
+          color: var(--ruth-color-text-primary) !important;
+          box-shadow: 0 26px 80px color-mix(in srgb, var(--rosta-carbon) 58%, transparent) !important;
+          -webkit-backdrop-filter: none !important;
+          backdrop-filter: none !important;
           font-family: var(--font-body) !important;
         }
 
@@ -39,7 +39,7 @@ export function UniversalPopoverStyles() {
           overflow: hidden !important;
           border-radius: 18px !important;
           padding: 8px !important;
-          box-shadow: 0 18px 46px rgba(35, 27, 20, 0.16) !important;
+          box-shadow: 0 18px 46px color-mix(in srgb, var(--rosta-carbon) 50%, transparent) !important;
         }
 
         [data-ruth-overlay-surface="drawer"] {
@@ -50,6 +50,7 @@ export function UniversalPopoverStyles() {
         .ruth-universal-popover h2,
         .product-variant-sheet h2,
         [data-ruth-overlay-surface] h2 {
+          color: var(--ruth-color-text-primary) !important;
           font-family: var(--font-heading) !important;
           font-weight: 400 !important;
         }
@@ -69,14 +70,14 @@ export function UniversalPopoverStyles() {
           width: 12rem !important;
           margin: 12px 0 0 !important;
           overflow: hidden !important;
-          border: 1px solid rgba(184, 151, 106, 0.24) !important;
+          border: 1px solid var(--ruth-color-border-subtle) !important;
           border-radius: 18px !important;
-          background: rgba(250, 247, 242, 0.97) !important;
+          background: var(--ruth-color-surface-elevated) !important;
           padding: 8px !important;
-          color: var(--ink) !important;
-          box-shadow: 0 18px 46px rgba(35, 27, 20, 0.16) !important;
-          -webkit-backdrop-filter: blur(18px) !important;
-          backdrop-filter: blur(18px) !important;
+          color: var(--ruth-color-text-primary) !important;
+          box-shadow: 0 18px 46px color-mix(in srgb, var(--rosta-carbon) 50%, transparent) !important;
+          -webkit-backdrop-filter: none !important;
+          backdrop-filter: none !important;
           transform-origin: top right !important;
         }
 
@@ -90,7 +91,7 @@ export function UniversalPopoverStyles() {
           border-radius: 12px !important;
           background: transparent !important;
           padding: 11px 14px !important;
-          color: var(--muted-foreground) !important;
+          color: var(--ruth-color-text-muted) !important;
           font-family: var(--font-body) !important;
           font-size: 11px !important;
           font-weight: 500 !important;
@@ -101,14 +102,27 @@ export function UniversalPopoverStyles() {
           transition: background-color 160ms ease, color 160ms ease, transform 160ms cubic-bezier(.22,1,.36,1) !important;
         }
 
-        div:has(> button[aria-label="Hesap menüsü"]) > div.absolute a:hover,
         div:has(> button[aria-label="Hesap menüsü"]) > div.absolute a:focus-visible,
-        div:has(> button[aria-label="Hesap menüsü"]) > div.absolute > button:hover,
-        div:has(> button[aria-label="Hesap menüsü"]) > div.absolute > button:focus-visible {
-          background: var(--ivory) !important;
-          color: var(--ink) !important;
-          outline: none !important;
-          transform: translateX(2px);
+        div:has(> button[aria-label="Hesap menüsü"]) > div.absolute > button:focus-visible,
+        [data-ruth-overlay-item="true"]:focus-visible {
+          background: var(--ruth-color-accent-soft) !important;
+          color: var(--ruth-color-text-primary) !important;
+          outline: 2px solid var(--ruth-color-focus) !important;
+          outline-offset: 2px !important;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+          div:has(> button[aria-label="Hesap menüsü"]) > div.absolute a:hover,
+          div:has(> button[aria-label="Hesap menüsü"]) > div.absolute > button:hover,
+          [data-ruth-overlay-item="true"]:hover {
+            background: var(--ruth-color-accent-soft) !important;
+            color: var(--ruth-color-text-primary) !important;
+          }
+
+          div:has(> button[aria-label="Hesap menüsü"]) > div.absolute a:hover,
+          div:has(> button[aria-label="Hesap menüsü"]) > div.absolute > button:hover {
+            transform: translateX(2px);
+          }
         }
 
         .product-variant-sheet {
@@ -123,17 +137,26 @@ export function UniversalPopoverStyles() {
         [data-ruth-overlay-surface] input,
         [data-ruth-overlay-surface] select,
         [data-ruth-overlay-surface] textarea {
-          border-color: rgba(184, 151, 106, 0.24) !important;
+          border-color: var(--ruth-color-border-subtle) !important;
           border-radius: 12px !important;
-          background: rgba(255, 255, 255, 0.76) !important;
+          background: var(--ruth-color-surface-muted) !important;
+          color: var(--ruth-color-text-primary) !important;
+        }
+
+        .product-variant-sheet input::placeholder,
+        .ruth-universal-popover input::placeholder,
+        [data-ruth-overlay-surface] input::placeholder,
+        [data-ruth-overlay-surface] textarea::placeholder {
+          color: var(--ruth-color-text-muted) !important;
         }
 
         .product-variant-sheet [aria-label="Kapat"],
         [data-ruth-overlay-surface] [aria-label*="kapat" i] {
-          border-color: rgba(184, 151, 106, 0.24) !important;
+          border-color: var(--ruth-color-border-subtle) !important;
           border-radius: 50% !important;
-          background: rgba(250, 247, 242, 0.86) !important;
-          box-shadow: 0 8px 22px rgba(35, 27, 20, 0.08) !important;
+          background: var(--ruth-color-surface-muted) !important;
+          color: var(--ruth-color-text-primary) !important;
+          box-shadow: 0 8px 22px color-mix(in srgb, var(--rosta-carbon) 38%, transparent) !important;
         }
 
         [data-ruth-overlay-item="true"] {
@@ -142,18 +165,11 @@ export function UniversalPopoverStyles() {
           align-items: center !important;
           border-radius: 12px !important;
           padding: 11px 14px !important;
-          color: var(--muted-foreground) !important;
+          color: var(--ruth-color-text-muted) !important;
           font-size: 11px !important;
           font-weight: 500 !important;
           letter-spacing: 0.16em !important;
           text-transform: uppercase !important;
-        }
-
-        [data-ruth-overlay-item="true"]:hover,
-        [data-ruth-overlay-item="true"]:focus-visible {
-          background: var(--ivory) !important;
-          color: var(--ink) !important;
-          outline: none !important;
         }
 
         @media (min-width: 768px) {
@@ -202,6 +218,14 @@ export function UniversalPopoverStyles() {
             margin: 0 8px 8px !important;
             border-radius: 23px !important;
             padding-bottom: calc(24px + env(safe-area-inset-bottom)) !important;
+          }
+        }
+
+        @media (forced-colors: active) {
+          div:has(> button[aria-label="Hesap menüsü"]) > div.absolute a:focus-visible,
+          div:has(> button[aria-label="Hesap menüsü"]) > div.absolute > button:focus-visible,
+          [data-ruth-overlay-item="true"]:focus-visible {
+            outline-color: Highlight !important;
           }
         }
 
