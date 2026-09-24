@@ -321,7 +321,7 @@ export function ProductSwipeTransitionParity() {
         .product-browser-preview {
           height: 100dvh !important;
           min-height: 100dvh !important;
-          background: var(--cream) !important;
+          background: var(--rosta-carbon) !important;
         }
 
         .product-browser-track,
@@ -339,9 +339,9 @@ export function ProductSwipeTransitionParity() {
           display: block !important;
           width: 100% !important;
           min-height: var(--ruth-swipe-purchase-height, auto) !important;
-          border-top: 1px solid rgba(184,151,106,.3) !important;
-          background: var(--cream) !important;
-          box-shadow: 0 -18px 48px rgba(33,25,18,.16) !important;
+          border-top: 1px solid color-mix(in srgb,var(--rosta-kraft) 46%,transparent) !important;
+          background: var(--rosta-carbon) !important;
+          box-shadow: 0 -18px 48px color-mix(in srgb,var(--rosta-carbon) 52%,transparent) !important;
           padding-bottom: env(safe-area-inset-bottom) !important;
           opacity: 1 !important;
           visibility: visible !important;
@@ -398,9 +398,9 @@ export function ProductSwipeTransitionParity() {
           align-items: center !important;
           gap: 5px !important;
           border-radius: 2px !important;
-          background: #b40016 !important;
+          background: var(--rosta-brick-b) !important;
           padding: 5px 6px !important;
-          color: #fff !important;
+          color: var(--rosta-action-text) !important;
           line-height: 1 !important;
         }
 
