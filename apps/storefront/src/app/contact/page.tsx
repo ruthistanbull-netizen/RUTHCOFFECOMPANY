@@ -14,25 +14,31 @@ export default function ContactPage() {
   const supportEmail = String(process.env.NEXT_PUBLIC_ROSTA_SUPPORT_EMAIL || "").trim();
 
   const cards = [
-    whatsappUrl ? {
+    {
       icon: MessageCircle,
-      title: "WhatsApp",
-      desc: "Sipariş ve destek konularında ROSTA ekibine ulaşın.",
-      href: whatsappUrl,
-    } : null,
+      title: "Canlı Destek",
+      desc: "Canlı destek kapalıysa WhatsApp üzerinden ROSTA ekibine ulaşabilirsiniz.",
+      href: null,
+      actionLabel: whatsappUrl ? "WhatsApp'tan Yaz" : null,
+      actionHref: whatsappUrl || null,
+    },
     {
       icon: Mail,
       title: "Mesaj Gönder",
       desc: "Aşağıdaki formdan bize mesaj bırakabilirsiniz.",
       href: "#contact-form",
+      actionLabel: null,
+      actionHref: null,
     },
-    instagramUrl ? {
+    {
       icon: Instagram,
       title: "Instagram",
       desc: "ROSTA Coffee Co. sosyal medya hesabını ziyaret edin.",
-      href: instagramUrl,
-    } : null,
-  ].filter((item): item is { icon: typeof Mail; title: string; desc: string; href: string } => Boolean(item));
+      href: instagramUrl || null,
+      actionLabel: null,
+      actionHref: null,
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-ivory px-4 pb-24 pt-32 md:px-8">
@@ -52,15 +58,33 @@ export default function ContactPage() {
                 <CardIcon className="mb-5 text-gold-dark" size={22} />
                 <h2 className="font-heading text-2xl">{item.title}</h2>
                 <p className="mt-4 leading-7 text-muted-ruth">{item.desc}</p>
+                {item.actionHref && item.actionLabel ? (
+                  <a
+                    href={item.actionHref}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-ink px-5 py-3 text-[10px] uppercase tracking-wide-luxe text-cream transition hover:bg-gold-dark"
+                  >
+                    {item.actionLabel}
+                  </a>
+                ) : null}
               </div>
             );
 
             return (
               <AnimatedBlock key={item.title} delay={0.12 + index * 0.08}>
-                {item.href.startsWith("http") ? (
-                  <a href={item.href} target="_blank" rel="noreferrer" className="block h-full">{content}</a>
+                {item.href ? (
+                  item.href.startsWith("http") ? (
+                    <a href={item.href} target="_blank" rel="noreferrer" className="block h-full">
+                      {content}
+                    </a>
+                  ) : (
+                    <Link href={`/contact${item.href}`} className="block h-full">
+                      {content}
+                    </Link>
+                  )
                 ) : (
-                  <Link href={item.href} className="block h-full">{content}</Link>
+                  content
                 )}
               </AnimatedBlock>
             );
@@ -69,7 +93,7 @@ export default function ContactPage() {
 
         <AnimatedBlock delay={0.26}>
           <section className="mt-12 rounded-[2rem] border border-gold/15 bg-cream p-6 md:p-10">
-            <p className="mb-3 text-xs uppercase tracking-wide-luxe text-gold-dark">İşletme bilgileri</p>
+            <p className="mb-3 text-xs uppercase tracking-wide-luxe text-gold-dark">İletişim ve işletme bilgileri</p>
             <div className="grid gap-5 text-sm leading-7 text-muted-ruth md:grid-cols-2">
               <div className="space-y-2">
                 <p><strong className="text-ink">Resmî satıcı:</strong> Görkem Çirik</p>
@@ -89,8 +113,11 @@ export default function ContactPage() {
             <div className="mb-9 max-w-2xl">
               <p className="mb-3 text-xs uppercase tracking-wide-luxe text-gold-dark">Bizimle iletişime geç</p>
               <h2 className="font-heading text-4xl uppercase tracking-[0.08em] md:text-5xl">Mesajınızı bırakın.</h2>
-              <p className="mt-5 leading-7 text-muted-ruth">Ad soyad, e-posta, telefon numarası ve mesajınızı bırakarak bizimle iletişime geçebilirsiniz.</p>
+              <p className="mt-5 leading-7 text-muted-ruth">
+                Ad soyad, e-posta, telefon numarası ve mesajınızı bırakarak bizimle iletişime geçebilirsiniz.
+              </p>
             </div>
+
             <ContactForm />
           </section>
         </AnimatedBlock>
