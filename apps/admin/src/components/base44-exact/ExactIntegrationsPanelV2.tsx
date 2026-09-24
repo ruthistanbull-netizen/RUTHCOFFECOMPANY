@@ -33,7 +33,8 @@ import {
 } from "./primitives";
 import { ExactDataCard, ExactMetricCard } from "./data";
 
-type Scope = "all" | "panel" | "insight" | "marketing";
+type Scope = "all" | "panel" | "ruthie" | "marketing";
+type IntegrationMode = "gmail" | "server";
 type Integration = {
   key: string;
   label: string;
@@ -41,26 +42,26 @@ type Integration = {
   scopes: Exclude<Scope, "all">[];
   icon: LucideIcon;
   help: string[];
-  statusEndpoint?: string;
   manageHref?: string;
-  mode?: "gmail" | "server";
+  mode: IntegrationMode;
 };
 type State = { connected: boolean; detail: string; checking?: boolean };
+type StatusResponse = { integrations?: Record<string, State> };
 
 const definitions: Integration[] = [
-  { key: "supabase", label: "Supabase", description: "Veritabanı, kimlik, storage ve canlı panel verisi", scopes: ["panel", "insight"], icon: Database, statusEndpoint: "/api/health", mode: "server", help: ["Supabase Project URL ve service role anahtarını Zeabur güvenli ortam değişkenlerine ekle.", "Admin servisini yeniden yayınla.", "Servis Sağlığı ekranından veritabanı kontrolünü çalıştır."] },
-  { key: "paytr", label: "PayTR", description: "Ödeme, taksit, callback ve iade altyapısı", scopes: ["panel", "insight"], icon: CreditCard, statusEndpoint: "/api/payments/list?limit=1", manageHref: "/payments", mode: "server", help: ["PayTR mağaza bilgilerini storefront ve admin servisinin güvenli ayarlarına ekle.", "Callback adresini production ödeme rotasına yönlendir.", "Ödemeler ekranından canlı kayıt kontrolü yap."] },
-  { key: "shipping", label: "Basit Kargo", description: "Barkod, etiket, fiyat ve ters kargo işlemleri", scopes: ["panel", "insight"], icon: Truck, statusEndpoint: "/api/shipping/basit-kargo/handlers", manageHref: "/shipping", mode: "server", help: ["Basit Kargo API erişimini Zeabur güvenli ayarlarına ekle.", "Kargo ekranından taşıyıcı listesini yenile.", "Test siparişinde barkod ve etiket üret."] },
-  { key: "gmail", label: "Gmail", description: "Hizmet, pazarlama ve müşteri iletişimi e-postaları", scopes: ["panel", "insight", "marketing"], icon: Mail, statusEndpoint: "/api/email/status", manageHref: "/email", mode: "gmail", help: ["Google Cloud üzerinde Gmail API'yi etkinleştir.", "OAuth callback adresini Google istemcisine ekle.", "Bağla düğmesiyle Google hesabında izin ver."] },
-  { key: "openai", label: "OpenAI · ROSTA Insight", description: "ROSTA Insight sohbeti, analiz ve onaylı panel işlemleri", scopes: ["insight"], icon: Sparkles, statusEndpoint: "/api/rosta-insight/integrations/status-v2", manageHref: "/rosta-insight", mode: "server", help: ["OpenAI API anahtarını yalnız Zeabur admin servisinde sakla.", "Model ve proje erişimini doğrula.", "ROSTA Insight ekranından sohbet ve onay akışını test et."] },
-  { key: "meta", label: "Meta Marketing", description: "Reklam hesabı raporlama ve kampanya analizi", scopes: ["insight", "marketing"], icon: Megaphone, statusEndpoint: "/api/integrations/meta/status", mode: "server", help: ["Business Manager sistem kullanıcısı oluştur.", "Reklam hesabına raporlama izinlerini ver.", "Uzun ömürlü erişimi admin servisinde sakla."] },
-  { key: "tiktok", label: "TikTok Ads", description: "TikTok reklam performansı ve raporları", scopes: ["insight", "marketing"], icon: Megaphone, mode: "server", help: ["TikTok for Business geliştirici uygulaması oluştur.", "Reklam hesabını uygulamaya bağla.", "API erişimini Zeabur güvenli ayarlarına ekle."] },
-  { key: "ga4", label: "Google Analytics 4", description: "Oturum, dönüşüm ve davranış analizi", scopes: ["insight", "marketing"], icon: BarChart3, mode: "server", help: ["GA4 ölçüm kimliğini storefront ayarlarına ekle.", "Measurement Protocol veya raporlama erişimini admin servisine bağla.", "Analitik ekranında veri akışını doğrula."] },
-  { key: "gtm", label: "Google Tag Manager", description: "Piksel, dönüşüm ve event etiketleri", scopes: ["panel", "marketing"], icon: Tag, mode: "server", help: ["Web container oluştur.", "Container kimliğini storefront ayarlarına ekle.", "Önizleme modunda sepet ve satın alma eventlerini test et."] },
-  { key: "search-console", label: "Search Console", description: "SEO performansı ve arama görünürlüğü", scopes: ["insight", "marketing"], icon: BarChart3, mode: "server", help: ["Site mülkünü doğrula.", "Raporlama yetkisini admin servisine bağla.", "ROSTA Insight SEO analizini yenile."] },
-  { key: "clarity", label: "Microsoft Clarity", description: "Isı haritası ve ziyaretçi oturum kayıtları", scopes: ["marketing"], icon: BarChart3, mode: "server", help: ["Clarity projesi oluştur.", "Proje kimliğini storefront'a ekle.", "Production oturumlarının geldiğini doğrula."] },
-  { key: "github", label: "GitHub", description: "Kod, commit, PR ve geliştirme bağlantısı", scopes: ["panel", "insight"], icon: Github, mode: "server", help: ["Yalnız ROSTA Coffee Company reposuna erişim ver.", "Repo bağlantısını ve erişimi güvenli sunucu ayarlarında sakla.", "ROSTA Insight geliştirme işlemiyle bağlantıyı test et."] },
-  { key: "zeabur", label: "Zeabur", description: "Admin ve storefront deploy, domain ve servis durumu", scopes: ["panel", "insight"], icon: Cloud, statusEndpoint: "/api/rosta-insight/integrations/status-v2", mode: "server", help: ["ROSTA admin ve storefront servislerinin Zeabur proje bağlantısını doğrula.", "Gizli değişkenleri yalnız Zeabur servis ayarlarında sakla.", "ZEABUR_SERVICE_ID, ZEABUR_PROJECT_ID ve ZEABUR_WEB_URL ile çalışan servisi doğrula."] },
+  { key: "supabase", label: "Supabase", description: "Veritabanı, kimlik, storage ve canlı panel verisi", scopes: ["panel", "ruthie"], icon: Database, mode: "server", help: ["ROSTA Supabase Project URL ve service role anahtarını Zeabur güvenli ortam değişkenlerine ekle.", "Admin ve storefront servislerini yeniden yayınla.", "Servis Sağlığı ekranından veritabanı kontrolünü çalıştır."] },
+  { key: "paytr", label: "PayTR", description: "Ödeme, taksit, callback ve iade altyapısı", scopes: ["panel", "ruthie"], icon: CreditCard, manageHref: "/payments", mode: "server", help: ["ROSTA PayTR merchant ID, key ve salt değerlerini storefront ve admin Zeabur değişkenlerine ekle.", "PayTR callback adresini ROSTA production callback rotasına yönlendir.", "Test modunda bir ödeme akışıyla bağlantıyı doğrula."] },
+  { key: "basit-kargo", label: "Basit Kargo", description: "Barkod, etiket, fiyat ve ters kargo işlemleri", scopes: ["panel", "ruthie"], icon: Truck, manageHref: "/shipping", mode: "server", help: ["ROSTA Basit Kargo API tokenını admin Zeabur değişkenlerine ekle.", "Kargo ekranından taşıyıcı listesini yenile.", "Test siparişinde barkod ve etiket üret."] },
+  { key: "gmail", label: "Gmail", description: "Hizmet, pazarlama ve müşteri iletişimi e-postaları", scopes: ["panel", "ruthie", "marketing"], icon: Mail, manageHref: "/email", mode: "gmail", help: ["Google Cloud üzerinde ROSTA için Gmail API OAuth istemcisi oluştur.", "Callback adresi olarak paneldeki /api/email/gmail/callback rotasını ekle.", "Bağla düğmesine basıp kullanacağın ROSTA Gmail hesabında izin ver."] },
+  { key: "openai", label: "OpenAI · ROSTA Insight", description: "ROSTA Insight sohbeti, analiz ve onaylı panel işlemleri", scopes: ["ruthie"], icon: Sparkles, manageHref: "/rosta-insight", mode: "server", help: ["ROSTA için OpenAI API anahtarını admin Zeabur servisinde OPENAI_API_KEY olarak ekle.", "Model değişkenlerini istersen ayrıca tanımla.", "ROSTA Insight ekranından sohbet ve onay akışını test et."] },
+  { key: "meta", label: "Meta Marketing", description: "Reklam hesabı raporlama ve kampanya analizi", scopes: ["ruthie", "marketing"], icon: Megaphone, mode: "server", help: ["ROSTA Business Manager'da sistem kullanıcısı oluştur ve gerekli reklam/Business/Page/Pixel izinlerini ver.", "META_SYSTEM_USER_ACCESS_TOKEN, META_AD_ACCOUNT_ID, META_BUSINESS_ID, META_PAGE_ID ve META_PIXEL_ID değerlerini admin Zeabur servisine ekle.", "Storefront ölçümü için NEXT_PUBLIC_META_PIXEL_ID ve server-side CAPI için META_CAPI_ACCESS_TOKEN değerlerini storefront servisine ekle."] },
+  { key: "tiktok", label: "TikTok Ads", description: "TikTok reklam performansı ve raporları", scopes: ["ruthie", "marketing"], icon: Megaphone, mode: "server", help: ["ROSTA TikTok for Business geliştirici erişimini hazırla ve reklam hesabını uygulamaya bağla.", "TIKTOK_ACCESS_TOKEN ve TIKTOK_ADVERTISER_ID değerlerini admin Zeabur servisine ekle.", "Storefront dönüşüm ölçümü için NEXT_PUBLIC_TIKTOK_PIXEL_ID değerini storefront Zeabur servisine ekle."] },
+  { key: "google-analytics", label: "Google Analytics 4", description: "Oturum, dönüşüm ve davranış analizi", scopes: ["ruthie", "marketing"], icon: BarChart3, mode: "server", help: ["ROSTA GA4 mülkünden ölçüm kimliğini al.", "Admin Zeabur servisine GA4_MEASUREMENT_ID, storefront servisine NEXT_PUBLIC_GA_MEASUREMENT_ID ekle; sunucu eventleri kullanacaksan GA4_API_SECRET da ekle.", "Production event akışını doğrula."] },
+  { key: "google-tag-manager", label: "Google Tag Manager", description: "Piksel, dönüşüm ve event etiketleri", scopes: ["panel", "marketing"], icon: Tag, mode: "server", help: ["ROSTA için web container oluştur.", "Admin Zeabur servisine GTM_CONTAINER_ID ve storefront servisine aynı değeri NEXT_PUBLIC_GTM_ID olarak ekle.", "GTM Preview ile page_view, view_item, add_to_cart, begin_checkout ve add_payment_info eventlerini test et."] },
+  { key: "search-console", label: "Search Console", description: "SEO performansı ve arama görünürlüğü", scopes: ["ruthie", "marketing"], icon: BarChart3, mode: "server", help: ["ROSTA site mülkünü doğrula.", "ROSTA raporlama OAuth veya servis hesabı yetkisini hazırla.", "Search Console erişim değişkenlerini admin Zeabur servisine ekle."] },
+  { key: "clarity", label: "Microsoft Clarity", description: "Isı haritası ve ziyaretçi oturum kayıtları", scopes: ["marketing"], icon: BarChart3, mode: "server", help: ["ROSTA için yeni Clarity projesi oluştur.", "Admin Zeabur servisine CLARITY_PROJECT_ID, storefront servisine aynı değeri NEXT_PUBLIC_CLARITY_PROJECT_ID olarak ekle.", "Production oturumlarının geldiğini doğrula."] },
+  { key: "github", label: "GitHub", description: "Kod, commit, PR ve geliştirme bağlantısı", scopes: ["panel", "ruthie"], icon: Github, mode: "server", help: ["Yalnız ROSTA Coffee Co. reposuna gerekli kapsamda erişim oluştur.", "Tokenı GITHUB_TOKEN olarak admin Zeabur servisine ekle.", "ROSTA_GITHUB_REPOSITORY değerinin ROSTA reposunu gösterdiğini doğrula."] },
+  { key: "zeabur", label: "Zeabur", description: "Panel ve storefront deploy, servis durumu ve çalışma ortamı", scopes: ["panel", "ruthie"], icon: Cloud, mode: "server", help: ["ROSTA Zeabur proje ve servis kimliklerini hazırla.", "ZEABUR_PROJECT_ID, ZEABUR_SERVICE_ID ve ZEABUR_WEB_URL değerlerini admin servisine ekle.", "Servis Sağlığı ekranından çalışma durumunu doğrula."] },
 ];
 
 export function ExactIntegrationsPanelV2() {
@@ -72,51 +73,44 @@ export function ExactIntegrationsPanelV2() {
   const [loading, setLoading] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
 
-  const check = useCallback(async () => {
+  const check = useCallback(async (liveMeta = false) => {
     setLoading(true);
-    const next: Record<string, State> = {};
-    await Promise.all(definitions.map(async (item) => {
-      if (!item.statusEndpoint) {
-        next[item.key] = { connected: false, detail: "Sunucu yapılandırması henüz doğrulanmadı." };
-        return;
+    try {
+      const suffix = liveMeta ? "?live=meta" : "";
+      const result = await adminRequest<StatusResponse>(`/api/rosta-insight/integrations/status-v2${suffix}`, { force: true });
+      const reported = result.integrations || {};
+      const next: Record<string, State> = {};
+      for (const item of definitions) {
+        next[item.key] = reported[item.key] || {
+          connected: false,
+          detail: "Bu sağlayıcı için ROSTA bağlantı bilgileri henüz tanımlı değil.",
+        };
       }
-      try {
-        const result = await adminRequest<Record<string, unknown>>(item.statusEndpoint, { force: true });
-        if (item.key === "gmail") {
-          const active = result.activeIntegration as { provider?: string; status?: string; email?: string | null } | null | undefined;
-          const connected = active?.provider === "gmail" && ["active", "connected"].includes(String(active.status || ""));
-          next[item.key] = {
-            connected,
-            detail: connected ? `Gmail aktif${active?.email ? ` · ${active.email}` : ""}` : "Aktif Gmail hesabı bağlı değil.",
-          };
-          return;
-        }
-        const serialized = JSON.stringify(result).toLocaleLowerCase("tr-TR");
-        const connected = !serialized.includes('"connected":false') && !serialized.includes('"ok":false');
-        next[item.key] = { connected, detail: connected ? "Canlı servis yanıt verdi." : "Bağlantı ayarı veya yetki kontrol edilmeli." };
-      } catch (error) {
-        next[item.key] = { connected: false, detail: error instanceof Error ? error.message : "Servis yanıt vermedi." };
-      }
-    }));
-    setStates(next);
-    setLoading(false);
+      setStates(next);
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : "Entegrasyon durumları alınamadı.";
+      setStates(Object.fromEntries(definitions.map((item) => [item.key, { connected: false, detail }])));
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  useEffect(() => { void check(); }, [check]);
+  useEffect(() => { void check(false); }, [check]);
 
   const visible = useMemo(() => definitions.filter((item) => scope === "all" || item.scopes.includes(scope)), [scope]);
   const metrics = useMemo(() => ({
     connected: definitions.filter((item) => states[item.key]?.connected).length,
     waiting: definitions.filter((item) => !states[item.key]?.connected).length,
-    insight: definitions.filter((item) => item.scopes.includes("insight") && states[item.key]?.connected).length,
+    ruthie: definitions.filter((item) => item.scopes.includes("ruthie") && states[item.key]?.connected).length,
   }), [states]);
+  const helpManageHref = help?.manageHref || "";
 
   const connect = async (item: Integration) => {
     if (item.mode !== "gmail") {
-      if (item.manageHref) window.location.href = item.manageHref;
-      else setHelp(item);
+      setHelp(item);
       return;
     }
+
     setBusy(item.key);
     try {
       const result = await adminRequest<{ authUrl?: string }>("/api/email/gmail/connect");
@@ -128,16 +122,12 @@ export function ExactIntegrationsPanelV2() {
     }
   };
 
-  const disconnect = async (item: Integration) => {
-    if (item.mode !== "gmail") {
-      setHelp(item);
-      return;
-    }
+  const disconnectGmail = async (item: Integration) => {
     setBusy(item.key);
     try {
       await adminRequest("/api/email/status?provider=gmail", { method: "DELETE" });
       toast.success("Gmail bağlantısı kesildi.");
-      await check();
+      await check(false);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Bağlantı kesilemedi.");
     } finally {
@@ -149,20 +139,21 @@ export function ExactIntegrationsPanelV2() {
     <div className="space-y-4 animate-fade-in" data-exact-base44-page="integrations-v2">
       <ExactPageHeader
         title="Entegrasyonlar"
-        subtitle="Panel ve ROSTA Insight'nin bağlı olduğu tüm servisler"
-        actions={<ExactIconButton icon={RefreshCw} label="Canlı kontrol" variant="secondary" onClick={() => void check()} loading={loading} />}
+        subtitle="Altyapı hazır; ROSTA'ya ait hesapları ve erişimleri buradan tamamla"
+        actions={<ExactIconButton icon={RefreshCw} label="Canlı kontrol" variant="secondary" onClick={() => void check(true)} loading={loading} />}
       />
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <ExactMetricCard label="Bağlı" value={metrics.connected} icon={CheckCircle2} />
         <ExactMetricCard label="Bağlantı Bekleyen" value={metrics.waiting} icon={Unplug} />
-        <ExactMetricCard label="ROSTA Insight Bağlantıları" value={metrics.insight} icon={Sparkles} />
+        <ExactMetricCard label="ROSTA Insight Bağlantıları" value={metrics.ruthie} icon={Sparkles} />
         <ExactMetricCard label="Toplam Sağlayıcı" value={definitions.length} icon={Webhook} />
       </div>
-      <ExactSegmentedControl value={scope} onChange={(value) => setScope(value as Scope)} options={[{ value: "all", label: "Tümü" }, { value: "panel", label: "Panel" }, { value: "insight", label: "ROSTA Insight" }, { value: "marketing", label: "Pazarlama" }]} />
+      <ExactSegmentedControl value={scope} onChange={(value) => setScope(value as Scope)} options={[{ value: "all", label: "Tümü" }, { value: "panel", label: "Panel" }, { value: "ruthie", label: "ROSTA Insight" }, { value: "marketing", label: "Pazarlama" }]} />
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
         {visible.map((item) => {
           const state = states[item.key] || { connected: false, detail: loading ? "Kontrol ediliyor…" : "Durum henüz doğrulanmadı." };
           const Icon = item.icon;
+          const connectedAction = item.mode === "gmail" ? "Bağlantıyı kes" : "Bağlantıyı yönet";
           return (
             <ExactDataCard key={item.key} className="transition-all hover:shadow-floating">
               <div className="flex items-start gap-3">
@@ -170,25 +161,39 @@ export function ExactIntegrationsPanelV2() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-2"><h3 className="text-sm font-semibold text-main">{item.label}</h3><ExactStatusBadge status={state.connected ? "active" : "archived"} label={state.connected ? "Bağlı" : "Bağlı değil"} size="sm" /></div>
                   <p className="mt-1 text-xs leading-relaxed text-muted">{item.description}</p>
-                  <div className="mt-2 flex flex-wrap gap-1">{item.scopes.map((entry) => <span key={entry} className="rounded-full bg-accent-soft px-2 py-0.5 text-[8px] font-semibold uppercase text-accent">{entry}</span>)}</div>
+                  <div className="mt-2 flex flex-wrap gap-1">{item.scopes.map((entry) => <span key={entry} className="rounded-full bg-accent-soft px-2 py-0.5 text-[8px] font-semibold uppercase text-accent">{entry === "ruthie" ? "ROSTA Insight" : entry}</span>)}</div>
                 </div>
               </div>
               <div className="mt-4 rounded-[var(--radius-small)] bg-surface-secondary p-3"><p className="text-[9px] font-semibold uppercase tracking-wide text-subtle">Durum</p><p className="mt-1 text-xs text-main">{state.detail}</p></div>
               <div className="mt-4 flex gap-2">
-                <ExactButton variant={state.connected ? "secondary" : "primary"} size="sm" className="flex-1" onClick={() => state.connected ? setPendingDisconnect(item) : void connect(item)} loading={busy === item.key}>{state.connected ? <><Unplug className="h-4 w-4" /> Bağlantıyı kes</> : <><Plug className="h-4 w-4" /> Bağla</>}</ExactButton>
+                <ExactButton
+                  variant={state.connected ? "secondary" : "primary"}
+                  size="sm"
+                  className="flex-1"
+                  onClick={() => {
+                    if (state.connected && item.mode === "gmail") setPendingDisconnect(item);
+                    else void connect(item);
+                  }}
+                  loading={busy === item.key}
+                >
+                  {state.connected ? <><Unplug className="h-4 w-4" /> {connectedAction}</> : <><Plug className="h-4 w-4" /> Bağla</>}
+                </ExactButton>
                 <ExactIconButton icon={CircleHelp} label={`${item.label} nasıl bağlanır?`} variant="secondary" size="icon-sm" onClick={() => setHelp(item)} />
               </div>
             </ExactDataCard>
           );
         })}
       </div>
-      <ExactFormModal open={Boolean(help)} onClose={() => setHelp(null)} title={help ? `${help.label} bağlantısı` : "Entegrasyon"} subtitle="Adım adım güvenli kurulum" size="lg" footer={<ExactButton variant="secondary" size="sm" onClick={() => setHelp(null)}>Kapat</ExactButton>}>
-        {help ? <div className="space-y-3">{help.help.map((step, index) => <div key={step} className="flex gap-3 rounded-[var(--radius-control)] bg-surface-secondary p-3"><div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-bold text-white">{index + 1}</div><p className="text-sm leading-relaxed text-main">{step}</p></div>)}</div> : null}
+      <ExactFormModal open={Boolean(help)} onClose={() => setHelp(null)} title={help ? `${help.label} bağlantısı` : "Entegrasyon"} subtitle="ROSTA hesabını bağlamak için gerekli adımlar" size="lg" footer={<ExactButton variant="secondary" size="sm" onClick={() => setHelp(null)}>Kapat</ExactButton>}>
+        {help ? <div className="space-y-3">
+          {help.help.map((step, index) => <div key={step} className="flex gap-3 rounded-[var(--radius-control)] bg-surface-secondary p-3"><div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-bold text-white">{index + 1}</div><p className="text-sm leading-relaxed text-main">{step}</p></div>)}
+          {helpManageHref ? <ExactButton className="w-full" variant="secondary" size="sm" onClick={() => { window.location.href = helpManageHref; }}>Yönetim sayfasını aç</ExactButton> : null}
+        </div> : null}
       </ExactFormModal>
       <ConfirmDialog
         open={Boolean(pendingDisconnect)}
-        title="Bağlantıyı kes"
-        description={pendingDisconnect ? `${pendingDisconnect.label} bağlantısı kesilecek. Bu işlem servis üzerinden yeniden bağlanana kadar ilgili özellikleri durdurabilir.` : undefined}
+        title="Gmail bağlantısını kes"
+        description={pendingDisconnect ? `${pendingDisconnect.label} hesabının ROSTA panel bağlantısı kesilecek. Yeniden kullanmak için OAuth ile tekrar bağlaman gerekir.` : undefined}
         confirmLabel="Bağlantıyı kes"
         cancelLabel="Vazgeç"
         tone="danger"
@@ -197,7 +202,7 @@ export function ExactIntegrationsPanelV2() {
         onConfirm={() => {
           const item = pendingDisconnect;
           if (!item) return;
-          void disconnect(item).finally(() => setPendingDisconnect(null));
+          void disconnectGmail(item).finally(() => setPendingDisconnect(null));
         }}
       />
     </div>

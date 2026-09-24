@@ -23,17 +23,6 @@ import type { Category, Collection } from "@/types/site";
 type NavChild = { label: string; path: string };
 type NavItem = ThemeNavItem & { children?: NavChild[] };
 
-const COLLECTION_ORDER = [
-  "ruthatelier",
-  "ateliersetleri",
-  "sunkissed",
-  "nazar",
-  "handmadespecials",
-  "arya",
-  "mantra",
-  "huna",
-];
-
 const COLLECTION_DRAG_THRESHOLD = 12;
 
 function uniqueChildren(items: NavChild[]) {
@@ -45,26 +34,8 @@ function uniqueChildren(items: NavChild[]) {
   return [...byPath.values()];
 }
 
-function collectionKey(collection: Collection) {
-  return collection.slug
-    .toLocaleLowerCase("tr-TR")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]/g, "");
-}
-
 function orderedPhotoCollections(collections: Collection[]) {
-  return collections
-    .filter((item) => item.cover_image_url)
-    .map((item, sourceIndex) => ({ item, sourceIndex }))
-    .sort((a, b) => {
-      const aIndex = COLLECTION_ORDER.indexOf(collectionKey(a.item));
-      const bIndex = COLLECTION_ORDER.indexOf(collectionKey(b.item));
-      const safeA = aIndex === -1 ? COLLECTION_ORDER.length + a.sourceIndex : aIndex;
-      const safeB = bIndex === -1 ? COLLECTION_ORDER.length + b.sourceIndex : bIndex;
-      return safeA - safeB;
-    })
-    .map(({ item }) => item);
+  return collections.filter((item) => item.cover_image_url);
 }
 
 function hexRgb(value: string) {

@@ -172,10 +172,10 @@ function runtimeConfig(env: NodeJS.ProcessEnv = process.env): RuntimeConfig {
   return {
     apiKey,
     baseUrl: (clean(env.OPENAI_BASE_URL) || DEFAULT_BASE_URL).replace(/\/+$/, ""),
-    realtimeModel: clean(env.RUTHIE_REALTIME_MODEL) || DEFAULT_REALTIME_MODEL,
-    transcriptionModel: clean(env.RUTHIE_TRANSCRIPTION_MODEL) || DEFAULT_TRANSCRIPTION_MODEL,
-    vadEagerness: normalizeVadEagerness(env.RUTHIE_VAD_EAGERNESS),
-    voice: normalizeRuthieVoice(env.RUTHIE_VOICE, DEFAULT_RUTHIE_VOICE),
+    realtimeModel: clean(env.ROSTA_INSIGHT_REALTIME_MODEL) || clean(env.RUTHIE_REALTIME_MODEL) || DEFAULT_REALTIME_MODEL,
+    transcriptionModel: clean(env.ROSTA_INSIGHT_TRANSCRIPTION_MODEL) || clean(env.RUTHIE_TRANSCRIPTION_MODEL) || DEFAULT_TRANSCRIPTION_MODEL,
+    vadEagerness: normalizeVadEagerness(env.ROSTA_INSIGHT_VAD_EAGERNESS || env.RUTHIE_VAD_EAGERNESS),
+    voice: normalizeRuthieVoice(env.ROSTA_INSIGHT_VOICE || env.RUTHIE_VOICE, DEFAULT_RUTHIE_VOICE),
     project: clean(env.OPENAI_PROJECT_ID),
     organization: clean(env.OPENAI_ORGANIZATION_ID),
   };

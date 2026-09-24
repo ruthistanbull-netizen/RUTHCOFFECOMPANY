@@ -139,8 +139,9 @@ async function runAbandonedCartEmails(request: Request) {
   }
 
   if (!integration) {
-    await writeAbandonedLastRun(supabase, { ok: false, sent: 0, failed: 0, source: "cron", error: "Aktif Brevo veya Gmail bağlantısı yok." });
-    return NextResponse.json({ ok: false, error: "Aktif Brevo veya Gmail bağlantısı yok." }, { status: 400 });
+    const detail = "E-posta entegrasyonu henüz bağlı değil; terk sepet otomasyonu bu çalışmada atlandı.";
+    await writeAbandonedLastRun(supabase, { ok: true, skipped: true, sent: 0, failed: 0, source: "cron", detail });
+    return NextResponse.json({ ok: true, skipped: true, sent: 0, failed: 0, detail }, { status: 200 });
   }
 
   const profile = { id: integration.profile_id || null };

@@ -530,7 +530,7 @@ export function AdminMobileQuarterMenu() {
           snapTo(Math.round(position.get()) + (event.deltaY > 0 ? 1 : -1));
         }}
       >
-        <svg className={styles.menuSvg} viewBox={`0 0 ${VIEWBOX} ${VIEWBOX}`} aria-label="ROSTA Coffee mobil menüsü">
+        <svg className={styles.menuSvg} viewBox={`0 0 ${VIEWBOX} ${VIEWBOX}`} aria-label="ROSTA Coffee Co. mobil menüsü">
           <defs>
             <radialGradient id="ruth-mobile-quarter-menu-shadow" cx="50%" cy="50%" r="50%">
               <stop offset="0" stopColor="rgba(0,0,0,0)" />

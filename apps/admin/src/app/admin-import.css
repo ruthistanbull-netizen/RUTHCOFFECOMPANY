@@ -1,0 +1,93 @@
+.cr-import-layout {
+  align-items: start;
+}
+
+.cr-import-card,
+.cr-import-side {
+  min-width: 0;
+}
+
+.cr-import-side {
+  display: grid;
+  gap: 16px;
+}
+
+.cr-import-upload {
+  margin: 14px 0;
+}
+
+.cr-import-card textarea {
+  width: 100%;
+  min-height: 260px;
+  resize: vertical;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.55;
+  white-space: pre;
+  overflow: auto;
+}
+
+.cr-import-actions {
+  margin-top: 14px;
+}
+
+.cr-check-list {
+  display: grid;
+  gap: 10px;
+}
+
+.cr-check-list p {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 9px;
+  align-items: start;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.cr-check-list svg {
+  width: 17px;
+  height: 17px;
+  color: var(--success);
+}
+
+.cr-import-errors {
+  max-height: 300px;
+  display: grid;
+  gap: 8px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.cr-import-errors > div {
+  padding: 10px;
+  border: 1px solid #fecdca;
+  border-radius: 10px;
+  background: var(--danger-soft);
+  display: grid;
+  gap: 3px;
+}
+
+.cr-import-errors strong {
+  font-size: 11px;
+}
+
+.cr-import-errors span {
+  color: var(--danger);
+  font-size: 10px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 700px) {
+  .cr-import-card textarea {
+    min-height: 220px;
+    font-size: 11px;
+  }
+
+  .cr-import-actions .cr-button {
+    flex: 1 1 140px;
+  }
+}

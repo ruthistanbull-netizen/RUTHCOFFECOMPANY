@@ -54,7 +54,7 @@ function ExactSidebar({ collapsed }: { collapsed: boolean }) {
         </div>
         {!collapsed ? (
           <div className="min-w-0">
-            <p className="text-sm font-bold text-main leading-tight truncate">ROSTA Coffee</p>
+            <p className="text-sm font-bold text-main leading-tight truncate">ROSTA Coffee Co.</p>
             <p className="text-[10px] text-subtle leading-tight">Control Room</p>
           </div>
         ) : null}
@@ -121,9 +121,9 @@ function ExactSidebar({ collapsed }: { collapsed: boolean }) {
       {!collapsed ? (
         <div className="p-3 border-t border-border-subtle shrink-0">
           <div className="flex items-center gap-2.5 p-2 radius-small bg-surface-tertiary">
-            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-accent to-[hsl(var(--accent-hover))] flex items-center justify-center text-white text-xs font-semibold shrink-0">RO</div>
+            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-accent to-[hsl(var(--accent-hover))] flex items-center justify-center text-white text-xs font-semibold shrink-0">RA</div>
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-semibold text-main truncate">ROSTA Coffee Co.</p>
+              <p className="text-xs font-semibold text-main truncate">Ruth Atelier</p>
               <p className="text-[10px] text-subtle truncate">Admin</p>
             </div>
           </div>
@@ -178,7 +178,7 @@ function ExactTopHeader({
         <kbd className="hidden md:inline-flex items-center gap-0.5 ml-auto text-[10px] font-mono bg-surface-tertiary px-1.5 py-0.5 rounded-md text-subtle">⌘K</kbd>
       </button>
 
-      <ExactIconButton icon={Sparkles} label="ROSTA Insight" variant="ghost" size="icon-sm" className="text-accent" onClick={() => router.push("/ruthie")} />
+      <ExactIconButton icon={Sparkles} label="Ruthie AI" variant="ghost" size="icon-sm" className="text-accent" onClick={() => router.push("/ruthie")} />
       <div className="relative">
         <ExactIconButton icon={Bell} label="Bildirimler" variant="ghost" size="icon-sm" onClick={() => router.push("/notifications")} />
         <span className="pointer-events-none absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-danger ring-2 ring-surface-primary" />
@@ -340,7 +340,7 @@ function ExactMobileDrawer({ open, onClose }: { open: boolean; onClose: () => vo
                 <div className="h-8 w-8 rounded-[var(--radius-small)] bg-gradient-to-br from-[hsl(var(--accent))] to-[hsl(var(--accent-hover))] flex items-center justify-center">
                   <span className="text-white font-bold text-xs">R</span>
                 </div>
-                <span className="text-sm font-bold text-main">ROSTA Coffee</span>
+                <span className="text-sm font-bold text-main">ROSTA Coffee Co.</span>
               </div>
               <ExactIconButton icon={X} label="Kapat" variant="ghost" size="icon-sm" onClick={onClose} />
             </div>

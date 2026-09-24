@@ -1,4 +1,4 @@
-/* ROSTA Insight popup — motion polish.
+/* Ruthie insight popup — motion polish.
    Uses individual translate/scale properties so it composes with Framer Motion's
    transform animations instead of fighting them. */
 
@@ -16,7 +16,7 @@
   transform-origin: 50% 55%;
 }
 
-/* Header / ROSTA Insight identity */
+/* Header / Ruthie identity */
 [data-ruthie-insight-popup="true"] > header > div:first-of-type {
   animation: ri-avatar-enter 620ms cubic-bezier(.18, .9, .22, 1.16) both;
   transition: scale 220ms cubic-bezier(.22, 1, .36, 1),
@@ -41,7 +41,7 @@
 [data-ruthie-insight-popup="true"] > header button:last-child:hover {
   translate: 0 -1px;
   scale: 1.045;
-  border-color: rgba(185, 86, 61, .22) !important;
+  border-color: rgba(201, 162, 58, .22) !important;
   box-shadow: 0 9px 22px rgba(65, 51, 24, .11);
 }
 
@@ -51,7 +51,7 @@
   box-shadow: 0 3px 10px rgba(65, 51, 24, .08);
 }
 
-/* Empty-state ROSTA Insight orb */
+/* Empty-state Ruthie orb */
 [data-ruthie-insight-popup="true"] [class*="min-h-52"] > div[class*="mb-3"] {
   animation: ri-orb-enter 680ms cubic-bezier(.18, .9, .22, 1.12) both,
              ri-orb-float 5.2s ease-in-out 900ms infinite;
@@ -114,7 +114,7 @@
   top: -100px;
   border-radius: 50%;
   pointer-events: none;
-  background: radial-gradient(circle, rgba(244, 240, 232,.24), transparent 68%);
+  background: radial-gradient(circle, rgba(230,210,139,.24), transparent 68%);
   animation: ri-card-glow 5.5s ease-in-out infinite;
   z-index: -1;
 }
@@ -223,7 +223,7 @@
 
 /* Send / image quote main action */
 [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Görsel fiyatını göster"],
-[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="ROSTA Insight’a gönder"] {
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ruthie’ye gönder"] {
   position: relative;
   isolation: isolate;
   overflow: visible;
@@ -234,46 +234,46 @@
 }
 
 [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Görsel fiyatını göster"]::before,
-[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="ROSTA Insight’a gönder"]::before {
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ruthie’ye gönder"]::before {
   content: "";
   position: absolute;
   inset: -6px;
   z-index: -1;
   border-radius: 999px;
-  background: rgba(185, 86, 61, .14);
+  background: rgba(201, 162, 58, .14);
   opacity: 0;
   scale: .72;
   transition: opacity 180ms ease, scale 300ms cubic-bezier(.22, 1, .36, 1);
 }
 
 [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Görsel fiyatını göster"]:hover,
-[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="ROSTA Insight’a gönder"]:hover {
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ruthie’ye gönder"]:hover {
   translate: 0 -2px;
   scale: 1.065;
   filter: saturate(1.07);
-  box-shadow: 0 13px 26px rgba(43, 27, 22,.28), inset 0 1px 0 rgba(255,255,255,.5) !important;
+  box-shadow: 0 13px 26px rgba(168,131,38,.28), inset 0 1px 0 rgba(255,255,255,.5) !important;
 }
 
 [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Görsel fiyatını göster"]:hover::before,
-[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="ROSTA Insight’a gönder"]:hover::before {
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ruthie’ye gönder"]:hover::before {
   opacity: 1;
   scale: 1;
 }
 
 [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Görsel fiyatını göster"]:active,
-[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="ROSTA Insight’a gönder"]:active {
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ruthie’ye gönder"]:active {
   translate: 0 2px;
   scale: .90;
-  box-shadow: 0 4px 11px rgba(43, 27, 22,.19), inset 0 2px 4px rgba(77,55,10,.12) !important;
+  box-shadow: 0 4px 11px rgba(168,131,38,.19), inset 0 2px 4px rgba(77,55,10,.12) !important;
   transition-duration: 65ms !important;
 }
 
 [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Görsel fiyatını göster"] svg,
-[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="ROSTA Insight’a gönder"] svg {
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ruthie’ye gönder"] svg {
   transition: translate 200ms cubic-bezier(.22, 1, .36, 1), rotate 240ms cubic-bezier(.22, 1, .36, 1), scale 200ms cubic-bezier(.22, 1, .36, 1);
 }
 
-[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="ROSTA Insight’a gönder"]:hover svg {
+[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ruthie’ye gönder"]:hover svg {
   translate: 2px -2px;
   rotate: -8deg;
   scale: 1.08;
@@ -343,8 +343,8 @@
 }
 
 @keyframes ri-orb-float {
-  0%, 100% { translate: 0 0; box-shadow: 0 10px 30px rgba(185, 86, 61,.12), 0 0 0 7px rgba(185, 86, 61,.045), inset 0 1px 0 rgba(255,255,255,.96); }
-  50% { translate: 0 -3px; box-shadow: 0 15px 34px rgba(185, 86, 61,.16), 0 0 0 8px rgba(185, 86, 61,.055), inset 0 1px 0 rgba(255,255,255,.96); }
+  0%, 100% { translate: 0 0; box-shadow: 0 10px 30px rgba(201,162,58,.12), 0 0 0 7px rgba(201,162,58,.045), inset 0 1px 0 rgba(255,255,255,.96); }
+  50% { translate: 0 -3px; box-shadow: 0 15px 34px rgba(201,162,58,.16), 0 0 0 8px rgba(201,162,58,.055), inset 0 1px 0 rgba(255,255,255,.96); }
 }
 
 @keyframes ri-card-glow {

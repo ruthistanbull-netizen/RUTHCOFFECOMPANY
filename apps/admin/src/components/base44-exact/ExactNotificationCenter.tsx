@@ -117,7 +117,7 @@ function formatRelative(timestamp: number) {
 
 function normalizePushPayload(payload: Record<string, unknown>): Omit<NotificationItem, "id" | "createdAt" | "read"> {
   const kind = String(payload.type || payload.kind || "default") as NotificationKind;
-  const title = String(payload.title || "Ruth Panel");
+  const title = String(payload.title || "ROSTA Panel");
   const body = String(payload.body || "Yeni bildirim");
   const url = typeof payload.url === "string" && payload.url ? payload.url : "/";
   return { kind, title, body, url };

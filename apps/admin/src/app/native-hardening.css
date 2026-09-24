@@ -1,0 +1,8 @@
+/*
+ * The legacy product editor jump tabs depended on global DOM selectors.
+ * Keep every editor section in the normal document flow and hide the inert
+ * shortcut row until it is implemented as a native React control.
+ */
+.cr-product-editor-tabs {
+  display: none !important;
+}

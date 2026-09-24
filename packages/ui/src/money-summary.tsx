@@ -94,7 +94,7 @@ export function MoneySummary({
     }] : []),
     ...(showZeroValues || breakdown.pointsDiscount.amountMinor > 0 ? [{
       key: "points",
-      label: "ROSTA Points",
+      label: "Ruthie Points",
       description: "Puan ile karşılanan tutar",
       value: formatMoney(breakdown.pointsDiscount, locale),
       negative: true,

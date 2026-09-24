@@ -159,6 +159,7 @@ export function ExactMetaAdsAnalysisRealtime() {
   const [accountName, setAccountName] = useState("Meta Reklam Hesabı");
   const [currency, setCurrency] = useState("TRY");
   const [loading, setLoading] = useState(true);
+  const [connectionDetail, setConnectionDetail] = useState<string | null>(null);
   const [selected, setSelected] = useState<CreativeAd | null>(null);
   const [since, setSince] = useState(() => dateValue(-29));
   const [until, setUntil] = useState(() => dateValue());
@@ -176,6 +177,20 @@ export function ExactMetaAdsAnalysisRealtime() {
 
   const load = useCallback(async () => {
     try {
+      const integrationStatus = await adminRequest<{ integrations?: { meta?: { connected?: boolean; detail?: string } } }>(
+        "/api/rosta-insight/integrations/status-v2",
+        { force: true },
+      );
+      const metaState = integrationStatus.integrations?.meta;
+      if (!metaState?.connected) {
+        setConnectionDetail(metaState?.detail || "ROSTA Meta Marketing hesabı henüz bağlı değil.");
+        setAds([]);
+        setMetricMap(new Map());
+        setLoading(false);
+        return;
+      }
+      setConnectionDetail(null);
+
       const [creativeData, metricData] = await Promise.all([
         adminRequest<CreativePayload>("/api/meta-ads/creatives"),
         adminRequest<MetricsPayload>("/api/meta-ads?range=30d"),
@@ -229,6 +244,24 @@ export function ExactMetaAdsAnalysisRealtime() {
       setAnalyzing(false);
     }
   };
+
+  if (connectionDetail) {
+    return (
+      <div className="space-y-4 animate-fade-in" data-exact-base44-page="meta-ads-analysis">
+        <ExactPageHeader title="ROSTA Insight Reklam Analizi" subtitle="Meta hesabını bağladıktan sonra kampanya, reklam seti ve kreatif performansını ROSTA Insight ile analiz et" />
+        <ExactDataCard title="Meta Marketing bağlantısı gerekli">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0">
+              <p className="ruth-type-card-title text-main">ROSTA reklam hesabı henüz bağlı değil.</p>
+              <p className="ruth-type-caption mt-1 max-w-2xl text-muted">{connectionDetail}</p>
+              <p className="ruth-type-caption mt-1 max-w-2xl text-muted">Altyapı hazır; ROSTA Meta hesabını bağladığında analiz ekranı canlı reklam verisini otomatik kullanacak.</p>
+            </div>
+            <ExactButton className="shrink-0" onClick={() => { window.location.href = "/settings/integrations"; }}>Meta'yı Bağla</ExactButton>
+          </div>
+        </ExactDataCard>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4 animate-fade-in" data-exact-base44-page="meta-ads-analysis">

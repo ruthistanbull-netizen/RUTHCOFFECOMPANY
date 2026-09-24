@@ -1,0 +1,27 @@
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+button,
+a,
+input,
+textarea,
+select,
+[role="button"] {
+  touch-action: manipulation;
+}
+
+@media (max-width: 860px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    scroll-margin-bottom: calc(90px + env(safe-area-inset-bottom));
+  }
+}

@@ -1,0 +1,226 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483300;
+  border: 0;
+  background: rgba(24, 27, 38, 0.10);
+  cursor: default;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.root {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  z-index: 2147483400;
+  overflow: hidden;
+  pointer-events: none;
+  contain: layout paint style;
+}
+
+.menuSvg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  shape-rendering: geometricPrecision;
+}
+
+.segmentButton {
+  outline: none;
+  pointer-events: auto;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mainRingBase {
+  fill: hsl(var(--surface-primary));
+  filter: drop-shadow(-10px -10px 24px rgba(25, 29, 42, 0.12));
+  pointer-events: none;
+}
+
+.accentWedge {
+  fill: hsl(var(--accent));
+  filter: drop-shadow(-3px -3px 10px hsl(var(--accent) / 0.16));
+  pointer-events: none;
+}
+
+.mainSegment,
+.subSegment,
+.subRingBase {
+  vector-effect: non-scaling-stroke;
+}
+
+.mainSegment {
+  fill: rgba(255, 255, 255, 0.001);
+  stroke: hsl(var(--border-strong) / 0.44);
+  stroke-width: 1px;
+  transition: fill 150ms ease, stroke 150ms ease, filter 170ms ease;
+}
+
+.segmentButton:hover .mainSegment,
+.segmentButton:focus-visible .mainSegment {
+  fill: hsl(var(--accent-soft) / 0.42);
+  stroke: hsl(var(--accent) / 0.36);
+}
+
+.activeSegment {
+  fill: hsl(var(--accent-soft) / 0.52);
+  stroke: hsl(var(--accent) / 0.38);
+}
+
+.selectedSegment,
+.segmentButton:hover .selectedSegment,
+.segmentButton:focus-visible .selectedSegment {
+  fill: hsl(var(--accent) / 0.94);
+  stroke: rgba(255, 255, 255, 0.96);
+  stroke-width: 1.9px;
+  stroke-linejoin: round;
+  paint-order: stroke fill;
+  filter:
+    drop-shadow(-3px -3px 8px hsl(var(--accent) / 0.16))
+    drop-shadow(0 0 1px rgba(255, 255, 255, 0.72));
+}
+
+.segmentIcon,
+.subIcon {
+  color: hsl(var(--text-main));
+  pointer-events: none;
+  stroke-width: 2.15;
+  transition: color 150ms ease, opacity 150ms ease;
+}
+
+.activeSegment + .segmentIcon {
+  color: hsl(var(--accent));
+}
+
+.featuredIcon,
+.selectedIcon {
+  color: #fff;
+}
+
+.segmentLabel {
+  fill: hsl(var(--text-main));
+  font-family: var(--font-body);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  pointer-events: none;
+}
+
+.featuredLabel,
+.selectedLabel {
+  fill: #fff;
+}
+
+.subRingBase {
+  fill: hsl(var(--surface-primary));
+  stroke: transparent;
+  stroke-width: 0;
+  filter: drop-shadow(-8px -8px 20px rgba(24, 28, 40, 0.10));
+  pointer-events: none;
+}
+
+.subSegment {
+  fill: rgba(255, 255, 255, 0.001);
+  stroke: hsl(var(--surface-primary));
+  stroke-width: 4px;
+  stroke-linejoin: round;
+  paint-order: stroke fill;
+  transition: fill 150ms ease, stroke 150ms ease, filter 170ms ease;
+}
+
+.segmentButton:hover .subSegment,
+.segmentButton:focus-visible .subSegment {
+  fill: hsl(var(--accent-soft) / 0.72);
+  stroke: hsl(var(--accent-soft) / 0.94);
+}
+
+.activeSubSegment,
+.segmentButton:hover .activeSubSegment,
+.segmentButton:focus-visible .activeSubSegment {
+  fill: hsl(var(--accent));
+  stroke: hsl(var(--accent));
+  filter: drop-shadow(-2px -2px 7px hsl(var(--accent) / 0.17));
+}
+
+.activeSubSegment + .subIcon {
+  color: #fff;
+}
+
+.coreShadow,
+.core {
+  pointer-events: none;
+}
+
+.core {
+  filter: drop-shadow(-8px -8px 18px rgba(25, 28, 38, 0.11));
+}
+
+.burger {
+  pointer-events: none;
+}
+
+.burgerLine {
+  stroke-width: 5.5;
+  stroke-linecap: round;
+}
+
+.coreHit {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  width: 53%;
+  height: 53%;
+  transform: translate(50%, 50%);
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  pointer-events: auto;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 767px) {
+  .root[data-open="true"] {
+    touch-action: pan-y;
+  }
+
+  .mainSegment {
+    stroke-width: 0.9px;
+  }
+
+  .selectedSegment,
+  .segmentButton:hover .selectedSegment,
+  .segmentButton:focus-visible .selectedSegment {
+    stroke-width: 1.8px;
+  }
+
+  .segmentIcon {
+    stroke-width: 2.25;
+  }
+
+  .segmentLabel {
+    font-size: 8.5px;
+  }
+
+  .subSegment {
+    stroke-width: 3.8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mainSegment,
+  .subSegment,
+  .segmentIcon,
+  .subIcon {
+    transition: none;
+  }
+}

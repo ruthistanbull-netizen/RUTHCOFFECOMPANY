@@ -1,0 +1,335 @@
+/* Requested dashboard hierarchy, compact conversion journey and two-column mobile cards. */
+.cr-dashboard-analytics--reordered {
+  grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+}
+
+.cr-dashboard-analytics--reordered .cr-analytics-card--revenue {
+  order: 1;
+  grid-column: span 3 !important;
+}
+
+.cr-dashboard-analytics--reordered .cr-analytics-card--orders {
+  order: 2;
+  grid-column: span 3 !important;
+}
+
+.cr-dashboard-analytics--reordered .cr-analytics-card--cart {
+  order: 3;
+  grid-column: span 3 !important;
+}
+
+.cr-dashboard-analytics--reordered .cr-analytics-card--session {
+  order: 4;
+  grid-column: span 3 !important;
+}
+
+.cr-dashboard-analytics--reordered .cr-analytics-card--conversion,
+.cr-dashboard-analytics--reordered .cr-analytics-card--conversion.is-open {
+  order: 5;
+  width: 100% !important;
+  grid-column: 1 / -1 !important;
+}
+
+.cr-dashboard-analytics--reordered .cr-analytics-card--revenue strong {
+  font-size: clamp(24px, 3.2vw, 42px) !important;
+  overflow-wrap: anywhere;
+}
+
+.cr-conversion-card__summary {
+  width: 100%;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+}
+
+.cr-conversion-card__headline {
+  min-width: 0;
+  display: grid !important;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+}
+
+.cr-conversion-card__headline > small {
+  white-space: nowrap;
+}
+
+.cr-conversion-card__headline > strong {
+  font-size: clamp(28px, 4vw, 42px) !important;
+  line-height: 1 !important;
+  white-space: nowrap;
+}
+
+.cr-conversion-journey {
+  min-width: 0;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.cr-conversion-journey > span {
+  min-width: 0;
+  padding-left: 10px;
+  border-left: 1px solid var(--line);
+  display: grid;
+  gap: 2px;
+}
+
+.cr-conversion-journey b,
+.cr-conversion-journey em {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cr-conversion-journey b {
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.1;
+}
+
+.cr-conversion-journey em {
+  color: var(--muted);
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .cr-dashboard-analytics--reordered {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .cr-dashboard-analytics--reordered .cr-analytics-card--revenue,
+  .cr-dashboard-analytics--reordered .cr-analytics-card--orders,
+  .cr-dashboard-analytics--reordered .cr-analytics-card--cart,
+  .cr-dashboard-analytics--reordered .cr-analytics-card--session {
+    grid-column: span 1 !important;
+  }
+
+  .cr-dashboard-analytics--reordered .cr-analytics-card--conversion,
+  .cr-dashboard-analytics--reordered .cr-analytics-card--conversion.is-open {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+@media (max-width: 700px) {
+  /* Home operation cards and order status cards stay two per row on phones. */
+  .cr-dashboard-analytics--reordered + .cr-grid--metrics,
+  .cr-order-metrics {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+
+  .cr-dashboard-analytics--reordered + .cr-grid--metrics .cr-metric,
+  .cr-order-metrics .cr-metric {
+    min-height: 142px !important;
+    padding: 14px !important;
+    border-radius: 14px !important;
+  }
+
+  .cr-dashboard-analytics--reordered + .cr-grid--metrics .cr-metric small,
+  .cr-order-metrics .cr-metric small {
+    font-size: 11px !important;
+    line-height: 1.25;
+  }
+
+  .cr-dashboard-analytics--reordered + .cr-grid--metrics .cr-metric > strong,
+  .cr-order-metrics .cr-metric > strong {
+    font-size: 30px !important;
+    line-height: 1;
+  }
+
+  .cr-dashboard-analytics--reordered + .cr-grid--metrics .cr-metric-footer,
+  .cr-order-metrics .cr-metric-footer {
+    align-items: flex-start !important;
+  }
+
+  .cr-dashboard-analytics--reordered + .cr-grid--metrics .cr-metric-footer > span:first-child,
+  .cr-order-metrics .cr-metric-footer > span:first-child {
+    display: none !important;
+  }
+
+  .cr-dashboard-analytics--reordered + .cr-grid--metrics .cr-status,
+  .cr-order-metrics .cr-status {
+    width: max-content;
+    min-width: 0 !important;
+    max-width: 100%;
+    height: 30px;
+    padding-inline: 10px;
+    font-size: 10px;
+  }
+
+  .cr-dashboard-analytics--reordered .cr-analytics-card {
+    min-height: 122px !important;
+  }
+
+  .cr-dashboard-analytics--reordered .cr-analytics-card--conversion,
+  .cr-dashboard-analytics--reordered .cr-analytics-card--conversion.is-open {
+    min-height: 0 !important;
+    width: 100% !important;
+    grid-column: 1 / -1 !important;
+  }
+
+  .cr-conversion-card__summary {
+    min-height: 96px;
+    padding: 14px !important;
+    grid-template-columns: minmax(0, 1fr) 38px;
+    gap: 8px;
+  }
+
+  .cr-conversion-card__headline {
+    grid-template-columns: auto auto minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .cr-conversion-card__headline > small {
+    font-size: 10px !important;
+  }
+
+  .cr-conversion-card__headline > strong {
+    font-size: 30px !important;
+  }
+
+  .cr-conversion-journey {
+    gap: 4px;
+  }
+
+  .cr-conversion-journey > span {
+    padding-left: 6px;
+  }
+
+  .cr-conversion-journey b {
+    font-size: 12px;
+  }
+
+  .cr-conversion-journey em {
+    font-size: 7px;
+  }
+
+  .cr-conversion-card__toggle {
+    min-width: 38px !important;
+    width: 38px !important;
+    padding: 0 !important;
+    justify-content: center;
+    font-size: 0 !important;
+  }
+
+  /* Products list: two product cards per row on phones. */
+  .cr-product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    padding: 8px !important;
+  }
+
+  .cr-product-card {
+    border-radius: 12px !important;
+  }
+
+  .cr-product-card__body {
+    padding: 8px !important;
+    gap: 6px !important;
+  }
+
+  .cr-product-card h2 {
+    min-height: 32px;
+    font-size: 11px !important;
+  }
+
+  .cr-product-card p {
+    font-size: 8px !important;
+  }
+
+  .cr-product-card__price {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .cr-product-card__price strong {
+    font-size: 11px !important;
+  }
+
+  .cr-product-card__top .cr-status {
+    min-width: 0 !important;
+    padding-inline: 7px;
+    font-size: 8px !important;
+  }
+
+  .cr-product-card__top .cr-icon-button {
+    width: 28px;
+    height: 28px;
+    flex-basis: 28px;
+  }
+
+  .cr-product-card__footer {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+
+@media (max-width: 440px) {
+  .cr-dashboard-analytics--reordered {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .cr-dashboard-analytics--reordered .cr-analytics-card--revenue,
+  .cr-dashboard-analytics--reordered .cr-analytics-card--orders,
+  .cr-dashboard-analytics--reordered .cr-analytics-card--cart,
+  .cr-dashboard-analytics--reordered .cr-analytics-card--session {
+    width: 100%;
+    grid-column: span 1 !important;
+  }
+
+  .cr-dashboard-analytics--reordered .cr-analytics-card--conversion,
+  .cr-dashboard-analytics--reordered .cr-analytics-card--conversion.is-open {
+    width: 100%;
+    grid-column: 1 / -1 !important;
+  }
+
+  .cr-dashboard-analytics--reordered + .cr-grid--metrics,
+  .cr-order-metrics {
+    gap: 8px !important;
+  }
+
+  .cr-dashboard-analytics--reordered + .cr-grid--metrics .cr-metric,
+  .cr-order-metrics .cr-metric {
+    min-height: 134px !important;
+    padding: 12px !important;
+  }
+
+  .cr-dashboard-analytics--reordered + .cr-grid--metrics .cr-status,
+  .cr-order-metrics .cr-status {
+    padding-inline: 8px;
+    font-size: 9px;
+  }
+
+  .cr-conversion-card__summary {
+    min-height: 90px;
+    padding: 12px !important;
+  }
+
+  .cr-conversion-card__headline {
+    gap: 6px;
+  }
+
+  .cr-conversion-card__headline > strong {
+    font-size: 27px !important;
+  }
+
+  .cr-conversion-journey > span {
+    padding-left: 5px;
+  }
+
+  .cr-conversion-journey b {
+    font-size: 11px;
+  }
+
+  .cr-conversion-journey em {
+    font-size: 6.5px;
+  }
+}

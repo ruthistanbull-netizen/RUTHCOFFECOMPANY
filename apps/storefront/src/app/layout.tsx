@@ -43,8 +43,7 @@ import {
   SOCIAL_PROFILES,
 } from "@/lib/seo";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 10;
 
 export const viewport: Viewport = {
   width: "device-width",

@@ -1,5 +1,5 @@
-/* ROSTA Insight popup motion ownership.
-   The popup surface is animated only by Admin ROSTA Insight popup motion. */
+/* Ruthie Insight popup motion ownership.
+   The popup surface is animated only by AdminRuthieInsightPopupMotion. */
 
 [data-ruthie-insight-popup="true"] {
   animation: none !important;
@@ -20,7 +20,7 @@
    stylesheet-level !important rule survives those writes and prevents the two
    delayed black flashes that appeared after the sheet had already closed. */
 body > div:has(> [data-ruthie-insight-popup="true"][data-ruthie-motion-phase="closing"])
-  > button[aria-label="ROSTA Insight sohbetini kapat"] {
+  > button[aria-label="Ruthie sohbetini kapat"] {
   opacity: 0 !important;
   background: transparent !important;
   pointer-events: none !important;
@@ -37,7 +37,7 @@ body > div:has(> [data-ruthie-insight-popup="true"][data-ruthie-motion-phase="cl
     backdrop-filter: none !important;
   }
 
-  body > div:has(> [data-ruthie-insight-popup="true"]) > button[aria-label="ROSTA Insight sohbetini kapat"] {
+  body > div:has(> [data-ruthie-insight-popup="true"]) > button[aria-label="Ruthie sohbetini kapat"] {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
   }

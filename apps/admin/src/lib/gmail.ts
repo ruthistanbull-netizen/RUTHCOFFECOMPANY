@@ -67,6 +67,8 @@ export function encryptRefreshToken(token: string) {
   return `${TOKEN_PREFIX}${iv.toString("base64url")}:${tag.toString("base64url")}:${ciphertext.toString("base64url")}`;
 }
 
+export const encryptGmailRefreshToken = encryptRefreshToken;
+
 export function decryptRefreshToken(stored: string) {
   const value = String(stored || "").trim();
   if (!value) return "";
@@ -191,7 +193,14 @@ function base64Url(value: string) {
 function encodeHeader(value: string) {
   return `=?UTF-8?B?${Buffer.from(value, "utf8").toString("base64")}?=`;
 }
-function htmlToText(html: string) {
+export function renderTemplate(template: string, variables: Record<string, string | number | null | undefined>) {
+  return template.replace(/\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/g, (_, key) => {
+    const value = variables[key];
+    return value === null || value === undefined ? "" : String(value);
+  });
+}
+
+export function htmlToText(html: string) {
   return html
     .replace(/<br\s*\/?>/gi, "\n")
     .replace(/<\/p>/gi, "\n")
@@ -302,6 +311,17 @@ export function loadRostaInlineLogo(): InlineEmailImage[] {
 export const loadRuthInlineLogo = loadRostaInlineLogo;
 
 
+export async function getGmailMessage(accessToken: string, messageId: string, format: "full" | "metadata" = "full") {
+  const params = new URLSearchParams({ format });
+  const response = await fetch(
+    `https://gmail.googleapis.com/gmail/v1/users/me/messages/${encodeURIComponent(messageId)}?${params.toString()}`,
+    { headers: { Authorization: `Bearer ${accessToken}` }, cache: "no-store" },
+  );
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error?.message || "Gmail mesajı okunamadı.");
+  return data as GmailMessage;
+}
+
 export async function getGmailThread(accessToken: string, threadId: string) {
   const response = await fetch(
     `https://gmail.googleapis.com/gmail/v1/users/me/threads/${encodeURIComponent(threadId)}?format=full`,
@@ -347,4 +367,12 @@ export function gmailMessageText(message: GmailMessage) {
       : body.trim();
   }
   return String(message.snippet || "").trim();
+}
+
+
+export function defaultOrderHtml(type: "order_created" | "order_shipped", vars: Record<string, string>) {
+  if (type === "order_shipped") {
+    return `<div style="font-family:Arial,sans-serif;color:#111111;line-height:1.7"><h2>Siparişin kargoya verildi</h2><p>Merhaba ${vars.customer_name || ""},</p><p>${vars.order_no} numaralı siparişin kargoya verildi.</p>${vars.cargo_company ? `<p><strong>Kargo:</strong> ${vars.cargo_company}</p>` : ""}${vars.cargo_tracking_no ? `<p><strong>Takip No:</strong> ${vars.cargo_tracking_no}</p>` : ""}<p>Sevgiler,<br/>ROSTA Coffee Co.</p></div>`;
+  }
+  return `<div style="font-family:Arial,sans-serif;color:#111111;line-height:1.7"><h2>Siparişini aldık</h2><p>Merhaba ${vars.customer_name || ""},</p><p>${vars.order_no} numaralı siparişin bize ulaştı. Hazırlık süreci başladığında seni bilgilendireceğiz.</p><p>Sevgiler,<br/>ROSTA Coffee Co.</p></div>`;
 }

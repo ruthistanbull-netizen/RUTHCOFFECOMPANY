@@ -129,8 +129,8 @@ const emptySummary: PaymentSummary = {
   reviewRequired: 0,
 };
 const PAYMENTS_PAGE_SIZE = 50;
-const PAYMENTS_CONTEXT_KEY = "ruth-payments-resource-context-v1";
-const PAYMENTS_SAVED_VIEWS_KEY = "ruth-payments-saved-views-v1";
+const PAYMENTS_CONTEXT_KEY = "rosta-payments-resource-context-v1";
+const PAYMENTS_SAVED_VIEWS_KEY = "rosta-payments-saved-views-v1";
 const STATUS_FILTER_VALUES = new Set<StatusFilter>(["all", "paid", "waiting", "failed", "refunded"]);
 const PAYMENT_SORT_KEYS = new Set<PaymentSortKey>(["reference", "customerName", "createdAt", "totalAmount"]);
 const PAYMENT_RANGE_VALUES = new Set<string>(["today", "this_week", "this_month", "last_30_days", "last_90_days"]);
@@ -680,7 +680,7 @@ export function ExactPayments() {
     const url = URL.createObjectURL(new Blob([`\ufeff${csv}`], { type: "text/csv;charset=utf-8" }));
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = `ruth-odemeler-${new Date().toISOString().slice(0, 10)}.csv`;
+    anchor.download = `rosta-odemeler-${new Date().toISOString().slice(0, 10)}.csv`;
     anchor.click();
     URL.revokeObjectURL(url);
   };

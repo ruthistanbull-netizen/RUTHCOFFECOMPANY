@@ -1,0 +1,100 @@
+a[aria-label="Ruthie Assistant"],
+a[aria-label="Ruthie sesli asistan"],
+a[aria-label="Bildirim ayarları"] {
+  min-width: 38px;
+  flex: 0 0 38px;
+}
+
+[data-ruthie-immersive-root] {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 2147483000 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  overflow: hidden !important;
+  transform: none !important;
+  filter: none !important;
+  perspective: none !important;
+  background: var(--ruth-color-text-primary);
+}
+
+[data-ruthie-immersive-root] > * {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+}
+
+/* The orb renderer intentionally draws beyond the sphere. Pull the canvas in
+   just enough that its transparent glow reaches zero before every edge. */
+[data-ruthie-immersive-root] canvas[aria-hidden="true"] {
+  transform: scale(.84);
+  transform-origin: 50% 50%;
+}
+
+html:has([data-ruthie-immersive-root]),
+body:has([data-ruthie-immersive-root]) {
+  width: 100%;
+  height: 100%;
+  overflow: hidden !important;
+  overscroll-behavior: none;
+}
+
+@media (max-width: 860px) {
+  /* The chat drawer must sit above the immersive Ruthie root and its scrim.
+     Attribute selectors keep this stable even though CSS-module class names are hashed. */
+  aside[aria-label="Ruthie Chat menüsü"] {
+    position: fixed !important;
+    inset: 0 auto 0 0 !important;
+    z-index: 2147483646 !important;
+    width: min(88vw, 380px) !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    overflow: hidden !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: translate3d(calc(-100% - 24px), 0, 0) !important;
+    background: color-mix(in srgb, var(--ruth-color-text-primary) 90%, black) !important;
+    color: var(--ruth-color-text-inverse) !important;
+    box-shadow: 28px 0 80px rgba(0, 0, 0, .72) !important;
+    transition: transform .24s cubic-bezier(.2,.8,.2,1), opacity .16s linear, visibility 0s linear .24s !important;
+  }
+
+  aside[aria-label="Ruthie Chat menüsü"][class*="sidebarOpen"] {
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: translate3d(0, 0, 0) !important;
+    transition-delay: 0s !important;
+  }
+
+  button[aria-label="Geçmişi kapat"] {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 2147483645 !important;
+    display: block !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    border: 0 !important;
+    background: rgba(0, 0, 0, .68) !important;
+    backdrop-filter: blur(3px);
+    transition: opacity .18s linear, visibility 0s linear .18s !important;
+  }
+
+  button[aria-label="Geçmişi kapat"][class*="scrimOpen"] {
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transition-delay: 0s !important;
+  }
+}
+
+@media (max-width: 420px) {
+  a[aria-label="Ruthie Assistant"],
+  a[aria-label="Ruthie sesli asistan"],
+  a[aria-label="Bildirim ayarları"] {
+    display: none !important;
+  }
+}

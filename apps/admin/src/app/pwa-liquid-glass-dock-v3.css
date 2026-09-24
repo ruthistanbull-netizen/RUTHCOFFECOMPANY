@@ -1,0 +1,243 @@
+@media (max-width: 1023px) {
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] {
+    width: 100% !important;
+    max-width: 420px !important;
+    height: 64px !important;
+    overflow: hidden !important;
+    border: 0.8px solid rgba(255, 255, 255, 0.72) !important;
+    border-radius: 999px !important;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.31), rgba(236, 239, 244, 0.08)),
+      rgba(208, 213, 221, 0.24) !important;
+    box-shadow:
+      0 13px 28px rgba(21, 25, 31, 0.17),
+      0 3px 9px rgba(21, 25, 31, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.96),
+      inset 0 -1px 0 rgba(62, 69, 79, 0.12) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(1.2) contrast(1.04) brightness(1.025) !important;
+    backdrop-filter: blur(24px) saturate(1.2) contrast(1.04) brightness(1.025) !important;
+    isolation: isolate !important;
+    transform: translateZ(0) !important;
+  }
+
+  nav[aria-label="ROSTA Coffee Co. mobil menü"]::before {
+    inset: 0.65px !important;
+    border-radius: inherit !important;
+    background:
+      radial-gradient(ellipse 64% 90% at 50% -18%, rgba(255, 255, 255, 0.66), transparent 55%),
+      radial-gradient(ellipse 45% 75% at 50% 120%, rgba(82, 90, 102, 0.08), transparent 68%),
+      linear-gradient(112deg, rgba(255, 255, 255, 0.17), transparent 29%, rgba(255, 255, 255, 0.05) 63%, transparent 84%) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.76),
+      inset 0 -1px 0 rgba(68, 76, 88, 0.06) !important;
+    opacity: 0.96 !important;
+  }
+
+  nav[aria-label="ROSTA Coffee Co. mobil menü"]::after {
+    background:
+      radial-gradient(ellipse 88px 128% at -2% 50%, rgba(255, 255, 255, 0.64), rgba(255, 255, 255, 0.14) 32%, transparent 70%),
+      radial-gradient(ellipse 88px 128% at 102% 50%, rgba(255, 255, 255, 0.64), rgba(255, 255, 255, 0.14) 32%, transparent 70%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.1), transparent 44%, rgba(58, 66, 78, 0.03)) !important;
+    box-shadow:
+      inset 0 0 0 0.55px rgba(255, 255, 255, 0.56),
+      inset 14px 0 22px rgba(255, 255, 255, 0.1),
+      inset -14px 0 22px rgba(255, 255, 255, 0.1) !important;
+    opacity: 0.88 !important;
+  }
+
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] > div {
+    inset: 0 4px !important;
+  }
+
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] > div > span:first-child {
+    top: 0 !important;
+    width: 20% !important;
+    height: 64px !important;
+  }
+
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] > div > span:first-child > span {
+    inset: auto !important;
+    top: 3px !important;
+    left: calc(50% - 29px) !important;
+    width: 58px !important;
+    height: 58px !important;
+    overflow: hidden !important;
+    border-radius: 999px !important;
+    filter:
+      drop-shadow(0 9px 16px rgba(28, 33, 41, 0.18))
+      drop-shadow(0 1px 2px rgba(28, 33, 41, 0.1)) !important;
+    transform-origin: 50% 50% !important;
+    transition:
+      width 135ms cubic-bezier(0.16, 1, 0.3, 1),
+      height 135ms cubic-bezier(0.16, 1, 0.3, 1),
+      left 135ms cubic-bezier(0.16, 1, 0.3, 1),
+      filter 160ms ease !important;
+  }
+
+  nav[aria-label="ROSTA Coffee Co. mobil menü"]:has(button[data-dock-index]:active) > div > span:first-child > span {
+    left: calc(50% - 31px) !important;
+    width: 62px !important;
+    height: 59px !important;
+    filter:
+      drop-shadow(0 11px 20px rgba(25, 29, 36, 0.2))
+      drop-shadow(0 2px 3px rgba(25, 29, 36, 0.1)) !important;
+  }
+
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] > div > span:first-child > span > span:nth-child(1) {
+    border: 0.9px solid rgba(255, 255, 255, 0.91) !important;
+    border-radius: inherit !important;
+    background:
+      radial-gradient(circle at 34% 4%, rgba(255, 255, 255, 0.69), transparent 34%),
+      radial-gradient(circle at 76% 84%, rgba(208, 216, 226, 0.16), transparent 46%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.44), rgba(220, 225, 232, 0.2)),
+      rgba(238, 241, 245, 0.32) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.99),
+      inset 0 -1px 0 rgba(67, 75, 87, 0.17),
+      inset 6px 0 10px rgba(255, 255, 255, 0.11),
+      inset -6px 0 10px rgba(255, 255, 255, 0.11),
+      0 2px 8px rgba(28, 33, 41, 0.09) !important;
+    -webkit-backdrop-filter: blur(8px) saturate(1.18) contrast(1.06) brightness(1.025) !important;
+    backdrop-filter: blur(8px) saturate(1.18) contrast(1.06) brightness(1.025) !important;
+    filter: url("#ruth-liquid-glass-displacement") saturate(1.08) contrast(1.04) !important;
+    opacity: 0.96 !important;
+  }
+
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] > div > span:first-child > span > span:nth-child(2) {
+    border: 0.7px solid rgba(255, 255, 255, 0.68) !important;
+    border-radius: inherit !important;
+    box-shadow:
+      inset 0 0 0 0.6px rgba(255, 255, 255, 0.52),
+      inset 5px 0 10px rgba(255, 255, 255, 0.13),
+      inset -5px 0 10px rgba(255, 255, 255, 0.13),
+      inset 0 -7px 12px rgba(42, 50, 61, 0.045) !important;
+    opacity: 0.96 !important;
+  }
+
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] > div > span:first-child > span > span:nth-child(3) {
+    border-radius: inherit !important;
+    background:
+      radial-gradient(circle at 6% 50%, rgba(0, 172, 255, 0.18), transparent 25%),
+      radial-gradient(circle at 94% 50%, rgba(255, 44, 126, 0.15), transparent 25%),
+      radial-gradient(circle at 50% 2%, rgba(255, 210, 96, 0.12), transparent 24%) !important;
+    mix-blend-mode: screen !important;
+    opacity: 0.78 !important;
+    filter: blur(0.18px) !important;
+  }
+
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] > div > span:first-child > span > span:nth-child(4) {
+    border-radius: inherit !important;
+    background:
+      linear-gradient(118deg, transparent 12%, rgba(255, 255, 255, 0.74) 26%, transparent 41%),
+      radial-gradient(ellipse 72% 38% at 50% 0%, rgba(255, 255, 255, 0.66), transparent 72%) !important;
+    mix-blend-mode: screen !important;
+    opacity: 0.68 !important;
+  }
+
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] > div > span:first-child > span > span:nth-child(5) {
+    border: 0.55px solid rgba(255, 255, 255, 0.88) !important;
+    border-radius: inherit !important;
+    box-shadow:
+      inset 0 0 0 0.65px rgba(61, 71, 84, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+    opacity: 0.9 !important;
+  }
+
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] button[data-dock-index] {
+    color: rgba(64, 69, 77, 0.67) !important;
+  }
+
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] button[data-dock-index] > span:last-child {
+    gap: 0 !important;
+    padding: 3px 1px 1px !important;
+    filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.38)) !important;
+    transition:
+      transform 160ms cubic-bezier(0.16, 1, 0.3, 1),
+      color 130ms ease,
+      opacity 130ms ease,
+      filter 130ms ease !important;
+  }
+
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] button[data-dock-index] > span:last-child > span:first-child {
+    width: 28px !important;
+    height: 28px !important;
+    flex-basis: 28px !important;
+  }
+
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] button[data-dock-index] > span:last-child > span:first-child img {
+    width: 25px !important;
+    height: 25px !important;
+    opacity: 0.66 !important;
+    filter: grayscale(1) contrast(1.02) !important;
+  }
+
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] button[data-dock-index] > span:last-child > span:last-child {
+    max-width: calc(100% - 2px) !important;
+    font-size: 9px !important;
+    font-weight: 610 !important;
+    line-height: 1.02 !important;
+    letter-spacing: -0.025em !important;
+    opacity: 0.64 !important;
+  }
+
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] button[data-dock-index][aria-current="page"] {
+    color: rgba(12, 14, 17, 0.96) !important;
+  }
+
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] button[data-dock-index][aria-current="page"] > span:last-child {
+    filter:
+      drop-shadow(0 1px 0 rgba(255, 255, 255, 0.66))
+      drop-shadow(0 2px 4px rgba(24, 29, 36, 0.08)) !important;
+    transform: translate3d(0, -0.3px, 0) scale(1.025) !important;
+  }
+
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] button[data-dock-index][aria-current="page"] > span:last-child > span:first-child img {
+    opacity: 0.98 !important;
+    filter: grayscale(1) contrast(1.18) brightness(0.82) !important;
+  }
+
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] button[data-dock-index][aria-current="page"] > span:last-child > span:last-child {
+    font-weight: 730 !important;
+    opacity: 0.96 !important;
+  }
+
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] button[data-dock-index]:active > span:last-child {
+    transform: translate3d(0, 0.5px, 0) scale(0.95) !important;
+    opacity: 0.92 !important;
+  }
+
+  html.dark nav[aria-label="ROSTA Coffee Co. mobil menü"],
+  html[data-theme="dark"] nav[aria-label="ROSTA Coffee Co. mobil menü"] {
+    border-color: rgba(255, 255, 255, 0.22) !important;
+    background:
+      linear-gradient(180deg, rgba(62, 67, 76, 0.33), rgba(20, 23, 29, 0.18)),
+      rgba(20, 23, 29, 0.42) !important;
+    box-shadow:
+      0 14px 30px rgba(0, 0, 0, 0.36),
+      inset 0 1px 0 rgba(255, 255, 255, 0.22),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.3) !important;
+  }
+
+  html.dark nav[aria-label="ROSTA Coffee Co. mobil menü"] button[data-dock-index],
+  html[data-theme="dark"] nav[aria-label="ROSTA Coffee Co. mobil menü"] button[data-dock-index] {
+    color: rgba(232, 235, 240, 0.64) !important;
+  }
+
+  html.dark nav[aria-label="ROSTA Coffee Co. mobil menü"] button[data-dock-index][aria-current="page"],
+  html[data-theme="dark"] nav[aria-label="ROSTA Coffee Co. mobil menü"] button[data-dock-index][aria-current="page"] {
+    color: rgba(255, 255, 255, 0.98) !important;
+  }
+
+  html.dark nav[aria-label="ROSTA Coffee Co. mobil menü"] button[data-dock-index][aria-current="page"] > span:last-child > span:first-child img,
+  html[data-theme="dark"] nav[aria-label="ROSTA Coffee Co. mobil menü"] button[data-dock-index][aria-current="page"] > span:last-child > span:first-child img {
+    filter: grayscale(1) contrast(1.15) brightness(1.32) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  nav[aria-label="ROSTA Coffee Co. mobil menü"],
+  nav[aria-label="ROSTA Coffee Co. mobil menü"] * {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
+}

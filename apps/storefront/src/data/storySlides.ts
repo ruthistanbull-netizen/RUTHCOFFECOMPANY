@@ -15,9 +15,23 @@ export const storySlides = [
   },
   {
     eyebrow: "",
+    title: "Kavrumdan servise tutarlı bir çizgi.",
+    body: "Çekirdeğin karakterini koruyan kavrum yaklaşımı ve doğru kullanım bilgisi, her fincanda daha öngörülebilir sonuç verir.",
+    image: "/home/rosta-hero-v4.webp",
+    href: "/products",
+  },
+  {
+    eyebrow: "",
     title: "Evde iyi kahve daha kolay.",
     body: "Doğru kahve, doğru saklama ve anlaşılır ürün detaylarıyla hazırlama sürecini gereksiz karmaşadan uzaklaştır.",
     image: "/home/rosta-under-hero-photo.jpg",
+    href: "/products",
+  },
+  {
+    eyebrow: "",
+    title: "Kahve ritüeli, günlük hayatın içinde.",
+    body: "Evden kafeye, hızlı bir espresso molasından yavaş demlemeye kadar ROSTA ürünleri gerçek kullanım anları için tasarlanır.",
+    image: "/home/rosta-under-hero-v4.jpg",
     href: "/products",
   },
   {
@@ -27,4 +41,4 @@ export const storySlides = [
     image: "/home/rosta-hero.webp",
     href: "/about",
   },
-];
+] as const;

@@ -1,0 +1,161 @@
+.root {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+.root :global([data-exact-base44-page="email-customers"]) {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+/* Until the desktop two-column breakpoint, put the composer before the long
+   customer list. Otherwise the composer sits below hundreds of customer cards. */
+@media (max-width: 1279px) {
+  .root :global([data-exact-base44-page="email-customers"] > div:nth-of-type(3)) {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+  }
+
+  .root :global([data-exact-base44-page="email-customers"] > div:nth-of-type(3) > div:first-child) {
+    order: 2;
+    min-width: 0;
+  }
+
+  .root :global([data-exact-base44-page="email-customers"] > div:nth-of-type(3) > div:last-child) {
+    order: 1;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  /* Audience tabs must scroll inside their own row instead of widening the page. */
+  .root :global([data-exact-base44-page="email-customers"] > div:nth-of-type(3) > div:first-child > div:first-child) {
+    display: flex;
+    width: 100%;
+    max-width: 100%;
+    justify-content: flex-start;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .root :global([data-exact-base44-page="email-customers"] > div:nth-of-type(3) > div:first-child > div:first-child::-webkit-scrollbar) {
+    display: none;
+  }
+
+  .root :global([data-exact-base44-page="email-customers"] > div:nth-of-type(3) > div:first-child > div:first-child > *) {
+    flex: 0 0 auto;
+  }
+
+  /* Search and select-all controls stack cleanly on narrow screens. */
+  .root :global([data-exact-base44-page="email-customers"] > div:nth-of-type(3) > div:first-child > div:nth-child(2)) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .root :global([data-exact-base44-page="email-customers"] > div:nth-of-type(3) > div:first-child > div:nth-child(2) > label) {
+    min-height: 40px;
+    width: 100%;
+  }
+
+  .root :global([data-exact-base44-page="email-customers"] input[type="checkbox"]) {
+    width: 20px;
+    height: 20px;
+    flex: 0 0 auto;
+  }
+
+  /* The generic mobile table card was treating the checkbox as the card title,
+     then forcing customer identity into a right-aligned value column. Reflow that
+     existing markup into a real customer card without changing desktop tables. */
+  .root :global([data-exact-base44-page="email-customers"] .md\:hidden > div > button) {
+    position: relative;
+    min-width: 0;
+    overflow: hidden;
+    padding: 14px;
+  }
+
+  .root :global([data-exact-base44-page="email-customers"] .md\:hidden > div > button > div:first-child) {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 2;
+    margin: 0;
+  }
+
+  .root :global([data-exact-base44-page="email-customers"] .md\:hidden > div > button > div:nth-child(2)) {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .root :global([data-exact-base44-page="email-customers"] .md\:hidden > div > button > div:nth-child(2) > div) {
+    min-width: 0;
+    gap: 4px;
+    border-radius: var(--radius-small);
+    background: hsl(var(--surface-secondary));
+    padding: 8px;
+  }
+
+  .root :global([data-exact-base44-page="email-customers"] .md\:hidden > div > button > div:nth-child(2) > div:first-child) {
+    grid-column: 1 / -1;
+    display: block;
+    margin-bottom: 2px;
+    padding: 0 44px 12px 0;
+    border-bottom: 1px solid hsl(var(--border-subtle));
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .root :global([data-exact-base44-page="email-customers"] .md\:hidden > div > button > div:nth-child(2) > div:first-child > span:first-child) {
+    display: none;
+  }
+
+  .root :global([data-exact-base44-page="email-customers"] .md\:hidden > div > button > div:nth-child(2) > div:first-child > span:last-child) {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    text-align: left;
+  }
+
+  .root :global([data-exact-base44-page="email-customers"] .md\:hidden > div > button > div:nth-child(2) > div:not(:first-child)) {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  .root :global([data-exact-base44-page="email-customers"] .md\:hidden > div > button > div:nth-child(2) > div:not(:first-child) > span:last-child) {
+    max-width: 100%;
+    overflow: hidden;
+    text-align: left;
+  }
+
+  .root :global([data-exact-base44-page="email-customers"] .md\:hidden p) {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .root :global([data-exact-base44-page="email-customers"] .md\:hidden span) {
+    min-width: 0;
+  }
+
+  /* Keep the composer compact enough to use comfortably on a phone. */
+  .root :global([data-exact-base44-page="email-customers"] > div:nth-of-type(3) > div:last-child textarea) {
+    min-height: 160px;
+  }
+
+  .root :global([data-exact-base44-page="email-customers"] > div:nth-of-type(2)) {
+    min-width: 0;
+  }
+}

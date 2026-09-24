@@ -317,7 +317,7 @@ export async function POST(request: Request) {
     }
   }
 
-  const email = await sendOrderConfirmationEmail(supabase, order.id, profileId).catch((error) => ({ ok: false, error: error instanceof Error ? error.message : "Sipariş maili gönderilemedi." }));
+  const email = await sendOrderConfirmationEmail(supabase, order.id, auth.profile.id).catch((error) => ({ ok: false, error: error instanceof Error ? error.message : "Sipariş maili gönderilemedi." }));
   const revalidate = await revalidateWebsite({ source: "admin-manual-order" });
   return NextResponse.json({
     ok: true,

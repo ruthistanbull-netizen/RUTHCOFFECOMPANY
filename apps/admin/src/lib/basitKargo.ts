@@ -34,6 +34,10 @@ export type NormalizedBasitShipment = {
   raw: unknown;
 };
 
+export function isBasitKargoConfigured() {
+  return Boolean(process.env.BASIT_KARGO_API_TOKEN?.trim());
+}
+
 export class BasitKargoApiError extends Error {
   status: number;
   details: unknown;
@@ -49,7 +53,7 @@ export class BasitKargoApiError extends Error {
 function apiToken() {
   assertPhase4OrderShippingEnabled();
   const token = process.env.BASIT_KARGO_API_TOKEN?.trim();
-  if (!token) throw new BasitKargoApiError("BASIT_KARGO_API_TOKEN Render ortam değişkeni bulunamadı.", 500);
+  if (!token) throw new BasitKargoApiError("BASIT_KARGO_API_TOKEN henüz yapılandırılmadı. ROSTA Basit Kargo hesabını bağlamak için deployment ortam değişkenine tokenı ekle.", 500);
   return token;
 }
 

@@ -25,6 +25,13 @@
     "dev:admin": "npm --prefix apps/admin run dev",
     "build:admin": "npm --prefix apps/admin run build",
     "start:admin": "npm --prefix apps/admin run start",
-    "typecheck:admin": "npm --prefix apps/admin run typecheck"
+    "typecheck:admin": "npm --prefix apps/admin run typecheck",
+    "typecheck:admin-app": "npm --prefix apps/admin run typecheck:app",
+    "typecheck:contracts": "npm --prefix packages/contracts run typecheck",
+    "typecheck:commerce-core": "npm --prefix packages/commerce-core run typecheck",
+    "typecheck:commerce": "npm run typecheck:contracts && npm run typecheck:commerce-core",
+    "typecheck:all": "npm run typecheck:commerce && npm run typecheck:admin-app && npm run typecheck:storefront",
+    "build:all": "npm run build:storefront && npm run build:admin",
+    "verify:rosta-parity": "node scripts/verify-rosta-commerce-parity.mjs"
   }
 }

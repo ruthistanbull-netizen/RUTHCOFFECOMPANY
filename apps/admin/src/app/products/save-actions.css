@@ -1,0 +1,41 @@
+/* Keep product editor actions visible above the scrollable form. */
+.cr-drawer--product {
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+}
+
+.cr-drawer--product > .cr-drawer__header {
+  grid-row: 1;
+}
+
+.cr-drawer--product > .cr-product-editor-tabs {
+  grid-row: 2;
+}
+
+.cr-drawer--product > .cr-product-editor-footer {
+  grid-row: 3;
+  min-height: 58px;
+  padding: 9px 14px;
+  border-top: 0;
+  border-bottom: 1px solid var(--line);
+  box-shadow: 0 8px 18px rgba(16, 24, 40, 0.06);
+  z-index: 2;
+}
+
+.cr-drawer--product > .cr-drawer__body {
+  grid-row: 4;
+}
+
+@media (max-width: 720px) {
+  .cr-drawer--product > .cr-product-editor-footer {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+
+  .cr-drawer--product > .cr-product-editor-footer > div {
+    width: 100%;
+  }
+
+  .cr-drawer--product > .cr-product-editor-footer .cr-button {
+    flex: 1;
+  }
+}

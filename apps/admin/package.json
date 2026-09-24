@@ -7,16 +7,17 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build --webpack --experimental-app-only --debug",
     "start": "next start",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "typecheck:app": "tsc --noEmit -p tsconfig.app.json"
   },
   "dependencies": {
     "@ruth-commerce/commerce-core": "file:../../packages/commerce-core",
     "@ruth-commerce/contracts": "file:../../packages/contracts",
     "@ruth-commerce/ui": "file:../../packages/ui",
-    "@supabase/supabase-js": "2.108.2",
+    "@supabase/supabase-js": "2.110.8",
     "framer-motion": "^12.23.0",
     "lucide-react": "^0.468.0",
     "next": "16.2.9",
@@ -25,10 +26,10 @@
     "sharp": "^0.34.3",
     "@react-three/fiber": "^9.6.1",
     "three": "^0.185.1",
-    "@fontsource-variable/inter": "5.3.0"
+    "@fontsource-variable/inter": "5.3.0",
+    "@tailwindcss/postcss": "4.3.3"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.1.0",
     "@types/node": "^20.19.0",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",

@@ -32,10 +32,10 @@ import { ExactIconButton, ExactToastProvider, exactCx } from "./primitives";
 function Brand({ collapsed = false }: { collapsed?: boolean }) {
   return (
     <Link href="/" className={exactCx("flex min-w-0 items-center gap-2.5", collapsed && "justify-center")}>
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-[var(--radius-small)] bg-[#F4F0E8] shadow-sm ring-1 ring-black/5">
-        <img src="/rosta-coffee-co.svg" alt="ROSTA" className="h-8 w-8 object-contain" />
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-[var(--radius-small)] bg-white shadow-sm ring-1 ring-black/5">
+        <img src="/rosta-coffee-co.svg" alt="ROSTA Coffee Co." className="h-8 w-8 object-contain" />
       </div>
-      {!collapsed ? <div className="min-w-0"><p className="ruth-type-card-title truncate text-main">ROSTA</p><p className="ruth-type-caption truncate text-subtle">Control Room</p></div> : null}
+      {!collapsed ? <div className="min-w-0"><p className="ruth-type-card-title truncate text-main">ROSTA Coffee Co.</p><p className="ruth-type-caption truncate text-subtle">Control Room</p></div> : null}
     </Link>
   );
 }
@@ -44,7 +44,7 @@ function MobileDrawerBrand({ onClick }: { onClick: () => void }) {
   return (
     <Link
       href="/"
-      aria-label="ROSTA ana sayfası"
+      aria-label="ROSTA Coffee Co. ana sayfası"
       onClick={onClick}
       className="relative block h-14 w-[176px] shrink-0 overflow-hidden"
     >
@@ -54,7 +54,7 @@ function MobileDrawerBrand({ onClick }: { onClick: () => void }) {
         width={1000}
         height={500}
         draggable={false}
-        className="block h-full w-full select-none object-contain object-left"
+        className="block h-auto w-full -translate-y-[17px] select-none object-contain dark:drop-shadow-[0_0_4px_rgba(255,255,255,0.78)]"
       />
     </Link>
   );
@@ -73,7 +73,7 @@ function Sidebar({ collapsed }: { collapsed: boolean }) {
           return <div key={group.label} className="mb-1">
             {!collapsed ? <button type="button" onClick={() => setExpanded((current) => ({ ...current, [group.label]: !isExpanded }))} className="ruth-type-label flex w-full items-center justify-between px-2.5 py-1.5 font-semibold uppercase tracking-wide text-subtle transition-colors hover:text-muted">{group.label}<ChevronDown className={exactCx("h-3 w-3 transition-transform", !isExpanded && "-rotate-90")} /></button> : <div className="mx-1 my-2 h-px bg-border-subtle" />}
             <AnimatePresence initial={false}>{isExpanded || collapsed ? <motion.div initial={collapsed ? false : { height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.18, ease: [0.32, 0.72, 0, 1] }} className="overflow-hidden">{visibleItems.map((item) => { const active = exactItemIsActive(pathname, item); const Icon = item.icon; return <Link key={`${group.label}:${item.path}`} href={item.path} aria-current={active ? "page" : undefined} title={collapsed ? item.label : undefined} className={exactCx("ruth-type-control group relative flex h-9 items-center gap-2.5 px-2.5 radius-small transition-all duration-150", active ? "bg-accent-soft text-accent" : "text-muted hover:bg-surface-tertiary hover:text-main", collapsed && "justify-center")}>
-              {active && !collapsed ? <span className="absolute left-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-accent" /> : null}<Icon className="h-[17px] w-[17px] shrink-0" />{!collapsed ? <span className="truncate">{item.label}</span> : null}{!collapsed && item.badge ? <span className="ruth-type-caption ml-auto rounded-full bg-accent px-1.5 py-0.5 font-bold text-[#F4F0E8]">{item.badge}</span> : null}
+              {active && !collapsed ? <span className="absolute left-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-accent" /> : null}<Icon className="h-[17px] w-[17px] shrink-0" />{!collapsed ? <span className="truncate">{item.label}</span> : null}{!collapsed && item.badge ? <span className="ruth-type-caption ml-auto rounded-full bg-accent px-1.5 py-0.5 font-bold text-white">{item.badge}</span> : null}
             </Link>; })}</motion.div> : null}</AnimatePresence>
           </div>;
         })}
@@ -91,7 +91,7 @@ function TopHeader({ collapsed, onToggleSidebar, onOpenSearch, onOpenMore, dark,
     <ExactIconButton icon={collapsed ? PanelLeft : PanelLeftClose} label="Kenar çubuğunu değiştir" variant="ghost" size="icon-sm" className="hidden lg:flex" onClick={onToggleSidebar} />
     <span className="ruth-type-card-title hidden truncate text-main md:block">{currentItem?.label || "Kontrol Merkezi"}</span>
     <button type="button" onClick={onOpenSearch} className="ruth-type-control ml-auto mr-1 flex h-11 items-center gap-2 border border-border-subtle bg-surface-secondary px-3 text-subtle radius-control transition-all hover:border-border-strong hover:text-muted md:h-9 md:w-64"><Search className="h-4 w-4 shrink-0" /><span className="hidden md:inline">Ara veya komut çalıştır…</span></button>
-    <ExactIconButton icon={Sparkles} label="ROSTA Insight" variant="ghost" size="icon-sm" className="text-accent" onClick={() => router.push("/")} />
+    <ExactIconButton icon={Sparkles} label="ROSTA Insight" variant="ghost" size="icon-sm" className="text-accent" onClick={() => router.push("/rosta-insight")} />
     <ExactNotificationBell />
     <ExactIconButton icon={dark ? Sun : Moon} label="Temayı değiştir" variant="ghost" size="icon-sm" onClick={onToggleDark} />
   </header>;
@@ -120,10 +120,10 @@ function MobileBottomNav() {
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-header px-3 pb-[max(0.65rem,env(safe-area-inset-bottom))] lg:hidden">
       <nav
         aria-label="Mobil ana menü"
-        className="pointer-events-auto relative mx-auto w-full max-w-[460px] overflow-hidden rounded-[30px] border border-[#F4F0E8]/70 bg-[#F4F0E8]/[0.58] p-1.5 shadow-[0_18px_44px_rgba(31,26,58,0.18),0_4px_14px_rgba(31,26,58,0.10),inset_0_1px_0_rgba(244,240,232,0.88)] backdrop-blur-[28px] backdrop-saturate-[1.8] dark:border-white/10 dark:bg-black/[0.42] dark:shadow-[0_18px_46px_rgba(0,0,0,0.42),inset_0_1px_0_rgba(244,240,232,0.12)]"
+        className="pointer-events-auto relative mx-auto w-full max-w-[460px] overflow-hidden rounded-[30px] border border-white/70 bg-white/[0.58] p-1.5 shadow-[0_18px_44px_rgba(31,26,58,0.18),0_4px_14px_rgba(31,26,58,0.10),inset_0_1px_0_rgba(255,255,255,0.88)] backdrop-blur-[28px] backdrop-saturate-[1.8] dark:border-white/10 dark:bg-black/[0.42] dark:shadow-[0_18px_46px_rgba(0,0,0,0.42),inset_0_1px_0_rgba(255,255,255,0.12)]"
       >
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#F4F0E8]/40 via-[#F4F0E8]/5 to-white/15 dark:from-white/10 dark:via-transparent dark:to-white/5" />
-        <div className="pointer-events-none absolute inset-x-5 top-0 h-px bg-gradient-to-r from-transparent via-[#F4F0E8]/95 to-transparent dark:via-[#F4F0E8]/30" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/40 via-white/5 to-white/15 dark:from-white/10 dark:via-transparent dark:to-white/5" />
+        <div className="pointer-events-none absolute inset-x-5 top-0 h-px bg-gradient-to-r from-transparent via-white/95 to-transparent dark:via-white/30" />
         <div className="pointer-events-none absolute -bottom-12 left-1/2 h-24 w-56 -translate-x-1/2 rounded-full bg-accent/15 blur-3xl" />
 
         <div className="relative flex items-stretch">
@@ -149,11 +149,11 @@ function MobileBottomNav() {
                     <motion.span
                       layoutId="exact-mobile-liquid-pill"
                       transition={{ type: "spring", stiffness: 420, damping: 34, mass: 0.78 }}
-                      className="absolute inset-x-1 inset-y-0 overflow-hidden rounded-[22px] border border-[#F4F0E8]/75 bg-[#F4F0E8]/[0.70] shadow-[0_7px_22px_rgba(93,72,210,0.18),inset_0_1px_0_rgba(244,240,232,0.95),inset_0_-1px_0_rgba(112,91,229,0.08)] dark:border-white/15 dark:bg-white/[0.10] dark:shadow-[0_8px_24px_rgba(0,0,0,0.28),inset_0_1px_0_rgba(244,240,232,0.18)]"
+                      className="absolute inset-x-1 inset-y-0 overflow-hidden rounded-[22px] border border-white/75 bg-white/[0.70] shadow-[0_7px_22px_rgba(93,72,210,0.18),inset_0_1px_0_rgba(255,255,255,0.95),inset_0_-1px_0_rgba(112,91,229,0.08)] dark:border-white/15 dark:bg-white/[0.10] dark:shadow-[0_8px_24px_rgba(0,0,0,0.28),inset_0_1px_0_rgba(255,255,255,0.18)]"
                     >
-                      <span className="absolute inset-0 bg-gradient-to-br from-[#F4F0E8]/75 via-[#F4F0E8]/10 to-accent/10 dark:from-white/10 dark:via-transparent dark:to-accent/15" />
-                      <span className="absolute left-[14%] right-[14%] top-0 h-px bg-gradient-to-r from-transparent via-[#F4F0E8] to-transparent dark:via-[#F4F0E8]/30" />
-                      <span className="absolute -right-3 -top-5 h-12 w-12 rounded-full bg-[#F4F0E8]/65 blur-xl dark:bg-white/10" />
+                      <span className="absolute inset-0 bg-gradient-to-br from-white/75 via-white/10 to-accent/10 dark:from-white/10 dark:via-transparent dark:to-accent/15" />
+                      <span className="absolute left-[14%] right-[14%] top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent dark:via-white/30" />
+                      <span className="absolute -right-3 -top-5 h-12 w-12 rounded-full bg-white/65 blur-xl dark:bg-white/10" />
                     </motion.span>
                   ) : null}
 
@@ -185,7 +185,7 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
   const pathname = usePathname();
   const overlay = useOverlayBehavior({ active: open, onClose, dismissalPolicy: "light-dismiss" });
   if (typeof document === "undefined") return null;
-  return createPortal(<AnimatePresence>{open ? <><motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={overlay.onBackdropClick} className="fixed inset-0 z-drawer bg-black/30 backdrop-blur-[2px] lg:hidden" /><motion.aside ref={overlay.containerRef} initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }} transition={{ type: "spring", damping: 32, stiffness: 320 }} className="fixed bottom-0 left-0 top-0 z-drawer flex w-[286px] flex-col bg-surface-primary lg:hidden" role="dialog" aria-modal="true" aria-label="Mobil menü" tabIndex={-1} data-dismissal-policy={overlay.dismissalPolicy}><div className="flex h-[calc(4.5rem+env(safe-area-inset-top))] shrink-0 items-end justify-between border-b border-border-subtle px-4 pb-2"><MobileDrawerBrand onClick={onClose} /><ExactIconButton icon={X} label="Menüyü kapat" variant="ghost" size="icon-sm" onClick={onClose} /></div><nav className="no-scrollbar flex-1 overflow-y-auto px-3 py-4">{exactNavStructure.map((group) => <div key={group.label} className="mb-4"><p className="ruth-type-label mb-1 px-2 font-semibold uppercase tracking-wide text-subtle">{group.label}</p>{group.items.map((item) => { const active = exactItemIsActive(pathname, item); const Icon = item.icon; return <Link key={item.path} href={item.path} onClick={onClose} className={exactCx("ruth-type-control flex h-11 items-center gap-3 px-3 radius-small", active ? "bg-accent-soft font-medium text-accent" : "text-muted hover:bg-surface-secondary hover:text-main")}><Icon className="h-[17px] w-[17px]" /><span className="truncate">{item.label}</span>{item.badge ? <span className="ruth-type-caption ml-auto rounded-full bg-accent px-1.5 py-0.5 font-bold text-[#F4F0E8]">{item.badge}</span> : null}</Link>; })}</div>)}</nav></motion.aside></> : null}</AnimatePresence>, document.body);
+  return createPortal(<AnimatePresence>{open ? <><motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={overlay.onBackdropClick} className="fixed inset-0 z-drawer bg-black/30 backdrop-blur-[2px] lg:hidden" /><motion.aside ref={overlay.containerRef} initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }} transition={{ type: "spring", damping: 32, stiffness: 320 }} className="fixed bottom-0 left-0 top-0 z-drawer flex w-[286px] flex-col bg-surface-primary lg:hidden" role="dialog" aria-modal="true" aria-label="Mobil menü" tabIndex={-1} data-dismissal-policy={overlay.dismissalPolicy}><div className="flex h-[calc(4.5rem+env(safe-area-inset-top))] shrink-0 items-end justify-between border-b border-border-subtle px-4 pb-2"><MobileDrawerBrand onClick={onClose} /><ExactIconButton icon={X} label="Menüyü kapat" variant="ghost" size="icon-sm" onClick={onClose} /></div><nav className="no-scrollbar flex-1 overflow-y-auto px-3 py-4">{exactNavStructure.map((group) => <div key={group.label} className="mb-4"><p className="ruth-type-label mb-1 px-2 font-semibold uppercase tracking-wide text-subtle">{group.label}</p>{group.items.map((item) => { const active = exactItemIsActive(pathname, item); const Icon = item.icon; return <Link key={item.path} href={item.path} onClick={onClose} className={exactCx("ruth-type-control flex h-11 items-center gap-3 px-3 radius-small", active ? "bg-accent-soft font-medium text-accent" : "text-muted hover:bg-surface-secondary hover:text-main")}><Icon className="h-[17px] w-[17px]" /><span className="truncate">{item.label}</span>{item.badge ? <span className="ruth-type-caption ml-auto rounded-full bg-accent px-1.5 py-0.5 font-bold text-white">{item.badge}</span> : null}</Link>; })}</div>)}</nav></motion.aside></> : null}</AnimatePresence>, document.body);
 }
 
 export function ExactBase44ShellV2({ children }: { children: ReactNode }) {
@@ -194,11 +194,11 @@ export function ExactBase44ShellV2({ children }: { children: ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dark, setDark] = useState(false);
 
-  useEffect(() => { const stored = window.localStorage.getItem("rosta_exact_sidebar_collapsed") === "1"; setCollapsed(stored); const darkStored = window.localStorage.getItem("rosta_exact_dark") === "1"; setDark(darkStored); document.documentElement.classList.toggle("dark", darkStored); }, []);
+  useEffect(() => { const stored = window.localStorage.getItem("ruth_exact_sidebar_collapsed") === "1"; setCollapsed(stored); const darkStored = window.localStorage.getItem("ruth_exact_dark") === "1"; setDark(darkStored); document.documentElement.classList.toggle("dark", darkStored); }, []);
   useEffect(() => { const handler = (event: KeyboardEvent) => { if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") { event.preventDefault(); setSearchOpen(true); } }; window.addEventListener("keydown", handler); return () => window.removeEventListener("keydown", handler); }, []);
 
-  const toggleSidebar = () => setCollapsed((value) => { const next = !value; window.localStorage.setItem("rosta_exact_sidebar_collapsed", next ? "1" : "0"); return next; });
-  const toggleDark = () => setDark((value) => { const next = !value; window.localStorage.setItem("rosta_exact_dark", next ? "1" : "0"); document.documentElement.classList.toggle("dark", next); return next; });
+  const toggleSidebar = () => setCollapsed((value) => { const next = !value; window.localStorage.setItem("ruth_exact_sidebar_collapsed", next ? "1" : "0"); return next; });
+  const toggleDark = () => setDark((value) => { const next = !value; window.localStorage.setItem("ruth_exact_dark", next ? "1" : "0"); document.documentElement.classList.toggle("dark", next); return next; });
 
   return <ExactToastProvider><ExactNotificationProvider><div className="min-h-screen bg-background text-main lg:flex"><Sidebar collapsed={collapsed} /><div className="min-w-0 flex-1"><TopHeader collapsed={collapsed} onToggleSidebar={toggleSidebar} onOpenSearch={() => setSearchOpen(true)} onOpenMore={() => setMobileOpen(true)} dark={dark} onToggleDark={toggleDark} /><main className="mx-auto w-full max-w-[1600px] px-3 pb-[calc(6.5rem+env(safe-area-inset-bottom))] pt-4 md:px-5 lg:pb-8 lg:pt-5">{children}</main></div><MobileBottomNav /><MobileDrawer open={mobileOpen} onClose={() => setMobileOpen(false)} /><CommandPalette open={searchOpen} onClose={() => setSearchOpen(false)} /></div><ExactUnifiedToastLayer /></ExactNotificationProvider></ExactToastProvider>;
 }

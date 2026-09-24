@@ -1,0 +1,94 @@
+/* Final mobile card layout requested for dashboard and orders. */
+
+@media (max-width: 700px) {
+  /* Dashboard: two cards per row, with revenue and orders first. */
+  .cr-dashboard-analytics--reordered {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+
+  .cr-dashboard-analytics--reordered .cr-analytics-card--revenue {
+    order: 1;
+    grid-column: span 1 !important;
+  }
+
+  .cr-dashboard-analytics--reordered .cr-analytics-card--orders {
+    order: 2;
+    grid-column: span 1 !important;
+  }
+
+  .cr-dashboard-analytics--reordered .cr-analytics-card--session {
+    order: 3;
+    grid-column: span 1 !important;
+  }
+
+  .cr-dashboard-analytics--reordered .cr-analytics-card--cart {
+    order: 4;
+    grid-column: span 1 !important;
+  }
+
+  .cr-dashboard-analytics.cr-dashboard-analytics--reordered > .cr-analytics-card.cr-analytics-card--conversion,
+  .cr-dashboard-analytics.cr-dashboard-analytics--reordered > .cr-analytics-card.cr-analytics-card--conversion.is-open {
+    order: 5 !important;
+    grid-column-start: 1 !important;
+    grid-column-end: -1 !important;
+    grid-area: auto / 1 / auto / -1 !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    justify-self: stretch !important;
+    align-self: stretch !important;
+  }
+
+  /* Dashboard and orders status cards: always two across on mobile. */
+  .cr-grid.cr-grid--metrics,
+  .cr-order-metrics.cr-grid--metrics,
+  .cr-order-metrics .cr-grid--metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+
+  .cr-grid--metrics .cr-metric {
+    min-width: 0 !important;
+    min-height: 126px !important;
+    padding: 14px !important;
+  }
+
+  .cr-grid--metrics .cr-metric > strong {
+    font-size: clamp(27px, 8vw, 36px) !important;
+  }
+
+  .cr-grid--metrics .cr-metric-footer {
+    align-items: flex-start !important;
+  }
+
+  .cr-grid--metrics .cr-status {
+    min-width: 0 !important;
+    width: fit-content !important;
+    max-width: 100% !important;
+    padding-inline: 10px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .cr-dashboard-analytics--reordered,
+  .cr-grid.cr-grid--metrics,
+  .cr-order-metrics.cr-grid--metrics,
+  .cr-order-metrics .cr-grid--metrics {
+    gap: 8px !important;
+  }
+
+  .cr-grid--metrics .cr-metric {
+    min-height: 118px !important;
+    padding: 12px !important;
+  }
+
+  .cr-grid--metrics .cr-metric small {
+    font-size: 10px !important;
+    line-height: 1.3 !important;
+  }
+
+  .cr-grid--metrics .cr-status {
+    font-size: 9px !important;
+  }
+}

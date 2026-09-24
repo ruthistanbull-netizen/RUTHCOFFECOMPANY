@@ -1,0 +1,67 @@
+:root {
+  --ruth-signature-logo: url('/ruth-signature-logo.svg');
+}
+
+[data-panel-brand] [class*="brandMark"] {
+  background-image: var(--ruth-signature-logo) !important;
+}
+
+.cr-login__brand-mark,
+.cr-auth-state__mark {
+  color: transparent !important;
+  font-size: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  background-image: var(--ruth-signature-logo) !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+}
+
+.cr-login__brand-mark {
+  width: clamp(160px, 24vw, 250px);
+  height: clamp(88px, 13vw, 136px);
+  filter: invert(1);
+}
+
+.cr-auth-state__mark {
+  width: min(180px, 62vw);
+  height: 98px;
+}
+
+.cr-login__brand::after {
+  content: "";
+  right: -7vw;
+  bottom: -8vw;
+  width: min(72vw, 860px);
+  height: min(40vw, 470px);
+  background: var(--ruth-signature-logo) center / contain no-repeat;
+  filter: invert(1);
+  opacity: .035;
+  font: inherit;
+}
+
+[class*="profileAction"] > span {
+  color: transparent !important;
+  font-size: 0 !important;
+  background-color: transparent !important;
+  background-image: var(--ruth-signature-logo) !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+}
+
+@media (max-width: 860px) {
+  .cr-login__brand-mark {
+    width: min(220px, 66vw);
+    height: 116px;
+  }
+
+  .cr-login__brand::after {
+    width: 92vw;
+    height: 48vw;
+    right: -18vw;
+    bottom: -13vw;
+  }
+}

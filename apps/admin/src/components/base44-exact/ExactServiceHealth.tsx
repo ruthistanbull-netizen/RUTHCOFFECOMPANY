@@ -161,7 +161,7 @@ function stateFromBackend(status?: string): HealthState {
 
 function coreDisplayName(title?: string, key?: string) {
   const raw = String(title || key || "Commerce Core");
-  if (/Ruthie Assistant Core/i.test(raw)) return "ROSTA Insight Çekirdeği";
+  if (/Ruthie Assistant Core/i.test(raw)) return "Ruthie Assistant Çekirdeği";
   return raw.replace(/\s+Engine$/i, " Çekirdeği").replace(/\s+Core$/i, " Çekirdeği");
 }
 

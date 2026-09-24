@@ -291,7 +291,7 @@ export function ExactRuthie() {
   const tone = stateTone(state);
   const latestSources = [...messages].reverse().find((message) => message.sources?.length)?.sources || [];
 
-  return <div className="min-h-screen p-4 md:p-6 bg-gradient-to-br from-background via-surface-primary to-accent-soft/30 overflow-y-auto" data-exact-base44-page="rosta-insight">
+  return <div className="min-h-screen p-4 md:p-6 bg-gradient-to-br from-background via-surface-primary to-accent-soft/30 overflow-y-auto" data-exact-base44-page="ruthie">
     <div className="max-w-[1480px] mx-auto space-y-4 animate-fade-in">
       <ExactPageHeader title="ROSTA Insight" subtitle="Operasyonel ticaret asistanın" actions={<><Link href="/"><ExactButton variant="secondary" size="sm"><ArrowLeft className="h-4 w-4" /> Panele dön</ExactButton></Link><ExactSegmentedControl size="sm" value={mode} onChange={(value) => setMode(value as Mode)} options={[{ value: "chat", label: "Yazılı" }, { value: "voice", label: "Sesli", icon: Mic }]} /><ExactIconButton icon={ttsEnabled ? Volume2 : VolumeX} label="Sesli yanıtı değiştir" variant="secondary" onClick={() => { window.speechSynthesis?.cancel(); setTtsEnabled((current) => !current); }} /><ExactIconButton icon={Settings2} label="Sohbeti sıfırla" variant="secondary" onClick={reset} /></>} />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 min-h-[calc(100vh-130px)]">

@@ -5,8 +5,7 @@ import { CANONICAL_SUPABASE_URL } from "@/lib/supabaseRuntime";
 const supabaseUrl = CANONICAL_SUPABASE_URL;
 const supabaseAnonKey = (
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
-  "sb_publishable_6Zoqk9z0WEDsvNZ79-b2Qw_fnKVuWhb"
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 )?.trim();
 
 export const hasSupabaseEnv = Boolean(supabaseUrl && supabaseAnonKey);

@@ -1,8 +1,8 @@
 :root {
-  --ruth-panel-user-logo: url('/rosta-coffee-co.svg');
+  --ruth-panel-user-logo: url('/rosta-coffee-co.svg?v=20260901-1');
 }
 
-/* Canonical ROSTA Coffee wordmark supplied by the user. Keep one visual source
+/* Canonical ROSTA Coffee Co. wordmark supplied by the user. Keep one visual source
    for the panel shell, auth screens and loading/preparing states. */
 [data-panel-brand] [class*="brandMark"] {
   width: 148px !important;
@@ -26,17 +26,17 @@
 
 /* Replace legacy raster logo images without touching their component logic. */
 img[data-ruth-loading-logo],
-img[src*="/ruth-commerce-panel-logo.png"],
+img[src*="/rosta-coffee-co.svg"],
 img[src*="/brand/ruth-r-mark.webp"],
 img[src*="/panel-ruth-logo-cropped.png"],
 img[src*="/panel-r-logo.png"] {
-  content: url('/rosta-coffee-co.svg') !important;
+  content: url('/rosta-coffee-co.svg?v=20260901-1') !important;
   object-fit: contain !important;
   object-position: center !important;
 }
 
 /* Base44 compact brand used a square R tile plus separate copy. Turn that tile
-   into the full wordmark and remove the duplicate ROSTA Coffee text. */
+   into the full wordmark and remove the duplicate ROSTA Coffee Co. text. */
 div:has(> img[src*="/brand/ruth-r-mark.webp"]) {
   width: 150px !important;
   height: 58px !important;
@@ -92,7 +92,7 @@ aside[class*="z-sidebar"] > div:first-child > a::after {
 
 /* Dark surfaces need the same black artwork inverted, not a second asset. */
 html.dark img[data-ruth-loading-logo],
-html.dark img[src*="/ruth-commerce-panel-logo.png"],
+html.dark img[src*="/rosta-coffee-co.svg"],
 html.dark img[src*="/brand/ruth-r-mark.webp"],
 html.dark [data-panel-brand] [class*="brandMark"],
 html.dark aside[class*="z-sidebar"] > div:first-child > a::after,

@@ -105,6 +105,12 @@ type MetaPayload = {
   __fromCache?: boolean;
 };
 
+type MetaIntegrationStatus = {
+  integrations?: {
+    meta?: { connected?: boolean; detail?: string };
+  };
+};
+
 type BreakdownPopup = { ad: MetaAd; left: number; top: number };
 type PreviewKey = "feed" | "story" | "reels" | "explore";
 type PreviewPlacement = {
@@ -375,6 +381,7 @@ export function ExactMetaAdsRealtime() {
   const [customUntil, setCustomUntil] = useState(() => dateValue());
   const [payload, setPayload] = useState<MetaPayload | null>(null);
   const [loading, setLoading] = useState(true);
+  const [connectionDetail, setConnectionDetail] = useState<string | null>(null);
   const [selected, setSelected] = useState<MetaAd | null>(null);
   const [breakdown, setBreakdown] = useState<BreakdownPopup | null>(null);
   const [expandedCampaigns, setExpandedCampaigns] = useState<Set<string>>(() => new Set());
@@ -397,6 +404,17 @@ export function ExactMetaAdsRealtime() {
     const path = `/api/meta-ads?${params.toString()}`;
 
     try {
+      const integrationStatus = await adminRequest<MetaIntegrationStatus>("/api/rosta-insight/integrations/status-v2", { force: true });
+      const metaState = integrationStatus.integrations?.meta;
+      if (!metaState?.connected) {
+        if (sequence !== requestSequence.current) return;
+        setConnectionDetail(metaState?.detail || "ROSTA Meta Marketing hesabı henüz bağlı değil.");
+        setPayload(null);
+        setLoading(false);
+        return;
+      }
+      setConnectionDetail(null);
+
       const immediate = await adminRequest<MetaPayload>(path);
       if (sequence !== requestSequence.current) return;
       setPayload(immediate);
@@ -494,7 +512,18 @@ export function ExactMetaAdsRealtime() {
         </motion.div>
       ) : null}
 
-      {loading && !payload ? (
+      {connectionDetail ? (
+        <ExactDataCard title="Meta Marketing bağlantısı gerekli">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0">
+              <p className="ruth-type-card-title text-main">ROSTA reklam hesabı henüz bağlı değil.</p>
+              <p className="ruth-type-caption mt-1 max-w-2xl text-muted">{connectionDetail}</p>
+              <p className="ruth-type-caption mt-1 max-w-2xl text-muted">Altyapı hazır; ROSTA Business Manager / reklam hesabı token ve kimliklerini eklediğinde bu ekran canlı veriyi otomatik kullanacak.</p>
+            </div>
+            <ExactButton className="shrink-0" onClick={() => { window.location.href = "/settings/integrations"; }}>Meta'yı Bağla</ExactButton>
+          </div>
+        </ExactDataCard>
+      ) : loading && !payload ? (
         <div className="space-y-3"><ExactSkeleton className="h-32" /><div className="grid grid-cols-2 gap-3 xl:grid-cols-6">{Array.from({ length: 6 }, (_, index) => <ExactSkeleton key={index} className="h-28" />)}</div><ExactSkeleton className="h-80" /></div>
       ) : payload ? (
         <>

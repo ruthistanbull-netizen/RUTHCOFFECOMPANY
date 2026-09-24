@@ -34,7 +34,9 @@ import {
 
 type PreviewMode = "desktop" | "mobile";
 const DRAFT_KEY = "rosta_exact_base44_storefront_draft";
+const LEGACY_DRAFT_KEY = "ruth_exact_base44_storefront_draft";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://rostacoffecompany.zeabur.app";
+const SITE_HOST = SITE_URL.replace(/^https?:\\/\\//, "").replace(/\\/.*$/, "");
 
 function safeDraft(value: string | null) {
   if (!value) return null;
@@ -65,7 +67,12 @@ export function ExactStorefront() {
     try {
       const result = await adminRequest<{ settings?: unknown }>(`/api/theme?t=${Date.now()}`);
       const serverSettings = normalizeThemeCustomizerSettings(result.settings);
-      const draft = typeof window === "undefined" ? null : safeDraft(window.localStorage.getItem(DRAFT_KEY));
+      const rawDraft = typeof window === "undefined" ? null : (window.localStorage.getItem(DRAFT_KEY) || window.localStorage.getItem(LEGACY_DRAFT_KEY));
+      const draft = safeDraft(rawDraft);
+      if (typeof window !== "undefined" && !window.localStorage.getItem(DRAFT_KEY) && window.localStorage.getItem(LEGACY_DRAFT_KEY) && rawDraft) {
+        window.localStorage.setItem(DRAFT_KEY, rawDraft);
+        window.localStorage.removeItem(LEGACY_DRAFT_KEY);
+      }
       setSavedSettings(serverSettings);
       setSettings(draft || serverSettings);
       if (draft && settingsFingerprint(draft) !== settingsFingerprint(serverSettings)) {
@@ -82,6 +89,7 @@ export function ExactStorefront() {
 
   const saveDraft = () => {
     window.localStorage.setItem(DRAFT_KEY, JSON.stringify(settings));
+    window.localStorage.removeItem(LEGACY_DRAFT_KEY);
     toast.success("Vitrin taslağı bu cihazda kaydedildi.");
   };
 
@@ -107,6 +115,7 @@ export function ExactStorefront() {
       setSettings(nextSettings);
       setSavedSettings(nextSettings);
       window.localStorage.removeItem(DRAFT_KEY);
+      window.localStorage.removeItem(LEGACY_DRAFT_KEY);
       toast.success(result.warning ? `Vitrin yayınlandı. ${result.warning}` : "Vitrin yayınlandı ve website yenilemesi tetiklendi.");
       return true;
     } catch (caught) {
@@ -118,6 +127,7 @@ export function ExactStorefront() {
   const discardSettings = useCallback(() => {
     setSettings(savedSettings);
     window.localStorage.removeItem(DRAFT_KEY);
+    window.localStorage.removeItem(LEGACY_DRAFT_KEY);
   }, [savedSettings]);
 
   useSaveLifecycleSource({
@@ -317,7 +327,7 @@ export function ExactStorefront() {
                   <span className="h-2.5 w-2.5 rounded-full bg-danger/40" />
                   <span className="h-2.5 w-2.5 rounded-full bg-warning/40" />
                   <span className="h-2.5 w-2.5 rounded-full bg-success/40" />
-                  <span className="ml-2 text-[10px] text-subtle">rostacoffecompany.zeabur.app</span>
+                  <span className="ml-2 text-[10px] text-subtle">{SITE_HOST}</span>
                 </div>
                 <div
                   className="relative min-h-[260px] p-6 text-center flex flex-col items-center justify-center overflow-hidden"
@@ -328,15 +338,15 @@ export function ExactStorefront() {
                   <div className="relative z-10">
                     {settings.logo.src ? <img src={settings.logo.src} alt="ROSTA Coffee Co." className="mx-auto max-h-10 max-w-[190px] object-contain mb-3" /> : null}
                     <p className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: settings.colors.goldDark }}>ROSTA COFFEE CO.</p>
-                    <h2 className="text-2xl font-bold mt-2" style={{ color: settings.colors.ink }}>Coffee, Made With Character</h2>
-                    <p className="text-xs mt-1" style={{ color: settings.colors.muted }}>{settings.announcement.text || "Specialty coffee, wholesale and consulting"}</p>
+                    <h2 className="text-2xl font-bold mt-2" style={{ color: settings.colors.ink }}>Good Coffee, Good Mood.</h2>
+                    <p className="text-xs mt-1" style={{ color: settings.colors.muted }}>{settings.announcement.text || "Taze kahve, sade ritüel."}</p>
                     <button type="button" className="mt-4 px-5 py-2 rounded-full text-white text-xs font-medium" style={{ backgroundColor: settings.colors.gold }}>Kahveleri Keşfet</button>
                   </div>
                 </div>
                 <div className="grid grid-cols-3 gap-2 p-4" style={{ backgroundColor: settings.colors.cream }}>
                   {settings.homepageImages.scrollImages.slice(0, 3).map((image, index) => (
                     <div key={`${image}-${index}`} className="aspect-square rounded-[var(--radius-small)] bg-surface-primary overflow-hidden flex items-center justify-center">
-                      {image ? <img src={image} alt={`Ürün ${index + 1}`} className="h-full w-full object-cover" /> : <span className="text-[9px] text-subtle">Product {index + 1}</span>}
+                      {image ? <img src={image} alt={`Kahve ${index + 1}`} className="h-full w-full object-cover" /> : <span className="text-[9px] text-subtle">Kahve {index + 1}</span>}
                     </div>
                   ))}
                 </div>

@@ -1,18 +1,57 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { assertRostaSupabaseUrl, ROSTA_SUPABASE_URL } from "@/lib/platform";
+import { normalizeSupabaseUrl } from "@/lib/supabaseRuntime";
+import { assertRostaSupabaseUrl } from "@/lib/platform";
 
-let client: SupabaseClient | null = null;
+let adminClient: SupabaseClient | null = null;
+
+function decodeJwtPayload(token: string): Record<string, unknown> | null {
+  const parts = token.split(".");
+  if (parts.length !== 3) return null;
+
+  try {
+    const payload = parts[1]
+      .replace(/-/g, "+")
+      .replace(/_/g, "/")
+      .padEnd(Math.ceil(parts[1].length / 4) * 4, "=");
+    return JSON.parse(Buffer.from(payload, "base64").toString("utf8"));
+  } catch {
+    return null;
+  }
+}
+
+function assertValidServerKey(supabaseUrl: string, key: string) {
+  if (key.startsWith("sb_secret_")) return;
+
+  const payload = decodeJwtPayload(key);
+  const projectRef = new URL(supabaseUrl).hostname.split(".")[0];
+
+  if (
+    payload?.role !== "service_role" ||
+    (typeof payload?.ref === "string" && payload.ref !== projectRef)
+  ) {
+    throw new Error(
+      "SUPABASE_SERVICE_ROLE_KEY ROSTA Supabase projesi için geçerli değil.",
+    );
+  }
+}
 
 export function getSupabaseAdmin() {
-  if (client) return client;
-  const key = String(process.env.SUPABASE_SERVICE_ROLE_KEY || "").trim();
-  if (!key) throw new Error("Panel Supabase service-role env değeri eksik: SUPABASE_SERVICE_ROLE_KEY.");
+  const supabaseUrl = assertRostaSupabaseUrl(normalizeSupabaseUrl(
+    process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL,
+  ));
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
 
-  const requestedUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || ROSTA_SUPABASE_URL;
-  const url = assertRostaSupabaseUrl(requestedUrl);
+  if (!serviceRoleKey) {
+    throw new Error("Supabase admin service-role env eksik.");
+  }
 
-  client = createClient(url, key, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
-  return client;
+  assertValidServerKey(supabaseUrl, serviceRoleKey);
+
+  if (!adminClient) {
+    adminClient = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+  }
+
+  return adminClient;
 }

@@ -1,0 +1,85 @@
+.metrics {
+  gap: 16px;
+}
+
+.panel {
+  margin-top: 16px;
+  overflow: hidden;
+}
+
+.timeline {
+  display: grid;
+  gap: 0;
+  padding: 4px 18px 18px;
+}
+
+.timelineItem {
+  position: relative;
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  gap: 12px;
+  min-height: 82px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--ruth-color-border-subtle);
+}
+
+.timelineItem:last-child {
+  border-bottom: 0;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  margin-top: 4px;
+  border: 2px solid var(--ruth-color-surface);
+  border-radius: 50%;
+  background: var(--ruth-color-accent-strong);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ruth-color-accent) 18%, transparent);
+}
+
+.eventCopy {
+  display: grid;
+  min-width: 0;
+  gap: 6px;
+}
+
+.eventCopy > strong {
+  color: var(--ruth-color-text-primary);
+  font-size: 13px;
+}
+
+.eventCopy > span {
+  color: var(--ruth-color-text-secondary);
+  font-size: 11px;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  color: var(--ruth-color-text-muted);
+  font-size: 10px;
+}
+
+.meta small {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+.meta svg {
+  width: 13px;
+  height: 13px;
+  flex: 0 0 13px;
+}
+
+.metaCode {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 900px) {
+  .metrics {
+    grid-template-columns: 1fr;
+  }
+}

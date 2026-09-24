@@ -1,0 +1,24 @@
+/* Manuel görsel QA sonrası son katman responsive düzeltmeleri. */
+.cr-email-preview-section iframe,
+.cr-template-preview iframe,
+.cr-automation-preview iframe {
+  display: block;
+}
+
+@media (max-width: 620px) {
+  .cr-email-preview-section iframe,
+  .cr-template-preview iframe,
+  .cr-automation-preview iframe {
+    min-height: 860px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cr-product-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .cr-product-card {
+    width: 100%;
+  }
+}

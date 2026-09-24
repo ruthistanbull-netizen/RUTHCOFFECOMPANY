@@ -1,9 +1,9 @@
-/* ROSTA admin — exact palette surface compatibility layer.
+/* ROSTA Coffee Co. admin — Desert Rose warm surface system.
    This file is imported last on purpose so legacy/page-specific cold whites are
-   normalized without changing geometry, motion or dark-mode behavior. */
+   normalized without touching the existing gold accent system or dark mode. */
 
 html:not(.dark) {
-  /* Reference palette: canvas #F4F0E8, surface #F4F0E8. */
+  /* Reference palette: canvas #FBF1EA, surface #FFF9F5. */
   --app-background: 25 68% 95.1%;
   --surface-primary: 24 100% 98%;
   --surface-secondary: 24 68% 96.4%;
@@ -14,28 +14,28 @@ html:not(.dark) {
   --border-strong: 21 41% 80.8%;
   --neutral-soft: 24 34% 93%;
 
-  /* ROSTA accent tokens are defined by the exact palette layer. */
+  /* Existing gold accent tokens intentionally remain untouched. */
   --shadow-card:
-    0 2px 8px -2px rgba(43, 27, 22, 0.045),
-    0 8px 24px -8px rgba(43, 27, 22, 0.055);
+    0 2px 8px -2px rgba(113, 67, 45, 0.045),
+    0 8px 24px -8px rgba(113, 67, 45, 0.055);
   --shadow-floating:
-    0 14px 42px -10px rgba(43, 27, 22, 0.14),
-    0 6px 18px -5px rgba(43, 27, 22, 0.07);
+    0 14px 42px -10px rgba(104, 61, 40, 0.14),
+    0 6px 18px -5px rgba(104, 61, 40, 0.07);
   --shadow-sticky:
-    0 1px 3px rgba(43, 27, 22, 0.045),
-    0 1px 2px rgba(43, 27, 22, 0.03);
-  --shadow-overlay: 0 24px 64px -12px rgba(43, 27, 22, 0.24);
+    0 1px 3px rgba(104, 61, 40, 0.045),
+    0 1px 2px rgba(104, 61, 40, 0.03);
+  --shadow-overlay: 0 24px 64px -12px rgba(78, 45, 31, 0.24);
 }
 
 html:not(.dark),
 html:not(.dark) body {
-  background-color: #F4F0E8;
+  background-color: #fbf1ea;
 }
 
 /* Tailwind/legacy components that still ask for literal white should inherit the
    warm panel surface instead of reintroducing a cold white patch. */
 html:not(.dark) [class~="bg-white"] {
-  background-color: #F4F0E8 !important;
+  background-color: #fff9f5 !important;
 }
 
 /* Common native controls may be rendered outside a card token in older pages. */
@@ -44,154 +44,154 @@ html:not(.dark) :where(
   [data-exact-base44-auth],
   [data-ruth-admin-page]
 ) :where(input, textarea, select)[class~="bg-white"] {
-  background-color: #F4F0E8 !important;
+  background-color: #fff9f5 !important;
 }
 
 /* Auth screens are public routes and bypass AppFrame, so warm them explicitly.
    Forgot/reset already use semantic tokens; these rules also remove the last
    literal-white logo/control surfaces there. */
 html:not(.dark) [data-exact-base44-auth] {
-  background-color: #F4F0E8 !important;
+  background-color: #fbf1ea !important;
 }
 
 html:not(.dark) [data-exact-base44-auth] > section:last-child {
-  background-color: #F4F0E8;
+  background-color: #fff9f5;
 }
 
 html:not(.dark) [data-exact-base44-auth] > section:first-child .relative.z-10 > div:first-child,
 html:not(.dark) [data-exact-base44-auth] > section:last-child > div > div:first-child {
-  background-color: #F4F0E8;
+  background-color: #fff9f5;
 }
 
-/* Login previously had a dark control-room override. Keep its ROSTA identity but
-   move the whole screen into the same ROSTA Bone light system as the rest
+/* Login previously had a dark control-room override. Keep its gold identity but
+   move the whole screen into the same warm Desert Rose light system as the rest
    of the panel. */
 html:not(.dark) [data-exact-base44-auth="login"] {
-  background: #F4F0E8 !important;
-  color: #111111 !important;
+  background: #fbf1ea !important;
+  color: #2a201c !important;
 }
 
 html:not(.dark) [data-exact-base44-auth="login"]::before {
   background:
-    radial-gradient(circle at 12% 8%, rgba(185, 86, 61, .14), transparent 34%),
-    radial-gradient(circle at 88% 90%, rgba(185, 86, 61, .22), transparent 34%),
-    radial-gradient(circle at 48% 48%, rgba(244, 240, 232, .72), transparent 52%) !important;
+    radial-gradient(circle at 12% 8%, rgba(201, 162, 58, .14), transparent 34%),
+    radial-gradient(circle at 88% 90%, rgba(223, 169, 142, .22), transparent 34%),
+    radial-gradient(circle at 48% 48%, rgba(255, 249, 245, .72), transparent 52%) !important;
   filter: blur(4px);
 }
 
 html:not(.dark) [data-exact-base44-auth="login"]::after {
   opacity: .20 !important;
   background-image:
-    linear-gradient(rgba(43, 27, 22, .045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(43, 27, 22, .045) 1px, transparent 1px) !important;
+    linear-gradient(rgba(113, 60, 43, .045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(113, 60, 43, .045) 1px, transparent 1px) !important;
 }
 
 html:not(.dark) [data-exact-base44-auth="login"] > section:first-child {
   background:
     radial-gradient(circle at 16% 14%, rgba(255, 255, 255, .15), transparent 36%),
-    linear-gradient(145deg, #2B1B16 0%, #B9563D 48%, #2B1B16 100%) !important;
-  border-color: rgba(43, 27, 22, .12) !important;
+    linear-gradient(145deg, #8f6e1f 0%, #c9a23a 48%, #9e7824 100%) !important;
+  border-color: rgba(113, 60, 43, .12) !important;
   box-shadow: none !important;
 }
 
 html:not(.dark) [data-exact-base44-auth="login"] > section:last-child {
-  background: rgba(244, 240, 232, .93) !important;
-  border-color: rgba(170, 168, 161, .82) !important;
-  box-shadow: 0 28px 80px rgba(43, 27, 22, .10) !important;
+  background: rgba(255, 249, 245, .93) !important;
+  border-color: rgba(226, 200, 186, .82) !important;
+  box-shadow: 0 28px 80px rgba(113, 60, 43, .10) !important;
   backdrop-filter: blur(26px) saturate(1.05);
   -webkit-backdrop-filter: blur(26px) saturate(1.05);
 }
 
 html:not(.dark) [data-exact-base44-auth="login"] > section:last-child h2 {
-  color: #111111 !important;
+  color: #2a201c !important;
 }
 
 html:not(.dark) [data-exact-base44-auth="login"] > section:last-child h2 + p,
 html:not(.dark) [data-exact-base44-auth="login"] form label,
 html:not(.dark) [data-exact-base44-auth="login"] > section:last-child > div > p:last-child {
-  color: #6F725B !important;
+  color: #7e6860 !important;
 }
 
 html:not(.dark) [data-exact-base44-auth="login"] > section:last-child > div > div:nth-child(2) > div:first-child {
-  border-color: #AAA8A1 !important;
-  background: #F4F0E8 !important;
-  color: #B9563D !important;
+  border-color: #e2c8ba !important;
+  background: #fdf8f3 !important;
+  color: #c9a23a !important;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .72) !important;
 }
 
 html:not(.dark) [data-exact-base44-auth="login"] form .relative > svg {
-  color: #6F725B !important;
+  color: #9a8178 !important;
 }
 
 html:not(.dark) [data-exact-base44-auth="login"] form .form-input {
-  border-color: #AAA8A1 !important;
-  background: #F4F0E8 !important;
-  color: #111111 !important;
+  border-color: #e2c8ba !important;
+  background: #fff9f5 !important;
+  color: #2a201c !important;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .78) !important;
 }
 
 html:not(.dark) [data-exact-base44-auth="login"] form .form-input::placeholder {
-  color: #AAA8A1 !important;
+  color: #b49d94 !important;
 }
 
 html:not(.dark) [data-exact-base44-auth="login"] form .form-input:hover {
-  border-color: #AAA8A1 !important;
+  border-color: #d7b5a4 !important;
 }
 
 html:not(.dark) [data-exact-base44-auth="login"] form .form-input:focus {
-  border-color: rgba(185, 86, 61, .62) !important;
-  background: #F4F0E8 !important;
-  box-shadow: 0 0 0 4px rgba(185, 86, 61, .10) !important;
+  border-color: rgba(201, 162, 58, .62) !important;
+  background: #fff9f5 !important;
+  box-shadow: 0 0 0 4px rgba(201, 162, 58, .10) !important;
 }
 
 html:not(.dark) [data-exact-base44-auth="login"] form .relative > button[aria-label*="Şifreyi"] {
-  color: #6F725B !important;
+  color: #917b72 !important;
 }
 
 html:not(.dark) [data-exact-base44-auth="login"] form .relative > button[aria-label*="Şifreyi"]:hover {
-  background: #F4F0E8 !important;
-  color: #111111 !important;
+  background: #f7eee8 !important;
+  color: #2a201c !important;
 }
 
 html:not(.dark) [data-exact-base44-auth="login"] form a[href="/forgot-password"] {
-  color: #B9563D !important;
+  color: #a88326 !important;
 }
 
 html:not(.dark) [data-exact-base44-auth="login"] form > button[type="submit"] {
-  background: #B9563D !important;
-  color: #111111 !important;
-  box-shadow: 0 12px 30px rgba(43, 27, 22, .16) !important;
+  background: #c9a23a !important;
+  color: #211a08 !important;
+  box-shadow: 0 12px 30px rgba(168, 131, 38, .16) !important;
 }
 
 html:not(.dark) [data-exact-base44-auth="login"] form > button[type="submit"]:hover {
-  background: #2B1B16 !important;
+  background: #b78f2e !important;
 }
 
 /* Net Sales should lift evenly from the Desert Rose canvas. Keep this ambient
-   and symmetric: no strong bottom cast, no inner glow, no change to the accent. */
+   and symmetric: no strong bottom cast, no inner glow, no change to the gold. */
 html:not(.dark) [aria-label="Net satışı oluşturan siparişleri aç"] > article {
   box-shadow:
-    0 0 0 1px rgba(43, 27, 22, 0.025),
-    0 0 16px rgba(43, 27, 22, 0.105),
-    0 0 32px rgba(43, 27, 22, 0.055) !important;
+    0 0 0 1px rgba(91, 55, 38, 0.025),
+    0 0 16px rgba(91, 55, 38, 0.105),
+    0 0 32px rgba(91, 55, 38, 0.055) !important;
 }
 
 @media (min-width: 1024px) {
   html:not(.dark) [data-exact-base44-auth="login"] > section:first-child {
-    border-color: rgba(43, 27, 22, .12) !important;
-    box-shadow: -20px 34px 86px rgba(43, 27, 22, .10) !important;
+    border-color: rgba(113, 60, 43, .12) !important;
+    box-shadow: -20px 34px 86px rgba(113, 60, 43, .10) !important;
   }
 
   html:not(.dark) [data-exact-base44-auth="login"] > section:last-child {
-    border-color: rgba(170, 168, 161, .82) !important;
-    box-shadow: 20px 34px 86px rgba(43, 27, 22, .10) !important;
+    border-color: rgba(226, 200, 186, .82) !important;
+    box-shadow: 20px 34px 86px rgba(113, 60, 43, .10) !important;
   }
 }
 
 @media (max-width: 1023px) {
   html:not(.dark) [data-exact-base44-auth="login"] > section:last-child {
-    background: rgba(244, 240, 232, .96) !important;
-    border-color: #AAA8A1 !important;
-    box-shadow: 0 24px 70px rgba(43, 27, 22, .11) !important;
+    background: rgba(255, 249, 245, .96) !important;
+    border-color: #e2c8ba !important;
+    box-shadow: 0 24px 70px rgba(113, 60, 43, .11) !important;
   }
 }

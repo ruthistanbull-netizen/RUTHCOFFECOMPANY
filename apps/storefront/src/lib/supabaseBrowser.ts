@@ -1,7 +1,7 @@
 "use client";
 
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { CANONICAL_SUPABASE_URL } from "@/lib/supabaseRuntime";
+import { normalizeSupabaseUrl } from "@/lib/supabaseRuntime";
 
 let browserClient: SupabaseClient | null = null;
 
@@ -27,12 +27,15 @@ function installPasswordResetEmailBridge(client: SupabaseClient) {
 }
 
 export function getSupabaseBrowser() {
-  const supabaseUrl = CANONICAL_SUPABASE_URL;
+  const supabaseUrl = normalizeSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL);
   const supabaseAnonKey = (
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
-    "sb_publishable_6Zoqk9z0WEDsvNZ79-b2Qw_fnKVuWhb"
-  ).trim();
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+  )?.trim();
+
+  if (!supabaseAnonKey) {
+    throw new Error("Supabase env eksik: public anon/publishable key gerekli.");
+  }
 
   if (!browserClient) {
     browserClient = installPasswordResetEmailBridge(createClient(supabaseUrl, supabaseAnonKey));

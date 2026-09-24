@@ -161,7 +161,7 @@ export function VariantStudioManager({ variants, setVariants, productPhotos, bas
             <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-5 sm:px-6 sm:py-7">
               <div className="mx-auto grid w-full max-w-2xl gap-5">
                 <ExactField label="Seçenek adı">
-                  <input value={optionName} onChange={(event) => setOptionName(event.target.value)} className={exactFormInputClass} placeholder="Örn. Öğütüm, Gramaj, Kavrum" />
+                  <input value={optionName} onChange={(event) => setOptionName(event.target.value)} className={exactFormInputClass} placeholder="Örn. Renk, Zincir Uzunluğu, Beden" />
                 </ExactField>
 
                 <div>

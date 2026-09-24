@@ -1,14 +1,20 @@
 "use client";
 
-import { adminRequest, clearAdminApiCache } from "@/lib/adminApi";
+import {
+  reconcileAdminResource,
+  reconcileAdminResources,
+} from "@/lib/adminOperationalFreshness";
 
-export async function hardRefreshAdminResource<T>(path: string) {
-  clearAdminApiCache(path.split("?")[0]);
-  const value = await adminRequest<T>(path, {
-    force: true,
-    hardRefresh: true,
-    ttlMs: 0,
-    staleMs: 0,
+export function hardRefreshAdminResource<T = any>(path: string) {
+  return reconcileAdminResource<T>(path, {
+    reason: "manual-refresh",
+    supersede: true,
   });
-  return { value, acceptedAt: Date.now() };
+}
+
+export function reconcileAfterAdminMutation(paths: string[]) {
+  return reconcileAdminResources(paths, {
+    reason: "mutation-reconcile",
+    supersede: true,
+  });
 }

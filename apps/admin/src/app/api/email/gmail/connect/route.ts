@@ -1,40 +1,28 @@
-import crypto from "node:crypto";
 import { NextResponse } from "next/server";
+import crypto from "crypto";
 import { requireAdmin } from "@/lib/auth";
 import { gmailAuthUrl, gmailRedirectUri } from "@/lib/gmail";
 
 export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
 
-export async function POST(request: Request) {
+export async function GET(request: Request) {
   const auth = await requireAdmin(request);
   if ("error" in auth) return auth.error;
 
-  try {
-    const state = crypto.randomBytes(32).toString("hex");
-    const redirectUri = gmailRedirectUri(request);
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+  const { supabase, profile } = auth;
+  const state = crypto.randomBytes(24).toString("hex");
+  const redirectUri = gmailRedirectUri(request);
+  const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
 
-    const { error } = await auth.supabase.from("email_oauth_states").insert({
-      provider: "gmail",
-      profile_id: auth.profile.id,
-      state,
-      redirect_uri: redirectUri,
-      expires_at: expiresAt,
-    });
-    if (error) throw new Error(error.message);
+  const { error } = await supabase.from("email_oauth_states").insert({
+    provider: "gmail",
+    profile_id: profile.id,
+    state,
+    redirect_uri: redirectUri,
+    expires_at: expiresAt,
+  });
 
-    const authUrl = gmailAuthUrl(state, redirectUri);
-    return NextResponse.json({
-      ok: true,
-      authUrl,
-      url: authUrl,
-      expiresAt,
-    }, { headers: { "Cache-Control": "no-store" } });
-  } catch (error) {
-    return NextResponse.json({
-      ok: false,
-      error: error instanceof Error ? error.message : "Gmail bağlantısı başlatılamadı.",
-    }, { status: 400 });
-  }
+  if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 400 });
+
+  return NextResponse.json({ ok: true, authUrl: gmailAuthUrl(state, redirectUri) });
 }

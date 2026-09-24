@@ -1811,7 +1811,7 @@ export function CheckoutClient() {
 
               <div className="mt-10 grid grid-cols-3 gap-3 text-center">
                 {[
-                  { icon: Truck, title: "Kargo", lines: ["2.000₺ Üzeri Ücretsiz Kargo"] },
+                  { icon: Truck, title: "Kargo", lines: ["Kargo ücreti sipariş ayarlarına göre hesaplanır"] },
                   { icon: Shield, title: "Güvenli", lines: ["PAYTR ile Güvenli Ödeme"] },
                   { icon: RefreshCw, title: "Değişim", lines: ["Destek ile hızlı süreç", "14 Gün içerisinde iade ve değişim"] },
                 ].map((item) => (

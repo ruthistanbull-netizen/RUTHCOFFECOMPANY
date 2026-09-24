@@ -154,6 +154,7 @@ export function ExactMetaCatalogs() {
   const [initialLoading, setInitialLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [connectionDetail, setConnectionDetail] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<CatalogSummary | null>(null);
   const [detail, setDetail] = useState<CatalogDetail | null>(null);
@@ -176,6 +177,19 @@ export function ExactMetaCatalogs() {
     else if (!silent) setRefreshing(true);
 
     try {
+      const integrationStatus = await adminRequest<{ integrations?: { meta?: { connected?: boolean; detail?: string } } }>(
+        "/api/rosta-insight/integrations/status-v2",
+        { force: true },
+      );
+      const metaState = integrationStatus.integrations?.meta;
+      if (!metaState?.connected) {
+        setConnectionDetail(metaState?.detail || "ROSTA Meta Marketing hesabı henüz bağlı değil.");
+        setPayload(null);
+        setError(null);
+        return;
+      }
+      setConnectionDetail(null);
+
       const result = await adminRequest<CatalogListPayload>("/api/meta-catalogs", {
         force: true,
         hardRefresh: true,
@@ -372,6 +386,24 @@ export function ExactMetaCatalogs() {
   };
 
   const listUnavailable = initialLoading && !payload;
+
+  if (connectionDetail) {
+    return (
+      <div className="space-y-4 animate-fade-in" data-exact-base44-page="meta-catalogs">
+        <ExactPageHeader title="Meta Katalogları" subtitle="ROSTA Meta Business / Commerce Manager kataloglarını görüntüle ve yönet" />
+        <ExactDataCard title="Meta Marketing bağlantısı gerekli">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-main">ROSTA Meta hesabı henüz bağlı değil.</p>
+              <p className="mt-1 text-xs leading-relaxed text-muted">{connectionDetail}</p>
+              <p className="mt-1 text-xs leading-relaxed text-muted">Altyapı hazır; Business Manager, katalog ve gerekli izinleri bağladığında kataloglar burada otomatik görünecek.</p>
+            </div>
+            <ExactButton className="shrink-0" onClick={() => { window.location.href = "/settings/integrations"; }}>Meta'yı Bağla</ExactButton>
+          </div>
+        </ExactDataCard>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4 animate-fade-in" data-exact-base44-page="meta-catalogs">

@@ -74,7 +74,10 @@ const initialForm: CheckoutForm = {
   note: "",
 };
 
-const CHECKOUT_DRAFT_TOKEN_KEY = "ruth-checkout-draft-token";
+const CHECKOUT_DRAFT_TOKEN_KEY = "rosta-checkout-draft-token";
+const LEGACY_CHECKOUT_DRAFT_TOKEN_KEY = "ruth-checkout-draft-token";
+const SELECTED_DISCOUNT_CODE_KEY = "rosta-selected-discount-code";
+const LEGACY_SELECTED_DISCOUNT_CODE_KEY = "ruth-selected-discount-code";
 const inputClass = "mt-2 w-full rounded-lg border border-gold/20 bg-ivory px-4 py-3 text-sm normal-case tracking-normal text-ink outline-none transition focus:border-gold-dark";
 
 function makeLocalDraftToken() {
@@ -172,8 +175,9 @@ export function PaytrIframeCheckoutClient() {
   ];
 
   useEffect(() => {
-    const token = externalDraftToken || window.localStorage.getItem(CHECKOUT_DRAFT_TOKEN_KEY) || makeLocalDraftToken();
+    const token = externalDraftToken || window.localStorage.getItem(CHECKOUT_DRAFT_TOKEN_KEY) || window.localStorage.getItem(LEGACY_CHECKOUT_DRAFT_TOKEN_KEY) || makeLocalDraftToken();
     window.localStorage.setItem(CHECKOUT_DRAFT_TOKEN_KEY, token);
+    window.localStorage.removeItem(LEGACY_CHECKOUT_DRAFT_TOKEN_KEY);
     setCheckoutDraftToken(token);
   }, [externalDraftToken]);
 
@@ -235,7 +239,7 @@ export function PaytrIframeCheckoutClient() {
         if (!data?.ok) return;
         const discounts = (data.discounts || []) as AccountDiscount[];
         setAvailableDiscounts(discounts);
-        const savedCode = window.localStorage.getItem("ruth-selected-discount-code");
+        const savedCode = window.localStorage.getItem(SELECTED_DISCOUNT_CODE_KEY) || window.localStorage.getItem(LEGACY_SELECTED_DISCOUNT_CODE_KEY);
         const savedDiscount = discounts.find((discount) => discount.code === savedCode);
         if (savedDiscount) {
           setAppliedCoupon({
@@ -244,7 +248,8 @@ export function PaytrIframeCheckoutClient() {
             discountPercent: Number(savedDiscount.discountPercent || 10),
           });
           setCouponInput(savedDiscount.code);
-          window.localStorage.removeItem("ruth-selected-discount-code");
+          window.localStorage.removeItem(SELECTED_DISCOUNT_CODE_KEY);
+          window.localStorage.removeItem(LEGACY_SELECTED_DISCOUNT_CODE_KEY);
         }
       })
       .catch(() => undefined)

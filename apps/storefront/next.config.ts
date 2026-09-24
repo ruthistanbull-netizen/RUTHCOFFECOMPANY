@@ -1,7 +1,16 @@
 import type { NextConfig } from "next";
 
-const themeEditorOrigins = "https://rostapanel.zeabur.app http://localhost:* https://localhost:*";
-const supabaseHttpOrigin = "https://fposvxuryzidmeuwytbg.supabase.co";
+const themeEditorOrigins = (
+  process.env.THEME_EDITOR_ORIGINS ||
+  process.env.NEXT_PUBLIC_ADMIN_URL ||
+  process.env.NEXT_PUBLIC_PANEL_URL ||
+  "https://rostapanel.zeabur.app http://localhost:* https://localhost:*"
+)
+  .split(/[\s,]+/)
+  .map((value) => value.trim())
+  .filter(Boolean)
+  .join(" ");
+const supabaseHttpOrigin = (process.env.NEXT_PUBLIC_SUPABASE_URL || "https://fposvxuryzidmeuwytbg.supabase.co").replace(/\/$/, "");
 
 const supabaseWsOrigin = supabaseHttpOrigin.replace(/^http/, "ws");
 const contentSecurityPolicy = [
@@ -14,8 +23,8 @@ const contentSecurityPolicy = [
   "media-src 'self' blob: https:",
   "font-src 'self' data:",
   "style-src 'self' 'unsafe-inline'",
-  "script-src 'self' 'unsafe-inline' https://www.paytr.com https://*.paytr.com https://connect.facebook.net https://www.googletagmanager.com https://www.clarity.ms",
-  `connect-src 'self' ${supabaseHttpOrigin} ${supabaseWsOrigin} https://www.google-analytics.com https://region1.google-analytics.com https://www.facebook.com https://connect.facebook.net https://www.clarity.ms https://*.clarity.ms`,
+  "script-src 'self' 'unsafe-inline' https://www.paytr.com https://*.paytr.com https://connect.facebook.net https://www.googletagmanager.com https://www.clarity.ms https://analytics.tiktok.com",
+  `connect-src 'self' ${supabaseHttpOrigin} ${supabaseWsOrigin} https://www.google-analytics.com https://region1.google-analytics.com https://www.facebook.com https://connect.facebook.net https://www.clarity.ms https://*.clarity.ms https://analytics.tiktok.com`,
   "frame-src 'self' https:",
   "upgrade-insecure-requests",
 ].join("; ");
@@ -30,7 +39,6 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  typescript: { ignoreBuildErrors: true },
   compress: true,
   poweredByHeader: false,
   env: {

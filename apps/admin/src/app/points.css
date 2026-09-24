@@ -1,0 +1,342 @@
+.cr-points-layout {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(350px, .75fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.cr-points-directory,
+.cr-points-editor {
+  overflow: hidden;
+}
+
+.cr-points-editor {
+  position: sticky;
+  top: 84px;
+  max-height: calc(100vh - 104px);
+  overflow-y: auto;
+}
+
+.cr-points-select-all {
+  min-height: 38px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.cr-points-select-all input {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--accent);
+}
+
+.cr-points-list {
+  display: grid;
+}
+
+.cr-points-row {
+  min-height: 82px;
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--line);
+  background: #fff;
+  display: grid;
+  grid-template-columns: 22px minmax(210px, 1fr) 105px 105px 36px;
+  gap: 10px;
+  align-items: center;
+}
+
+.cr-points-row:last-child {
+  border-bottom: 0;
+}
+
+.cr-points-row.is-selected {
+  background: #fafbfc;
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.cr-points-row > label input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+}
+
+.cr-points-row > button {
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.cr-points-row > button > span:last-child {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.cr-points-row > button strong,
+.cr-points-row > button small {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cr-points-row > button strong {
+  font-size: 11px;
+}
+
+.cr-points-row > button small {
+  color: var(--muted);
+  font-size: 8px;
+}
+
+.cr-points-row > div {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.cr-points-row > div strong {
+  font-size: 12px;
+}
+
+.cr-points-row > div span {
+  color: var(--muted);
+  font-size: 8px;
+}
+
+.cr-points-row > .cr-icon-button {
+  pointer-events: none;
+}
+
+.cr-points-editor__body {
+  padding: 14px;
+  display: grid;
+  gap: 12px;
+}
+
+.cr-points-history {
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  display: grid;
+}
+
+.cr-points-history > div:first-child {
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.cr-points-history > div:first-child svg {
+  width: 16px;
+  height: 16px;
+  color: var(--accent);
+}
+
+.cr-points-history > div:first-child strong {
+  font-size: 11px;
+}
+
+.cr-points-history > article {
+  min-height: 68px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr) auto;
+  gap: 9px;
+  align-items: center;
+}
+
+.cr-points-history > article:last-child {
+  border-bottom: 0;
+}
+
+.cr-points-history > article > div {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.cr-points-history > article strong,
+.cr-points-history > article span,
+.cr-points-history > article small {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cr-points-history > article > div strong {
+  font-size: 10px;
+}
+
+.cr-points-history > article > div span,
+.cr-points-history > article > div small {
+  color: var(--muted);
+  font-size: 8px;
+}
+
+.cr-points-amount {
+  min-height: 27px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font-size: 10px;
+  font-weight: 850;
+}
+
+.cr-points-amount.is-positive {
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+.cr-points-amount.is-negative {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.cr-small-modal {
+  width: min(500px, 100%);
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  border-radius: 18px;
+  background: var(--bg);
+  box-shadow: 0 28px 90px rgba(0,0,0,.32);
+}
+
+.cr-small-modal > header {
+  min-height: 72px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  background: #fff;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.cr-small-modal > header h2 {
+  margin: 4px 0 0;
+  font-size: 20px;
+  letter-spacing: -.035em;
+}
+
+.cr-small-modal > div {
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+}
+
+.cr-small-modal > footer {
+  min-height: 62px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--line);
+  background: #fff;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.cr-import-zone {
+  min-height: 130px;
+  padding: 18px;
+  border: 1px dashed #98a2b3;
+  border-radius: 13px;
+  background: var(--surface-2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.cr-import-zone:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.cr-import-zone > svg {
+  width: 24px;
+  height: 24px;
+  color: var(--accent);
+}
+
+.cr-import-zone strong {
+  max-width: 100%;
+  font-size: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cr-import-zone span {
+  color: var(--muted);
+  font-size: 8px;
+}
+
+.cr-import-zone input {
+  display: none;
+}
+
+@media (max-width: 1080px) {
+  .cr-points-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .cr-points-editor {
+    position: static;
+    max-height: none;
+  }
+}
+
+@media (max-width: 680px) {
+  .cr-points-row {
+    min-height: 122px;
+    grid-template-columns: 20px minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+  }
+
+  .cr-points-row > button {
+    grid-column: 2 / 4;
+    grid-row: 1;
+  }
+
+  .cr-points-row > .cr-status {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: start;
+  }
+
+  .cr-points-row > div {
+    grid-column: 3;
+    grid-row: 2;
+    justify-items: end;
+  }
+
+  .cr-points-row > .cr-icon-button {
+    display: none;
+  }
+
+  .cr-small-modal {
+    width: 100%;
+    max-height: 100%;
+    border-radius: 0;
+  }
+}

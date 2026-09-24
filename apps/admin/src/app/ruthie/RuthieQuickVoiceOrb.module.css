@@ -1,0 +1,386 @@
+.positionLayer {
+  --orb-x: 0px;
+  --orb-y: 0px;
+  --hitbox-inset: 4px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 2147483600;
+  width: 150px;
+  height: 150px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate3d(var(--orb-x), var(--orb-y), 0);
+  transform-origin: 0 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  will-change: transform;
+  isolation: isolate;
+}
+
+.positionLayer[data-ready="true"] {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: none;
+}
+
+.root {
+  --motion-angle: 0deg;
+  --motion-stretch: 1;
+  --motion-squash: 1;
+  --ui-scale: 1;
+  position: absolute;
+  inset: var(--hitbox-inset);
+  display: block;
+  width: auto;
+  height: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  isolation: isolate;
+  outline: none;
+  transform: none !important;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  contain: layout style;
+  filter: none;
+}
+
+/* This is the no-freeze orb shell. The listening aura and full-screen water
+   ripple remain compositor-only, but every visible band now stays in gold. */
+.root::before,
+.root::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  transform-origin: 50% 50%;
+  will-change: transform, opacity;
+}
+
+.root::before {
+  width: 72%;
+  height: 72%;
+  border: 1px solid rgba(230, 210, 139, 0);
+  box-shadow:
+    0 0 0 rgba(201, 162, 58, 0),
+    0 0 0 rgba(226, 199, 107, 0),
+    inset 0 0 0 rgba(246, 235, 200, 0);
+  transform: translate3d(-50%, -50%, 0) scale(.84);
+  transition:
+    opacity .38s cubic-bezier(.2, .75, .2, 1),
+    transform .44s cubic-bezier(.16, 1, .3, 1),
+    border-color .38s ease,
+    box-shadow .44s ease;
+}
+
+.root::after {
+  width: 82%;
+  height: 82%;
+  background: radial-gradient(circle, rgba(201, 162, 58, .10) 0 42%, rgba(226, 199, 107, .045) 56%, transparent 72%);
+  filter: blur(8px);
+  transform: translate3d(-50%, -50%, 0) scale(.76);
+  transition:
+    opacity .42s cubic-bezier(.2, .75, .2, 1),
+    transform .5s cubic-bezier(.16, 1, .3, 1);
+}
+
+.root[data-listening="true"]::before {
+  opacity: .92;
+  border-color: rgba(246, 235, 200, .78);
+  box-shadow:
+    0 0 9px rgba(201, 162, 58, .30),
+    0 0 22px rgba(226, 199, 107, .12),
+    inset 0 0 12px rgba(246, 235, 200, .08);
+  transform: translate3d(-50%, -50%, 0) scale(1.04);
+}
+
+.root[data-listening="true"]::after {
+  opacity: .86;
+  transform: translate3d(-50%, -50%, 0) scale(1.08);
+}
+
+.root[data-dragging="true"] {
+  --ui-scale: 1.035;
+  cursor: grabbing;
+}
+
+.root[data-gliding="true"] {
+  --ui-scale: 1.018;
+  cursor: grab;
+}
+
+.root[data-pressed="true"] {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.root:active {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+}
+
+.root:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--ruth-color-accent, hsl(var(--accent))) 22%, transparent);
+  outline-offset: 2px;
+}
+
+.motionShell {
+  position: absolute;
+  inset: calc(-1 * var(--hitbox-inset));
+  z-index: 1;
+  display: block;
+  pointer-events: none;
+  transform:
+    rotate(var(--motion-angle))
+    scale(var(--ui-scale))
+    scaleX(var(--motion-stretch))
+    scaleY(var(--motion-squash));
+  transform-origin: 50% 50%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  will-change: transform;
+  filter: none;
+  transition: transform .2s cubic-bezier(.16, 1, .3, 1);
+}
+
+.root[data-dragging="true"] .motionShell,
+.root[data-gliding="true"] .motionShell {
+  transition: none;
+}
+
+.orb {
+  --orb-size: 150px !important;
+  width: var(--orb-size) !important;
+  height: var(--orb-size) !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  pointer-events: none;
+  overflow: hidden !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.orb canvas {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  clip-path: none !important;
+  -webkit-clip-path: none !important;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.root[data-pressed="true"] .orb,
+.root[data-pressed="true"] .orb > *,
+.root[data-pressed="true"] .orb canvas,
+.root:active .orb,
+.root:active .orb > *,
+.root:active .orb canvas {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Keep the original water-ripple timing and shape, but use only the
+   #C9A23A gold family so activation never flashes purple or blue. */
+.activationWave {
+  --wave-x: 50vw;
+  --wave-y: 50vh;
+  --wave-diameter: 108px;
+  --water-max-scale: 15.75;
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  overflow: hidden;
+  pointer-events: none;
+  isolation: isolate;
+  contain: layout paint style;
+  transform: translateZ(0);
+}
+
+.waveRing,
+.waveLens {
+  position: absolute;
+  left: var(--wave-x);
+  top: var(--wave-y);
+  width: var(--wave-diameter);
+  height: var(--wave-diameter);
+  pointer-events: none;
+  opacity: 0;
+  transform-origin: 50% 50%;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translate3d(-50%, -50%, 0) scale(.72);
+}
+
+.waveRing {
+  background:
+    radial-gradient(ellipse at 47% 45%,
+      transparent 0 43.4%,
+      rgba(246, 235, 200, .24) 44.6%,
+      rgba(226, 199, 107, .16) 46.2%,
+      rgba(201, 162, 58, .075) 48.2%,
+      transparent 51.1%),
+    radial-gradient(ellipse at 52% 49%,
+      transparent 0 46.1%,
+      rgba(230, 210, 139, .055) 47.1%,
+      transparent 49.7%);
+}
+
+.waveRingPrimary {
+  border-radius: 47% 53% 49% 51% / 51% 47% 53% 49%;
+  animation: ruthieWaterRippleOne 1.82s cubic-bezier(.12, .62, .16, 1) forwards;
+}
+
+.waveRingSecondary {
+  border-radius: 52% 48% 54% 46% / 47% 54% 46% 53%;
+  animation: ruthieWaterRippleTwo 1.90s .085s cubic-bezier(.12, .62, .17, 1) forwards;
+}
+
+.waveRingTertiary {
+  border-radius: 49% 51% 46% 54% / 55% 45% 52% 48%;
+  animation: ruthieWaterRippleThree 1.96s .17s cubic-bezier(.13, .61, .18, 1) forwards;
+}
+
+.waveLens {
+  border-radius: 54% 46% 51% 49% / 48% 52% 45% 55%;
+  background:
+    radial-gradient(ellipse at 52% 48%,
+      transparent 0 41.7%,
+      rgba(246, 235, 200, .15) 43.8%,
+      rgba(201, 162, 58, .10) 47.1%,
+      rgba(226, 199, 107, .05) 50.2%,
+      transparent 53.6%),
+    radial-gradient(ellipse at 47% 53%,
+      transparent 0 46.3%,
+      rgba(230, 210, 139, .045) 47.5%,
+      transparent 50.4%);
+  animation: ruthieWaterRippleFour 2.02s .255s cubic-bezier(.13, .60, .18, 1) forwards;
+}
+
+@keyframes ruthieWaterRippleOne {
+  0% {
+    opacity: 0;
+    transform: translate3d(-50%, -50%, 0) scale(.72) rotate(-2deg) scaleX(.975) scaleY(1.025);
+  }
+  7% { opacity: .96; }
+  34% { opacity: .69; }
+  64% { opacity: .35; }
+  100% {
+    opacity: 0;
+    transform: translate3d(-50%, -50%, 0) scale(var(--water-max-scale)) rotate(7deg) scaleX(1.018) scaleY(.982);
+  }
+}
+
+@keyframes ruthieWaterRippleTwo {
+  0% {
+    opacity: 0;
+    transform: translate3d(-50%, -50%, 0) scale(.82) rotate(4deg) scaleX(1.022) scaleY(.978);
+  }
+  9% { opacity: .74; }
+  38% { opacity: .53; }
+  68% { opacity: .26; }
+  100% {
+    opacity: 0;
+    transform: translate3d(-50%, -50%, 0) scale(calc(var(--water-max-scale) * .94)) rotate(-8deg) scaleX(.986) scaleY(1.014);
+  }
+}
+
+@keyframes ruthieWaterRippleThree {
+  0% {
+    opacity: 0;
+    transform: translate3d(-50%, -50%, 0) scale(.92) rotate(-5deg) scaleX(.985) scaleY(1.015);
+  }
+  10% { opacity: .56; }
+  41% { opacity: .39; }
+  70% { opacity: .18; }
+  100% {
+    opacity: 0;
+    transform: translate3d(-50%, -50%, 0) scale(calc(var(--water-max-scale) * .88)) rotate(11deg) scaleX(1.012) scaleY(.988);
+  }
+}
+
+@keyframes ruthieWaterRippleFour {
+  0% {
+    opacity: 0;
+    transform: translate3d(-50%, -50%, 0) scale(1.02) rotate(3deg) scaleX(1.012) scaleY(.988);
+  }
+  12% { opacity: .38; }
+  43% { opacity: .31; }
+  73% { opacity: .13; }
+  100% {
+    opacity: 0;
+    transform: translate3d(-50%, -50%, 0) scale(calc(var(--water-max-scale) * .82)) rotate(-10deg) scaleX(.99) scaleY(1.01);
+  }
+}
+
+@media (max-width: 760px) {
+  .positionLayer {
+    --hitbox-inset: 4px;
+    z-index: 2147483600;
+    width: 132px;
+    height: 132px;
+  }
+
+  .root {
+    contain: layout style;
+  }
+
+  .orb {
+    --orb-size: 132px !important;
+  }
+
+  .activationWave {
+    --water-max-scale: 12;
+    z-index: 2147483000;
+  }
+
+  .root::after {
+    filter: blur(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motionShell,
+  .root::before,
+  .root::after {
+    transition-duration: .16s !important;
+  }
+
+  .waveRingSecondary,
+  .waveRingTertiary,
+  .waveLens {
+    display: none !important;
+  }
+
+  .waveRingPrimary {
+    animation-duration: .72s !important;
+  }
+}

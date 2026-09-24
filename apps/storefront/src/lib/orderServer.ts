@@ -137,13 +137,12 @@ function getVariantIdFromKey(key: string | undefined) {
 }
 
 function makeOrderNo() {
-  const now = new Date();
-  const stamp = now
-    .toISOString()
-    .replace(/[-:.TZ]/g, "")
-    .slice(0, 14);
-  const random = Math.random().toString(36).slice(2, 8).toUpperCase();
-  return `RST${stamp}${random}`;
+  const year = new Intl.DateTimeFormat("en", {
+    timeZone: "Europe/Istanbul",
+    year: "2-digit",
+  }).format(new Date());
+  const random = Math.floor(Math.random() * 10_000).toString().padStart(4, "0");
+  return `RST${year}${random}`;
 }
 
 function makeResumeToken() {
@@ -401,11 +400,6 @@ async function getReviewCouponDiscount(
 }
 
 async function shippingConfiguration(supabase: ReturnType<typeof getSupabaseAdmin>, subtotal: number) {
-  const envFee = Math.max(0, Number(process.env.SHIPPING_FEE || 79.9));
-  const envThreshold = Math.max(0, Number(process.env.FREE_SHIPPING_THRESHOLD || 2000));
-  let fee = envFee;
-  let freeThreshold = envThreshold;
-
   const { data } = await supabase
     .from("site_settings")
     .select("setting_value")
@@ -413,10 +407,29 @@ async function shippingConfiguration(supabase: ReturnType<typeof getSupabaseAdmi
     .maybeSingle();
 
   const storedSettings = data?.setting_value as Record<string, unknown> | null;
-  const storedThreshold = Number(storedSettings?.freeShippingThreshold);
-  const storedFee = Number(storedSettings?.customerShippingFee ?? storedSettings?.shippingFee);
-  if (Number.isFinite(storedThreshold) && storedThreshold >= 0) freeThreshold = storedThreshold;
-  if (Number.isFinite(storedFee) && storedFee >= 0) fee = storedFee;
+  const storedThreshold = storedSettings?.freeShippingThreshold == null ? NaN : Number(storedSettings.freeShippingThreshold);
+  const storedFeeRaw = storedSettings?.customerShippingFee ?? storedSettings?.shippingFee;
+  const storedFee = storedFeeRaw == null ? NaN : Number(storedFeeRaw);
+
+  const envThresholdRaw = process.env.FREE_SHIPPING_THRESHOLD?.trim();
+  const envFeeRaw = process.env.SHIPPING_FEE?.trim();
+  const envThreshold = envThresholdRaw ? Number(envThresholdRaw) : NaN;
+  const envFee = envFeeRaw ? Number(envFeeRaw) : NaN;
+
+  const freeThreshold = Number.isFinite(storedThreshold) && storedThreshold >= 0
+    ? storedThreshold
+    : Number.isFinite(envThreshold) && envThreshold >= 0
+      ? envThreshold
+      : NaN;
+  const fee = Number.isFinite(storedFee) && storedFee >= 0
+    ? storedFee
+    : Number.isFinite(envFee) && envFee >= 0
+      ? envFee
+      : NaN;
+
+  if (!Number.isFinite(freeThreshold) || !Number.isFinite(fee)) {
+    throw new Error("ROSTA kargo ücretleri henüz yapılandırılmadı. Panelde Kargo ayarlarından limit ve ücreti kaydet.");
+  }
 
   return subtotal >= freeThreshold ? 0 : fee;
 }

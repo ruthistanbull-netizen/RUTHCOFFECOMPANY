@@ -1,0 +1,535 @@
+.frame {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+  overflow-x: hidden;
+  overflow-y: auto;
+  color: #f7f9ff;
+  background:
+    radial-gradient(ellipse 54% 54% at 18% 24%, rgba(29, 104, 255, .16), transparent 72%),
+    radial-gradient(ellipse 45% 52% at 84% 78%, rgba(184, 46, 255, .14), transparent 73%),
+    linear-gradient(145deg, #020611 0%, #050816 48%, #02030b 100%);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  overscroll-behavior: contain;
+}
+
+.frame,
+.frame * {
+  box-sizing: border-box;
+}
+
+.ambient {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 44%, rgba(50, 145, 255, .08), transparent 35%),
+    linear-gradient(90deg, transparent 0 15%, rgba(101, 141, 255, .025) 50%, transparent 85%);
+}
+
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+  opacity: .045;
+  mix-blend-mode: screen;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.32'/%3E%3C/svg%3E");
+}
+
+.previewMain {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  min-height: 100dvh;
+  padding:
+    max(18px, env(safe-area-inset-top))
+    clamp(14px, 3.6vw, 56px)
+    max(18px, env(safe-area-inset-bottom));
+  display: grid;
+  place-items: center;
+}
+
+.panel {
+  position: relative;
+  isolation: isolate;
+  width: min(1240px, 100%);
+  height: min(900px, calc(100dvh - 36px));
+  min-height: 690px;
+  overflow: hidden;
+  border: 1px solid rgba(135, 166, 232, .20);
+  border-radius: 32px;
+  background:
+    radial-gradient(ellipse 54% 48% at 32% 34%, rgba(35, 105, 255, .11), transparent 72%),
+    radial-gradient(ellipse 42% 46% at 82% 82%, rgba(207, 44, 255, .10), transparent 74%),
+    linear-gradient(135deg, rgba(13, 22, 48, .88), rgba(5, 8, 21, .92) 55%, rgba(19, 8, 33, .86));
+  box-shadow:
+    0 38px 120px rgba(0, 0, 0, .55),
+    inset 0 1px 0 rgba(255, 255, 255, .045),
+    inset 0 0 70px rgba(57, 101, 205, .025);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+.panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 10%, rgba(118, 176, 255, .035) 48%, transparent 82%),
+    radial-gradient(circle at 50% 43%, rgba(58, 156, 255, .08), transparent 43%);
+}
+
+.loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: rgba(215, 227, 250, .62);
+  font-size: 13px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.panel [data-ruthie-voice-app] {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 1 !important;
+  display: grid !important;
+  grid-template-rows: 94px minmax(0, 1fr) !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: hidden !important;
+  background: transparent !important;
+}
+
+.panel [data-ruthie-voice-app]::before {
+  display: none !important;
+}
+
+.panel [data-ruthie-voice-app] > header {
+  position: relative !important;
+  z-index: 20 !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto auto !important;
+  align-items: center !important;
+  gap: clamp(10px, 1.7vw, 20px) !important;
+  width: 100% !important;
+  min-height: 94px !important;
+  height: 94px !important;
+  padding: 0 clamp(18px, 2.8vw, 34px) !important;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(128, 158, 221, .08) !important;
+  background: linear-gradient(180deg, rgba(4, 8, 20, .54), rgba(4, 8, 20, .05)) !important;
+  box-shadow: none !important;
+}
+
+.panel [data-ruthie-voice-app] > header > div:first-child {
+  grid-column: 1 !important;
+  justify-self: start !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 13px !important;
+  min-width: 0 !important;
+}
+
+.panel [data-ruthie-voice-app] > header > div:first-child > span {
+  position: relative;
+  display: grid !important;
+  place-items: center;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border: 1px solid rgba(147, 178, 239, .19);
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 34% 24%, rgba(146, 193, 255, .18), transparent 48%),
+    linear-gradient(145deg, rgba(34, 47, 83, .86), rgba(9, 13, 29, .96));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .055), 0 12px 32px rgba(0, 0, 0, .24);
+}
+
+.panel [data-ruthie-voice-app] > header > div:first-child > span svg {
+  display: none !important;
+}
+
+.panel [data-ruthie-voice-app] > header > div:first-child > span::before {
+  content: "R";
+  color: #eef5ff;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.panel [data-ruthie-voice-app] > header > div:first-child > div {
+  display: grid !important;
+  justify-items: start !important;
+  gap: 5px !important;
+}
+
+.panel [data-ruthie-voice-app] > header > div:first-child strong {
+  color: #f8fbff !important;
+  font: 720 15px/1 Inter, ui-sans-serif, system-ui, sans-serif !important;
+  letter-spacing: .18em !important;
+  text-transform: uppercase;
+}
+
+.panel [data-ruthie-voice-app] > header > div:first-child small {
+  color: rgba(192, 209, 240, .48) !important;
+  font: 500 9px/1.1 Inter, ui-sans-serif, system-ui, sans-serif !important;
+  letter-spacing: .16em !important;
+  text-transform: uppercase;
+}
+
+.panel [data-ruthie-voice-app] > header > div:first-child small {
+  font-size: 0 !important;
+}
+
+.panel [data-ruthie-voice-app] > header > div:first-child small::after {
+  content: "NEURAL VOICE INTERFACE";
+  font-size: 9px;
+}
+
+.panel [data-ruthie-voice-app] > header > div:nth-child(2) {
+  grid-column: 2 !important;
+  justify-self: end !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  min-height: 40px !important;
+  padding: 0 15px !important;
+  border: 1px solid rgba(118, 151, 221, .20) !important;
+  border-radius: 999px !important;
+  background: rgba(4, 9, 22, .62) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .025) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.panel [data-ruthie-voice-app] > header > div:nth-child(2) i {
+  width: 7px !important;
+  height: 7px !important;
+  border-radius: 50%;
+  background: #58edc4 !important;
+  box-shadow: 0 0 0 5px rgba(88, 237, 196, .07), 0 0 17px rgba(88, 237, 196, .68) !important;
+}
+
+.panel [data-ruthie-voice-app] > header > div:nth-child(2) strong {
+  color: rgba(222, 234, 255, .74) !important;
+  font-size: 10px !important;
+  font-weight: 680 !important;
+  letter-spacing: .06em !important;
+  white-space: nowrap;
+}
+
+.panel [data-ruthie-voice-app] > header > div:last-child {
+  grid-column: 3 !important;
+  justify-self: end !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.panel [data-ruthie-voice-app] > header > div:last-child button,
+.panel [data-ruthie-voice-app] > header > div:last-child a {
+  display: grid !important;
+  place-items: center !important;
+  width: 38px !important;
+  height: 38px !important;
+  padding: 0 !important;
+  border: 1px solid rgba(113, 150, 231, .18) !important;
+  border-radius: 50% !important;
+  background: rgba(4, 9, 22, .50) !important;
+  color: rgba(204, 222, 250, .68) !important;
+  box-shadow: none !important;
+}
+
+.panel [data-ruthie-voice-app] > header > div:last-child button:hover,
+.panel [data-ruthie-voice-app] > header > div:last-child a:hover {
+  border-color: rgba(85, 215, 255, .48) !important;
+  background: rgba(58, 118, 226, .13) !important;
+  color: #ffffff !important;
+}
+
+.panel [data-ruthie-voice-stage] {
+  position: relative !important;
+  z-index: 2 !important;
+  display: grid !important;
+  grid-template-rows: minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  justify-items: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  padding: 0 clamp(16px, 3vw, 42px) max(20px, env(safe-area-inset-bottom)) !important;
+  overflow: hidden !important;
+}
+
+.panel [data-ruthie-voice-stage]::before {
+  content: "" !important;
+  display: block !important;
+  position: absolute !important;
+  z-index: 0 !important;
+  left: 50% !important;
+  top: 42% !important;
+  width: min(82vw, 980px) !important;
+  aspect-ratio: 1.55 !important;
+  transform: translate(-50%, -50%) !important;
+  border-radius: 50% !important;
+  background: radial-gradient(ellipse, rgba(44, 151, 255, .13), rgba(124, 57, 255, .055) 47%, transparent 72%) !important;
+  filter: blur(32px) !important;
+  pointer-events: none;
+}
+
+.panel [data-ruthie-orb-shell] {
+  position: relative !important;
+  z-index: 2 !important;
+  align-self: center !important;
+  width: min(92%, 990px) !important;
+  height: clamp(430px, 60dvh, 620px) !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: 100% !important;
+  margin: 0 !important;
+  overflow: visible !important;
+  transform: none !important;
+  filter: brightness(1.58) saturate(1.42) contrast(1.13) !important;
+}
+
+.panel [data-ruthie-orb-shell] canvas {
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 100% !important;
+  min-height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  filter:
+    brightness(1.18)
+    saturate(1.25)
+    drop-shadow(0 0 24px rgba(54, 191, 255, .26))
+    drop-shadow(0 0 42px rgba(174, 62, 255, .18)) !important;
+}
+
+.panel [data-ruthie-voice-copy] {
+  position: relative !important;
+  z-index: 5 !important;
+  align-self: end !important;
+  width: min(900px, 100%) !important;
+  min-height: 126px !important;
+  padding: 0 14px 14px !important;
+  text-align: center !important;
+}
+
+.panel [data-ruthie-voice-copy]::before {
+  display: none !important;
+}
+
+.panel [data-ruthie-voice-copy] small {
+  display: block !important;
+  color: rgba(98, 224, 255, .76) !important;
+  font: 620 11px/1.2 Inter, ui-sans-serif, system-ui, sans-serif !important;
+  letter-spacing: .12em !important;
+  text-transform: uppercase !important;
+}
+
+.panel [data-ruthie-voice-copy] h1 {
+  width: 100% !important;
+  max-width: 900px !important;
+  max-height: 3.3em !important;
+  margin: 11px auto 8px !important;
+  overflow: auto !important;
+  color: #ffffff !important;
+  font: 680 clamp(28px, 3.2vw, 42px)/1.08 Inter, ui-sans-serif, system-ui, sans-serif !important;
+  letter-spacing: -.03em !important;
+  text-align: center !important;
+  text-wrap: balance;
+}
+
+.panel [data-ruthie-voice-copy] p {
+  display: block !important;
+  max-width: 760px !important;
+  margin: 0 auto !important;
+  color: rgba(201, 216, 242, .55) !important;
+  font: 400 12px/1.55 Inter, ui-sans-serif, system-ui, sans-serif !important;
+}
+
+.panel [data-ruthie-voice-copy] button {
+  min-height: 40px !important;
+  margin-top: 10px !important;
+  padding: 0 15px !important;
+  border: 1px solid rgba(97, 181, 255, .34) !important;
+  border-radius: 999px !important;
+  background: rgba(47, 115, 222, .11) !important;
+  color: #dff6ff !important;
+  font-size: 11px !important;
+}
+
+@media (max-width: 900px) {
+  .previewMain {
+    padding: max(10px, env(safe-area-inset-top)) 10px max(10px, env(safe-area-inset-bottom));
+  }
+
+  .panel {
+    height: calc(100dvh - 20px);
+    min-height: 620px;
+    border-radius: 24px;
+  }
+
+  .panel [data-ruthie-voice-app] {
+    grid-template-rows: 82px minmax(0, 1fr) !important;
+  }
+
+  .panel [data-ruthie-voice-app] > header {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    height: 82px !important;
+    min-height: 82px !important;
+    padding-inline: 16px !important;
+  }
+
+  .panel [data-ruthie-voice-app] > header > div:nth-child(2) {
+    grid-column: 2 !important;
+  }
+
+  .panel [data-ruthie-voice-app] > header > div:last-child {
+    position: absolute !important;
+    top: 88px !important;
+    right: 14px !important;
+    z-index: 30 !important;
+  }
+
+  .panel [data-ruthie-orb-shell] {
+    width: min(100%, 820px) !important;
+    height: clamp(350px, 54dvh, 510px) !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .previewMain {
+    padding: 0;
+  }
+
+  .panel {
+    width: 100%;
+    height: 100dvh;
+    min-height: 620px;
+    border-radius: 0;
+    border-inline: 0;
+  }
+
+  .panel [data-ruthie-voice-app] {
+    grid-template-rows: 78px minmax(0, 1fr) !important;
+  }
+
+  .panel [data-ruthie-voice-app] > header {
+    height: 78px !important;
+    min-height: 78px !important;
+    padding:
+      env(safe-area-inset-top)
+      12px
+      0 !important;
+  }
+
+  .panel [data-ruthie-voice-app] > header > div:first-child {
+    gap: 10px !important;
+  }
+
+  .panel [data-ruthie-voice-app] > header > div:first-child > span {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+  }
+
+  .panel [data-ruthie-voice-app] > header > div:first-child strong {
+    font-size: 13px !important;
+    letter-spacing: .14em !important;
+  }
+
+  .panel [data-ruthie-voice-app] > header > div:first-child small::after {
+    font-size: 7px;
+  }
+
+  .panel [data-ruthie-voice-app] > header > div:nth-child(2) {
+    min-height: 34px !important;
+    padding-inline: 11px !important;
+  }
+
+  .panel [data-ruthie-voice-app] > header > div:nth-child(2) strong {
+    max-width: 98px;
+    overflow: hidden;
+    font-size: 9px !important;
+    text-overflow: ellipsis;
+  }
+
+  .panel [data-ruthie-voice-app] > header > div:last-child {
+    top: 84px !important;
+    right: 10px !important;
+    gap: 6px !important;
+  }
+
+  .panel [data-ruthie-voice-app] > header > div:last-child button,
+  .panel [data-ruthie-voice-app] > header > div:last-child a {
+    width: 34px !important;
+    height: 34px !important;
+  }
+
+  .panel [data-ruthie-voice-stage] {
+    padding: 0 8px max(12px, env(safe-area-inset-bottom)) !important;
+  }
+
+  .panel [data-ruthie-orb-shell] {
+    width: 100% !important;
+    height: clamp(290px, 48dvh, 410px) !important;
+    filter: brightness(1.62) saturate(1.46) contrast(1.12) !important;
+  }
+
+  .panel [data-ruthie-voice-copy] {
+    min-height: 150px !important;
+    padding: 0 10px max(10px, env(safe-area-inset-bottom)) !important;
+  }
+
+  .panel [data-ruthie-voice-copy] small {
+    font-size: 9px !important;
+  }
+
+  .panel [data-ruthie-voice-copy] h1 {
+    max-height: 4.4em !important;
+    margin-top: 9px !important;
+    font-size: clamp(23px, 7.4vw, 31px) !important;
+    line-height: 1.12 !important;
+  }
+
+  .panel [data-ruthie-voice-copy] p {
+    max-height: 3.2em;
+    overflow: hidden;
+    font-size: 11px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .panel [data-ruthie-voice-app] > header > div:nth-child(2) strong {
+    display: none;
+  }
+
+  .panel [data-ruthie-voice-app] > header > div:nth-child(2) {
+    width: 34px !important;
+    justify-content: center !important;
+    padding: 0 !important;
+  }
+
+  .panel [data-ruthie-orb-shell] {
+    height: clamp(255px, 43dvh, 350px) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grain {
+    display: none;
+  }
+}

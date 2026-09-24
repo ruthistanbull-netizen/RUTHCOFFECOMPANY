@@ -1,0 +1,234 @@
+.trigger {
+  width: 100%;
+  min-height: 52px;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto 18px;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 8px 12px;
+  border: 1px solid var(--border-subtle, rgba(15, 23, 42, 0.09));
+  border-radius: var(--radius-control, 14px);
+  background: var(--surface-primary, #fff);
+  color: var(--text-main, #17191d);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 150ms ease, background 150ms ease, box-shadow 150ms ease;
+}
+
+.trigger:hover {
+  border-color: var(--border-strong, rgba(15, 23, 42, 0.16));
+  background: var(--surface-secondary, #f7f7f8);
+}
+
+.trigger:focus-visible {
+  outline: 2px solid var(--accent, #685bff);
+  outline-offset: 2px;
+}
+
+.triggerLogo,
+.optionLogo {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle, rgba(15, 23, 42, 0.08));
+  background: #fff;
+}
+
+.triggerLogo {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+}
+
+.triggerLogo img,
+.optionLogo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.triggerLogo img {
+  padding: 4px;
+}
+
+.triggerLogo svg,
+.optionLogo svg {
+  width: 16px;
+  height: 16px;
+  color: var(--accent, #685bff);
+}
+
+.triggerCopy,
+.optionCopy {
+  min-width: 0;
+}
+
+.triggerCopy small {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--text-subtle, #8a909a);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.triggerCopy strong {
+  display: block;
+  overflow: hidden;
+  color: var(--text-main, #17191d);
+  font-size: 12.5px;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.triggerMeta,
+.optionMeta {
+  display: grid;
+  justify-items: end;
+  gap: 2px;
+  white-space: nowrap;
+}
+
+.triggerMeta em,
+.optionMeta em {
+  color: var(--accent, #685bff);
+  font-size: 8px;
+  font-style: normal;
+  font-weight: 750;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.triggerMeta b,
+.optionMeta b {
+  color: var(--text-main, #17191d);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.chevron {
+  width: 16px;
+  height: 16px;
+  color: var(--text-subtle, #8a909a);
+}
+
+.options {
+  grid-template-columns: 1fr !important;
+  gap: 0 !important;
+  padding: 6px 10px 10px !important;
+}
+
+.option {
+  width: 100%;
+  min-height: 54px;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto 26px;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 4px;
+  border: 0;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.07);
+  border-radius: 0;
+  background: transparent;
+  color: #343840;
+  text-align: left;
+  cursor: pointer;
+  transition: background 140ms ease;
+}
+
+.option:last-child {
+  border-bottom: 0;
+}
+
+.option:hover,
+.optionSelected {
+  background: rgba(104, 91, 255, 0.055);
+}
+
+.optionLogo {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+}
+
+.optionLogo img {
+  padding: 4px;
+}
+
+.optionCopy strong {
+  display: block;
+  overflow: hidden;
+  color: #202328;
+  font-size: 12.5px;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.optionCopy small {
+  display: block;
+  margin-top: 2px;
+  overflow: hidden;
+  color: #9298a1;
+  font-size: 9px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.check {
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #685bff;
+}
+
+.check svg {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2.4;
+}
+
+:global(html.dark) .option {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+  color: #e4e6ea;
+}
+
+:global(html.dark) .optionCopy strong,
+:global(html.dark) .triggerCopy strong,
+:global(html.dark) .triggerMeta b,
+:global(html.dark) .optionMeta b {
+  color: #f1f2f4;
+}
+
+:global(html.dark) .option:hover,
+:global(html.dark) .optionSelected {
+  background: rgba(112, 96, 255, 0.14);
+}
+
+@media (max-width: 560px) {
+  .trigger {
+    grid-template-columns: 32px minmax(0, 1fr) auto 16px;
+    min-height: 50px;
+    gap: 8px;
+    padding: 8px 10px;
+  }
+
+  .triggerLogo,
+  .optionLogo {
+    width: 32px;
+    height: 32px;
+  }
+
+  .option {
+    grid-template-columns: 32px minmax(0, 1fr) auto 24px;
+    min-height: 50px;
+    gap: 8px;
+  }
+}
