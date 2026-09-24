@@ -1,36 +1,69 @@
-:root {
-  --ruth-color-canvas: #F4F0E8;
-  --ruth-color-surface: #F4F0E8;
-  --ruth-color-surface-muted: color-mix(in srgb, #F4F0E8 88%, #AAA8A1);
-  --ruth-color-text-primary: #111111;
-  --ruth-color-text-muted: #6F725B;
-  --ruth-color-text-inverse: #F4F0E8;
-  --ruth-color-accent: #B9563D;
-  --ruth-color-accent-soft: color-mix(in srgb, #B9563D 28%, #F4F0E8);
-  --ruth-color-accent-strong: #2B1B16;
-  --ruth-color-accent-wash: rgba(185, 86, 61, 0.16);
-  --ruth-color-border-subtle: color-mix(in srgb, #AAA8A1 52%, transparent);
-  --ruth-color-border-strong: #AAA8A1;
-  --ruth-color-focus: #B9563D;
-  --ruth-color-overlay: rgba(17, 17, 17, 0.46);
-  --ruth-color-success: #6F725B;
-  --ruth-color-warning: #B9563D;
-  --ruth-color-danger: #2B1B16;
-  --ruth-color-info: #AAA8A1;
-}
-
 :root,
 [data-ruth-theme] {
+  /* ROSTA Global Color System v2.3 - locked brand palette */
+  --rosta-carbon: #111111;
+  --rosta-carbon-soft: #242424;
+  --rosta-cream: #FBF3E6;
+  --rosta-espresso: #38251C;
+  --rosta-brick-b: #C94A40;
+  --rosta-cocoa: #6B4638;
+  --rosta-kraft: #C8A77D;
+  --rosta-action-text: #FFFFFF;
+
+  /* Brand/UI semantic roles */
+  --ruth-color-canvas: var(--rosta-carbon);
+  --ruth-color-surface: var(--rosta-carbon-soft);
+  --ruth-color-surface-muted: color-mix(in srgb, var(--rosta-carbon-soft) 88%, var(--rosta-espresso));
+  --ruth-color-surface-elevated: var(--rosta-carbon-soft);
+  --ruth-color-surface-inverse: var(--rosta-cream);
+  --ruth-color-text-primary: var(--rosta-cream);
+  --ruth-color-text-muted: color-mix(in srgb, var(--rosta-cream) 72%, transparent);
+  --ruth-color-text-inverse: var(--rosta-cream);
+  --ruth-color-text-on-light: var(--rosta-carbon);
+  --ruth-color-text-on-action: var(--rosta-action-text);
+  --ruth-color-accent: var(--rosta-brick-b);
+  --ruth-color-accent-soft: color-mix(in srgb, var(--rosta-brick-b) 15%, transparent);
+  --ruth-color-accent-strong: var(--rosta-espresso);
+  --ruth-color-accent-wash: color-mix(in srgb, var(--rosta-brick-b) 15%, transparent);
+  --ruth-color-border-subtle: color-mix(in srgb, var(--rosta-kraft) 42%, transparent);
+  --ruth-color-border-strong: var(--rosta-kraft);
+  --ruth-color-focus: var(--rosta-brick-b);
+  --ruth-color-selected: var(--rosta-brick-b);
+  --ruth-color-overlay: color-mix(in srgb, var(--rosta-carbon) 72%, transparent);
+
+  /* Ruth Commerce operational status semantics - intentionally outside brand lock */
+  --ruth-color-success: #1BA786;
+  --ruth-color-success-soft: #E3F8ED;
+  --ruth-color-success-text: #147B63;
+  --ruth-color-warning: #D99620;
+  --ruth-color-warning-soft: #FFF4D6;
+  --ruth-color-warning-text: #9B6B17;
+  --ruth-color-danger: #E1606B;
+  --ruth-color-danger-soft: #FFE5E8;
+  --ruth-color-danger-text: #D62937;
+  --ruth-color-info: #4F94E8;
+  --ruth-color-info-soft: #EBF3FF;
+  --ruth-color-info-text: #1C71D9;
+  --ruth-color-neutral: #858993;
+  --ruth-color-neutral-soft: #EBECF0;
+  --ruth-color-neutral-text: #60636C;
+  --ruth-color-status-accent: #C9A33B;
+  --ruth-color-status-accent-soft: #F6EBC6;
+  --ruth-color-status-accent-text: #3B2D0D;
+
+  /* Legacy aliases: keep existing components on the semantic layer. */
   --ruth-ink: var(--ruth-color-text-primary);
   --ruth-ink-muted: var(--ruth-color-text-muted);
   --ruth-paper: var(--ruth-color-surface-muted);
   --ruth-surface: var(--ruth-color-surface);
   --ruth-gold: var(--ruth-color-accent);
   --ruth-gold-light: var(--ruth-color-accent-soft);
-  --ruth-gold-dark: var(--ruth-color-accent-strong);
+  --ruth-gold-dark: var(--ruth-color-accent);
   --ruth-border: var(--ruth-color-border-subtle);
-  --ruth-success: var(--ruth-color-success);
-  --ruth-warning: var(--ruth-color-warning);
-  --ruth-danger: var(--ruth-color-danger);
-  --ruth-info: var(--ruth-color-info);
+  --ruth-success: var(--ruth-color-success-text);
+  --ruth-warning: var(--ruth-color-warning-text);
+  --ruth-danger: var(--ruth-color-danger-text);
+  --ruth-info: var(--ruth-color-info-text);
+  --ruth-neutral: var(--ruth-color-neutral-text);
+  --ruth-status-accent: var(--ruth-color-status-accent-text);
 }
