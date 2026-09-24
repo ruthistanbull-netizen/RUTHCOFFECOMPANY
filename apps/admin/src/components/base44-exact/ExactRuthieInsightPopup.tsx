@@ -953,7 +953,7 @@ export function ExactRuthieInsightPopup({
                   </div>
                 </div>
 
-                <div className="mt-2 flex justify-end"><Link href="/ruthie/chat" onClick={onClose} className="inline-flex items-center gap-1 text-[10px] font-medium text-muted hover:text-accent">Tam ROSTA Insight sohbetini aç <ExternalLink className="h-3 w-3" /></Link></div>
+                <div className="mt-2 flex justify-end"><Link href="/rosta-insight/chat" onClick={onClose} className="inline-flex items-center gap-1 text-[10px] font-medium text-muted hover:text-accent">Tam ROSTA Insight sohbetini aç <ExternalLink className="h-3 w-3" /></Link></div>
               </div>
             </motion.section>
           </div>
