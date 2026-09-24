@@ -69,8 +69,8 @@ const navGroups: NavGroup[] = [
   {
     label: "Asistan",
     items: [
-      { href: "/ruthie", label: "ROSTA Insight", shortLabel: "Sesli Insight", icon: Headphones, searchTerms: ["Yapay zeka", "AI", "Sesli asistan", "Voice", "Kamera", "Çeviri"], badge: "AI" },
-      { href: "/ruthie/chat", label: "ROSTA Insight Chat", shortLabel: "Insight Chat", icon: MessageSquareText, searchTerms: ["Yapay zeka", "AI", "Chat", "Sohbet", "Dosya", "Fotoğraf"] },
+      { href: "/ruthie", label: "Ruthie", shortLabel: "Sesli Ruthie", icon: Headphones, searchTerms: ["Yapay zeka", "AI", "Sesli asistan", "Voice", "Kamera", "Çeviri"], badge: "AI" },
+      { href: "/ruthie/chat", label: "Ruthie Chat", shortLabel: "Ruthie Chat", icon: MessageSquareText, searchTerms: ["Yapay zeka", "AI", "Chat", "Sohbet", "Dosya", "Fotoğraf"] },
     ],
   },
   {
@@ -397,7 +397,7 @@ export function ControlRoomShell({ children }: { children: ReactNode }) {
                 <button className={productsView === "list" ? styles.viewSwitcherActive : ""} type="button" onClick={() => setProductView("list")} aria-pressed={productsView === "list"}><List aria-hidden="true" /><span>Liste</span></button>
               </div>
             ) : null}
-            <button className={`${styles.iconAction} ${styles.ruthieAction}`} type="button" onClick={() => setRuthieDockOpen((open) => !open)} aria-label="ROSTA Insight hızlı panelini aç" aria-expanded={ruthieDockOpen}><Bot aria-hidden="true" /></button>
+            <button className={`${styles.iconAction} ${styles.ruthieAction}`} type="button" onClick={() => setRuthieDockOpen((open) => !open)} aria-label="Ruthie hızlı panelini aç" aria-expanded={ruthieDockOpen}><Bot aria-hidden="true" /></button>
             <Link className={styles.iconAction} href="/notifications" aria-label="Bildirim ayarları"><BellRing aria-hidden="true" /><span className={styles.notificationDot} /></Link>
             <button className={styles.iconAction} type="button" onClick={toggleTheme} aria-label={darkMode ? "Açık temaya geç" : "Koyu temaya geç"} aria-pressed={darkMode}>
               {darkMode ? <Sun aria-hidden="true" /> : <Moon aria-hidden="true" />}
@@ -441,7 +441,7 @@ export function ControlRoomShell({ children }: { children: ReactNode }) {
               className={styles.ruthieDockBackdrop}
               type="button"
               onClick={() => setRuthieDockOpen(false)}
-              aria-label="ROSTA Insight hızlı panelini kapat"
+              aria-label="Ruthie hızlı panelini kapat"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -451,7 +451,7 @@ export function ControlRoomShell({ children }: { children: ReactNode }) {
               className={styles.ruthieDock}
               role="dialog"
               aria-modal="true"
-              aria-label="ROSTA Insight hızlı paneli"
+              aria-label="Ruthie hızlı paneli"
               initial={{ opacity: 0, scale: 0.94, y: 14 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.94, y: 14 }}
@@ -459,13 +459,13 @@ export function ControlRoomShell({ children }: { children: ReactNode }) {
             >
               <header>
                 <span className={styles.ruthieDockOrb}><Sparkles aria-hidden="true" /></span>
-                <div><strong>ROSTA Insight</strong><small>{currentRoute.title} sayfasında hazır</small></div>
-                <button type="button" onClick={() => setRuthieDockOpen(false)} aria-label="ROSTA Insight hızlı panelini kapat"><X aria-hidden="true" /></button>
+                <div><strong>Ruthie</strong><small>{currentRoute.title} sayfasında hazır</small></div>
+                <button type="button" onClick={() => setRuthieDockOpen(false)} aria-label="Ruthie hızlı panelini kapat"><X aria-hidden="true" /></button>
               </header>
               <div className={styles.ruthieDockBody}>
-                <p>Bu sayfadaki işlemleri değiştirmeden ROSTA Insight sesli asistana veya sohbete geçebilirsin.</p>
-                <Link href="/ruthie" onClick={() => setRuthieDockOpen(false)}><Headphones aria-hidden="true" /><span><strong>Sesli ROSTA Insight</strong><small>Konuşarak işlem ve analiz başlat</small></span></Link>
-                <Link href="/ruthie/chat" onClick={() => setRuthieDockOpen(false)}><MessageSquareText aria-hidden="true" /><span><strong>ROSTA Insight Chat</strong><small>Dosya, fotoğraf ve panel bağlamıyla sohbet et</small></span></Link>
+                <p>Bu sayfadaki işlemleri değiştirmeden Ruthie sesli asistanına veya sohbete geçebilirsin.</p>
+                <Link href="/ruthie" onClick={() => setRuthieDockOpen(false)}><Headphones aria-hidden="true" /><span><strong>Sesli Ruthie</strong><small>Konuşarak işlem ve analiz başlat</small></span></Link>
+                <Link href="/ruthie/chat" onClick={() => setRuthieDockOpen(false)}><MessageSquareText aria-hidden="true" /><span><strong>Ruthie Chat</strong><small>Dosya, fotoğraf ve panel bağlamıyla sohbet et</small></span></Link>
               </div>
             </motion.aside>
           </>
