@@ -39,16 +39,16 @@ type SearchResult = ProductResult | CollectionResult | CategoryResult;
 function SearchResultRow({ result }: { result: SearchResult }) {
   if (result.kind === "product") {
     return (
-      <div className="flex items-center justify-between gap-4 text-ink">
+      <div className="flex items-center justify-between gap-4 text-cream">
         <span className="flex min-w-0 items-center gap-3">
           {result.main_image_url ? (
             <img src={result.main_image_url} alt="" className="h-14 w-14 shrink-0 rounded-lg object-cover" />
           ) : (
-            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-ivory font-heading">R</span>
+            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-carbon-soft font-heading">R</span>
           )}
           <span className="grid min-w-0 gap-1">
             <strong className="truncate font-heading text-base font-medium">{result.name}</strong>
-            <small className="truncate text-muted-ruth">{result.material || "ROSTA Coffee"} · {result.stock_status === "out_of_stock" ? "Tükendi" : "Stokta"}</small>
+            <small className="truncate text-cream/70">{result.material || "ROSTA Coffee"} · {result.stock_status === "out_of_stock" ? "Tükendi" : "Stokta"}</small>
           </span>
         </span>
         <strong className="shrink-0 text-sm">{formatPrice(result.price)}</strong>
@@ -58,23 +58,23 @@ function SearchResultRow({ result }: { result: SearchResult }) {
 
   if (result.kind === "collection") {
     return (
-      <div className="flex items-center justify-between gap-4 text-ink">
+      <div className="flex items-center justify-between gap-4 text-cream">
         <span className="grid gap-1">
           <strong className="font-heading text-base font-medium">{result.name}</strong>
-          <small className="line-clamp-1 text-muted-ruth">{result.description || "Koleksiyonu keşfet"}</small>
+          <small className="line-clamp-1 text-cream/70">{result.description || "Koleksiyonu keşfet"}</small>
         </span>
-        <span className="text-xs uppercase tracking-wide-luxe text-gold-dark">Koleksiyon</span>
+        <span className="text-xs uppercase tracking-wide-luxe text-brick">Koleksiyon</span>
       </div>
     );
   }
 
   return (
-    <div className="flex items-center justify-between gap-4 text-ink">
+    <div className="flex items-center justify-between gap-4 text-cream">
       <span className="grid gap-1">
         <strong className="font-heading text-base font-medium">{result.name}</strong>
-        <small className="line-clamp-1 text-muted-ruth">{result.description || "Kategori ürünlerini gör"}</small>
+        <small className="line-clamp-1 text-cream/70">{result.description || "Kategori ürünlerini gör"}</small>
       </span>
-      <span className="text-xs uppercase tracking-wide-luxe text-gold-dark">Kategori</span>
+      <span className="text-xs uppercase tracking-wide-luxe text-brick">Kategori</span>
     </div>
   );
 }
