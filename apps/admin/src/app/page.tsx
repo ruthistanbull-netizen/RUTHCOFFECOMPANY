@@ -1,17 +1,5 @@
-import { RuthieDockedQuickVoiceOrb } from "@/app/ruthie/RuthieDockedQuickVoiceOrb";
-import { RuthieOrbDockSlot } from "@/app/ruthie/RuthieOrbDockSlot";
-import { DashboardSessionSourceRingPatch } from "@/components/DashboardSessionSourceRingPatch";
-import { DashboardSessionSourceSemanticColors } from "@/components/DashboardSessionSourceSemanticColors";
-import { ExactOverviewDashboardV4 } from "@/components/base44-exact/ExactOverviewDashboardV4";
+import { redirect } from "next/navigation";
 
-export default function DashboardPage() {
-  return (
-    <>
-      <DashboardSessionSourceRingPatch />
-      <DashboardSessionSourceSemanticColors />
-      <ExactOverviewDashboardV4 />
-      <RuthieOrbDockSlot />
-      <RuthieDockedQuickVoiceOrb />
-    </>
-  );
+export default function PanelHubEntryPage() {
+  redirect("/profiles");
 }
