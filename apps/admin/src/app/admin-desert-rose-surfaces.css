@@ -40,82 +40,14 @@ html :where([class~="bg-white"]) {
 
 html :where(
   [data-exact-base44-page],
-  [data-exact-base44-auth],
   [data-ruth-admin-page]
 ) :where(input, textarea, select)[class~="bg-white"] {
   background-color: var(--rosta-carbon-soft) !important;
   color: var(--rosta-cream) !important;
 }
 
-[data-exact-base44-auth] {
-  background-color: var(--rosta-carbon) !important;
-}
-
-[data-exact-base44-auth] > section:last-child {
-  background-color: var(--rosta-carbon-soft);
-}
-
-[data-exact-base44-auth] > section:first-child .relative.z-10 > div:first-child,
-[data-exact-base44-auth] > section:last-child > div > div:first-child {
-  background-color: var(--rosta-carbon-soft);
-}
-
-[data-exact-base44-auth="login"] {
-  background: var(--rosta-carbon) !important;
-  color: var(--rosta-cream) !important;
-}
-
-[data-exact-base44-auth="login"] > section:first-child {
-  border-color: color-mix(in srgb, var(--rosta-kraft) 42%, transparent) !important;
-}
-
-[data-exact-base44-auth="login"] > section:last-child {
-  background: var(--rosta-carbon-soft) !important;
-  border-color: color-mix(in srgb, var(--rosta-kraft) 42%, transparent) !important;
-}
-
-[data-exact-base44-auth="login"] > section:last-child h2 {
-  color: var(--rosta-cream) !important;
-}
-
-[data-exact-base44-auth="login"] > section:last-child h2 + p,
-[data-exact-base44-auth="login"] form label,
-[data-exact-base44-auth="login"] > section:last-child > div > p:last-child {
-  color: color-mix(in srgb, var(--rosta-cream) 70%, transparent) !important;
-}
-
-[data-exact-base44-auth="login"] form .form-input {
-  border-color: color-mix(in srgb, var(--rosta-kraft) 42%, transparent) !important;
-  background: var(--rosta-carbon-soft) !important;
-  color: var(--rosta-cream) !important;
-  box-shadow: none !important;
-}
-
-[data-exact-base44-auth="login"] form .form-input::placeholder {
-  color: color-mix(in srgb, var(--rosta-cream) 52%, transparent) !important;
-}
-
-[data-exact-base44-auth="login"] form .form-input:focus {
-  border-color: var(--rosta-brick-b) !important;
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--rosta-brick-b) 24%, transparent) !important;
-}
-
-[data-exact-base44-auth="login"] form a[href="/forgot-password"] {
-  color: var(--rosta-brick-b) !important;
-}
-
-[data-exact-base44-auth="login"] form > button[type="submit"] {
-  border-color: var(--rosta-brick-b) !important;
-  background: var(--rosta-brick-b) !important;
-  color: var(--rosta-action-text) !important;
-  box-shadow: 0 12px 30px color-mix(in srgb, var(--rosta-carbon) 38%, transparent) !important;
-}
-
-[data-exact-base44-auth="login"] form > button[type="submit"]:active {
-  border-color: var(--rosta-espresso) !important;
-  background: var(--rosta-espresso) !important;
-  color: var(--rosta-cream) !important;
-}
+/* RR HUB auth screens own their visual system in ExactAuth.tsx.
+   Keep the legacy surface compatibility layer out of login/reset routes. */
 
 [aria-label="Net satışı oluşturan siparişleri aç"] > article {
   box-shadow:
@@ -124,14 +56,3 @@ html :where(
     0 0 32px color-mix(in srgb, var(--rosta-carbon) 24%, transparent) !important;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  [data-exact-base44-auth="login"] form .form-input:hover {
-    border-color: var(--rosta-kraft) !important;
-  }
-
-  [data-exact-base44-auth="login"] form > button[type="submit"]:hover {
-    box-shadow:
-      inset 0 0 0 1px color-mix(in srgb, var(--rosta-cream) 74%, transparent),
-      0 12px 30px color-mix(in srgb, var(--rosta-carbon) 42%, transparent) !important;
-  }
-}
