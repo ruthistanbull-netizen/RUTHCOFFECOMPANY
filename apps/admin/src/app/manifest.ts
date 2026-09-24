@@ -2,14 +2,14 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "ROSTA Coffee Co. Control Room",
-    short_name: "ROSTA Panel",
-    description: "ROSTA Coffee Co. sipariş, kargo, ödeme, müşteri ve mağaza operasyon paneli",
+    name: "RR HUB",
+    short_name: "RR HUB",
+    description: "ROSTA Coffee Co. ve Ruth Istanbul yönetim alanlarına güvenli erişim",
     start_url: "/",
     scope: "/",
     display: "standalone",
-    background_color: "#F4F0E8",
-    theme_color: "#F4F0E8",
+    background_color: "#141414",
+    theme_color: "#141414",
     orientation: "portrait-primary",
     icons: [
       {
