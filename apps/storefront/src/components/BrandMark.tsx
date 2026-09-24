@@ -28,7 +28,7 @@ export default function BrandMark({
   return (
     <div className={`${centered ? "text-center" : ""} ${className}`}>
       <div
-        className={`font-heading uppercase leading-none text-ink ${sizeMap[size]} ${
+        className={`font-heading uppercase leading-none text-current ${sizeMap[size]} ${
           centered ? centeredTrackingCompensation[size] : ""
         }`}
       >
