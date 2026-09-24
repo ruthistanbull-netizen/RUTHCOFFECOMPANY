@@ -376,6 +376,6 @@
   html.dark aside[class*="z-sidebar"] > div:first-child > a::after {
     filter:
       drop-shadow(0 0 1px color-mix(in srgb, var(--rosta-cream) 95%, transparent))
-      drop-shadow(0 0 4px rgba(255, 255, 255, 0.58));
+      drop-shadow(0 0 4px color-mix(in srgb, var(--rosta-cream) 58%, transparent));
   }
 }
