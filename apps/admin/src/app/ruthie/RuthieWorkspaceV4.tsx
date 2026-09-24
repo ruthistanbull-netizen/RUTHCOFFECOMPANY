@@ -618,7 +618,7 @@ export function RuthieWorkspaceV4() {
 
       <FullscreenOverlay
         open={realtime.phase !== "idle"}
-        title="Ruthie"
+        title="ROSTA Insight"
         onClose={() => { setCameraOpen(false); realtime.end(); }}
         closeOnBackdrop={false}
         showCloseButton={false}
