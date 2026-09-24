@@ -170,7 +170,7 @@ export function RuthieWorkspaceV5() {
     void (async () => {
       try {
         const headers = await adminAuthHeaders();
-        const response = await fetch("/api/ruthie/openai/status", { headers, cache: "no-store" });
+        const response = await fetch("/api/rosta-insight/openai/status", { headers, cache: "no-store" });
         const payload = await response.json() as ProviderStatus;
         if (!response.ok || !payload.ok) throw new Error("ROSTA Insight bağlantı durumu alınamadı.");
         setStatus(payload);
@@ -253,7 +253,7 @@ export function RuthieWorkspaceV5() {
     abortRef.current = controller;
     try {
       const headers = await adminAuthHeaders();
-      const response = await fetch("/api/ruthie/openai/chat", {
+      const response = await fetch("/api/rosta-insight/openai/chat", {
         method: "POST",
         signal: controller.signal,
         cache: "no-store",
@@ -282,7 +282,7 @@ export function RuthieWorkspaceV5() {
     updateConversation(conversationId, (conversation) => ({ ...conversation, messages: conversation.messages.map((item) => item.id === messageId ? { ...item, actionState: "executing", actionError: undefined } : item) }));
     try {
       const headers = await adminAuthHeaders();
-      const response = await fetch("/api/ruthie/admin/execute", {
+      const response = await fetch("/api/rosta-insight/admin/execute", {
         method: "POST",
         cache: "no-store",
         headers: { ...headers, "Content-Type": "application/json" },
