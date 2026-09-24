@@ -10,7 +10,8 @@
     "build": "next build --webpack --experimental-app-only --debug",
     "start": "next start",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "typecheck:app": "tsc --noEmit -p tsconfig.app.json"
   },
   "dependencies": {
     "@ruth-commerce/commerce-core": "file:../../packages/commerce-core",
