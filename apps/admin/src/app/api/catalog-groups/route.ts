@@ -1,99 +1,160 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
-import { revalidateStorefront } from "@/lib/storefront";
+import { noStoreHeaders, revalidateWebsite } from "@/lib/websiteRevalidate";
+import { slugifyCatalogValue } from "@/lib/catalogGroups";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const runtime = "nodejs";
 
-function tableFor(value: unknown) {
-  return value === "collection" ? "collections" : value === "category" ? "categories" : null;
+function clean(value: unknown) {
+  return typeof value === "string" ? value.trim() : "";
 }
-function linkTableFor(value: unknown) {
-  return value === "collection"
-    ? { table: "product_collections", foreignKey: "collection_id" }
-    : value === "category"
-      ? { table: "product_categories", foreignKey: "category_id" }
-      : null;
+
+function tableFor(type: string): "categories" | "collections" | null {
+  if (type === "category") return "categories";
+  if (type === "collection") return "collections";
+  return null;
 }
-function slugify(value: unknown) {
-  return String(value || "").trim().toLocaleLowerCase("tr-TR")
-    .replace(/ı/g,"i").replace(/ğ/g,"g").replace(/ü/g,"u").replace(/ş/g,"s").replace(/ö/g,"o").replace(/ç/g,"c")
-    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
-    .replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,90);
+
+function toInt(value: unknown, fallback = 0) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? Math.trunc(parsed) : fallback;
+}
+
+function responseError(message: string, status = 400) {
+  return NextResponse.json({ ok: false, error: message }, { status, headers: noStoreHeaders() });
+}
+
+async function revalidateCatalog(table: "categories" | "collections", source: string) {
+  return revalidateWebsite({
+    source,
+    tags: table === "categories" ? ["categories", "products"] : ["collections", "products"],
+  });
 }
 
 export async function GET(request: Request) {
   const auth = await requireAdmin(request);
   if ("error" in auth) return auth.error;
 
-  const type = new URL(request.url).searchParams.get("type");
+  const url = new URL(request.url);
+  const type = clean(url.searchParams.get("type"));
   const table = tableFor(type);
-  const link = linkTableFor(type);
-  if (!table || !link) return NextResponse.json({ ok:false, error:"Geçersiz katalog tipi." }, { status:400 });
+  if (!table) return responseError("Geçerli tür gerekli.");
 
-  const [itemsResult, linksResult] = await Promise.all([
-    auth.supabase.from(table).select("*").order("sort_order",{ascending:true}).order("name",{ascending:true}),
-    auth.supabase.from(link.table).select(`${link.foreignKey},product_id`),
+  const relationTable = table === "categories" ? "product_categories" : "product_collections";
+  const relationColumn = table === "categories" ? "category_id" : "collection_id";
+
+  const [{ data, error }, { data: links, error: linkError }] = await Promise.all([
+    auth.supabase
+      .from(table)
+      .select("id, name, slug, description, cover_image_url, sort_order, status, created_at, updated_at")
+      .order("sort_order", { ascending: true })
+      .order("name", { ascending: true }),
+    auth.supabase.from(relationTable).select(`product_id, ${relationColumn}`),
   ]);
-  if (itemsResult.error) return NextResponse.json({ ok:false, error:itemsResult.error.message }, { status:500 });
-  if (linksResult.error) return NextResponse.json({ ok:false, error:linksResult.error.message }, { status:500 });
+
+  if (error) return responseError(error.message);
+  if (linkError) return responseError(linkError.message);
 
   const counts = new Map<string, number>();
-  for (const row of linksResult.data || []) {
-    const id = String((row as any)[link.foreignKey] || "");
+  for (const link of links || []) {
+    const id = String((link as Record<string, unknown>)[relationColumn] || "");
     if (id) counts.set(id, (counts.get(id) || 0) + 1);
   }
 
-  const items = (itemsResult.data || []).map((item:any) => ({
-    ...item,
-    product_count: counts.get(String(item.id)) || 0,
-  }));
-
-  return NextResponse.json({ ok:true, items }, { headers:{"Cache-Control":"private, no-store"} });
+  return NextResponse.json({
+    ok: true,
+    items: (data || []).map((item) => ({ ...item, product_count: counts.get(String(item.id)) || 0 })),
+  }, { headers: noStoreHeaders() });
 }
 
 export async function POST(request: Request) {
   const auth = await requireAdmin(request);
   if ("error" in auth) return auth.error;
-  const body = await request.json().catch(()=>({}));
-  const table = tableFor(body.type);
-  if (!table) return NextResponse.json({ ok:false, error:"Geçersiz katalog tipi." }, { status:400 });
 
-  const name = String(body.name || "").trim();
-  if (!name) return NextResponse.json({ ok:false, error:"Ad gerekli." }, { status:400 });
-  const record = {
-    name,
-    slug: slugify(body.slug || name),
-    description: String(body.description || "").trim() || null,
-    cover_image_url: String(body.cover_image_url || "").trim() || null,
-    sort_order: Number.isFinite(Number(body.sort_order)) ? Number(body.sort_order) : 0,
-    status: body.status === "inactive" ? "inactive" : "active",
-    updated_at: new Date().toISOString(),
-  };
-  const { data, error } = await auth.supabase.from(table).insert(record).select("*").single();
-  if (error) return NextResponse.json({ ok:false, error:error.message }, { status:400 });
-  const storefront = await revalidateStorefront("rosta-admin-catalog-group-create","catalog");
-  return NextResponse.json({ ok:true, item:{...data,product_count:0}, storefront });
+  const body = await request.json();
+  const type = clean(body.type);
+  const table = tableFor(type);
+  if (!table) return responseError("Geçerli tür gerekli.");
+
+  const name = clean(body.name);
+  if (!name) return responseError("Ad gerekli.");
+
+  const slug = slugifyCatalogValue(clean(body.slug) || name);
+  if (!slug) return responseError("Geçerli bir slug oluşturulamadı.");
+
+  const { data: existing, error: existingError } = await auth.supabase
+    .from(table)
+    .select("id")
+    .eq("slug", slug)
+    .maybeSingle();
+  if (existingError) return responseError(existingError.message);
+  if (existing?.id) return responseError("Bu slug zaten kullanılıyor.", 409);
+
+  const { data, error } = await auth.supabase
+    .from(table)
+    .insert({
+      name,
+      slug,
+      description: clean(body.description) || null,
+      cover_image_url: clean(body.cover_image_url) || null,
+      sort_order: toInt(body.sort_order, 0),
+      status: clean(body.status) === "inactive" ? "inactive" : "active",
+      updated_at: new Date().toISOString(),
+    })
+    .select("id, name, slug, description, cover_image_url, sort_order, status, created_at, updated_at")
+    .single();
+
+  if (error) return responseError(error.message);
+
+  const revalidate = await revalidateCatalog(table, `${type}-create`);
+  return NextResponse.json({ ok: true, item: { ...data, product_count: 0 }, revalidate, warning: revalidate.ok ? null : revalidate.message }, { headers: noStoreHeaders() });
 }
 
 export async function PATCH(request: Request) {
   const auth = await requireAdmin(request);
   if ("error" in auth) return auth.error;
-  const body = await request.json().catch(()=>({}));
-  const table = tableFor(body.type);
-  const id = String(body.id || "").trim();
-  if (!table || !id) return NextResponse.json({ ok:false, error:"Katalog tipi veya id eksik." }, { status:400 });
 
-  const update:Record<string,unknown> = { updated_at:new Date().toISOString() };
-  for (const key of ["name","description","cover_image_url","sort_order","status"]) {
-    if (key in body) update[key] = body[key] === "" ? null : body[key];
-  }
-  if ("slug" in body || "name" in body) update.slug = slugify(body.slug || body.name);
+  const body = await request.json();
+  const type = clean(body.type);
+  const table = tableFor(type);
+  if (!table) return responseError("Geçerli tür gerekli.");
 
-  const { data, error } = await auth.supabase.from(table).update(update).eq("id",id).select("*").single();
-  if (error) return NextResponse.json({ ok:false, error:error.message }, { status:400 });
-  const storefront = await revalidateStorefront("rosta-admin-catalog-group-update","catalog");
-  return NextResponse.json({ ok:true, item:data, storefront });
+  const id = clean(body.id);
+  const name = clean(body.name);
+  if (!id) return responseError("Kayıt id gerekli.");
+  if (!name) return responseError("Ad gerekli.");
+
+  const slug = slugifyCatalogValue(clean(body.slug) || name);
+  if (!slug) return responseError("Geçerli bir slug oluşturulamadı.");
+
+  const { data: duplicate, error: duplicateError } = await auth.supabase
+    .from(table)
+    .select("id")
+    .eq("slug", slug)
+    .neq("id", id)
+    .maybeSingle();
+  if (duplicateError) return responseError(duplicateError.message);
+  if (duplicate?.id) return responseError("Bu slug başka bir kayıtta kullanılıyor.", 409);
+
+  const { data, error } = await auth.supabase
+    .from(table)
+    .update({
+      name,
+      slug,
+      description: clean(body.description) || null,
+      cover_image_url: clean(body.cover_image_url) || null,
+      sort_order: toInt(body.sort_order, 0),
+      status: clean(body.status) === "inactive" ? "inactive" : "active",
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id)
+    .select("id, name, slug, description, cover_image_url, sort_order, status, created_at, updated_at")
+    .single();
+
+  if (error) return responseError(error.message);
+
+  const revalidate = await revalidateCatalog(table, `${type}-update`);
+  return NextResponse.json({ ok: true, item: data, revalidate, warning: revalidate.ok ? null : revalidate.message }, { headers: noStoreHeaders() });
 }
 
 export async function DELETE(request: Request) {
@@ -101,23 +162,22 @@ export async function DELETE(request: Request) {
   if ("error" in auth) return auth.error;
 
   const url = new URL(request.url);
-  const type = url.searchParams.get("type");
-  const id = String(url.searchParams.get("id") || "").trim();
-  const table = tableFor(type);
-  const link = linkTableFor(type);
-  if (!table || !link || !id) return NextResponse.json({ ok:false, error:"Katalog tipi veya id eksik." }, { status:400 });
-
-  // Exact Ruth UI describes this as deleting the group while preserving products.
-  const unlink = await auth.supabase.from(link.table).delete().eq(link.foreignKey,id);
-  if (unlink.error) return NextResponse.json({ ok:false, error:unlink.error.message }, { status:400 });
-
-  const removed = await auth.supabase.from(table).delete().eq("id",id);
-  if (removed.error) {
-    // Fallback for restrictive FK policies: keep the group but remove it from storefront.
-    const disabled = await auth.supabase.from(table).update({status:"inactive",updated_at:new Date().toISOString()}).eq("id",id);
-    if (disabled.error) return NextResponse.json({ ok:false, error:removed.error.message }, { status:400 });
+  let type = clean(url.searchParams.get("type"));
+  let id = clean(url.searchParams.get("id"));
+  if (!id || !type) {
+    const body = await request.json().catch(() => ({}));
+    type = type || clean(body.type);
+    id = id || clean(body.id);
   }
 
-  const storefront = await revalidateStorefront("rosta-admin-catalog-group-delete","catalog");
-  return NextResponse.json({ ok:true, storefront });
+  const table = tableFor(type);
+  if (!table) return responseError("Geçerli tür gerekli.");
+  if (!id) return responseError("Kayıt id gerekli.");
+
+  // FK'ler ON DELETE CASCADE / SET NULL olarak SQL dosyasında hazırlanır.
+  const { error } = await auth.supabase.from(table).delete().eq("id", id);
+  if (error) return responseError(error.message);
+
+  const revalidate = await revalidateCatalog(table, `${type}-delete`);
+  return NextResponse.json({ ok: true, revalidate, warning: revalidate.ok ? null : revalidate.message }, { headers: noStoreHeaders() });
 }
