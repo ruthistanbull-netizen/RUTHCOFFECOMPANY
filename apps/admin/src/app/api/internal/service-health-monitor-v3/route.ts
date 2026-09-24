@@ -1,0 +1,13 @@
+import { runServiceHealthMonitor } from "@/lib/serviceHealthMonitor";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const maxDuration = 45;
+
+export async function GET(request: Request) {
+  return runServiceHealthMonitor(request);
+}
+
+export async function POST(request: Request) {
+  return runServiceHealthMonitor(request);
+}
