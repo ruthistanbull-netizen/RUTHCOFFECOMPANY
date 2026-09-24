@@ -193,8 +193,8 @@ const statusOptions = [
 const paymentOptions = ["pending", "waiting", "paid", "failed", "cancelled", "refunded"];
 const ORDERS_PAGE_SIZE = 50;
 const ORDERS_RESOURCE_PATH = "/api/orders?range=all&payment=all&q=";
-const ORDERS_CONTEXT_KEY = "ruth-orders-resource-context-v1";
-const ORDERS_SAVED_VIEWS_KEY = "ruth-orders-saved-views-v1";
+const ORDERS_CONTEXT_KEY = "rosta-orders-resource-context-v1";
+const ORDERS_SAVED_VIEWS_KEY = "rosta-orders-saved-views-v1";
 const DEFAULT_ORDER_COLUMNS: OrderColumnVisibility = {
   order_no: true,
   customer_name: true,
