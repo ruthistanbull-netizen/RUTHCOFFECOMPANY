@@ -18,10 +18,30 @@ export async function GET(request: Request) {
   if ("error" in auth) return auth.error;
 
   const url = new URL(request.url);
+  const providerCredentials = credentials();
+  if (!providerCredentials.merchantId || !providerCredentials.merchantKey || !providerCredentials.merchantSalt) {
+    return NextResponse.json({
+      ok: true,
+      configured: false,
+      rows: [],
+      range: null,
+      summary: {
+        futureNet: 0,
+        paidNet: 0,
+        totalReturns: 0,
+        futureCount: 0,
+        nextPayment: null,
+      },
+      providerStatus: "unconfigured",
+      providerWarning: "ROSTA PayTR hesabı henüz bağlı değil. Merchant ID, key ve salt değerlerini Entegrasyonlar ekranındaki adımlara göre ekle.",
+    }, {
+      headers: { "Cache-Control": "no-store, no-cache, must-revalidate" },
+    });
+  }
 
   try {
     const report = await loadPaytrSettlementReport({
-      ...credentials(),
+      ...providerCredentials,
       startDate: url.searchParams.get("start"),
       endDate: url.searchParams.get("end"),
     });
