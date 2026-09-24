@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 
 const POPUP_SELECTOR = '[data-ruthie-insight-popup="true"]';
-const BACKDROP_SELECTOR = 'button[aria-label="Ruthie sohbetini kapat"]';
+const BACKDROP_SELECTOR = 'button[aria-label="ROSTA Insight sohbetini kapat"]';
 const CLOSE_SELECTOR = 'button[aria-label="Kapat"]';
 const MOBILE_QUERY = "(max-width: 767px)";
 const EASING = "cubic-bezier(.22,1,.36,1)";
