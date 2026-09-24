@@ -19,6 +19,8 @@ RUN npm install --no-audit --no-fund
 
 COPY . .
 
+RUN rm -rf apps/admin/.next apps/storefront/.next
+
 # Build exactly one app. Zeabur exposes these values to the Docker build as
 # mounted env secrets, while ARG keeps local/manual Docker builds predictable.
 RUN hint="$ZEABUR_SERVICE_ID $ZEABUR_WEB_DOMAIN $ZEABUR_WEB_URL"; \
