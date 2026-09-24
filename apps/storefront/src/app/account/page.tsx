@@ -12,8 +12,8 @@ export default function AccountPage() {
   return (
     <>
       <AccountClient />
-      <div className="bg-ivory px-4 pb-24 text-center">
-        <Link href="/account/privacy" className="text-sm text-ink underline underline-offset-4">
+      <div className="bg-carbon px-4 pb-24 text-center">
+        <Link href="/account/privacy" className="text-sm text-cream underline underline-offset-4">
           Gizlilik ve iletişim tercihlerim
         </Link>
       </div>
