@@ -62,10 +62,6 @@ type BulkSendResult = {
   errors?: string[];
 };
 
-function normalizedEmail(value: unknown) {
-  return String(value || "").trim().toLocaleLowerCase("en-US");
-}
-
 function nameOf(customer: Customer) {
   return customer.full_name || customer.email || customer.phone || "İsimsiz müşteri";
 }
