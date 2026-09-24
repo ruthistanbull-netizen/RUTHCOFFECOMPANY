@@ -86,7 +86,7 @@ export function RuthieJarvisPreview() {
       <header className={styles.header}>
         <div className={styles.brand} style={{ paddingLeft: 58 }}>
           <div>
-            <strong>RUTHIE</strong>
+            <strong>ROSTA INSIGHT</strong>
             <small>NEURAL ASSISTANT CORE</small>
           </div>
         </div>
@@ -110,11 +110,11 @@ export function RuthieJarvisPreview() {
         </div>
       </section>
 
-      <aside className={styles.panel} aria-label="Ruthie animasyon durumları">
+      <aside className={styles.panel} aria-label="ROSTA Insight animasyon durumları">
         <div className={styles.panelHeading}>
           <div>
             <small>ANİMASYON DURUMLARI</small>
-            <h2>Ruthie’yi test et</h2>
+            <h2>ROSTA Insight’ı test et</h2>
           </div>
           <button
             type="button"
