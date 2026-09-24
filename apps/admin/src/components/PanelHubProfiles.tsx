@@ -251,9 +251,9 @@ export function PanelHubProfiles() {
               >
                 <div
                   className={[
-                    "relative aspect-square w-full overflow-hidden rounded-[4px] border-[3px] border-transparent shadow-[0_18px_45px_rgba(0,0,0,.24)] transition-[border-color,filter,box-shadow] duration-200",
-                    "group-hover:border-black group-focus-visible:border-black",
-                    selected ? "border-black shadow-[0_24px_70px_rgba(0,0,0,.45)]" : "",
+                    "relative aspect-square w-full overflow-hidden rounded-[4px] border-[3px] border-transparent shadow-[0_18px_45px_rgba(0,0,0,.24)] transition-[border-color,filter,box-shadow,outline-color,outline-offset] duration-200",
+                    "group-hover:border-black group-hover:outline group-hover:outline-2 group-hover:outline-black/70 group-hover:outline-offset-[3px] group-focus-visible:border-black group-focus-visible:outline group-focus-visible:outline-2 group-focus-visible:outline-black group-focus-visible:outline-offset-[3px]",
+                    selected ? "border-[5px] border-black outline outline-[3px] outline-[#6f665a] outline-offset-[4px] shadow-[0_26px_76px_rgba(0,0,0,.58),inset_0_0_0_1px_rgba(255,255,255,.16)]" : "",
                     card.surface,
                   ].join(" ")}
                 >
