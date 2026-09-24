@@ -63,7 +63,7 @@ export function ContactForm() {
             value={form.name}
             onChange={(event) => setForm({ ...form, name: event.target.value })}
             placeholder="Adınız Soyadınız"
-            className="w-full rounded-full border border-kraft/35 bg-carbon px-5 py-4 text-sm text-[var(--rosta-action-text)] outline-none transition placeholder:text-[var(--rosta-action-text)]/40 focus:border-brick"
+            className="w-full rounded-full border border-kraft/35 bg-carbon px-5 py-4 text-sm text-cream outline-none transition placeholder:text-cream/40 focus:border-brick"
           />
         </label>
         <label className="block">
@@ -76,7 +76,7 @@ export function ContactForm() {
             value={form.email}
             onChange={(event) => setForm({ ...form, email: event.target.value })}
             placeholder="ornek@mail.com"
-            className="w-full rounded-full border border-kraft/35 bg-carbon px-5 py-4 text-sm text-[var(--rosta-action-text)] outline-none transition placeholder:text-[var(--rosta-action-text)]/40 focus:border-brick"
+            className="w-full rounded-full border border-kraft/35 bg-carbon px-5 py-4 text-sm text-cream outline-none transition placeholder:text-cream/40 focus:border-brick"
           />
         </label>
       </div>
@@ -90,7 +90,7 @@ export function ContactForm() {
           value={form.phone}
           onChange={(event) => setForm({ ...form, phone: event.target.value })}
           placeholder="05xx xxx xx xx"
-          className="w-full rounded-full border border-kraft/35 bg-carbon px-5 py-4 text-sm text-[var(--rosta-action-text)] outline-none transition placeholder:text-[var(--rosta-action-text)]/40 focus:border-brick"
+          className="w-full rounded-full border border-kraft/35 bg-carbon px-5 py-4 text-sm text-cream outline-none transition placeholder:text-cream/40 focus:border-brick"
         />
       </label>
 
@@ -105,7 +105,7 @@ export function ContactForm() {
           value={form.message}
           onChange={(event) => setForm({ ...form, message: event.target.value })}
           placeholder="Bize yazmak istediğiniz konuyu buraya yazın."
-          className="w-full resize-none rounded-[1.6rem] border border-kraft/35 bg-carbon px-5 py-4 text-sm leading-7 text-[var(--rosta-action-text)] outline-none transition placeholder:text-[var(--rosta-action-text)]/40 focus:border-brick"
+          className="w-full resize-none rounded-[1.6rem] border border-kraft/35 bg-carbon px-5 py-4 text-sm leading-7 text-cream outline-none transition placeholder:text-cream/40 focus:border-brick"
         />
       </label>
 
@@ -117,7 +117,7 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={sending}
-        className="w-full rounded-full bg-brick px-8 py-4 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)] transition active:bg-espresso disabled:cursor-not-allowed disabled:opacity-60 md:w-auto"
+        className="w-full rounded-full bg-brick px-8 py-4 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)] transition active:bg-espresso disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick md:w-auto"
       >
         {sending ? "Gönderiliyor…" : "Mesajı Gönder"}
       </button>
