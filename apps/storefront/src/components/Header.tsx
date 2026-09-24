@@ -38,31 +38,6 @@ function orderedPhotoCollections(collections: Collection[]) {
   return collections.filter((item) => item.cover_image_url);
 }
 
-function hexRgb(value: string) {
-  const raw = String(value || "").replace("#", "").trim();
-  const hex = raw.length === 3
-    ? raw.split("").map((character) => `${character}${character}`).join("")
-    : raw.slice(0, 6);
-  if (!/^[0-9a-f]{6}$/i.test(hex)) return null;
-  return [
-    Number.parseInt(hex.slice(0, 2), 16),
-    Number.parseInt(hex.slice(2, 4), 16),
-    Number.parseInt(hex.slice(4, 6), 16),
-  ] as const;
-}
-
-function isDarkColor(value: string) {
-  const channels = hexRgb(value);
-  if (!channels) return false;
-  const linear = channels.map((channel) => {
-    const normalized = channel / 255;
-    return normalized <= 0.03928
-      ? normalized / 12.92
-      : ((normalized + 0.055) / 1.055) ** 2.4;
-  });
-  return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2] < 0.42;
-}
-
 function ZaraMenuIcon({ open = false }: { open?: boolean }) {
   return (
     <span
@@ -438,7 +413,6 @@ export function Header({
   const transparentProductHeader = productPage && !scrolled && !menuOpen && !searchOpen;
   const transparentHomeHeader = homePage && overHomeEditorial && !menuOpen && !searchOpen;
   const contrastHeader = transparentProductHeader || transparentHomeHeader;
-  const darkMenuSurface = true;
   const menuControlColor = "#FBF3E6";
   const menuToneStyle = {
     "--ruth-menu-control-color": menuControlColor,
