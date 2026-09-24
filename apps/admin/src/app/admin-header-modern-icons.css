@@ -6,7 +6,7 @@ html:not(.dark) header.z-header > div > button {
   border: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
-  color: var(--rosta-carbon) !important;
+  color: var(--rosta-cream) !important;
 }
 
 header.z-header > button > svg,
@@ -27,9 +27,17 @@ header.z-header > div > button {
     background-color 160ms ease !important;
 }
 
-header.z-header > button:hover,
-header.z-header > div > button:hover {
-  background: color-mix(in srgb, currentColor 5%, transparent) !important;
+@media (hover: hover) and (pointer: fine) {
+  header.z-header > button:hover,
+  header.z-header > div > button:hover {
+    background: color-mix(in srgb, currentColor 8%, transparent) !important;
+  }
+}
+
+header.z-header > button:focus-visible,
+header.z-header > div > button:focus-visible {
+  outline: 2px solid var(--rosta-brick-b) !important;
+  outline-offset: 2px !important;
 }
 
 header.z-header > button:active,
@@ -52,7 +60,7 @@ header.z-header > div > button:active {
     border-radius: 50% !important;
     background: transparent !important;
     box-shadow: none !important;
-    color: var(--rosta-carbon) !important;
+    color: var(--rosta-cream) !important;
   }
 
   header.z-header > button:has(svg.lucide-search) > span,
@@ -114,4 +122,12 @@ header.z-header > div > button:active {
   border: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
+  color: var(--rosta-cream) !important;
+}
+
+@media (forced-colors: active) {
+  header.z-header > button:focus-visible,
+  header.z-header > div > button:focus-visible {
+    outline-color: Highlight !important;
+  }
 }
