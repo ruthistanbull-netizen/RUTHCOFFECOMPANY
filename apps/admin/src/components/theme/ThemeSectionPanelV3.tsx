@@ -142,13 +142,13 @@ function Field({
           rows={4}
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          className="w-full resize-y rounded-xl border border-border-subtle bg-surface-secondary p-3 text-[10px] outline-none focus:border-black/30"
+          className="w-full resize-y rounded-xl border border-border-subtle bg-surface-secondary p-3 text-[10px] outline-none focus:border-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         />
       ) : (
         <input
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          className="h-10 w-full rounded-xl border border-border-subtle bg-surface-secondary px-3 text-[10px] outline-none focus:border-black/30"
+          className="h-10 w-full rounded-xl border border-border-subtle bg-surface-secondary px-3 text-[10px] outline-none focus:border-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         />
       )}
     </label>
@@ -163,7 +163,7 @@ function Toggle({ label, value, onChange }: { label: string; value: boolean; onC
       className="flex h-11 w-full items-center justify-between rounded-xl border border-border-subtle bg-surface-primary px-3.5 text-left"
     >
       <span className="text-[10px] font-medium">{label}</span>
-      <span className={`relative h-5 w-9 rounded-full transition ${value ? "bg-black" : "bg-black/15"}`}>
+      <span className={`relative h-5 w-9 rounded-full transition ${value ? "bg-accent" : "bg-surface-tertiary"}`}>
         <span
           className={`absolute top-0.5 h-4 w-4 rounded-full bg-surface-primary shadow transition-transform ${
             value ? "translate-x-[18px]" : "translate-x-0.5"
@@ -591,7 +591,7 @@ export function ThemeSectionPanelV3() {
                     onDragEnd={() => setDragId(null)}
                     onDragOver={(event) => event.preventDefault()}
                     onDrop={() => drop(section.id)}
-                    className={`flex items-center gap-1 rounded-xl border bg-surface-primary p-2 ${dragId === section.id ? "border-black/30 opacity-60" : "border-border-subtle"}`}
+                    className={`flex items-center gap-1 rounded-xl border bg-surface-primary p-2 ${dragId === section.id ? "border-accent/40 opacity-60" : "border-border-subtle"}`}
                   >
                     <span className="grid h-8 w-6 cursor-grab place-items-center text-subtle">
                       <GripVertical className="h-4 w-4" />
@@ -624,7 +624,7 @@ export function ThemeSectionPanelV3() {
               <Palette className="h-3.5 w-3.5" />
               Genel Tema
             </button>
-            <button type="button" disabled={!dirty || saving} onClick={() => void publish()} className="col-span-2 flex h-10 items-center justify-center gap-1.5 rounded-xl bg-black text-[9px] font-semibold text-white disabled:opacity-30">
+            <button type="button" disabled={!dirty || saving} onClick={() => void publish()} className="col-span-2 flex h-10 items-center justify-center gap-1.5 rounded-xl bg-accent text-[9px] font-semibold text-[var(--rosta-action-text)] active:bg-[var(--rosta-espresso)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-30">
               <Save className="h-3.5 w-3.5" />
               {saving ? "Yayınlanıyor…" : "Bölümleri Yayınla"}
             </button>
@@ -633,14 +633,14 @@ export function ThemeSectionPanelV3() {
       ) : null}
 
       {libraryOpen ? (
-        <div className="fixed inset-0 z-[2147483600] grid place-items-center bg-black/25 p-4 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[2147483600] grid place-items-center bg-[var(--ruth-color-overlay)] p-4 backdrop-blur-sm">
           <div className="w-full max-w-sm rounded-3xl bg-surface-primary p-4 shadow-2xl">
             <div className="mb-4 flex items-center justify-between">
               <div>
                 <p className="text-[12px] font-semibold">Yeni Bölüm</p>
                 <p className="text-[8px] text-muted">Eklemek istediğin alanı seç.</p>
               </div>
-              <button onClick={() => setLibraryOpen(false)} className="grid h-8 w-8 place-items-center rounded-lg bg-black/[0.05]"><X className="h-4 w-4" /></button>
+              <button onClick={() => setLibraryOpen(false)} className="grid h-8 w-8 place-items-center rounded-lg bg-surface-secondary active:bg-accent-soft focus-visible:bg-accent-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><X className="h-4 w-4" /></button>
             </div>
             <div className="space-y-2">
               {LIBRARY.map((item) => (
@@ -655,20 +655,20 @@ export function ThemeSectionPanelV3() {
       ) : null}
 
       {pageOpen ? (
-        <div className="fixed inset-0 z-[2147483600] grid place-items-center bg-black/25 p-4 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[2147483600] grid place-items-center bg-[var(--ruth-color-overlay)] p-4 backdrop-blur-sm">
           <div className="w-full max-w-sm rounded-3xl bg-surface-primary p-4 shadow-2xl">
             <div className="mb-4 flex items-center justify-between">
               <div>
                 <p className="text-[12px] font-semibold">Yeni Sayfa</p>
                 <p className="text-[8px] text-muted">Boş sayfa oluştur, sonra bölümleri ekle.</p>
               </div>
-              <button onClick={() => setPageOpen(false)} className="grid h-8 w-8 place-items-center rounded-lg bg-black/[0.05]"><X className="h-4 w-4" /></button>
+              <button onClick={() => setPageOpen(false)} className="grid h-8 w-8 place-items-center rounded-lg bg-surface-secondary active:bg-accent-soft focus-visible:bg-accent-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><X className="h-4 w-4" /></button>
             </div>
             <div className="space-y-3">
               <Field label="Sayfa adı" value={pageName} onChange={setPageName} />
               <Field label="Adres" value={pageSlug} onChange={setPageSlug} />
             </div>
-            <button type="button" onClick={createPage} className="mt-4 h-10 w-full rounded-xl bg-black text-[9px] font-semibold text-white">Sayfayı Oluştur</button>
+            <button type="button" onClick={createPage} className="mt-4 h-10 w-full rounded-xl bg-accent text-[9px] font-semibold text-[var(--rosta-action-text)] active:bg-[var(--rosta-espresso)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">Sayfayı Oluştur</button>
           </div>
         </div>
       ) : null}
