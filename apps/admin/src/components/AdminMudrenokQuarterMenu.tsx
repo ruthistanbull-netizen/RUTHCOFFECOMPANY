@@ -40,7 +40,7 @@ const LABELS: Record<string, string> = {
   "Meta Reklamları": "Meta",
   MAĞAZA: "Mağaza",
   RAPORLAMA: "Analitik",
-  Ruthie: "Ruthie",
+  Ruthie: "ROSTA Insight",
   SİSTEM: "Sistem",
 };
 
