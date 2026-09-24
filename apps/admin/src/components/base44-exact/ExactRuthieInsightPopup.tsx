@@ -136,22 +136,22 @@ const PURPOSES: Array<{ value: Exclude<ImagePurpose, "">; title: string; detail:
 ];
 
 const STYLE_GROUPS: StyleGroup[] = [
-  { id: "model", label: "Lifestyle Kullanım", description: "Kahveyi gerçek kullanım ve servis anında göster", options: ["Masada servis", "Elde kahve paketi", "Kahve hazırlama anı", "Kafe ortamı", "Ev demleme", "Tek ürün", "Editorial lifestyle"] },
+  { id: "model", label: "Lifestyle Kullanım", description: "Kahveyi gerçek kullanım ve servis anında göster", options: ["Masada servis", "Elde kahve paketi", "Kahve hazırlama anı", "Kafe ortamı", "Ev demleme", "Street coffee anı", "Editoryal kafe"] },
   { id: "studio", label: "Stüdyo Ürün Fotoğrafı", description: "Temiz ve e-ticaret odaklı ürün çekimi", options: ["Beyaz fon", "Krem fon", "Koyu lüks fon", "Soft gölgeli", "E-ticaret uyumlu", "İzole ürün görünümü"] },
   { id: "campaign", label: "Lüks Kampanya Görseli", description: "Marka kampanyası ve reklam hissi", options: ["Dramatik ışık", "Premium fon", "Reklam afiş hissi", "Güçlü gölge", "Marka kampanyası hissi"] },
-  { id: "lifestyle", label: "Lifestyle / Günlük Kullanım", description: "Doğal ve gerçek kullanım odaklı", options: ["Doğal masa", "Ayna önü", "Kumaş üstü", "Elde kullanım", "Günlük ortam"] },
+  { id: "lifestyle", label: "Lifestyle / Günlük Kullanım", description: "Doğal ve gerçek kullanım odaklı", options: ["Doğal masa", "Kafe tezgâhı", "Demleme istasyonu", "Elde paket", "Günlük kahve anı"] },
   { id: "flatlay", label: "Flat Lay / Masa Üstü", description: "Yukarıdan düzenlenmiş ürün kompozisyonu", options: ["Yukarıdan çekim", "Dekorlu", "Sade", "Çoklu ürün yerleşimi", "Set düzeni"] },
-  { id: "macro", label: "Makro / Detay Çekim", description: "Taş, metal ve işçilik detaylarını öne çıkar", options: ["Taş detayı", "Metal doku", "İşçilik yakın plan", "Ultra yakın çekim"] },
+  { id: "macro", label: "Makro / Detay Çekim", description: "Çekirdek, öğütüm ve demleme dokularını öne çıkar", options: ["Çekirdek dokusu", "Öğütüm detayı", "Crema yakın plan", "Paket baskı detayı", "Ultra yakın çekim"] },
   { id: "hand", label: "Elde Tutulan Ürün", description: "Ürünü elde doğal biçimde göster", options: ["Tek elde tutma", "İki elde sunum", "Kutudan çıkarma"] },
-  { id: "mirror", label: "Ayna Yansımalı", description: "Yansıma ile editoryal ve premium görünüm", options: ["Tam yansıma", "Kısmi yansıma", "Lüks zemin yansıması"] },
-  { id: "stilllife", label: "Still Life / Obje Kompozisyonu", description: "Ürünleri seçili dekor objeleriyle kurgula", options: ["Taşlarla", "Kumaşla", "Metal objelerle", "Çiçeklerle", "Deniz temalı objelerle"] },
-  { id: "editorial", label: "Editorial / Moda Çekimi", description: "Dergi ve moda kampanyası estetiği", options: ["Moda çekimi", "Dramatik kompozisyon", "Dergi tarzı", "Artistik ışık"] },
-  { id: "lookbook", label: "Lookbook Tarzı", description: "Seri üretime uygun temiz koleksiyon dili", options: ["Sade fon", "Koleksiyon havası", "Temiz kadraj", "Premium moda sunumu"] },
+  { id: "mirror", label: "Cam / Yansıma Kompozisyonu", description: "Cam, krom ve parlak yüzeylerle premium kahve kompozisyonu", options: ["Cam yansıması", "Kısmi yansıma", "Krom zemin", "Gece kafe yansıması"] },
+  { id: "stilllife", label: "Still Life / Obje Kompozisyonu", description: "Kahveyi seçili servis ve demleme objeleriyle kurgula", options: ["Çekirdeklerle", "Seramik fincanla", "Dripper ile", "Ahşap yüzeyde", "Metal ekipmanla", "Keten dokuyla"] },
+  { id: "editorial", label: "Editorial / Marka Çekimi", description: "Dergi ve marka kampanyası estetiği", options: ["Marka kampanyası", "Dramatik kompozisyon", "Dergi tarzı", "Artistik ışık", "Street editorial"] },
+  { id: "lookbook", label: "Ürün Serisi Tarzı", description: "Seri üretime uygun temiz ürün ve blend dili", options: ["Sade fon", "Blend serisi", "Temiz kadraj", "Premium ürün sunumu", "Yan yana paketler"] },
   { id: "poster", label: "Reklam Afişi Tarzı", description: "Performans reklamı ve hero kreatif", options: ["Yazısız afiş", "Yazılı afiş", "Hero ürün", "Dikkat çekici kompozisyon"] },
   { id: "ugc", label: "UGC / Sosyal Medya Tarzı", description: "Daha doğal ve kullanıcı çekimi hissi", options: ["Doğal çekim", "Telefon kamerası hissi", "Sosyal medya görünümü", "Kullanıcı deneyimi havası"] },
   { id: "packaging", label: "Paketleme / Kutu İçinde", description: "Hediye ve kutu deneyimini göster", options: ["Kutu içinde", "Kutudan çıkarken", "Hediye paketi", "Premium ambalaj"] },
   { id: "set", label: "Ürün Seti Görseli", description: "Birden fazla kahve ürününü birlikte sun", options: ["Kahve + fincan", "Paket + çekirdek", "Tam set", "Çoklu ürün premium sunum"] },
-  { id: "season", label: "Sezon Temalı", description: "Kampanya dönemine göre atmosfer oluştur", options: ["Yaz", "Sonbahar", "Gece", "Beach", "Bridal", "Özel gün", "Yılbaşı", "Sevgililer günü"] },
+  { id: "season", label: "Sezon Temalı", description: "Kampanya dönemine göre atmosfer oluştur", options: ["Yaz", "Sonbahar", "Kış", "Gece", "Sabah", "Street", "Özel gün", "Yılbaşı", "Sevgililer günü"] },
 ];
 
 const EXTRA_GROUPS: Array<{ id: ExtraKey; label: string; options: string[] }> = [
