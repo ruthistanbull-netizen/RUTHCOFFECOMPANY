@@ -45,7 +45,7 @@ export function AnalyticsConsentGate() {
             aria-labelledby="analytics-consent-title"
             aria-describedby="analytics-consent-description"
             data-ruth-cookie-consent
-            className="fixed left-1/2 w-[calc(100%-24px)] max-w-[460px] -translate-x-1/2 rounded-[18px] border border-black/10 bg-cream px-4 py-3.5 text-ink shadow-[0_18px_60px_rgba(33,25,18,.18)] md:px-5 md:py-4"
+            className="fixed left-1/2 w-[calc(100%-24px)] max-w-[460px] -translate-x-1/2 rounded-[18px] border border-kraft/40 bg-carbon-soft px-4 py-3.5 text-cream shadow-[0_18px_60px_color-mix(in_srgb,var(--rosta-carbon)_62%,transparent)] md:px-5 md:py-4"
             style={{
               bottom: "max(12px, env(safe-area-inset-bottom))",
               zIndex: 2147483000,
@@ -55,13 +55,13 @@ export function AnalyticsConsentGate() {
           >
             <h2
               id="analytics-consent-title"
-              className="font-heading text-[17px] font-normal leading-tight text-ink md:text-lg"
+              className="font-heading text-[17px] font-normal leading-tight text-cream md:text-lg"
             >
               Çerezler
             </h2>
             <p
               id="analytics-consent-description"
-              className="mt-1.5 text-[12.5px] leading-[1.55] text-ink/70 md:text-[13px]"
+              className="mt-1.5 text-[12.5px] leading-[1.55] text-cream/70 md:text-[13px]"
             >
               Deneyiminizi iyileştirmek ve site kullanımını anlamak için çerezlerden yararlanıyoruz.
               Gerekli çerezler her zaman aktiftir; diğer çerezleri kabul edebilir veya reddedebilirsiniz.
@@ -69,14 +69,14 @@ export function AnalyticsConsentGate() {
             <div className="mt-3 flex items-center gap-2">
               <button
                 type="button"
-                className="min-h-10 flex-1 rounded-full bg-ink px-4 text-[10px] font-medium uppercase tracking-[.14em] text-cream"
+                className="min-h-10 flex-1 rounded-full bg-brick px-4 text-[10px] font-medium uppercase tracking-[.14em] text-white active:bg-espresso focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
                 onClick={() => choose("accepted")}
               >
                 Kabul et
               </button>
               <button
                 type="button"
-                className="min-h-10 flex-1 rounded-full border border-ink/20 bg-transparent px-4 text-[10px] font-medium uppercase tracking-[.14em] text-ink"
+                className="min-h-10 flex-1 rounded-full border border-kraft/45 bg-transparent px-4 text-[10px] font-medium uppercase tracking-[.14em] text-cream active:border-espresso active:bg-espresso focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
                 onClick={() => choose("rejected")}
               >
                 Reddet
@@ -84,7 +84,7 @@ export function AnalyticsConsentGate() {
             </div>
             <Link
               href="/privacy-policy"
-              className="mt-2.5 inline-block text-[10.5px] text-ink/60 underline decoration-ink/30 underline-offset-4"
+              className="mt-2.5 inline-block text-[10.5px] text-cream/65 underline decoration-kraft/45 underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
             >
               Gizlilik ve çerezler
             </Link>
