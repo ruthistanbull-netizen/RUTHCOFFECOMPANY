@@ -91,8 +91,22 @@ declare global {
     gtag?: (...args: unknown[]) => void;
     dataLayer?: unknown[];
     clarity?: (...args: unknown[]) => void;
+    ttq?: TikTokPixelQueue;
+    TiktokAnalyticsObject?: string;
   }
 }
+
+type TikTokPixelQueue = unknown[] & {
+  methods?: string[];
+  setAndDefer?: (target: TikTokPixelQueue, method: string) => void;
+  instance?: (pixelId: string) => TikTokPixelQueue;
+  load?: (pixelId: string, options?: Record<string, unknown>) => void;
+  page?: (...args: unknown[]) => void;
+  track?: (...args: unknown[]) => void;
+  _i?: Record<string, TikTokPixelQueue>;
+  _t?: Record<string, number>;
+  _o?: Record<string, Record<string, unknown>>;
+};
 
 function attributionReferrer() {
   const referrer = clean(document.referrer);
@@ -300,6 +314,33 @@ const GA_EVENT_MAP: Record<string, string> = {
   payment_start: "add_payment_info",
 };
 
+const TIKTOK_EVENT_MAP: Record<string, string> = {
+  product_view: "ViewContent",
+  cart_add: "AddToCart",
+  checkout_view: "InitiateCheckout",
+  payment_start: "AddPaymentInfo",
+};
+
+function commerceValue(metadata: Record<string, unknown>) {
+  if (metadata.total_amount != null) return Number(metadata.total_amount);
+  if (metadata.price != null) return Number(metadata.price) * Number(metadata.quantity || 1);
+  return undefined;
+}
+
+function commerceItem(metadata: Record<string, unknown>) {
+  const id = metadata.product_id || metadata.product_slug;
+  const name = metadata.product_name;
+  const price = metadata.price != null ? Number(metadata.price) : undefined;
+  const quantity = metadata.quantity != null ? Number(metadata.quantity) : undefined;
+  if (!id && !name && price == null && quantity == null) return null;
+  return {
+    ...(id ? { item_id: String(id), content_id: String(id) } : {}),
+    ...(name ? { item_name: String(name), content_name: String(name) } : {}),
+    ...(price != null && Number.isFinite(price) ? { price } : {}),
+    ...(quantity != null && Number.isFinite(quantity) ? { quantity } : {}),
+  };
+}
+
 function getDeviceInfo() {
   const ua = navigator.userAgent;
   const browser = /Edg\//.test(ua) ? "Edge" : /OPR\//.test(ua) ? "Opera" : /Chrome\//.test(ua) ? "Chrome" : /Firefox\//.test(ua) ? "Firefox" : /Safari\//.test(ua) ? "Safari" : "Diğer";
@@ -331,11 +372,13 @@ function postRuthEvent(eventName: string, attribution: RuthAttribution, metadata
     event_client_at: new Date().toISOString(),
   };
 
+  const value = commerceValue(metadata);
+  const item = commerceItem(metadata);
+
   const metaEvent = META_EVENT_MAP[eventName];
   if (marketingConsent && metaEvent && window.fbq) {
     const data: Record<string, unknown> = {};
-    if (metadata.total_amount != null) data.value = Number(metadata.total_amount);
-    if (metadata.price != null) data.value = Number(metadata.price) * Number(metadata.quantity || 1);
+    if (value != null && Number.isFinite(value)) data.value = value;
     if (data.value != null) data.currency = "TRY";
     if (metadata.product_slug) data.content_ids = [String(metadata.product_slug)];
     if (metadata.product_name) data.content_name = String(metadata.product_name);
@@ -345,6 +388,41 @@ function postRuthEvent(eventName: string, attribution: RuthAttribution, metadata
 
   const gaEvent = GA_EVENT_MAP[eventName];
   if (marketingConsent && gaEvent && window.gtag) window.gtag("event", gaEvent, metadata);
+
+  const gtmId = process.env.NEXT_PUBLIC_GTM_ID?.trim();
+  if (marketingConsent && gtmId && window.dataLayer) {
+    const ecommerce = {
+      ...(value != null && Number.isFinite(value) ? { value, currency: "TRY" } : {}),
+      ...(item ? { items: [item] } : {}),
+    };
+    window.dataLayer.push({
+      event: gaEvent || eventName,
+      rosta_event_id: eventId,
+      ...(Object.keys(ecommerce).length ? { ecommerce } : {}),
+    });
+  }
+
+  const tiktokEvent = TIKTOK_EVENT_MAP[eventName];
+  if (marketingConsent && tiktokEvent && window.ttq?.track) {
+    const payload: Record<string, unknown> = {};
+    if (value != null && Number.isFinite(value)) {
+      payload.value = value;
+      payload.currency = "TRY";
+    }
+    if (item) {
+      payload.content_type = "product";
+      if (item.content_id) payload.content_id = item.content_id;
+      if (item.content_name) payload.description = item.content_name;
+      if (item.quantity != null) payload.quantity = item.quantity;
+      payload.contents = [{
+        ...(item.content_id ? { content_id: item.content_id } : {}),
+        ...(item.content_name ? { content_name: item.content_name } : {}),
+        ...(item.price != null ? { price: item.price } : {}),
+        ...(item.quantity != null ? { quantity: item.quantity } : {}),
+      }];
+    }
+    window.ttq.track(tiktokEvent, payload);
+  }
 
   return fetch("/api/events/collect", {
     method: "POST", headers: { "Content-Type": "application/json" }, cache: "no-store", keepalive: true,
@@ -382,6 +460,19 @@ function initializeMarketingTags() {
 
   const metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID?.trim();
   const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim();
+  const gtmId = process.env.NEXT_PUBLIC_GTM_ID?.trim();
+  const tiktokPixelId = process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID?.trim();
+
+  if (gtmId && !document.querySelector("script[data-rosta-gtm]")) {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ "gtm.start": Date.now(), event: "gtm.js" });
+    const script = document.createElement("script");
+    script.async = true;
+    script.dataset.rostaGtm = gtmId;
+    script.src = `https://www.googletagmanager.com/gtm.js?id=${encodeURIComponent(gtmId)}`;
+    document.head.appendChild(script);
+  }
+
   if (metaPixelId && !window.fbq) {
     const fbq = function (...args: unknown[]) { (fbq as unknown as { queue: unknown[] }).queue.push(args); } as unknown as Window["fbq"];
     Object.assign(fbq as object, { queue: [], loaded: true, version: "2.0" });
@@ -395,6 +486,41 @@ function initializeMarketingTags() {
     window.gtag("js", new Date());
     window.gtag("config", gaId, { send_page_view: false, cookie_flags: "SameSite=None;Secure" });
     const script = document.createElement("script"); script.async = true; script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(gaId)}`; document.head.appendChild(script);
+  }
+
+  if (tiktokPixelId && !document.querySelector("script[data-rosta-tiktok-pixel]")) {
+    const ttq = (window.ttq = window.ttq || []) as TikTokPixelQueue;
+    window.TiktokAnalyticsObject = "ttq";
+    const methods = ["page", "track", "identify", "instances", "debug", "on", "off", "once", "ready", "alias", "group", "enableCookie", "disableCookie"];
+    ttq.methods = methods;
+    ttq.setAndDefer = (target, method) => {
+      (target as unknown as Record<string, (...args: unknown[]) => void>)[method] = (...args: unknown[]) => {
+        target.push([method, ...args]);
+      };
+    };
+    methods.forEach((method) => ttq.setAndDefer?.(ttq, method));
+    ttq.instance = (pixelId) => {
+      ttq._i = ttq._i || {};
+      const instance = (ttq._i[pixelId] = ttq._i[pixelId] || ([] as unknown as TikTokPixelQueue));
+      methods.forEach((method) => ttq.setAndDefer?.(instance, method));
+      return instance;
+    };
+    ttq.load = (pixelId, options = {}) => {
+      const src = "https://analytics.tiktok.com/i18n/pixel/events.js";
+      ttq._i = ttq._i || {};
+      ttq._i[pixelId] = ttq._i[pixelId] || ([] as unknown as TikTokPixelQueue);
+      ttq._t = ttq._t || {};
+      ttq._t[pixelId] = Date.now();
+      ttq._o = ttq._o || {};
+      ttq._o[pixelId] = options;
+      const script = document.createElement("script");
+      script.async = true;
+      script.dataset.rostaTiktokPixel = pixelId;
+      script.src = `${src}?sdkid=${encodeURIComponent(pixelId)}&lib=ttq`;
+      document.head.appendChild(script);
+    };
+    ttq.load(tiktokPixelId);
+    ttq.page?.();
   }
 
   const clarityProjectId = (process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID || "").trim();
@@ -428,6 +554,15 @@ function replayCurrentPageToMarketing() {
 
   window.fbq?.("track", "PageView", {}, { eventID: eventId });
   window.gtag?.("event", "page_view", { page_path: `${pathname}${window.location.search}`, page_title: document.title });
+  if (process.env.NEXT_PUBLIC_GTM_ID?.trim() && window.dataLayer) {
+    window.dataLayer.push({
+      event: "page_view",
+      page_path: `${pathname}${window.location.search}`,
+      page_title: document.title,
+      rosta_event_id: eventId,
+    });
+  }
+  window.ttq?.page?.();
   window.clarity?.("identify", attribution.visitor_id, attribution.session_id, pathname);
   window.clarity?.("set", "current_path", pathname);
   window.clarity?.("set", "traffic_source", attribution.source);
@@ -475,6 +610,14 @@ export function SiteAnalytics() {
     }
     if (hasMarketingConsent()) {
       window.gtag?.("event", "page_view", { page_path: `${pathname}${window.location.search}`, page_title: document.title });
+      if (process.env.NEXT_PUBLIC_GTM_ID?.trim() && window.dataLayer) {
+        window.dataLayer.push({
+          event: "page_view",
+          page_path: `${pathname}${window.location.search}`,
+          page_title: document.title,
+        });
+      }
+      window.ttq?.page?.();
     }
   }, [pathname]);
 
