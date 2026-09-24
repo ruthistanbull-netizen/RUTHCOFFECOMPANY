@@ -3,12 +3,12 @@
 import { useEffect } from "react";
 
 const ORDER_STATUS_STYLES: Record<string, { label: string; background: string; text: string; dot: string }> = {
-  "yeni sipariş": { label: "Yeni Sipariş", background: "#fff4bd", text: "#8a6a00", dot: "#d7a900" },
-  "hazırlanıyor": { label: "Hazırlanıyor", background: "#dbeafe", text: "#1d4ed8", dot: "#2563eb" },
-  "kargoya hazır": { label: "Kargoya Hazır", background: "#dcfce7", text: "#2f7d4f", dot: "#4a965b" },
-  "gönderildi": { label: "Gönderildi", background: "#bbf7d0", text: "#166534", dot: "#15803d" },
-  "teslim edildi": { label: "Teslim Edildi", background: "#fce7f3", text: "#be185d", dot: "#ec4899" },
-  "değerlendirildi": { label: "Değerlendirildi", background: "#f5d0fe", text: "#a21caf", dot: "#c026d3" },
+  "yeni sipariş": { label: "Yeni Sipariş", background: "#E3F8ED", text: "#147B63", dot: "#1BA786" },
+  "hazırlanıyor": { label: "Hazırlanıyor", background: "#EBF3FF", text: "#1C71D9", dot: "#4F94E8" },
+  "kargoya hazır": { label: "Kargoya Hazır", background: "#F6EBC6", text: "#3B2D0D", dot: "#C9A33B" },
+  "gönderildi": { label: "Gönderildi", background: "#F6EBC6", text: "#3B2D0D", dot: "#C9A33B" },
+  "teslim edildi": { label: "Teslim Edildi", background: "#E3F8ED", text: "#147B63", dot: "#1BA786" },
+  "değerlendirildi": { label: "Değerlendirildi", background: "#EBECF0", text: "#60636C", dot: "#858993" },
 };
 
 function normalize(value: string) {
