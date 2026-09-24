@@ -1,5 +1,5 @@
 export const SITE_NAME = "Rosta Coffee Co.";
-export const SITE_URL = "https://rostacoffeecompany.zeabur.app";
+export const SITE_URL = "https://rostacoffecompany.zeabur.app";
 
 export const DEFAULT_SEO_TITLE = "Rosta Coffee Co. | Kahve, Danışmanlık & Tedarik";
 export const DEFAULT_SEO_DESCRIPTION =
