@@ -214,10 +214,10 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs backdrop-blur"><Sparkles className="h-3.5 w-3.5" /> Yeni nesil ticaret operasyonu</div>
             <h1 className="mt-6 text-5xl font-bold tracking-tight leading-[1.05]">Satıştan teslimata<br />tek kontrol alanı.</h1>
-            <p className="mt-5 text-base leading-relaxed text-white/70 max-w-lg">Sipariş, ödeme, üretim, stok, müşteri ve Ruthie AI operasyonlarını güvenli bir panelden yönet.</p>
+            <p className="mt-5 text-base leading-relaxed text-white/70 max-w-lg">Sipariş, ödeme, üretim, stok, müşteri ve ROSTA Insight operasyonlarını güvenli bir panelden yönet.</p>
           </div>
           <div className="grid grid-cols-3 gap-3">
-            {[{ icon: ShieldCheck, label: "RBAC ve güvenli oturum" }, { icon: KeyRound, label: "Denetimli kritik işlemler" }, { icon: Sparkles, label: "Ruthie AI desteği" }].map((item) => (
+            {[{ icon: ShieldCheck, label: "RBAC ve güvenli oturum" }, { icon: KeyRound, label: "Denetimli kritik işlemler" }, { icon: Sparkles, label: "ROSTA Insight desteği" }].map((item) => (
               <div key={item.label} className="rounded-[18px] border border-white/12 bg-white/8 p-3 backdrop-blur">
                 <item.icon className="h-4 w-4 mb-2" />
                 <p className="text-[11px] leading-snug text-white/75">{item.label}</p>
