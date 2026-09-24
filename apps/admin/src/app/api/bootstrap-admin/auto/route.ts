@@ -64,7 +64,7 @@ export async function POST() {
             full_name: BOOTSTRAP_NAME,
             rosta_admin: true,
           },
-        });
+        } as any);
 
         if (synced.error) {
           return NextResponse.json(
@@ -95,7 +95,7 @@ export async function POST() {
       full_name: BOOTSTRAP_NAME,
       rosta_admin: true,
     },
-  });
+  } as any);
 
   if (created.error || !created.data.user) {
     const message = created.error?.message || "Admin auth kullanıcısı oluşturulamadı.";
