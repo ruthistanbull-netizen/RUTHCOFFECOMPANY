@@ -61,7 +61,6 @@ export async function POST() {
           password,
           email_confirm: true,
           user_metadata: {
-            ...(current.data.user?.user_metadata || {}),
             full_name: BOOTSTRAP_NAME,
             rosta_admin: true,
           },
