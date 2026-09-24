@@ -43,7 +43,7 @@ const FAQ_ITEMS: FaqItem[] = [
 
 export default function FaqPage() {
   return (
-    <main className="min-h-screen bg-ivory px-4 pb-24 pt-32 md:px-8">
+    <main className="min-h-screen bg-carbon px-4 pb-24 pt-32 text-cream md:px-8">
       <div className="mx-auto max-w-5xl">
         <PageIntro
           eyebrow="ROSTA Coffee Co."
