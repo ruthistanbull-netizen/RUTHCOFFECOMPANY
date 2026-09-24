@@ -148,7 +148,7 @@ export function ThemeEditorDevicePreview() {
         width: 100% !important;
         height: 100% !important;
         border-radius: 44px !important;
-        background: #fff !important;
+        background: var(--rosta-carbon) !important;
       }
 
       [data-theme-customizer-v4] main > [data-ruth-preview-shell="mobile"]::before {
