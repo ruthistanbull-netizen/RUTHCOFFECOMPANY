@@ -176,7 +176,7 @@ export function ExactRuthie() {
       if (stored?.threadId) setThreadId(stored.threadId);
       if (typeof stored?.ttsEnabled === "boolean") setTtsEnabled(stored.ttsEnabled);
     } catch { /* ignore invalid local state */ }
-    void fetch("/api/ruthie/openai/status", { cache: "no-store" }).then((response) => setOnline(response.ok)).catch(() => setOnline(false));
+    void fetch("/api/rosta-insight/openai/status", { cache: "no-store" }).then((response) => setOnline(response.ok)).catch(() => setOnline(false));
   }, []);
 
   useEffect(() => {
