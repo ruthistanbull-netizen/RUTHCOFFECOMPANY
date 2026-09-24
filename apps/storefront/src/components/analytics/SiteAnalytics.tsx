@@ -480,7 +480,9 @@ function initializeMarketingTags() {
     const script = document.createElement("script"); script.async = true; script.src = "https://connect.facebook.net/en_US/fbevents.js"; document.head.appendChild(script);
     window.fbq?.("init", metaPixelId, {}, { external_id: getRuthAttribution()?.visitor_id });
   }
-  if (gaId && !window.gtag) {
+  // When GTM is configured it owns browser-side GA4 delivery. Loading direct
+  // gtag at the same time can double-count page and commerce events.
+  if (gaId && !gtmId && !window.gtag) {
     window.dataLayer = window.dataLayer || [];
     window.gtag = (...args: unknown[]) => { window.dataLayer?.push(args); };
     window.gtag("js", new Date());
