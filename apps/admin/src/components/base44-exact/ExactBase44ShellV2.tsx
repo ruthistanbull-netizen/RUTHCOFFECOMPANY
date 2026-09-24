@@ -32,7 +32,7 @@ import { ExactIconButton, ExactToastProvider, exactCx } from "./primitives";
 function Brand({ collapsed = false }: { collapsed?: boolean }) {
   return (
     <Link
-      href="/"
+      href="/dashboard"
       aria-label="ROSTA Coffee Co."
       className={exactCx(
         "flex min-w-0 items-center",
@@ -61,7 +61,7 @@ function Brand({ collapsed = false }: { collapsed?: boolean }) {
 function MobileDrawerBrand({ onClick }: { onClick: () => void }) {
   return (
     <Link
-      href="/"
+      href="/dashboard"
       aria-label="ROSTA Coffee Co. ana sayfası"
       onClick={onClick}
       className="relative block h-14 w-[176px] shrink-0 overflow-hidden"
