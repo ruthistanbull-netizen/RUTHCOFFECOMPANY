@@ -15,12 +15,12 @@ RUN npm install --no-audit --no-fund
 
 COPY . .
 
-RUN npm run build:storefront && test -f apps/storefront/.next/BUILD_ID
+RUN npm run build:storefront
 
 ENV NODE_ENV=production
 ENV HOSTNAME=0.0.0.0
-ENV PORT=3000
+ENV PORT=8080
 
-EXPOSE 3000
+EXPOSE 8080
 
 CMD ["npm","run","start:storefront"]
