@@ -24,18 +24,18 @@ export function PageIntro({
       className={`${align === "center" ? "text-center" : "text-left"} ${className}`}
     >
       {eyebrow && (
-        <p className="mb-3 text-xs uppercase tracking-wide-luxe text-gold-dark">
+        <p className="mb-3 text-xs uppercase tracking-wide-luxe text-brick">
           {eyebrow}
         </p>
       )}
       <h1
         className="font-heading text-balance"
-        style={{ fontSize: "clamp(2.2rem, 6vw, 4.5rem)", color: "var(--ink)" }}
+        style={{ fontSize: "clamp(2.2rem, 6vw, 4.5rem)", color: "var(--rosta-cream)" }}
       >
         {title}
       </h1>
       {description && (
-        <p className={`mt-5 max-w-2xl leading-8 text-muted-ruth ${align === "center" ? "mx-auto" : ""}`}>
+        <p className={`mt-5 max-w-2xl leading-8 text-cream/70 ${align === "center" ? "mx-auto" : ""}`}>
           {description}
         </p>
       )}
