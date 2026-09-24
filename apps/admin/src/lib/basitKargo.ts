@@ -34,6 +34,10 @@ export type NormalizedBasitShipment = {
   raw: unknown;
 };
 
+export function isBasitKargoConfigured() {
+  return Boolean(process.env.BASIT_KARGO_API_TOKEN?.trim());
+}
+
 export class BasitKargoApiError extends Error {
   status: number;
   details: unknown;
