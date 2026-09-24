@@ -42,8 +42,8 @@ export function AccountPrivacyClient() {
       .catch((caught) => setError(caught instanceof Error ? caught.message : "Tercihler alınamadı."));
   }, [session?.access_token]);
 
-  if (isLoading) return <div className="flex min-h-screen items-center justify-center bg-ivory" role="status" aria-busy="true"><LoadingIndicator size="md" label="Hesap gizliliği yükleniyor" /></div>;
-  if (!user) return <div className="min-h-screen bg-ivory px-4 pt-32 text-center"><p>Bu alanı görmek için giriş yapmalısın.</p><Link className="mt-5 inline-block underline" href="/login?redirect=/account/privacy">Giriş yap</Link></div>;
+  if (isLoading) return <div className="flex min-h-screen items-center justify-center bg-carbon text-cream" role="status" aria-busy="true"><LoadingIndicator size="md" label="Hesap gizliliği yükleniyor" /></div>;
+  if (!user) return <div className="min-h-screen bg-carbon px-4 pt-32 text-center text-cream"><p>Bu alanı görmek için giriş yapmalısın.</p><Link className="mt-5 inline-block underline" href="/login?redirect=/account/privacy">Giriş yap</Link></div>;
 
   const updateConsent = async (next: boolean) => {
     setBusy(true);
@@ -77,35 +77,35 @@ export function AccountPrivacyClient() {
   };
 
   return (
-    <main className="min-h-screen bg-ivory px-4 pb-24 pt-32 md:px-8">
+    <main className="min-h-screen bg-carbon px-4 pb-24 pt-32 md:px-8 text-cream">
       <div className="mx-auto max-w-3xl space-y-6">
         <div>
-          <p className="text-xs uppercase tracking-wide-luxe text-gold-dark">Hesap gizliliği</p>
+          <p className="text-xs uppercase tracking-wide-luxe text-brick">Hesap gizliliği</p>
           <h1 className="mt-3 font-heading text-4xl">İletişim ve veri tercihleri</h1>
-          <p className="mt-4 text-sm leading-7 text-muted-ruth">Pazarlama iznini dilediğin zaman değiştirebilir veya hesabının silinmesini talep edebilirsin.</p>
+          <p className="mt-4 text-sm leading-7 text-cream/70">Pazarlama iznini dilediğin zaman değiştirebilir veya hesabının silinmesini talep edebilirsin.</p>
         </div>
 
-        {error ? <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</div> : null}
-        {notice ? <div aria-live="polite" className="rounded-xl border border-gold/20 bg-cream p-4 text-sm text-ink">{notice}</div> : null}
+        {error ? <div role="alert" className="rounded-xl border border-[var(--ruth-color-danger)]/40 bg-[var(--ruth-color-danger-soft)] p-4 text-sm text-[var(--ruth-color-danger-text)]">{error}</div> : null}
+        {notice ? <div aria-live="polite" className="rounded-xl border border-kraft/40 bg-carbon-soft p-4 text-sm text-cream">{notice}</div> : null}
 
-        <section className="rounded-2xl border border-gold/15 bg-cream p-6">
-          <div className="flex items-start gap-4"><ShieldCheck className="mt-1 text-gold-dark" /><div><h2 className="font-heading text-2xl">Kampanya e-postaları</h2><p className="mt-2 text-sm leading-6 text-muted-ruth">Sipariş ve kargo gibi zorunlu hizmet mesajları devam eder. Bu tercih yalnız indirim ve kampanya e-postalarını yönetir.</p></div></div>
+        <section className="rounded-2xl border border-kraft/35 bg-carbon-soft p-6">
+          <div className="flex items-start gap-4"><ShieldCheck className="mt-1 text-brick" /><div><h2 className="font-heading text-2xl">Kampanya e-postaları</h2><p className="mt-2 text-sm leading-6 text-cream/70">Sipariş ve kargo gibi zorunlu hizmet mesajları devam eder. Bu tercih yalnız indirim ve kampanya e-postalarını yönetir.</p></div></div>
           <div className="mt-5 flex flex-wrap gap-3">
-            <button type="button" disabled={busy || state?.marketingEmailConsent === true} onClick={() => void updateConsent(true)} className="rounded-full bg-ink px-5 py-3 text-xs uppercase tracking-wide-luxe text-cream disabled:opacity-40">Onay ver</button>
-            <button type="button" disabled={busy || state?.marketingEmailConsent === false} onClick={() => void updateConsent(false)} className="rounded-full border border-ink/20 px-5 py-3 text-xs uppercase tracking-wide-luxe text-ink disabled:opacity-40">Onayı geri çek</button>
+            <button type="button" disabled={busy || state?.marketingEmailConsent === true} onClick={() => void updateConsent(true)} className="rounded-full bg-brick px-5 py-3 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)] disabled:opacity-40">Onay ver</button>
+            <button type="button" disabled={busy || state?.marketingEmailConsent === false} onClick={() => void updateConsent(false)} className="rounded-full border border-kraft/40 px-5 py-3 text-xs uppercase tracking-wide-luxe text-cream disabled:opacity-40">Onayı geri çek</button>
           </div>
-          <p className="mt-4 text-sm text-muted-ruth">Mevcut durum: <strong className="text-ink">{state?.marketingEmailConsent ? "İzin var" : "İzin yok"}</strong></p>
+          <p className="mt-4 text-sm text-cream/70">Mevcut durum: <strong className="text-cream">{state?.marketingEmailConsent ? "İzin var" : "İzin yok"}</strong></p>
         </section>
 
-        <section className="rounded-2xl border border-red-200 bg-red-50/50 p-6">
+        <section className="rounded-2xl border border-[var(--ruth-color-danger)]/40 bg-[var(--ruth-color-danger-soft)]/70 p-6">
           <h2 className="font-heading text-2xl">Hesap silme talebi</h2>
           {state?.deletionRequest && ["requested", "reviewing"].includes(state.deletionRequest.status) ? (
-            <p className="mt-3 text-sm leading-6 text-red-800">Silme talebin alındı ve inceleniyor. Yeni bir talep oluşturman gerekmiyor.</p>
+            <p className="mt-3 text-sm leading-6 text-[var(--ruth-color-danger-text)]">Silme talebin alındı ve inceleniyor. Yeni bir talep oluşturman gerekmiyor.</p>
           ) : (
             <>
-              <p className="mt-3 text-sm leading-6 text-red-800">Talebi doğrulamak için aşağıya <strong>HESABIMI SİL</strong> yaz. Sipariş, fatura, ödeme ve hukuki yükümlülük kapsamındaki kayıtlar gereken süre boyunca saklanabilir.</p>
-              <input value={confirmation} onChange={(event) => setConfirmation(event.target.value)} placeholder="HESABIMI SİL" className="mt-5 w-full rounded-lg border border-red-200 bg-white px-4 py-3 text-sm" />
-              <button type="button" disabled={busy || confirmation.trim().toLocaleUpperCase("tr-TR") !== "HESABIMI SİL"} onClick={() => void requestDeletion()} className="mt-4 rounded-full bg-red-700 px-5 py-3 text-xs uppercase tracking-wide-luxe text-white disabled:opacity-40">Silme talebi oluştur</button>
+              <p className="mt-3 text-sm leading-6 text-[var(--ruth-color-danger-text)]">Talebi doğrulamak için aşağıya <strong>HESABIMI SİL</strong> yaz. Sipariş, fatura, ödeme ve hukuki yükümlülük kapsamındaki kayıtlar gereken süre boyunca saklanabilir.</p>
+              <input value={confirmation} onChange={(event) => setConfirmation(event.target.value)} placeholder="HESABIMI SİL" className="mt-5 w-full rounded-lg border border-[var(--ruth-color-danger)]/40 bg-carbon-soft px-4 py-3 text-sm" />
+              <button type="button" disabled={busy || confirmation.trim().toLocaleUpperCase("tr-TR") !== "HESABIMI SİL"} onClick={() => void requestDeletion()} className="mt-4 rounded-full bg-[var(--ruth-color-danger)] px-5 py-3 text-xs uppercase tracking-wide-luxe text-white disabled:opacity-40">Silme talebi oluştur</button>
             </>
           )}
         </section>
