@@ -377,7 +377,7 @@ export function ExactRuthieInsightPopup({
     void (async () => {
       try {
         const headers = await adminAuthHeaders();
-        const response = await fetch("/api/ruthie/openai/status", { headers, cache: "no-store" });
+        const response = await fetch("/api/rosta-insight/openai/status", { headers, cache: "no-store" });
         const payload = await response.json().catch(() => null) as ProviderStatus | null;
         if (cancelled) return;
         const ready = Boolean(response.ok && payload?.ok && payload.configured && payload.capabilities?.chat);
@@ -553,7 +553,7 @@ export function ExactRuthieInsightPopup({
 
     try {
       const headers = await adminAuthHeaders();
-      const response = await fetch("/api/ruthie/openai/chat", {
+      const response = await fetch("/api/rosta-insight/openai/chat", {
         method: "POST",
         cache: "no-store",
         headers: { ...headers, "Content-Type": "application/json", "x-correlation-id": correlationId() },
@@ -591,7 +591,7 @@ export function ExactRuthieInsightPopup({
     setImageError(null);
     try {
       const headers = await adminAuthHeaders();
-      const response = await fetch("/api/ruthie/openai/image-v3", {
+      const response = await fetch("/api/rosta-insight/openai/image-v3", {
         method: "POST",
         cache: "no-store",
         headers: { ...headers, "Content-Type": "application/json" },
@@ -615,7 +615,7 @@ export function ExactRuthieInsightPopup({
     setImageError(null);
     try {
       const headers = await adminAuthHeaders();
-      const response = await fetch("/api/ruthie/openai/image-v3", {
+      const response = await fetch("/api/rosta-insight/openai/image-v3", {
         method: "POST",
         cache: "no-store",
         headers: { ...headers, "Content-Type": "application/json" },
