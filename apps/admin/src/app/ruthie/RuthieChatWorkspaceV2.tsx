@@ -295,7 +295,7 @@ export function RuthieChatWorkspaceV2() {
     ));
   }, [conversations, historyQuery]);
   const voiceContext = useMemo(
-    () => messages.slice(-16).map((item) => `${item.role === "user" ? "Kullanıcı" : "Ruthie"}: ${item.text}`).join("\n"),
+    () => messages.slice(-16).map((item) => `${item.role === "user" ? "Kullanıcı" : "ROSTA Insight"}: ${item.text}`).join("\n"),
     [messages],
   );
 
@@ -610,7 +610,7 @@ export function RuthieChatWorkspaceV2() {
         <footer className={styles.sidebarFooter}>
           <span className={providerReady ? styles.online : ""} />
           <div>
-            <strong>{providerReady ? "Ruthie hazır" : "Bağlantı yok"}</strong>
+            <strong>{providerReady ? "ROSTA Insight hazır" : "Bağlantı yok"}</strong>
             <small>{modelLabel} · {enabledPlugins.length} eklenti aktif</small>
           </div>
         </footer>
@@ -627,7 +627,7 @@ export function RuthieChatWorkspaceV2() {
         <div className={styles.messages} aria-live="polite">
           {!messages.length ? (
             <div className={styles.empty}>
-              <small>RUTHIE COMMERCE ASSISTANT</small>
+              <small>ROSTA INSIGHT</small>
               <h1>Bugün ne yapalım?</h1>
               <p>Paneli yönetebilir, webde araştırabilir, fotoğraf ve belgeleri inceleyebilirim.</p>
               <div>
@@ -647,7 +647,7 @@ export function RuthieChatWorkspaceV2() {
                 >
                   {item.role === "assistant" ? <span className={styles.avatar}><Sparkles /></span> : null}
                   <div className={styles.bubble}>
-                    {item.role === "assistant" ? <strong>Ruthie</strong> : null}
+                    {item.role === "assistant" ? <strong>ROSTA Insight</strong> : null}
                     <p>{item.text}</p>
 
                     {item.attachments?.length ? (
@@ -725,7 +725,7 @@ export function RuthieChatWorkspaceV2() {
                 <article className={`${styles.message} ${styles.assistantMessage}`}>
                   <span className={styles.avatar}><Sparkles /></span>
                   <div className={styles.bubble}>
-                    <strong>Ruthie</strong>
+                    <strong>ROSTA Insight</strong>
                     <div className={styles.typing}><span /><span /><span /></div>
                   </div>
                 </article>
@@ -818,10 +818,10 @@ export function RuthieChatWorkspaceV2() {
       </main>
 
       {!mobileLayout ? (
-        <aside className={styles.rail} aria-label="Ruthie Neural Core ve operasyon kısayolları">
+        <aside className={styles.rail} aria-label="ROSTA Insight Neural Core ve operasyon kısayolları">
           <header className={styles.railHeader}>
             <span><Sparkles /></span>
-            <div><strong>Ruthie Core</strong><small>Commerce Assistant</small></div>
+            <div><strong>ROSTA Insight Core</strong><small>Commerce Assistant</small></div>
             <i />
           </header>
 
