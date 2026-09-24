@@ -69,8 +69,8 @@ const navGroups: NavGroup[] = [
   {
     label: "Asistan",
     items: [
-      { href: "/ruthie", label: "ROSTA Insight", shortLabel: "Sesli Insight", icon: Headphones, searchTerms: ["Yapay zeka", "AI", "Sesli asistan", "Voice", "Kamera", "Çeviri"], badge: "AI" },
-      { href: "/ruthie/chat", label: "ROSTA Insight Chat", shortLabel: "Insight Chat", icon: MessageSquareText, searchTerms: ["Yapay zeka", "AI", "Chat", "Sohbet", "Dosya", "Fotoğraf"] },
+      { href: "/rosta-insight", label: "ROSTA Insight", shortLabel: "Sesli Insight", icon: Headphones, searchTerms: ["Yapay zeka", "AI", "Sesli asistan", "Voice", "Kamera", "Çeviri"], badge: "AI" },
+      { href: "/rosta-insight/chat", label: "ROSTA Insight Chat", shortLabel: "Insight Chat", icon: MessageSquareText, searchTerms: ["Yapay zeka", "AI", "Chat", "Sohbet", "Dosya", "Fotoğraf"] },
     ],
   },
   {
@@ -131,8 +131,8 @@ const base44Ease: [number, number, number, number] = [0.32, 0.72, 0, 1];
 
 function activeFor(pathname: string, item: NavItem) {
   if (item.href === "/") return pathname === "/";
-  if (item.href === "/ruthie") return pathname === "/ruthie" || pathname.startsWith("/ruthie/wake");
-  if (item.href === "/ruthie/chat") return pathname === "/ruthie/chat" || pathname.startsWith("/ruthie/chat/");
+  if (item.href === "/rosta-insight") return pathname === "/rosta-insight" || pathname.startsWith("/rosta-insight/voice") || pathname.startsWith("/rosta-insight/wake") || pathname === "/ruthie" || pathname.startsWith("/ruthie/voice") || pathname.startsWith("/ruthie/wake");
+  if (item.href === "/rosta-insight/chat") return pathname === "/rosta-insight/chat" || pathname.startsWith("/rosta-insight/chat/") || pathname === "/ruthie/chat" || pathname.startsWith("/ruthie/chat/");
   if (pathname === item.href || pathname.startsWith(`${item.href}/`)) return true;
   return (item.aliases || []).some((alias) => pathname === alias || pathname.startsWith(`${alias}/`));
 }
@@ -464,8 +464,8 @@ export function ControlRoomShell({ children }: { children: ReactNode }) {
               </header>
               <div className={styles.ruthieDockBody}>
                 <p>Bu sayfadaki işlemleri değiştirmeden ROSTA Insight sesli asistanına veya sohbete geçebilirsin.</p>
-                <Link href="/ruthie" onClick={() => setRuthieDockOpen(false)}><Headphones aria-hidden="true" /><span><strong>Sesli ROSTA Insight</strong><small>Konuşarak işlem ve analiz başlat</small></span></Link>
-                <Link href="/ruthie/chat" onClick={() => setRuthieDockOpen(false)}><MessageSquareText aria-hidden="true" /><span><strong>ROSTA Insight Chat</strong><small>Dosya, fotoğraf ve panel bağlamıyla sohbet et</small></span></Link>
+                <Link href="/rosta-insight/voice" onClick={() => setRuthieDockOpen(false)}><Headphones aria-hidden="true" /><span><strong>Sesli ROSTA Insight</strong><small>Konuşarak işlem ve analiz başlat</small></span></Link>
+                <Link href="/rosta-insight/chat" onClick={() => setRuthieDockOpen(false)}><MessageSquareText aria-hidden="true" /><span><strong>ROSTA Insight Chat</strong><small>Dosya, fotoğraf ve panel bağlamıyla sohbet et</small></span></Link>
               </div>
             </motion.aside>
           </>
