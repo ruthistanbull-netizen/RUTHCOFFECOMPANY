@@ -443,7 +443,14 @@ export function AdminProductStudioResponsiveEnhancer() {
           cursor: pointer;
           transition: background .16s ease, transform .16s ease;
         }
-        .ruth-product-catalog-item:hover { background: hsl(var(--surface-secondary)); }
+        .ruth-product-catalog-item:focus-visible {
+          background: hsl(var(--accent-soft));
+          outline: 2px solid hsl(var(--accent));
+          outline-offset: -2px;
+        }
+        @media (hover: hover) and (pointer: fine) {
+          .ruth-product-catalog-item:hover { background: hsl(var(--surface-secondary)); }
+        }
         .ruth-product-catalog-item.is-selected { background: hsl(var(--accent-soft)); }
         .ruth-product-catalog-image {
           width: 44px;
