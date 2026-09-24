@@ -34,6 +34,9 @@ const storefrontLayout = file("apps/storefront/src/app/layout.tsx");
 const storefrontHome = file("apps/storefront/src/app/page.tsx");
 const adminShell = file("apps/admin/src/components/base44-exact/ExactBase44ShellV2.tsx");
 const recovery = file("apps/storefront/src/app/api/auth/password-recovery/route.ts");
+const rostaPoints = file("apps/admin/src/app/api/rosta-points/route.ts");
+const themeSections = file("apps/admin/src/app/api/theme-sections/route.ts");
+const storefrontRevalidate = file("apps/storefront/src/app/api/revalidate/route.ts");
 const adminEnv = file("apps/admin/.env.example");
 const storefrontEnv = file("apps/storefront/.env.example");
 const analyticsMigration = file("supabase/migrations/20260924170000_rosta_dashboard_session_accuracy.sql");
@@ -64,6 +67,15 @@ expect(!adminShell.includes("⌘K"), "legacy command shortcut badge still visibl
 
 expect(recovery.includes("ADMIN_ORIGIN"), "storefront password recovery must proxy through admin recovery service");
 expect(!recovery.includes("createClient("), "storefront password recovery must not directly create a Supabase client");
+
+expect(rostaPoints.includes('adjust_rosta_points'), "ROSTA Points admin adjustments must use the atomic ROSTA RPC");
+expect(rostaPoints.includes('update_loyalty_reward_settings'), "ROSTA Points settings must use the canonical loyalty settings RPC");
+expect(rostaPoints.includes('rosta_point_transactions'), "ROSTA Points history must use the ROSTA ledger alias");
+expect(!rostaPoints.includes('update({reward_points_balance'), "ROSTA Points route must not manually mutate balances");
+
+expect(themeSections.includes('tags: ["rosta-theme"]'), "theme section saves must invalidate the ROSTA theme tag");
+expect(storefrontRevalidate.includes('revalidateTag("rosta-theme", IMMEDIATE_EXPIRY)'), "storefront theme revalidation must expire immediately");
+expect(storefrontRevalidate.includes('revalidatePath("/", "layout")'), "theme revalidation must refresh the root layout");
 
 expect(!adminEnv.includes("sb_publishable_"), "admin env example must not contain a real Supabase publishable key");
 expect(!storefrontEnv.includes("sb_publishable_"), "storefront env example must not contain a real Supabase publishable key");
