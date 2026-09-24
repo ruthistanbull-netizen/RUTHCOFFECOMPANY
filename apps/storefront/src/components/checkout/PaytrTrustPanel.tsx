@@ -5,7 +5,7 @@ export function PaytrTrustPanel() {
     <aside className="mx-auto -mt-16 mb-20 w-[calc(100%-2rem)] max-w-7xl rounded-2xl border border-gold/15 bg-white px-5 py-5 shadow-sm md:px-7">
       <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-4">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-info/10 text-info">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full" style={{ background: "color-mix(in srgb, var(--ruth-color-info) 10%, transparent)", color: "var(--ruth-color-info)" }}>
             <ShieldCheck size={22} aria-hidden="true" />
           </div>
           <div>
