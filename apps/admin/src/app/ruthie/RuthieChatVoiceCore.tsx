@@ -138,7 +138,7 @@ export function RuthieChatVoiceCore({ compact = false, context = "" }: RuthieCha
     if (realtime.userText) return realtime.userText;
     if (lastText) return lastText;
     return active
-      ? "Ruthie seni dinliyor. Konuşmaya başlayabilirsin."
+      ? "ROSTA Insight seni dinliyor. Konuşmaya başlayabilirsin."
       : "Küreye dokunarak sesli Ruthie'yi aynı ekranda aç.";
   }, [active, lastText, realtime.assistantText, realtime.error, realtime.userText]);
 
@@ -163,7 +163,7 @@ export function RuthieChatVoiceCore({ compact = false, context = "" }: RuthieCha
       className={`${styles.card} ${compact ? styles.compact : ""}`}
       data-active={active ? "true" : "false"}
       data-phase={realtime.phase}
-      aria-label="Ruthie Neural Core"
+      aria-label="ROSTA Insight Neural Core"
     >
       <header>
         <div>
