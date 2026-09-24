@@ -58,7 +58,7 @@ export const metadata: Metadata = {
   applicationName: "ROSTA Panel",
   title: { default: "ROSTA Control Room", template: "%s | ROSTA" },
   description: "ROSTA Coffee Co. yönetim paneli",
-  manifest: "/manifest.webmanifest",
+  manifest: "/manifest.webmanifest?v=24",
   icons: {
     icon: "/icon.svg",
     apple: "/api/panel-home-icon",
