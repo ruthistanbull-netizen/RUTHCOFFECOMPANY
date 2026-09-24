@@ -152,7 +152,7 @@ export function RuthieChatComposerEnhancer() {
     const discover = () => {
       const root = document.querySelector<HTMLElement>('[data-ruthie-experience="chat"]');
       if (!root) return;
-      const textarea = root.querySelector<HTMLTextAreaElement>('textarea[placeholder*="Ruthie"]');
+      const textarea = root.querySelector<HTMLTextAreaElement>('textarea[placeholder*="ROSTA Insight"]');
       const fileInput = root.querySelector<HTMLInputElement>('input[type="file"]');
       const composer = textarea?.parentElement;
       const tools = fileInput?.parentElement;
@@ -382,7 +382,7 @@ export function RuthieChatComposerEnhancer() {
   }, [imageSelected, requestQuote, targets]);
 
   const attachGeneratedImage = async (image: GeneratedImage) => {
-    if (!targets) throw new Error("Ruthie dosya alanı bulunamadı.");
+    if (!targets) throw new Error("ROSTA Insight dosya alanı bulunamadı.");
     const response = await fetch(image.dataUrl);
     const blob = await response.blob();
     const file = new File([blob], image.name, { type: image.mimeType || blob.type || "image/png" });
