@@ -288,7 +288,7 @@ function normalizeSdp(value: unknown): string {
 
 function runtimeConfig(env: NodeJS.ProcessEnv = process.env): RuntimeConfig {
   const apiKey = clean(env.OPENAI_API_KEY);
-  const chatModel = clean(env.RUTHIE_CHAT_MODEL);
+  const chatModel = clean(env.ROSTA_INSIGHT_CHAT_MODEL) || clean(env.RUTHIE_CHAT_MODEL);
   if (!apiKey || !chatModel) {
     throw new RuthieRuntimeError({
       code: "ROSTA_INSIGHT_OPENAI_NOT_CONFIGURED",
@@ -300,9 +300,9 @@ function runtimeConfig(env: NodeJS.ProcessEnv = process.env): RuntimeConfig {
     apiKey,
     chatModel,
     baseUrl: (clean(env.OPENAI_BASE_URL) || DEFAULT_BASE_URL).replace(/\/+$/, ""),
-    realtimeModel: clean(env.RUTHIE_REALTIME_MODEL) || DEFAULT_REALTIME_MODEL,
-    transcriptionModel: clean(env.RUTHIE_TRANSCRIPTION_MODEL) || DEFAULT_TRANSCRIPTION_MODEL,
-    voice: clean(env.RUTHIE_VOICE) || DEFAULT_VOICE,
+    realtimeModel: clean(env.ROSTA_INSIGHT_REALTIME_MODEL) || clean(env.RUTHIE_REALTIME_MODEL) || DEFAULT_REALTIME_MODEL,
+    transcriptionModel: clean(env.ROSTA_INSIGHT_TRANSCRIPTION_MODEL) || clean(env.RUTHIE_TRANSCRIPTION_MODEL) || DEFAULT_TRANSCRIPTION_MODEL,
+    voice: clean(env.ROSTA_INSIGHT_VOICE) || clean(env.RUTHIE_VOICE) || DEFAULT_VOICE,
     project: clean(env.OPENAI_PROJECT_ID),
     organization: clean(env.OPENAI_ORGANIZATION_ID),
   };
