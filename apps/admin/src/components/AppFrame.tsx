@@ -71,7 +71,6 @@ export function AppFrame({ children }: { children: ReactNode }) {
   if (pathname === "/profiles") {
     return (
       <RequireAdmin>
-        {providers}
         <div
           data-panel-hub-immersive-root
           style={{
