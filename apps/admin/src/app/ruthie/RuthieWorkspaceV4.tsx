@@ -306,11 +306,11 @@ export function RuthieWorkspaceV4() {
       const headers = await adminAuthHeaders();
       const response = await fetch("/api/ruthie/openai/status", { headers, cache: "no-store" });
       const payload = await response.json().catch(() => null) as ProviderStatus | null;
-      if (!response.ok || !payload?.ok) throw new Error("Ruthie sağlayıcı durumu alınamadı.");
+      if (!response.ok || !payload?.ok) throw new Error("ROSTA Insight sağlayıcı durumu alınamadı.");
       setStatus(payload);
     } catch (caught) {
       setStatus(null);
-      setStatusError(caught instanceof Error ? caught.message : "Ruthie sağlayıcı durumu alınamadı.");
+      setStatusError(caught instanceof Error ? caught.message : "ROSTA Insight sağlayıcı durumu alınamadı.");
     }
   }, []);
 
@@ -463,7 +463,7 @@ export function RuthieWorkspaceV4() {
     const conversation = conversationsRef.current.find((item) => item.id === activeIdRef.current);
     return (conversation?.messages || [])
       .slice(-12)
-      .map((message) => `${message.role === "user" ? "Kullanıcı" : "Ruthie"}: ${message.text}`)
+      .map((message) => `${message.role === "user" ? "Kullanıcı" : "ROSTA Insight"}: ${message.text}`)
       .join("\n");
   }, []);
 
@@ -492,7 +492,7 @@ export function RuthieWorkspaceV4() {
   const enabledTools = catalog?.tools.filter((tool) => tool.enabled) || [];
   const voiceLabel = realtime.phase === "connecting" ? "Bağlanıyor"
     : realtime.phase === "thinking" ? "Düşünüyor"
-      : realtime.phase === "speaking" ? "Ruthie konuşuyor"
+      : realtime.phase === "speaking" ? "ROSTA Insight konuşuyor"
         : realtime.phase === "error" ? "Bağlantı kurulamadı"
           : cameraOpen ? "Kamera ve mikrofon açık" : "Seni dinliyor";
   const voiceHeadline = realtime.phase === "connecting" ? "ROSTA Insight hazırlanıyor"
@@ -511,14 +511,14 @@ export function RuthieWorkspaceV4() {
     <section className={styles.page}>
       <div className={`${styles.workspace} ${historyOpen ? styles.historyIsOpen : ""}`}>
         <button className={styles.mobileHistoryBackdrop} type="button" aria-label="Konuşma geçmişini kapat" onClick={() => setHistoryOpen(false)} />
-        <aside className={styles.historyPanel} aria-label="Ruthie konuşma geçmişi">
+        <aside className={styles.historyPanel} aria-label="ROSTA Insight konuşma geçmişi">
           <div className={styles.historyHeader}>
-            <div className={styles.ruthieBrand}><span><Sparkles aria-hidden="true" /></span><strong>Ruthie</strong></div>
+            <div className={styles.ruthieBrand}><span><Sparkles aria-hidden="true" /></span><strong>ROSTA Insight</strong></div>
             <button className={styles.closeHistoryButton} type="button" onClick={() => setHistoryOpen(false)} aria-label="Geçmişi kapat"><X aria-hidden="true" /></button>
           </div>
           <button className={styles.newChatButton} type="button" onClick={createNewConversation}><MessageSquarePlus aria-hidden="true" /><span>Yeni sohbet</span></button>
           <label className={styles.historySearch}><Search aria-hidden="true" /><input value={historyQuery} onChange={(event) => setHistoryQuery(event.target.value)} placeholder="Geçmişte ara" aria-label="Konuşma geçmişinde ara" /></label>
-          <nav className={styles.workspaceLinks} aria-label="Ruthie özellikleri">
+          <nav className={styles.workspaceLinks} aria-label="ROSTA Insight özellikleri">
             <button type="button" onClick={() => setAppsOpen(true)}><AppWindow aria-hidden="true" /><span>Eklentiler ve araçlar</span></button>
             <button type="button" onClick={() => void realtime.start()} disabled={!voiceReady}><Headphones aria-hidden="true" /><span>Sesli asistan</span></button>
           </nav>
@@ -537,13 +537,13 @@ export function RuthieWorkspaceV4() {
             ))}
             {!filteredConversations.length ? <p className={styles.noHistory}>Eşleşen konuşma bulunamadı.</p> : null}
           </div>
-          <div className={styles.historyFooter}><span className={`${styles.statusDot} ${providerReady ? styles.online : ""}`} /><div><strong>{providerReady ? "Ruthie hazır" : "OpenAI bağlantısı yok"}</strong><small>{modelLabel} · panel + web + vision</small></div></div>
+          <div className={styles.historyFooter}><span className={`${styles.statusDot} ${providerReady ? styles.online : ""}`} /><div><strong>{providerReady ? "ROSTA Insight hazır" : "OpenAI bağlantısı yok"}</strong><small>{modelLabel} · panel + web + vision</small></div></div>
         </aside>
 
         <main className={styles.chatMain}>
           <header className={styles.chatTopbar}>
             <button className={styles.historyToggle} type="button" onClick={() => setHistoryOpen(true)} aria-label="Konuşma geçmişini aç"><Menu aria-hidden="true" /></button>
-            <button className={styles.modelButton} type="button" onClick={() => setAppsOpen(true)}><span>Ruthie</span><small>{modelLabel}</small><ChevronDown aria-hidden="true" /></button>
+            <button className={styles.modelButton} type="button" onClick={() => setAppsOpen(true)}><span>ROSTA Insight</span><small>{modelLabel}</small><ChevronDown aria-hidden="true" /></button>
             <div className={styles.liveCapabilities} aria-label="Aktif Ruthie yetenekleri">
               <span><ShieldCheck aria-hidden="true" /> Panel erişimi</span>
               <span><Globe2 aria-hidden="true" /> Web arama</span>
@@ -570,7 +570,7 @@ export function RuthieWorkspaceV4() {
                   <article className={`${styles.message} ${message.role === "user" ? styles.userMessage : styles.assistantMessage}`} key={message.id}>
                     {message.role === "assistant" ? <span className={styles.assistantAvatar}><Sparkles aria-hidden="true" /></span> : null}
                     <div className={styles.messageContent}>
-                      {message.role === "assistant" ? <strong>Ruthie</strong> : null}
+                      {message.role === "assistant" ? <strong>ROSTA Insight</strong> : null}
                       <p>{message.text}</p>
                       <div className={styles.messageMeta}>
                         {message.source === "voice" ? <span><Mic aria-hidden="true" /> Sesli görüşme</span> : null}
@@ -581,7 +581,7 @@ export function RuthieWorkspaceV4() {
                     </div>
                   </article>
                 ))}
-                {sending ? <article className={`${styles.message} ${styles.assistantMessage}`}><span className={styles.assistantAvatar}><Sparkles aria-hidden="true" /></span><div className={styles.messageContent}><strong>Ruthie</strong><div className={styles.typingDots}><span /><span /><span /></div><small className={styles.workingLabel}>Panel ve web araçları kontrol ediliyor</small></div></article> : null}
+                {sending ? <article className={`${styles.message} ${styles.assistantMessage}`}><span className={styles.assistantAvatar}><Sparkles aria-hidden="true" /></span><div className={styles.messageContent}><strong>ROSTA Insight</strong><div className={styles.typingDots}><span /><span /><span /></div><small className={styles.workingLabel}>Panel ve web araçları kontrol ediliyor</small></div></article> : null}
               </div>
             )}
             <div ref={bottomRef} />
@@ -592,7 +592,7 @@ export function RuthieWorkspaceV4() {
           <div className={styles.composerArea}>
             <form className={styles.composer} onSubmit={submit}>
               <button className={styles.composerIconButton} type="button" onClick={() => setAppsOpen(true)} aria-label="Dosya ve eklenti ekle"><Plus aria-hidden="true" /></button>
-              <textarea ref={textareaRef} value={input} onChange={(event) => setInput(event.target.value)} onKeyDown={onComposerKeyDown} rows={1} maxLength={8_000} placeholder={providerReady ? "ROSTA Insight'a mesaj gönder" : "OpenAI bağlantısı hazır değil"} aria-label="Ruthie mesajı" disabled={!providerReady} />
+              <textarea ref={textareaRef} value={input} onChange={(event) => setInput(event.target.value)} onKeyDown={onComposerKeyDown} rows={1} maxLength={8_000} placeholder={providerReady ? "ROSTA Insight'a mesaj gönder" : "OpenAI bağlantısı hazır değil"} aria-label="ROSTA Insight mesajı" disabled={!providerReady} />
               <button className={styles.composerIconButton} type="button" onClick={() => setAppsOpen(true)} aria-label="Eklentileri aç"><Paperclip aria-hidden="true" /></button>
               <button className={styles.composerIconButton} type="button" onClick={() => void realtime.start()} disabled={!voiceReady} aria-label="Sesli asistanı başlat"><Mic aria-hidden="true" /></button>
               {sending ? <button className={styles.sendButton} type="button" onClick={() => { abortRef.current?.abort(); setSending(false); }} aria-label="Yanıtı durdur"><Square aria-hidden="true" /></button> : <button className={styles.sendButton} type="submit" disabled={!canSend} aria-label="Mesaj gönder"><Send aria-hidden="true" /></button>}
@@ -627,11 +627,11 @@ export function RuthieWorkspaceV4() {
       >
         <div className={styles.voiceShell}>
           <header className={styles.voiceHeader}>
-            <div className={styles.voiceIdentity}><span><Sparkles aria-hidden="true" /></span><div><strong>Ruthie</strong><small>{status?.models?.realtime || "gpt-realtime"}</small></div></div>
+            <div className={styles.voiceIdentity}><span><Sparkles aria-hidden="true" /></span><div><strong>ROSTA Insight</strong><small>{status?.models?.realtime || "gpt-realtime"}</small></div></div>
             <div className={styles.voiceHeaderStatus}><span className={realtime.phase === "error" ? styles.voiceStatusError : ""} /><strong>{voiceLabel}</strong></div>
             <div className="ruthieVoiceHeaderActions">
               <button type="button" onClick={() => setCameraOpen((current) => !current)} disabled={!realtime.connected} aria-label={cameraOpen ? "Kamerayı kapat" : "Arka kamerayı aç"} aria-pressed={cameraOpen}>{cameraOpen ? <CameraOff aria-hidden="true" /> : <Camera aria-hidden="true" />}</button>
-              <button type="button" onClick={() => { setCameraOpen(false); realtime.end(); }} aria-label="Ruthie'yi kapat"><X aria-hidden="true" /></button>
+              <button type="button" onClick={() => { setCameraOpen(false); realtime.end(); }} aria-label="ROSTA Insight'ı kapat"><X aria-hidden="true" /></button>
             </div>
           </header>
 
