@@ -278,7 +278,7 @@ export function useRuthieRealtimeVision(options: UseRuthieRealtimeVisionOptions)
 
   const executeVoiceAction = useCallback(async (action: RuthieRealtimePendingAction) => {
     const headers = await adminAuthHeaders();
-    const response = await fetch("/api/ruthie/admin/execute", {
+    const response = await fetch("/api/rosta-insight/admin/execute", {
       method: "POST",
       cache: "no-store",
       headers: { ...headers, "Content-Type": "application/json", "x-correlation-id": makeId("voice-confirm") },
@@ -369,7 +369,7 @@ export function useRuthieRealtimeVision(options: UseRuthieRealtimeVisionOptions)
     setPhase("acting");
     try {
       const headers = await adminAuthHeaders();
-      const response = await fetch("/api/ruthie/admin/invoke", {
+      const response = await fetch("/api/rosta-insight/admin/invoke", {
         method: "POST",
         cache: "no-store",
         headers: { ...headers, "Content-Type": "application/json", "x-correlation-id": makeId("voice-tool") },
@@ -639,7 +639,7 @@ export function useRuthieRealtimeVision(options: UseRuthieRealtimeVisionOptions)
       const localSdp = pc.localDescription?.sdp;
       if (!localSdp) throw new Error("Tarayıcı ses bağlantısı oluşturamadı.");
       const authHeaders = await adminAuthHeaders();
-      const response = await fetch("/api/ruthie/openai/realtime", {
+      const response = await fetch("/api/rosta-insight/openai/realtime", {
         method: "POST",
         cache: "no-store",
         headers: { ...authHeaders, "Content-Type": "application/sdp", "x-correlation-id": makeId("voice") },
