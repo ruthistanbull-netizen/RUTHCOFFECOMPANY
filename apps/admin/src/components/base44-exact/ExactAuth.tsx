@@ -40,7 +40,7 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
 
     if (mode === "login") {
       void supabase.auth.getSession().then(({ data }) => {
-        if (data.session) router.replace("/");
+        if (data.session) router.replace("/profiles");
       });
       return;
     }
@@ -142,7 +142,8 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
           other.removeItem("ruth_admin_next_checked_until");
         } catch {}
 
-        router.replace("/");
+        try { window.sessionStorage.removeItem("rosta_panel_hub_entered_v1"); } catch {}
+        router.replace("/profiles");
         router.refresh();
         return;
       }
@@ -185,14 +186,14 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
   };
 
   const title = mode === "login"
-    ? "Control Room’a giriş yap"
+    ? "Control Hub’a giriş yap"
     : mode === "forgot"
       ? "Şifreni yenile"
       : resetComplete
         ? "Şifren güncellendi"
         : "Yeni şifre oluştur";
   const subtitle = mode === "login"
-    ? "ROSTA Coffee Co. operasyon paneli"
+    ? "ROSTA Coffee Co. ve Ruth Istanbul panelleri"
     : mode === "forgot"
       ? "Yenileme bağlantısını e-posta adresine göndereceğiz."
       : resetComplete
@@ -209,12 +210,12 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
         <div className="relative z-10 flex flex-col justify-between w-full max-w-xl">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center h-11 w-11 rounded-[14px] bg-white/15 border border-white/20 backdrop-blur"><span className="font-bold text-lg">R</span></div>
-            <div><p className="font-bold text-lg">ROSTA Coffee Co.</p><p className="text-xs text-white/65">Control Room</p></div>
+            <div><p className="font-bold text-lg">Control Hub</p><p className="text-xs text-white/65">ROSTA × Ruth</p></div>
           </div>
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs backdrop-blur"><Sparkles className="h-3.5 w-3.5" /> Yeni nesil ticaret operasyonu</div>
-            <h1 className="mt-6 text-5xl font-bold tracking-tight leading-[1.05]">Satıştan teslimata<br />tek kontrol alanı.</h1>
-            <p className="mt-5 text-base leading-relaxed text-white/70 max-w-lg">Sipariş, ödeme, üretim, stok, müşteri ve ROSTA Insight operasyonlarını güvenli bir panelden yönet.</p>
+            <h1 className="mt-6 text-5xl font-bold tracking-tight leading-[1.05]">İki marka.<br />Tek güvenli giriş.</h1>
+            <p className="mt-5 text-base leading-relaxed text-white/70 max-w-lg">ROSTA Coffee Co. ve Ruth Istanbul yönetim panellerine tek oturumdan geç.</p>
           </div>
           <div className="grid grid-cols-3 gap-3">
             {[{ icon: ShieldCheck, label: "RBAC ve güvenli oturum" }, { icon: KeyRound, label: "Denetimli kritik işlemler" }, { icon: Sparkles, label: "ROSTA Insight desteği" }].map((item) => (
@@ -231,7 +232,7 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
         <div className="w-full max-w-md animate-fade-in">
           <div className="lg:hidden flex items-center gap-3 mb-10">
             <div className="flex items-center justify-center h-10 w-10 radius-small bg-accent text-white font-bold">R</div>
-            <div><p className="font-bold text-main">ROSTA Coffee Co.</p><p className="text-[10px] text-subtle">Control Room</p></div>
+            <div><p className="font-bold text-main">Control Hub</p><p className="text-[10px] text-subtle">ROSTA × Ruth</p></div>
           </div>
 
           <div className="mb-8">
