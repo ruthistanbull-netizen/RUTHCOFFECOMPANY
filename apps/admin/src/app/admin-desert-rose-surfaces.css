@@ -1,197 +1,137 @@
-/* ROSTA Coffee Co. admin — Desert Rose warm surface system.
-   This file is imported last on purpose so legacy/page-specific cold whites are
-   normalized without touching the existing gold accent system or dark mode. */
+/* ROSTA Global Color System v2.3
+ * Legacy admin surface compatibility layer.
+ * This file previously forced a light "Desert Rose" theme; it now keeps the
+ * same selectors inside the Carbon-dominant semantic palette.
+ */
 
-html:not(.dark) {
-  /* Reference palette: canvas #FBF1EA, surface #FFF9F5. */
-  --app-background: 25 68% 95.1%;
-  --surface-primary: 24 100% 98%;
-  --surface-secondary: 24 68% 96.4%;
-  --surface-tertiary: 24 57% 91.5%;
-
-  /* Warm separators and neutral fills; no steel/blue cast. */
-  --border-subtle: 21 38% 88.5%;
-  --border-strong: 21 41% 80.8%;
-  --neutral-soft: 24 34% 93%;
-
-  /* Existing gold accent tokens intentionally remain untouched. */
-  --shadow-card:
-    0 2px 8px -2px rgba(113, 67, 45, 0.045),
-    0 8px 24px -8px rgba(113, 67, 45, 0.055);
-  --shadow-floating:
-    0 14px 42px -10px rgba(104, 61, 40, 0.14),
-    0 6px 18px -5px rgba(104, 61, 40, 0.07);
-  --shadow-sticky:
-    0 1px 3px rgba(104, 61, 40, 0.045),
-    0 1px 2px rgba(104, 61, 40, 0.03);
-  --shadow-overlay: 0 24px 64px -12px rgba(78, 45, 31, 0.24);
-}
-
+html,
 html:not(.dark),
-html:not(.dark) body {
-  background-color: #fbf1ea;
+html.dark {
+  --app-background: 0 0% 6.7%;
+  --surface-primary: 0 0% 14.1%;
+  --surface-secondary: 0 0% 14.1%;
+  --surface-tertiary: 19.3 33.3% 16.5%;
+  --border-subtle: 33.6 40.5% 63.7% / .42;
+  --border-strong: 33.6 40.5% 63.7%;
+  --neutral-soft: 228 14.3% 93.1%;
+  --shadow-card:
+    0 2px 8px -2px color-mix(in srgb, var(--rosta-carbon) 30%, transparent),
+    0 8px 24px -8px color-mix(in srgb, var(--rosta-carbon) 24%, transparent);
+  --shadow-floating:
+    0 14px 42px -10px color-mix(in srgb, var(--rosta-carbon) 54%, transparent),
+    0 6px 18px -5px color-mix(in srgb, var(--rosta-carbon) 34%, transparent);
+  --shadow-sticky: 0 1px 3px color-mix(in srgb, var(--rosta-carbon) 32%, transparent);
+  --shadow-overlay: 0 24px 64px -12px color-mix(in srgb, var(--rosta-carbon) 64%, transparent);
 }
 
-/* Tailwind/legacy components that still ask for literal white should inherit the
-   warm panel surface instead of reintroducing a cold white patch. */
-html:not(.dark) [class~="bg-white"] {
-  background-color: #fff9f5 !important;
+html,
+html body,
+html:not(.dark),
+html:not(.dark) body,
+html.dark,
+html.dark body {
+  background-color: var(--rosta-carbon);
+  color: var(--rosta-cream);
 }
 
-/* Common native controls may be rendered outside a card token in older pages. */
-html:not(.dark) :where(
+html :where([class~="bg-white"]) {
+  background-color: var(--rosta-carbon-soft) !important;
+}
+
+html :where(
   [data-exact-base44-page],
   [data-exact-base44-auth],
   [data-ruth-admin-page]
 ) :where(input, textarea, select)[class~="bg-white"] {
-  background-color: #fff9f5 !important;
+  background-color: var(--rosta-carbon-soft) !important;
+  color: var(--rosta-cream) !important;
 }
 
-/* Auth screens are public routes and bypass AppFrame, so warm them explicitly.
-   Forgot/reset already use semantic tokens; these rules also remove the last
-   literal-white logo/control surfaces there. */
-html:not(.dark) [data-exact-base44-auth] {
-  background-color: #fbf1ea !important;
+[data-exact-base44-auth] {
+  background-color: var(--rosta-carbon) !important;
 }
 
-html:not(.dark) [data-exact-base44-auth] > section:last-child {
-  background-color: #fff9f5;
+[data-exact-base44-auth] > section:last-child {
+  background-color: var(--rosta-carbon-soft);
 }
 
-html:not(.dark) [data-exact-base44-auth] > section:first-child .relative.z-10 > div:first-child,
-html:not(.dark) [data-exact-base44-auth] > section:last-child > div > div:first-child {
-  background-color: #fff9f5;
+[data-exact-base44-auth] > section:first-child .relative.z-10 > div:first-child,
+[data-exact-base44-auth] > section:last-child > div > div:first-child {
+  background-color: var(--rosta-carbon-soft);
 }
 
-/* Login previously had a dark control-room override. Keep its gold identity but
-   move the whole screen into the same warm Desert Rose light system as the rest
-   of the panel. */
-html:not(.dark) [data-exact-base44-auth="login"] {
-  background: #fbf1ea !important;
-  color: #2a201c !important;
+[data-exact-base44-auth="login"] {
+  background: var(--rosta-carbon) !important;
+  color: var(--rosta-cream) !important;
 }
 
-html:not(.dark) [data-exact-base44-auth="login"]::before {
-  background:
-    radial-gradient(circle at 12% 8%, rgba(201, 162, 58, .14), transparent 34%),
-    radial-gradient(circle at 88% 90%, rgba(223, 169, 142, .22), transparent 34%),
-    radial-gradient(circle at 48% 48%, rgba(255, 249, 245, .72), transparent 52%) !important;
-  filter: blur(4px);
+[data-exact-base44-auth="login"] > section:first-child {
+  border-color: color-mix(in srgb, var(--rosta-kraft) 42%, transparent) !important;
 }
 
-html:not(.dark) [data-exact-base44-auth="login"]::after {
-  opacity: .20 !important;
-  background-image:
-    linear-gradient(rgba(113, 60, 43, .045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(113, 60, 43, .045) 1px, transparent 1px) !important;
+[data-exact-base44-auth="login"] > section:last-child {
+  background: var(--rosta-carbon-soft) !important;
+  border-color: color-mix(in srgb, var(--rosta-kraft) 42%, transparent) !important;
 }
 
-html:not(.dark) [data-exact-base44-auth="login"] > section:first-child {
-  background:
-    radial-gradient(circle at 16% 14%, rgba(255, 255, 255, .15), transparent 36%),
-    linear-gradient(145deg, #8f6e1f 0%, #c9a23a 48%, #9e7824 100%) !important;
-  border-color: rgba(113, 60, 43, .12) !important;
+[data-exact-base44-auth="login"] > section:last-child h2 {
+  color: var(--rosta-cream) !important;
+}
+
+[data-exact-base44-auth="login"] > section:last-child h2 + p,
+[data-exact-base44-auth="login"] form label,
+[data-exact-base44-auth="login"] > section:last-child > div > p:last-child {
+  color: color-mix(in srgb, var(--rosta-cream) 70%, transparent) !important;
+}
+
+[data-exact-base44-auth="login"] form .form-input {
+  border-color: color-mix(in srgb, var(--rosta-kraft) 42%, transparent) !important;
+  background: var(--rosta-carbon-soft) !important;
+  color: var(--rosta-cream) !important;
   box-shadow: none !important;
 }
 
-html:not(.dark) [data-exact-base44-auth="login"] > section:last-child {
-  background: rgba(255, 249, 245, .93) !important;
-  border-color: rgba(226, 200, 186, .82) !important;
-  box-shadow: 0 28px 80px rgba(113, 60, 43, .10) !important;
-  backdrop-filter: blur(26px) saturate(1.05);
-  -webkit-backdrop-filter: blur(26px) saturate(1.05);
+[data-exact-base44-auth="login"] form .form-input::placeholder {
+  color: color-mix(in srgb, var(--rosta-cream) 52%, transparent) !important;
 }
 
-html:not(.dark) [data-exact-base44-auth="login"] > section:last-child h2 {
-  color: #2a201c !important;
+[data-exact-base44-auth="login"] form .form-input:focus {
+  border-color: var(--rosta-brick-b) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--rosta-brick-b) 24%, transparent) !important;
 }
 
-html:not(.dark) [data-exact-base44-auth="login"] > section:last-child h2 + p,
-html:not(.dark) [data-exact-base44-auth="login"] form label,
-html:not(.dark) [data-exact-base44-auth="login"] > section:last-child > div > p:last-child {
-  color: #7e6860 !important;
+[data-exact-base44-auth="login"] form a[href="/forgot-password"] {
+  color: var(--rosta-brick-b) !important;
 }
 
-html:not(.dark) [data-exact-base44-auth="login"] > section:last-child > div > div:nth-child(2) > div:first-child {
-  border-color: #e2c8ba !important;
-  background: #fdf8f3 !important;
-  color: #c9a23a !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .72) !important;
+[data-exact-base44-auth="login"] form > button[type="submit"] {
+  border-color: var(--rosta-brick-b) !important;
+  background: var(--rosta-brick-b) !important;
+  color: var(--rosta-action-text) !important;
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--rosta-carbon) 38%, transparent) !important;
 }
 
-html:not(.dark) [data-exact-base44-auth="login"] form .relative > svg {
-  color: #9a8178 !important;
+[data-exact-base44-auth="login"] form > button[type="submit"]:active {
+  border-color: var(--rosta-espresso) !important;
+  background: var(--rosta-espresso) !important;
+  color: var(--rosta-cream) !important;
 }
 
-html:not(.dark) [data-exact-base44-auth="login"] form .form-input {
-  border-color: #e2c8ba !important;
-  background: #fff9f5 !important;
-  color: #2a201c !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .78) !important;
-}
-
-html:not(.dark) [data-exact-base44-auth="login"] form .form-input::placeholder {
-  color: #b49d94 !important;
-}
-
-html:not(.dark) [data-exact-base44-auth="login"] form .form-input:hover {
-  border-color: #d7b5a4 !important;
-}
-
-html:not(.dark) [data-exact-base44-auth="login"] form .form-input:focus {
-  border-color: rgba(201, 162, 58, .62) !important;
-  background: #fff9f5 !important;
-  box-shadow: 0 0 0 4px rgba(201, 162, 58, .10) !important;
-}
-
-html:not(.dark) [data-exact-base44-auth="login"] form .relative > button[aria-label*="Şifreyi"] {
-  color: #917b72 !important;
-}
-
-html:not(.dark) [data-exact-base44-auth="login"] form .relative > button[aria-label*="Şifreyi"]:hover {
-  background: #f7eee8 !important;
-  color: #2a201c !important;
-}
-
-html:not(.dark) [data-exact-base44-auth="login"] form a[href="/forgot-password"] {
-  color: #a88326 !important;
-}
-
-html:not(.dark) [data-exact-base44-auth="login"] form > button[type="submit"] {
-  background: #c9a23a !important;
-  color: #211a08 !important;
-  box-shadow: 0 12px 30px rgba(168, 131, 38, .16) !important;
-}
-
-html:not(.dark) [data-exact-base44-auth="login"] form > button[type="submit"]:hover {
-  background: #b78f2e !important;
-}
-
-/* Net Sales should lift evenly from the Desert Rose canvas. Keep this ambient
-   and symmetric: no strong bottom cast, no inner glow, no change to the gold. */
-html:not(.dark) [aria-label="Net satışı oluşturan siparişleri aç"] > article {
+[aria-label="Net satışı oluşturan siparişleri aç"] > article {
   box-shadow:
-    0 0 0 1px rgba(91, 55, 38, 0.025),
-    0 0 16px rgba(91, 55, 38, 0.105),
-    0 0 32px rgba(91, 55, 38, 0.055) !important;
+    0 0 0 1px color-mix(in srgb, var(--rosta-kraft) 22%, transparent),
+    0 0 16px color-mix(in srgb, var(--rosta-carbon) 40%, transparent),
+    0 0 32px color-mix(in srgb, var(--rosta-carbon) 24%, transparent) !important;
 }
 
-@media (min-width: 1024px) {
-  html:not(.dark) [data-exact-base44-auth="login"] > section:first-child {
-    border-color: rgba(113, 60, 43, .12) !important;
-    box-shadow: -20px 34px 86px rgba(113, 60, 43, .10) !important;
+@media (hover: hover) and (pointer: fine) {
+  [data-exact-base44-auth="login"] form .form-input:hover {
+    border-color: var(--rosta-kraft) !important;
   }
 
-  html:not(.dark) [data-exact-base44-auth="login"] > section:last-child {
-    border-color: rgba(226, 200, 186, .82) !important;
-    box-shadow: 20px 34px 86px rgba(113, 60, 43, .10) !important;
-  }
-}
-
-@media (max-width: 1023px) {
-  html:not(.dark) [data-exact-base44-auth="login"] > section:last-child {
-    background: rgba(255, 249, 245, .96) !important;
-    border-color: #e2c8ba !important;
-    box-shadow: 0 24px 70px rgba(113, 60, 43, .11) !important;
+  [data-exact-base44-auth="login"] form > button[type="submit"]:hover {
+    box-shadow:
+      inset 0 0 0 1px color-mix(in srgb, var(--rosta-cream) 74%, transparent),
+      0 12px 30px color-mix(in srgb, var(--rosta-carbon) 42%, transparent) !important;
   }
 }
