@@ -1,28 +1,27 @@
 import {
-  defaultDiscountCampaignSettings,
   normalizeDiscountCampaignSettings,
   type CouponCodeRule,
   type CouponUsageContext,
 } from "@/lib/discountCampaignSettings";
 
-type Purpose = Exclude<CouponUsageContext, "general">;
-
-function isActiveNow(coupon: CouponCodeRule, now = Date.now()) {
-  if (!coupon.enabled || !coupon.code) return false;
-  if (coupon.startsAt) {
-    const startsAt = new Date(coupon.startsAt).getTime();
-    if (Number.isFinite(startsAt) && startsAt > now) return false;
-  }
-  if (coupon.endsAt) {
-    const endsAt = new Date(coupon.endsAt).getTime();
-    if (Number.isFinite(endsAt) && endsAt < now) return false;
-  }
+function active(rule: CouponCodeRule, now = Date.now()) {
+  if (!rule.enabled || !rule.code) return false;
+  const start = rule.startsAt ? new Date(rule.startsAt).getTime() : 0;
+  const end = rule.endsAt ? new Date(rule.endsAt).getTime() : 0;
+  if (rule.startsAt && (!Number.isFinite(start) || start > now)) return false;
+  if (rule.endsAt && (!Number.isFinite(end) || end < now)) return false;
   return true;
+}
+
+export function purposeCouponLabel(coupon: CouponCodeRule | null) {
+  if (!coupon) return "";
+  if (coupon.discountType === "percent") return `%${Math.max(0, Number(coupon.value || 0))}`;
+  return `${Math.max(0, Number(coupon.value || 0)).toLocaleString("tr-TR")} TL`;
 }
 
 export async function loadPurposeCoupon(
   supabase: any,
-  purpose: Purpose,
+  purpose: Exclude<CouponUsageContext, "general">,
 ): Promise<CouponCodeRule | null> {
   const { data, error } = await supabase
     .from("site_settings")
@@ -30,22 +29,7 @@ export async function loadPurposeCoupon(
     .eq("setting_key", "discount_campaigns")
     .maybeSingle();
 
-  if (error) throw new Error(error.message);
-
-  const settings = normalizeDiscountCampaignSettings(
-    data?.setting_value || defaultDiscountCampaignSettings,
-  );
-
-  return settings.coupons.find(
-    (coupon) => coupon.usageContext === purpose && isActiveNow(coupon),
-  ) || null;
-}
-
-export function purposeCouponLabel(coupon?: CouponCodeRule | null) {
-  if (!coupon) return "";
-  const value = Number(coupon.value || 0);
-  if (coupon.discountType === "amount") {
-    return `${value.toLocaleString("tr-TR")} TL indirim`;
-  }
-  return `%${value.toLocaleString("tr-TR")} indirim`;
+  if (error) return null;
+  const settings = normalizeDiscountCampaignSettings(data?.setting_value || {});
+  return settings.coupons.find((coupon) => coupon.usageContext === purpose && active(coupon)) || null;
 }
