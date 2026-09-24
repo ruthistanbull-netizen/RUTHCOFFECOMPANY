@@ -133,7 +133,7 @@ const TRANSLATION_LANGUAGES = ["İngilizce", "Arnavutça", "İtalyanca", "Almanc
 const suggestions = [
   "Paneli canlı verilerle analiz et ve en önemli sorunları sırala.",
   "Bugünkü sipariş ve stok durumunda neye odaklanmalıyım?",
-  "Webde güncel takı e-ticaret trendlerini araştır.",
+  "Webde güncel specialty coffee ve kahve e-ticaret trendlerini araştır.",
   "Son ürün ve sipariş verilerine göre aksiyon planı çıkar.",
 ];
 
