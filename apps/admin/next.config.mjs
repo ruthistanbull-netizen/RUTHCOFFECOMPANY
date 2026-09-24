@@ -1,6 +1,6 @@
 import path from "node:path";
 
-const storefrontUrl = "https://rostacoffecompany.zeabur.app";
+const storefrontUrl = "https://rostacoffeecompany.zeabur.app";
 const panelUrl = "https://rostapanel.zeabur.app";
 
 /** @type {import("next").NextConfig} */
@@ -11,7 +11,6 @@ const nextConfig = {
     "@ruth-commerce/contracts",
   ],
   outputFileTracingRoot: path.resolve(process.cwd(), "../.."),
-  output: "standalone",
   productionBrowserSourceMaps: false,
   experimental: {
     cpus: 1,
