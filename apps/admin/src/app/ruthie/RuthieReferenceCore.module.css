@@ -1,0 +1,88 @@
+.canvas {
+  width: 100%;
+  height: 100%;
+  min-width: 100%;
+  min-height: 100%;
+  display: block;
+  filter: saturate(.9) contrast(1.06);
+}
+
+:global([data-ruthie-voice-app]) {
+  background:
+    radial-gradient(ellipse 42% 42% at 50% 42%, rgba(137, 92, 39, .045), transparent 68%),
+    radial-gradient(ellipse 80% 62% at 50% 100%, rgba(50, 35, 19, .05), transparent 70%),
+    linear-gradient(180deg, #020202 0%, #050403 54%, #010101 100%) !important;
+}
+
+:global([data-ruthie-voice-app])::before {
+  background:
+    radial-gradient(circle at 50% 42%, rgba(255, 226, 177, .022), transparent 34%),
+    linear-gradient(90deg, transparent 14%, rgba(255, 255, 255, .008) 50%, transparent 86%) !important;
+}
+
+:global([data-ruthie-voice-stage])::before {
+  width: min(72vw, 820px) !important;
+  opacity: .34 !important;
+  background: radial-gradient(circle, rgba(168, 111, 43, .055), rgba(92, 59, 25, .02) 42%, transparent 72%) !important;
+  filter: blur(46px) !important;
+}
+
+:global([data-ruthie-orb-shell]) {
+  width: min(64vh, 760px, 68vw) !important;
+  height: min(64vh, 760px, 68vw) !important;
+  min-width: 360px !important;
+  min-height: 360px !important;
+  margin-top: -4px !important;
+  filter: drop-shadow(0 30px 62px rgba(0, 0, 0, .62)) !important;
+}
+
+:global([data-ruthie-orb-shell])::after {
+  bottom: 5% !important;
+  width: 54% !important;
+  height: 7% !important;
+  background: radial-gradient(ellipse, rgba(191, 137, 69, .09), rgba(80, 48, 18, .025) 42%, transparent 76%) !important;
+  filter: blur(22px) !important;
+}
+
+@media (max-width: 760px) {
+  .canvas {
+    width: 100%;
+    height: 100%;
+    min-width: 100%;
+    min-height: 100%;
+    position: relative;
+    left: 0;
+    top: 0;
+    filter: saturate(.86) contrast(1.08);
+  }
+
+  :global([data-ruthie-voice-app]) {
+    background:
+      radial-gradient(ellipse 70% 40% at 50% 38%, rgba(132, 88, 35, .04), transparent 72%),
+      linear-gradient(180deg, #020202 0%, #040302 58%, #010101 100%) !important;
+  }
+
+  :global([data-ruthie-voice-stage])::before {
+    width: 88vw !important;
+    opacity: .25 !important;
+    filter: blur(52px) !important;
+  }
+
+  :global([data-ruthie-orb-shell]) {
+    width: min(88vw, 50vh) !important;
+    height: min(88vw, 50vh) !important;
+    min-width: 278px !important;
+    min-height: 278px !important;
+    margin-top: 0 !important;
+    filter: drop-shadow(0 24px 52px rgba(0, 0, 0, .68)) !important;
+  }
+}
+
+@media (max-height: 720px) and (min-width: 761px) {
+  :global([data-ruthie-orb-shell]) {
+    width: min(58vh, 620px, 62vw) !important;
+    height: min(58vh, 620px, 62vw) !important;
+    min-width: 310px !important;
+    min-height: 310px !important;
+  }
+}
