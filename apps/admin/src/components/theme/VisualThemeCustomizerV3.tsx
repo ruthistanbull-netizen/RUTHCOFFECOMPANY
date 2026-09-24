@@ -95,7 +95,7 @@ function cx(...values: Array<string | false | null | undefined>) {
 function Accordion({ title, open, onToggle, children }: { title: string; open: boolean; onToggle: () => void; children: React.ReactNode }) {
   return (
     <div className="overflow-hidden rounded-2xl border border-border-subtle bg-surface-primary">
-      <button type="button" onClick={onToggle} className="flex h-11 w-full items-center justify-between px-3.5 text-left text-[11px] font-semibold hover:bg-accent/[0.025]">
+      <button type="button" onClick={onToggle} className="flex h-11 w-full items-center justify-between px-3.5 text-left text-[11px] font-semibold active:bg-accent-soft focus-visible:bg-accent-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
         <span>{title}</span>{open ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
       </button>
       {open ? <div className="border-t border-black/[0.06] p-3">{children}</div> : null}
@@ -105,7 +105,7 @@ function Accordion({ title, open, onToggle, children }: { title: string; open: b
 
 function Switch({ label, checked, onChange }: { label: string; checked: boolean; onChange: (next: boolean) => void }) {
   return (
-    <button type="button" onClick={() => onChange(!checked)} className="flex h-11 w-full items-center justify-between rounded-xl border border-border-subtle bg-surface-primary px-3.5 hover:border-border-strong">
+    <button type="button" onClick={() => onChange(!checked)} className="flex h-11 w-full items-center justify-between rounded-xl border border-border-subtle bg-surface-primary px-3.5 focus-visible:border-border-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
       <span className="text-[10px] font-medium">{label}</span>
       <span className={cx("relative block h-6 w-11 shrink-0 rounded-full transition-colors", checked ? "bg-accent" : "bg-accent/15")}>
         <span className={cx("absolute left-1 top-1 block h-4 w-4 rounded-full bg-surface-primary shadow-sm transition-transform", checked ? "translate-x-5" : "translate-x-0")} />
@@ -129,7 +129,7 @@ function Slider({ label, value, min, max, step = 1, suffix = "", onChange }: { l
 function Segmented<T extends string>({ value, options, onChange }: { value: T; options: Array<[T, string]>; onChange: (next: T) => void }) {
   return (
     <div className="grid grid-cols-3 gap-1 rounded-xl bg-accent/[0.045] p-1">
-      {options.map(([key, label]) => <button key={key} type="button" onClick={() => onChange(key)} className={cx("h-8 rounded-lg text-[9px] transition", value === key ? "bg-surface-primary font-medium shadow-sm" : "text-muted hover:text-black")}>{label}</button>)}
+      {options.map(([key, label]) => <button key={key} type="button" onClick={() => onChange(key)} className={cx("h-8 rounded-lg text-[9px] transition", value === key ? "bg-surface-primary font-medium shadow-sm" : "text-muted focus-visible:text-main")}>{label}</button>)}
     </div>
   );
 }
@@ -368,7 +368,7 @@ export function VisualThemeCustomizerV3() {
         </div>
 
         <div className="flex shrink-0 items-center gap-1.5">
-          <a href={`${STOREFRONT_URL}${pageKey}`} target="_blank" rel="noreferrer" className="grid h-9 w-9 place-items-center rounded-xl border border-border-subtle bg-surface-primary hover:border-border-strong" aria-label="Websiteyi aç"><ExternalLink className="h-3.5 w-3.5" /></a>
+          <a href={`${STOREFRONT_URL}${pageKey}`} target="_blank" rel="noreferrer" className="grid h-9 w-9 place-items-center rounded-xl border border-border-subtle bg-surface-primary focus-visible:border-border-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" aria-label="Websiteyi aç"><ExternalLink className="h-3.5 w-3.5" /></a>
           <button type="button" disabled={!dirty} onClick={() => setSettings(saved)} className="flex h-9 items-center gap-1 rounded-xl border border-border-subtle bg-surface-primary px-2.5 text-[9px] font-medium disabled:opacity-30"><RotateCcw className="h-3.5 w-3.5" /><span className="hidden lg:inline">Geri al</span></button>
           <button type="button" disabled={!dirty || saving || uploading} onClick={() => void publish()} className="flex h-9 items-center gap-1.5 rounded-xl bg-accent px-3 text-[9px] font-semibold text-[var(--rosta-action-text)] shadow-sm disabled:opacity-30"><Save className="h-3.5 w-3.5" />{saving ? "Yayınlanıyor" : "Yayınla"}</button>
         </div>
@@ -383,7 +383,7 @@ export function VisualThemeCustomizerV3() {
                 <input value={filter} onChange={(event) => setFilter(event.target.value)} placeholder="Alan ara" className="min-w-0 flex-1 bg-transparent text-[9px] outline-none" />
               </div>
               <div className="mt-2 max-h-[170px] space-y-1 overflow-y-auto pr-1">
-                {visibleOutline.map((item) => <button key={item.id} type="button" onClick={() => iframeRef.current?.contentWindow?.postMessage({ type: "RUTH_THEME_EDITOR_SELECT_REQUEST", id: item.id }, "*")} className={cx("flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-left transition", selected?.id === item.id ? "bg-accent text-[var(--rosta-action-text)]" : "hover:bg-accent/[0.045]")}>
+                {visibleOutline.map((item) => <button key={item.id} type="button" onClick={() => iframeRef.current?.contentWindow?.postMessage({ type: "RUTH_THEME_EDITOR_SELECT_REQUEST", id: item.id }, "*")} className={cx("flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-left transition", selected?.id === item.id ? "bg-accent text-[var(--rosta-action-text)]" : "active:bg-accent-soft focus-visible:bg-accent-soft")}>
                   <span className={cx("grid h-6 w-6 shrink-0 place-items-center rounded-lg text-[9px]", selected?.id === item.id ? "bg-surface-primary/15" : "bg-accent/[0.05]")}>{kindMark(item.kind)}</span>
                   <span className="min-w-0 flex-1 truncate text-[9px]">{item.label}</span>
                   {hasOverride(item.id) ? <span className={cx("h-1.5 w-1.5 rounded-full", selected?.id === item.id ? "bg-surface-primary" : "bg-accent")} /> : null}
@@ -407,7 +407,7 @@ export function VisualThemeCustomizerV3() {
                 <div className="space-y-2">
                   {textCapable ? <div><label className="mb-1.5 block text-[9px] font-medium">Metin</label><textarea rows={2} value={override?.text ?? selected.text ?? ""} onChange={(event) => patchOverride({ text: event.target.value })} className="w-full resize-none rounded-xl border border-border-subtle bg-surface-secondary p-2.5 text-[10px] outline-none focus:border-accent" /></div> : isTextual ? <div className="rounded-xl bg-surface-tertiary p-3 text-[9px] leading-relaxed text-muted">Bu öğe ikon veya iç içe yapı içeriyor. Yapıyı bozmamak için metin düzenleme kapalı; görünümünü aşağıdan değiştirebilirsin.</div> : null}
                   {selected.kind === "link" ? <div><label className="mb-1.5 block text-[9px] font-medium">Gideceği bağlantı</label><input value={override?.href ?? selected.href ?? ""} onChange={(event) => patchOverride({ href: event.target.value })} className="h-9 w-full rounded-xl border border-border-subtle bg-surface-secondary px-2.5 text-[9px] outline-none focus:border-accent" /></div> : null}
-                  {selected.kind === "image" && selected.tag !== "video" ? <div className="space-y-2"><label className="flex h-10 cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-border-strong bg-surface-secondary text-[9px] font-medium hover:border-black/35"><ImagePlus className="h-4 w-4" />{uploading ? "Yükleniyor…" : "Görseli değiştir"}<input hidden type="file" accept="image/*" disabled={uploading} onChange={(event) => { const file = event.target.files?.[0]; if (file) void upload(file); }} /></label><Segmented value={(style.objectFit || selected.metrics?.objectFit || "cover") as "cover" | "contain" | "fill"} options={[["cover", "Doldur"], ["contain", "Sığdır"], ["fill", "Esnet"]]} onChange={(value) => patchStyle("objectFit", value)} /></div> : null}
+                  {selected.kind === "image" && selected.tag !== "video" ? <div className="space-y-2"><label className="flex h-10 cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-border-strong bg-surface-secondary text-[9px] font-medium focus-within:border-accent"><ImagePlus className="h-4 w-4" />{uploading ? "Yükleniyor…" : "Görseli değiştir"}<input hidden type="file" accept="image/*" disabled={uploading} onChange={(event) => { const file = event.target.files?.[0]; if (file) void upload(file); }} /></label><Segmented value={(style.objectFit || selected.metrics?.objectFit || "cover") as "cover" | "contain" | "fill"} options={[["cover", "Doldur"], ["contain", "Sığdır"], ["fill", "Esnet"]]} onChange={(value) => patchStyle("objectFit", value)} /></div> : null}
                   {!textCapable && selected.kind !== "link" && selected.kind !== "image" && !isTextual ? <p className="text-[9px] leading-relaxed text-muted">Bu alanın içerik verisi doğrudan değiştirilmiyor. Boyut, boşluk ve görünüm ayarlarını kullan.</p> : null}
                 </div>
               </Accordion>
@@ -444,7 +444,7 @@ export function VisualThemeCustomizerV3() {
             <div className="mt-2"><Switch label="WhatsApp butonunu göster" checked={settings.whatsapp.enabled} onChange={(enabled) => setSettings((current) => ({ ...current, whatsapp: { ...current.whatsapp, enabled } }))} /></div>
           </div> : null}
 
-          <button type="button" onClick={() => setGlobalOpen((value) => !value)} className={cx("flex h-[49px] shrink-0 items-center justify-between border-t border-border-subtle px-4 text-left transition", globalOpen ? "bg-accent text-[var(--rosta-action-text)]" : "bg-surface-primary hover:bg-accent/[0.025]")}>
+          <button type="button" onClick={() => setGlobalOpen((value) => !value)} className={cx("flex h-[49px] shrink-0 items-center justify-between border-t border-border-subtle px-4 text-left transition", globalOpen ? "bg-accent text-[var(--rosta-action-text)]" : "bg-surface-primary active:bg-accent-soft focus-visible:bg-accent-soft")}>
             <span className="flex items-center gap-2 text-[10px] font-semibold"><Palette className="h-4 w-4" />Genel Tema</span>
             {globalOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
           </button>
