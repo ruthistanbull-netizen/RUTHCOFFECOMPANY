@@ -4,14 +4,14 @@ export function StorefrontRequestedFixes() {
       /* Home and product headers remain transparent; only foreground contrast changes. */
       html.ruth-home-page-active .ruth-zara-header.is-contrast,
       html.ruth-home-page-active .ruth-zara-header.is-contrast .ruth-zara-header-inner { background: transparent !important; border-color: transparent !important; box-shadow: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
-      html.ruth-home-page-active .ruth-zara-header.is-contrast .ruth-zara-header-inner { color: var(--ruth-home-header-logo-ink, var(--ruth-home-header-ink, #ffffff)) !important; mix-blend-mode: normal !important; }
+      html.ruth-home-page-active .ruth-zara-header.is-contrast .ruth-zara-header-inner { color: var(--ruth-home-header-logo-ink, var(--ruth-home-header-ink, var(--rosta-cream))) !important; mix-blend-mode: normal !important; }
       html.ruth-home-page-active .ruth-zara-header .header-wordmark,
       html.ruth-home-page-active .ruth-zara-header.is-contrast .header-wordmark { filter: brightness(0) invert(var(--ruth-home-header-logo-invert, var(--ruth-home-header-invert, 1))) !important; }
-      html.ruth-home-page-active .ruth-zara-menu-button:not(.ruth-zara-menu-button--menu-open) { color: var(--ruth-home-header-menu-ink, var(--ruth-home-header-ink, #ffffff)) !important; mix-blend-mode: normal !important; }
+      html.ruth-home-page-active .ruth-zara-menu-button:not(.ruth-zara-menu-button--menu-open) { color: var(--ruth-home-header-menu-ink, var(--ruth-home-header-ink, var(--rosta-cream))) !important; mix-blend-mode: normal !important; }
       html.ruth-home-page-active .ruth-zara-menu-button:not(.ruth-zara-menu-button--menu-open) .ruth-zara-hamburger__line { background: currentColor !important; }
-      html.ruth-home-page-active .ruth-zara-header button[aria-label="Ara"] { color: var(--ruth-home-header-search-ink, var(--ruth-home-header-ink, #ffffff)) !important; }
-      html.ruth-home-page-active .ruth-zara-header button[aria-label="Hesap menüsü"] { color: var(--ruth-home-header-account-ink, var(--ruth-home-header-ink, #ffffff)) !important; }
-      html.ruth-home-page-active .ruth-zara-header button[aria-label^="Sepet"] { color: var(--ruth-home-header-cart-ink, var(--ruth-home-header-ink, #ffffff)) !important; }
+      html.ruth-home-page-active .ruth-zara-header button[aria-label="Ara"] { color: var(--ruth-home-header-search-ink, var(--ruth-home-header-ink, var(--rosta-cream))) !important; }
+      html.ruth-home-page-active .ruth-zara-header button[aria-label="Hesap menüsü"] { color: var(--ruth-home-header-account-ink, var(--ruth-home-header-ink, var(--rosta-cream))) !important; }
+      html.ruth-home-page-active .ruth-zara-header button[aria-label^="Sepet"] { color: var(--ruth-home-header-cart-ink, var(--ruth-home-header-ink, var(--rosta-cream))) !important; }
       html.ruth-home-page-active .ruth-zara-header button[aria-label="Ara"] svg,
       html.ruth-home-page-active .ruth-zara-header button[aria-label="Hesap menüsü"] svg,
       html.ruth-home-page-active .ruth-zara-header button[aria-label^="Sepet"] svg { color: inherit !important; stroke: currentColor !important; }
@@ -21,7 +21,7 @@ export function StorefrontRequestedFixes() {
       html.ruth-product-page-active .ruth-zara-header.is-contrast,
       html.ruth-product-page-active .ruth-zara-header.product-header-transparent,
       html.ruth-product-page-active .ruth-zara-header .ruth-zara-header-inner { background: transparent !important; border-color: transparent !important; box-shadow: none !important; transition: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
-      html.ruth-product-page-active .ruth-zara-header .ruth-zara-header-inner { color: var(--ruth-product-header-ink, #111111) !important; mix-blend-mode: normal !important; }
+      html.ruth-product-page-active .ruth-zara-header .ruth-zara-header-inner { color: var(--ruth-product-header-ink, var(--rosta-carbon)) !important; mix-blend-mode: normal !important; }
       html.ruth-product-page-active .ruth-zara-header .header-wordmark { filter: brightness(0) invert(var(--ruth-product-header-invert, 0)) !important; }
       html.ruth-product-page-active .ruth-zara-header button,
       html.ruth-product-page-active .ruth-zara-header a,
@@ -30,19 +30,19 @@ export function StorefrontRequestedFixes() {
       /* Product-page mobile header: every action follows the same contrast variable as Menu. */
       @media (max-width: 767px) {
         html.ruth-product-page-active .ruth-zara-header .ruth-zara-header-inner,
-        html.ruth-product-page-active .ruth-zara-header .ruth-zara-header-inner > div { color: var(--ruth-product-header-ink, #111111) !important; }
+        html.ruth-product-page-active .ruth-zara-header .ruth-zara-header-inner > div { color: var(--ruth-product-header-ink, var(--rosta-carbon)) !important; }
         html.ruth-product-page-active .ruth-zara-header button[aria-label="Ara"],
         html.ruth-product-page-active .ruth-zara-header button[aria-label="Hesap menüsü"],
-        html.ruth-product-page-active .ruth-zara-header button[aria-label^="Sepet"] { color: var(--ruth-product-header-ink, #111111) !important; -webkit-text-fill-color: var(--ruth-product-header-ink, #111111) !important; opacity: 1 !important; }
+        html.ruth-product-page-active .ruth-zara-header button[aria-label^="Sepet"] { color: var(--ruth-product-header-ink, var(--rosta-carbon)) !important; -webkit-text-fill-color: var(--ruth-product-header-ink, var(--rosta-carbon)) !important; opacity: 1 !important; }
         html.ruth-product-page-active .ruth-zara-header button[aria-label="Ara"] svg,
         html.ruth-product-page-active .ruth-zara-header button[aria-label="Hesap menüsü"] svg,
-        html.ruth-product-page-active .ruth-zara-header button[aria-label^="Sepet"] svg { color: var(--ruth-product-header-ink, #111111) !important; stroke: var(--ruth-product-header-ink, #111111) !important; opacity: 1 !important; }
+        html.ruth-product-page-active .ruth-zara-header button[aria-label^="Sepet"] svg { color: var(--ruth-product-header-ink, var(--rosta-carbon)) !important; stroke: var(--ruth-product-header-ink, var(--rosta-carbon)) !important; opacity: 1 !important; }
         html.ruth-product-page-active .ruth-zara-header button[aria-label="Ara"] svg *,
         html.ruth-product-page-active .ruth-zara-header button[aria-label="Hesap menüsü"] svg *,
-        html.ruth-product-page-active .ruth-zara-header button[aria-label^="Sepet"] svg * { stroke: var(--ruth-product-header-ink, #111111) !important; color: var(--ruth-product-header-ink, #111111) !important; }
+        html.ruth-product-page-active .ruth-zara-header button[aria-label^="Sepet"] svg * { stroke: var(--ruth-product-header-ink, var(--rosta-carbon)) !important; color: var(--ruth-product-header-ink, var(--rosta-carbon)) !important; }
       }
 
-      html.ruth-product-page-active .ruth-zara-menu-button:not(.ruth-zara-menu-button--menu-open) { color: var(--ruth-product-header-ink, #111111) !important; mix-blend-mode: normal !important; }
+      html.ruth-product-page-active .ruth-zara-menu-button:not(.ruth-zara-menu-button--menu-open) { color: var(--ruth-product-header-ink, var(--rosta-carbon)) !important; mix-blend-mode: normal !important; }
       html.ruth-product-page-active .ruth-zara-menu-button:not(.ruth-zara-menu-button--menu-open) .ruth-zara-hamburger__line { background: currentColor !important; }
 
       /* Material and care are rendered as two separate paragraphs. */
