@@ -86,10 +86,10 @@ async function fetchTarget(baseUrl: string, secret: string, target: PanelSyncTar
     const response = await fetch(`${baseUrl}${target.route}`, {
       method: "GET",
       headers: {
-        "x-ruth-internal-secret": secret,
+        "x-rosta-internal-secret": secret,
         "x-ruth-cache-bypass": "1",
-        "x-ruth-panel-sync": "1",
-        "user-agent": "ruth-panel-sync/2.0",
+        "x-rosta-panel-sync": "1",
+        "user-agent": "rosta-panel-sync/2.0",
       },
       signal: controller.signal,
       cache: "no-store",
@@ -176,7 +176,7 @@ async function setHealthState(
 async function inspectCoreHealth(baseUrl: string, secret: string) {
   try {
     const response = await fetch(`${baseUrl}/api/commerce-core/health`, {
-      headers: { "x-ruth-internal-secret": secret, "x-ruth-cache-bypass": "1", "user-agent": "ruth-panel-sync/2.0" },
+      headers: { "x-rosta-internal-secret": secret, "x-ruth-cache-bypass": "1", "user-agent": "rosta-panel-sync/2.0" },
       cache: "no-store",
     });
     const payload = await response.json().catch(() => ({}));
