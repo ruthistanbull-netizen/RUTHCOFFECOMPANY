@@ -36,11 +36,11 @@ export function AdminPanelHubEntryGuard({ children }: { children: ReactNode }) {
   if (!allowed) {
     return (
       <div
-        aria-label="Backstage açılıyor"
+        aria-label="RR HUB açılıyor"
         className="fixed inset-0 z-[2147483647] bg-[#141414]"
       >
-        <div className="absolute left-5 top-[max(1.25rem,env(safe-area-inset-top))] text-[15px] font-semibold tracking-[-0.03em] text-white/72 sm:left-8">
-          Backstage
+        <div className="absolute left-5 top-[max(1.25rem,env(safe-area-inset-top))] text-[16px] font-black tracking-[0.035em] text-white/72 sm:left-8">
+          RR HUB
         </div>
       </div>
     );
