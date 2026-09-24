@@ -252,40 +252,32 @@ export function AdminInterfacePolishV2() {
         }
       }
 
-      /* Desktop brand: fill the sidebar brand rectangle much more strongly. */
+      /* Desktop brand: keep the ROSTA wordmark fully inside the sidebar header. */
       @media (min-width: 1024px) {
         aside[class*="z-sidebar"] > div:first-child {
           overflow: hidden !important;
-          padding-left: 8px !important;
-          padding-right: 8px !important;
+          padding-left: 12px !important;
+          padding-right: 12px !important;
         }
 
         aside[class*="z-sidebar"] > div:first-child > a[href="/"] {
           width: 100% !important;
           height: 100% !important;
           transform: none !important;
-          transform-origin: left center;
         }
 
-        aside[class*="z-sidebar"] img[src*="ruth-commerce-panel-logo"],
         aside[class*="z-sidebar"] img[alt="ROSTA Coffee Co."] {
           width: 100% !important;
-          max-width: none !important;
+          max-width: 202px !important;
           height: 100% !important;
-          max-height: none !important;
+          max-height: 58px !important;
           object-fit: contain !important;
-          transform: scale(1.65) !important;
-          transform-origin: left center !important;
+          object-position: center !important;
+          transform: none !important;
         }
 
         aside[class*="z-sidebar"] > div:first-child > a[href="/"] > div:first-child {
-          transform: scale(1.22);
-          transform-origin: left center;
-        }
-
-        aside[class*="z-sidebar"] > div:first-child > a[href="/"] p:first-child {
-          font-size: 18px !important;
-          line-height: 1 !important;
+          transform: none !important;
         }
       }
     `}</style>
