@@ -1,80 +1,130 @@
-/* Color-only layer for the directly transplanted ROSTA Coffee panel.
-   Geometry, spacing, animation, radii and interaction behavior remain source-identical. */
+/* ROSTA Global Color System v2.3
+ * Binding color-only contract for the transplanted admin UI.
+ * Geometry, spacing, typography and data behavior stay unchanged.
+ */
 :root,
-html:not(.dark) {
-  --app-background: 40 35% 93% !important;
-  --surface-primary: 40 35% 93% !important;
-  --surface-secondary: 40 22% 89% !important;
-  --surface-tertiary: 40 12% 84% !important;
-  --text-main: 0 0% 6.7% !important;
-  --text-muted: 64 11% 40% !important;
-  --text-subtle: 47 5% 65% !important;
-  --border-subtle: 47 5% 76% !important;
-  --border-strong: 47 5% 65% !important;
-  --accent: 12 50% 48% !important;
-  --accent-hover: 16 32% 13% !important;
-  --accent-soft: 12 42% 90% !important;
-  --accent-foreground: 40 35% 93% !important;
-  --success: 64 11% 40% !important;
-  --success-soft: 40 35% 93% !important;
-  --success-foreground: 16 32% 13% !important;
-  --warning: 12 50% 48% !important;
-  --warning-soft: 40 35% 93% !important;
-  --warning-foreground: 16 32% 13% !important;
-  --danger: 16 32% 13% !important;
-  --danger-soft: 40 35% 93% !important;
-  --danger-foreground: 16 32% 13% !important;
-  --info: 47 5% 65% !important;
-  --info-soft: 40 35% 93% !important;
-  --info-foreground: 0 0% 6.7% !important;
-  --neutral: 47 5% 65% !important;
-  --neutral-soft: 40 35% 93% !important;
-  --neutral-foreground: 64 11% 40% !important;
-
-  --rosta-carbon:#111111;
-  --rosta-bone:#F4F0E8;
-  --rosta-espresso:#2B1B16;
-  --rosta-oxide:#B9563D;
-  --rosta-olive:#6F725B;
-  --rosta-steel:#AAA8A1;
-
-  --ruth-color-canvas:#F4F0E8 !important;
-  --ruth-color-surface:#F4F0E8 !important;
-  --ruth-color-surface-muted:color-mix(in srgb,#F4F0E8 88%,#AAA8A1) !important;
-  --ruth-color-text-primary:#111111 !important;
-  --ruth-color-text-muted:#6F725B !important;
-  --ruth-color-text-inverse:#F4F0E8 !important;
-  --ruth-color-accent:#B9563D !important;
-  --ruth-color-accent-soft:color-mix(in srgb,#B9563D 18%,#F4F0E8) !important;
-  --ruth-color-accent-strong:#2B1B16 !important;
-  --ruth-color-border-subtle:#AAA8A1 !important;
-  --ruth-color-border-strong:#AAA8A1 !important;
-  --ruth-color-focus:#B9563D !important;
-}
-
 html:not(.dark),
-html:not(.dark) body {
-  background:#F4F0E8 !important;
-  color:#111111;
-}
-
-
 html.dark {
-  --app-background:0 0% 6.7% !important;
-  --surface-primary:16 32% 13% !important;
-  --surface-secondary:0 0% 6.7% !important;
-  --surface-tertiary:64 11% 40% !important;
-  --text-main:40 35% 93% !important;
-  --text-muted:47 5% 65% !important;
-  --text-subtle:64 11% 40% !important;
-  --border-subtle:64 11% 40% !important;
-  --border-strong:47 5% 65% !important;
-  --accent:12 50% 48% !important;
-  --accent-hover:40 35% 93% !important;
-  --accent-soft:16 32% 13% !important;
-  --accent-foreground:40 35% 93% !important;
+  /* Locked ROSTA brand palette */
+  --rosta-carbon: #111111;
+  --rosta-carbon-soft: #242424;
+  --rosta-cream: #FBF3E6;
+  --rosta-espresso: #38251C;
+  --rosta-brick-b: #C94A40;
+  --rosta-cocoa: #6B4638;
+  --rosta-kraft: #C8A77D;
+  --rosta-action-text: #FFFFFF;
+
+  /* Base44 HSL semantic bridge */
+  --app-background: 0 0% 6.7% !important;
+  --surface-primary: 0 0% 14.1% !important;
+  --surface-secondary: 0 0% 14.1% !important;
+  --surface-tertiary: 19.3 33.3% 16.5% !important;
+  --text-main: 37.1 72.4% 94.3% !important;
+  --text-muted: 37.1 72.4% 94.3% / .72 !important;
+  --text-subtle: 37.1 72.4% 94.3% / .65 !important;
+  --border-subtle: 33.6 40.5% 63.7% / .38 !important;
+  --border-strong: 33.6 40.5% 63.7% !important;
+  --accent: 4.4 55.9% 52% !important;
+  --accent-hover: 4.4 55.9% 52% !important;
+  --accent-active: 19.3 33.3% 16.5% !important;
+  --accent-soft: 4.4 55.9% 52% / .15 !important;
+  --accent-foreground: 0 0% 100% !important;
+
+  /* Ruth operational status semantics - do not remap to brand colors */
+  --success: 165.9 72.2% 38% !important;
+  --success-soft: 148.6 60% 93.1% !important;
+  --success-foreground: 166 72% 28% !important;
+  --warning: 38.3 74.3% 48.8% !important;
+  --warning-soft: 43.9 100% 92% !important;
+  --warning-foreground: 38.2 74.2% 34.9% !important;
+  --danger: 354.9 68.3% 62.9% !important;
+  --danger-soft: 353.1 100% 94.9% !important;
+  --danger-foreground: 355.1 67.8% 50% !important;
+  --info: 212.9 76.9% 61% !important;
+  --info-soft: 216 100% 96.1% !important;
+  --info-foreground: 213 77.1% 48% !important;
+  --neutral: 222.9 6.1% 54.9% !important;
+  --neutral-soft: 228 14.3% 93.1% !important;
+  --neutral-foreground: 225 5.9% 40% !important;
+  --status-accent: 43.9 56.8% 51% !important;
+  --status-accent-soft: 46.2 72.7% 87.1% !important;
+  --status-accent-foreground: 41.7 63.9% 14.1% !important;
+
+  /* Shared UI semantic bridge */
+  --ruth-color-canvas: var(--rosta-carbon) !important;
+  --ruth-color-surface: var(--rosta-carbon-soft) !important;
+  --ruth-color-surface-muted: var(--rosta-carbon-soft) !important;
+  --ruth-color-surface-elevated: var(--rosta-carbon-soft) !important;
+  --ruth-color-surface-inverse: var(--rosta-cream) !important;
+  --ruth-color-text-primary: var(--rosta-cream) !important;
+  --ruth-color-text-muted: color-mix(in srgb, var(--rosta-cream) 70%, transparent) !important;
+  --ruth-color-text-inverse: var(--rosta-cream) !important;
+  --ruth-color-text-on-light: var(--rosta-carbon) !important;
+  --ruth-color-text-on-action: var(--rosta-action-text) !important;
+  --ruth-color-accent: var(--rosta-brick-b) !important;
+  --ruth-color-accent-soft: color-mix(in srgb, var(--rosta-brick-b) 15%, transparent) !important;
+  --ruth-color-accent-strong: var(--rosta-espresso) !important;
+  --ruth-color-accent-wash: color-mix(in srgb, var(--rosta-brick-b) 15%, transparent) !important;
+  --ruth-color-border-subtle: color-mix(in srgb, var(--rosta-kraft) 42%, transparent) !important;
+  --ruth-color-border-strong: var(--rosta-kraft) !important;
+  --ruth-color-focus: var(--rosta-brick-b) !important;
+  --ruth-color-selected: var(--rosta-brick-b) !important;
+  --ruth-color-overlay: color-mix(in srgb, var(--rosta-carbon) 72%, transparent) !important;
+
+  --ruth-color-success: #1BA786 !important;
+  --ruth-color-success-soft: #E3F8ED !important;
+  --ruth-color-success-text: #147B63 !important;
+  --ruth-color-warning: #D99620 !important;
+  --ruth-color-warning-soft: #FFF4D6 !important;
+  --ruth-color-warning-text: #9B6B17 !important;
+  --ruth-color-danger: #E1606B !important;
+  --ruth-color-danger-soft: #FFE5E8 !important;
+  --ruth-color-danger-text: #D62937 !important;
+  --ruth-color-info: #4F94E8 !important;
+  --ruth-color-info-soft: #EBF3FF !important;
+  --ruth-color-info-text: #1C71D9 !important;
+  --ruth-color-neutral: #858993 !important;
+  --ruth-color-neutral-soft: #EBECF0 !important;
+  --ruth-color-neutral-text: #60636C !important;
+  --ruth-color-status-accent: #C9A33B !important;
+  --ruth-color-status-accent-soft: #F6EBC6 !important;
+  --ruth-color-status-accent-text: #3B2D0D !important;
 }
 
-[data-rosta-panel="true"] :where(input,textarea,select) {
-  accent-color:#B9563D;
+html,
+body,
+html:not(.dark),
+html:not(.dark) body,
+html.dark,
+html.dark body {
+  background: var(--rosta-carbon) !important;
+  color: var(--rosta-cream);
+  color-scheme: dark;
+}
+
+[data-rosta-panel="true"] {
+  accent-color: var(--rosta-brick-b);
+}
+
+[data-rosta-panel="true"] :where(input, textarea, select) {
+  caret-color: var(--rosta-brick-b);
+}
+
+[data-rosta-panel="true"] :where(button, a[href], input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--rosta-brick-b) !important;
+  outline-offset: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-rosta-panel="true"] :where(button, a[href], [role="button"]):hover {
+    --rosta-interaction-edge: var(--rosta-cream);
+  }
+}
+
+@media (forced-colors: active) {
+  [data-rosta-panel="true"] :where(button, a[href], input, textarea, select, [tabindex]):focus-visible {
+    outline: 2px solid Highlight !important;
+    outline-offset: 2px;
+  }
 }
