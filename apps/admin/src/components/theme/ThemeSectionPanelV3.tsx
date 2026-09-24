@@ -103,10 +103,10 @@ function Range({
   onChange: (value: number) => void;
 }) {
   return (
-    <div className="rounded-xl border border-black/[0.08] bg-[#fafafa] p-3">
+    <div className="rounded-xl border border-border-subtle bg-surface-secondary p-3">
       <div className="mb-1.5 flex items-center justify-between gap-3 text-[9px]">
         <span className="font-medium">{label}</span>
-        <span className="rounded-md bg-white px-1.5 py-0.5 tabular-nums text-black/45 shadow-sm">
+        <span className="rounded-md bg-surface-primary px-1.5 py-0.5 tabular-nums text-muted shadow-sm">
           {Math.round(value * 10) / 10}{suffix}
         </span>
       </div>
@@ -142,13 +142,13 @@ function Field({
           rows={4}
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          className="w-full resize-y rounded-xl border border-black/10 bg-[#fafafa] p-3 text-[10px] outline-none focus:border-black/30"
+          className="w-full resize-y rounded-xl border border-border-subtle bg-surface-secondary p-3 text-[10px] outline-none focus:border-black/30"
         />
       ) : (
         <input
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          className="h-10 w-full rounded-xl border border-black/10 bg-[#fafafa] px-3 text-[10px] outline-none focus:border-black/30"
+          className="h-10 w-full rounded-xl border border-border-subtle bg-surface-secondary px-3 text-[10px] outline-none focus:border-black/30"
         />
       )}
     </label>
@@ -160,12 +160,12 @@ function Toggle({ label, value, onChange }: { label: string; value: boolean; onC
     <button
       type="button"
       onClick={() => onChange(!value)}
-      className="flex h-11 w-full items-center justify-between rounded-xl border border-black/10 bg-white px-3.5 text-left"
+      className="flex h-11 w-full items-center justify-between rounded-xl border border-border-subtle bg-surface-primary px-3.5 text-left"
     >
       <span className="text-[10px] font-medium">{label}</span>
       <span className={`relative h-5 w-9 rounded-full transition ${value ? "bg-black" : "bg-black/15"}`}>
         <span
-          className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${
+          className={`absolute top-0.5 h-4 w-4 rounded-full bg-surface-primary shadow transition-transform ${
             value ? "translate-x-[18px]" : "translate-x-0.5"
           }`}
         />
@@ -176,7 +176,7 @@ function Toggle({ label, value, onChange }: { label: string; value: boolean; onC
 
 function Group({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-2xl border border-black/[0.08] bg-white p-3">
+    <section className="rounded-2xl border border-border-subtle bg-surface-primary p-3">
       <h3 className="mb-3 text-[10px] font-semibold">{title}</h3>
       <div className="space-y-2.5">{children}</div>
     </section>
@@ -210,7 +210,7 @@ function ImageUpload({ onChange }: { onChange: (url: string) => void }) {
   };
 
   return (
-    <label className="flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-black/20 bg-[#fafafa] text-[9px] font-semibold hover:border-black/35">
+    <label className="flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-border-strong bg-surface-secondary text-[9px] font-semibold hover:border-black/35">
       <ImagePlus className="h-4 w-4" />
       {busy ? "Yükleniyor…" : "Görsel Değiştir"}
       <input
@@ -255,21 +255,21 @@ function SectionSettings({
                 key={item.id}
                 type="button"
                 onClick={() => onEditInner(item.id)}
-                className="flex w-full items-center gap-3 rounded-xl border border-black/[0.07] bg-[#fafafa] px-3 py-2.5 text-left hover:border-black/20"
+                className="flex w-full items-center gap-3 rounded-xl border border-border-subtle bg-surface-secondary px-3 py-2.5 text-left hover:border-border-strong"
               >
-                <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-white text-[9px] shadow-sm">
+                <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-surface-primary text-[9px] shadow-sm">
                   {item.kind === "image" ? "▧" : item.kind === "button" ? "●" : item.kind === "link" ? "↗" : "T"}
                 </span>
                 <span className="min-w-0 flex-1">
                   <b className="block truncate text-[9px] font-medium">{item.label}</b>
-                  <small className="text-[7px] text-black/35">{item.kind}</small>
+                  <small className="text-[7px] text-subtle">{item.kind}</small>
                 </span>
-                <ChevronRight className="h-3.5 w-3.5 text-black/30" />
+                <ChevronRight className="h-3.5 w-3.5 text-subtle" />
               </button>
             ))}
           </div>
         ) : (
-          <div className="rounded-xl bg-[#f4f4f1] p-3 text-[9px] leading-relaxed text-black/50">
+          <div className="rounded-xl bg-surface-tertiary p-3 text-[9px] leading-relaxed text-muted">
             Önizleme yüklenince bu bölümün görselleri, yazıları ve butonları burada görünür.
           </div>
         )}
@@ -293,7 +293,7 @@ function SectionSettings({
                 <select
                   value={section.productSource || "featured"}
                   onChange={(event) => patch({ productSource: event.target.value as "featured" | "all" })}
-                  className="h-10 w-full rounded-xl border border-black/10 bg-[#fafafa] px-3 text-[10px]"
+                  className="h-10 w-full rounded-xl border border-border-subtle bg-surface-secondary px-3 text-[10px]"
                 >
                   <option value="featured">Öne Çıkanlar</option>
                   <option value="all">Tüm Ürünler</option>
@@ -325,7 +325,7 @@ function SectionSettings({
           ) : null}
         </>
       ) : (
-        <div className="rounded-2xl border border-black/[0.08] bg-white p-4 text-[9px] leading-relaxed text-black/55">
+        <div className="rounded-2xl border border-border-subtle bg-surface-primary p-4 text-[9px] leading-relaxed text-muted">
           Bu hazır bölümün mevcut site tasarımı korunuyor. İçindeki öğelerden görsel, yazı ve butonları tek tek düzenleyebilirsin.
         </div>
       )}
@@ -520,7 +520,7 @@ export function ThemeSectionPanelV3() {
           type="button"
           onClick={() => setOpen(true)}
           data-theme-sections-launcher
-          className="fixed left-[54px] top-[10px] z-[2147483600] flex h-9 items-center gap-2 rounded-xl border border-black/10 bg-white px-3 text-[9px] font-semibold shadow-sm hover:border-black/20"
+          className="fixed left-[54px] top-[10px] z-[2147483600] flex h-9 items-center gap-2 rounded-xl border border-border-subtle bg-surface-primary px-3 text-[9px] font-semibold shadow-sm hover:border-border-strong"
         >
           <Layers3 className="h-4 w-4" />
           Bölümler
@@ -528,10 +528,10 @@ export function ThemeSectionPanelV3() {
       ) : null}
 
       {open ? (
-        <aside className="fixed bottom-0 left-0 top-14 z-[2147483550] flex w-full max-w-[326px] flex-col border-r border-black/10 bg-[#f7f7f5] shadow-2xl">
-          <header className="flex h-13 shrink-0 items-center gap-2 border-b border-black/10 bg-white px-3 py-2">
+        <aside className="fixed bottom-0 left-0 top-14 z-[2147483550] flex w-full max-w-[326px] flex-col border-r border-border-subtle bg-background shadow-2xl text-main">
+          <header className="flex h-13 shrink-0 items-center gap-2 border-b border-border-subtle bg-surface-primary px-3 py-2">
             {selected ? (
-              <button type="button" onClick={() => setSelectedId(null)} className="grid h-8 w-8 place-items-center rounded-lg hover:bg-black/[0.05]" aria-label="Bölümlere dön">
+              <button type="button" onClick={() => setSelectedId(null)} className="grid h-8 w-8 place-items-center rounded-lg active:bg-accent-soft focus-visible:bg-accent-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" aria-label="Bölümlere dön">
                 <ArrowLeft className="h-4 w-4" />
               </button>
             ) : (
@@ -539,15 +539,15 @@ export function ThemeSectionPanelV3() {
             )}
             <div className="min-w-0 flex-1">
               <p className="truncate text-[11px] font-semibold">{selected ? selected.title || LABELS[selected.type] : "Bölümler"}</p>
-              <p className="text-[8px] text-black/40">{selected ? "İçerik ve görünüm" : "Sürükle · sırala · düzenle"}</p>
+              <p className="text-[8px] text-muted">{selected ? "İçerik ve görünüm" : "Sürükle · sırala · düzenle"}</p>
             </div>
-            <button type="button" onClick={() => setOpen(false)} className="grid h-8 w-8 place-items-center rounded-lg hover:bg-black/[0.05]" aria-label="Bölümleri kapat">
+            <button type="button" onClick={() => setOpen(false)} className="grid h-8 w-8 place-items-center rounded-lg active:bg-accent-soft focus-visible:bg-accent-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" aria-label="Bölümleri kapat">
               <X className="h-4 w-4" />
             </button>
           </header>
 
           {!selected ? (
-            <div className="shrink-0 border-b border-black/10 bg-white p-3">
+            <div className="shrink-0 border-b border-border-subtle bg-surface-primary p-3">
               <div className="flex gap-2">
                 <select
                   value={path}
@@ -556,13 +556,13 @@ export function ThemeSectionPanelV3() {
                     setSelectedId(null);
                     navigatePreview(event.target.value, dirty ? previewToken : undefined);
                   }}
-                  className="h-10 min-w-0 flex-1 rounded-xl border border-black/10 bg-[#fafafa] px-3 text-[9px]"
+                  className="h-10 min-w-0 flex-1 rounded-xl border border-border-subtle bg-surface-secondary px-3 text-[9px]"
                 >
                   {pages.map((item) => (
                     <option key={item.path} value={item.path}>{item.label}</option>
                   ))}
                 </select>
-                <button type="button" onClick={() => setPageOpen(true)} className="flex h-10 items-center gap-1 rounded-xl border border-black/10 bg-white px-2.5 text-[8px] font-medium">
+                <button type="button" onClick={() => setPageOpen(true)} className="flex h-10 items-center gap-1 rounded-xl border border-border-subtle bg-surface-primary px-2.5 text-[8px] font-medium">
                   <Plus className="h-3.5 w-3.5" />
                   Sayfa
                 </button>
@@ -591,16 +591,16 @@ export function ThemeSectionPanelV3() {
                     onDragEnd={() => setDragId(null)}
                     onDragOver={(event) => event.preventDefault()}
                     onDrop={() => drop(section.id)}
-                    className={`flex items-center gap-1 rounded-xl border bg-white p-2 ${dragId === section.id ? "border-black/30 opacity-60" : "border-black/[0.08]"}`}
+                    className={`flex items-center gap-1 rounded-xl border bg-surface-primary p-2 ${dragId === section.id ? "border-black/30 opacity-60" : "border-border-subtle"}`}
                   >
-                    <span className="grid h-8 w-6 cursor-grab place-items-center text-black/25">
+                    <span className="grid h-8 w-6 cursor-grab place-items-center text-subtle">
                       <GripVertical className="h-4 w-4" />
                     </span>
                     <button type="button" onClick={() => setSelectedId(section.id)} className="min-w-0 flex-1 px-1 text-left">
                       <b className="block truncate text-[9px] font-semibold">{section.title || LABELS[section.type]}</b>
-                      <span className="text-[7px] text-black/35">{LABELS[section.type]}</span>
+                      <span className="text-[7px] text-subtle">{LABELS[section.type]}</span>
                     </button>
-                    <button type="button" onClick={() => setPage({ ...page, sections: page.sections.map((item) => item.id === section.id ? { ...item, enabled: !item.enabled } : item) })} className="grid h-8 w-8 place-items-center rounded-lg hover:bg-black/[0.04]" aria-label={section.enabled ? "Bölümü gizle" : "Bölümü göster"}>
+                    <button type="button" onClick={() => setPage({ ...page, sections: page.sections.map((item) => item.id === section.id ? { ...item, enabled: !item.enabled } : item) })} className="grid h-8 w-8 place-items-center rounded-lg active:bg-accent-soft focus-visible:bg-accent-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" aria-label={section.enabled ? "Bölümü gizle" : "Bölümü göster"}>
                       {section.enabled ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
                     </button>
                     <button type="button" disabled={index === 0} onClick={() => move(index, -1)} className="grid h-8 w-7 place-items-center disabled:opacity-15"><ArrowUp className="h-3 w-3" /></button>
@@ -615,12 +615,12 @@ export function ThemeSectionPanelV3() {
             )}
           </div>
 
-          <footer className="absolute bottom-0 left-0 right-0 grid grid-cols-2 gap-2 border-t border-black/10 bg-white p-3">
-            <button type="button" onClick={() => setLibraryOpen(true)} className="flex h-10 items-center justify-center gap-1.5 rounded-xl border border-black/10 text-[9px] font-semibold">
+          <footer className="absolute bottom-0 left-0 right-0 grid grid-cols-2 gap-2 border-t border-border-subtle bg-surface-primary p-3">
+            <button type="button" onClick={() => setLibraryOpen(true)} className="flex h-10 items-center justify-center gap-1.5 rounded-xl border border-border-subtle text-[9px] font-semibold">
               <Plus className="h-3.5 w-3.5" />
               Yeni Bölüm
             </button>
-            <button type="button" onClick={openGeneral} className="flex h-10 items-center justify-center gap-1.5 rounded-xl border border-black/10 text-[9px] font-semibold">
+            <button type="button" onClick={openGeneral} className="flex h-10 items-center justify-center gap-1.5 rounded-xl border border-border-subtle text-[9px] font-semibold">
               <Palette className="h-3.5 w-3.5" />
               Genel Tema
             </button>
@@ -634,19 +634,19 @@ export function ThemeSectionPanelV3() {
 
       {libraryOpen ? (
         <div className="fixed inset-0 z-[2147483600] grid place-items-center bg-black/25 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-sm rounded-3xl bg-white p-4 shadow-2xl">
+          <div className="w-full max-w-sm rounded-3xl bg-surface-primary p-4 shadow-2xl">
             <div className="mb-4 flex items-center justify-between">
               <div>
                 <p className="text-[12px] font-semibold">Yeni Bölüm</p>
-                <p className="text-[8px] text-black/40">Eklemek istediğin alanı seç.</p>
+                <p className="text-[8px] text-muted">Eklemek istediğin alanı seç.</p>
               </div>
               <button onClick={() => setLibraryOpen(false)} className="grid h-8 w-8 place-items-center rounded-lg bg-black/[0.05]"><X className="h-4 w-4" /></button>
             </div>
             <div className="space-y-2">
               {LIBRARY.map((item) => (
-                <button key={item.type} type="button" onClick={() => addSection(item.type)} className="w-full rounded-2xl border border-black/[0.08] p-4 text-left hover:border-black/25">
+                <button key={item.type} type="button" onClick={() => addSection(item.type)} className="w-full rounded-2xl border border-border-subtle p-4 text-left hover:border-black/25">
                   <b className="block text-[10px]">{item.title}</b>
-                  <span className="mt-1 block text-[8px] leading-relaxed text-black/45">{item.detail}</span>
+                  <span className="mt-1 block text-[8px] leading-relaxed text-muted">{item.detail}</span>
                 </button>
               ))}
             </div>
@@ -656,11 +656,11 @@ export function ThemeSectionPanelV3() {
 
       {pageOpen ? (
         <div className="fixed inset-0 z-[2147483600] grid place-items-center bg-black/25 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-sm rounded-3xl bg-white p-4 shadow-2xl">
+          <div className="w-full max-w-sm rounded-3xl bg-surface-primary p-4 shadow-2xl">
             <div className="mb-4 flex items-center justify-between">
               <div>
                 <p className="text-[12px] font-semibold">Yeni Sayfa</p>
-                <p className="text-[8px] text-black/40">Boş sayfa oluştur, sonra bölümleri ekle.</p>
+                <p className="text-[8px] text-muted">Boş sayfa oluştur, sonra bölümleri ekle.</p>
               </div>
               <button onClick={() => setPageOpen(false)} className="grid h-8 w-8 place-items-center rounded-lg bg-black/[0.05]"><X className="h-4 w-4" /></button>
             </div>
