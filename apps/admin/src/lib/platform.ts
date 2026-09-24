@@ -6,7 +6,7 @@ export const ROSTA_SUPABASE_URL = `https://${ROSTA_SUPABASE_PROJECT_REF}.supabas
 export const ROSTA_SUPABASE_PUBLISHABLE_KEY =
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-  "sb_publishable_6Zoqk9z0WEDsvNZ79-b2Qw_fnKVuWhb";
+  "";
 
 export function assertRostaSupabaseUrl(value?: string) {
   const normalized = String(value || ROSTA_SUPABASE_URL).trim().replace(/\/+$/, "");
