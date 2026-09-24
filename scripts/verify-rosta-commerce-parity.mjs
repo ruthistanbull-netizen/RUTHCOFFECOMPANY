@@ -66,8 +66,10 @@ const runtimeConvergence = file("supabase/migrations/20260924184500_rosta_platfo
 
 expect(Boolean(rootPkg.scripts?.["typecheck:all"]), "root typecheck:all script missing");
 expect(Boolean(rootPkg.scripts?.["build:all"]), "root build:all script missing");
-expect(String(rootPkg.scripts?.["start:storefront"] || "").includes("apps/storefront/.next/BUILD_ID"), "storefront runtime start must self-heal a missing .next build");
-expect(String(rootPkg.scripts?.["start:admin"] || "").includes("apps/admin/.next/BUILD_ID"), "admin runtime start must self-heal a missing .next build");
+expect(String(rootPkg.scripts?.["start:storefront"] || "").includes("npm --prefix apps/storefront run start"), "storefront runtime must start the prebuilt Next app directly");
+expect(String(rootPkg.scripts?.["start:admin"] || "").includes("npm --prefix apps/admin run start"), "admin runtime must start the prebuilt Next app directly");
+expect(!String(rootPkg.scripts?.["start:storefront"] || "").includes("build:storefront"), "storefront runtime must never compile after container start");
+expect(!String(rootPkg.scripts?.["start:admin"] || "").includes("build:admin"), "admin runtime must never compile after container start");
 
 expect(adminPkg.dependencies?.["@supabase/supabase-js"] === "2.110.8", "admin Supabase client must match current Commerce lock (2.110.8)");
 expect(storefrontPkg.dependencies?.["@supabase/supabase-js"] === "2.110.8", "storefront Supabase client must match current Commerce lock (2.110.8)");
@@ -141,12 +143,12 @@ expect(exactRuntimeServiceDocker.includes("RUN npm run build:storefront"), "exac
 expect(exactRuntimeServiceDocker.includes("apps/storefront/.next/BUILD_ID"), "exact runtime service Docker alias must verify the storefront build artifact");
 expect(panelDocker.includes("apps/admin/.next/BUILD_ID"), "panel Dockerfile must verify the admin build artifact");
 expect(sharedDocker.includes("apps/storefront/.next/BUILD_ID") && sharedDocker.includes("apps/admin/.next/BUILD_ID"), "shared Dockerfile must verify app build artifacts");
-expect(!sharedDocker.includes("rostacoffecompany"), "shared Dockerfile still contains the misspelled storefront service/domain hint");
+expect(sharedDocker.includes("rostacoffecompany") && sharedDocker.includes("rostacoffeecompany"), "shared Dockerfile must recognize both actual and canonical storefront name variants");
 
-expect(adminNextConfig.includes("https://rostacoffeecompany.zeabur.app"), "admin Next config must use the actual storefront Zeabur domain");
+expect(adminNextConfig.includes("https://rostacoffecompany.zeabur.app"), "admin Next config must use the actual storefront Zeabur domain");
 expect(!adminNextConfig.includes('output: "standalone"'), "admin Docker runtime uses next start, so standalone output must not be enabled");
-expect(adminEnv.includes("https://rostacoffeecompany.zeabur.app/"), "admin env example must use the actual storefront Zeabur domain");
-expect(storefrontEnv.includes("https://rostacoffeecompany.zeabur.app/"), "storefront env example must use the actual storefront Zeabur domain");
+expect(adminEnv.includes("https://rostacoffecompany.zeabur.app/"), "admin env example must use the actual storefront Zeabur domain");
+expect(storefrontEnv.includes("https://rostacoffecompany.zeabur.app/"), "storefront env example must use the actual storefront Zeabur domain");
 
 expect(adminManifest.includes('name: "ROSTA Coffee Co. Control Room"'), "admin dynamic PWA manifest must be ROSTA branded");
 expect(adminManifest.includes('url: "/icon-192.png?v=25"'), "admin manifest 192px ROSTA icon missing");
