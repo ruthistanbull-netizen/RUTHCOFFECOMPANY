@@ -52,6 +52,7 @@ type SelectedElement = {
   text?: string;
   textEditable?: boolean;
   imageSrc?: string;
+  mediaType?: "image" | "video";
   href?: string;
   metrics?: {
     width: number;
@@ -84,6 +85,11 @@ const STOREFRONT_URL = RAW_STOREFRONT_URL
   .replace(/^https:\/\/ruthistanbul\.com(?=\/|$)/, "https://rostacoffecompany.zeabur.app")
   .replace(/\/$/, "");
 const THEME_IMAGE_ACCEPT = "image/*,.jpg,.jpeg,.png,.webp,.avif,.heic,.heif";
+const THEME_MEDIA_ACCEPT = "image/*,video/*,.jpg,.jpeg,.png,.webp,.avif,.heic,.heif,.mp4,.m4v,.mov,.webm";
+
+function mediaTypeForFile(file: File): "image" | "video" {
+  return file.type.startsWith("video/") || /\.(mp4|m4v|mov|webm)$/i.test(file.name || "") ? "video" : "image";
+}
 const FALLBACK_PAGES: PageItem[] = [
   { path: "/", label: "Ana Sayfa", group: "Mağaza" },
   { path: "/products", label: "Tüm Ürünler", group: "Mağaza" },
@@ -356,26 +362,35 @@ export function VisualThemeCustomizer() {
     if (!selected) return;
     setUploading("selected");
     try {
+      const mediaType = mediaTypeForFile(file);
       const src = await uploadThemeImage(file);
-      if (isHomepageHeroElement(path, selected.id)) {
+
+      if (isHomepageHeroElement(path, selected.id) && mediaType === "image") {
         const selectedDevice = homepageHeroDeviceForElement(selected.id) || device;
         await persistHeroImage(selectedDevice, src);
-      } else {
-        setSettings((current) => {
-          const base = baseOverride(current);
-          if (!base) return current;
-          return upsertThemeElementOverride(current, targetPage, { ...base, imageSrc: src, kind: "image" });
-        });
-        iframeRef.current?.contentWindow?.postMessage({
-          type: "RUTH_THEME_EDITOR_IMAGE_OVERRIDE",
-          id: selected.id,
-          selector: selected.selector,
-          imageSrc: src,
-          src,
-        }, "*");
       }
+
+      setSettings((current) => {
+        const base = baseOverride(current);
+        if (!base) return current;
+        return upsertThemeElementOverride(current, targetPage, {
+          ...base,
+          imageSrc: src,
+          mediaType,
+          kind: "image",
+        });
+      });
+      setSelected((current) => current ? { ...current, tag: mediaType === "video" ? "video" : "img", mediaType, imageSrc: src } : current);
+      iframeRef.current?.contentWindow?.postMessage({
+        type: "RUTH_THEME_EDITOR_MEDIA_OVERRIDE",
+        id: selected.id,
+        selector: selected.selector,
+        imageSrc: src,
+        src,
+        mediaType,
+      }, "*");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Görsel yüklenemedi.");
+      toast.error(error instanceof Error ? error.message : "Fotoğraf veya video yüklenemedi.");
     } finally {
       setUploading(null);
     }
@@ -390,6 +405,34 @@ export function VisualThemeCustomizer() {
         setMenu(null);
         pendingContextRef.current = { id: message.id, point: message.point as ContextPoint };
         iframeRef.current?.contentWindow?.postMessage({ type: "RUTH_THEME_EDITOR_SELECT_REQUEST", id: message.id, scroll: false }, "*");
+        return;
+      }
+
+      if (message.type === "RUTH_THEME_EDITOR_RESIZE" && typeof message.id === "string" && selected?.id === message.id) {
+        const width = Number(message.width);
+        const height = Number(message.height);
+        const targetDevice: Device = message.device === "mobile" ? "mobile" : "desktop";
+        if (Number.isFinite(width) && Number.isFinite(height) && width > 0 && height > 0) {
+          setSettings((current) => {
+            const base = baseOverride(current);
+            if (!base) return current;
+            const currentStyle = targetDevice === "mobile" ? base.mobile : base.desktop;
+            return upsertThemeElementOverride(current, targetPage, {
+              ...base,
+              [targetDevice]: {
+                ...(currentStyle || {}),
+                width: Math.round(width),
+                widthUnit: "px",
+                height: Math.round(height),
+                heightUnit: "px",
+              },
+            });
+          });
+          setSelected((current) => current ? {
+            ...current,
+            metrics: current.metrics ? { ...current.metrics, width: Math.round(width), height: Math.round(height) } : current.metrics,
+          } : current);
+        }
         return;
       }
 
@@ -421,7 +464,7 @@ export function VisualThemeCustomizer() {
 
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
-  }, [sendSettings, settings]);
+  }, [baseOverride, selected?.id, sendSettings, settings, targetPage]);
 
   const setPage = (nextPath: string) => {
     const page = pages.find((item) => item.path === nextPath);
@@ -555,19 +598,23 @@ export function VisualThemeCustomizer() {
             </div>
           </div>
 
-          {selected.kind === "image" && selected.tag !== "video" ? (
+          {selected.kind === "image" ? (
             <section className="border-b border-black/[0.06] p-3">
-              <p className="mb-2 text-[9px] font-semibold">Görsel</p>
+              <p className="mb-2 text-[9px] font-semibold">Medya</p>
               {selected.imageSrc ? (
                 <div className="mb-2 h-[68px] overflow-hidden rounded-lg border border-black/[0.06] bg-[#f6f6f4]">
-                  <img src={selectedOverride?.imageSrc || selected.imageSrc} alt="" className="h-full w-full object-cover" />
+                  {(selectedOverride?.mediaType || selected.mediaType || (selected.tag === "video" ? "video" : "image")) === "video" ? (
+                    <video src={selectedOverride?.imageSrc || selected.imageSrc} muted playsInline className="h-full w-full object-cover" />
+                  ) : (
+                    <img src={selectedOverride?.imageSrc || selected.imageSrc} alt="" className="h-full w-full object-cover" />
+                  )}
                 </div>
               ) : null}
               <label className={cx("relative flex h-10 w-full items-center justify-center gap-2 overflow-hidden rounded-xl border border-black/[0.09] bg-[#fafafa] text-[9px] font-medium hover:bg-white", uploading === "selected" && "pointer-events-none opacity-40")}>
-                <ImageIcon className="h-3.5 w-3.5" />{uploading === "selected" ? "Yükleniyor…" : "Fotoğrafı değiştir"}
+                <ImageIcon className="h-3.5 w-3.5" />{uploading === "selected" ? "Yükleniyor…" : "Fotoğraf / video değiştir"}
                 <input
                   type="file"
-                  accept={THEME_IMAGE_ACCEPT}
+                  accept={THEME_MEDIA_ACCEPT}
                   disabled={uploading === "selected"}
                   className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
                   onChange={(event) => {
@@ -582,8 +629,10 @@ export function VisualThemeCustomizer() {
                   <span className="mb-1 block text-[8px] font-medium text-black/45">Doldurma</span>
                   <select
                     value={selectedDeviceStyle?.objectFit || selectedMetrics?.objectFit || "cover"}
+                    onPointerDown={(event) => event.stopPropagation()}
+                    onClick={(event) => event.stopPropagation()}
                     onChange={(event) => patchDeviceStyle({ objectFit: event.target.value as ThemeDeviceStyle["objectFit"] })}
-                    className="h-9 w-full rounded-lg border border-black/10 bg-[#fafafa] px-2 text-[9px] outline-none"
+                    className="h-9 w-full cursor-pointer rounded-lg border border-black/10 bg-[#fafafa] px-2 text-[9px] outline-none"
                   >
                     <option value="cover">Kırp / doldur</option>
                     <option value="contain">Tamamını göster</option>
