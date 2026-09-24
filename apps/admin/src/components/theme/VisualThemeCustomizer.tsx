@@ -58,6 +58,7 @@ type SelectedElement = {
     height: number;
     fontSize: number;
     lineHeight: number | null;
+    letterSpacing: number;
     paddingX: number;
     paddingY: number;
     marginTop: number;
