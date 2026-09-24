@@ -304,7 +304,7 @@ export function RuthieWorkspaceV4() {
     setStatusError(null);
     try {
       const headers = await adminAuthHeaders();
-      const response = await fetch("/api/ruthie/openai/status", { headers, cache: "no-store" });
+      const response = await fetch("/api/rosta-insight/openai/status", { headers, cache: "no-store" });
       const payload = await response.json().catch(() => null) as ProviderStatus | null;
       if (!response.ok || !payload?.ok) throw new Error("ROSTA Insight sağlayıcı durumu alınamadı.");
       setStatus(payload);
@@ -318,7 +318,7 @@ export function RuthieWorkspaceV4() {
     setCatalogLoading(true);
     try {
       const headers = await adminAuthHeaders();
-      const response = await fetch("/api/ruthie/workspace", { headers, cache: "no-store" });
+      const response = await fetch("/api/rosta-insight/workspace", { headers, cache: "no-store" });
       const payload = await response.json().catch(() => null) as WorkspaceCatalog | null;
       if (!response.ok || !payload?.ok) throw new Error("Eklenti kataloğu alınamadı.");
       setCatalog(payload);
@@ -436,7 +436,7 @@ export function RuthieWorkspaceV4() {
 
     try {
       const authHeaders = await adminAuthHeaders();
-      const response = await fetch("/api/ruthie/openai/chat", {
+      const response = await fetch("/api/rosta-insight/openai/chat", {
         method: "POST",
         cache: "no-store",
         signal: controller.signal,
