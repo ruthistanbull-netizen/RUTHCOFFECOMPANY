@@ -28,8 +28,8 @@ RUN target="$ROSTA_APP"; \
 
 ENV NODE_ENV=production
 ENV HOSTNAME=0.0.0.0
-ENV PORT=3000
+ENV PORT=8080
 
-EXPOSE 3000
+EXPOSE 8080
 
 CMD ["sh","-c","target=\"$ROSTA_APP\"; if [ -z \"$target\" ] && [ -f /app/.rosta-app-target ]; then target=\"$(cat /app/.rosta-app-target)\"; fi; if [ \"$target\" = \"admin\" ]; then exec npm run start:admin; elif [ \"$target\" = \"storefront\" ]; then exec npm run start:storefront; else echo \"Invalid runtime ROSTA_APP: $target\" >&2; exit 2; fi"]
