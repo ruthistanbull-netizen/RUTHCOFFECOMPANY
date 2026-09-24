@@ -45,18 +45,9 @@ async function findActiveGmail(supabase: any, profileId?: string | null): Promis
   if (own.error) throw new Error(own.error.message);
   if (own.data && clean(own.data.email)) return own.data as EmailIntegration;
 
-  if (profileId) {
-    const shared = await supabase
-      .from("email_integrations")
-      .select("*")
-      .eq("provider", "gmail")
-      .eq("status", "active")
-      .order("updated_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-    if (shared.error) throw new Error(shared.error.message);
-    if (shared.data && clean(shared.data.email)) return shared.data as EmailIntegration;
-  }
+  // Profile-scoped panel actions must never fall back to another admin's Gmail.
+  // Global workers call this helper without a profile id and may use the latest
+  // explicitly connected ROSTA Gmail integration.
   return null;
 }
 
