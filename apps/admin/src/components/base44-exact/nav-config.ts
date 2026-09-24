@@ -126,8 +126,8 @@ export const exactNavStructure: ExactNavGroup[] = [
   {
     label: "ROSTA Insight",
     items: [
-      { label: "ROSTA Insight Chat", path: "/ruthie/chat", icon: RuthieBrandIcon, badge: "AI" },
-      { label: "ROSTA Insight Asistan", path: "/ruthie/voice", icon: AudioWaveform },
+      { label: "ROSTA Insight Chat", path: "/rosta-insight/chat", icon: RuthieBrandIcon, badge: "AI" },
+      { label: "ROSTA Insight Asistan", path: "/rosta-insight/voice", icon: AudioWaveform },
     ],
   },
   {
