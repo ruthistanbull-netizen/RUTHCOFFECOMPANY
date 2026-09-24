@@ -66,7 +66,7 @@ export function AppFrame({ children }: { children: ReactNode }) {
     </>
   );
 
-  if (pathname === "/ruthie" || pathname.startsWith("/ruthie/")) {
+  if (pathname === "/rosta-insight" || pathname.startsWith("/rosta-insight/") || pathname === "/ruthie" || pathname.startsWith("/ruthie/")) {
     return (
       <RequireAdmin>
         {providers}
