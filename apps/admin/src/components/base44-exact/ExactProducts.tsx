@@ -162,8 +162,8 @@ const PRODUCTS_CONTEXT_KEY = "rosta-products-resource-context-v1";
 const PRODUCTS_SAVED_VIEWS_KEY = "rosta-products-saved-views-v1";
 const DEFAULT_FINISHES = ["Açık Kavrum", "Orta Kavrum", "Koyu Kavrum", "Espresso Kavrum"];
 const STANDARD_CARE_VALUE = "Serin, kuru ve güneş almayan bir yerde; paketi hava almayacak şekilde kapalı saklayın.";
-const ADJUSTABLE_RING_VALUE = "250 g paket";
-const NECKLACE_SIZE_GUIDE_VALUE = "500 g paket";
+const PACKAGE_250G_VALUE = "250 g paket";
+const PACKAGE_500G_VALUE = "500 g paket";
 const DEFAULT_COLUMNS: ColumnVisibility = {
   material: true,
   collections: true,
@@ -360,7 +360,7 @@ function isNumericBulkField(field: BulkField) {
 
 function defaultBulkValue(field: BulkField, materials: string[], categories: Group[], collections: Group[]) {
   if (field === "finish_color") return DEFAULT_FINISHES[0];
-  if (field === "size_usage") return NECKLACE_SIZE_GUIDE_VALUE;
+  if (field === "size_usage") return PACKAGE_500G_VALUE;
   if (field === "care_advice") return STANDARD_CARE_VALUE;
   if (field === "material") return materials[0] || "Arabica";
   if (field === "stock_status") return "in_stock";
@@ -384,8 +384,8 @@ function bulkValueOptions(field: BulkField, materials: string[], categories: Gro
   }
   if (field === "size_usage") {
     return [
-      { value: NECKLACE_SIZE_GUIDE_VALUE, label: "500 g paket" },
-      { value: ADJUSTABLE_RING_VALUE, label: "250 g paket" },
+      { value: PACKAGE_500G_VALUE, label: "500 g paket" },
+      { value: PACKAGE_250G_VALUE, label: "250 g paket" },
       { value: "", label: "Paket bilgisini kaldır" },
     ];
   }
