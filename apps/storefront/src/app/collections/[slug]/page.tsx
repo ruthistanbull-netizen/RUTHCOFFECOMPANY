@@ -44,18 +44,18 @@ export default async function CollectionDetailPage({ params }: { params: Promise
   if (!collection) notFound();
 
   return (
-    <div className="min-h-screen bg-ivory px-4 pb-24 pt-[calc(var(--announcement-height,0px)+128px)] md:px-8">
+    <div className="min-h-screen bg-carbon px-4 pb-24 pt-[calc(var(--announcement-height,0px)+128px)] text-cream md:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="mb-12 grid gap-10 md:mb-16 md:grid-cols-[1fr_0.8fr] md:items-end">
           <AnimatedBlock delay={0.08}>
-            <p className="mb-3 text-xs uppercase tracking-wide-luxe text-gold-dark">Koleksiyon</p>
+            <p className="mb-3 text-xs uppercase tracking-wide-luxe text-brick">Koleksiyon</p>
             <h1
               className="font-heading font-editorial text-balance"
-              style={{ fontSize: "clamp(2.2rem, 6vw, 4.5rem)", color: "var(--ink)" }}
+              style={{ fontSize: "clamp(2.2rem, 6vw, 4.5rem)", color: "var(--rosta-cream)" }}
             >
               {collection.name}
             </h1>
-            <p className="mt-6 max-w-2xl leading-8 text-muted-ruth">
+            <p className="mt-6 max-w-2xl leading-8 text-cream/70">
               {collection.description || "ROSTA Coffee Co. seçili koleksiyonu."}
             </p>
           </AnimatedBlock>
