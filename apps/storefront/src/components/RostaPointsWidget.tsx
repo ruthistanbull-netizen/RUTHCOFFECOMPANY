@@ -227,22 +227,22 @@ export function RostaPointsWidget() {
       <style jsx global>{`
         .rewards-floating-bubble.rosta-points-offer-trigger {
           overflow: hidden;
-          border: 1px solid rgba(43, 27, 22, 0.14) !important;
-          background: rgba(244, 240, 232, 0.92) !important;
-          color: #111111 !important;
-          box-shadow: 0 12px 34px rgba(17, 17, 17, 0.12) !important;
+          border: 1px solid color-mix(in srgb, var(--rosta-kraft) 42%, transparent) !important;
+          background: color-mix(in srgb, var(--rosta-carbon-soft) 96%, transparent) !important;
+          color: var(--rosta-cream) !important;
+          box-shadow: 0 12px 34px color-mix(in srgb, var(--rosta-carbon) 46%, transparent) !important;
           backdrop-filter: blur(18px);
           -webkit-backdrop-filter: blur(18px);
         }
         .rosta-points-offer-trigger .rewards-floating-icon {
-          background: #111111 !important;
-          color: #F4F0E8 !important;
+          background: var(--rosta-brick-b) !important;
+          color: var(--rosta-action-text) !important;
         }
         .rewards-overlay.rosta-points-offer-overlay {
           position: fixed !important;
           inset: 0 !important;
           z-index: 9998 !important;
-          background: rgba(17, 17, 17, 0.42) !important;
+          background: var(--ruth-color-overlay) !important;
           backdrop-filter: none !important;
           -webkit-backdrop-filter: none !important;
         }
@@ -261,9 +261,9 @@ export function RostaPointsWidget() {
           overflow: hidden !important;
           border: 0 !important;
           border-radius: 0 !important;
-          background: #F4F0E8 !important;
-          color: #111111 !important;
-          box-shadow: -24px 0 70px rgba(17, 17, 17, 0.16) !important;
+          background: var(--rosta-carbon-soft) !important;
+          color: var(--rosta-cream) !important;
+          box-shadow: -24px 0 70px color-mix(in srgb, var(--rosta-carbon) 58%, transparent) !important;
           transform-origin: 100% 50%;
         }
         .rosta-points-offer-modal .rewards-close {
@@ -279,11 +279,8 @@ export function RostaPointsWidget() {
           border: 0;
           border-radius: 999px;
           background: transparent;
-          color: #111111;
+          color: var(--rosta-cream);
           transition: background 180ms ease;
-        }
-        .rosta-points-offer-modal .rewards-close:hover {
-          background: rgba(17, 17, 17, 0.055);
         }
         .rosta-points-offer-scroll {
           min-height: 0;
@@ -291,17 +288,17 @@ export function RostaPointsWidget() {
           overflow-y: auto;
           overscroll-behavior: contain;
           scrollbar-width: thin;
-          scrollbar-color: rgba(17, 17, 17, 0.18) transparent;
+          scrollbar-color: var(--rosta-kraft) transparent;
         }
         .rosta-points-offer-scroll::-webkit-scrollbar { width: 5px; }
         .rosta-points-offer-scroll::-webkit-scrollbar-thumb {
           border-radius: 999px;
-          background: rgba(17, 17, 17, 0.18);
+          background: var(--rosta-kraft);
         }
         .rosta-points-offer-copy {
           position: relative;
           padding: 52px 52px 46px;
-          background: #F4F0E8;
+          background: var(--rosta-carbon-soft);
         }
         .rosta-points-offer-brand {
           display: flex;
@@ -326,7 +323,7 @@ export function RostaPointsWidget() {
         .rosta-points-offer-copy h2 {
           max-width: 500px;
           margin: 0;
-          color: #111111;
+          color: var(--rosta-cream);
           font-family: var(--font-heading);
           font-size: clamp(34px, 5vw, 48px);
           font-weight: 900;
@@ -336,7 +333,7 @@ export function RostaPointsWidget() {
         .rosta-points-offer-copy > p {
           max-width: 480px;
           margin: 15px 0 0;
-          color: #6F725B;
+          color: color-mix(in srgb, var(--rosta-cream) 70%, transparent);
           font-size: 15px;
           line-height: 1.55;
         }
@@ -354,19 +351,19 @@ export function RostaPointsWidget() {
           justify-content: space-between;
           gap: 16px;
           padding: 0 18px;
-          border: 1px solid #AAA8A1;
+          border: 1px solid color-mix(in srgb, var(--rosta-kraft) 42%, transparent);
           border-radius: 999px;
-          background: #F4F0E8;
+          background: var(--rosta-carbon);
         }
         .rosta-points-offer-balance span {
           overflow: hidden;
-          color: #6F725B;
+          color: color-mix(in srgb, var(--rosta-cream) 70%, transparent);
           font-size: 12px;
           text-overflow: ellipsis;
           white-space: nowrap;
         }
         .rosta-points-offer-balance strong {
-          color: #111111;
+          color: var(--rosta-cream);
           font-family: var(--font-heading);
           font-size: 17px;
           font-weight: 500;
@@ -381,22 +378,22 @@ export function RostaPointsWidget() {
           gap: 8px;
           padding: 0 23px;
           border-radius: 999px;
-          background: #111111;
-          color: #F4F0E8 !important;
+          border: 1px solid var(--rosta-brick-b);
+          background: var(--rosta-brick-b);
+          color: var(--rosta-action-text) !important;
           font-size: 12px;
           font-weight: 600;
           text-decoration: none !important;
           transition: background 180ms ease;
         }
-        .rosta-points-offer-cta:hover { background: #111111; }
         .rosta-points-offer-legal {
           margin-top: 13px !important;
-          color: #6F725B !important;
+          color: color-mix(in srgb, var(--rosta-cream) 70%, transparent) !important;
           font-size: 10.5px !important;
           line-height: 1.5 !important;
         }
         .rosta-points-offer-legal a {
-          color: #6F725B;
+          color: color-mix(in srgb, var(--rosta-cream) 70%, transparent);
           text-decoration: underline;
           text-underline-offset: 3px;
         }
@@ -406,7 +403,7 @@ export function RostaPointsWidget() {
           height: min(43vw, 390px);
           min-height: 300px;
           overflow: hidden;
-          background: #AAA8A1;
+          background: var(--rosta-kraft);
         }
         .rosta-points-offer-photo img {
           display: block;
@@ -420,11 +417,11 @@ export function RostaPointsWidget() {
           position: absolute;
           inset: 0;
           pointer-events: none;
-          background: linear-gradient(180deg, rgba(17,17,17,0.015), rgba(17,17,17,0.05));
+          background: linear-gradient(180deg, color-mix(in srgb, var(--rosta-carbon) 6%, transparent), color-mix(in srgb, var(--rosta-carbon) 28%, transparent));
         }
         .rosta-points-offer-details {
           padding: 28px 52px calc(40px + env(safe-area-inset-bottom));
-          background: #F4F0E8;
+          background: var(--rosta-carbon-soft);
         }
         .rosta-points-offer-section-head {
           display: flex;
@@ -432,12 +429,12 @@ export function RostaPointsWidget() {
           justify-content: space-between;
           gap: 20px;
           padding-bottom: 20px;
-          border-bottom: 1px solid #AAA8A1;
+          border-bottom: 1px solid color-mix(in srgb, var(--rosta-kraft) 42%, transparent);
         }
         .rosta-points-offer-section-head span {
           display: block;
           margin-bottom: 5px;
-          color: #6F725B;
+          color: var(--rosta-brick-b);
           font-size: 9px;
           font-weight: 600;
           letter-spacing: 0.16em;
@@ -445,7 +442,7 @@ export function RostaPointsWidget() {
         }
         .rosta-points-offer-section-head h3 {
           margin: 0;
-          color: #111111;
+          color: var(--rosta-cream);
           font-family: var(--font-heading);
           font-size: 23px;
           font-weight: 500;
@@ -463,11 +460,11 @@ export function RostaPointsWidget() {
         .rosta-points-offer-value small {
           display: block;
           margin-top: 3px;
-          color: #6F725B;
+          color: color-mix(in srgb, var(--rosta-cream) 70%, transparent);
           font-size: 10px;
         }
         .rosta-points-offer-accordion {
-          border-bottom: 1px solid #AAA8A1;
+          border-bottom: 1px solid var(--rosta-kraft);
         }
         .rosta-points-offer-accordion-trigger {
           display: flex;
@@ -479,7 +476,7 @@ export function RostaPointsWidget() {
           padding: 0;
           border: 0;
           background: transparent;
-          color: #2B1B16;
+          color: var(--rosta-cream);
           font-size: 13px;
           font-weight: 600;
           text-align: left;
@@ -496,8 +493,8 @@ export function RostaPointsWidget() {
           align-items: center;
           justify-content: center;
           border-radius: 999px;
-          background: #F4F0E8;
-          color: #2B1B16;
+          background: var(--rosta-carbon-soft);
+          color: var(--rosta-cream);
         }
         .rosta-points-offer-accordion-content { overflow: hidden; }
         .rosta-points-offer-action-item {
@@ -506,8 +503,8 @@ export function RostaPointsWidget() {
           gap: 12px;
           align-items: center;
           padding: 13px 0;
-          border-top: 1px solid rgba(170, 168, 161, 0.72);
-          color: #2B1B16;
+          border-top: 1px solid color-mix(in srgb, var(--rosta-kraft) 42%, transparent);
+          color: var(--rosta-cream);
         }
         button.rosta-points-offer-action-item {
           width: 100%;
@@ -520,7 +517,7 @@ export function RostaPointsWidget() {
         .rosta-points-offer-action-item > svg:first-child {
           width: 19px;
           height: 19px;
-          color: #2B1B16;
+          color: var(--rosta-cream);
         }
         .rosta-points-offer-action-item strong {
           display: block;
@@ -530,7 +527,7 @@ export function RostaPointsWidget() {
         .rosta-points-offer-action-item span {
           display: block;
           margin-top: 3px;
-          color: #6F725B;
+          color: color-mix(in srgb, var(--rosta-cream) 70%, transparent);
           font-size: 11px;
           line-height: 1.45;
         }
@@ -544,34 +541,64 @@ export function RostaPointsWidget() {
           width: 130px;
           min-height: 36px;
           padding: 0 11px;
-          border: 1px solid #AAA8A1;
+          border: 1px solid var(--rosta-kraft);
           border-radius: 8px;
-          background: #F4F0E8;
-          color: #2B1B16;
+          background: var(--rosta-carbon-soft);
+          color: var(--rosta-cream);
           font-size: 11px;
           outline: none;
         }
-        .rosta-points-birthday-fields input:focus {
-          border-color: #6F725B;
-          box-shadow: 0 0 0 3px rgba(43, 27, 22, 0.08);
+        .rosta-points-birthday-fields input:focus-visible {
+          border-color: var(--rosta-brick-b);
+          outline: 2px solid var(--rosta-brick-b);
+          outline-offset: 2px;
+          box-shadow: none;
         }
         .rosta-points-birthday-fields button {
           min-height: 36px;
           padding: 0 13px;
           border: 0;
           border-radius: 8px;
-          background: #111111;
-          color: #F4F0E8;
+          border: 1px solid var(--rosta-brick-b);
+          background: var(--rosta-brick-b);
+          color: var(--rosta-action-text);
           font-size: 10.5px;
         }
         .rosta-points-offer-note {
           margin: 4px 0 14px;
-          color: #6F725B;
+          color: color-mix(in srgb, var(--rosta-cream) 70%, transparent);
           font-size: 10.5px;
         }
         .rewards-error-text {
-          color: #B9563D !important;
+          color: var(--ruth-color-danger) !important;
           font-size: 10px !important;
+        }
+        .rosta-points-offer-cta:active,
+        .rosta-points-birthday-fields button:active {
+          border-color: var(--rosta-espresso) !important;
+          background: var(--rosta-espresso) !important;
+          color: var(--rosta-cream) !important;
+        }
+        .rosta-points-offer-modal :where(button, a, input):focus-visible {
+          outline: 2px solid var(--rosta-brick-b);
+          outline-offset: 2px;
+        }
+        @media (hover: hover) and (pointer: fine) {
+          .rosta-points-offer-modal .rewards-close:hover {
+            background: var(--ruth-color-accent-wash);
+          }
+          .rosta-points-offer-cta:hover {
+            box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--rosta-cream) 74%, transparent);
+          }
+          .rosta-points-offer-legal a:hover,
+          .rosta-points-offer-accordion-trigger:hover {
+            color: var(--rosta-brick-b);
+          }
+        }
+        @media (forced-colors: active) {
+          .rosta-points-offer-modal :where(button, a, input):focus-visible {
+            outline: 2px solid Highlight;
+          }
         }
         @media (max-width: 767px) {
           .rewards-panel.rosta-points-offer-modal {
