@@ -67,7 +67,7 @@ export function RuthieVoiceAnalysisOverlay() {
   const refresh = useCallback(async () => {
     try {
       const headers = await adminAuthHeaders();
-      const response = await fetch("/api/ruthie/voice-profile", { headers, cache: "no-store" });
+      const response = await fetch("/api/rosta-insight/voice-profile", { headers, cache: "no-store" });
       const payload = await response.json().catch(() => null) as VoiceProfileResponse | null;
       if (!response.ok || !payload?.ok || !payload.profile) throw new Error(payload?.error?.message || "Ses profili okunamadı.");
       setProfile(payload.profile);
@@ -82,7 +82,7 @@ export function RuthieVoiceAnalysisOverlay() {
   const updateProfile = useCallback(async (action: "enable" | "disable" | "toggle" | "learning_enable" | "learning_disable" | "reset") => {
     try {
       const headers = await adminAuthHeaders();
-      const response = await fetch("/api/ruthie/voice-profile", {
+      const response = await fetch("/api/rosta-insight/voice-profile", {
         method: "PATCH",
         cache: "no-store",
         headers: { ...headers, "Content-Type": "application/json" },
@@ -169,7 +169,7 @@ export function RuthieVoiceAnalysisOverlay() {
         const transcriptWordCount = latestText ? latestText.split(/\s+/).filter(Boolean).length : 0;
         const speechRate = transcriptWordCount > 0 ? clamp(transcriptWordCount / durationSeconds * 60, 40, 280) : null;
         const headers = await adminAuthHeaders();
-        const response = await fetch("/api/ruthie/voice-profile", {
+        const response = await fetch("/api/rosta-insight/voice-profile", {
           method: "POST",
           cache: "no-store",
           headers: { ...headers, "Content-Type": "application/json" },
