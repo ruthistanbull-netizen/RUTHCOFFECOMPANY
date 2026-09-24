@@ -5,7 +5,7 @@ import { useEffect } from "react";
 
 type Rgb = { red: number; green: number; blue: number };
 
-const DEFAULT_SURFACE = "rgb(246 240 231)";
+const DEFAULT_SURFACE = "rgb(17 17 17)";
 const THEME_META_ID = "ruth-mobile-chrome-theme-color";
 
 function clamp(value: number, minimum: number, maximum: number) {
@@ -134,7 +134,7 @@ function resolvedHeaderSurface(pathname: string) {
     if (behindHeader) return behindHeader;
   }
 
-  return variableColor("--ivory", "--background") || DEFAULT_SURFACE;
+  return variableColor("--ruth-color-canvas", "--background") || DEFAULT_SURFACE;
 }
 
 function applyThemeColorWithoutTakingHeadOwnership(color: string) {
