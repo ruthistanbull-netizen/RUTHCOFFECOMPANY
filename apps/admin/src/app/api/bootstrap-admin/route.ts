@@ -49,7 +49,7 @@ export async function POST(request: Request) {
     password,
     email_confirm: true,
     user_metadata: { full_name: fullName, rosta_admin: true },
-  });
+  } as any);
   if (created.error || !created.data.user) {
     return NextResponse.json(
       { ok: false, error: created.error?.message || "Admin auth kullanıcısı oluşturulamadı." },
