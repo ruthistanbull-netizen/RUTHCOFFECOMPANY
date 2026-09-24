@@ -46,6 +46,21 @@ export function PanelHubProfiles() {
   const [remember, setRemember] = useState(false);
 
   useEffect(() => {
+    const resetSelection = () => {
+      setActive(null);
+      setError(null);
+      document.documentElement.style.removeProperty("pointer-events");
+    };
+
+    const onPageShow = () => resetSelection();
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") resetSelection();
+    };
+
+    window.addEventListener("pageshow", onPageShow);
+    document.addEventListener("visibilitychange", onVisibility);
+    resetSelection();
+
     setRemember(adminRememberSessionEnabled());
     let alive = true;
     void getSupabaseBrowser().auth.getSession().then(({ data }) => {
@@ -58,6 +73,8 @@ export function PanelHubProfiles() {
     });
     return () => {
       alive = false;
+      window.removeEventListener("pageshow", onPageShow);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
   }, []);
 
@@ -90,7 +107,7 @@ export function PanelHubProfiles() {
       }, 360);
     } catch (caught) {
       setActive(null);
-      setError(caught instanceof Error ? caught.message : "Ruth paneline güvenli geçiş başlatılamadı.");
+      setError(caught instanceof Error ? caught.message : "Ruth çalışma alanına güvenli geçiş başlatılamadı.");
     }
   };
 
@@ -113,7 +130,7 @@ export function PanelHubProfiles() {
     {
       key: "rosta" as const,
       label: "ROSTA Coffee Co.",
-      caption: "Control Room",
+      caption: "Workspace",
       image: "/rosta-coffee-co.svg",
       imageClass: "h-[62%] w-[78%] object-contain",
       surface: "bg-[#F4F0E8]",
@@ -122,7 +139,7 @@ export function PanelHubProfiles() {
     {
       key: "ruth" as const,
       label: "Ruth Istanbul",
-      caption: "Commerce",
+      caption: "Workspace",
       image: `${RUTH_ADMIN_URL}/ruth-commerce-panel-logo.png?v=20260807-3`,
       imageClass: "h-[72%] w-[84%] object-contain",
       surface: "bg-[linear-gradient(145deg,#171717,#28231a)]",
@@ -134,9 +151,9 @@ export function PanelHubProfiles() {
     <main className="relative min-h-[100dvh] overflow-hidden bg-[#141414] text-white" data-panel-hub>
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_-12%,rgba(255,255,255,.075),transparent_37%),linear-gradient(180deg,rgba(0,0,0,.04),rgba(0,0,0,.32))]" />
 
-      <header className="relative z-20 flex h-[72px] items-center justify-between px-5 sm:px-8 lg:px-12">
+      <header className="relative z-20 flex h-[68px] items-center justify-between px-5 pt-[env(safe-area-inset-top)] sm:h-[72px] sm:px-8 lg:px-12">
         <div className="text-[17px] font-semibold tracking-[-0.03em] text-white/92">
-          Control Hub
+          Backstage
         </div>
         <button
           type="button"
@@ -153,22 +170,22 @@ export function PanelHubProfiles() {
         initial={{ opacity: 0 }}
         animate={{ opacity: active ? 0.82 : 1 }}
         transition={{ duration: 0.28 }}
-        className="relative z-10 mx-auto flex min-h-[calc(100dvh-144px)] w-full max-w-[1120px] flex-col items-center justify-center px-5 pb-16 pt-5"
+        className="relative z-10 mx-auto flex min-h-[calc(100dvh-132px)] w-full max-w-[1120px] flex-col items-center justify-center px-5 pb-[max(3rem,env(safe-area-inset-bottom))] pt-4 sm:min-h-[calc(100dvh-144px)] sm:pb-16 sm:pt-5"
       >
         <motion.div
           animate={active ? { opacity: 0.28, y: -8, scale: 0.985 } : { opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.3, ease: [0.2, 0.8, 0.2, 1] }}
-          className="mb-10 text-center sm:mb-12"
+          className="mb-8 max-w-[620px] text-center sm:mb-12"
         >
-          <h1 className="text-[34px] font-normal leading-none tracking-[-0.045em] sm:text-[48px] lg:text-[56px]">
-            Hangi panel?
+          <h1 className="text-[31px] font-normal leading-[1.05] tracking-[-0.045em] sm:text-[46px] lg:text-[54px]">
+            Hangi markayla devam etmek istiyorsun?
           </h1>
           <p className="mt-3 text-[12px] text-white/38 sm:text-[13px]">
             {email || "Yönetici hesabı"}
           </p>
         </motion.div>
 
-        <div className="flex w-full max-w-[620px] items-start justify-center gap-7 sm:gap-11">
+        <div className="flex w-full max-w-[620px] items-start justify-center gap-5 sm:gap-11">
           {cards.map((card) => {
             const selected = active === card.key;
             const dimmed = Boolean(active && !selected);
@@ -187,10 +204,10 @@ export function PanelHubProfiles() {
                       ? { opacity: 0.16, y: 8, scale: 0.88 }
                       : { opacity: 1, y: 0, scale: 1 }
                 }
-                transition={{ duration: 0.32, ease: [0.2, 0.8, 0.2, 1] }}
-                whileHover={active ? undefined : { scale: 1.07, y: -3 }}
+                transition={{ duration: 0.24, ease: [0.2, 0.8, 0.2, 1] }}
+                whileHover={active ? undefined : { scale: 1.055, y: -2 }}
                 whileTap={active ? undefined : { scale: 0.985 }}
-                className="group w-[132px] text-left outline-none sm:w-[188px] lg:w-[208px]"
+                className="group w-[140px] touch-manipulation text-left outline-none sm:w-[188px] lg:w-[208px]"
               >
                 <div
                   className={[
