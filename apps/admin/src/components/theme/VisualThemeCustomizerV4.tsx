@@ -194,7 +194,7 @@ function Toggle({
     <button
       type="button"
       onClick={() => onChange(!value)}
-      className="flex min-h-12 w-full items-center gap-3 rounded-lg border border-border-subtle bg-surface-primary px-3.5 text-left transition hover:border-border-strong"
+      className="flex min-h-12 w-full items-center gap-3 rounded-lg border border-border-subtle bg-surface-primary px-3.5 text-left transition focus-visible:border-border-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
     >
       <span className="min-w-0 flex-1">
         <b className="block text-[11px] font-medium">{label}</b>
@@ -307,7 +307,7 @@ function ImageUpload({
           </label>
         </div>
         {value ? (
-          <button type="button" onClick={() => onChange("")} className="grid h-8 w-8 shrink-0 place-items-center rounded-md text-subtle active:bg-accent-soft focus-visible:bg-accent-soft focus-visible:text-main">
+          <button type="button" onClick={() => onChange("")} className="grid h-8 w-8 shrink-0 place-items-center rounded-md text-subtle active:bg-accent-soft focus-visible:bg-accent-soft focus-visible:text-main focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
             <Trash2 className="h-3.5 w-3.5" />
           </button>
         ) : null}
@@ -318,7 +318,7 @@ function ImageUpload({
 
 function ThemeMenuItem({ title, detail, onClick }: { title: string; detail: string; onClick: () => void }) {
   return (
-    <button type="button" onClick={onClick} className="flex min-h-14 w-full items-center gap-3 border-b border-border-subtle px-4 text-left transition hover:bg-accent-soft">
+    <button type="button" onClick={onClick} className="flex min-h-14 w-full items-center gap-3 border-b border-border-subtle px-4 text-left transition active:bg-accent-soft focus-visible:bg-accent-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
       <span className="min-w-0 flex-1">
         <b className="block text-[11px] font-medium">{title}</b>
         <small className="mt-0.5 block text-[9px] leading-4 text-muted">{detail}</small>
@@ -669,7 +669,7 @@ export function VisualThemeCustomizerV4() {
     <div className="fixed inset-0 z-[90] flex min-h-0 flex-col bg-background text-main" data-theme-customizer-v4>
       <header className="flex h-[64px] min-h-[64px] shrink-0 items-center border-b border-border-subtle bg-surface-primary px-3 md:px-4">
         <div className="flex min-w-0 flex-1 items-center gap-3">
-          <a href="/" aria-label="Panele dön" className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-border-subtle active:bg-accent-soft focus-visible:bg-accent-soft">
+          <a href="/" aria-label="Panele dön" className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-border-subtle active:bg-accent-soft focus-visible:bg-accent-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
             <X className="h-4 w-4" />
           </a>
           <div className="hidden min-w-0 sm:block">
@@ -682,7 +682,7 @@ export function VisualThemeCustomizerV4() {
           <select
             value={activePageKey}
             onChange={(event) => changePage(event.target.value)}
-            className="h-9 w-full max-w-[330px] rounded-lg border border-border-subtle bg-surface-primary px-3 text-[11px] font-medium outline-none hover:border-border-strong"
+            className="h-9 w-full max-w-[330px] rounded-lg border border-border-subtle bg-surface-primary px-3 text-[11px] font-medium outline-none focus-visible:border-border-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             aria-label="Düzenlenecek sayfa"
           >
             {groupedPages.map(([group, items]) => (
@@ -698,7 +698,7 @@ export function VisualThemeCustomizerV4() {
         </div>
 
         <div className="flex flex-1 items-center justify-end gap-2">
-          {lifecycleDirty ? <button type="button" onClick={discardAll} disabled={lifecycleSaving} className="hidden h-9 rounded-lg border border-border-subtle px-3 text-[9px] font-medium active:bg-accent-soft focus-visible:bg-accent-soft disabled:opacity-40 sm:inline-flex sm:items-center">Geri al</button> : null}
+          {lifecycleDirty ? <button type="button" onClick={discardAll} disabled={lifecycleSaving} className="hidden h-9 rounded-lg border border-border-subtle px-3 text-[9px] font-medium active:bg-accent-soft focus-visible:bg-accent-soft disabled:opacity-40 sm:inline-flex sm:items-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">Geri al</button> : null}
           <button type="button" onClick={() => void saveAll()} disabled={!lifecycleDirty || loading || lifecycleSaving} className="inline-flex h-9 items-center gap-2 rounded-lg bg-accent px-3.5 text-[9px] font-semibold text-[var(--rosta-action-text)] active:bg-[var(--rosta-espresso)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-default disabled:opacity-35">
             {lifecycleSaving ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
             Kaydet
@@ -710,7 +710,7 @@ export function VisualThemeCustomizerV4() {
         <aside className="order-2 flex h-[48dvh] w-full shrink-0 flex-col border-t border-border-subtle bg-surface-primary md:order-1 md:h-full md:w-[360px] md:border-r md:border-t-0">
           <div className="flex h-[54px] shrink-0 items-center gap-2 border-b border-border-subtle px-3">
             {view !== "sections" ? (
-              <button type="button" onClick={back} className="grid h-8 w-8 shrink-0 place-items-center rounded-md active:bg-accent-soft focus-visible:bg-accent-soft"><ArrowLeft className="h-4 w-4" /></button>
+              <button type="button" onClick={back} className="grid h-8 w-8 shrink-0 place-items-center rounded-md active:bg-accent-soft focus-visible:bg-accent-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><ArrowLeft className="h-4 w-4" /></button>
             ) : (
               <Layers3 className="ml-1 h-4 w-4 shrink-0 text-muted" />
             )}
@@ -749,7 +749,7 @@ export function VisualThemeCustomizerV4() {
                           <b className="block truncate text-[10px] font-medium">{SECTION_LABELS[section.type]}</b>
                           <small className="mt-0.5 block truncate text-[8px] text-subtle">{section.enabled ? "Gösteriliyor" : "Gizli"}</small>
                         </button>
-                        <button type="button" onClick={() => toggleSection(section.id)} className="grid h-8 w-8 shrink-0 place-items-center rounded-md text-muted active:bg-accent-soft focus-visible:bg-accent-soft" aria-label={section.enabled ? "Gizle" : "Göster"}>
+                        <button type="button" onClick={() => toggleSection(section.id)} className="grid h-8 w-8 shrink-0 place-items-center rounded-md text-muted active:bg-accent-soft focus-visible:bg-accent-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" aria-label={section.enabled ? "Gizle" : "Göster"}>
                           {section.enabled ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
                         </button>
                         {!["hero", "scroll-story", "collections", "featured-products", "brand-story", "trust"].includes(section.type) ? (
@@ -758,7 +758,7 @@ export function VisualThemeCustomizerV4() {
                       </div>
                     ))}
                   </div>
-                  <button type="button" onClick={() => setView("library")} className="mx-3 flex h-10 w-[calc(100%-24px)] items-center justify-center gap-2 rounded-lg border border-dashed border-border-strong text-[9px] font-medium text-muted focus-visible:border-accent hover:bg-accent-soft"><Plus className="h-3.5 w-3.5" />Yeni Bölüm Ekle</button>
+                  <button type="button" onClick={() => setView("library")} className="mx-3 flex h-10 w-[calc(100%-24px)] items-center justify-center gap-2 rounded-lg border border-dashed border-border-strong text-[9px] font-medium text-muted focus-visible:border-accent active:bg-accent-soft focus-visible:bg-accent-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Plus className="h-3.5 w-3.5" />Yeni Bölüm Ekle</button>
                 </div>
               ) : (
                 <div className="p-4">
@@ -775,7 +775,7 @@ export function VisualThemeCustomizerV4() {
                 <p className="px-1 pb-3 text-[9px] leading-4 text-muted">Sayfaya eklemek istediğin hazır bölümü seç. Eklendikten sonra yalnızca o bölümün gerekli ayarları gösterilir.</p>
                 <div className="space-y-2">
                   {SECTION_LIBRARY.map((item) => (
-                    <button key={item.type} type="button" onClick={() => addSection(item.type)} className="flex min-h-[62px] w-full items-center gap-3 rounded-lg border border-border-subtle bg-surface-primary px-3 text-left focus-visible:border-accent hover:bg-accent-soft">
+                    <button key={item.type} type="button" onClick={() => addSection(item.type)} className="flex min-h-[62px] w-full items-center gap-3 rounded-lg border border-border-subtle bg-surface-primary px-3 text-left focus-visible:border-accent active:bg-accent-soft focus-visible:bg-accent-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
                       <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-accent-soft text-accent"><Plus className="h-4 w-4" /></span>
                       <span className="min-w-0 flex-1"><b className="block text-[10px] font-medium">{item.title}</b><small className="mt-1 block text-[8px] leading-4 text-muted">{item.detail}</small></span>
                     </button>
