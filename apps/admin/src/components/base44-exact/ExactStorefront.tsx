@@ -36,7 +36,7 @@ type PreviewMode = "desktop" | "mobile";
 const DRAFT_KEY = "rosta_exact_base44_storefront_draft";
 const LEGACY_DRAFT_KEY = "ruth_exact_base44_storefront_draft";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://rostacoffecompany.zeabur.app";
-const SITE_HOST = SITE_URL.replace(/^https?:\\/\\//, "").replace(/\\/.*$/, "");
+const SITE_HOST = SITE_URL.replace(/^https?:\/\//, "").replace(/\/.*$/, "");
 
 function safeDraft(value: string | null) {
   if (!value) return null;
