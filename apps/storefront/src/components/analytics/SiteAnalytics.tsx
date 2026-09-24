@@ -460,6 +460,7 @@ function initializeMarketingTags() {
 
   const metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID?.trim();
   const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim();
+  const gtmId = (process.env.NEXT_PUBLIC_GTM_ID || process.env.NEXT_PUBLIC_GTM_CONTAINER_ID || "").trim();
   const gtmId = process.env.NEXT_PUBLIC_GTM_ID?.trim();
   const tiktokPixelId = process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID?.trim();
 
