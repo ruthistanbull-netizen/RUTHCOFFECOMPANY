@@ -264,13 +264,13 @@ export function AccountOrdersClient() {
               await signOut();
               window.location.href = "/";
             }}
-            className="inline-flex items-center justify-center gap-2 border border-kraft/45 px-6 py-3 text-xs uppercase tracking-wide-luxe text-cream transition hover:bg-carbon-soft"
+            className="inline-flex items-center justify-center gap-2 border border-kraft/45 px-6 py-3 text-xs uppercase tracking-wide-luxe text-cream transition active:bg-brick/10"
           >
             <LogOut size={15} /> Çıkış Yap
           </button>
         </div>
 
-        {error ? <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div> : null}
+        {error ? <div className="mb-6 rounded-xl border border-[var(--ruth-color-danger)]/40 bg-[var(--ruth-color-danger-soft)] px-4 py-3 text-sm text-[var(--ruth-color-danger-text)]">{error}</div> : null}
 
         {orders.length === 0 ? (
           <div className="rounded-2xl border border-kraft/35 bg-carbon-soft p-8 text-center">
