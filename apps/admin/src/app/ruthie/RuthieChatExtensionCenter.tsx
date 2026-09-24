@@ -224,7 +224,7 @@ export function RuthieChatExtensionCenter() {
   const helpIntegration = integrations.find((item) => item.id === helpId) || null;
 
   const launcher = host ? createPortal(
-    <section className={styles.launcher} aria-label="Ruthie eklentileri ve yetenekleri">
+    <section className={styles.launcher} aria-label="ROSTA Insight eklentileri ve yetenekleri">
       <button type="button" onClick={openIntegrations}>
         <span className={styles.launcherIcon}><Plug /></span>
         <span><strong>Eklentiler</strong><small>Dış servis bağlantıları</small></span>
@@ -233,7 +233,7 @@ export function RuthieChatExtensionCenter() {
       </button>
       <button type="button" onClick={() => { syncAbilityState(); setModal("abilities"); }}>
         <span className={styles.launcherIcon}><Sparkles /></span>
-        <span><strong>Yetenekler</strong><small>Ruthie çalışma özellikleri</small></span>
+        <span><strong>Yetenekler</strong><small>ROSTA Insight çalışma özellikleri</small></span>
         <em>{enabledAbilityCount}/{abilities.length}</em>
         <ChevronRight />
       </button>
@@ -251,7 +251,7 @@ export function RuthieChatExtensionCenter() {
             <span>{modal === "integrations" ? <Plug /> : <Sparkles />}</span>
             <div>
               <strong>{modal === "integrations" ? "Eklentiler" : "Yetenekler"}</strong>
-              <small>{modal === "integrations" ? "Ruthie'nin bağlanabildiği dış servisler" : "Ruthie'nin kullanabildiği çalışma özellikleri"}</small>
+              <small>{modal === "integrations" ? "ROSTA Insight'ın bağlanabildiği dış servisler" : "ROSTA Insight'ın kullanabildiği çalışma özellikleri"}</small>
             </div>
           </div>
           <button type="button" onClick={() => setModal(null)} aria-label="Pencereyi kapat"><X /></button>
