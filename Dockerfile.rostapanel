@@ -15,8 +15,8 @@ RUN npm run build:admin && test -f apps/admin/.next/BUILD_ID
 
 ENV NODE_ENV=production
 ENV HOSTNAME=0.0.0.0
-ENV PORT=3000
+ENV PORT=8080
 ENV ROSTA_APP=admin
 
-EXPOSE 3000
+EXPOSE 8080
 CMD ["npm","run","start:admin"]
