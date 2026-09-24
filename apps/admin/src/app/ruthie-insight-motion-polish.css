@@ -38,17 +38,10 @@
               border-color 180ms ease !important;
 }
 
-[data-ruthie-insight-popup="true"] > header button:last-child:hover {
-  translate: 0 -1px;
-  scale: 1.045;
-  border-color: rgba(201, 162, 58, .22) !important;
-  box-shadow: 0 9px 22px rgba(65, 51, 24, .11);
-}
-
 [data-ruthie-insight-popup="true"] > header button:last-child:active {
   translate: 0 1px;
   scale: .92;
-  box-shadow: 0 3px 10px rgba(65, 51, 24, .08);
+  box-shadow: 0 3px 10px color-mix(in srgb, var(--rosta-carbon) 34%, transparent);
 }
 
 /* Empty-state Ruthie orb */
@@ -77,24 +70,15 @@
   inset: -40% -18%;
   z-index: -1;
   pointer-events: none;
-  background: linear-gradient(105deg, transparent 32%, rgba(255,255,255,.62) 48%, transparent 64%);
+  background: linear-gradient(105deg, transparent 32%, color-mix(in srgb, var(--rosta-cream) 62%, transparent) 48%, transparent 64%);
   translate: -115% 0;
   transition: translate 520ms cubic-bezier(.22, 1, .36, 1);
-}
-
-[data-ruthie-insight-popup="true"] [class*="max-w-md"][class*="grid"] > button:hover {
-  translate: 0 -2px;
-  scale: 1.012;
-}
-
-[data-ruthie-insight-popup="true"] [class*="max-w-md"][class*="grid"] > button:hover::after {
-  translate: 115% 0;
 }
 
 [data-ruthie-insight-popup="true"] [class*="max-w-md"][class*="grid"] > button:active {
   translate: 0 1px;
   scale: .965;
-  box-shadow: 0 3px 10px rgba(59, 49, 29, .05) !important;
+  box-shadow: 0 3px 10px color-mix(in srgb, var(--rosta-carbon) 28%, transparent) !important;
   transition-duration: 80ms !important;
 }
 
@@ -114,7 +98,7 @@
   top: -100px;
   border-radius: 50%;
   pointer-events: none;
-  background: radial-gradient(circle, rgba(230,210,139,.24), transparent 68%);
+  background: radial-gradient(circle, color-mix(in srgb, var(--rosta-kraft) 24%, transparent), transparent 68%);
   animation: ri-card-glow 5.5s ease-in-out infinite;
   z-index: -1;
 }
@@ -129,12 +113,6 @@
               border-color 180ms ease,
               color 180ms ease,
               filter 180ms ease !important;
-}
-
-[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-7"][class*="rounded-full"]:hover {
-  translate: 0 -1px;
-  scale: 1.025;
-  filter: saturate(1.04);
 }
 
 [data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-7"][class*="rounded-full"]:active {
@@ -161,27 +139,15 @@
               filter 180ms ease !important;
 }
 
-[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-8"]:hover {
-  translate: 0 -2px;
-  scale: 1.018;
-  filter: saturate(1.05);
-  box-shadow: 0 11px 24px rgba(92, 69, 20, .11), inset 0 1px 0 rgba(255,255,255,.9) !important;
-}
-
 [data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-8"]:active {
   translate: 0 1px;
   scale: .955;
-  box-shadow: 0 4px 11px rgba(70, 54, 22, .07) !important;
+  box-shadow: 0 4px 11px color-mix(in srgb, var(--rosta-carbon) 32%, transparent) !important;
   transition-duration: 75ms !important;
 }
 
 [data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-8"] svg {
   transition: rotate 260ms cubic-bezier(.22, 1, .36, 1), scale 220ms cubic-bezier(.22, 1, .36, 1);
-}
-
-[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-8"]:hover svg {
-  rotate: -7deg;
-  scale: 1.12;
 }
 
 /* Composer */
@@ -210,12 +176,6 @@
               color 180ms ease !important;
 }
 
-[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ekle ve oluştur"]:hover {
-  translate: 0 -1px;
-  scale: 1.055;
-  box-shadow: 0 8px 18px rgba(61, 50, 30, .08);
-}
-
 [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ekle ve oluştur"]:active {
   translate: 0 1px;
   scale: .90;
@@ -240,31 +200,17 @@
   inset: -6px;
   z-index: -1;
   border-radius: 999px;
-  background: rgba(201, 162, 58, .14);
+  background: color-mix(in srgb, var(--rosta-brick-b) 14%, transparent);
   opacity: 0;
   scale: .72;
   transition: opacity 180ms ease, scale 300ms cubic-bezier(.22, 1, .36, 1);
-}
-
-[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Görsel fiyatını göster"]:hover,
-[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ruthie’ye gönder"]:hover {
-  translate: 0 -2px;
-  scale: 1.065;
-  filter: saturate(1.07);
-  box-shadow: 0 13px 26px rgba(168,131,38,.28), inset 0 1px 0 rgba(255,255,255,.5) !important;
-}
-
-[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Görsel fiyatını göster"]:hover::before,
-[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ruthie’ye gönder"]:hover::before {
-  opacity: 1;
-  scale: 1;
 }
 
 [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Görsel fiyatını göster"]:active,
 [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ruthie’ye gönder"]:active {
   translate: 0 2px;
   scale: .90;
-  box-shadow: 0 4px 11px rgba(168,131,38,.19), inset 0 2px 4px rgba(77,55,10,.12) !important;
+  box-shadow: 0 4px 11px color-mix(in srgb, var(--rosta-brick-b) 19%, transparent), inset 0 2px 4px color-mix(in srgb, var(--rosta-espresso) 36%, transparent) !important;
   transition-duration: 65ms !important;
 }
 
@@ -273,28 +219,12 @@
   transition: translate 200ms cubic-bezier(.22, 1, .36, 1), rotate 240ms cubic-bezier(.22, 1, .36, 1), scale 200ms cubic-bezier(.22, 1, .36, 1);
 }
 
-[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ruthie’ye gönder"]:hover svg {
-  translate: 2px -2px;
-  rotate: -8deg;
-  scale: 1.08;
-}
-
-[data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Görsel fiyatını göster"]:hover svg {
-  rotate: 9deg;
-  scale: 1.12;
-}
-
 /* Tool chooser popover */
 [data-ruthie-insight-popup="true"] div[class*="absolute"][class*="bottom-[calc(100%+8px)]"] button {
   transition: scale 150ms cubic-bezier(.22, 1, .36, 1),
               translate 150ms cubic-bezier(.22, 1, .36, 1),
               background 170ms ease,
               box-shadow 180ms ease !important;
-}
-
-[data-ruthie-insight-popup="true"] div[class*="absolute"][class*="bottom-[calc(100%+8px)]"] button:hover {
-  translate: 2px 0;
-  scale: 1.008;
 }
 
 [data-ruthie-insight-popup="true"] div[class*="absolute"][class*="bottom-[calc(100%+8px)]"] button:active {
@@ -306,17 +236,8 @@
   transition: translate 180ms cubic-bezier(.22, 1, .36, 1), color 180ms ease, opacity 180ms ease;
 }
 
-[data-ruthie-insight-popup="true"] a[href="/ruthie/chat"]:hover {
-  translate: -2px 0;
-}
-
 [data-ruthie-insight-popup="true"] a[href="/ruthie/chat"] svg {
   transition: translate 180ms cubic-bezier(.22, 1, .36, 1), rotate 180ms ease;
-}
-
-[data-ruthie-insight-popup="true"] a[href="/ruthie/chat"]:hover svg {
-  translate: 2px -2px;
-  rotate: 3deg;
 }
 
 @keyframes ri-surface-settle {
@@ -343,8 +264,8 @@
 }
 
 @keyframes ri-orb-float {
-  0%, 100% { translate: 0 0; box-shadow: 0 10px 30px rgba(201,162,58,.12), 0 0 0 7px rgba(201,162,58,.045), inset 0 1px 0 rgba(255,255,255,.96); }
-  50% { translate: 0 -3px; box-shadow: 0 15px 34px rgba(201,162,58,.16), 0 0 0 8px rgba(201,162,58,.055), inset 0 1px 0 rgba(255,255,255,.96); }
+  0%, 100% { translate: 0 0; box-shadow: 0 10px 30px color-mix(in srgb, var(--rosta-brick-b) 12%, transparent), 0 0 0 7px color-mix(in srgb, var(--rosta-brick-b) 4.5%, transparent), inset 0 1px 0 color-mix(in srgb, var(--rosta-cream) 96%, transparent); }
+  50% { translate: 0 -3px; box-shadow: 0 15px 34px color-mix(in srgb, var(--rosta-brick-b) 16%, transparent), 0 0 0 8px color-mix(in srgb, var(--rosta-brick-b) 5.5%, transparent), inset 0 1px 0 color-mix(in srgb, var(--rosta-cream) 96%, transparent); }
 }
 
 @keyframes ri-card-glow {
@@ -362,6 +283,88 @@
   0% { scale: .5; rotate: -18deg; opacity: .25; }
   70% { scale: 1.18; rotate: 3deg; opacity: 1; }
   100% { scale: 1; rotate: 0; opacity: 1; }
+}
+
+
+@media (hover: hover) and (pointer: fine) {
+  [data-ruthie-insight-popup="true"] > header button:last-child:hover {
+    translate: 0 -1px;
+    scale: 1.045;
+    border-color: color-mix(in srgb, var(--rosta-brick-b) 22%, transparent) !important;
+    box-shadow: 0 9px 22px color-mix(in srgb, var(--rosta-carbon) 42%, transparent);
+  }
+
+  [data-ruthie-insight-popup="true"] [class*="max-w-md"][class*="grid"] > button:hover {
+    translate: 0 -2px;
+    scale: 1.012;
+  }
+
+  [data-ruthie-insight-popup="true"] [class*="max-w-md"][class*="grid"] > button:hover::after {
+    translate: 115% 0;
+  }
+
+  [data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-7"][class*="rounded-full"]:hover {
+    translate: 0 -1px;
+    scale: 1.025;
+    filter: saturate(1.04);
+  }
+
+  [data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-8"]:hover {
+    translate: 0 -2px;
+    scale: 1.018;
+    filter: saturate(1.05);
+    box-shadow: 0 11px 24px color-mix(in srgb, var(--rosta-carbon) 40%, transparent), inset 0 1px 0 color-mix(in srgb, var(--rosta-cream) 90%, transparent) !important;
+  }
+
+  [data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-8"]:hover svg {
+    rotate: -7deg;
+    scale: 1.12;
+  }
+
+  [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ekle ve oluştur"]:hover {
+    translate: 0 -1px;
+    scale: 1.055;
+    box-shadow: 0 8px 18px color-mix(in srgb, var(--rosta-carbon) 34%, transparent);
+  }
+
+  [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Görsel fiyatını göster"]:hover,
+  [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ruthie’ye gönder"]:hover {
+    translate: 0 -2px;
+    scale: 1.065;
+    filter: saturate(1.07);
+    box-shadow: 0 13px 26px color-mix(in srgb, var(--rosta-brick-b) 28%, transparent), inset 0 1px 0 color-mix(in srgb, var(--rosta-cream) 50%, transparent) !important;
+  }
+
+  [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Görsel fiyatını göster"]:hover::before,
+  [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ruthie’ye gönder"]:hover::before {
+    opacity: 1;
+    scale: 1;
+  }
+
+  [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ruthie’ye gönder"]:hover svg {
+    translate: 2px -2px;
+    rotate: -8deg;
+    scale: 1.08;
+  }
+
+  [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Görsel fiyatını göster"]:hover svg {
+    rotate: 9deg;
+    scale: 1.12;
+  }
+
+  [data-ruthie-insight-popup="true"] div[class*="absolute"][class*="bottom-[calc(100%+8px)]"] button:hover {
+    translate: 2px 0;
+    scale: 1.008;
+  }
+
+  [data-ruthie-insight-popup="true"] a[href="/ruthie/chat"]:hover {
+    translate: -2px 0;
+  }
+
+  [data-ruthie-insight-popup="true"] a[href="/ruthie/chat"]:hover svg {
+    translate: 2px -2px;
+    rotate: 3deg;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
