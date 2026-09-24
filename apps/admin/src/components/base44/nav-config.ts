@@ -94,7 +94,7 @@ export const base44NavStructure: Base44NavGroup[] = [
     items: [
       { label: "Meta Reklamları", href: "/meta-ads", icon: BarChart3, exact: true, badge: "META" },
       { label: "Meta Katalogları", href: "/meta-ads/catalogs", icon: Layers, exact: true, badge: "META" },
-      { label: "Ruthie Reklam Analizi", href: "/meta-ads/analysis", icon: Sparkles, badge: "AI" },
+      { label: "ROSTA Insight Reklam Analizi", href: "/meta-ads/analysis", icon: Sparkles, badge: "AI" },
     ],
   },
   {
@@ -106,10 +106,10 @@ export const base44NavStructure: Base44NavGroup[] = [
     ],
   },
   {
-    label: "Ruthie",
+    label: "ROSTA Insight",
     items: [
-      { label: "Ruthie Chat", href: "/ruthie/chat", icon: Sparkles, badge: "AI" },
-      { label: "Ruthie Asistan", href: "/ruthie/voice", icon: Mic2 },
+      { label: "ROSTA Insight Chat", href: "/ruthie/chat", icon: Sparkles, badge: "AI" },
+      { label: "ROSTA Insight Asistan", href: "/ruthie/voice", icon: Mic2 },
     ],
   },
   {
@@ -126,7 +126,7 @@ export const base44MobileNav: Base44NavItem[] = [
   { label: "Merkez", href: "/", icon: Gauge, exact: true },
   { label: "Sipariş", href: "/orders", icon: ShoppingBag },
   { label: "Ürünler", href: "/products", icon: Boxes },
-  { label: "Ruthie", href: "/ruthie/chat", icon: Sparkles, aliases: ["/ruthie/voice"] },
+  { label: "ROSTA Insight", href: "/ruthie/chat", icon: Sparkles, aliases: ["/ruthie/voice"] },
   { label: "Daha Fazla", href: "/settings", icon: Settings2 },
 ];
 
