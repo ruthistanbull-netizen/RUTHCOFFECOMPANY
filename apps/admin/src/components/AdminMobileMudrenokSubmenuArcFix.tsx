@@ -10,7 +10,7 @@ const FINALIZE_MS = 930;
 function accentColor(root: HTMLElement, strong = false) {
   const css = getComputedStyle(root);
   return css.getPropertyValue(strong ? "--quarter-menu-accent-strong" : "--quarter-menu-accent").trim()
-    || (strong ? "#e2c76b" : "#c9a23a");
+    || (strong ? "#38251C" : "#C94A40");
 }
 
 function fixMainArc(root: HTMLElement) {
