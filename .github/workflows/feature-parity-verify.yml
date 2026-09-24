@@ -1,0 +1,26 @@
+name: Feature Parity Verify
+
+on:
+  push:
+    branches:
+      - feat/exact-ruth-commerce-panel-transplant
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Admin typecheck
+        run: npm --prefix apps/admin run typecheck:app
+      - name: Storefront typecheck
+        run: npm --prefix apps/storefront run typecheck
+      - name: Admin build
+        run: npm --prefix apps/admin run build
+      - name: Storefront build
+        run: npm --prefix apps/storefront run build
