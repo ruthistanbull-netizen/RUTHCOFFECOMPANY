@@ -168,7 +168,7 @@ export function RuthieVoiceOnly() {
 
   const voiceReady = Boolean(status?.configured && status.capabilities?.realtimeVoice);
   const conversationContext = useCallback(
-    () => transcripts.slice(-24).map((item) => `${item.role === "user" ? "Kullanıcı" : "Ruthie"}: ${item.text}`).join("\n"),
+    () => transcripts.slice(-24).map((item) => `${item.role === "user" ? "Kullanıcı" : "ROSTA Insight"}: ${item.text}`).join("\n"),
     [transcripts],
   );
   const realtime = useRuthieRealtimeVision({
@@ -357,10 +357,10 @@ export function RuthieVoiceOnly() {
   return (
     <section className={styles.app} data-ruthie-voice-app data-phase={realtime.phase}>
       <header className={styles.topbar}>
-        <div className={styles.identity}><span><Sparkles /></span><div><strong>Ruthie</strong><small>{status?.models?.realtime || "gpt-realtime"}</small></div></div>
+        <div className={styles.identity}><span><Sparkles /></span><div><strong>ROSTA Insight</strong><small>{status?.models?.realtime || "gpt-realtime"}</small></div></div>
         <div className={styles.state}><i className={realtime.phase === "error" ? styles.stateError : ""} /><strong>{voiceLabel}</strong></div>
         <div className={styles.actions}>
-          <button type="button" onClick={() => { setDraftVoice(selectedVoice); setPreviewError(""); setSettingsOpen(true); }} aria-label="Ruthie sesini seç"><Settings2 /></button>
+          <button type="button" onClick={() => { setDraftVoice(selectedVoice); setPreviewError(""); setSettingsOpen(true); }} aria-label="ROSTA Insight sesini seç"><Settings2 /></button>
           <Link href="/ruthie/chat" aria-label="ROSTA Insight Chat'e geç"><MessageSquareText /></Link>
           <button type="button" onClick={() => setCameraOpen((value) => !value)} disabled={!realtime.connected} aria-pressed={showCamera} aria-label={showCamera ? "Kamerayı kapat" : "Arka kamerayı aç"}>{showCamera ? <CameraOff /> : <Camera />}</button>
           <Link href="/" aria-label="Panele dön"><X /></Link>
@@ -400,7 +400,7 @@ export function RuthieVoiceOnly() {
         <div className={styles.settingsBackdrop} role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setSettingsOpen(false); }}>
           <section className={styles.settingsPanel} role="dialog" aria-modal="true" aria-labelledby="ruthie-voice-title">
             <div className={styles.settingsHeader}>
-              <div><small>RUTHIE SESİ</small><h2 id="ruthie-voice-title">Ses seç ve dinle</h2></div>
+              <div><small>ROSTA INSIGHT SESİ</small><h2 id="ruthie-voice-title">Ses seç ve dinle</h2></div>
               <button type="button" onClick={() => { stopPreview(); setSettingsOpen(false); }} aria-label="Ses ayarlarını kapat"><X /></button>
             </div>
 
