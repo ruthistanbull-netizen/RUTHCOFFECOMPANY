@@ -71,7 +71,7 @@ function ensureThemeId(element: Element) {
   const existing = element.getAttribute("data-theme-id");
   if (existing) return existing;
   const scope = element.closest("header,footer") ? "global" : themeTemplatePageKey(window.location.pathname);
-  const id = `context-${hash(`${scope}:${structuralPath(element)}`)}`;
+  const id = `auto-${hash(`${scope}:${structuralPath(element)}`)}`;
   element.setAttribute("data-theme-id", id);
   return id;
 }
