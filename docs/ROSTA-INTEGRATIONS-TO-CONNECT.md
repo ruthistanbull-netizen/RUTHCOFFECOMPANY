@@ -100,6 +100,14 @@ PayTR notification/callback URL:
 
 Until merchant credentials exist, PayTR recovery jobs skip cleanly instead of pretending the provider is connected.
 
+## ROSTA shipping prices
+
+This is a commercial setting, not an inherited Ruth default. Configure it from **Panel → Kargo** before taking live checkout orders:
+- free-shipping threshold
+- customer shipping fee
+
+Optional storefront env fallbacks exist as `FREE_SHIPPING_THRESHOLD` and `SHIPPING_FEE`, but the panel setting is preferred.
+
 ## Basit Kargo
 
 Admin Zeabur service:
