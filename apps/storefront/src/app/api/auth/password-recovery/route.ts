@@ -1,15 +1,9 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-import { CANONICAL_SUPABASE_URL } from "@/lib/supabaseRuntime";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const ROSTA_STORE_URL = "https://rostacoffecompany.zeabur.app";
-const ROSTA_PUBLISHABLE_KEY =
-  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-  "sb_publishable_6Zoqk9z0WEDsvNZ79-b2Qw_fnKVuWhb";
+const ADMIN_ORIGIN = (process.env.ADMIN_API_ORIGIN || process.env.NEXT_PUBLIC_PANEL_URL || "https://rostapanel.zeabur.app").replace(/\/+$/, "");
 
 function normalizeEmail(value: unknown) {
   return typeof value === "string" ? value.trim().toLocaleLowerCase("tr-TR") : "";
@@ -29,22 +23,31 @@ export async function POST(request: Request) {
   }
 
   try {
-    const supabase = createClient(CANONICAL_SUPABASE_URL, ROSTA_PUBLISHABLE_KEY, {
-      auth: { persistSession: false, autoRefreshToken: false },
+    const response = await fetch(`${ADMIN_ORIGIN}/api/auth/password-recovery`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, target: "storefront" }),
+      cache: "no-store",
     });
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${ROSTA_STORE_URL}/reset-password?type=recovery`,
-    });
-    if (error) throw error;
+
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      return NextResponse.json(
+        { ok: false, error: data.error || "Şifre yenileme e-postası şu anda gönderilemiyor." },
+        { status: response.status >= 500 ? 503 : response.status, headers: { "Cache-Control": "no-store" } },
+      );
+    }
 
     return NextResponse.json(
-      { ok: true, message: "Bu e-posta ile bir hesap varsa şifre yenileme bağlantısı gönderildi." },
-      { headers: { "Cache-Control": "no-store" } },
+      {
+        ok: true,
+        message: "Bu e-posta ile bir hesap varsa şifre yenileme bağlantısı gönderildi.",
+      },
+      { status: 200, headers: { "Cache-Control": "no-store" } },
     );
-  } catch (error) {
-    console.error("ROSTA password recovery failed", error);
+  } catch {
     return NextResponse.json(
-      { ok: false, error: "Şifre yenileme e-postası şu anda gönderilemiyor." },
+      { ok: false, error: "Şifre yenileme servisine şu anda ulaşılamıyor." },
       { status: 503, headers: { "Cache-Control": "no-store" } },
     );
   }
