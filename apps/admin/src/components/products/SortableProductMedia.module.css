@@ -69,10 +69,6 @@
     border-color 220ms var(--ruth-easing);
 }
 
-.card:hover .media {
-  border-color: color-mix(in srgb, var(--ruth-color-accent-strong) 22%, var(--ruth-color-border-subtle));
-}
-
 .vertical .card {
   display: grid;
   grid-template-columns: 74px minmax(0, 1fr) 34px;
@@ -112,7 +108,7 @@
   padding: 0 7px;
   border-radius: 7px;
   background: var(--ruth-color-accent-strong);
-  color: white;
+  color: var(--rosta-action-text);
   box-shadow: 0 5px 14px color-mix(in srgb, var(--ruth-color-accent-strong) 24%, transparent);
   font-family: var(--ruth-font-ui);
   font-size: var(--ruth-type-label-size);
@@ -132,11 +128,11 @@
   padding: 0;
   place-items: center;
   translate: -50% 0;
-  border: 1px solid color-mix(in srgb, white 18%, transparent);
+  border: 1px solid color-mix(in srgb, var(--rosta-cream) 18%, transparent);
   border-radius: 10px;
   background: color-mix(in srgb, var(--ruth-color-text-primary) 82%, transparent);
   color: var(--ruth-color-surface);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, .14);
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--rosta-carbon) 48%, transparent);
   cursor: grab;
   touch-action: none;
   -webkit-tap-highlight-color: transparent;
@@ -168,7 +164,7 @@
   place-items: center;
   border-radius: 9px;
   background: color-mix(in srgb, var(--ruth-color-surface) 94%, transparent);
-  box-shadow: 0 6px 16px rgba(15, 23, 42, .12);
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--rosta-carbon) 44%, transparent);
   cursor: pointer;
   opacity: 0;
   transform: translateY(-3px) scale(.96);
@@ -181,7 +177,7 @@
 .remove {
   right: 7px;
   border: 1px solid color-mix(in srgb, var(--ruth-color-danger) 20%, transparent);
-  background: #fff;
+  background: var(--rosta-carbon-soft);
   color: var(--ruth-color-danger);
   opacity: 1;
   transform: none;
@@ -472,6 +468,26 @@
 .libraryCard > div button svg {
   width: 11px;
   height: 11px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card:hover .media {
+    border-color: color-mix(in srgb, var(--rosta-brick-b) 34%, var(--ruth-color-border-subtle));
+  }
+
+  .card:hover .remove,
+  .card:hover .edit {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  .remove:hover {
+    background: color-mix(in srgb, var(--ruth-color-danger) 8%, var(--rosta-carbon-soft));
+  }
+
+  .edit:hover {
+    background: var(--ruth-color-surface);
+  }
 }
 
 @media (max-width: 860px) {
