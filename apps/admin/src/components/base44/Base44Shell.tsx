@@ -119,9 +119,9 @@ function Base44Sidebar({ collapsed }: { collapsed: boolean }) {
       {!collapsed ? (
         <div className="p-3 border-t border-border-subtle shrink-0">
           <div className="flex items-center gap-2.5 p-2 radius-small bg-surface-tertiary">
-            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-[hsl(var(--accent))] to-[hsl(var(--accent-hover))] flex items-center justify-center text-white text-xs font-semibold shrink-0">RA</div>
+            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-[hsl(var(--accent))] to-[hsl(var(--accent-hover))] flex items-center justify-center text-white text-xs font-semibold shrink-0">RC</div>
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-semibold text-main truncate">Ruth Atelier</p>
+              <p className="text-xs font-semibold text-main truncate">ROSTA COFFEE CO.</p>
               <p className="text-[10px] text-subtle truncate">Admin</p>
             </div>
           </div>
@@ -321,7 +321,7 @@ export function Base44Shell({ children }: { children: ReactNode }) {
             <kbd className="hidden md:inline-flex items-center gap-0.5 ml-auto text-[10px] font-mono bg-surface-tertiary px-1.5 py-0.5 rounded-md text-subtle">⌘K</kbd>
           </button>
 
-          <Base44IconButton icon={Sparkles} label="Ruthie AI" variant="ghost" size="icon-sm" className="text-accent" onClick={() => router.push("/ruthie")} />
+          <Base44IconButton icon={Sparkles} label="ROSTA Insight" variant="ghost" size="icon-sm" className="text-accent" onClick={() => router.push("/ruthie")} />
           <Base44IconButton icon={Bell} label="Bildirimler" variant="ghost" size="icon-sm" className="relative" onClick={() => router.push("/notifications")} />
           <Base44IconButton icon={dark ? Sun : Moon} label="Temayı değiştir" variant="ghost" size="icon-sm" onClick={toggleDark} />
         </header>
