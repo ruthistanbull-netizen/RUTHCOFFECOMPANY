@@ -29,14 +29,17 @@ export function StorefrontRevisionStyles() {
 
         /* Mobile product header: search/account/cart follow the same adaptive contrast as the menu. */
         @media (max-width: 767px) {
-          html.ruth-product-page-active .ruth-zara-header.product-header-transparent .ruth-zara-header-inner > div:last-child { color: #fff !important; mix-blend-mode: difference !important; }
+          html.ruth-product-page-active .ruth-zara-header.product-header-transparent .ruth-zara-header-inner > div:last-child { color: var(--rosta-cream) !important; mix-blend-mode: difference !important; }
           html.ruth-product-page-active .ruth-zara-header.product-header-transparent .ruth-zara-header-inner > div:last-child button,
           html.ruth-product-page-active .ruth-zara-header.product-header-transparent .ruth-zara-header-inner > div:last-child a,
           html.ruth-product-page-active .ruth-zara-header.product-header-transparent .ruth-zara-header-inner > div:last-child svg { color: inherit !important; stroke: currentColor !important; }
         }
 
         .site-app-shell button:has(svg.lucide-x):not(.ruth-zara-menu-button) { display:flex !important; width:40px !important; min-width:40px !important; height:40px !important; min-height:40px !important; flex:0 0 40px !important; align-items:center !important; justify-content:center !important; padding:0 !important; border:0 !important; border-radius:9999px !important; background:transparent !important; color:inherit !important; box-shadow:none !important; transition:background-color 180ms ease,transform 180ms ease !important; -webkit-tap-highlight-color:transparent; }
-        .site-app-shell button:has(svg.lucide-x):not(.ruth-zara-menu-button):hover { background:rgba(0,0,0,.05) !important; }
+        .site-app-shell button:has(svg.lucide-x):not(.ruth-zara-menu-button):focus-visible { outline:2px solid var(--rosta-brick-b) !important; outline-offset:2px !important; }
+        @media (hover:hover) and (pointer:fine) {
+          .site-app-shell button:has(svg.lucide-x):not(.ruth-zara-menu-button):hover { background:color-mix(in srgb,currentColor 8%,transparent) !important; }
+        }
         .site-app-shell button:has(svg.lucide-x):not(.ruth-zara-menu-button):active { transform:scale(.96) !important; }
         .site-app-shell button:has(svg.lucide-x):not(.ruth-zara-menu-button) svg { width:20px !important; height:20px !important; stroke-width:1.5 !important; }
         html:has(.product-variant-overlay) .ruth-zara-header-inner > div:last-child { opacity:0 !important; visibility:hidden !important; pointer-events:none !important; }
