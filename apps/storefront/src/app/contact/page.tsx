@@ -57,13 +57,13 @@ export default function ContactPage() {
               <div className="h-full rounded-lg border border-kraft/35 bg-carbon-soft p-7 transition  focus-visible:border-brick  ">
                 <CardIcon className="mb-5 text-brick" size={22} />
                 <h2 className="font-heading text-2xl">{item.title}</h2>
-                <p className="mt-4 leading-7 text-[var(--rosta-action-text)]/70">{item.desc}</p>
+                <p className="mt-4 leading-7 text-cream/70">{item.desc}</p>
                 {item.actionHref && item.actionLabel ? (
                   <a
                     href={item.actionHref}
                     target="_blank"
                     rel="noreferrer"
-                    className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-brick px-5 py-3 text-[10px] uppercase tracking-wide-luxe text-[var(--rosta-action-text)] transition active:bg-espresso"
+                    className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-brick px-5 py-3 text-[10px] uppercase tracking-wide-luxe text-[var(--rosta-action-text)] transition active:bg-espresso focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
                   >
                     {item.actionLabel}
                   </a>
@@ -94,15 +94,15 @@ export default function ContactPage() {
         <AnimatedBlock delay={0.26}>
           <section className="mt-12 rounded-[2rem] border border-kraft/35 bg-carbon-soft p-6 md:p-10">
             <p className="mb-3 text-xs uppercase tracking-wide-luxe text-brick">İletişim ve işletme bilgileri</p>
-            <div className="grid gap-5 text-sm leading-7 text-[var(--rosta-action-text)]/70 md:grid-cols-2">
+            <div className="grid gap-5 text-sm leading-7 text-cream/70 md:grid-cols-2">
               <div className="space-y-2">
-                <p><strong className="text-[var(--rosta-action-text)]">Resmî satıcı:</strong> Görkem Çirik</p>
-                <p><strong className="text-[var(--rosta-action-text)]">İşletme türü:</strong> Şahıs işletmesi</p>
-                <p><strong className="text-[var(--rosta-action-text)]">Vergi dairesi / no:</strong> Bayrampaşa / 2571309841</p>
+                <p><strong className="text-cream">Resmî satıcı:</strong> Görkem Çirik</p>
+                <p><strong className="text-cream">İşletme türü:</strong> Şahıs işletmesi</p>
+                <p><strong className="text-cream">Vergi dairesi / no:</strong> Bayrampaşa / 2571309841</p>
               </div>
               <div className="space-y-2">
-                {supportEmail ? <p><strong className="text-[var(--rosta-action-text)]">E-posta:</strong> <a className="hover:text-[var(--rosta-action-text)]" href={`mailto:${supportEmail}`}>{supportEmail}</a></p> : null}
-                <p><strong className="text-[var(--rosta-action-text)]">Adres:</strong> Vatan Mahallesi, Küçük Sokak No: 2 Daire: 1, Bayrampaşa / İstanbul</p>
+                {supportEmail ? <p><strong className="text-cream">E-posta:</strong> <a className="focus-visible:text-cream focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick" href={`mailto:${supportEmail}`}>{supportEmail}</a></p> : null}
+                <p><strong className="text-cream">Adres:</strong> Vatan Mahallesi, Küçük Sokak No: 2 Daire: 1, Bayrampaşa / İstanbul</p>
               </div>
             </div>
           </section>
@@ -113,7 +113,7 @@ export default function ContactPage() {
             <div className="mb-9 max-w-2xl">
               <p className="mb-3 text-xs uppercase tracking-wide-luxe text-brick">Bizimle iletişime geç</p>
               <h2 className="font-heading text-4xl uppercase tracking-[0.08em] md:text-5xl">Mesajınızı bırakın.</h2>
-              <p className="mt-5 leading-7 text-[var(--rosta-action-text)]/70">
+              <p className="mt-5 leading-7 text-cream/70">
                 Ad soyad, e-posta, telefon numarası ve mesajınızı bırakarak bizimle iletişime geçebilirsiniz.
               </p>
             </div>
@@ -123,7 +123,7 @@ export default function ContactPage() {
         </AnimatedBlock>
 
         <AnimatedBlock delay={0.34}>
-          <Link href="/products" className="mt-10 inline-flex rounded-full bg-brick px-8 py-4 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)] transition active:bg-espresso">
+          <Link href="/products" className="mt-10 inline-flex rounded-full bg-brick px-8 py-4 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)] transition active:bg-espresso focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick">
             Alışverişe Devam Et
           </Link>
         </AnimatedBlock>
