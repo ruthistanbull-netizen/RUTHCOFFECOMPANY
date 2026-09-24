@@ -32,6 +32,7 @@ const storefrontPkg = json("apps/storefront/package.json");
 const storefrontNext = file("apps/storefront/next.config.ts");
 const storefrontLayout = file("apps/storefront/src/app/layout.tsx");
 const storefrontHome = file("apps/storefront/src/app/page.tsx");
+const storefrontFooter = file("apps/storefront/src/components/Footer.tsx");
 const homeSectionRenderer = file("apps/storefront/src/components/theme/HomeSectionRenderer.tsx");
 const adminShell = file("apps/admin/src/components/base44-exact/ExactBase44ShellV2.tsx");
 const recovery = file("apps/storefront/src/app/api/auth/password-recovery/route.ts");
@@ -85,6 +86,10 @@ expect(adminPkg.scripts?.start === "next start", "admin start script must match 
 expect(!storefrontNext.includes("ignoreBuildErrors"), "storefront build must not ignore TypeScript errors");
 expect(storefrontNext.includes("analytics.tiktok.com"), "TikTok analytics domains missing from storefront CSP");
 expect(storefrontNext.includes(".split(/[\\s,]+/)"), "theme editor origins must split on whitespace/comma");
+
+expect(!storefrontFooter.includes("social is { label: string; href: string; icon: ReactNode }"), "Footer social links must not use the invalid ReactNode type predicate");
+expect(storefrontFooter.includes("type SocialLink ="), "Footer social links must have an explicit stable type");
+expect(storefrontFooter.includes("icon: ReactElement;"), "Footer social icon type must use ReactElement");
 
 expect(homeSectionRenderer.includes('editorialVideo?: string;'), "HomeSectionRenderer editorialVideo prop must remain backward-compatible");
 expect(homeSectionRenderer.includes('editorialImage?: string;'), "HomeSectionRenderer editorialImage prop must remain backward-compatible");
@@ -149,6 +154,9 @@ expect(!sharedDocker.includes("building both apps as safe fallback"), "root Dock
 expect(sharedDocker.includes("Unable to resolve Zeabur service role"), "root Dockerfile must fail closed when service role cannot be resolved");
 expect(sharedDocker.includes("ZEABUR_WEB_DOMAIN") && sharedDocker.includes("ZEABUR_WEB_URL"), "root Dockerfile runtime must retain domain-hint fallback");
 expect(sharedDocker.includes("ENV PORT=8080") && sharedDocker.includes("EXPOSE 8080"), "root Dockerfile must use Zeabur Git-service port 8080");
+expect(sharedDocker.includes("rm -rf apps/admin/.next apps/storefront/.next"), "root Dockerfile must clear stale Next artifacts before compile");
+expect(panelDocker.includes("rm -rf apps/admin/.next apps/storefront/.next"), "panel Dockerfile must clear stale Next artifacts before compile");
+expect(storefrontDocker.includes("rm -rf apps/admin/.next apps/storefront/.next"), "storefront Dockerfile must clear stale Next artifacts before compile");
 expect(!sharedDocker.includes("test -f apps/admin/.next/BUILD_ID"), "root Dockerfile must not add a false admin BUILD_ID gate");
 expect(!sharedDocker.includes("test -f apps/storefront/.next/BUILD_ID"), "root Dockerfile must not add a false storefront BUILD_ID gate");
 expect(panelDocker.includes("RUN npm run build:admin"), "panel Dockerfile must build only admin");
