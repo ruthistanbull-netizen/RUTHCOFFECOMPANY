@@ -148,7 +148,7 @@ function HeaderQuickControls({ onOpenMenu }: { onOpenMenu: () => void }) {
     void (async () => {
       try {
         const headers = await adminAuthHeaders();
-        const response = await fetch("/api/ruthie/openai/status", { headers, cache: "no-store" });
+        const response = await fetch("/api/rosta-insight/openai/status", { headers, cache: "no-store" });
         const payload = await response.json().catch(() => null) as ProviderStatus | null;
         if (!cancelled) setProviderReady(Boolean(response.ok && payload?.ok && payload.configured && payload.capabilities?.chat));
       } catch {
@@ -191,7 +191,7 @@ function HeaderQuickControls({ onOpenMenu }: { onOpenMenu: () => void }) {
     setSending(true);
     try {
       const headers = await adminAuthHeaders();
-      const response = await fetch("/api/ruthie/openai/chat", {
+      const response = await fetch("/api/rosta-insight/openai/chat", {
         method: "POST",
         cache: "no-store",
         headers: { ...headers, "Content-Type": "application/json", "x-correlation-id": makeId("header-ruthie") },
