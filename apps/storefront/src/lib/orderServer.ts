@@ -137,13 +137,12 @@ function getVariantIdFromKey(key: string | undefined) {
 }
 
 function makeOrderNo() {
-  const now = new Date();
-  const stamp = now
-    .toISOString()
-    .replace(/[-:.TZ]/g, "")
-    .slice(0, 14);
-  const random = Math.random().toString(36).slice(2, 8).toUpperCase();
-  return `RST${stamp}${random}`;
+  const year = new Intl.DateTimeFormat("en", {
+    timeZone: "Europe/Istanbul",
+    year: "2-digit",
+  }).format(new Date());
+  const random = Math.floor(Math.random() * 10_000).toString().padStart(4, "0");
+  return `RST${year}${random}`;
 }
 
 function makeResumeToken() {
