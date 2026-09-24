@@ -33,6 +33,11 @@ create table if not exists public.platform_delivery_dead_letters (
 );
 alter table public.platform_delivery_dead_letters enable row level security;
 
+revoke all privileges on table public.platform_delivery_jobs from public, anon, authenticated;
+revoke all privileges on table public.platform_delivery_dead_letters from public, anon, authenticated;
+grant select, insert, update, delete on table public.platform_delivery_jobs to service_role;
+grant select, insert, update, delete on table public.platform_delivery_dead_letters to service_role;
+
 create or replace function public.claim_platform_delivery_jobs(p_worker text,p_limit integer default 10)
 returns setof public.platform_delivery_jobs
 language plpgsql security definer set search_path=public,pg_catalog as $$
