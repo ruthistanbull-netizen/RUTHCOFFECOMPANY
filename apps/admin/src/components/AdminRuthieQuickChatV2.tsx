@@ -154,11 +154,11 @@ export function AdminRuthieQuickChatV2() {
                 value={message}
                 onChange={(event) => setMessage(event.target.value)}
                 onKeyDown={onKeyDown}
-                placeholder={providerReady ? "Ruthie'ye yaz..." : "ROSTA Insight hazırlanıyor..."}
+                placeholder={providerReady ? "ROSTA Insight'a yaz..." : "ROSTA Insight hazırlanıyor..."}
                 disabled={!providerReady || sending}
                 autoComplete="off"
               />
-              <button type="button" onClick={() => void send()} disabled={!providerReady || !message.trim() || sending} aria-label="Ruthie'ye gönder">
+              <button type="button" onClick={() => void send()} disabled={!providerReady || !message.trim() || sending} aria-label="ROSTA Insight'a gönder">
                 <Send size={17} />
               </button>
             </motion.div>
