@@ -104,8 +104,8 @@ type CustomersResponse = { customers?: Customer[]; summary?: Summary; pagination
 
 const emptySummary: Summary = { customerCount: 0, memberCount: 0, nonMemberCount: 0, customersWithOrders: 0, totalPaidRevenue: 0 };
 const emptyPagination: Pagination = { page: 1, pageSize: 25, total: 0, totalPages: 1 };
-const CUSTOMERS_CONTEXT_KEY = "ruth-customers-resource-context-v1";
-const CUSTOMERS_SAVED_VIEWS_KEY = "ruth-customers-saved-views-v1";
+const CUSTOMERS_CONTEXT_KEY = "rosta-customers-resource-context-v1";
+const CUSTOMERS_SAVED_VIEWS_KEY = "rosta-customers-saved-views-v1";
 const MEMBERSHIP_VALUES = new Set<MembershipFilter>(["all", "member", "non_member"]);
 const SORT_VALUES = new Set<SortOption>(["recent", "spent", "orders", "name"]);
 const DEFAULT_CUSTOMER_COLUMNS: CustomerColumnVisibility = {
