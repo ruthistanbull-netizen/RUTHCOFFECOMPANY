@@ -103,7 +103,7 @@ type TikTokPixelQueue = unknown[] & {
   load?: (pixelId: string, options?: Record<string, unknown>) => void;
   page?: (...args: unknown[]) => void;
   track?: (...args: unknown[]) => void;
-  _i?: Record<string, TikTokPixelQueue>;
+  _i?: Record<string, TikTokPixelQueue & { _u?: string }>;
   _t?: Record<string, number>;
   _o?: Record<string, Record<string, unknown>>;
 };
@@ -390,13 +390,13 @@ function postRuthEvent(eventName: string, attribution: RuthAttribution, metadata
   if (marketingConsent && gaEvent && window.gtag) window.gtag("event", gaEvent, metadata);
 
   const gtmId = process.env.NEXT_PUBLIC_GTM_ID?.trim();
-  if (marketingConsent && gtmId && window.dataLayer) {
+  if (marketingConsent && gtmId && gaEvent && window.dataLayer) {
     const ecommerce = {
       ...(value != null && Number.isFinite(value) ? { value, currency: "TRY" } : {}),
       ...(item ? { items: [item] } : {}),
     };
     window.dataLayer.push({
-      event: gaEvent || eventName,
+      event: gaEvent,
       rosta_event_id: eventId,
       ...(Object.keys(ecommerce).length ? { ecommerce } : {}),
     });
@@ -508,7 +508,8 @@ function initializeMarketingTags() {
     ttq.load = (pixelId, options = {}) => {
       const src = "https://analytics.tiktok.com/i18n/pixel/events.js";
       ttq._i = ttq._i || {};
-      ttq._i[pixelId] = ttq._i[pixelId] || ([] as unknown as TikTokPixelQueue);
+      ttq._i[pixelId] = ttq._i[pixelId] || ([] as unknown as TikTokPixelQueue & { _u?: string });
+      ttq._i[pixelId]._u = src;
       ttq._t = ttq._t || {};
       ttq._t[pixelId] = Date.now();
       ttq._o = ttq._o || {};
@@ -520,7 +521,6 @@ function initializeMarketingTags() {
       document.head.appendChild(script);
     };
     ttq.load(tiktokPixelId);
-    ttq.page?.();
   }
 
   const clarityProjectId = (process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID || "").trim();
