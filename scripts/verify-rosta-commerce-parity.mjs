@@ -40,6 +40,9 @@ const storefrontRevalidate = file("apps/storefront/src/app/api/revalidate/route.
 const adminEnv = file("apps/admin/.env.example");
 const storefrontEnv = file("apps/storefront/.env.example");
 const analyticsMigration = file("supabase/migrations/20260924170000_rosta_dashboard_session_accuracy.sql");
+const compactOrderMigration = file("supabase/migrations/20260924180000_compact_rosta_order_numbers.sql");
+const emailCronMigration = file("supabase/migrations/20260924181500_rosta_customer_email_automation_crons.sql");
+const orderServer = file("apps/storefront/src/lib/orderServer.ts");
 const bootstrapSeed = file("supabase/migrations/20260922014705_rosta_bootstrap_seed.sql");
 const sharedDocker = file("Dockerfile");
 const panelDocker = file("Dockerfile.rostapanel");
@@ -84,6 +87,15 @@ expect(adminEnv.includes("CRON_SECRET="), "admin CRON_SECRET placeholder missing
 
 expect(analyticsMigration.includes("public.admin_analytics_summary"), "dashboard analytics summary RPC migration missing");
 expect(analyticsMigration.includes("analytics_events_session_created_at_idx"), "dashboard analytics session index missing");
+
+expect(orderServer.includes('return `RST${year}${random}`;'), "storefront must generate compact ROSTA order numbers");
+expect(compactOrderMigration.includes("generate_compact_rosta_order_no"), "compact ROSTA order number DB guard missing");
+expect(compactOrderMigration.includes("new.merchant_oid := new.order_no"), "checkout merchant_oid must stay synchronized with the compact order number");
+
+expect(emailCronMigration.includes("'rosta-abandoned-cart-email'"), "abandoned-cart customer email scheduler missing");
+expect(emailCronMigration.includes("'rosta-review-request-email'"), "review-request customer email scheduler missing");
+expect(emailCronMigration.includes("'x-automation-cron-secret'"), "customer email schedulers must authenticate by header");
+expect(!emailCronMigration.includes("?kind=review&secret="), "review scheduler must never expose its secret in the URL");
 
 expect(panelDocker.includes("COPY apps/admin/package.json") && panelDocker.includes("COPY apps/storefront/package.json"), "panel Docker workspace manifests incomplete");
 expect(storefrontDocker.includes("COPY apps/admin/package.json") && storefrontDocker.includes("COPY apps/storefront/package.json"), "storefront Docker workspace manifests incomplete");
