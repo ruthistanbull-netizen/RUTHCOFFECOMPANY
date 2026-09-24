@@ -1,0 +1,186 @@
+.card {
+  --core-line: rgba(239, 199, 127, .22);
+  --core-line-strong: rgba(239, 199, 127, .46);
+  --core-text: #f6eedf;
+  --core-muted: rgba(246, 238, 223, .5);
+  --core-gold: #efc77f;
+  display: grid;
+  justify-items: stretch;
+  gap: 10px;
+  min-width: 0;
+  padding: 15px;
+  border: 1px solid var(--core-line);
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at 50% 24%, rgba(201, 139, 55, .09), transparent 50%),
+    rgba(255, 246, 223, .018);
+  color: var(--core-text);
+  box-shadow: inset 0 1px rgba(255, 246, 223, .025);
+}
+
+.card > header,
+.card > footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.card > header > div {
+  display: grid;
+  gap: 2px;
+}
+
+.card > header strong {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.card > header small,
+.card > header > span,
+.card > footer {
+  color: var(--core-muted);
+  font-size: 9px;
+}
+
+.card > header > span {
+  padding: 5px 8px;
+  border: 1px solid var(--core-line);
+  border-radius: 999px;
+}
+
+.card > header > span.activeState {
+  color: #a8e3bd;
+  border-color: rgba(80, 190, 122, .34);
+  background: rgba(49, 134, 80, .11);
+}
+
+.orbButton {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(210px, 100%);
+  aspect-ratio: 1;
+  margin: 0 auto;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--core-gold);
+  cursor: pointer;
+  isolation: isolate;
+}
+
+.orbButton::before {
+  content: "";
+  position: absolute;
+  inset: 10%;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(214, 155, 66, .12), rgba(122, 70, 17, .035) 58%, transparent 74%);
+  filter: blur(12px);
+  transition: transform 260ms ease, opacity 260ms ease;
+}
+
+.card[data-active="true"] .orbButton::before {
+  transform: scale(1.12);
+  opacity: 1;
+}
+
+.orb {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.micBadge {
+  position: absolute;
+  right: 8%;
+  bottom: 8%;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--core-line-strong);
+  border-radius: 50%;
+  background: rgba(12, 8, 5, .92);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .42);
+}
+
+.micBadge svg {
+  width: 15px;
+  height: 15px;
+}
+
+.card[data-active="true"] .micBadge {
+  color: #c6efd4;
+  border-color: rgba(92, 203, 132, .45);
+  background: rgba(31, 90, 54, .88);
+}
+
+.card > p {
+  min-height: 34px;
+  margin: 0;
+  color: var(--core-muted);
+  font-size: 10px;
+  line-height: 1.55;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.retry {
+  min-height: 36px;
+  border: 1px solid var(--core-line-strong);
+  border-radius: 999px;
+  background: rgba(201, 139, 55, .08);
+  color: var(--core-gold);
+  font: inherit;
+  font-size: 10px;
+}
+
+.retry svg {
+  width: 13px;
+  height: 13px;
+  vertical-align: -2px;
+  margin-right: 5px;
+}
+
+.card > footer {
+  padding-top: 9px;
+  border-top: 1px solid rgba(239, 199, 127, .1);
+}
+
+.card > footer span:last-child {
+  color: var(--core-gold);
+}
+
+.compact {
+  padding: 12px;
+  border-radius: 17px;
+}
+
+.compact .orbButton {
+  width: min(230px, 74vw);
+}
+
+@media (max-width: 980px) {
+  .card {
+    margin-top: 2px;
+  }
+
+  .orbButton {
+    width: min(250px, 72vw);
+  }
+
+  .card > p {
+    font-size: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbButton::before {
+    transition: none;
+  }
+}
