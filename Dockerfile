@@ -3,7 +3,7 @@ FROM public.ecr.aws/docker/library/node:22-bookworm-slim
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 
-ARG ROSTA_APP=""
+ARG ROSTA_APP
 ENV ROSTA_APP=${ROSTA_APP}
 
 COPY . .
