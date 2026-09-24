@@ -82,7 +82,7 @@ const integrations: IntegrationDefinition[] = [
       "Vercel hesap ayarlarından bir erişim tokenı oluştur.",
       "Storefront projesinin Project ID bilgisini Project Settings bölümünden kopyala.",
       "Token ve Project ID değerlerini Render admin servisinin ortam değişkenlerine ekle.",
-      "Admin servisini yeniden deploy et; Ruthie daha sonra deploy durumunu okuyabilir.",
+      "Admin servisini yeniden deploy et; ROSTA Insight daha sonra deploy durumunu okuyabilir.",
     ],
   },
   {
@@ -104,7 +104,7 @@ const integrations: IntegrationDefinition[] = [
     icon: Github,
     steps: [
       "Fine-grained personal access token veya GitHub App erişimi oluştur.",
-      "RUTHISTANBUL-COMMERCE reposuna Contents ve Pull requests yetkilerini ver.",
+      "RUTHCOFFECOMPANY reposuna Contents ve Pull requests yetkilerini ver.",
       "Token ile owner/repo bilgisini Render admin ortam değişkenlerine ekle.",
       "Admin servisini yeniden deploy et ve bağlantı kartını yeniden aç.",
     ],
@@ -192,7 +192,7 @@ export function RuthieChatExtensionCenter() {
     setLoadingStatuses(true);
     try {
       const headers = await adminAuthHeaders();
-      const response = await fetch("/api/ruthie/integrations/status", { headers, cache: "no-store" });
+      const response = await fetch("/api/rosta-insight/integrations/status-v2", { headers, cache: "no-store" });
       const payload = await response.json().catch(() => null) as StatusPayload | null;
       setStatuses(response.ok && payload?.ok ? payload.integrations || {} : {});
     } catch {
