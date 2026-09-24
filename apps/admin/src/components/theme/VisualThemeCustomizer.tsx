@@ -514,7 +514,7 @@ export function VisualThemeCustomizer() {
 
         <div className="flex flex-1 items-center justify-end gap-2">
           {dirty ? <button type="button" onClick={discard} disabled={saveLifecycle.saving} className="hidden h-9 rounded-xl border border-border-subtle bg-surface-primary px-3 text-[9px] font-medium sm:inline-flex sm:items-center">Geri al</button> : null}
-          <button type="button" onClick={() => void saveLifecycle.save()} disabled={!dirty || saveLifecycle.saving || loading} className="inline-flex h-9 items-center gap-2 rounded-xl bg-accent px-3.5 text-[9px] font-semibold text-white disabled:opacity-35">
+          <button type="button" onClick={() => void saveLifecycle.save()} disabled={!dirty || saveLifecycle.saving || loading} className="inline-flex h-9 items-center gap-2 rounded-xl bg-accent px-3.5 text-[9px] font-semibold text-[var(--rosta-action-text)] active:bg-[var(--rosta-espresso)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-35">
             {saveLifecycle.saving ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}Kaydet
           </button>
         </div>
@@ -588,7 +588,7 @@ export function VisualThemeCustomizer() {
                 <p className="truncate text-[10px] font-semibold">{selected.label}</p>
                 <p className="mt-0.5 text-[8px] text-subtle">{selected.tag} · {selected.kind} · {device === "mobile" ? "Mobil" : "Masaüstü"}</p>
               </div>
-              <button type="button" onClick={() => setMenu(null)} className="grid h-7 w-7 shrink-0 place-items-center rounded-lg text-[14px] text-subtle hover:bg-accent-soft hover:text-main">×</button>
+              <button type="button" onClick={() => setMenu(null)} className="grid h-7 w-7 shrink-0 place-items-center rounded-lg text-[14px] text-subtle active:bg-accent-soft active:text-main focus-visible:bg-accent-soft focus-visible:text-main focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">×</button>
             </div>
           </div>
 
@@ -600,7 +600,7 @@ export function VisualThemeCustomizer() {
                   <img src={selectedOverride?.imageSrc || selected.imageSrc} alt="" className="h-full w-full object-cover" />
                 </div>
               ) : null}
-              <label className={cx("relative flex h-10 w-full items-center justify-center gap-2 overflow-hidden rounded-xl border border-border-subtle bg-surface-secondary text-[9px] font-medium hover:bg-surface-primary", uploading === "selected" && "pointer-events-none opacity-40")}>
+              <label className={cx("relative flex h-10 w-full items-center justify-center gap-2 overflow-hidden rounded-xl border border-border-subtle bg-surface-secondary text-[9px] font-medium focus-within:bg-surface-primary focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent", uploading === "selected" && "pointer-events-none opacity-40")}>
                 <ImageIcon className="h-3.5 w-3.5" />{uploading === "selected" ? "Yükleniyor…" : "Fotoğrafı değiştir"}
                 <input
                   type="file"
@@ -740,7 +740,7 @@ export function VisualThemeCustomizer() {
           ) : null}
 
           <div className="sticky bottom-0 border-t border-border-subtle bg-surface-primary/95 p-2 backdrop-blur">
-            <button type="button" onClick={resetSelectedOverride} disabled={!selectedOverride} className="h-8 w-full rounded-lg border border-border-subtle text-[8px] font-medium text-muted hover:bg-accent-soft disabled:opacity-30">Bu öğenin ayarlarını sıfırla</button>
+            <button type="button" onClick={resetSelectedOverride} disabled={!selectedOverride} className="h-8 w-full rounded-lg border border-border-subtle text-[8px] font-medium text-muted active:bg-accent-soft focus-visible:bg-accent-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-30">Bu öğenin ayarlarını sıfırla</button>
           </div>
         </div>
       ) : null}
