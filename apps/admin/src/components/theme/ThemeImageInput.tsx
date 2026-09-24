@@ -18,8 +18,8 @@ export function ThemeImageInput({
   return (
     <label
       className={compact
-        ? "relative flex h-9 cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-lg border border-black/10 bg-[#fafafa] text-[9px] font-medium"
-        : "relative mt-2 flex h-9 cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-black/10 bg-white text-[9px] font-medium hover:border-[#b28c43]/40"}
+        ? "relative flex h-9 cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-lg border border-border-subtle bg-surface-secondary text-[9px] font-medium text-main"
+        : "relative mt-2 flex h-9 cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-border-subtle bg-surface-primary text-[9px] font-medium focus-within:border-accent"}
     >
       {compact ? <ImagePlus className="h-3.5 w-3.5" /> : null}
       {busy ? "Yükleniyor…" : hasValue ? "Değiştir" : "Görsel seç"}
