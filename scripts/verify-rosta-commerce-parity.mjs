@@ -72,6 +72,8 @@ expect(String(rootPkg.scripts?.["start:admin"] || "").includes("apps/admin/.next
 expect(adminPkg.dependencies?.["@supabase/supabase-js"] === "2.110.8", "admin Supabase client must match current Commerce lock (2.110.8)");
 expect(storefrontPkg.dependencies?.["@supabase/supabase-js"] === "2.110.8", "storefront Supabase client must match current Commerce lock (2.110.8)");
 expect(adminPkg.dependencies?.["@tailwindcss/postcss"] === "4.3.3", "admin Tailwind PostCSS must be available to production builds");
+expect(String(storefrontPkg.scripts?.start || "").includes("0.0.0.0") && String(storefrontPkg.scripts?.start || "").includes("${PORT:-8080}"), "storefront Next start must bind to Zeabur PORT on all interfaces");
+expect(String(adminPkg.scripts?.start || "").includes("0.0.0.0") && String(adminPkg.scripts?.start || "").includes("${PORT:-8080}"), "admin Next start must bind to Zeabur PORT on all interfaces");
 
 expect(!storefrontNext.includes("ignoreBuildErrors"), "storefront build must not ignore TypeScript errors");
 expect(storefrontNext.includes("analytics.tiktok.com"), "TikTok analytics domains missing from storefront CSP");
@@ -127,6 +129,9 @@ expect(!sharedDocker.includes("npm run build:all"), "shared Dockerfile must neve
 expect(sharedDocker.includes('target="storefront"'), "shared Dockerfile must use storefront as the safe default when Zeabur target hints are unavailable");
 expect(sharedDocker.includes("ZEABUR_SERVICE_NAME") && sharedDocker.includes("ZEABUR_SERVICE_DOMAIN"), "shared Dockerfile must inspect Zeabur service hints");
 expect(sharedDocker.includes("/app/.rosta-app-target"), "shared Dockerfile must persist the build target for runtime startup");
+expect(sharedDocker.includes("ENV PORT=8080") && sharedDocker.includes("EXPOSE 8080"), "shared Dockerfile must expose Zeabur web port 8080");
+expect(panelDocker.includes("ENV PORT=8080") && panelDocker.includes("EXPOSE 8080"), "panel Dockerfile must expose Zeabur web port 8080");
+expect(storefrontDocker.includes("ENV PORT=8080") && storefrontDocker.includes("EXPOSE 8080"), "storefront Dockerfile must expose Zeabur web port 8080");
 expect(panelDocker.includes("RUN npm run build:admin"), "panel Dockerfile must build only admin");
 expect(storefrontDocker.includes("RUN npm run build:storefront"), "storefront Dockerfile must build only storefront");
 expect(actualServiceDocker.includes("RUN npm run build:storefront"), "actual Zeabur storefront service Dockerfile must build storefront");
