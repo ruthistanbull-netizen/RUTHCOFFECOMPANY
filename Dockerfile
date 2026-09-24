@@ -4,6 +4,11 @@ WORKDIR /app
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Stable Zeabur service IDs observed from the project runtime:
+# panel:      6ab1db67afd7153d77b410bb
+# storefront: 6ab040b5477bfd0030149f96
+ARG ZEABUR_SERVICE_ID
+
 COPY package.json ./package.json
 COPY apps/admin/package.json ./apps/admin/package.json
 COPY apps/storefront/package.json ./apps/storefront/package.json
@@ -15,10 +20,17 @@ RUN npm install --no-audit --no-fund
 
 COPY . .
 
-# Zeabur currently resolves both ROSTA services through the root Dockerfile.
-# Build both apps once in the image so runtime can safely select the correct one.
-RUN npm run build:admin
-RUN npm run build:storefront
+# Build exactly the app owned by this Zeabur service. If Zeabur ever creates a
+# replacement service with a new ID, keep a safe both-app fallback until the
+# new ID is pinned.
+RUN if [ "$ZEABUR_SERVICE_ID" = "6ab1db67afd7153d77b410bb" ]; then \
+      npm run build:admin; \
+    elif [ "$ZEABUR_SERVICE_ID" = "6ab040b5477bfd0030149f96" ]; then \
+      npm run build:storefront; \
+    else \
+      echo "[ROSTA] Unknown Zeabur service ID; building both apps as safe fallback"; \
+      npm run build:admin && npm run build:storefront; \
+    fi
 
 ENV NODE_ENV=production
 ENV HOSTNAME=0.0.0.0
@@ -26,4 +38,4 @@ ENV PORT=8080
 
 EXPOSE 8080
 
-CMD ["sh","-c","hint=\"$ROSTA_APP $ZEABUR_WEB_DOMAIN $ZEABUR_WEB_URL\"; if printf '%s' \"$hint\" | grep -qi 'admin\|panel\|rostapanel'; then exec npm run start:admin; elif printf '%s' \"$hint\" | grep -Eqi 'storefront|rostacoffecompany|rostacoffeecompany|ruthcoffecompany|ruthcoffeecompany'; then exec npm run start:storefront; else echo '[ROSTA] No explicit service hint; defaulting to storefront'; exec npm run start:storefront; fi"]
+CMD ["sh","-c","hint=\"$ZEABUR_SERVICE_ID $ROSTA_APP $ZEABUR_WEB_DOMAIN $ZEABUR_WEB_URL\"; if printf '%s' \"$hint\" | grep -q '6ab1db67afd7153d77b410bb' || printf '%s' \"$hint\" | grep -Eqi 'admin|panel|rostapanel'; then exec npm run start:admin; elif printf '%s' \"$hint\" | grep -q '6ab040b5477bfd0030149f96' || printf '%s' \"$hint\" | grep -Eqi 'storefront|rostacoffecompany|rostacoffeecompany|ruthcoffecompany|ruthcoffeecompany'; then exec npm run start:storefront; else echo '[ROSTA] No service hint; defaulting to storefront'; exec npm run start:storefront; fi"]
