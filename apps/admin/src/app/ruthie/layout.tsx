@@ -2,29 +2,17 @@ import type { Metadata } from "next";
 import "./ruthie-experience-polish.css";
 
 export const metadata: Metadata = {
-  applicationName: "Ruthie Sesli",
-  title: "Ruthie Sesli",
-  description: "Ruthie sesli yönetici asistanı",
-  manifest: "/ruthie-voice.webmanifest?v=9",
+  applicationName: "ROSTA Insight",
+  title: "ROSTA Insight",
+  description: "ROSTA Coffee Co. operasyon ve ticaret asistanı",
+  manifest: "/manifest.webmanifest",
   icons: {
-    icon: [
-      {
-        url: "/ruth-panel-icon-static-180.png?v=9",
-        sizes: "180x180",
-        type: "image/png",
-      },
-    ],
-    apple: [
-      {
-        url: "/apple-touch-icon.png?v=9",
-        sizes: "180x180",
-        type: "image/png",
-      },
-    ],
+    icon: [{ url: "/api/panel-icon/180", sizes: "180x180", type: "image/png" }],
+    apple: [{ url: "/api/panel-icon/180", sizes: "180x180", type: "image/png" }],
   },
   appleWebApp: {
     capable: true,
-    title: "Ruthie Sesli",
+    title: "ROSTA Insight",
     statusBarStyle: "default",
   },
 };
