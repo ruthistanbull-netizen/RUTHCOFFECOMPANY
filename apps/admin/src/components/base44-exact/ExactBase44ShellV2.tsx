@@ -31,11 +31,29 @@ import { ExactIconButton, ExactToastProvider, exactCx } from "./primitives";
 
 function Brand({ collapsed = false }: { collapsed?: boolean }) {
   return (
-    <Link href="/" className={exactCx("flex min-w-0 items-center gap-2.5", collapsed && "justify-center")}>
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-[var(--radius-small)] bg-white shadow-sm ring-1 ring-black/5">
-        <img src="/rosta-coffee-co.svg" alt="ROSTA Coffee Co." className="h-8 w-8 object-contain" />
+    <Link
+      href="/"
+      aria-label="ROSTA Coffee Co."
+      className={exactCx(
+        "flex min-w-0 items-center",
+        collapsed ? "justify-center" : "h-full w-full justify-center",
+      )}
+    >
+      <div
+        className={exactCx(
+          "flex shrink-0 items-center justify-center overflow-hidden",
+          collapsed
+            ? "h-10 w-10 rounded-[var(--radius-small)] bg-white shadow-sm ring-1 ring-black/5"
+            : "h-[58px] w-full max-w-[202px] bg-transparent",
+        )}
+      >
+        <img
+          src="/rosta-coffee-co.svg"
+          alt="ROSTA Coffee Co."
+          draggable={false}
+          className={collapsed ? "h-8 w-8 object-contain" : "block h-full w-full object-contain object-center"}
+        />
       </div>
-      {!collapsed ? <div className="min-w-0"><p className="ruth-type-card-title truncate text-main">ROSTA Coffee Co.</p><p className="ruth-type-caption truncate text-subtle">Control Room</p></div> : null}
     </Link>
   );
 }
