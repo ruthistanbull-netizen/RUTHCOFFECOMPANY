@@ -7,8 +7,8 @@ import {
   type ProductHeaderToneDetail,
 } from "./productGalleryTone";
 
-const PRODUCT_FALLBACK_COLOR = "rgb(250 247 242)";
-const DEFAULT_THEME_COLOR = "#F6F0E7";
+const PRODUCT_FALLBACK_COLOR = "rgb(251 243 230)";
+const DEFAULT_THEME_COLOR = "#111111";
 
 function activeProductImage() {
   const frame = document.querySelector<HTMLElement>(
@@ -42,7 +42,7 @@ function normalizedDetail(detail: ProductHeaderToneDetail): ProductHeaderToneDet
   return {
     tone,
     color: detail.color || PRODUCT_FALLBACK_COLOR,
-    ink: detail.ink || (tone === "light" ? "#ffffff" : "#111111"),
+    ink: detail.ink || (tone === "light" ? "#FBF3E6" : "#111111"),
     invert: detail.invert || (tone === "light" ? "1" : "0"),
   };
 }
@@ -68,7 +68,7 @@ function detailFromColor(color: string): ProductHeaderToneDetail | null {
   return {
     tone: darkBackground ? "light" : "dark",
     color: `rgb(${Math.round(rgb.red)} ${Math.round(rgb.green)} ${Math.round(rgb.blue)})`,
-    ink: darkBackground ? "#ffffff" : "#111111",
+    ink: darkBackground ? "#FBF3E6" : "#111111",
     invert: darkBackground ? "1" : "0",
   };
 }
@@ -202,7 +202,7 @@ export function ProductHeaderAdaptiveTone() {
   return (
     <style>{`
       html:has(.ruth-zara-menu-surface) .ruth-zara-menu-button {
-        color: #111111 !important;
+        color: var(--rosta-cream) !important;
         mix-blend-mode: normal !important;
       }
       html:has(.ruth-zara-menu-surface) .ruth-zara-menu-button .ruth-zara-hamburger__line {
@@ -260,7 +260,7 @@ export function ProductHeaderAdaptiveTone() {
       @media (max-width: 767px) {
         html.ruth-home-page-active,
         html.ruth-home-page-active body {
-          background: var(--ruth-home-media-top, rgb(126 126 108)) !important;
+          background: var(--ruth-home-media-top, var(--rosta-carbon)) !important;
         }
         html.ruth-home-page-active main > #home-editorial {
           margin-top: -64px !important;
