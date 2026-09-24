@@ -95,11 +95,11 @@ export function AdminRuthieQuickChatV2() {
       });
       const payload = await response.json().catch(() => null) as ChatPayload | null;
       const textResponse = payload?.response?.text?.trim();
-      if (!response.ok || !payload?.ok || !textResponse) throw new Error(payload?.error?.message || "Ruthie yanıt veremedi.");
+      if (!response.ok || !payload?.ok || !textResponse) throw new Error(payload?.error?.message || "ROSTA Insight yanıt veremedi.");
       historyRef.current = [...outgoing, { role: "assistant" as const, text: textResponse }].slice(-16);
       setReply(textResponse);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Ruthie yanıt veremedi.");
+      setError(caught instanceof Error ? caught.message : "ROSTA Insight yanıt veremedi.");
     } finally {
       setSending(false);
     }
@@ -132,7 +132,7 @@ export function AdminRuthieQuickChatV2() {
           className="ruthie-quick-v2__bot"
           onClick={() => setExpanded((value) => !value)}
           whileTap={{ scale: 0.9 }}
-          aria-label={expanded ? "Ruthie hızlı sohbeti kapat" : "Ruthie hızlı sohbeti aç"}
+          aria-label={expanded ? "ROSTA Insight hızlı sohbeti kapat" : "ROSTA Insight hızlı sohbeti aç"}
           aria-expanded={expanded}
         >
           <span className="ruthie-quick-v2__halo" aria-hidden="true" />
@@ -154,7 +154,7 @@ export function AdminRuthieQuickChatV2() {
                 value={message}
                 onChange={(event) => setMessage(event.target.value)}
                 onKeyDown={onKeyDown}
-                placeholder={providerReady ? "Ruthie'ye yaz..." : "Ruthie hazırlanıyor..."}
+                placeholder={providerReady ? "Ruthie'ye yaz..." : "ROSTA Insight hazırlanıyor..."}
                 disabled={!providerReady || sending}
                 autoComplete="off"
               />
@@ -173,7 +173,7 @@ export function AdminRuthieQuickChatV2() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -6, scale: 0.98 }}
             >
-              <div><RuthieBrandIcon size={16} /><strong>Ruthie</strong><button type="button" onClick={() => { setReply(null); setError(null); }} aria-label="Yanıtı kapat"><X size={14} /></button></div>
+              <div><RuthieBrandIcon size={16} /><strong>ROSTA Insight</strong><button type="button" onClick={() => { setReply(null); setError(null); }} aria-label="Yanıtı kapat"><X size={14} /></button></div>
               {sending ? <p>Yazıyor…</p> : null}
               {reply ? <p>{reply}</p> : null}
               {error ? <p className="is-error">{error}</p> : null}
