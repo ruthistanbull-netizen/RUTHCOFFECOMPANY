@@ -1,6 +1,6 @@
 import path from "node:path";
 
-const storefrontUrl = "https://rostacoffeecompany.zeabur.app";
+const storefrontUrl = "https://rostacoffecompany.zeabur.app";
 const panelUrl = "https://rostapanel.zeabur.app";
 
 /** @type {import("next").NextConfig} */
