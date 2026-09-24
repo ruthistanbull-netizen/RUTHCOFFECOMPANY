@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
-import { basitKargoRequest, normalizeBasitKargoQuotes } from "@/lib/basitKargo";
+import { basitKargoRequest, isBasitKargoConfigured, normalizeBasitKargoQuotes } from "@/lib/basitKargo";
 import { normalizePackages } from "@/lib/basitKargoShipping";
 import { noStoreHeaders } from "@/lib/websiteRevalidate";
 
@@ -17,6 +17,12 @@ function calculateDesiKg(packages: Array<{ height: number; width: number; depth:
 export async function POST(request: Request) {
   const auth = await requireAdmin(request);
   if ("error" in auth) return auth.error;
+  if (!isBasitKargoConfigured()) {
+    return NextResponse.json(
+      { ok: true, configured: false, packages: [], quotes: [], source: "unbound" },
+      { headers: noStoreHeaders() },
+    );
+  }
   try {
     const body = await request.json().catch(() => ({}));
     const packages = normalizePackages(body.packages);
@@ -45,7 +51,7 @@ export async function POST(request: Request) {
       .filter((quote) => Number.isFinite(Number(quote.price)))
       .sort((a, b) => Number(a.price) - Number(b.price));
 
-    return NextResponse.json({ ok: true, packages, quotes: sorted, source }, { headers: noStoreHeaders() });
+    return NextResponse.json({ ok: true, configured: true, packages, quotes: sorted, source }, { headers: noStoreHeaders() });
   } catch (error) {
     return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : "Canlı fiyatlar alınamadı." }, { status: 400, headers: noStoreHeaders() });
   }
