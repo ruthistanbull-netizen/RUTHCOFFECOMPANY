@@ -143,7 +143,7 @@ export function RuthieVoiceOnly() {
     void (async () => {
       try {
         const headers = await adminAuthHeaders();
-        const response = await fetch("/api/ruthie/openai/status", { headers, cache: "no-store" });
+        const response = await fetch("/api/rosta-insight/openai/status", { headers, cache: "no-store" });
         const payload = await response.json() as ProviderStatus;
         setStatus(payload);
       } catch {
@@ -284,7 +284,7 @@ export function RuthieVoiceOnly() {
     setPreviewing(draftVoice);
     try {
       const headers = await adminAuthHeaders();
-      const response = await fetch("/api/ruthie/openai/voice-preview", {
+      const response = await fetch("/api/rosta-insight/openai/voice-preview", {
         method: "POST",
         cache: "no-store",
         headers: { ...headers, "Content-Type": "application/json" },
