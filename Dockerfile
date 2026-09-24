@@ -16,7 +16,7 @@ RUN target="$ROSTA_APP"; \
     service_hint="$(printf '%s %s %s %s' "$ZEABUR_SERVICE_NAME" "$ZEABUR_SERVICE_DOMAIN" "$ZEABUR_WEB_DOMAIN" "$ZEABUR_WEB_URL")"; \
     if [ -z "$target" ]; then \
       if printf '%s' "$service_hint" | grep -qi 'rostapanel'; then target="admin"; \
-      elif printf '%s' "$service_hint" | grep -qi 'rostacoffecompany'; then target="storefront"; \
+      elif printf '%s' "$service_hint" | grep -qi 'rostacoffeecompany'; then target="storefront"; \
       else target="storefront"; \
       fi; \
     fi; \
@@ -32,4 +32,4 @@ ENV PORT=3000
 
 EXPOSE 3000
 
-CMD ["sh","-c","service_hint="$(printf '%s %s %s %s' "$ZEABUR_SERVICE_NAME" "$ZEABUR_SERVICE_DOMAIN" "$ZEABUR_WEB_DOMAIN" "$ZEABUR_WEB_URL")"; if [ "$ROSTA_APP" = "admin" ] || printf '%s' "$service_hint" | grep -qi 'rostapanel'; then exec npm run start:admin; else exec npm run start:storefront; fi"]
+CMD ["sh","-c","target=\"$ROSTA_APP\"; if [ -z \"$target\" ] && [ -f /app/.rosta-app-target ]; then target=\"$(cat /app/.rosta-app-target)\"; fi; if [ \"$target\" = \"admin\" ]; then exec npm run start:admin; elif [ \"$target\" = \"storefront\" ]; then exec npm run start:storefront; else echo \"Invalid runtime ROSTA_APP: $target\" >&2; exit 2; fi"]
