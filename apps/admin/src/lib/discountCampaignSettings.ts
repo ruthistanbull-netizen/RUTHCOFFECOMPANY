@@ -78,7 +78,7 @@ export function makeDiscountRule(): DiscountRule {
 export function makeCouponRule(): CouponCodeRule {
   return {
     id: createId("coupon"),
-    code: "RUTH10",
+    code: "ROSTA10",
     name: "Yeni Kupon",
     enabled: true,
     discountType: "percent",
@@ -185,7 +185,7 @@ export function normalizeDiscountCampaignSettings(input: unknown): DiscountCampa
         const type = valueType(item?.discountType);
         return {
           id: stringValue(item?.id, `coupon-${index}`),
-          code: stringValue(item?.code, "RUTH10").toLocaleUpperCase("tr-TR").replace(/\s+/g, ""),
+          code: stringValue(item?.code, "ROSTA10").toLocaleUpperCase("tr-TR").replace(/\s+/g, ""),
           name: stringValue(item?.name, "Kupon"),
           enabled: Boolean(item?.enabled),
           discountType: type,
