@@ -174,9 +174,9 @@ export function PanelHubProfiles() {
       key: "ruth" as const,
       label: "Ruth Istanbul",
       caption: "Yönetim Alanı",
-      image: `${RUTH_ADMIN_URL}/ruth-commerce-panel-logo.png?v=20260807-3`,
+      image: `${RUTH_ADMIN_URL}/ruth-commerce-user-logo.svg`,
       imageClass: "h-[72%] w-[84%] object-contain",
-      surface: "bg-[linear-gradient(145deg,#171717,#28231a)]",
+      surface: "bg-[#F4F0E8]",
       action: enterRuth,
     },
   ];
@@ -252,8 +252,8 @@ export function PanelHubProfiles() {
                 <div
                   className={[
                     "relative aspect-square w-full overflow-hidden rounded-[4px] border-[3px] border-transparent shadow-[0_18px_45px_rgba(0,0,0,.24)] transition-[border-color,filter,box-shadow] duration-200",
-                    "group-hover:border-white group-focus-visible:border-white",
-                    selected ? "border-white shadow-[0_24px_70px_rgba(0,0,0,.5)]" : "",
+                    "group-hover:border-black group-focus-visible:border-black",
+                    selected ? "border-black shadow-[0_24px_70px_rgba(0,0,0,.45)]" : "",
                     card.surface,
                   ].join(" ")}
                 >
