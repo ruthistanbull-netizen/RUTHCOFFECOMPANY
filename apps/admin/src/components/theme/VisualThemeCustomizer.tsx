@@ -404,8 +404,8 @@ export function VisualThemeCustomizer() {
           const requestedX = rect.left + pending.point.x * scaleX;
           const requestedY = rect.top + pending.point.y * scaleY;
           setMenu({
-            x: Math.max(12, Math.min(window.innerWidth - 348, requestedX)),
-            y: Math.max(72, Math.min(Math.max(72, window.innerHeight - 560), requestedY)),
+            x: Math.max(10, Math.min(window.innerWidth - 274, requestedX)),
+            y: Math.max(70, Math.min(Math.max(70, window.innerHeight - 470), requestedY)),
           });
           pendingContextRef.current = null;
         }
@@ -448,10 +448,21 @@ export function VisualThemeCustomizer() {
 
   return (
     <div className="fixed inset-0 z-[90] flex min-h-0 flex-col bg-[#eceef1]" data-theme-customizer-v4>
+      <style>{`
+        [data-ruth-theme-context-menu] section { padding: 8px !important; }
+        [data-ruth-theme-context-menu] section > p,
+        [data-ruth-theme-context-menu] section > span { margin-bottom: 5px !important; }
+        [data-ruth-theme-context-menu] input:not([type="range"]):not([type="color"]),
+        [data-ruth-theme-context-menu] select { height: 30px !important; min-height: 30px !important; font-size: 8px !important; border-radius: 8px !important; }
+        [data-ruth-theme-context-menu] textarea { min-height: 58px !important; padding: 7px !important; font-size: 8px !important; line-height: 1.35 !important; border-radius: 8px !important; }
+        [data-ruth-theme-context-menu] label > span { font-size: 7.5px !important; }
+        [data-ruth-theme-context-menu] input[type="range"] { height: 14px !important; }
+        [data-ruth-theme-context-menu] button { min-height: 30px; }
+      `}</style>
       <header className="flex h-[64px] shrink-0 items-center border-b border-black/10 bg-[#fbf8f3] px-3 md:px-4">
         <div className="flex min-w-0 flex-1 items-center gap-3">
           <a href="/" aria-label="Panele dön" className="grid h-9 w-9 place-items-center rounded-xl border border-black/[0.08] bg-white shadow-sm"><ArrowLeft className="h-4 w-4" /></a>
-          <div className="hidden sm:block"><p className="text-[12px] font-semibold">Mağaza Tasarımı</p><p className="mt-0.5 text-[8px] text-black/35">Masaüstü ve mobil mağaza medya editörü</p></div>
+          <div className="hidden sm:block"><p className="text-[12px] font-semibold">Mağaza Tasarımı</p><p className="mt-0.5 text-[8px] text-black/35">Sağ tıkla · mobilde basılı tutarak düzenle</p></div>
         </div>
 
         <div className="mx-2 flex min-w-0 flex-[1.5] items-center justify-center gap-2">
@@ -473,7 +484,11 @@ export function VisualThemeCustomizer() {
       </header>
 
       <div className="flex min-h-0 flex-1 flex-col md:flex-row">
-        <aside className="order-2 flex h-[44dvh] w-full shrink-0 flex-col border-t border-black/10 bg-[#fbf8f3] md:order-1 md:h-full md:w-[360px] md:border-r md:border-t-0">
+        <aside
+          aria-hidden="true"
+          style={{ display: "none" }}
+          className="h-0 w-0 overflow-hidden"
+        >
           <div className="grid grid-cols-3 gap-1 border-b border-black/[0.07] p-2">
             <button type="button" onClick={() => setSideView("quick")} className={cx("h-9 rounded-lg text-[9px] font-medium", sideView === "quick" ? "bg-white shadow-sm" : "text-black/45")}>Hızlı düzenle</button>
             <button type="button" onClick={() => setSideView("home")} className={cx("h-9 rounded-lg text-[9px] font-medium", sideView === "home" ? "bg-white shadow-sm" : "text-black/45")}>Anasayfa</button>
@@ -516,7 +531,7 @@ export function VisualThemeCustomizer() {
           </div>
         </aside>
 
-        <main className="order-1 flex min-h-0 flex-1 items-center justify-center overflow-hidden bg-[#e9ebee] p-3 md:order-2 md:p-5">
+        <main className="flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-hidden bg-[#e9ebee] p-3 md:p-4">
           <div className={cx("relative overflow-hidden bg-white shadow-[0_10px_40px_rgba(15,23,42,.08)] transition-all duration-300", device === "mobile" ? "h-full max-h-[820px] w-[430px] max-w-full rounded-[24px] border border-black/10" : "h-full w-full rounded-xl border border-black/[0.08]")}>
             <iframe ref={iframeRef} key={`${path}-${nonce}`} src={previewUrl} title="Mağaza önizleme" className="h-full w-full border-0 bg-white" onLoad={() => window.setTimeout(() => sendSettings(settings), 40)} />
           </div>
@@ -525,12 +540,12 @@ export function VisualThemeCustomizer() {
 
       {menu && selected ? (
         <div
-          className="fixed z-[2147483640] w-[336px] max-w-[calc(100vw-24px)] max-h-[calc(100vh-84px)] overflow-y-auto rounded-2xl border border-black/10 bg-white shadow-[0_22px_65px_rgba(15,23,42,.28)]"
+          className="fixed z-[2147483640] w-[264px] max-w-[calc(100vw-20px)] max-h-[min(460px,calc(100vh-78px))] overflow-y-auto rounded-xl border border-black/10 bg-white shadow-[0_18px_46px_rgba(15,23,42,.22)]"
           style={{ left: menu.x, top: menu.y }}
           data-ruth-theme-editor-ui
           data-ruth-theme-context-menu
         >
-          <div className="sticky top-0 z-10 border-b border-black/[0.06] bg-white/95 px-3.5 py-3 backdrop-blur">
+          <div className="sticky top-0 z-10 border-b border-black/[0.06] bg-white/95 px-2.5 py-2 backdrop-blur">
             <div className="flex items-start gap-3">
               <div className="min-w-0 flex-1">
                 <p className="truncate text-[10px] font-semibold">{selected.label}</p>
@@ -544,7 +559,7 @@ export function VisualThemeCustomizer() {
             <section className="border-b border-black/[0.06] p-3">
               <p className="mb-2 text-[9px] font-semibold">Görsel</p>
               {selected.imageSrc ? (
-                <div className="mb-2 aspect-[16/9] overflow-hidden rounded-xl border border-black/[0.06] bg-[#f6f6f4]">
+                <div className="mb-2 h-[68px] overflow-hidden rounded-lg border border-black/[0.06] bg-[#f6f6f4]">
                   <img src={selectedOverride?.imageSrc || selected.imageSrc} alt="" className="h-full w-full object-cover" />
                 </div>
               ) : null}
@@ -692,11 +707,8 @@ export function VisualThemeCustomizer() {
             </section>
           ) : null}
 
-          <div className="sticky bottom-0 border-t border-black/[0.07] bg-white/95 p-2.5 backdrop-blur">
-            <div className="grid grid-cols-2 gap-2">
-              <button type="button" onClick={() => { setSideView("theme"); setMenu(null); }} className="flex h-10 items-center justify-center gap-2 rounded-xl border border-black/10 text-[9px] font-medium hover:bg-black/[0.025]"><Palette className="h-3.5 w-3.5" />Tema ayarları</button>
-              <button type="button" onClick={resetSelectedOverride} disabled={!selectedOverride} className="h-10 rounded-xl border border-black/10 text-[9px] font-medium text-black/55 hover:bg-black/[0.025] disabled:opacity-30">Öğe ayarlarını sıfırla</button>
-            </div>
+          <div className="sticky bottom-0 border-t border-black/[0.07] bg-white/95 p-2 backdrop-blur">
+            <button type="button" onClick={resetSelectedOverride} disabled={!selectedOverride} className="h-8 w-full rounded-lg border border-black/10 text-[8px] font-medium text-black/55 hover:bg-black/[0.025] disabled:opacity-30">Bu öğenin ayarlarını sıfırla</button>
           </div>
         </div>
       ) : null}
