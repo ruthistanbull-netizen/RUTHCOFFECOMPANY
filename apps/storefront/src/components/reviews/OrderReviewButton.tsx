@@ -4,7 +4,7 @@ import { Star, X } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 
-const STAR_GOLD = "#f5b301";
+const STAR_GOLD = "#C8A77D";
 
 type Props = {
   orderId: string;
@@ -47,25 +47,25 @@ export function OrderReviewButton({ orderId, orderNo, orderStatus, orderPaymentS
 
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)} className="inline-flex items-center justify-center gap-1.5 rounded-full border border-gold/25 bg-cream px-4 py-2 text-[10px] uppercase tracking-wide-luxe text-ink transition hover:bg-ink hover:text-cream">
+      <button type="button" onClick={() => setOpen(true)} className="inline-flex items-center justify-center gap-1.5 rounded-full border border-kraft/45 bg-carbon-soft px-4 py-2 text-[10px] uppercase tracking-wide-luxe text-cream transition active:bg-brick active:text-[var(--rosta-action-text)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick">
         <Star size={12} /> Değerlendir
       </button>
       {open && (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-ink/45 px-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-2xl border border-gold/15 bg-cream p-5 shadow-2xl">
+        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-carbon/75 px-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl border border-kraft/35 bg-carbon-soft p-5 text-cream shadow-2xl">
             <div className="mb-4 flex items-start justify-between gap-4">
-              <div><p className="text-xs uppercase tracking-wide-luxe text-gold-dark">Değerlendirme</p><h3 className="mt-2 font-heading text-2xl">{item.product_name}</h3></div>
-              <button type="button" onClick={() => setOpen(false)} className="rounded-full border border-gold/20 p-2"><X size={16} /></button>
+              <div><p className="text-xs uppercase tracking-wide-luxe text-brick">Değerlendirme</p><h3 className="mt-2 font-heading text-2xl">{item.product_name}</h3></div>
+              <button type="button" onClick={() => setOpen(false)} className="rounded-full border border-kraft/40 p-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"><X size={16} /></button>
             </div>
             <div className="mb-4 flex gap-1">
               {Array.from({ length: 5 }).map((_, index) => (
                 <button key={index} type="button" onClick={() => setRating(index + 1)} style={{ color: STAR_GOLD }}><Star size={28} className={index < rating ? "fill-current" : ""} /></button>
               ))}
             </div>
-            <label className="block text-xs uppercase tracking-wide-luxe text-muted-ruth">Başlık<input value={title} onChange={(e) => setTitle(e.target.value)} className="mt-2 w-full rounded-lg border border-gold/15 bg-ivory px-4 py-3 text-sm outline-none" placeholder="Kısa bir başlık" /></label>
-            <label className="mt-4 block text-xs uppercase tracking-wide-luxe text-muted-ruth">Yorum<textarea value={comment} onChange={(e) => setComment(e.target.value)} className="mt-2 min-h-28 w-full rounded-lg border border-gold/15 bg-ivory px-4 py-3 text-sm outline-none" placeholder="Ürünle ilgili deneyimini yaz" /></label>
-            {message && <p className="mt-4 rounded-lg bg-ivory px-3 py-2 text-xs leading-5 text-muted-ruth">{message}</p>}
-            <button type="button" onClick={submit} disabled={loading} className="mt-5 w-full bg-ink px-5 py-4 text-xs uppercase tracking-wide-luxe text-cream disabled:opacity-60">{loading ? "Gönderiliyor..." : "Yorumu Gönder"}</button>
+            <label className="block text-xs uppercase tracking-wide-luxe text-cream/70">Başlık<input value={title} onChange={(e) => setTitle(e.target.value)} className="mt-2 w-full rounded-lg border border-kraft/35 bg-carbon px-4 py-3 text-sm outline-none" placeholder="Kısa bir başlık" /></label>
+            <label className="mt-4 block text-xs uppercase tracking-wide-luxe text-cream/70">Yorum<textarea value={comment} onChange={(e) => setComment(e.target.value)} className="mt-2 min-h-28 w-full rounded-lg border border-kraft/35 bg-carbon px-4 py-3 text-sm outline-none" placeholder="Ürünle ilgili deneyimini yaz" /></label>
+            {message && <p className="mt-4 rounded-lg bg-carbon px-3 py-2 text-xs leading-5 text-cream/70">{message}</p>}
+            <button type="button" onClick={submit} disabled={loading} className="mt-5 w-full bg-brick px-5 py-4 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)] active:bg-espresso disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick">{loading ? "Gönderiliyor..." : "Yorumu Gönder"}</button>
           </div>
         </div>
       )}
