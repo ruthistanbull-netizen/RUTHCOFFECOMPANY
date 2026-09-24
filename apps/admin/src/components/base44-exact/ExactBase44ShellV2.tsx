@@ -33,7 +33,7 @@ function Brand({ collapsed = false }: { collapsed?: boolean }) {
   return (
     <Link href="/" className={exactCx("flex min-w-0 items-center gap-2.5", collapsed && "justify-center")}>
       <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-[var(--radius-small)] bg-white shadow-sm ring-1 ring-black/5">
-        <img src="/brand/ruth-r-mark.webp" alt="Ruth" className="h-8 w-8 object-contain" />
+        <img src="/rosta-coffee-co.svg" alt="ROSTA Coffee Co." className="h-8 w-8 object-contain" />
       </div>
       {!collapsed ? <div className="min-w-0"><p className="ruth-type-card-title truncate text-main">ROSTA Coffee Co.</p><p className="ruth-type-caption truncate text-subtle">Control Room</p></div> : null}
     </Link>
@@ -49,7 +49,7 @@ function MobileDrawerBrand({ onClick }: { onClick: () => void }) {
       className="relative block h-14 w-[176px] shrink-0 overflow-hidden"
     >
       <img
-        src="/ruth-commerce-panel-logo.png?v=20260807-3"
+        src="/rosta-coffee-co.svg"
         alt="ROSTA Coffee Co."
         width={1000}
         height={500}
@@ -91,7 +91,7 @@ function TopHeader({ collapsed, onToggleSidebar, onOpenSearch, onOpenMore, dark,
     <ExactIconButton icon={collapsed ? PanelLeft : PanelLeftClose} label="Kenar çubuğunu değiştir" variant="ghost" size="icon-sm" className="hidden lg:flex" onClick={onToggleSidebar} />
     <span className="ruth-type-card-title hidden truncate text-main md:block">{currentItem?.label || "Kontrol Merkezi"}</span>
     <button type="button" onClick={onOpenSearch} className="ruth-type-control ml-auto mr-1 flex h-11 items-center gap-2 border border-border-subtle bg-surface-secondary px-3 text-subtle radius-control transition-all hover:border-border-strong hover:text-muted md:h-9 md:w-64"><Search className="h-4 w-4 shrink-0" /><span className="hidden md:inline">Ara veya komut çalıştır…</span></button>
-    <ExactIconButton icon={Sparkles} label="Ruthie AI" variant="ghost" size="icon-sm" className="text-accent" onClick={() => router.push("/ruthie")} />
+    <ExactIconButton icon={Sparkles} label="ROSTA Insight" variant="ghost" size="icon-sm" className="text-accent" onClick={() => router.push("/ruthie")} />
     <ExactNotificationBell />
     <ExactIconButton icon={dark ? Sun : Moon} label="Temayı değiştir" variant="ghost" size="icon-sm" onClick={onToggleDark} />
   </header>;
