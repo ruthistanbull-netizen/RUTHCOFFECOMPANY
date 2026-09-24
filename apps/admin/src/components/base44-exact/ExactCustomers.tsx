@@ -431,7 +431,7 @@ export function ExactCustomers() {
     if (!Number.isFinite(amount) || amount <= 0) { toast.error("Geçerli bir ROSTA Points miktarı gir."); return; }
     setBusy(true);
     try {
-      const result = await adminRequest<{ appliedAmount?: number; balance?: number }>("/api/ruthie-points", { method: "POST", body: JSON.stringify({ profileId: selected.profile_id || selected.id, operation: pointsOperation, points: amount, reason: pointsReason }) });
+      const result = await adminRequest<{ appliedAmount?: number; balance?: number }>("/api/rosta-points", { method: "POST", body: JSON.stringify({ profileId: selected.profile_id || selected.id, operation: pointsOperation, points: amount, reason: pointsReason }) });
       const applied = Number(result.appliedAmount || (pointsOperation === "add" ? amount : -amount));
       const balance = Number(result.balance ?? Math.max(0, selected.reward_points_balance + applied));
       setSelected((current) => current ? { ...current, reward_points_balance: balance } : current);
