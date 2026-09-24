@@ -105,10 +105,10 @@ export function PaytrOrderResult({ orderNo }: { orderNo?: string }) {
 
   if (!orderNo) {
     return (
-      <div className="mx-auto max-w-xl rounded-2xl border border-gold/15 bg-cream p-6 sm:p-8">
-        <p className="text-xs uppercase tracking-wide-luxe text-gold-dark">Sipariş Bilgisi</p>
+      <div className="mx-auto max-w-xl rounded-2xl border border-kraft/35 bg-carbon-soft p-6 sm:p-8">
+        <p className="text-xs uppercase tracking-wide-luxe text-brick">Sipariş Bilgisi</p>
         <h1 className="mt-2 font-heading text-4xl">Sipariş bilgisi bulunamadı</h1>
-        <p className="mt-4 text-sm leading-7 text-muted-ruth">
+        <p className="mt-4 text-sm leading-7 text-cream/70">
           Sipariş referansı eksik. Sipariş durumunu hesabından veya sipariş takip ekranından kontrol edebilirsin.
         </p>
       </div>
@@ -118,13 +118,13 @@ export function PaytrOrderResult({ orderNo }: { orderNo?: string }) {
   return (
     <>
       <CoffeeBeanRain />
-      <div className="order-success-card mx-auto max-w-2xl rounded-2xl border border-gold/15 bg-cream p-5 sm:p-8">
-        <CheckCircle2 className="order-success-icon mx-auto mb-4 text-gold-dark" size={42} />
-        <p className="order-success-eyebrow mb-2 text-[0.65rem] uppercase tracking-wide-luxe text-gold-dark sm:text-xs">
+      <div className="order-success-card mx-auto max-w-2xl rounded-2xl border border-kraft/35 bg-carbon-soft p-5 sm:p-8">
+        <CheckCircle2 className="order-success-icon mx-auto mb-4 text-brick" size={42} />
+        <p className="order-success-eyebrow mb-2 text-[0.65rem] uppercase tracking-wide-luxe text-brick sm:text-xs">
           Sipariş Alındı
         </p>
         <h1 className="order-success-title font-heading text-4xl sm:text-5xl">Siparişiniz Tamamlandı</h1>
-        <p className="order-success-copy mx-auto mt-4 max-w-lg text-sm leading-7 text-muted-ruth">
+        <p className="order-success-copy mx-auto mt-4 max-w-lg text-sm leading-7 text-cream/70">
           Ödemen başarıyla tamamlandı. Siparişin ROSTA Coffee Co. sistemine alındı.
         </p>
         <OrderSuccessRostaPointsAnimation orderNo={orderNo} />
