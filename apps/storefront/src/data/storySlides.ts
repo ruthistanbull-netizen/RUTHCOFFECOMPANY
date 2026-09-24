@@ -41,4 +41,4 @@ export const storySlides = [
     image: "/home/rosta-hero.webp",
     href: "/about",
   },
-] as const;
+];
