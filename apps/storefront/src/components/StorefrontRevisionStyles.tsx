@@ -19,12 +19,12 @@ export function StorefrontRevisionStyles() {
 
         html.ruth-product-page-active .product-gallery-frame.is-lightbox .product-gallery-image,
         html.ruth-product-page-active .product-gallery-frame.is-lightbox .product-gallery-image img { object-fit: contain !important; }
-        html.ruth-product-page-active .ruth-zara-header.product-header-transparent .ruth-zara-header-inner { color: var(--ruth-product-header-ink, #111111) !important; mix-blend-mode: normal !important; }
+        html.ruth-product-page-active .ruth-zara-header.product-header-transparent .ruth-zara-header-inner { color: var(--ruth-product-header-ink, var(--rosta-carbon)) !important; mix-blend-mode: normal !important; }
         html.ruth-product-page-active .ruth-zara-header.product-header-transparent .header-wordmark { filter: brightness(0) invert(var(--ruth-product-header-invert, 0)) !important; }
         html.ruth-product-page-active .ruth-zara-header.product-header-transparent button,
         html.ruth-product-page-active .ruth-zara-header.product-header-transparent a,
         html.ruth-product-page-active .ruth-zara-header.product-header-transparent svg { color: inherit !important; stroke: currentColor !important; }
-        html.ruth-product-page-active:has(.ruth-zara-header.product-header-transparent[data-menu-open="false"]) .ruth-zara-menu-button { color: var(--ruth-product-header-ink, #111111) !important; mix-blend-mode: normal !important; }
+        html.ruth-product-page-active:has(.ruth-zara-header.product-header-transparent[data-menu-open="false"]) .ruth-zara-menu-button { color: var(--ruth-product-header-ink, var(--rosta-carbon)) !important; mix-blend-mode: normal !important; }
         html.ruth-product-page-active:has(.ruth-zara-header.product-header-transparent[data-menu-open="false"]) .ruth-zara-menu-button .ruth-zara-hamburger__line { background: currentColor !important; }
 
         /* Mobile product header: search/account/cart follow the same adaptive contrast as the menu. */
@@ -50,7 +50,7 @@ export function StorefrontRevisionStyles() {
 
         /* Sold-out cards: subtly fade the image and show a red TÜKENDİ pill on the top-right. */
         .product-card-root:has(.product-card-add:disabled) .product-card-image-frame::after {
-          content:"TÜKENDİ"; position:absolute; top:10px; right:10px; z-index:6; display:inline-flex; min-height:29px; align-items:center; justify-content:center; padding:0 11px; border:1px solid rgba(180,0,22,.18); border-radius:999px; background:rgba(180,0,22,.96); color:#fff; font-size:8.5px; font-weight:500; letter-spacing:.14em; line-height:1; text-transform:uppercase; box-shadow:0 5px 16px rgba(40,0,0,.12);
+          content:"TÜKENDİ"; position:absolute; top:10px; right:10px; z-index:6; display:inline-flex; min-height:29px; align-items:center; justify-content:center; padding:0 11px; border:1px solid color-mix(in srgb,var(--ruth-color-danger) 28%,transparent); border-radius:999px; background:var(--ruth-color-danger); color:var(--rosta-action-text); font-size:8.5px; font-weight:500; letter-spacing:.14em; line-height:1; text-transform:uppercase; box-shadow:0 5px 16px color-mix(in srgb,var(--ruth-color-danger) 20%,transparent);
         }
         .product-card-root:has(.product-card-add:disabled) .product-card-image-frame img { opacity:.72 !important; filter:saturate(.82) !important; transition:opacity 220ms ease,filter 220ms ease !important; }
 
