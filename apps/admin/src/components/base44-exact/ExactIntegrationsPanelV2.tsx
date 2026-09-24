@@ -186,7 +186,7 @@ export function ExactIntegrationsPanelV2() {
       <ExactFormModal open={Boolean(help)} onClose={() => setHelp(null)} title={help ? `${help.label} bağlantısı` : "Entegrasyon"} subtitle="ROSTA hesabını bağlamak için gerekli adımlar" size="lg" footer={<ExactButton variant="secondary" size="sm" onClick={() => setHelp(null)}>Kapat</ExactButton>}>
         {help ? <div className="space-y-3">
           {help.help.map((step, index) => <div key={step} className="flex gap-3 rounded-[var(--radius-control)] bg-surface-secondary p-3"><div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-bold text-white">{index + 1}</div><p className="text-sm leading-relaxed text-main">{step}</p></div>)}
-          {help.manageHref ? <ExactButton className="w-full" variant="secondary" size="sm" onClick={() => { window.location.href = help.manageHref!; }}>Yönetim sayfasını aç</ExactButton> : null}
+          {help.manageHref ? <a href={help.manageHref} className="block"><ExactButton className="w-full" variant="secondary" size="sm">Yönetim sayfasını aç</ExactButton></a> : null}
         </div> : null}
       </ExactFormModal>
       <ConfirmDialog
