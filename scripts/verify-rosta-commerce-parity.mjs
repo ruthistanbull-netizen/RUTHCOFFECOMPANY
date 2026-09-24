@@ -120,6 +120,7 @@ expect(storefrontDocker.includes("COPY apps/admin/package.json") && storefrontDo
 expect(!sharedDocker.includes("npm run build:all"), "shared Dockerfile must never couple panel and storefront builds");
 expect(sharedDocker.includes('target="storefront"'), "shared Dockerfile must use storefront as the safe default when Zeabur target hints are unavailable");
 expect(sharedDocker.includes("ZEABUR_SERVICE_NAME") && sharedDocker.includes("ZEABUR_SERVICE_DOMAIN"), "shared Dockerfile must inspect Zeabur service hints");
+expect(sharedDocker.includes("/app/.rosta-app-target"), "shared Dockerfile must persist the build target for runtime startup");
 expect(panelDocker.includes("RUN npm run build:admin"), "panel Dockerfile must build only admin");
 expect(storefrontDocker.includes("RUN npm run build:storefront"), "storefront Dockerfile must build only storefront");
 
