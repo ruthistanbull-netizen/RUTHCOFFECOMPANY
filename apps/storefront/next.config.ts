@@ -6,7 +6,7 @@ const themeEditorOrigins = (
   process.env.NEXT_PUBLIC_PANEL_URL ||
   "https://rostapanel.zeabur.app http://localhost:* https://localhost:*"
 )
-  .split(/[\\s,]+/)
+  .split(/[\s,]+/)
   .map((value) => value.trim())
   .filter(Boolean)
   .join(" ");
