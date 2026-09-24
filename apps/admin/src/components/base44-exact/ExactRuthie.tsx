@@ -71,7 +71,7 @@ type SpeechRecognitionLike = {
 
 type SpeechRecognitionConstructor = new () => SpeechRecognitionLike;
 
-const STORAGE_KEY = "ruthie-exact-conversation-v1";
+const STORAGE_KEY = "rosta-insight-exact-conversation-v1";
 const initialMessage: Message = {
   id: "welcome",
   role: "assistant",
@@ -280,7 +280,7 @@ export function ExactRuthie() {
     if (!video || !video.videoWidth) return;
     const canvas = document.createElement("canvas"); canvas.width = video.videoWidth; canvas.height = video.videoHeight;
     canvas.getContext("2d")?.drawImage(video, 0, 0);
-    setAttachments((current) => [...current, { name: `ruthie-camera-${Date.now()}.jpg`, type: "image/jpeg", dataUrl: canvas.toDataURL("image/jpeg", 0.86) }].slice(0, 8));
+    setAttachments((current) => [...current, { name: `rosta-insight-camera-${Date.now()}.jpg`, type: "image/jpeg", dataUrl: canvas.toDataURL("image/jpeg", 0.86) }].slice(0, 8));
     closeCamera(); toast.success("Kamera görüntüsü ROSTA Insight mesajına eklendi.");
   };
 
