@@ -291,7 +291,7 @@ export function ExactNotificationBell() {
                   <p className="ruth-type-caption mt-0.5 text-subtle">Son bildirimlerin burada tutulur.</p>
                 </div>
                 <div className="flex items-center gap-1">
-                  {unreadCount > 0 ? <button type="button" onClick={markAllRead} className="ruth-type-control rounded-md px-2 py-1.5 text-subtle transition-colors hover:bg-surface-secondary hover:text-main">Tümünü oku</button> : null}
+                  {unreadCount > 0 ? <button type="button" onClick={markAllRead} className="ruth-type-control rounded-md px-2 py-1.5 text-subtle transition-colors active:bg-surface-secondary focus-visible:bg-surface-secondary focus-visible:text-main focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">Tümünü oku</button> : null}
                   <ExactIconButton icon={X} label="Kapat" variant="ghost" size="icon-sm" onClick={() => setOpen(false)} />
                 </div>
               </header>
@@ -310,7 +310,7 @@ export function ExactNotificationBell() {
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: Math.min(index * 0.025, 0.15), duration: 0.18 }}
                           className={exactCx(
-                            "group flex w-full gap-3 rounded-[var(--radius-small)] p-3 text-left transition-colors hover:bg-surface-secondary",
+                            "group flex w-full gap-3 rounded-[var(--radius-small)] p-3 text-left transition-colors active:bg-surface-secondary focus-visible:bg-surface-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
                             !item.read && "bg-accent-soft/55",
                           )}
                         >
@@ -325,7 +325,7 @@ export function ExactNotificationBell() {
                             <span className="ruth-type-caption mt-1 block line-clamp-2 pr-1 text-muted">{item.body}</span>
                             {!item.read ? <span className="mt-2 inline-flex items-center gap-1.5 ruth-type-caption font-medium text-accent"><span className="h-1.5 w-1.5 rounded-full bg-accent" />Yeni</span> : null}
                           </span>
-                          <ChevronRight className="mt-3 h-4 w-4 shrink-0 text-subtle opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100" />
+                          <ChevronRight className="mt-3 h-4 w-4 shrink-0 text-subtle opacity-0 transition-all group-focus-visible:translate-x-0.5 group-focus-visible:opacity-100" />
                         </motion.button>
                       );
                     })}
@@ -341,8 +341,8 @@ export function ExactNotificationBell() {
 
               {items.length ? (
                 <footer className="flex items-center justify-between gap-2 border-t border-border-subtle bg-surface-secondary/50 px-3 py-2.5">
-                  <button type="button" onClick={clearAll} className="ruth-type-control inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 text-subtle transition-colors hover:bg-surface-tertiary hover:text-danger"><Trash2 className="h-3.5 w-3.5" />Temizle</button>
-                  <button type="button" onClick={() => { setOpen(false); router.push("/notifications"); }} className="ruth-type-control inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 font-medium text-accent transition-colors hover:bg-accent-soft">Tüm bildirimleri gör<ChevronRight className="h-3.5 w-3.5" /></button>
+                  <button type="button" onClick={clearAll} className="ruth-type-control inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 text-subtle transition-colors active:bg-surface-tertiary active:text-danger focus-visible:bg-surface-tertiary focus-visible:text-danger focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Trash2 className="h-3.5 w-3.5" />Temizle</button>
+                  <button type="button" onClick={() => { setOpen(false); router.push("/notifications"); }} className="ruth-type-control inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 font-medium text-accent transition-colors active:bg-accent-soft focus-visible:bg-accent-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">Tüm bildirimleri gör<ChevronRight className="h-3.5 w-3.5" /></button>
                 </footer>
               ) : null}
             </motion.section>
@@ -383,7 +383,7 @@ export function ExactUnifiedToastLayer() {
                 <div className="min-w-0 flex-1 pr-5">
                   <div className="ruth-type-control font-semibold text-main">{notice.message}</div>
                 </div>
-                <button type="button" onClick={() => dismiss(notice.id)} className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full text-subtle opacity-60 transition-all hover:bg-surface-secondary hover:text-main hover:opacity-100" aria-label="Bildirimi kapat"><X className="h-3.5 w-3.5" /></button>
+                <button type="button" onClick={() => dismiss(notice.id)} className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full text-subtle opacity-60 transition-all active:bg-surface-secondary focus-visible:bg-surface-secondary focus-visible:text-main focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent hover:opacity-100" aria-label="Bildirimi kapat"><X className="h-3.5 w-3.5" /></button>
               </div>
               <div className="mt-2 h-0.5 overflow-hidden rounded-full bg-surface-tertiary"><motion.span initial={{ width: "100%" }} animate={{ width: "0%" }} transition={{ duration: Math.max(0.1, notice.durationMs / 1000), ease: "linear" }} className="block h-full bg-accent" /></div>
             </motion.div>
