@@ -30,6 +30,7 @@ type EditorElement = {
   text?: string;
   textEditable: boolean;
   imageSrc?: string;
+  mediaType?: "image" | "video";
   href?: string;
   metrics: {
     width: number;
@@ -363,6 +364,7 @@ function metadata(element: Element): EditorElement {
     text: textEditable ? (element.textContent || "") : undefined,
     textEditable,
     imageSrc: kindFor(element) === "image" ? media.currentSrc || media.getAttribute("src") || "" : undefined,
+    mediaType: kindFor(element) === "image" ? (element.tagName === "VIDEO" ? "video" : "image") : undefined,
     href: element.tagName === "A" ? anchor.getAttribute("href") || "" : undefined,
     metrics: {
       width: Math.round(rect.width),
@@ -455,9 +457,153 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
     let releaseTimer = 0;
     let outlineTimer = 0;
     let mutationTimer = 0;
+    let resizeFrame = 0;
+    let selectedElement: Element | null = null;
+    const mediaOrigins = new Map<string, Element>();
     const overlay = document.createElement("div");
     overlay.dataset.ruthThemeEditorUi = "true";
     overlay.style.cssText = "position:fixed;pointer-events:none;z-index:2147483646;border:2px solid #C94A40;background:color-mix(in srgb,#C94A40 10%,transparent);display:none;box-sizing:border-box;border-radius:6px";
+
+    const resizeDirections = ["nw", "n", "ne", "e", "se", "s", "sw", "w"] as const;
+    const handlePosition: Record<(typeof resizeDirections)[number], string> = {
+      nw: "left:-7px;top:-7px;cursor:nwse-resize",
+      n: "left:50%;top:-7px;transform:translateX(-50%);cursor:ns-resize",
+      ne: "right:-7px;top:-7px;cursor:nesw-resize",
+      e: "right:-7px;top:50%;transform:translateY(-50%);cursor:ew-resize",
+      se: "right:-7px;bottom:-7px;cursor:nwse-resize",
+      s: "left:50%;bottom:-7px;transform:translateX(-50%);cursor:ns-resize",
+      sw: "left:-7px;bottom:-7px;cursor:nesw-resize",
+      w: "left:-7px;top:50%;transform:translateY(-50%);cursor:ew-resize",
+    };
+
+    const handles = resizeDirections.map((direction) => {
+      const handle = document.createElement("span");
+      handle.dataset.ruthThemeResizeHandle = direction;
+      handle.dataset.ruthThemeEditorUi = "true";
+      handle.style.cssText = `position:absolute;width:12px;height:12px;border-radius:999px;background:#FBF3E6;border:2px solid #C94A40;box-shadow:0 1px 4px rgba(17,17,17,.28);pointer-events:auto;touch-action:none;display:none;${handlePosition[direction]}`;
+      overlay.appendChild(handle);
+      return handle;
+    });
+
+    const rememberMediaOrigin = (element: Element) => {
+      const id = ensureThemeId(element);
+      if (!mediaOrigins.has(id)) mediaOrigins.set(id, element.cloneNode(true) as Element);
+      return id;
+    };
+
+    const swapMediaElement = (element: Element, mediaType: "image" | "video") => {
+      const desiredTag = mediaType === "video" ? "VIDEO" : "IMG";
+      if (element.tagName === desiredTag) return element;
+      const id = rememberMediaOrigin(element);
+      const origin = mediaOrigins.get(id) || element;
+      const replacement = mediaType === "video" ? document.createElement("video") : document.createElement("img");
+
+      for (const attribute of Array.from(origin.attributes)) {
+        if (["src", "srcset", "poster", "autoplay", "loop", "muted", "playsinline", "controls"].includes(attribute.name.toLowerCase())) continue;
+        replacement.setAttribute(attribute.name, attribute.value);
+      }
+      replacement.setAttribute("data-theme-id", id);
+      if (mediaType === "video") {
+        const video = replacement as HTMLVideoElement;
+        video.autoplay = true;
+        video.loop = true;
+        video.muted = true;
+        video.playsInline = true;
+        video.preload = "metadata";
+      } else {
+        (replacement as HTMLImageElement).alt = (origin as HTMLImageElement).alt || "";
+      }
+
+      element.replaceWith(replacement);
+      return replacement;
+    };
+
+    const restoreMediaOrigin = (id: string) => {
+      const current = findById(id);
+      const origin = mediaOrigins.get(id);
+      if (!current || !origin) return current;
+      const replacement = origin.cloneNode(true) as Element;
+      replacement.setAttribute("data-theme-id", id);
+      current.replaceWith(replacement);
+      mediaOrigins.delete(id);
+      return replacement;
+    };
+
+    const canResize = (element: Element | null) => {
+      if (!(element instanceof HTMLElement)) return false;
+      if (kindFor(element) !== "image") return false;
+      const rect = element.getBoundingClientRect();
+      return rect.width >= 180 && rect.height >= 100;
+    };
+
+    const positionOverlay = (element: Element, locked = false) => {
+      const rect = element.getBoundingClientRect();
+      overlay.style.display = "block";
+      overlay.style.left = `${rect.left}px`;
+      overlay.style.top = `${rect.top}px`;
+      overlay.style.width = `${rect.width}px`;
+      overlay.style.height = `${rect.height}px`;
+      const showHandles = locked && canResize(element);
+      for (const handle of handles) handle.style.display = showHandles ? "block" : "none";
+    };
+
+    for (const handle of handles) {
+      handle.addEventListener("pointerdown", (event) => {
+        if (!(selectedElement instanceof HTMLElement) || !canResize(selectedElement)) return;
+        event.preventDefault();
+        event.stopPropagation();
+        const direction = handle.dataset.ruthThemeResizeHandle || "se";
+        const element = selectedElement;
+        const start = element.getBoundingClientRect();
+        const startX = event.clientX;
+        const startY = event.clientY;
+        const pointerId = event.pointerId;
+        handle.setPointerCapture?.(pointerId);
+
+        const move = (moveEvent: PointerEvent) => {
+          if (moveEvent.pointerId !== pointerId) return;
+          moveEvent.preventDefault();
+          const dx = moveEvent.clientX - startX;
+          const dy = moveEvent.clientY - startY;
+          let width = start.width;
+          let height = start.height;
+          if (direction.includes("e")) width += dx;
+          if (direction.includes("w")) width -= dx;
+          if (direction.includes("s")) height += dy;
+          if (direction.includes("n")) height -= dy;
+          width = Math.max(48, Math.min(5000, width));
+          height = Math.max(48, Math.min(5000, height));
+          element.style.width = `${Math.round(width)}px`;
+          element.style.height = `${Math.round(height)}px`;
+          positionOverlay(element, true);
+
+          window.cancelAnimationFrame(resizeFrame);
+          resizeFrame = window.requestAnimationFrame(() => {
+            if (window.parent === window) return;
+            window.parent.postMessage({
+              type: "RUTH_THEME_EDITOR_RESIZE",
+              id: ensureThemeId(element),
+              width: Math.round(width),
+              height: Math.round(height),
+              device: window.innerWidth < 768 ? "mobile" : "desktop",
+            }, "*");
+          });
+        };
+
+        const end = (endEvent: PointerEvent) => {
+          if (endEvent.pointerId !== pointerId) return;
+          handle.removeEventListener("pointermove", move);
+          handle.removeEventListener("pointerup", end);
+          handle.removeEventListener("pointercancel", end);
+          try { handle.releasePointerCapture?.(pointerId); } catch {}
+        };
+
+        handle.addEventListener("pointermove", move);
+        handle.addEventListener("pointerup", end);
+        handle.addEventListener("pointercancel", end);
+      });
+    }
+
     if (editorMode) document.body.appendChild(overlay);
 
     const applySettings = (next: ThemeCustomizerSettings, scanDocument = true) => {
@@ -469,7 +615,8 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
       const overrides = combinedOverrides(next);
       const nextIds = new Set(overrides.map((item) => item.id));
       for (const id of new Set([...trackedIds.current, ...nextIds])) {
-        const element = findById(id);
+        let element = findById(id);
+        if (!nextIds.has(id) && mediaOrigins.has(id)) element = restoreMediaOrigin(id);
         const original = element ? originals.current.get(element) : null;
         if (element && original) restore(element, original, isHeroImageId(id));
       }
@@ -477,13 +624,20 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
       const missingIds: string[] = [];
       let appliedCount = 0;
       for (const override of overrides) {
-        const element = findById(override.id);
+        let element = findById(override.id);
         if (!element) {
           missingIds.push(override.id);
           continue;
         }
+        if (override.kind === "image" && override.mediaType) {
+          element = swapMediaElement(element, override.mediaType);
+        }
         if (!originals.current.has(element)) originals.current.set(element, snapshot(element));
         applyOverride(element, override, mobile, isHeroImageId(override.id));
+        if (selectedElement && ensureThemeId(selectedElement) === override.id) {
+          selectedElement = element;
+          positionOverlay(element, true);
+        }
         appliedCount += 1;
       }
       trackedIds.current = nextIds;
@@ -501,13 +655,9 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
 
     const select = (element: Element) => {
       if (!editorMode || window.parent === window) return;
+      selectedElement = element;
       window.parent.postMessage({ type: "RUTH_THEME_EDITOR_SELECT", pathname: themePageKey(window.location.pathname), element: metadata(element) }, "*");
-      const rect = element.getBoundingClientRect();
-      overlay.style.display = "block";
-      overlay.style.left = `${rect.left}px`;
-      overlay.style.top = `${rect.top}px`;
-      overlay.style.width = `${rect.width}px`;
-      overlay.style.height = `${rect.height}px`;
+      positionOverlay(element, true);
     };
 
     const notifyPath = (pathname = window.location.pathname) => {
@@ -533,6 +683,19 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
         if (element) {
           select(element);
           if (event.data.scroll !== false) element.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }
+      if (event.data.type === "RUTH_THEME_EDITOR_MEDIA_OVERRIDE" && typeof event.data.id === "string" && event.data.imageSrc) {
+        registerElements();
+        let element = findById(event.data.id);
+        if (element) {
+          const mediaType = event.data.mediaType === "video" ? "video" : "image";
+          element = swapMediaElement(element, mediaType);
+          const media = element as HTMLImageElement | HTMLVideoElement;
+          media.setAttribute("src", String(event.data.imageSrc));
+          if (element.tagName === "IMG") (element as HTMLImageElement).setAttribute("srcset", String(event.data.imageSrc));
+          selectedElement = element;
+          select(element);
         }
       }
       if (event.data.type === "RUTH_THEME_EDITOR_REFRESH_OUTLINE") sendOutline();
@@ -575,16 +738,15 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
 
     const onMove = (event: MouseEvent) => {
       if (!editorMode) return;
+      if (selectedElement && document.contains(selectedElement)) {
+        positionOverlay(selectedElement, true);
+        return;
+      }
       const raw = event.target instanceof Element ? event.target : null;
       if (!raw) return;
       const target = pickTarget(raw);
       if (!target) return;
-      const rect = target.getBoundingClientRect();
-      overlay.style.display = "block";
-      overlay.style.left = `${rect.left}px`;
-      overlay.style.top = `${rect.top}px`;
-      overlay.style.width = `${rect.width}px`;
-      overlay.style.height = `${rect.height}px`;
+      positionOverlay(target, false);
     };
 
     const onResize = () => applySettings(settingsRef.current);
@@ -639,6 +801,7 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
       window.clearTimeout(releaseTimer);
       window.clearTimeout(outlineTimer);
       window.clearTimeout(mutationTimer);
+      window.cancelAnimationFrame(resizeFrame);
       overlay.remove();
     };
   }, []);
