@@ -1,5 +1,5 @@
 export const ROSTA_PANEL_URL = "https://rostapanel.zeabur.app";
-export const ROSTA_STORE_URL = "https://rostacoffeecompany.zeabur.app";
+export const ROSTA_STORE_URL = "https://rostacoffecompany.zeabur.app";
 export const ROSTA_SUPABASE_PROJECT_REF = "fposvxuryzidmeuwytbg";
 export const ROSTA_SUPABASE_URL = `https://${ROSTA_SUPABASE_PROJECT_REF}.supabase.co`;
 
