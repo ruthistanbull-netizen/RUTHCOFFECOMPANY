@@ -55,6 +55,8 @@ const canonicalStorefrontDocker = file("Dockerfile.rostacoffeecompany");
 const exactRuntimeServiceDocker = file("Dockerfile.ruthcoffecompany");
 const panelZbpack = file("zbpack.rostapanel.json");
 const storefrontZbpack = file("zbpack.ruthcoffecompany.json");
+const genericPanelZbpack = file("zbpack.admin.json");
+const genericStorefrontZbpack = file("zbpack.storefront.json");
 const adminManifest = file("apps/admin/src/app/manifest.ts");
 const adminLayout = file("apps/admin/src/app/layout.tsx");
 const notificationCenter = file("apps/admin/src/components/base44-exact/ExactNotificationCenter.tsx");
@@ -151,6 +153,8 @@ expect(panelDocker.includes("apps/admin/.next/BUILD_ID"), "panel Dockerfile must
 expect(sharedDocker.includes("apps/admin/.next/BUILD_ID"), "root panel Dockerfile must verify the admin build artifact");
 expect(panelZbpack.includes('"name": "rostapanel"'), "Zeabur panel service must pin Dockerfile.rostapanel");
 expect(storefrontZbpack.includes('"name": "ruthcoffecompany"'), "Zeabur storefront service must pin Dockerfile.ruthcoffecompany");
+expect(genericPanelZbpack.includes('"name": "rostapanel"'), "generic Zeabur admin alias must pin Dockerfile.rostapanel");
+expect(genericStorefrontZbpack.includes('"name": "ruthcoffecompany"'), "generic Zeabur storefront alias must pin Dockerfile.ruthcoffecompany");
 
 expect(adminNextConfig.includes("https://rostacoffecompany.zeabur.app"), "admin Next config must use the actual storefront Zeabur domain");
 expect(!adminNextConfig.includes('output: "standalone"'), "admin Docker runtime uses next start, so standalone output must not be enabled");
