@@ -98,17 +98,17 @@ type SaveResponse = {
   variantMediaHandled?: boolean;
   durationMs?: number;
 };
-type SizePreset = "none" | "adjustable-ring" | "necklace-guide" | "custom";
+type SizePreset = "none" | "package-250g" | "package-500g" | "custom";
 type CarePreset = "none" | "standard" | "custom";
 type ProductSelectHandler = (productId: string, productType: "single" | "bundle") => void;
 
 const defaultMaterials = ["Arabica", "Robusta", "Arabica + Robusta Blend", "Kafeinsiz"];
 const defaultFinishes = ["Açık Kavrum", "Orta Kavrum", "Koyu Kavrum", "Espresso Kavrum"];
 const STANDARD_CARE_VALUE = "Serin, kuru ve güneş almayan bir yerde; paketi hava almayacak şekilde kapalı saklayın.";
-const ADJUSTABLE_RING_VALUE = "250 g paket";
-const NECKLACE_SIZE_GUIDE_VALUE = "500 g paket";
-const necklaceGuideValues = new Set([
-  NECKLACE_SIZE_GUIDE_VALUE,
+const PACKAGE_250G_VALUE = "250 g paket";
+const PACKAGE_500G_VALUE = "500 g paket";
+const package500Values = new Set([
+  PACKAGE_500G_VALUE,
   "500 g",
   "500 gram paket",
 ]);
@@ -162,8 +162,8 @@ function groupIds(product: Product, type: "collection" | "category") {
 function sizePresetFor(value: string | null | undefined): SizePreset {
   const current = String(value || "").trim();
   if (!current) return "none";
-  if (necklaceGuideValues.has(current)) return "necklace-guide";
-  if (current.toLocaleLowerCase("tr-TR") === ADJUSTABLE_RING_VALUE.toLocaleLowerCase("tr-TR")) return "adjustable-ring";
+  if (package500Values.has(current)) return "package-500g";
+  if (current.toLocaleLowerCase("tr-TR") === PACKAGE_250G_VALUE.toLocaleLowerCase("tr-TR")) return "package-250g";
   return "custom";
 }
 
@@ -789,15 +789,15 @@ export function ExactProductStudioWorkspace({
                           const next = event.target.value as SizePreset;
                           setSizePreset(next);
                           if (next === "none") updateForm({ size_usage: "" });
-                          else if (next === "adjustable-ring") updateForm({ size_usage: ADJUSTABLE_RING_VALUE });
-                          else if (next === "necklace-guide") updateForm({ size_usage: NECKLACE_SIZE_GUIDE_VALUE });
+                          else if (next === "package-250g") updateForm({ size_usage: PACKAGE_250G_VALUE });
+                          else if (next === "package-500g") updateForm({ size_usage: PACKAGE_500G_VALUE });
                           else if (sizePreset !== "custom") updateForm({ size_usage: "" });
                         }}
                         className={exactFormInputClass}
                       >
                         <option value="none">Paket bilgisi yok</option>
-                        <option value="adjustable-ring">250 g paket</option>
-                        <option value="necklace-guide">500 g paket</option>
+                        <option value="package-250g">250 g paket</option>
+                        <option value="package-500g">500 g paket</option>
                         <option value="custom">Özel paket / kullanım metni…</option>
                       </select>
                       {sizePreset === "custom" ? (
@@ -808,7 +808,7 @@ export function ExactProductStudioWorkspace({
                           placeholder="Özel paket, gramaj veya kullanım metni"
                         />
                       ) : null}
-                      {sizePreset === "necklace-guide" ? (
+                      {sizePreset === "package-500g" ? (
                         <p className="ruth-type-caption leading-relaxed text-subtle">Storefront ürün detayında 500 g paket seçeneği gösterilir.</p>
                       ) : null}
                     </div>
