@@ -269,7 +269,7 @@ export function RuthieChatWorkspaceV2() {
     void (async () => {
       try {
         const headers = await adminAuthHeaders();
-        const response = await fetch("/api/ruthie/openai/status", { headers, cache: "no-store" });
+        const response = await fetch("/api/rosta-insight/openai/status", { headers, cache: "no-store" });
         const payload = await response.json() as ProviderStatus;
         if (!response.ok || !payload.ok) throw new Error("ROSTA Insight bağlantı durumu alınamadı.");
         setStatus(payload);
@@ -417,7 +417,7 @@ export function RuthieChatWorkspaceV2() {
 
     try {
       const headers = await adminAuthHeaders();
-      const response = await fetch("/api/ruthie/openai/chat", {
+      const response = await fetch("/api/rosta-insight/openai/chat", {
         method: "POST",
         cache: "no-store",
         headers: {
@@ -480,7 +480,7 @@ export function RuthieChatWorkspaceV2() {
     }));
     try {
       const headers = await adminAuthHeaders();
-      const response = await fetch("/api/ruthie/admin/execute", {
+      const response = await fetch("/api/rosta-insight/admin/execute", {
         method: "POST",
         cache: "no-store",
         headers: { ...headers, "Content-Type": "application/json" },
