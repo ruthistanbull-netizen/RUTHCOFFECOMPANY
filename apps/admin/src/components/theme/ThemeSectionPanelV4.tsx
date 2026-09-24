@@ -379,7 +379,7 @@ export function ThemeSectionPanelV4() {
       if (frameWindow && event.source !== frameWindow) return;
       if (!event.data || typeof event.data !== "object") return;
 
-      if (event.data.type === "RUTH_THEME_EDITOR_CONTEXT_REQUEST" && typeof event.data.sectionId === "string" && event.data.point) {
+      if (event.data.type === "RUTH_THEME_EDITOR_CONTEXT_REQUEST" && event.data.sectionTarget === true && typeof event.data.sectionId === "string" && event.data.point) {
         const contextPath = typeof event.data.pathname === "string" && settings.pages[event.data.pathname] ? event.data.pathname : path;
         const contextPage = themeSectionPage(settings, contextPath);
         if (contextPage.sections.some((item) => item.id === event.data.sectionId) && frame) {
@@ -398,7 +398,6 @@ export function ThemeSectionPanelV4() {
           setSelectedId(event.data.sectionId);
           setContextPanel({ x, y, sectionId: event.data.sectionId, elementId: String(event.data.id || ""), point });
           setOpen(true);
-          window.setTimeout(() => window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" })), 90);
         }
         return;
       }
