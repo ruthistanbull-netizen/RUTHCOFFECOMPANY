@@ -93,10 +93,33 @@ export function ExactAuthReset({ mode }: { mode: "reset" }) {
 
   if (!bootstrapped) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-background p-5" data-exact-base44-auth={mode}>
-        <div className="radius-control border border-info/20 bg-info-soft px-4 py-3 text-xs text-info-foreground">
-          Güvenli sıfırlama bağlantısı doğrulanıyor…
-        </div>
+      <main
+        className="relative min-h-[100dvh] overflow-hidden bg-[#141414] text-[#F4F0E8]"
+        data-exact-base44-auth={mode}
+      >
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_-10%,rgba(255,255,255,.075),transparent_34%),linear-gradient(180deg,rgba(0,0,0,.04),rgba(0,0,0,.34))]" />
+        <header className="relative z-20 flex h-[72px] items-center px-5 pt-[env(safe-area-inset-top)] sm:h-[86px] sm:px-10 lg:px-12">
+          <img
+            src="/rr-hub-cream.svg"
+            alt="RR HUB"
+            draggable={false}
+            className="h-[30px] w-auto select-none object-contain sm:h-[34px]"
+          />
+        </header>
+        <section className="relative z-10 flex min-h-[calc(100dvh-72px)] items-start justify-center px-5 pb-[max(2rem,env(safe-area-inset-bottom))] pt-8 sm:min-h-[calc(100dvh-86px)] sm:items-center sm:pb-16 sm:pt-0">
+          <div className="w-full max-w-[450px] rounded-[8px] border border-white/[0.08] bg-[#1b1b1b]/92 px-6 py-10 text-center shadow-[0_30px_80px_rgba(0,0,0,.38)] backdrop-blur-[6px] sm:px-14 sm:py-12">
+            <img
+              src="/rr-hub-cream.svg"
+              alt="RR HUB"
+              draggable={false}
+              className="mx-auto mb-8 h-auto w-[184px] select-none object-contain sm:w-[210px]"
+            />
+            <div className="mx-auto h-7 w-7 animate-spin rounded-full border-2 border-[#F4F0E8]/20 border-t-[#F4F0E8]" />
+            <p className="mt-5 text-[13px] font-medium text-[#F4F0E8]/72">
+              Güvenli sıfırlama bağlantısı doğrulanıyor…
+            </p>
+          </div>
+        </section>
       </main>
     );
   }
