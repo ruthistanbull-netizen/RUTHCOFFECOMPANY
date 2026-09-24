@@ -47,7 +47,6 @@ export function AppFrame({ children }: { children: ReactNode }) {
 
   const providers = (
     <>
-      <AdminPanelHubEntryGuard />
       <AdminNavigationRecovery />
       <AdminNotificationSounds />
       <AdminPerformanceBootstrap />
@@ -93,6 +92,7 @@ export function AppFrame({ children }: { children: ReactNode }) {
 
   if (pathname === "/rosta-insight" || pathname.startsWith("/rosta-insight/") || pathname === "/ruthie" || pathname.startsWith("/ruthie/")) {
     return (
+      <AdminPanelHubEntryGuard>
       <RequireAdmin>
         {providers}
         <RuthieRealtimeProtocolGuard />
@@ -112,11 +112,13 @@ export function AppFrame({ children }: { children: ReactNode }) {
           {children}
         </div>
       </RequireAdmin>
+      </AdminPanelHubEntryGuard>
     );
   }
 
   if (pathname === "/theme" || pathname === "/settings") {
     return (
+      <AdminPanelHubEntryGuard>
       <RequireAdmin>
         {providers}
         <div
@@ -135,10 +137,12 @@ export function AppFrame({ children }: { children: ReactNode }) {
           {children}
         </div>
       </RequireAdmin>
+      </AdminPanelHubEntryGuard>
     );
   }
 
   return (
+    <AdminPanelHubEntryGuard>
     <RequireAdmin>
       {providers}
       <AdminPageRefreshTransition />
@@ -149,5 +153,6 @@ export function AppFrame({ children }: { children: ReactNode }) {
       <AdminMobileQuarterMenu />
       <ExactBase44ShellV2><AdminLiveDataBoundary>{children}</AdminLiveDataBoundary></ExactBase44ShellV2>
     </RequireAdmin>
+    </AdminPanelHubEntryGuard>
   );
 }
