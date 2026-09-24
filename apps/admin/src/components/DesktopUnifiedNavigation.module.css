@@ -9,11 +9,11 @@
   flex-direction: column;
   align-items: center;
   gap: 5px;
-  border: 1px solid rgba(15, 23, 42, 0.11);
+  border: 1px solid color-mix(in srgb, var(--rosta-kraft) 42%, transparent);
   border-left: 0;
   border-radius: 0 28px 28px 0;
-  background: #fff;
-  box-shadow: 12px 16px 36px rgba(15, 23, 42, 0.12), inset 0 1px 0 #fff;
+  background: color-mix(in srgb, var(--rosta-carbon-soft) 96%, transparent);
+  box-shadow: 12px 16px 36px color-mix(in srgb, var(--rosta-carbon) 56%, transparent), inset 0 1px 0 color-mix(in srgb, var(--rosta-cream) 7%, transparent);
   translate: 0 -50%;
   transform-origin: left center;
   overflow: visible;
@@ -33,31 +33,36 @@
   position: relative;
   flex: 0 0 auto;
   padding: 0;
-  border: 1px solid rgba(15, 23, 42, 0.11);
+  border: 1px solid color-mix(in srgb, var(--rosta-kraft) 36%, transparent);
   border-radius: 50%;
   display: grid;
   place-items: center;
-  color: #555b64;
-  background: #fff;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06), inset 0 1px 0 #fff;
+  color: color-mix(in srgb, var(--rosta-cream) 70%, transparent);
+  background: var(--rosta-carbon);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--rosta-carbon) 48%, transparent), inset 0 1px 0 color-mix(in srgb, var(--rosta-cream) 7%, transparent);
   cursor: pointer;
   outline: 0;
   -webkit-tap-highlight-color: transparent;
   will-change: width, height, transform;
 }
 
+.sectionButton:focus-visible {
+  outline: 2px solid var(--rosta-brick-b);
+  outline-offset: 2px;
+}
+
 .sectionActive {
-  color: #30343a;
-  background: #fff;
-  border-color: rgba(89, 79, 168, 0.28);
-  box-shadow: 0 0 0 2px rgba(96, 87, 180, 0.09), 0 6px 16px rgba(15, 23, 42, 0.1), inset 0 1px 0 #fff;
+  color: var(--rosta-cream);
+  background: color-mix(in srgb, var(--rosta-brick-b) 16%, var(--rosta-carbon));
+  border-color: var(--rosta-brick-b);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--rosta-brick-b) 15%, transparent), 0 6px 16px color-mix(in srgb, var(--rosta-carbon) 52%, transparent);
 }
 
 .sectionOpen {
-  color: #262a30;
-  background: #fff;
-  border-color: rgba(15, 23, 42, 0.18);
-  box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.05), 0 8px 20px rgba(15, 23, 42, 0.12), inset 0 1px 0 #fff;
+  color: var(--rosta-action-text);
+  background: var(--rosta-brick-b);
+  border-color: var(--rosta-brick-b);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--rosta-brick-b) 18%, transparent), 0 8px 20px color-mix(in srgb, var(--rosta-carbon) 58%, transparent);
 }
 
 .sectionIcon { display: grid; place-items: center; pointer-events: none; }
@@ -71,11 +76,11 @@
   width: max-content;
   max-width: 180px;
   padding: 7px 10px;
-  border: 1px solid rgba(15, 23, 42, 0.1);
+  border: 1px solid color-mix(in srgb, var(--rosta-kraft) 38%, transparent);
   border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 9px 24px rgba(15, 23, 42, 0.12);
-  color: #30343a;
+  background: var(--rosta-carbon-soft);
+  box-shadow: 0 9px 24px color-mix(in srgb, var(--rosta-carbon) 52%, transparent);
+  color: var(--rosta-cream);
   font: 650 11px/1.2 Inter, ui-sans-serif, system-ui, sans-serif;
   white-space: nowrap;
   pointer-events: none;
@@ -113,7 +118,7 @@
   padding: 0;
   border: 0;
   background: transparent;
-  color: #25292f;
+  color: var(--rosta-cream);
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -127,17 +132,23 @@
   will-change: transform, opacity, filter;
 }
 
+.bubbleItem:focus-visible {
+  outline: 2px solid var(--rosta-brick-b);
+  outline-offset: 3px;
+  border-radius: 999px;
+}
+
 .bubbleCircle {
   width: 50px;
   height: 50px;
   flex: 0 0 50px;
-  border: 1px solid rgba(15, 23, 42, 0.11);
+  border: 1px solid color-mix(in srgb, var(--rosta-kraft) 38%, transparent);
   border-radius: 50%;
   display: grid;
   place-items: center;
-  background: #fff;
-  color: #30343a;
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.09), inset 0 1px 0 #fff;
+  background: var(--rosta-carbon-soft);
+  color: var(--rosta-cream);
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--rosta-carbon) 50%, transparent), inset 0 1px 0 color-mix(in srgb, var(--rosta-cream) 7%, transparent);
   transition: box-shadow 160ms ease, background 160ms ease, color 160ms ease, border-color 160ms ease;
 }
 
@@ -146,7 +157,7 @@
 .bubbleLabel {
   width: 106px;
   max-width: 106px;
-  color: #353940;
+  color: color-mix(in srgb, var(--rosta-cream) 82%, transparent);
   font: 650 9.25px/1.16 Inter, ui-sans-serif, system-ui, sans-serif;
   text-align: left;
   white-space: normal;
@@ -161,26 +172,12 @@
 }
 
 .bubbleItemActive .bubbleCircle {
-  color: #575180;
-  background: #fff;
-  border-color: rgba(96, 87, 180, 0.28);
-  box-shadow: 0 0 0 2px rgba(96, 87, 180, 0.12), 0 9px 22px rgba(15, 23, 42, 0.1), inset 0 1px 0 #fff;
+  color: var(--rosta-action-text);
+  background: var(--rosta-brick-b);
+  border-color: var(--rosta-brick-b);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--rosta-brick-b) 18%, transparent), 0 9px 22px color-mix(in srgb, var(--rosta-carbon) 56%, transparent);
 }
-.bubbleItemActive .bubbleLabel { color: #575180; }
-
-:global(html.dark) .dock {
-  border-color: rgba(255, 255, 255, 0.12);
-  background: rgba(24, 24, 27, 0.92);
-  box-shadow: 12px 16px 38px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-}
-:global(html.dark) .sectionButton { color: #d6d8dc; background: rgba(255, 255, 255, 0.08); border-color: rgba(255,255,255,.09); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08); }
-:global(html.dark) .sectionActive,
-:global(html.dark) .sectionOpen { color: #fff; background: rgba(255, 255, 255, 0.12); border-color: rgba(255,255,255,.16); }
-:global(html.dark) .tooltip { border-color: rgba(255, 255, 255, 0.12); background: rgba(29, 29, 32, 0.96); color: #f3f4f6; box-shadow: 0 9px 24px rgba(0, 0, 0, 0.3); }
-:global(html.dark) .bubbleCircle { border-color: rgba(255, 255, 255, 0.1); background: rgba(42, 43, 48, 0.96); color: #f3f4f6; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.08); }
-:global(html.dark) .bubbleLabel { color: #eef0f3; }
-:global(html.dark) .bubbleItemActive .bubbleCircle { color: #fff; background: rgba(112, 103, 194, 0.22); border-color: rgba(145,135,230,.26); box-shadow: 0 0 0 2px rgba(145, 135, 230, 0.18), 0 9px 22px rgba(0, 0, 0, 0.28); }
-:global(html.dark) .bubbleItemActive .bubbleLabel { color: #dcd7ff; }
+.bubbleItemActive .bubbleLabel { color: var(--rosta-brick-b); }
 
 @media (max-width: 1023px) { .dock { display: none; } }
 
@@ -190,6 +187,11 @@
   .bubbleCircle { width: 46px; height: 46px; flex-basis: 46px; }
   .bubbleItem { min-height: 46px; gap: 8px; width: 158px; }
   .bubbleLabel { font-size: 8.5px; width: 102px; max-width: 102px; }
+}
+
+@media (forced-colors: active) {
+  .sectionButton:focus-visible,
+  .bubbleItem:focus-visible { outline-color: Highlight; }
 }
 
 @media (prefers-reduced-motion: reduce) {
