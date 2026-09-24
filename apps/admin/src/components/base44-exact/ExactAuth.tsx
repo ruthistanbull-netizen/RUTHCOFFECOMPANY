@@ -1,23 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import {
-  ArrowRight,
-  CheckCircle2,
-  Eye,
-  EyeOff,
-  KeyRound,
-  LockKeyhole,
-  Mail,
-  ShieldCheck,
-  Sparkles,
-} from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
 import { getSupabaseBrowser, setAdminRememberSession } from "@/lib/supabaseBrowser";
-import { ExactButton, ExactField, exactFormInputClass } from "./primitives";
 
 type AuthMode = "login" | "forgot" | "reset";
+const PROFILE_NAME_KEY = "rr_hub_profile_name";
 
 export function ExactAuth({ mode }: { mode: AuthMode }) {
   const router = useRouter();
@@ -74,9 +64,7 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
           acceptRecovery();
           return;
         }
-      } catch {
-        // PASSWORD_RECOVERY olayı URL oturumu işlendiğinde yine gelebilir.
-      }
+      } catch {}
 
       window.setTimeout(async () => {
         if (!active || settled) return;
@@ -101,7 +89,7 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
     event.preventDefault();
     const supabase = getSupabaseBrowser();
     if (!supabase) {
-      setError("Supabase bağlantısı hazırlanamadı.");
+      setError("Bağlantı hazırlanamadı.");
       return;
     }
 
@@ -111,9 +99,6 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
 
     try {
       if (mode === "login") {
-        // Storage choice must be set before Supabase writes the new auth token.
-        // Without this option the session stays scoped to the current PWA/browser
-        // session; with it enabled the token is durably persisted on this device.
         setAdminRememberSession(rememberSession);
 
         const { data, error: signInError } = await supabase.auth.signInWithPassword({
@@ -130,16 +115,20 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
         if (!response.ok || !result.ok) {
           await supabase.auth.signOut();
           setAdminRememberSession(false);
-          throw new Error(result.error || "Bu hesap için admin yetkisi bulunamadı.");
+          throw new Error(result.error || "Bu hesap için yönetim erişimi bulunamadı.");
         }
 
-        // This is only a UI fast-path marker. A full storage bucket must never
-        // turn a successful authentication into a login error.
         try {
           const target = rememberSession ? window.localStorage : window.sessionStorage;
           const other = rememberSession ? window.sessionStorage : window.localStorage;
           target.setItem("ruth_admin_next_checked_until", String(Date.now() + 15 * 60 * 1000));
           other.removeItem("ruth_admin_next_checked_until");
+
+          const profileName = String(result?.profile?.full_name || "").trim();
+          if (profileName) {
+            target.setItem(PROFILE_NAME_KEY, profileName);
+            other.removeItem(PROFILE_NAME_KEY);
+          }
         } catch {}
 
         try { window.sessionStorage.removeItem("rosta_panel_hub_entered_v1"); } catch {}
@@ -177,7 +166,7 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
       setRecoveryReady(false);
       setPassword("");
       setConfirmPassword("");
-      setNotice("Şifren güncellendi. Yeni şifrenle panele giriş yapabilirsin.");
+      setNotice("Şifren güncellendi. Yeni şifrenle giriş yapabilirsin.");
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Kimlik doğrulama işlemi tamamlanamadı.");
     } finally {
@@ -186,140 +175,179 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
   };
 
   const title = mode === "login"
-    ? "Backstage’e giriş yap"
+    ? "Oturum aç"
     : mode === "forgot"
-      ? "Şifreni yenile"
+      ? "Şifrenizi yenileyin"
       : resetComplete
-        ? "Şifren güncellendi"
-        : "Yeni şifre oluştur";
+        ? "Şifreniz güncellendi"
+        : "Yeni şifre oluşturun";
+
   const subtitle = mode === "login"
-    ? "ROSTA Coffee Co. ve Ruth Istanbul çalışma alanları"
+    ? "ROSTA Coffee Co. ve Ruth Istanbul çalışma alanlarına erişin."
     : mode === "forgot"
-      ? "Yenileme bağlantısını e-posta adresine göndereceğiz."
+      ? "Yenileme bağlantısını e-posta adresinize göndereceğiz."
       : resetComplete
-        ? "Yeni şifren artık kullanıma hazır."
-        : "Hesabın için güvenli bir şifre belirle.";
+        ? "Yeni şifreniz kullanıma hazır."
+        : "Hesabınız için yeni bir şifre belirleyin.";
+
+  const fieldClass =
+    "h-[54px] w-full rounded-[4px] border border-white/28 bg-[#333]/85 px-4 text-[15px] text-white outline-none transition placeholder:text-white/48 focus:border-white/65 focus:bg-[#383838] disabled:opacity-50";
 
   return (
-    <main className="min-h-screen grid lg:grid-cols-[1.05fr_.95fr] bg-background" data-exact-base44-auth={mode}>
-      <section className="hidden lg:flex relative overflow-hidden bg-gradient-to-br from-[#8F6E1F] via-[#C9A23A] to-[#5F4814] p-12 text-white">
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute -top-24 -left-24 h-80 w-80 rounded-full bg-white/20 blur-3xl animate-orb-breathe" />
-          <div className="absolute bottom-12 right-0 h-96 w-96 rounded-full bg-[#E6D28B]/25 blur-3xl animate-orb-deform" />
-        </div>
-        <div className="relative z-10 flex flex-col justify-between w-full max-w-xl">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center h-11 w-11 rounded-[14px] bg-white/15 border border-white/20 backdrop-blur"><span className="font-bold text-lg">R</span></div>
-            <div><p className="font-bold text-lg">Backstage</p><p className="text-xs text-white/65">ROSTA × Ruth</p></div>
-          </div>
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs backdrop-blur"><Sparkles className="h-3.5 w-3.5" /> Yeni nesil ticaret operasyonu</div>
-            <h1 className="mt-6 text-5xl font-bold tracking-tight leading-[1.05]">İki marka.<br />Tek güvenli giriş.</h1>
-            <p className="mt-5 text-base leading-relaxed text-white/70 max-w-lg">ROSTA Coffee Co. ve Ruth Istanbul yönetim panellerine tek oturumdan geç.</p>
-          </div>
-          <div className="grid grid-cols-3 gap-3">
-            {[{ icon: ShieldCheck, label: "RBAC ve güvenli oturum" }, { icon: KeyRound, label: "Denetimli kritik işlemler" }, { icon: Sparkles, label: "ROSTA Insight desteği" }].map((item) => (
-              <div key={item.label} className="rounded-[18px] border border-white/12 bg-white/8 p-3 backdrop-blur">
-                <item.icon className="h-4 w-4 mb-2" />
-                <p className="text-[11px] leading-snug text-white/75">{item.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+    <main className="relative min-h-[100dvh] overflow-hidden bg-[#141414] text-white" data-exact-base44-auth={mode}>
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_-10%,rgba(255,255,255,.075),transparent_34%),linear-gradient(180deg,rgba(0,0,0,.04),rgba(0,0,0,.34))]" />
 
-      <section className="flex items-center justify-center p-5 md:p-10">
-        <div className="w-full max-w-md animate-fade-in">
-          <div className="lg:hidden flex items-center gap-3 mb-10">
-            <div className="flex items-center justify-center h-10 w-10 radius-small bg-accent text-white font-bold">R</div>
-            <div><p className="font-bold text-main">Backstage</p><p className="text-[10px] text-subtle">ROSTA × Ruth</p></div>
+      <header className="relative z-20 flex h-[72px] items-center px-5 pt-[env(safe-area-inset-top)] sm:h-[86px] sm:px-10 lg:px-12">
+        <div className="text-[20px] font-black tracking-[0.04em] text-white sm:text-[23px]">
+          RR HUB
+        </div>
+      </header>
+
+      <section className="relative z-10 flex min-h-[calc(100dvh-72px)] items-start justify-center px-5 pb-[max(2rem,env(safe-area-inset-bottom))] pt-8 sm:min-h-[calc(100dvh-86px)] sm:items-center sm:pb-16 sm:pt-0">
+        <div className="w-full max-w-[450px] rounded-[6px] bg-black/72 px-6 py-8 shadow-[0_30px_80px_rgba(0,0,0,.38)] backdrop-blur-[2px] sm:px-14 sm:py-12">
+          <div className="mb-7">
+            <h1 className="text-[30px] font-bold tracking-[-0.035em] text-white sm:text-[34px]">{title}</h1>
+            <p className="mt-2 text-[12px] leading-relaxed text-white/42 sm:text-[13px]">{subtitle}</p>
           </div>
 
-          <div className="mb-8">
-            <div className="flex items-center justify-center h-12 w-12 radius-control bg-accent-soft text-accent mb-5">
-              {resetComplete ? <CheckCircle2 className="h-6 w-6" /> : mode === "login" ? <LockKeyhole className="h-6 w-6" /> : mode === "forgot" ? <Mail className="h-6 w-6" /> : <KeyRound className="h-6 w-6" />}
+          {checkingRecovery ? (
+            <div className="mb-4 rounded-[4px] border border-white/10 bg-white/[0.055] px-4 py-3 text-[12px] text-white/65">
+              Güvenli bağlantı doğrulanıyor…
             </div>
-            <h2 className="text-3xl font-bold tracking-tight text-main">{title}</h2>
-            <p className="text-sm text-muted mt-2">{subtitle}</p>
-          </div>
+          ) : null}
 
-          {checkingRecovery ? <div className="radius-control border border-info/20 bg-info-soft px-4 py-3 text-xs text-info-foreground mb-4">Güvenli sıfırlama bağlantısı doğrulanıyor…</div> : null}
-          {error ? <div className="radius-control border border-danger/20 bg-danger-soft px-4 py-3 text-xs text-danger-foreground mb-4">{error}</div> : null}
-          {notice ? <div className="radius-control border border-success/20 bg-success-soft px-4 py-3 text-xs text-success-foreground mb-4">{notice}</div> : null}
+          {error ? (
+            <div className="mb-4 rounded-[4px] border border-[#e87c03]/55 bg-[#e87c03]/12 px-4 py-3 text-[12px] leading-relaxed text-[#ffd6a3]">
+              {error}
+            </div>
+          ) : null}
+
+          {notice ? (
+            <div className="mb-4 rounded-[4px] border border-white/12 bg-white/[0.055] px-4 py-3 text-[12px] leading-relaxed text-white/68">
+              {notice}
+            </div>
+          ) : null}
 
           {sent ? (
-            <div className="radius-card border border-success/20 bg-success-soft p-5">
-              <ShieldCheck className="h-7 w-7 text-success-foreground" />
-              <h3 className="font-semibold text-main mt-3">E-postanı kontrol et</h3>
-              <p className="text-sm text-muted mt-1">Şifre yenileme bağlantısı {email} adresine gönderildi.</p>
-              <Link href="/login" className="mt-4 inline-flex"><ExactButton size="sm">Giriş ekranına dön <ArrowRight className="h-4 w-4" /></ExactButton></Link>
+            <div>
+              <p className="text-[15px] leading-relaxed text-white/72">
+                Şifre yenileme bağlantısı <strong className="font-medium text-white">{email}</strong> adresine gönderildi.
+              </p>
+              <Link href="/login" className="mt-7 inline-flex h-11 w-full items-center justify-center rounded-[4px] bg-white text-[14px] font-semibold text-black transition hover:bg-white/88 active:scale-[0.985]">
+                Giriş ekranına dön
+              </Link>
             </div>
           ) : resetComplete ? (
-            <div className="radius-card border border-success/20 bg-success-soft p-5">
-              <CheckCircle2 className="h-7 w-7 text-success-foreground" />
-              <h3 className="font-semibold text-main mt-3">Yeni şifre kaydedildi</h3>
-              <p className="text-sm text-muted mt-1">Eski şifren artık geçerli değil.</p>
-              <Link href="/login" className="mt-4 inline-flex"><ExactButton size="sm">Giriş ekranına dön <ArrowRight className="h-4 w-4" /></ExactButton></Link>
+            <div>
+              <p className="text-[15px] leading-relaxed text-white/72">Yeni şifreniz kaydedildi.</p>
+              <Link href="/login" className="mt-7 inline-flex h-11 w-full items-center justify-center rounded-[4px] bg-white text-[14px] font-semibold text-black transition hover:bg-white/88 active:scale-[0.985]">
+                Giriş ekranına dön
+              </Link>
             </div>
           ) : (
             <form onSubmit={submit} className="space-y-4">
               {mode !== "reset" ? (
-                <ExactField label="E-posta adresi" required>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-subtle" />
-                    <input type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} className={`${exactFormInputClass} pl-10`} placeholder="admin@ruthistanbul.com" required disabled={loading} />
-                  </div>
-                </ExactField>
+                <input
+                  type="email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  className={fieldClass}
+                  placeholder="E-posta adresi"
+                  required
+                  disabled={loading}
+                />
               ) : null}
 
               {mode !== "forgot" && (mode !== "reset" || recoveryReady) ? (
-                <ExactField label={mode === "reset" ? "Yeni şifre" : "Şifre"} required>
-                  <div className="relative">
-                    <LockKeyhole className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-subtle" />
-                    <input type={showPassword ? "text" : "password"} autoComplete={mode === "login" ? "current-password" : "new-password"} value={password} onChange={(event) => setPassword(event.target.value)} className={`${exactFormInputClass} pl-10 pr-10`} minLength={mode === "reset" ? 8 : undefined} required disabled={loading} />
-                    <button type="button" onClick={() => setShowPassword((current) => !current)} className="absolute right-3 top-1/2 -translate-y-1/2 text-subtle hover:text-main" aria-label={showPassword ? "Şifreyi gizle" : "Şifreyi göster"}>{showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button>
-                  </div>
-                </ExactField>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    autoComplete={mode === "login" ? "current-password" : "new-password"}
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                    className={`${fieldClass} pr-12`}
+                    placeholder={mode === "reset" ? "Yeni şifre" : "Şifre"}
+                    minLength={mode === "reset" ? 8 : undefined}
+                    required
+                    disabled={loading}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((current) => !current)}
+                    className="absolute right-3 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full text-white/46 transition hover:bg-white/[0.07] hover:text-white active:scale-90"
+                    aria-label={showPassword ? "Şifreyi gizle" : "Şifreyi göster"}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
               ) : null}
 
               {mode === "reset" && recoveryReady ? (
-                <ExactField label="Yeni şifreyi doğrula" required>
-                  <input type={showPassword ? "text" : "password"} autoComplete="new-password" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} className={exactFormInputClass} minLength={8} required disabled={loading} />
-                </ExactField>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="new-password"
+                  value={confirmPassword}
+                  onChange={(event) => setConfirmPassword(event.target.value)}
+                  className={fieldClass}
+                  placeholder="Yeni şifreyi doğrulayın"
+                  minLength={8}
+                  required
+                  disabled={loading}
+                />
               ) : null}
 
               {mode === "login" ? (
-                <div className="flex items-center justify-between gap-4">
-                  <label className="inline-flex min-h-10 cursor-pointer items-center gap-2 text-xs font-medium text-muted">
+                <div className="flex items-center justify-between gap-4 pt-0.5">
+                  <label className="inline-flex min-h-9 cursor-pointer items-center gap-2 text-[12px] text-white/58">
                     <input
                       type="checkbox"
                       checked={rememberSession}
                       onChange={(event) => setRememberSession(event.target.checked)}
                       disabled={loading}
-                      className="h-4 w-4 rounded border-border-strong accent-[hsl(var(--accent))]"
+                      className="h-4 w-4 rounded border-white/35 bg-transparent accent-white"
                     />
                     <span>Oturumu açık tut</span>
                   </label>
-                  <Link href="/forgot-password" className="text-xs font-medium text-accent hover:underline">Şifremi unuttum</Link>
+                  <Link href="/forgot-password" className="text-[12px] text-white/58 transition hover:text-white hover:underline">
+                    Şifremi unuttum
+                  </Link>
                 </div>
               ) : null}
 
               {(mode !== "reset" || recoveryReady) ? (
-                <ExactButton type="submit" size="lg" className="w-full" loading={loading}>
-                  {mode === "login" ? "Giriş yap" : mode === "forgot" ? "Yenileme bağlantısı gönder" : "Yeni şifreyi kaydet"}
-                  <ArrowRight className="h-4 w-4" />
-                </ExactButton>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="mt-1 flex h-[48px] w-full touch-manipulation select-none items-center justify-center rounded-[4px] bg-white text-[14px] font-bold text-[#141414] transition-[transform,background,filter] duration-150 hover:bg-white/90 active:scale-[0.965] active:brightness-75 disabled:cursor-wait disabled:opacity-55 [-webkit-tap-highlight-color:transparent]"
+                >
+                  {loading
+                    ? "Kontrol ediliyor…"
+                    : mode === "login"
+                      ? "Giriş Yap"
+                      : mode === "forgot"
+                        ? "Bağlantıyı Gönder"
+                        : "Şifreyi Kaydet"}
+                </button>
               ) : null}
 
               {mode === "reset" && !checkingRecovery && !recoveryReady ? (
-                <Link href="/forgot-password" className="block"><ExactButton type="button" size="lg" className="w-full">Yeni bağlantı iste <ArrowRight className="h-4 w-4" /></ExactButton></Link>
+                <Link href="/forgot-password" className="flex h-[48px] w-full items-center justify-center rounded-[4px] bg-white text-[14px] font-bold text-black transition active:scale-[0.98]">
+                  Yeni bağlantı iste
+                </Link>
               ) : null}
 
-              {mode !== "login" ? <Link href="/login" className="block text-center text-xs font-medium text-muted hover:text-accent">Giriş ekranına dön</Link> : null}
+              {mode !== "login" ? (
+                <Link href="/login" className="block pt-2 text-center text-[12px] text-white/48 transition hover:text-white">
+                  Giriş ekranına dön
+                </Link>
+              ) : null}
             </form>
           )}
 
-          <p className="text-[10px] text-subtle text-center mt-8">Yetkisiz erişim denemeleri ve kritik panel işlemleri denetim kayıtlarında saklanır.</p>
+          <p className="mt-8 text-center text-[10px] leading-relaxed text-white/20">
+            RR HUB · Güvenli yönetim erişimi
+          </p>
         </div>
       </section>
     </main>
