@@ -108,8 +108,8 @@ export const base44NavStructure: Base44NavGroup[] = [
   {
     label: "ROSTA Insight",
     items: [
-      { label: "ROSTA Insight Chat", href: "/ruthie/chat", icon: Sparkles, badge: "AI" },
-      { label: "ROSTA Insight Asistan", href: "/ruthie/voice", icon: Mic2 },
+      { label: "ROSTA Insight Chat", href: "/rosta-insight/chat", icon: Sparkles, badge: "AI" },
+      { label: "ROSTA Insight Asistan", href: "/rosta-insight/voice", icon: Mic2 },
     ],
   },
   {
@@ -126,7 +126,7 @@ export const base44MobileNav: Base44NavItem[] = [
   { label: "Merkez", href: "/", icon: Gauge, exact: true },
   { label: "Sipariş", href: "/orders", icon: ShoppingBag },
   { label: "Ürünler", href: "/products", icon: Boxes },
-  { label: "ROSTA Insight", href: "/ruthie/chat", icon: Sparkles, aliases: ["/ruthie/voice"] },
+  { label: "ROSTA Insight", href: "/rosta-insight/chat", icon: Sparkles, aliases: ["/rosta-insight/voice", "/ruthie", "/ruthie/chat", "/ruthie/voice"] },
   { label: "Daha Fazla", href: "/settings", icon: Settings2 },
 ];
 
