@@ -5,18 +5,22 @@ import { noStoreHeaders, revalidateWebsite } from "@/lib/websiteRevalidate";
 export const runtime = "nodejs";
 
 const SETTING_KEY = "shipping_settings";
-const DEFAULT_THRESHOLD = 2000;
-const DEFAULT_CUSTOMER_FEE = 79.9;
+function configuredNumber(value: unknown) {
+  if (value === null || value === undefined || String(value).trim() === "") return null;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : null;
+}
 
-function normalizeSettings(value: unknown) {
+function readSettings(value: unknown) {
   const source = value && typeof value === "object" && !Array.isArray(value)
     ? value as Record<string, unknown>
     : {};
-  const threshold = Number(source.freeShippingThreshold ?? DEFAULT_THRESHOLD);
-  const customerFee = Number(source.customerShippingFee ?? source.shippingFee ?? DEFAULT_CUSTOMER_FEE);
+  const freeShippingThreshold = configuredNumber(source.freeShippingThreshold);
+  const customerShippingFee = configuredNumber(source.customerShippingFee ?? source.shippingFee);
   return {
-    freeShippingThreshold: Number.isFinite(threshold) && threshold >= 0 ? threshold : DEFAULT_THRESHOLD,
-    customerShippingFee: Number.isFinite(customerFee) && customerFee >= 0 ? customerFee : DEFAULT_CUSTOMER_FEE,
+    freeShippingThreshold,
+    customerShippingFee,
+    configured: freeShippingThreshold !== null && customerShippingFee !== null,
   };
 }
 
@@ -31,7 +35,7 @@ export async function GET(request: Request) {
     .maybeSingle();
 
   if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 400, headers: noStoreHeaders() });
-  return NextResponse.json({ ok: true, settings: normalizeSettings(data?.setting_value) }, { headers: noStoreHeaders() });
+  return NextResponse.json({ ok: true, settings: readSettings(data?.setting_value) }, { headers: noStoreHeaders() });
 }
 
 export async function PUT(request: Request) {
@@ -39,7 +43,16 @@ export async function PUT(request: Request) {
   if ("error" in auth) return auth.error;
 
   const body = await request.json().catch(() => ({}));
-  const settings = normalizeSettings(body.settings || body);
+  const source = body.settings && typeof body.settings === "object" ? body.settings : body;
+  const freeShippingThreshold = configuredNumber(source.freeShippingThreshold);
+  const customerShippingFee = configuredNumber(source.customerShippingFee ?? source.shippingFee);
+  if (freeShippingThreshold === null || customerShippingFee === null) {
+    return NextResponse.json(
+      { ok: false, error: "Ücretsiz kargo limiti ve müşteri kargo ücreti yapılandırılmalı." },
+      { status: 400, headers: noStoreHeaders() },
+    );
+  }
+  const settings = { freeShippingThreshold, customerShippingFee, configured: true };
 
   const { error } = await auth.supabase
     .from("site_settings")
