@@ -491,7 +491,10 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
       if (event.data.type === "RUTH_THEME_EDITOR_SELECT_REQUEST" && typeof event.data.id === "string") {
         registerElements();
         const element = findById(event.data.id);
-        if (element) { select(element); element.scrollIntoView({ behavior: "smooth", block: "center" }); }
+        if (element) {
+          select(element);
+          if (event.data.scroll !== false) element.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
       }
       if (event.data.type === "RUTH_THEME_EDITOR_REFRESH_OUTLINE") sendOutline();
     };
