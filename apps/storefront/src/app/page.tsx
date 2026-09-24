@@ -32,6 +32,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
   );
   const page = themeSectionPage(draftSections || publishedSections, "/");
   const heroImages = homepageHeroImages(themeSettings);
+  const editorialVideo = themeSettings.homepageImages.editorialVideo || "/home/rosta-under-hero-video.mp4";
+  const editorialImage = themeSettings.homepageImages.editorialImage || "/home/rosta-under-hero-photo.jpg";
 
   return <>
     <ThemeEditorHomeScrollBridge />
@@ -44,8 +46,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
         allProducts={allProducts}
         collections={collections}
         heroImages={heroImages}
-        editorialVideo={themeSettings.homepageImages.editorialVideo || "/home/rosta-under-hero-video.mp4"}
-        editorialImage={themeSettings.homepageImages.editorialImage || "/home/rosta-under-hero-photo.jpg"}
+        editorialVideo={editorialVideo}
+        editorialImage={editorialImage}
         scrollImages={themeSettings.homepageImages.scrollImages}
         freeShippingThreshold={freeShippingThreshold}
       />
