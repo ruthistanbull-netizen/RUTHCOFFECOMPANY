@@ -6,27 +6,27 @@ export function ThemeEditorIkasPolish() {
     <style>{`
       ${CUSTOMIZER} input[type="range"],
       ${CUSTOMIZER} input[type="checkbox"] {
-        accent-color: #C9A23A !important;
+        accent-color: var(--rosta-brick-b) !important;
       }
 
       ${CUSTOMIZER} [class*="bg-[#7c3aed]"] {
-        background-color: #C9A23A !important;
-        color: #211a08 !important;
+        background-color: var(--rosta-brick-b) !important;
+        color: var(--rosta-action-text) !important;
       }
 
       ${CUSTOMIZER} [class*="bg-[#f1ecff]"] {
-        background-color: #f6edcf !important;
+        background-color: color-mix(in srgb, var(--rosta-brick-b) 14%, var(--rosta-carbon-soft)) !important;
       }
 
       ${CUSTOMIZER} [class*="text-[#6d35e8]"],
       ${CUSTOMIZER} [class*="text-[#5f2bd1]"] {
-        color: #8f6e1f !important;
+        color: var(--rosta-brick-b) !important;
       }
 
       ${PANEL} {
         width: 364px !important;
-        background: #fff !important;
-        box-shadow: 10px 0 30px rgba(17, 24, 39, .035);
+        background: var(--rosta-carbon-soft) !important;
+        box-shadow: 10px 0 30px color-mix(in srgb, var(--rosta-carbon) 42%, transparent);
       }
 
       ${PANEL} button[aria-label="Kopyala"],
@@ -38,26 +38,22 @@ export function ThemeEditorIkasPolish() {
       ${PANEL} [draggable="true"] {
         min-height: 52px !important;
         gap: 4px !important;
-        border-color: rgba(15, 23, 42, .08) !important;
+        border-color: color-mix(in srgb, var(--rosta-kraft) 32%, transparent) !important;
         border-radius: 10px !important;
         padding: 3px 6px !important;
-        box-shadow: 0 1px 2px rgba(15, 23, 42, .02);
+        box-shadow: 0 1px 2px color-mix(in srgb, var(--rosta-carbon) 28%, transparent);
       }
 
-      ${PANEL} [draggable="true"]:hover {
-        border-color: rgba(201, 162, 58, .22) !important;
-        background: #fffdf7 !important;
-      }
 
       ${PANEL} [draggable="true"] > span:first-child {
         width: 24px !important;
-        color: rgba(15, 23, 42, .28) !important;
+        color: color-mix(in srgb, var(--rosta-cream) 38%, transparent) !important;
       }
 
       ${PANEL} [draggable="true"] > button[aria-label="Gizle"],
       ${PANEL} [draggable="true"] > button[aria-label="Göster"] {
         width: 34px !important;
-        color: rgba(15, 23, 42, .48) !important;
+        color: color-mix(in srgb, var(--rosta-cream) 58%, transparent) !important;
       }
 
       ${PANEL} [draggable="true"] > button[aria-label="Sil"] {
@@ -66,7 +62,7 @@ export function ThemeEditorIkasPolish() {
         transition: opacity .15s ease;
       }
 
-      ${PANEL} [draggable="true"]:hover > button[aria-label="Sil"] {
+      ${PANEL} [draggable="true"]:focus-within > button[aria-label="Sil"] {
         opacity: 1;
       }
 
@@ -91,10 +87,31 @@ export function ThemeEditorIkasPolish() {
         letter-spacing: -.01em !important;
       }
 
+      @media (hover: hover) and (pointer: fine) {
+        ${PANEL} [draggable="true"]:hover {
+          border-color: color-mix(in srgb, var(--rosta-brick-b) 38%, transparent) !important;
+          background: color-mix(in srgb, var(--rosta-brick-b) 8%, var(--rosta-carbon-soft)) !important;
+        }
+
+        ${PANEL} [draggable="true"]:hover > button[aria-label="Sil"] {
+          opacity: 1;
+        }
+      }
+
+      ${PANEL} [draggable="true"]:focus-within {
+        border-color: var(--rosta-brick-b) !important;
+        outline: 2px solid var(--rosta-brick-b);
+        outline-offset: 2px;
+      }
+
+      @media (forced-colors: active) {
+        ${PANEL} [draggable="true"]:focus-within { outline-color: Highlight; }
+      }
+
       @media (max-width: 767px) {
         ${PANEL} {
           width: 100% !important;
-          box-shadow: 0 -10px 30px rgba(17, 24, 39, .05);
+          box-shadow: 0 -10px 30px color-mix(in srgb, var(--rosta-carbon) 48%, transparent);
         }
       }
     `}</style>
