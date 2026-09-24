@@ -148,8 +148,8 @@ export function ExactShipping() {
   const [selected, setSelected] = useState<ShippingOrder | null>(null);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("all");
-  const [freeShippingThreshold, setFreeShippingThreshold] = useState("2000");
-  const [customerShippingFee, setCustomerShippingFee] = useState("79.9");
+  const [freeShippingThreshold, setFreeShippingThreshold] = useState("");
+  const [customerShippingFee, setCustomerShippingFee] = useState("");
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<string | null>(null);
   const [pendingCancel, setPendingCancel] = useState<ShippingOrder | null>(null);
@@ -160,7 +160,7 @@ export function ExactShipping() {
       const [ordersData, handlersData, settingsData] = await Promise.all([
         adminRequest<{ orders?: ShippingOrder[] }>("/api/shipping/basit-kargo/orders"),
         adminRequest<{ handlers?: Handler[] }>("/api/shipping/basit-kargo/handlers"),
-        adminRequest<{ settings?: { freeShippingThreshold?: number; customerShippingFee?: number } }>("/api/shipping/settings"),
+        adminRequest<{ settings?: { freeShippingThreshold?: number | null; customerShippingFee?: number | null; configured?: boolean } }>("/api/shipping/settings"),
       ]);
       const live = handlersData.handlers || [];
       const merged = [
@@ -171,8 +171,8 @@ export function ExactShipping() {
       setHandlers(merged);
       setOrders(next);
       setAddressDrafts(Object.fromEntries(next.map((order) => [order.id, firstAddress(order)])));
-      setFreeShippingThreshold(String(settingsData.settings?.freeShippingThreshold ?? 2000));
-      setCustomerShippingFee(String(settingsData.settings?.customerShippingFee ?? 79.9));
+      setFreeShippingThreshold(settingsData.settings?.freeShippingThreshold != null ? String(settingsData.settings.freeShippingThreshold) : "");
+      setCustomerShippingFee(settingsData.settings?.customerShippingFee != null ? String(settingsData.settings.customerShippingFee) : "");
       setSelected((current) => current ? next.find((order) => order.id === current.id) || null : null);
     } catch (caught) {
       toast.error(caught instanceof Error ? caught.message : "Kargo verileri alınamadı.");
