@@ -49,6 +49,14 @@ const bootstrapSeed = file("supabase/migrations/20260922014705_rosta_bootstrap_s
 const sharedDocker = file("Dockerfile");
 const panelDocker = file("Dockerfile.rostapanel");
 const storefrontDocker = file("Dockerfile.rostacoffecompany");
+const adminManifest = file("apps/admin/src/app/manifest.ts");
+const adminPushSw = file("apps/admin/public/push-sw.js");
+const adminIcon192 = file("apps/admin/src/app/icon-192.png/route.ts");
+const adminIcon512 = file("apps/admin/src/app/icon-512.png/route.ts");
+const panelHomeIcon = file("apps/admin/src/app/api/panel-home-icon/route.ts");
+const platformTick = file("apps/admin/src/app/api/internal/platform-tick/route.ts");
+const panelMaintenance = file("apps/admin/src/app/api/internal/panel-maintenance/route.ts");
+const runtimeConvergence = file("supabase/migrations/20260924184500_rosta_platform_runtime_convergence.sql");
 
 expect(Boolean(rootPkg.scripts?.["typecheck:all"]), "root typecheck:all script missing");
 expect(Boolean(rootPkg.scripts?.["build:all"]), "root build:all script missing");
@@ -108,6 +116,37 @@ expect(shippingHardening.includes("reconcile_basit_kargo_delivery_evidence"), "B
 expect(panelDocker.includes("COPY apps/admin/package.json") && panelDocker.includes("COPY apps/storefront/package.json"), "panel Docker workspace manifests incomplete");
 expect(storefrontDocker.includes("COPY apps/admin/package.json") && storefrontDocker.includes("COPY apps/storefront/package.json"), "storefront Docker workspace manifests incomplete");
 expect(sharedDocker.includes("npm run build:all"), "shared Dockerfile must safely build both apps when target detection is unavailable");
+
+expect(adminManifest.includes('name: "ROSTA Coffee Co. Control Room"'), "admin dynamic PWA manifest must be ROSTA branded");
+expect(adminManifest.includes('url: "/icon-192.png?v=25"'), "admin manifest 192px ROSTA icon missing");
+expect(adminManifest.includes('url: "/icon-512.png?v=25"'), "admin manifest 512px ROSTA icon missing");
+expect(!fs.existsSync(path.join(root, "apps/admin/public/manifest.webmanifest")), "legacy static admin manifest must not shadow the dynamic manifest");
+expect(adminIcon192.includes("renderRostaPanelIcon(192)"), "admin 192px icon route must render the ROSTA panel icon");
+expect(adminIcon512.includes("renderRostaPanelIcon(512)"), "admin 512px icon route must render the ROSTA panel icon");
+expect(panelHomeIcon.includes("renderRostaPanelIcon(180)"), "iOS panel home icon must render the ROSTA panel icon");
+expect(adminPushSw.includes('payload.title || "ROSTA Panel"'), "admin push service worker fallback title must be ROSTA branded");
+expect(adminPushSw.includes('kind: "ruth-push"'), "push service worker must preserve the current Commerce client event contract");
+expect(adminPushSw.includes('self.addEventListener("notificationclick"'), "push service worker notification click handler missing");
+
+expect(platformTick.includes('import { after, NextResponse } from "next/server"'), "platform tick must use Next after() for background health work");
+expect(platformTick.includes("const PRIMARY_TIMEOUT_MS = 30_000;"), "platform tick background timeout contract missing");
+expect(platformTick.includes('"/api/internal/service-health-monitor-v4"'), "platform tick must invoke service-health-monitor-v4");
+expect(platformTick.includes('"/api/internal/panel-maintenance"'), "platform tick must invoke panel maintenance");
+expect(platformTick.includes("const maintenanceDue = minute % 5 === 3;"), "platform tick five-minute maintenance cadence missing");
+expect(platformTick.includes('healthMonitor: "v4"'), "platform tick response must expose the v4 health monitor contract");
+expect(platformTick.includes('"x-rosta-internal-secret": secret'), "platform tick must authenticate with the ROSTA internal header");
+expect(!platformTick.includes('"x-ruth-internal-secret"'), "platform tick must not use Ruth internal authentication headers");
+
+expect(panelMaintenance.includes('"ROSTA Panel bakım uyarısı"'), "panel maintenance push alert must be ROSTA branded");
+expect(!panelMaintenance.includes('"Ruth Panel bakım uyarısı"'), "panel maintenance still contains the visible Ruth alert title");
+
+expect(runtimeConvergence.includes("https://rostapanel.zeabur.app"), "runtime convergence must bind database-owned callbacks to the ROSTA panel");
+expect(runtimeConvergence.includes("'rosta-platform-orchestrator'"), "canonical ROSTA platform orchestrator cron missing");
+expect(runtimeConvergence.includes("'rosta-service-health-supervisor-v4'"), "ROSTA health supervisor cron missing");
+expect(runtimeConvergence.includes("public.watch_service_health_monitor_v4()"), "ROSTA V4 heartbeat supervisor function missing");
+expect(runtimeConvergence.includes("'x-rosta-internal-secret'"), "ROSTA platform scheduler must use the ROSTA internal auth header");
+expect(!/ruthcommerce\.zeabur\.app/i.test(runtimeConvergence), "ROSTA runtime convergence contains the Ruth panel host");
+expect(!/ruthistanbul\.com/i.test(runtimeConvergence), "ROSTA runtime convergence contains the Ruth production domain");
 
 expect(!/ruthistanbul\.com/i.test(bootstrapSeed), "ROSTA bootstrap seed contains a Ruth Istanbul domain");
 expect(!/^\s*insert\s+into\s+(public\.)?(products|orders|profiles)\b/im.test(bootstrapSeed), "ROSTA bootstrap seed must not seed Ruth products/orders/profiles");
