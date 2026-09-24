@@ -100,11 +100,11 @@ function cx(...values: Array<string | false | null | undefined>) {
 }
 
 function fieldClass() {
-  return "h-10 w-full rounded-xl border border-black/10 bg-[#fafafa] px-3 text-[11px] outline-none transition focus:border-[#b28c43]/55 focus:bg-white";
+  return "h-10 w-full rounded-xl border border-border-subtle bg-surface-secondary px-3 text-[11px] outline-none transition focus:border-accent focus:bg-surface-primary";
 }
 
 function panelCard() {
-  return "rounded-2xl border border-black/[0.08] bg-white p-3 shadow-[0_1px_0_rgba(0,0,0,.02)]";
+  return "rounded-2xl border border-border-subtle bg-surface-primary p-3 shadow-card";
 }
 
 function cleanPath(value: string) {
@@ -127,13 +127,13 @@ function groupedPages(pages: PageItem[]) {
 
 function UploadCard({ title, value, busy, onFile }: { title: string; value: string; busy: boolean; onFile: (file: File) => void }) {
   return (
-    <div className="min-w-0 rounded-xl border border-black/[0.08] bg-[#fafafa] p-2.5">
+    <div className="min-w-0 rounded-xl border border-border-subtle bg-surface-secondary p-2.5">
       <p className="mb-2 text-[9px] font-semibold">{title}</p>
-      <div className="aspect-[4/3] overflow-hidden rounded-lg border border-black/[0.06] bg-white">
+      <div className="aspect-[4/3] overflow-hidden rounded-lg border border-border-subtle bg-surface-primary">
         {value ? (
           <img src={value} alt="" className="h-full w-full object-cover" />
         ) : (
-          <div className="grid h-full place-items-center text-black/20"><ImageIcon className="h-5 w-5" /></div>
+          <div className="grid h-full place-items-center text-subtle"><ImageIcon className="h-5 w-5" /></div>
         )}
       </div>
       <ThemeImageInput busy={busy} hasValue={Boolean(value)} onFile={onFile} />
@@ -154,10 +154,10 @@ const ROSTA_EDITOR_COLORS = [
 
 function LockedColorField({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex h-11 items-center gap-2 rounded-xl border border-black/[0.08] bg-[#fafafa] px-3">
-      <span className="h-7 w-8 rounded-md border border-black/10" style={{ background: value }} aria-hidden="true" />
+    <div className="flex h-11 items-center gap-2 rounded-xl border border-border-subtle bg-surface-secondary px-3">
+      <span className="h-7 w-8 rounded-md border border-border-subtle" style={{ background: value }} aria-hidden="true" />
       <span className="min-w-0 flex-1 text-[10px] font-medium">{label}</span>
-      <span className="text-[8px] uppercase text-black/35">{value}</span>
+      <span className="text-[8px] uppercase text-subtle">{value}</span>
     </div>
   );
 }
@@ -175,11 +175,11 @@ function BrandColorSelect({
 }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-[8px] text-black/45">{label}</span>
+      <span className="mb-1 block text-[8px] text-muted">{label}</span>
       <select
         value={value || ""}
         onChange={(event) => onChange(event.target.value || null)}
-        className="h-10 w-full rounded-lg border border-black/[0.08] bg-[#fafafa] px-2.5 text-[9px] outline-none focus:border-[#C94A40]/60"
+        className="h-10 w-full rounded-lg border border-border-subtle bg-surface-secondary px-2.5 text-[9px] outline-none focus:border-accent"
       >
         {allowDefault ? <option value="">Varsayılan</option> : null}
         {ROSTA_EDITOR_COLORS.map((color) => <option key={color.value} value={color.value}>{color.label} · {color.value}</option>)}
@@ -484,7 +484,7 @@ export function VisualThemeCustomizer() {
   };
 
   return (
-    <div className="fixed inset-0 z-[90] flex min-h-0 flex-col bg-[#eceef1]" data-theme-customizer-v4>
+    <div className="fixed inset-0 z-[90] flex min-h-0 flex-col bg-background text-main" data-theme-customizer-v4>
       <style>{`
         [data-ruth-theme-context-menu] section { padding: 8px !important; }
         [data-ruth-theme-context-menu] section > p,
@@ -496,25 +496,25 @@ export function VisualThemeCustomizer() {
         [data-ruth-theme-context-menu] input[type="range"] { height: 14px !important; }
         [data-ruth-theme-context-menu] button { min-height: 30px; }
       `}</style>
-      <header className="flex h-[64px] shrink-0 items-center border-b border-black/10 bg-[#fbf8f3] px-3 md:px-4">
+      <header className="flex h-[64px] shrink-0 items-center border-b border-border-subtle bg-surface-primary px-3 md:px-4">
         <div className="flex min-w-0 flex-1 items-center gap-3">
-          <a href="/" aria-label="Panele dön" className="grid h-9 w-9 place-items-center rounded-xl border border-black/[0.08] bg-white shadow-sm"><ArrowLeft className="h-4 w-4" /></a>
-          <div className="hidden sm:block"><p className="text-[12px] font-semibold">Mağaza Tasarımı</p><p className="mt-0.5 text-[8px] text-black/35">Sağ tıkla · mobilde basılı tutarak düzenle</p></div>
+          <a href="/" aria-label="Panele dön" className="grid h-9 w-9 place-items-center rounded-xl border border-border-subtle bg-surface-primary shadow-sm"><ArrowLeft className="h-4 w-4" /></a>
+          <div className="hidden sm:block"><p className="text-[12px] font-semibold">Mağaza Tasarımı</p><p className="mt-0.5 text-[8px] text-subtle">Sağ tıkla · mobilde basılı tutarak düzenle</p></div>
         </div>
 
         <div className="mx-2 flex min-w-0 flex-[1.5] items-center justify-center gap-2">
-          <select value={pages.some((item) => item.path === path) ? path : pages[0]?.path || "/"} onChange={(event) => setPage(event.target.value)} className="h-9 w-full max-w-[330px] rounded-xl border border-black/10 bg-white px-3 text-[10px] font-medium outline-none">
+          <select value={pages.some((item) => item.path === path) ? path : pages[0]?.path || "/"} onChange={(event) => setPage(event.target.value)} className="h-9 w-full max-w-[330px] rounded-xl border border-border-subtle bg-surface-primary px-3 text-[10px] font-medium outline-none">
             {groupedPages(pages).map(([group, items]) => <optgroup key={group} label={group}>{items.map((item) => <option key={item.path} value={item.path}>{item.label}</option>)}</optgroup>)}
           </select>
-          <div className="flex rounded-xl bg-black/[0.05] p-1">
-            <button type="button" aria-label="Masaüstü önizleme" onClick={() => setDevice("desktop")} className={cx("grid h-7 w-8 place-items-center rounded-lg", device === "desktop" ? "bg-white shadow-sm" : "text-black/35")}><Monitor className="h-3.5 w-3.5" /></button>
-            <button type="button" aria-label="Mobil önizleme" onClick={() => setDevice("mobile")} className={cx("grid h-7 w-8 place-items-center rounded-lg", device === "mobile" ? "bg-white shadow-sm" : "text-black/35")}><Smartphone className="h-3.5 w-3.5" /></button>
+          <div className="flex rounded-xl bg-surface-tertiary p-1">
+            <button type="button" aria-label="Masaüstü önizleme" onClick={() => setDevice("desktop")} className={cx("grid h-7 w-8 place-items-center rounded-lg", device === "desktop" ? "bg-surface-primary shadow-sm" : "text-subtle")}><Monitor className="h-3.5 w-3.5" /></button>
+            <button type="button" aria-label="Mobil önizleme" onClick={() => setDevice("mobile")} className={cx("grid h-7 w-8 place-items-center rounded-lg", device === "mobile" ? "bg-surface-primary shadow-sm" : "text-subtle")}><Smartphone className="h-3.5 w-3.5" /></button>
           </div>
         </div>
 
         <div className="flex flex-1 items-center justify-end gap-2">
-          {dirty ? <button type="button" onClick={discard} disabled={saveLifecycle.saving} className="hidden h-9 rounded-xl border border-black/10 bg-white px-3 text-[9px] font-medium sm:inline-flex sm:items-center">Geri al</button> : null}
-          <button type="button" onClick={() => void saveLifecycle.save()} disabled={!dirty || saveLifecycle.saving || loading} className="inline-flex h-9 items-center gap-2 rounded-xl bg-[#211a08] px-3.5 text-[9px] font-semibold text-white disabled:opacity-35">
+          {dirty ? <button type="button" onClick={discard} disabled={saveLifecycle.saving} className="hidden h-9 rounded-xl border border-border-subtle bg-surface-primary px-3 text-[9px] font-medium sm:inline-flex sm:items-center">Geri al</button> : null}
+          <button type="button" onClick={() => void saveLifecycle.save()} disabled={!dirty || saveLifecycle.saving || loading} className="inline-flex h-9 items-center gap-2 rounded-xl bg-accent px-3.5 text-[9px] font-semibold text-white disabled:opacity-35">
             {saveLifecycle.saving ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}Kaydet
           </button>
         </div>
@@ -526,18 +526,18 @@ export function VisualThemeCustomizer() {
           style={{ display: "none" }}
           className="h-0 w-0 overflow-hidden"
         >
-          <div className="grid grid-cols-3 gap-1 border-b border-black/[0.07] p-2">
-            <button type="button" onClick={() => setSideView("quick")} className={cx("h-9 rounded-lg text-[9px] font-medium", sideView === "quick" ? "bg-white shadow-sm" : "text-black/45")}>Hızlı düzenle</button>
-            <button type="button" onClick={() => setSideView("home")} className={cx("h-9 rounded-lg text-[9px] font-medium", sideView === "home" ? "bg-white shadow-sm" : "text-black/45")}>Anasayfa</button>
-            <button type="button" onClick={() => setSideView("theme")} className={cx("h-9 rounded-lg text-[9px] font-medium", sideView === "theme" ? "bg-white shadow-sm" : "text-black/45")}>Tema</button>
+          <div className="grid grid-cols-3 gap-1 border-b border-border-subtle p-2">
+            <button type="button" onClick={() => setSideView("quick")} className={cx("h-9 rounded-lg text-[9px] font-medium", sideView === "quick" ? "bg-surface-primary shadow-sm" : "text-muted")}>Hızlı düzenle</button>
+            <button type="button" onClick={() => setSideView("home")} className={cx("h-9 rounded-lg text-[9px] font-medium", sideView === "home" ? "bg-surface-primary shadow-sm" : "text-muted")}>Anasayfa</button>
+            <button type="button" onClick={() => setSideView("theme")} className={cx("h-9 rounded-lg text-[9px] font-medium", sideView === "theme" ? "bg-surface-primary shadow-sm" : "text-muted")}>Tema</button>
           </div>
 
           <div className="min-h-0 flex-1 overflow-y-auto p-3">
-            {loading ? <div className="grid h-full place-items-center"><RefreshCw className="h-5 w-5 animate-spin text-black/30" /></div> : null}
+            {loading ? <div className="grid h-full place-items-center"><RefreshCw className="h-5 w-5 animate-spin text-subtle" /></div> : null}
 
             {!loading && sideView === "quick" ? (
               <div className="space-y-3">
-                <div className={panelCard()}><div className="flex gap-3"><span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#f1e9d4] text-[#7b5c1e]"><MousePointer2 className="h-4 w-4" /></span><div><p className="text-[10px] font-semibold">Önizlemeden düzenle</p><p className="mt-1 text-[9px] leading-4 text-black/45">Masaüstünde sağ tıkla, mobilde uzun bas. Görsel, yazı, bağlantı, buton ve bölüm için yalnız o öğeye ait ayarlar tıkladığın yerde açılır.</p></div></div></div>
+                <div className={panelCard()}><div className="flex gap-3"><span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent"><MousePointer2 className="h-4 w-4" /></span><div><p className="text-[10px] font-semibold">Önizlemeden düzenle</p><p className="mt-1 text-[9px] leading-4 text-muted">Masaüstünde sağ tıkla, mobilde uzun bas. Görsel, yazı, bağlantı, buton ve bölüm için yalnız o öğeye ait ayarlar tıkladığın yerde açılır.</p></div></div></div>
               </div>
             ) : null}
 
@@ -545,7 +545,7 @@ export function VisualThemeCustomizer() {
               path === "/" ? (
                 <div className="space-y-3">
                   <div className={panelCard()}>
-                    <div className="mb-3"><p className="text-[10px] font-semibold">Ana hero görselleri</p><p className="mt-1 text-[8px] leading-4 text-black/40">Masaüstü ve mobil görseller ayrı kaydedilir. İki cihaz da gerçek img kaynağı kullanır; desktop srcSet kullanılmaz.</p></div>
+                    <div className="mb-3"><p className="text-[10px] font-semibold">Ana hero görselleri</p><p className="mt-1 text-[8px] leading-4 text-subtle">Masaüstü ve mobil görseller ayrı kaydedilir. İki cihaz da gerçek img kaynağı kullanır; desktop srcSet kullanılmaz.</p></div>
                     <div className="grid grid-cols-2 gap-2">
                       <UploadCard title="Masaüstü" value={homepageHeroDeviceImage(settings, "desktop")} busy={uploading === "hero-desktop"} onFile={(file) => void uploadHero("desktop", file)} />
                       <UploadCard title="Mobil" value={homepageHeroDeviceImage(settings, "mobile")} busy={uploading === "hero-mobile"} onFile={(file) => void uploadHero("mobile", file)} />
@@ -556,51 +556,51 @@ export function VisualThemeCustomizer() {
                     <div className="grid grid-cols-2 gap-2">{settings.homepageImages.scrollImages.map((src, index) => <UploadCard key={index} title={`Görsel ${index + 1}`} value={src} busy={uploading === `scroll-${index}`} onFile={(file) => void uploadScroll(index, file)} />)}</div>
                   </div>
                 </div>
-              ) : <div className="rounded-xl border border-dashed border-black/15 p-4 text-center text-[9px] text-black/40">Anasayfa fotoğrafları için Ana Sayfa’yı seç.</div>
+              ) : <div className="rounded-xl border border-dashed border-border-strong p-4 text-center text-[9px] text-subtle">Anasayfa fotoğrafları için Ana Sayfa’yı seç.</div>
             ) : null}
 
             {!loading && sideView === "theme" ? (
               <div className="space-y-3">
-                <div className={panelCard()}><div className="mb-3"><p className="text-[10px] font-semibold">ROSTA renk sistemi</p><p className="mt-1 text-[8px] leading-4 text-black/40">Marka paleti kilitli. Tema düzenleyici içerik, görsel, ölçü ve yerleşimi değiştirir; marka renkleri bu sistemin dışına çıkmaz.</p></div><div className="space-y-2"><LockedColorField label="Ana arka plan · Carbon" value="#111111" /><LockedColorField label="İkincil yüzey · Carbon Soft" value="#242424" /><LockedColorField label="Ana yazı · Cream" value="#FBF3E6" /><LockedColorField label="Ana aksiyon · Brick B" value="#C94A40" /><LockedColorField label="Basılı / güçlü · Espresso" value="#38251C" /><LockedColorField label="İkincil kahve · Cocoa" value="#6B4638" /><LockedColorField label="Sınır · Kraft" value="#C8A77D" /></div></div>
-                <div className={panelCard()}><p className="mb-2 text-[10px] font-semibold">WhatsApp</p><label className="block"><span className="mb-1 block text-[8px] text-black/40">Buton yazısı</span><input value={settings.whatsapp.label} onChange={(event) => setSettings((current) => ({ ...current, whatsapp: { ...current.whatsapp, label: event.target.value } }))} className={fieldClass()} /></label><label className="mt-2 block"><span className="mb-1 block text-[8px] text-black/40">Telefon</span><input value={settings.whatsapp.phone} onChange={(event) => setSettings((current) => ({ ...current, whatsapp: { ...current.whatsapp, phone: event.target.value.replace(/\D/g, "") } }))} className={fieldClass()} /></label></div>
+                <div className={panelCard()}><div className="mb-3"><p className="text-[10px] font-semibold">ROSTA renk sistemi</p><p className="mt-1 text-[8px] leading-4 text-subtle">Marka paleti kilitli. Tema düzenleyici içerik, görsel, ölçü ve yerleşimi değiştirir; marka renkleri bu sistemin dışına çıkmaz.</p></div><div className="space-y-2"><LockedColorField label="Ana arka plan · Carbon" value="#111111" /><LockedColorField label="İkincil yüzey · Carbon Soft" value="#242424" /><LockedColorField label="Ana yazı · Cream" value="#FBF3E6" /><LockedColorField label="Ana aksiyon · Brick B" value="#C94A40" /><LockedColorField label="Basılı / güçlü · Espresso" value="#38251C" /><LockedColorField label="İkincil kahve · Cocoa" value="#6B4638" /><LockedColorField label="Sınır · Kraft" value="#C8A77D" /></div></div>
+                <div className={panelCard()}><p className="mb-2 text-[10px] font-semibold">WhatsApp</p><label className="block"><span className="mb-1 block text-[8px] text-subtle">Buton yazısı</span><input value={settings.whatsapp.label} onChange={(event) => setSettings((current) => ({ ...current, whatsapp: { ...current.whatsapp, label: event.target.value } }))} className={fieldClass()} /></label><label className="mt-2 block"><span className="mb-1 block text-[8px] text-subtle">Telefon</span><input value={settings.whatsapp.phone} onChange={(event) => setSettings((current) => ({ ...current, whatsapp: { ...current.whatsapp, phone: event.target.value.replace(/\D/g, "") } }))} className={fieldClass()} /></label></div>
               </div>
             ) : null}
           </div>
         </aside>
 
-        <main className="flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-hidden bg-[#e9ebee] p-3 md:p-4">
-          <div className={cx("relative overflow-hidden bg-white shadow-[0_10px_40px_rgba(15,23,42,.08)] transition-all duration-300", device === "mobile" ? "h-full max-h-[820px] w-[430px] max-w-full rounded-[24px] border border-black/10" : "h-full w-full rounded-xl border border-black/[0.08]")}>
-            <iframe ref={iframeRef} key={`${path}-${nonce}`} src={previewUrl} title="Mağaza önizleme" className="h-full w-full border-0 bg-white" onLoad={() => window.setTimeout(() => sendSettings(settings), 40)} />
+        <main className="flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-hidden bg-background p-3 md:p-4">
+          <div className={cx("relative overflow-hidden bg-surface-primary shadow-floating transition-all duration-300", device === "mobile" ? "h-full max-h-[820px] w-[430px] max-w-full rounded-[24px] border border-border-subtle" : "h-full w-full rounded-xl border border-border-subtle")}>
+            <iframe ref={iframeRef} key={`${path}-${nonce}`} src={previewUrl} title="Mağaza önizleme" className="h-full w-full border-0 bg-surface-primary" onLoad={() => window.setTimeout(() => sendSettings(settings), 40)} />
           </div>
         </main>
       </div>
 
       {menu && selected ? (
         <div
-          className="fixed z-[2147483640] w-[264px] max-w-[calc(100vw-20px)] max-h-[min(460px,calc(100vh-78px))] overflow-y-auto rounded-xl border border-black/10 bg-white shadow-[0_18px_46px_rgba(15,23,42,.22)]"
+          className="fixed z-[2147483640] w-[264px] max-w-[calc(100vw-20px)] max-h-[min(460px,calc(100vh-78px))] overflow-y-auto rounded-xl border border-border-subtle bg-surface-primary shadow-overlay"
           style={{ left: menu.x, top: menu.y }}
           data-ruth-theme-editor-ui
           data-ruth-theme-context-menu
         >
-          <div className="sticky top-0 z-10 border-b border-black/[0.06] bg-white/95 px-2.5 py-2 backdrop-blur">
+          <div className="sticky top-0 z-10 border-b border-border-subtle bg-surface-primary/95 px-2.5 py-2 backdrop-blur">
             <div className="flex items-start gap-3">
               <div className="min-w-0 flex-1">
                 <p className="truncate text-[10px] font-semibold">{selected.label}</p>
-                <p className="mt-0.5 text-[8px] text-black/35">{selected.tag} · {selected.kind} · {device === "mobile" ? "Mobil" : "Masaüstü"}</p>
+                <p className="mt-0.5 text-[8px] text-subtle">{selected.tag} · {selected.kind} · {device === "mobile" ? "Mobil" : "Masaüstü"}</p>
               </div>
-              <button type="button" onClick={() => setMenu(null)} className="grid h-7 w-7 shrink-0 place-items-center rounded-lg text-[14px] text-black/35 hover:bg-black/[0.04] hover:text-black">×</button>
+              <button type="button" onClick={() => setMenu(null)} className="grid h-7 w-7 shrink-0 place-items-center rounded-lg text-[14px] text-subtle hover:bg-accent-soft hover:text-main">×</button>
             </div>
           </div>
 
           {selected.kind === "image" && selected.tag !== "video" ? (
-            <section className="border-b border-black/[0.06] p-3">
+            <section className="border-b border-border-subtle p-3">
               <p className="mb-2 text-[9px] font-semibold">Görsel</p>
               {selected.imageSrc ? (
-                <div className="mb-2 h-[68px] overflow-hidden rounded-lg border border-black/[0.06] bg-[#f6f6f4]">
+                <div className="mb-2 h-[68px] overflow-hidden rounded-lg border border-border-subtle bg-surface-secondary">
                   <img src={selectedOverride?.imageSrc || selected.imageSrc} alt="" className="h-full w-full object-cover" />
                 </div>
               ) : null}
-              <label className={cx("relative flex h-10 w-full items-center justify-center gap-2 overflow-hidden rounded-xl border border-black/[0.09] bg-[#fafafa] text-[9px] font-medium hover:bg-white", uploading === "selected" && "pointer-events-none opacity-40")}>
+              <label className={cx("relative flex h-10 w-full items-center justify-center gap-2 overflow-hidden rounded-xl border border-border-subtle bg-surface-secondary text-[9px] font-medium hover:bg-surface-primary", uploading === "selected" && "pointer-events-none opacity-40")}>
                 <ImageIcon className="h-3.5 w-3.5" />{uploading === "selected" ? "Yükleniyor…" : "Fotoğrafı değiştir"}
                 <input
                   type="file"
@@ -616,11 +616,11 @@ export function VisualThemeCustomizer() {
               </label>
               <div className="mt-3 grid grid-cols-2 gap-2">
                 <label className="block">
-                  <span className="mb-1 block text-[8px] font-medium text-black/45">Doldurma</span>
+                  <span className="mb-1 block text-[8px] font-medium text-muted">Doldurma</span>
                   <select
                     value={selectedDeviceStyle?.objectFit || selectedMetrics?.objectFit || "cover"}
                     onChange={(event) => patchDeviceStyle({ objectFit: event.target.value as ThemeDeviceStyle["objectFit"] })}
-                    className="h-9 w-full rounded-lg border border-black/10 bg-[#fafafa] px-2 text-[9px] outline-none"
+                    className="h-9 w-full rounded-lg border border-border-subtle bg-surface-secondary px-2 text-[9px] outline-none"
                   >
                     <option value="cover">Kırp / doldur</option>
                     <option value="contain">Tamamını göster</option>
@@ -628,54 +628,54 @@ export function VisualThemeCustomizer() {
                   </select>
                 </label>
                 <label className="block">
-                  <span className="mb-1 block text-[8px] font-medium text-black/45">Köşe</span>
-                  <input type="number" min={0} max={1000} value={Math.round(numberStyle("borderRadius", selectedMetrics?.borderRadius || 0))} onChange={(event) => patchDeviceStyle({ borderRadius: Number(event.target.value) || 0 })} className="h-9 w-full rounded-lg border border-black/10 bg-[#fafafa] px-2 text-[9px] outline-none" />
+                  <span className="mb-1 block text-[8px] font-medium text-muted">Köşe</span>
+                  <input type="number" min={0} max={1000} value={Math.round(numberStyle("borderRadius", selectedMetrics?.borderRadius || 0))} onChange={(event) => patchDeviceStyle({ borderRadius: Number(event.target.value) || 0 })} className="h-9 w-full rounded-lg border border-border-subtle bg-surface-secondary px-2 text-[9px] outline-none" />
                 </label>
               </div>
               <div className="mt-3">
-                <div className="mb-1 flex justify-between text-[8px] text-black/45"><span>Yatay odak</span><span>{Math.round(numberStyle("objectPositionX", selectedMetrics?.objectPositionX ?? 50))}%</span></div>
+                <div className="mb-1 flex justify-between text-[8px] text-muted"><span>Yatay odak</span><span>{Math.round(numberStyle("objectPositionX", selectedMetrics?.objectPositionX ?? 50))}%</span></div>
                 <input type="range" min={0} max={100} value={numberStyle("objectPositionX", selectedMetrics?.objectPositionX ?? 50)} onChange={(event) => patchDeviceStyle({ objectPositionX: Number(event.target.value) })} className="w-full accent-[#C94A40]" />
               </div>
               <div className="mt-2">
-                <div className="mb-1 flex justify-between text-[8px] text-black/45"><span>Dikey odak</span><span>{Math.round(numberStyle("objectPositionY", selectedMetrics?.objectPositionY ?? 50))}%</span></div>
+                <div className="mb-1 flex justify-between text-[8px] text-muted"><span>Dikey odak</span><span>{Math.round(numberStyle("objectPositionY", selectedMetrics?.objectPositionY ?? 50))}%</span></div>
                 <input type="range" min={0} max={100} value={numberStyle("objectPositionY", selectedMetrics?.objectPositionY ?? 50)} onChange={(event) => patchDeviceStyle({ objectPositionY: Number(event.target.value) })} className="w-full accent-[#C94A40]" />
               </div>
             </section>
           ) : null}
 
           {selected.textEditable ? (
-            <section className="border-b border-black/[0.06] p-3">
+            <section className="border-b border-border-subtle p-3">
               <span className="mb-1.5 flex items-center gap-1.5 text-[9px] font-semibold"><Type className="h-3 w-3" />Yazı</span>
-              <textarea rows={3} value={selectedOverride?.text ?? selected.text ?? ""} onChange={(event) => patchOverride({ text: event.target.value })} className="w-full resize-y rounded-xl border border-black/10 bg-[#fafafa] p-2.5 text-[9px] leading-4 outline-none focus:border-[#b28c43]/50" />
+              <textarea rows={3} value={selectedOverride?.text ?? selected.text ?? ""} onChange={(event) => patchOverride({ text: event.target.value })} className="w-full resize-y rounded-xl border border-border-subtle bg-surface-secondary p-2.5 text-[9px] leading-4 outline-none focus:border-accent" />
             </section>
           ) : null}
 
           {selected.kind === "link" ? (
-            <section className="border-b border-black/[0.06] p-3">
+            <section className="border-b border-border-subtle p-3">
               <span className="mb-1.5 flex items-center gap-1.5 text-[9px] font-semibold"><Link2 className="h-3 w-3" />Bağlantı</span>
-              <input value={selectedOverride?.href ?? selected.href ?? ""} onChange={(event) => patchOverride({ href: event.target.value })} className="h-9 w-full rounded-lg border border-black/10 bg-[#fafafa] px-2.5 text-[9px] outline-none focus:border-[#b28c43]/50" placeholder="/products" />
+              <input value={selectedOverride?.href ?? selected.href ?? ""} onChange={(event) => patchOverride({ href: event.target.value })} className="h-9 w-full rounded-lg border border-border-subtle bg-surface-secondary px-2.5 text-[9px] outline-none focus:border-accent" placeholder="/products" />
             </section>
           ) : null}
 
           {(selected.textEditable || selected.kind === "text" || selected.kind === "link" || selected.kind === "button") ? (
-            <section className="border-b border-black/[0.06] p-3">
+            <section className="border-b border-border-subtle p-3">
               <p className="mb-2 text-[9px] font-semibold">Tipografi</p>
               <div className="grid grid-cols-2 gap-2">
                 <label className="block">
-                  <span className="mb-1 block text-[8px] text-black/45">Yazı boyutu</span>
-                  <input type="number" min={6} max={240} value={Math.round(numberStyle("fontSize", selectedMetrics?.fontSize || 16))} onChange={(event) => patchDeviceStyle({ fontSize: Number(event.target.value) || 6 })} className="h-9 w-full rounded-lg border border-black/10 bg-[#fafafa] px-2 text-[9px] outline-none" />
+                  <span className="mb-1 block text-[8px] text-muted">Yazı boyutu</span>
+                  <input type="number" min={6} max={240} value={Math.round(numberStyle("fontSize", selectedMetrics?.fontSize || 16))} onChange={(event) => patchDeviceStyle({ fontSize: Number(event.target.value) || 6 })} className="h-9 w-full rounded-lg border border-border-subtle bg-surface-secondary px-2 text-[9px] outline-none" />
                 </label>
                 <label className="block">
-                  <span className="mb-1 block text-[8px] text-black/45">Satır yüksekliği</span>
-                  <input type="number" min={0.5} max={4} step={0.05} value={numberStyle("lineHeight", selectedMetrics?.lineHeight || 1.2)} onChange={(event) => patchDeviceStyle({ lineHeight: Number(event.target.value) || 1 })} className="h-9 w-full rounded-lg border border-black/10 bg-[#fafafa] px-2 text-[9px] outline-none" />
+                  <span className="mb-1 block text-[8px] text-muted">Satır yüksekliği</span>
+                  <input type="number" min={0.5} max={4} step={0.05} value={numberStyle("lineHeight", selectedMetrics?.lineHeight || 1.2)} onChange={(event) => patchDeviceStyle({ lineHeight: Number(event.target.value) || 1 })} className="h-9 w-full rounded-lg border border-border-subtle bg-surface-secondary px-2 text-[9px] outline-none" />
                 </label>
                 <label className="block">
-                  <span className="mb-1 block text-[8px] text-black/45">Harf aralığı</span>
-                  <input type="number" min={-20} max={100} step={0.1} value={numberStyle("letterSpacing", selectedMetrics?.letterSpacing || 0)} onChange={(event) => patchDeviceStyle({ letterSpacing: Number(event.target.value) || 0 })} className="h-9 w-full rounded-lg border border-black/10 bg-[#fafafa] px-2 text-[9px] outline-none" />
+                  <span className="mb-1 block text-[8px] text-muted">Harf aralığı</span>
+                  <input type="number" min={-20} max={100} step={0.1} value={numberStyle("letterSpacing", selectedMetrics?.letterSpacing || 0)} onChange={(event) => patchDeviceStyle({ letterSpacing: Number(event.target.value) || 0 })} className="h-9 w-full rounded-lg border border-border-subtle bg-surface-secondary px-2 text-[9px] outline-none" />
                 </label>
                 <label className="block">
-                  <span className="mb-1 block text-[8px] text-black/45">Hizalama</span>
-                  <select value={selectedDeviceStyle?.textAlign || selectedMetrics?.textAlign || "left"} onChange={(event) => patchDeviceStyle({ textAlign: event.target.value as ThemeDeviceStyle["textAlign"] })} className="h-9 w-full rounded-lg border border-black/10 bg-[#fafafa] px-2 text-[9px] outline-none">
+                  <span className="mb-1 block text-[8px] text-muted">Hizalama</span>
+                  <select value={selectedDeviceStyle?.textAlign || selectedMetrics?.textAlign || "left"} onChange={(event) => patchDeviceStyle({ textAlign: event.target.value as ThemeDeviceStyle["textAlign"] })} className="h-9 w-full rounded-lg border border-border-subtle bg-surface-secondary px-2 text-[9px] outline-none">
                     <option value="left">Sol</option><option value="center">Orta</option><option value="right">Sağ</option>
                   </select>
                 </label>
@@ -687,60 +687,60 @@ export function VisualThemeCustomizer() {
           ) : null}
 
           {(selected.kind === "button" || selected.kind === "section" || selected.kind === "container" || selected.kind === "image") ? (
-            <section className="border-b border-black/[0.06] p-3">
+            <section className="border-b border-border-subtle p-3">
               <p className="mb-2 text-[9px] font-semibold">Boyut ve görünüm</p>
               <div className="grid grid-cols-2 gap-2">
                 <label className="block">
-                  <span className="mb-1 block text-[8px] text-black/45">Genişlik</span>
+                  <span className="mb-1 block text-[8px] text-muted">Genişlik</span>
                   <div className="flex gap-1">
-                    <input type="number" min={0} max={5000} value={Math.round(numberStyle("width", selectedMetrics?.width || 0))} onChange={(event) => patchDeviceStyle({ width: Number(event.target.value) || 0, widthUnit: "px" })} className="h-9 min-w-0 flex-1 rounded-lg border border-black/10 bg-[#fafafa] px-2 text-[9px] outline-none" />
-                    <button type="button" onClick={() => patchDeviceStyle({ width: null })} className="h-9 rounded-lg border border-black/10 px-2 text-[8px] text-black/45">Auto</button>
+                    <input type="number" min={0} max={5000} value={Math.round(numberStyle("width", selectedMetrics?.width || 0))} onChange={(event) => patchDeviceStyle({ width: Number(event.target.value) || 0, widthUnit: "px" })} className="h-9 min-w-0 flex-1 rounded-lg border border-border-subtle bg-surface-secondary px-2 text-[9px] outline-none" />
+                    <button type="button" onClick={() => patchDeviceStyle({ width: null })} className="h-9 rounded-lg border border-border-subtle px-2 text-[8px] text-muted">Auto</button>
                   </div>
                 </label>
                 <label className="block">
-                  <span className="mb-1 block text-[8px] text-black/45">Yükseklik</span>
+                  <span className="mb-1 block text-[8px] text-muted">Yükseklik</span>
                   <div className="flex gap-1">
-                    <input type="number" min={0} max={5000} value={Math.round(numberStyle("height", selectedMetrics?.height || 0))} onChange={(event) => patchDeviceStyle({ height: Number(event.target.value) || 0, heightUnit: "px" })} className="h-9 min-w-0 flex-1 rounded-lg border border-black/10 bg-[#fafafa] px-2 text-[9px] outline-none" />
-                    <button type="button" onClick={() => patchDeviceStyle({ height: null })} className="h-9 rounded-lg border border-black/10 px-2 text-[8px] text-black/45">Auto</button>
+                    <input type="number" min={0} max={5000} value={Math.round(numberStyle("height", selectedMetrics?.height || 0))} onChange={(event) => patchDeviceStyle({ height: Number(event.target.value) || 0, heightUnit: "px" })} className="h-9 min-w-0 flex-1 rounded-lg border border-border-subtle bg-surface-secondary px-2 text-[9px] outline-none" />
+                    <button type="button" onClick={() => patchDeviceStyle({ height: null })} className="h-9 rounded-lg border border-border-subtle px-2 text-[8px] text-muted">Auto</button>
                   </div>
                 </label>
               </div>
               <div className="mt-2 grid grid-cols-2 gap-2">
                 <label className="block">
-                  <span className="mb-1 block text-[8px] text-black/45">Yatay iç boşluk</span>
-                  <input type="number" min={0} max={500} value={Math.round(numberStyle("paddingX", selectedMetrics?.paddingX || 0))} onChange={(event) => patchDeviceStyle({ paddingX: Number(event.target.value) || 0 })} className="h-9 w-full rounded-lg border border-black/10 bg-[#fafafa] px-2 text-[9px] outline-none" />
+                  <span className="mb-1 block text-[8px] text-muted">Yatay iç boşluk</span>
+                  <input type="number" min={0} max={500} value={Math.round(numberStyle("paddingX", selectedMetrics?.paddingX || 0))} onChange={(event) => patchDeviceStyle({ paddingX: Number(event.target.value) || 0 })} className="h-9 w-full rounded-lg border border-border-subtle bg-surface-secondary px-2 text-[9px] outline-none" />
                 </label>
                 <label className="block">
-                  <span className="mb-1 block text-[8px] text-black/45">Dikey iç boşluk</span>
-                  <input type="number" min={0} max={500} value={Math.round(numberStyle("paddingY", selectedMetrics?.paddingY || 0))} onChange={(event) => patchDeviceStyle({ paddingY: Number(event.target.value) || 0 })} className="h-9 w-full rounded-lg border border-black/10 bg-[#fafafa] px-2 text-[9px] outline-none" />
+                  <span className="mb-1 block text-[8px] text-muted">Dikey iç boşluk</span>
+                  <input type="number" min={0} max={500} value={Math.round(numberStyle("paddingY", selectedMetrics?.paddingY || 0))} onChange={(event) => patchDeviceStyle({ paddingY: Number(event.target.value) || 0 })} className="h-9 w-full rounded-lg border border-border-subtle bg-surface-secondary px-2 text-[9px] outline-none" />
                 </label>
               </div>
               <div className="mt-2 grid grid-cols-2 gap-2">
                 <label className="block">
-                  <span className="mb-1 block text-[8px] text-black/45">Üst boşluk</span>
-                  <input type="number" min={-1000} max={2000} value={Math.round(numberStyle("marginTop", selectedMetrics?.marginTop || 0))} onChange={(event) => patchDeviceStyle({ marginTop: Number(event.target.value) || 0 })} className="h-9 w-full rounded-lg border border-black/10 bg-[#fafafa] px-2 text-[9px] outline-none" />
+                  <span className="mb-1 block text-[8px] text-muted">Üst boşluk</span>
+                  <input type="number" min={-1000} max={2000} value={Math.round(numberStyle("marginTop", selectedMetrics?.marginTop || 0))} onChange={(event) => patchDeviceStyle({ marginTop: Number(event.target.value) || 0 })} className="h-9 w-full rounded-lg border border-border-subtle bg-surface-secondary px-2 text-[9px] outline-none" />
                 </label>
                 <label className="block">
-                  <span className="mb-1 block text-[8px] text-black/45">Alt boşluk</span>
-                  <input type="number" min={-1000} max={2000} value={Math.round(numberStyle("marginBottom", selectedMetrics?.marginBottom || 0))} onChange={(event) => patchDeviceStyle({ marginBottom: Number(event.target.value) || 0 })} className="h-9 w-full rounded-lg border border-black/10 bg-[#fafafa] px-2 text-[9px] outline-none" />
+                  <span className="mb-1 block text-[8px] text-muted">Alt boşluk</span>
+                  <input type="number" min={-1000} max={2000} value={Math.round(numberStyle("marginBottom", selectedMetrics?.marginBottom || 0))} onChange={(event) => patchDeviceStyle({ marginBottom: Number(event.target.value) || 0 })} className="h-9 w-full rounded-lg border border-border-subtle bg-surface-secondary px-2 text-[9px] outline-none" />
                 </label>
               </div>
               <div className="mt-2 grid grid-cols-2 gap-2">
                 <BrandColorSelect label="Arka plan" value={selectedDeviceStyle?.backgroundColor} onChange={(backgroundColor) => patchDeviceStyle({ backgroundColor })} />
                 <label className="block">
-                  <span className="mb-1 block text-[8px] text-black/45">Köşe</span>
-                  <input type="number" min={0} max={1000} value={Math.round(numberStyle("borderRadius", selectedMetrics?.borderRadius || 0))} onChange={(event) => patchDeviceStyle({ borderRadius: Number(event.target.value) || 0 })} className="h-9 w-full rounded-lg border border-black/10 bg-[#fafafa] px-2 text-[9px] outline-none" />
+                  <span className="mb-1 block text-[8px] text-muted">Köşe</span>
+                  <input type="number" min={0} max={1000} value={Math.round(numberStyle("borderRadius", selectedMetrics?.borderRadius || 0))} onChange={(event) => patchDeviceStyle({ borderRadius: Number(event.target.value) || 0 })} className="h-9 w-full rounded-lg border border-border-subtle bg-surface-secondary px-2 text-[9px] outline-none" />
                 </label>
               </div>
               <div className="mt-3">
-                <div className="mb-1 flex justify-between text-[8px] text-black/45"><span>Opaklık</span><span>{Math.round(numberStyle("opacity", selectedMetrics?.opacity ?? 1) * 100)}%</span></div>
+                <div className="mb-1 flex justify-between text-[8px] text-muted"><span>Opaklık</span><span>{Math.round(numberStyle("opacity", selectedMetrics?.opacity ?? 1) * 100)}%</span></div>
                 <input type="range" min={0.05} max={1} step={0.05} value={numberStyle("opacity", selectedMetrics?.opacity ?? 1)} onChange={(event) => patchDeviceStyle({ opacity: Number(event.target.value) })} className="w-full accent-[#C94A40]" />
               </div>
             </section>
           ) : null}
 
-          <div className="sticky bottom-0 border-t border-black/[0.07] bg-white/95 p-2 backdrop-blur">
-            <button type="button" onClick={resetSelectedOverride} disabled={!selectedOverride} className="h-8 w-full rounded-lg border border-black/10 text-[8px] font-medium text-black/55 hover:bg-black/[0.025] disabled:opacity-30">Bu öğenin ayarlarını sıfırla</button>
+          <div className="sticky bottom-0 border-t border-border-subtle bg-surface-primary/95 p-2 backdrop-blur">
+            <button type="button" onClick={resetSelectedOverride} disabled={!selectedOverride} className="h-8 w-full rounded-lg border border-border-subtle text-[8px] font-medium text-muted hover:bg-accent-soft disabled:opacity-30">Bu öğenin ayarlarını sıfırla</button>
           </div>
         </div>
       ) : null}
