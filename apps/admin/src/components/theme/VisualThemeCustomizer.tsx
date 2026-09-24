@@ -19,10 +19,12 @@ import { adminRequest } from "@/lib/adminApi";
 import {
   defaultThemeCustomizerSettings,
   normalizeThemeCustomizerSettings,
+  removeThemeElementOverride,
   themePage,
   themePageKey,
   upsertThemeElementOverride,
   type ThemeCustomizerSettings,
+  type ThemeDeviceStyle,
   type ThemeElementOverride,
 } from "@/lib/themeCustomizer";
 import {
@@ -51,6 +53,25 @@ type SelectedElement = {
   textEditable?: boolean;
   imageSrc?: string;
   href?: string;
+  metrics?: {
+    width: number;
+    height: number;
+    fontSize: number;
+    lineHeight: number | null;
+    paddingX: number;
+    paddingY: number;
+    marginTop: number;
+    marginBottom: number;
+    borderRadius: number;
+    opacity: number;
+    objectFit: string;
+    objectPositionX: number;
+    objectPositionY: number;
+    textAlign: string;
+    color: string;
+    backgroundColor: string;
+    display: string;
+  };
 };
 
 type ContextPoint = { x: number; y: number; viewportWidth: number; viewportHeight: number };
@@ -257,6 +278,25 @@ export function VisualThemeCustomizer() {
     });
   }, [baseOverride, selected, targetPage]);
 
+  const patchDeviceStyle = useCallback((patch: Partial<ThemeDeviceStyle>) => {
+    if (!selected) return;
+    setSettings((current) => {
+      const base = baseOverride(current);
+      if (!base) return current;
+      const deviceStyle = device === "mobile" ? base.mobile : base.desktop;
+      return upsertThemeElementOverride(current, targetPage, {
+        ...base,
+        [device]: { ...(deviceStyle || {}), ...patch },
+      });
+    });
+  }, [baseOverride, device, selected, targetPage]);
+
+  const resetSelectedOverride = useCallback(() => {
+    if (!selected) return;
+    setSettings((current) => removeThemeElementOverride(current, targetPage, selected.id));
+    setMenu(null);
+  }, [selected, targetPage]);
+
   const persistHeroImage = useCallback(async (heroDevice: HomepageHeroDevice, src: string) => {
     const nextToSave = normalizeThemeMediaSettings(setHomepageHeroDeviceImage(settings, heroDevice, src));
 
@@ -347,11 +387,6 @@ export function VisualThemeCustomizer() {
 
       if (message.type === "RUTH_THEME_EDITOR_CONTEXT_REQUEST" && typeof message.id === "string" && message.point) {
         setMenu(null);
-        if (typeof message.sectionId === "string" && message.sectionId) {
-          pendingContextRef.current = null;
-          setSelected(null);
-          return;
-        }
         pendingContextRef.current = { id: message.id, point: message.point as ContextPoint };
         iframeRef.current?.contentWindow?.postMessage({ type: "RUTH_THEME_EDITOR_SELECT_REQUEST", id: message.id, scroll: false }, "*");
         return;
@@ -365,9 +400,11 @@ export function VisualThemeCustomizer() {
           const rect = iframeRef.current.getBoundingClientRect();
           const scaleX = rect.width / Math.max(1, pending.point.viewportWidth);
           const scaleY = rect.height / Math.max(1, pending.point.viewportHeight);
+          const requestedX = rect.left + pending.point.x * scaleX;
+          const requestedY = rect.top + pending.point.y * scaleY;
           setMenu({
-            x: Math.min(Math.max(12, window.innerWidth - 292), Math.max(12, rect.left + pending.point.x * scaleX)),
-            y: Math.min(Math.max(72, window.innerHeight - 250), Math.max(72, rect.top + pending.point.y * scaleY)),
+            x: Math.max(12, Math.min(window.innerWidth - 348, requestedX)),
+            y: Math.max(72, Math.min(Math.max(72, window.innerHeight - 560), requestedY)),
           });
           pendingContextRef.current = null;
         }
@@ -401,6 +438,12 @@ export function VisualThemeCustomizer() {
   };
 
   const previewUrl = `${STOREFRONT_URL}${path === "/" ? "/" : path}?themeEditor=1&themePreview=${nonce}`;
+  const selectedDeviceStyle = device === "mobile" ? selectedOverride?.mobile : selectedOverride?.desktop;
+  const selectedMetrics = selected?.metrics;
+  const numberStyle = (key: keyof ThemeDeviceStyle, fallback: number) => {
+    const value = selectedDeviceStyle?.[key];
+    return typeof value === "number" ? value : fallback;
+  };
 
   return (
     <div className="fixed inset-0 z-[90] flex min-h-0 flex-col bg-[#eceef1]" data-theme-customizer-v4>
@@ -441,7 +484,7 @@ export function VisualThemeCustomizer() {
 
             {!loading && sideView === "quick" ? (
               <div className="space-y-3">
-                <div className={panelCard()}><div className="flex gap-3"><span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#f1e9d4] text-[#7b5c1e]"><MousePointer2 className="h-4 w-4" /></span><div><p className="text-[10px] font-semibold">Önizlemeden düzenle</p><p className="mt-1 text-[9px] leading-4 text-black/45">Masaüstünde sağ tıkla, mobilde uzun bas. Bölüm ayarları tıkladığın yerde açılır; sol panel seçimle değişmez.</p></div></div></div>
+                <div className={panelCard()}><div className="flex gap-3"><span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#f1e9d4] text-[#7b5c1e]"><MousePointer2 className="h-4 w-4" /></span><div><p className="text-[10px] font-semibold">Önizlemeden düzenle</p><p className="mt-1 text-[9px] leading-4 text-black/45">Masaüstünde sağ tıkla, mobilde uzun bas. Görsel, yazı, bağlantı, buton ve bölüm için yalnız o öğeye ait ayarlar tıkladığın yerde açılır.</p></div></div></div>
               </div>
             ) : null}
 
@@ -480,42 +523,180 @@ export function VisualThemeCustomizer() {
       </div>
 
       {menu && selected ? (
-        <div className="fixed z-[2147483640] w-[280px] overflow-hidden rounded-xl border border-black/10 bg-white py-1 shadow-[0_18px_50px_rgba(15,23,42,.24)]" style={{ left: menu.x, top: menu.y }} data-ruth-theme-editor-ui data-ruth-theme-context-menu>
-          <div className="border-b border-black/[0.06] px-3 py-2.5">
-            <p className="truncate text-[9px] font-semibold">{selected.label}</p>
-            <p className="mt-0.5 text-[8px] text-black/35">{selected.tag} · {selected.kind}</p>
+        <div
+          className="fixed z-[2147483640] w-[336px] max-w-[calc(100vw-24px)] max-h-[calc(100vh-84px)] overflow-y-auto rounded-2xl border border-black/10 bg-white shadow-[0_22px_65px_rgba(15,23,42,.28)]"
+          style={{ left: menu.x, top: menu.y }}
+          data-ruth-theme-editor-ui
+          data-ruth-theme-context-menu
+        >
+          <div className="sticky top-0 z-10 border-b border-black/[0.06] bg-white/95 px-3.5 py-3 backdrop-blur">
+            <div className="flex items-start gap-3">
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-[10px] font-semibold">{selected.label}</p>
+                <p className="mt-0.5 text-[8px] text-black/35">{selected.tag} · {selected.kind} · {device === "mobile" ? "Mobil" : "Masaüstü"}</p>
+              </div>
+              <button type="button" onClick={() => setMenu(null)} className="grid h-7 w-7 shrink-0 place-items-center rounded-lg text-[14px] text-black/35 hover:bg-black/[0.04] hover:text-black">×</button>
+            </div>
           </div>
-          {selected.kind === "image" ? (
-            <label className={cx("relative flex h-10 w-full items-center gap-2 overflow-hidden px-3 text-left text-[9px] hover:bg-black/[0.04]", uploading === "selected" && "pointer-events-none opacity-40")}>
-              <ImageIcon className="h-3.5 w-3.5" />{uploading === "selected" ? "Yükleniyor…" : "Görseli değiştir"}
-              <input
-                type="file"
-                accept={THEME_IMAGE_ACCEPT}
-                disabled={uploading === "selected"}
-                className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
-                onChange={(event) => {
-                  const file = event.currentTarget.files?.[0];
-                  setMenu(null);
-                  if (file) void uploadSelectedImage(file);
-                  event.currentTarget.value = "";
-                }}
-              />
-            </label>
+
+          {selected.kind === "image" && selected.tag !== "video" ? (
+            <section className="border-b border-black/[0.06] p-3">
+              <p className="mb-2 text-[9px] font-semibold">Görsel</p>
+              {selected.imageSrc ? (
+                <div className="mb-2 aspect-[16/9] overflow-hidden rounded-xl border border-black/[0.06] bg-[#f6f6f4]">
+                  <img src={selectedOverride?.imageSrc || selected.imageSrc} alt="" className="h-full w-full object-cover" />
+                </div>
+              ) : null}
+              <label className={cx("relative flex h-10 w-full items-center justify-center gap-2 overflow-hidden rounded-xl border border-black/[0.09] bg-[#fafafa] text-[9px] font-medium hover:bg-white", uploading === "selected" && "pointer-events-none opacity-40")}>
+                <ImageIcon className="h-3.5 w-3.5" />{uploading === "selected" ? "Yükleniyor…" : "Fotoğrafı değiştir"}
+                <input
+                  type="file"
+                  accept={THEME_IMAGE_ACCEPT}
+                  disabled={uploading === "selected"}
+                  className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                  onChange={(event) => {
+                    const file = event.currentTarget.files?.[0];
+                    if (file) void uploadSelectedImage(file);
+                    event.currentTarget.value = "";
+                  }}
+                />
+              </label>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                <label className="block">
+                  <span className="mb-1 block text-[8px] font-medium text-black/45">Doldurma</span>
+                  <select
+                    value={selectedDeviceStyle?.objectFit || selectedMetrics?.objectFit || "cover"}
+                    onChange={(event) => patchDeviceStyle({ objectFit: event.target.value as ThemeDeviceStyle["objectFit"] })}
+                    className="h-9 w-full rounded-lg border border-black/10 bg-[#fafafa] px-2 text-[9px] outline-none"
+                  >
+                    <option value="cover">Kırp / doldur</option>
+                    <option value="contain">Tamamını göster</option>
+                    <option value="fill">Esnet</option>
+                  </select>
+                </label>
+                <label className="block">
+                  <span className="mb-1 block text-[8px] font-medium text-black/45">Köşe</span>
+                  <input type="number" min={0} max={1000} value={Math.round(numberStyle("borderRadius", selectedMetrics?.borderRadius || 0))} onChange={(event) => patchDeviceStyle({ borderRadius: Number(event.target.value) || 0 })} className="h-9 w-full rounded-lg border border-black/10 bg-[#fafafa] px-2 text-[9px] outline-none" />
+                </label>
+              </div>
+              <div className="mt-3">
+                <div className="mb-1 flex justify-between text-[8px] text-black/45"><span>Yatay odak</span><span>{Math.round(numberStyle("objectPositionX", selectedMetrics?.objectPositionX ?? 50))}%</span></div>
+                <input type="range" min={0} max={100} value={numberStyle("objectPositionX", selectedMetrics?.objectPositionX ?? 50)} onChange={(event) => patchDeviceStyle({ objectPositionX: Number(event.target.value) })} className="w-full accent-[#b28c43]" />
+              </div>
+              <div className="mt-2">
+                <div className="mb-1 flex justify-between text-[8px] text-black/45"><span>Dikey odak</span><span>{Math.round(numberStyle("objectPositionY", selectedMetrics?.objectPositionY ?? 50))}%</span></div>
+                <input type="range" min={0} max={100} value={numberStyle("objectPositionY", selectedMetrics?.objectPositionY ?? 50)} onChange={(event) => patchDeviceStyle({ objectPositionY: Number(event.target.value) })} className="w-full accent-[#b28c43]" />
+              </div>
+            </section>
           ) : null}
+
           {selected.textEditable ? (
-            <label className="block border-t border-black/[0.05] px-3 py-2.5">
-              <span className="mb-1.5 flex items-center gap-1.5 text-[8px] font-medium text-black/45"><Type className="h-3 w-3" />Yazı</span>
-              <textarea rows={3} value={selectedOverride?.text ?? selected.text ?? ""} onChange={(event) => patchOverride({ text: event.target.value })} className="w-full resize-y rounded-lg border border-black/10 bg-[#fafafa] p-2 text-[9px] outline-none focus:border-[#b28c43]/50" />
-            </label>
+            <section className="border-b border-black/[0.06] p-3">
+              <span className="mb-1.5 flex items-center gap-1.5 text-[9px] font-semibold"><Type className="h-3 w-3" />Yazı</span>
+              <textarea rows={3} value={selectedOverride?.text ?? selected.text ?? ""} onChange={(event) => patchOverride({ text: event.target.value })} className="w-full resize-y rounded-xl border border-black/10 bg-[#fafafa] p-2.5 text-[9px] leading-4 outline-none focus:border-[#b28c43]/50" />
+            </section>
           ) : null}
+
           {selected.kind === "link" ? (
-            <label className="block border-t border-black/[0.05] px-3 py-2.5">
-              <span className="mb-1.5 flex items-center gap-1.5 text-[8px] font-medium text-black/45"><Link2 className="h-3 w-3" />Bağlantı</span>
-              <input value={selectedOverride?.href ?? selected.href ?? ""} onChange={(event) => patchOverride({ href: event.target.value })} className="h-9 w-full rounded-lg border border-black/10 bg-[#fafafa] px-2.5 text-[9px] outline-none focus:border-[#b28c43]/50" />
-            </label>
+            <section className="border-b border-black/[0.06] p-3">
+              <span className="mb-1.5 flex items-center gap-1.5 text-[9px] font-semibold"><Link2 className="h-3 w-3" />Bağlantı</span>
+              <input value={selectedOverride?.href ?? selected.href ?? ""} onChange={(event) => patchOverride({ href: event.target.value })} className="h-9 w-full rounded-lg border border-black/10 bg-[#fafafa] px-2.5 text-[9px] outline-none focus:border-[#b28c43]/50" placeholder="/products" />
+            </section>
           ) : null}
-          {!selected.textEditable && selected.kind !== "image" && selected.kind !== "link" ? <div className="flex min-h-10 items-center gap-2 px-3 text-[9px] text-black/45"><MousePointer2 className="h-3.5 w-3.5" />Bu öğenin özel alanı yok.</div> : null}
-          <button type="button" onClick={() => { setSideView("theme"); setMenu(null); }} className="flex h-10 w-full items-center gap-2 border-t border-black/[0.05] px-3 text-left text-[9px] hover:bg-black/[0.04]"><Palette className="h-3.5 w-3.5" />Tema ayarları<ChevronRight className="ml-auto h-3 w-3" /></button>
+
+          {(selected.textEditable || selected.kind === "text" || selected.kind === "link" || selected.kind === "button") ? (
+            <section className="border-b border-black/[0.06] p-3">
+              <p className="mb-2 text-[9px] font-semibold">Tipografi</p>
+              <div className="grid grid-cols-2 gap-2">
+                <label className="block">
+                  <span className="mb-1 block text-[8px] text-black/45">Yazı boyutu</span>
+                  <input type="number" min={6} max={240} value={Math.round(numberStyle("fontSize", selectedMetrics?.fontSize || 16))} onChange={(event) => patchDeviceStyle({ fontSize: Number(event.target.value) || 6 })} className="h-9 w-full rounded-lg border border-black/10 bg-[#fafafa] px-2 text-[9px] outline-none" />
+                </label>
+                <label className="block">
+                  <span className="mb-1 block text-[8px] text-black/45">Satır yüksekliği</span>
+                  <input type="number" min={0.5} max={4} step={0.05} value={numberStyle("lineHeight", selectedMetrics?.lineHeight || 1.2)} onChange={(event) => patchDeviceStyle({ lineHeight: Number(event.target.value) || 1 })} className="h-9 w-full rounded-lg border border-black/10 bg-[#fafafa] px-2 text-[9px] outline-none" />
+                </label>
+                <label className="block">
+                  <span className="mb-1 block text-[8px] text-black/45">Harf aralığı</span>
+                  <input type="number" min={-20} max={100} step={0.1} value={numberStyle("letterSpacing", selectedMetrics?.letterSpacing || 0)} onChange={(event) => patchDeviceStyle({ letterSpacing: Number(event.target.value) || 0 })} className="h-9 w-full rounded-lg border border-black/10 bg-[#fafafa] px-2 text-[9px] outline-none" />
+                </label>
+                <label className="block">
+                  <span className="mb-1 block text-[8px] text-black/45">Hizalama</span>
+                  <select value={selectedDeviceStyle?.textAlign || selectedMetrics?.textAlign || "left"} onChange={(event) => patchDeviceStyle({ textAlign: event.target.value as ThemeDeviceStyle["textAlign"] })} className="h-9 w-full rounded-lg border border-black/10 bg-[#fafafa] px-2 text-[9px] outline-none">
+                    <option value="left">Sol</option><option value="center">Orta</option><option value="right">Sağ</option>
+                  </select>
+                </label>
+              </div>
+              <label className="mt-2 flex h-10 items-center gap-2 rounded-lg border border-black/[0.08] bg-[#fafafa] px-2.5">
+                <input type="color" value={selectedDeviceStyle?.color || selectedMetrics?.color || "#111111"} onChange={(event) => patchDeviceStyle({ color: event.target.value })} className="h-6 w-8 border-0 bg-transparent p-0" />
+                <span className="text-[8px] font-medium text-black/50">Yazı rengi</span>
+                <span className="ml-auto text-[8px] uppercase text-black/35">{selectedDeviceStyle?.color || selectedMetrics?.color || "#111111"}</span>
+              </label>
+            </section>
+          ) : null}
+
+          {(selected.kind === "button" || selected.kind === "section" || selected.kind === "container" || selected.kind === "image") ? (
+            <section className="border-b border-black/[0.06] p-3">
+              <p className="mb-2 text-[9px] font-semibold">Boyut ve görünüm</p>
+              <div className="grid grid-cols-2 gap-2">
+                <label className="block">
+                  <span className="mb-1 block text-[8px] text-black/45">Genişlik</span>
+                  <div className="flex gap-1">
+                    <input type="number" min={0} max={5000} value={Math.round(numberStyle("width", selectedMetrics?.width || 0))} onChange={(event) => patchDeviceStyle({ width: Number(event.target.value) || 0, widthUnit: "px" })} className="h-9 min-w-0 flex-1 rounded-lg border border-black/10 bg-[#fafafa] px-2 text-[9px] outline-none" />
+                    <button type="button" onClick={() => patchDeviceStyle({ width: null })} className="h-9 rounded-lg border border-black/10 px-2 text-[8px] text-black/45">Auto</button>
+                  </div>
+                </label>
+                <label className="block">
+                  <span className="mb-1 block text-[8px] text-black/45">Yükseklik</span>
+                  <div className="flex gap-1">
+                    <input type="number" min={0} max={5000} value={Math.round(numberStyle("height", selectedMetrics?.height || 0))} onChange={(event) => patchDeviceStyle({ height: Number(event.target.value) || 0, heightUnit: "px" })} className="h-9 min-w-0 flex-1 rounded-lg border border-black/10 bg-[#fafafa] px-2 text-[9px] outline-none" />
+                    <button type="button" onClick={() => patchDeviceStyle({ height: null })} className="h-9 rounded-lg border border-black/10 px-2 text-[8px] text-black/45">Auto</button>
+                  </div>
+                </label>
+              </div>
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                <label className="block">
+                  <span className="mb-1 block text-[8px] text-black/45">Yatay iç boşluk</span>
+                  <input type="number" min={0} max={500} value={Math.round(numberStyle("paddingX", selectedMetrics?.paddingX || 0))} onChange={(event) => patchDeviceStyle({ paddingX: Number(event.target.value) || 0 })} className="h-9 w-full rounded-lg border border-black/10 bg-[#fafafa] px-2 text-[9px] outline-none" />
+                </label>
+                <label className="block">
+                  <span className="mb-1 block text-[8px] text-black/45">Dikey iç boşluk</span>
+                  <input type="number" min={0} max={500} value={Math.round(numberStyle("paddingY", selectedMetrics?.paddingY || 0))} onChange={(event) => patchDeviceStyle({ paddingY: Number(event.target.value) || 0 })} className="h-9 w-full rounded-lg border border-black/10 bg-[#fafafa] px-2 text-[9px] outline-none" />
+                </label>
+              </div>
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                <label className="block">
+                  <span className="mb-1 block text-[8px] text-black/45">Üst boşluk</span>
+                  <input type="number" min={-1000} max={2000} value={Math.round(numberStyle("marginTop", selectedMetrics?.marginTop || 0))} onChange={(event) => patchDeviceStyle({ marginTop: Number(event.target.value) || 0 })} className="h-9 w-full rounded-lg border border-black/10 bg-[#fafafa] px-2 text-[9px] outline-none" />
+                </label>
+                <label className="block">
+                  <span className="mb-1 block text-[8px] text-black/45">Alt boşluk</span>
+                  <input type="number" min={-1000} max={2000} value={Math.round(numberStyle("marginBottom", selectedMetrics?.marginBottom || 0))} onChange={(event) => patchDeviceStyle({ marginBottom: Number(event.target.value) || 0 })} className="h-9 w-full rounded-lg border border-black/10 bg-[#fafafa] px-2 text-[9px] outline-none" />
+                </label>
+              </div>
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                <label className="flex h-10 items-center gap-2 rounded-lg border border-black/[0.08] bg-[#fafafa] px-2.5">
+                  <input type="color" value={selectedDeviceStyle?.backgroundColor || selectedMetrics?.backgroundColor || "#ffffff"} onChange={(event) => patchDeviceStyle({ backgroundColor: event.target.value })} className="h-6 w-8 border-0 bg-transparent p-0" />
+                  <span className="text-[8px] font-medium text-black/50">Arka plan</span>
+                </label>
+                <label className="block">
+                  <span className="mb-1 block text-[8px] text-black/45">Köşe</span>
+                  <input type="number" min={0} max={1000} value={Math.round(numberStyle("borderRadius", selectedMetrics?.borderRadius || 0))} onChange={(event) => patchDeviceStyle({ borderRadius: Number(event.target.value) || 0 })} className="h-9 w-full rounded-lg border border-black/10 bg-[#fafafa] px-2 text-[9px] outline-none" />
+                </label>
+              </div>
+              <div className="mt-3">
+                <div className="mb-1 flex justify-between text-[8px] text-black/45"><span>Opaklık</span><span>{Math.round(numberStyle("opacity", selectedMetrics?.opacity ?? 1) * 100)}%</span></div>
+                <input type="range" min={0.05} max={1} step={0.05} value={numberStyle("opacity", selectedMetrics?.opacity ?? 1)} onChange={(event) => patchDeviceStyle({ opacity: Number(event.target.value) })} className="w-full accent-[#b28c43]" />
+              </div>
+            </section>
+          ) : null}
+
+          <div className="sticky bottom-0 border-t border-black/[0.07] bg-white/95 p-2.5 backdrop-blur">
+            <div className="grid grid-cols-2 gap-2">
+              <button type="button" onClick={() => { setSideView("theme"); setMenu(null); }} className="flex h-10 items-center justify-center gap-2 rounded-xl border border-black/10 text-[9px] font-medium hover:bg-black/[0.025]"><Palette className="h-3.5 w-3.5" />Tema ayarları</button>
+              <button type="button" onClick={resetSelectedOverride} disabled={!selectedOverride} className="h-10 rounded-xl border border-black/10 text-[9px] font-medium text-black/55 hover:bg-black/[0.025] disabled:opacity-30">Öğe ayarlarını sıfırla</button>
+            </div>
+          </div>
         </div>
       ) : null}
     </div>
