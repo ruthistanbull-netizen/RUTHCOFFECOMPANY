@@ -1,53 +1,92 @@
-import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
+import crypto from "node:crypto";
 
-export async function notifyOrderConfirmationEmail(orderId: string) {
-  const supabase = getSupabaseAdmin();
+const CANONICAL_ADMIN_INTERNAL_URL = "https://rostapanel.zeabur.app";
 
-  const { data: order, error: orderError } = await supabase
-    .from("orders")
-    .select("id,profile_id,order_no,customer_email,customer_name,total_amount,currency")
-    .eq("id", orderId)
-    .maybeSingle();
+function isRetiredAdminUrl(value: string) {
+  try {
+    return new URL(value).hostname.endsWith(".onrender.com");
+  } catch {
+    return true;
+  }
+}
 
-  if (orderError) throw new Error(`Sipariş e-posta kuyruğu için okunamadı: ${orderError.message}`);
-  if (!order) throw new Error("Sipariş e-posta kuyruğu için bulunamadı.");
+function adminInternalUrls() {
+  const configured = (
+    process.env.ADMIN_INTERNAL_URL ||
+    process.env.NEXT_PUBLIC_PANEL_URL ||
+    ""
+  ).trim().replace(/\/$/, "");
+  const safeConfigured = configured && !isRetiredAdminUrl(configured)
+    ? configured
+    : null;
 
-  const email = String(order.customer_email || "").trim().toLocaleLowerCase("tr-TR");
-  if (!email) return { ok: true, skipped: true, reason: "missing_customer_email" };
+  return [...new Set([
+    safeConfigured,
+    CANONICAL_ADMIN_INTERNAL_URL,
+  ].filter((value): value is string => Boolean(value)))];
+}
 
-  const { data: existing, error: existingError } = await supabase
-    .from("email_logs")
-    .select("id,status")
-    .eq("order_id", order.id)
-    .eq("template_key", "order_confirmation")
-    .in("status", ["queued", "sending", "sent", "failed"])
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+function serviceSecret() {
+  const value = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!value) throw new Error("SUPABASE_SERVICE_ROLE_KEY env eksik.");
+  return value;
+}
 
-  if (existingError) throw new Error(`Sipariş e-posta kuyruğu kontrol edilemedi: ${existingError.message}`);
-  if (existing) return { ok: true, queued: existing.status !== "sent", deduped: true, id: existing.id };
+async function sendAttempt(orderId: string) {
+  const body = JSON.stringify({ order_id: orderId });
+  let lastError: Error | null = null;
 
-  const subject = `ROSTA Coffee Co. · Siparişin alındı #${order.order_no}`;
-  const { data: queued, error: queueError } = await supabase
-    .from("email_logs")
-    .insert({
-      provider: "rosta",
-      profile_id: order.profile_id || null,
-      order_id: order.id,
-      to_email: email,
-      subject,
-      template_key: "order_confirmation",
-      status: "queued",
-      campaign_group: "transactional",
-      campaign_name: "order_confirmation",
-    })
-    .select("id,status")
-    .single();
+  for (const baseUrl of adminInternalUrls()) {
+    const timestamp = String(Date.now());
+    const signature = crypto
+      .createHmac("sha256", serviceSecret())
+      .update(`${timestamp}.${body}`)
+      .digest("hex");
 
-  if (queueError || !queued) {
-    throw new Error(`Sipariş e-posta kuyruğa alınamadı: ${queueError?.message || "kayıt dönmedi"}`);
+    try {
+      const response = await fetch(`${baseUrl}/api/internal/order-confirmation`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-rosta-timestamp": timestamp,
+          "x-rosta-signature": signature,
+        },
+        body,
+        cache: "no-store",
+        signal: AbortSignal.timeout(12_000),
+      });
+      const result = await response.json().catch(() => ({})) as Record<string, unknown>;
+
+      if (response.ok && result.ok) return result;
+
+      lastError = new Error(
+        typeof result.error === "string" && result.error.trim()
+          ? result.error
+          : `Sipariş onay maili servisi ${response.status} döndürdü (${baseUrl}).`,
+      );
+    } catch (error) {
+      lastError = error instanceof Error
+        ? error
+        : new Error(`Sipariş onay maili servisine ulaşılamadı (${baseUrl}).`);
+    }
   }
 
-  return { ok: true, queued: true, id: queued.id };
+  throw lastError || new Error("Sipariş onay maili servisine ulaşılamadı.");
+}
+
+export async function notifyOrderConfirmationEmail(orderId: string) {
+  let lastError: unknown = null;
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      return await sendAttempt(orderId);
+    } catch (error) {
+      lastError = error;
+      if (attempt < 3) {
+        await new Promise((resolve) => setTimeout(resolve, attempt * 1_000));
+      }
+    }
+  }
+  throw lastError instanceof Error
+    ? lastError
+    : new Error("Sipariş onay maili gönderilemedi.");
 }
