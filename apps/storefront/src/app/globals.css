@@ -2,22 +2,26 @@
 
 @theme {
   --color-carbon: #111111;
-  --color-bone: #f4f0e8;
-  --color-espresso: #2b1b16;
-  --color-oxide: #b9563d;
-  --color-dusty-olive: #6f725b;
-  --color-steel: #aaa8a1;
+  --color-carbon-soft: #242424;
+  --color-cream: #FBF3E6;
+  --color-espresso: #38251C;
+  --color-brick: #C94A40;
+  --color-cocoa: #6B4638;
+  --color-kraft: #C8A77D;
 
-  /* Legacy storefront aliases now resolve to the ROSTA design system. */
-  --color-white: #f4f0e8;
+  /* Legacy Tailwind aliases are constrained to the locked ROSTA palette. */
+  --color-bone: #FBF3E6;
+  --color-oxide: #C94A40;
+  --color-dusty-olive: #6B4638;
+  --color-steel: #C8A77D;
+  --color-white: #FBF3E6;
   --color-black: #111111;
-  --color-ivory: #f4f0e8;
-  --color-cream: #f4f0e8;
+  --color-ivory: #FBF3E6;
   --color-ink: #111111;
-  --color-gold: #b9563d;
-  --color-gold-dark: #2b1b16;
-  --color-bronze: #2b1b16;
-  --color-muted-ruth: #6f725b;
+  --color-gold: #C94A40;
+  --color-gold-dark: #38251C;
+  --color-bronze: #6B4638;
+  --color-muted-ruth: #6B4638;
 }
 
 :root {
@@ -28,40 +32,54 @@
   --home-editorial-inset-bottom-desktop: 32px;
 
   --rosta-carbon: #111111;
-  --rosta-bone: #f4f0e8;
-  --rosta-espresso: #2b1b16;
-  --rosta-oxide: #b9563d;
-  --rosta-olive: #6f725b;
-  --rosta-steel: #aaa8a1;
+  --rosta-carbon-soft: #242424;
+  --rosta-cream: #FBF3E6;
+  --rosta-espresso: #38251C;
+  --rosta-brick-b: #C94A40;
+  --rosta-cocoa: #6B4638;
+  --rosta-kraft: #C8A77D;
+  --rosta-action-text: #FFFFFF;
 
-  --background: var(--rosta-bone);
-  --foreground: var(--rosta-carbon);
-  --ivory: var(--rosta-bone);
-  --cream: var(--rosta-bone);
+  /* Legacy aliases retained for current storefront component contracts. */
+  --rosta-bone: var(--rosta-cream);
+  --rosta-oxide: var(--rosta-brick-b);
+  --rosta-olive: var(--rosta-cocoa);
+  --rosta-steel: var(--rosta-kraft);
+
+  --background: var(--rosta-carbon);
+  --foreground: var(--rosta-cream);
+  --ivory: var(--rosta-cream);
+  --cream: var(--rosta-cream);
   --ink: var(--rosta-carbon);
-  --gold: var(--rosta-oxide);
+  --gold: var(--rosta-brick-b);
   --gold-dark: var(--rosta-espresso);
-  --bronze: var(--rosta-espresso);
-  --muted-foreground: var(--rosta-olive);
+  --bronze: var(--rosta-cocoa);
+  --muted-foreground: var(--rosta-cocoa);
 
   --font-heading: var(--font-archivo), "Arial Black", "Helvetica Neue", Arial, sans-serif;
   --font-body: var(--font-inter), "Helvetica Neue", Arial, sans-serif;
   --ruth-font-display: var(--font-heading);
   --ruth-font-body: var(--font-body);
 
-  --ruth-color-canvas: var(--rosta-bone);
-  --ruth-color-surface: var(--rosta-bone);
-  --ruth-color-surface-muted: color-mix(in srgb, var(--rosta-bone) 90%, var(--rosta-steel));
-  --ruth-color-text-primary: var(--rosta-carbon);
-  --ruth-color-text-muted: var(--rosta-olive);
-  --ruth-color-text-inverse: var(--rosta-bone);
-  --ruth-color-accent: var(--rosta-oxide);
-  --ruth-color-accent-soft: color-mix(in srgb, var(--rosta-oxide) 28%, var(--rosta-bone));
+  --ruth-color-canvas: var(--rosta-carbon);
+  --ruth-color-surface: var(--rosta-carbon-soft);
+  --ruth-color-surface-muted: var(--rosta-carbon-soft);
+  --ruth-color-surface-elevated: var(--rosta-carbon-soft);
+  --ruth-color-surface-inverse: var(--rosta-cream);
+  --ruth-color-text-primary: var(--rosta-cream);
+  --ruth-color-text-muted: color-mix(in srgb, var(--rosta-cream) 72%, transparent);
+  --ruth-color-text-inverse: var(--rosta-cream);
+  --ruth-color-text-on-light: var(--rosta-carbon);
+  --ruth-color-text-on-action: var(--rosta-action-text);
+  --ruth-color-accent: var(--rosta-brick-b);
+  --ruth-color-accent-soft: color-mix(in srgb, var(--rosta-brick-b) 15%, transparent);
   --ruth-color-accent-strong: var(--rosta-espresso);
-  --ruth-color-border-subtle: color-mix(in srgb, var(--rosta-steel) 52%, transparent);
-  --ruth-color-border-strong: var(--rosta-steel);
-  --ruth-color-focus: var(--rosta-oxide);
-  --ruth-color-overlay: rgb(17 17 17 / 44%);
+  --ruth-color-accent-wash: color-mix(in srgb, var(--rosta-brick-b) 15%, transparent);
+  --ruth-color-border-subtle: color-mix(in srgb, var(--rosta-kraft) 42%, transparent);
+  --ruth-color-border-strong: var(--rosta-kraft);
+  --ruth-color-focus: var(--rosta-brick-b);
+  --ruth-color-selected: var(--rosta-brick-b);
+  --ruth-color-overlay: color-mix(in srgb, var(--rosta-carbon) 72%, transparent);
 }
 
 * {
@@ -73,7 +91,7 @@ html {
   max-width: 100%;
   scroll-behavior: smooth;
   overflow-x: clip;
-  background: var(--ivory);
+  background: var(--background);
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
@@ -84,8 +102,8 @@ body {
   min-height: 100svh;
   margin: 0;
   overflow-x: clip;
-  background: var(--ivory);
-  color: var(--ink);
+  background: var(--background);
+  color: var(--foreground);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -340,4 +358,70 @@ body:has(.ds-page) .ruth-page-header h1 {
 }
 .site-app-shell :where(button,input,select,textarea,p,a,span,label,small,strong,em,li,dt,dd,th,td) {
   font-family: var(--font-body);
+}
+
+
+/* ROSTA Global Color System v2.3 - storefront color lock */
+html,
+body,
+.site-app-shell,
+.site-content {
+  background: var(--rosta-carbon);
+  color: var(--rosta-cream);
+}
+
+.site-app-shell :where(button, a[href], input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--rosta-brick-b);
+  outline-offset: 2px;
+}
+
+.site-app-shell :where(.ruth-page-header__eyebrow, .ruth-page-section__eyebrow) {
+  color: var(--rosta-brick-b);
+}
+
+.site-app-shell :where(.ruth-button--primary) {
+  border-color: var(--rosta-brick-b);
+  background: var(--rosta-brick-b);
+  color: var(--rosta-action-text);
+}
+
+.site-app-shell :where(.ruth-button--secondary, .ruth-icon-button--surface) {
+  border-color: color-mix(in srgb, var(--rosta-kraft) 42%, transparent);
+  background: var(--rosta-carbon-soft);
+  color: var(--rosta-cream);
+}
+
+.site-app-shell :where(.ruth-input, .ruth-toolbar, .ruth-filter-shell, .ruth-data-table-wrap, .ruth-page-section--surface, .ruth-page-section--muted) {
+  border-color: color-mix(in srgb, var(--rosta-kraft) 42%, transparent);
+}
+
+.site-app-shell :where(.ruth-input, .ruth-toolbar, .ruth-filter-shell, .ruth-data-table-wrap) {
+  background: var(--rosta-carbon-soft);
+  color: var(--rosta-cream);
+}
+
+::selection {
+  background: var(--rosta-brick-b);
+  color: var(--rosta-action-text);
+}
+
+* {
+  scrollbar-color: var(--rosta-kraft) var(--rosta-carbon);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .site-app-shell :where(.ruth-button--primary):hover:not(:disabled) {
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--rosta-cream) 74%, transparent);
+  }
+
+  .site-app-shell :where(.ruth-button--secondary, .ruth-icon-button--surface):hover:not(:disabled) {
+    border-color: var(--rosta-brick-b);
+    color: var(--rosta-brick-b);
+  }
+}
+
+@media (forced-colors: active) {
+  .site-app-shell :where(button, a[href], input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid Highlight !important;
+  }
 }
