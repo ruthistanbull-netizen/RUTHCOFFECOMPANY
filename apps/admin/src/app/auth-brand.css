@@ -2,8 +2,8 @@
   width: min(280px, 100%);
   height: 140px;
   border-radius: 20px;
-  background: #fff url('/rosta-coffee-co.svg') center / contain no-repeat;
-  box-shadow: 0 18px 50px rgba(10, 15, 35, .22);
+  background: var(--rosta-cream) url('/rosta-coffee-co.svg') center / contain no-repeat;
+  box-shadow: 0 18px 50px color-mix(in srgb, var(--rosta-carbon) 42%, transparent);
   overflow: hidden;
 }
 
@@ -15,8 +15,8 @@
   width: min(250px, 76vw);
   height: 125px;
   border-radius: 16px;
-  background: #fff url('/rosta-coffee-co.svg') center / contain no-repeat;
-  box-shadow: 0 12px 34px rgba(16, 24, 40, .1);
+  background: var(--rosta-cream) url('/rosta-coffee-co.svg') center / contain no-repeat;
+  box-shadow: 0 12px 34px color-mix(in srgb, var(--rosta-carbon) 26%, transparent);
   overflow: hidden;
 }
 
@@ -36,8 +36,8 @@
   min-height: 100dvh !important;
   overflow: hidden;
   isolation: isolate;
-  background: #0b0a07 !important;
-  color: #fbf8ef;
+  background: var(--rosta-carbon) !important;
+  color: var(--rosta-cream);
 }
 
 [data-exact-base44-auth="login"]::before {
@@ -47,9 +47,9 @@
   z-index: -2;
   pointer-events: none;
   background:
-    radial-gradient(circle at 12% 9%, rgba(201, 162, 58, .27), transparent 32%),
-    radial-gradient(circle at 86% 88%, rgba(143, 110, 31, .19), transparent 30%),
-    radial-gradient(circle at 50% 50%, rgba(255,255,255,.025), transparent 48%);
+    radial-gradient(circle at 12% 9%, color-mix(in srgb, var(--rosta-brick-b) 27%, transparent), transparent 32%),
+    radial-gradient(circle at 86% 88%, color-mix(in srgb, var(--rosta-cocoa) 19%, transparent), transparent 30%),
+    radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--rosta-cream) 2.5%, transparent), transparent 48%);
   filter: blur(4px);
 }
 
@@ -61,17 +61,17 @@
   pointer-events: none;
   opacity: .16;
   background-image:
-    linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+    linear-gradient(color-mix(in srgb, var(--rosta-cream) 5%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--rosta-cream) 5%, transparent) 1px, transparent 1px);
   background-size: 42px 42px;
-  mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, var(--rosta-carbon) 14%, var(--rosta-carbon) 86%, transparent);
 }
 
 [data-exact-base44-auth="login"] > section:first-child,
 [data-exact-base44-auth="login"] > section:last-child {
   min-height: 650px;
-  background: rgba(255,255,255,.045) !important;
-  border-color: rgba(255,255,255,.085) !important;
+  background: color-mix(in srgb, var(--rosta-cream) 4.5%, transparent) !important;
+  border-color: color-mix(in srgb, var(--rosta-cream) 8.5%, transparent) !important;
   box-shadow: none;
   backdrop-filter: blur(28px) saturate(1.12);
   -webkit-backdrop-filter: blur(28px) saturate(1.12);
@@ -79,9 +79,9 @@
 
 [data-exact-base44-auth="login"] > section:first-child {
   background:
-    radial-gradient(circle at 14% 14%, rgba(201, 162, 58, .18), transparent 40%),
-    radial-gradient(circle at 88% 84%, rgba(143, 110, 31, .10), transparent 42%),
-    rgba(255,255,255,.045) !important;
+    radial-gradient(circle at 14% 14%, color-mix(in srgb, var(--rosta-brick-b) 18%, transparent), transparent 40%),
+    radial-gradient(circle at 88% 84%, color-mix(in srgb, var(--rosta-cocoa) 10%, transparent), transparent 42%),
+    color-mix(in srgb, var(--rosta-cream) 4.5%, transparent) !important;
 }
 
 [data-exact-base44-auth="login"] > section:first-child .absolute.inset-0 {
@@ -89,7 +89,7 @@
 }
 
 [data-exact-base44-auth="login"] > section:first-child .absolute.inset-0 > div:last-child {
-  background: rgba(230, 210, 139, .25) !important;
+  background: color-mix(in srgb, var(--rosta-kraft) 25%, transparent) !important;
 }
 
 [data-exact-base44-auth="login"] > section:first-child .relative.z-10 > div:first-child {
@@ -107,10 +107,10 @@
 }
 
 [data-exact-base44-auth="login"] > section:first-child .relative.z-10 > div:nth-child(2) > div:first-child {
-  border-color: rgba(255,255,255,.10) !important;
-  background: rgba(255,255,255,.055) !important;
-  color: rgba(255,255,255,.60) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+  border-color: color-mix(in srgb, var(--rosta-cream) 10%, transparent) !important;
+  background: color-mix(in srgb, var(--rosta-cream) 5.5%, transparent) !important;
+  color: color-mix(in srgb, var(--rosta-cream) 60%, transparent) !important;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--rosta-cream) 5%, transparent);
 }
 
 [data-exact-base44-auth="login"] > section:first-child h1 {
@@ -123,25 +123,25 @@
 
 [data-exact-base44-auth="login"] > section:first-child h1 + p {
   max-width: 480px;
-  color: rgba(255,255,255,.46) !important;
+  color: color-mix(in srgb, var(--rosta-cream) 46%, transparent) !important;
   font-size: 14px !important;
   line-height: 1.9 !important;
 }
 
 [data-exact-base44-auth="login"] > section:first-child .grid.grid-cols-3 > div {
-  border-color: rgba(255,255,255,.075) !important;
-  background: rgba(255,255,255,.035) !important;
+  border-color: color-mix(in srgb, var(--rosta-cream) 7.5%, transparent) !important;
+  background: color-mix(in srgb, var(--rosta-cream) 3.5%, transparent) !important;
   border-radius: 20px !important;
   padding: 15px !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.035);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--rosta-cream) 3.5%, transparent);
 }
 
 [data-exact-base44-auth="login"] > section:first-child .grid.grid-cols-3 p {
-  color: rgba(255,255,255,.58) !important;
+  color: color-mix(in srgb, var(--rosta-cream) 58%, transparent) !important;
 }
 
 [data-exact-base44-auth="login"] > section:last-child {
-  background: rgba(10,9,6,.50) !important;
+  background: color-mix(in srgb, var(--rosta-carbon) 50%, transparent) !important;
 }
 
 [data-exact-base44-auth="login"] > section:last-child > div {
@@ -157,15 +157,15 @@
   width: 44px !important;
   height: 44px !important;
   margin-bottom: 20px !important;
-  border: 1px solid rgba(255,255,255,.10) !important;
+  border: 1px solid color-mix(in srgb, var(--rosta-cream) 10%, transparent) !important;
   border-radius: 15px !important;
-  background: rgba(255,255,255,.055) !important;
-  color: rgba(230,210,139,.92) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.055);
+  background: color-mix(in srgb, var(--rosta-cream) 5.5%, transparent) !important;
+  color: color-mix(in srgb, var(--rosta-kraft) 92%, transparent) !important;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--rosta-cream) 5.5%, transparent);
 }
 
 [data-exact-base44-auth="login"] > section:last-child h2 {
-  color: #fbf8ef !important;
+  color: var(--rosta-cream) !important;
   font-size: 31px !important;
   line-height: 1.08 !important;
   letter-spacing: -.035em !important;
@@ -174,7 +174,7 @@
 
 [data-exact-base44-auth="login"] > section:last-child h2 + p {
   margin-top: 8px !important;
-  color: rgba(255,255,255,.40) !important;
+  color: color-mix(in srgb, var(--rosta-cream) 40%, transparent) !important;
   font-size: 13px !important;
   line-height: 1.7 !important;
 }
@@ -184,7 +184,7 @@
 }
 
 [data-exact-base44-auth="login"] form label {
-  color: rgba(255,255,255,.56) !important;
+  color: color-mix(in srgb, var(--rosta-cream) 56%, transparent) !important;
 }
 
 [data-exact-base44-auth="login"] form .relative > svg {
@@ -193,7 +193,7 @@
   z-index: 3 !important;
   width: 17px !important;
   height: 17px !important;
-  color: rgba(255,255,255,.34) !important;
+  color: color-mix(in srgb, var(--rosta-cream) 34%, transparent) !important;
   pointer-events: none !important;
 }
 
@@ -202,12 +202,12 @@
   height: 52px !important;
   padding-left: 52px !important;
   padding-right: 16px !important;
-  border: 1px solid rgba(255,255,255,.10) !important;
+  border: 1px solid color-mix(in srgb, var(--rosta-cream) 10%, transparent) !important;
   border-radius: 17px !important;
-  background: rgba(255,255,255,.052) !important;
-  color: #fbf8ef !important;
+  background: color-mix(in srgb, var(--rosta-cream) 5.2%, transparent) !important;
+  color: var(--rosta-cream) !important;
   font-size: 13px !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.025) !important;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--rosta-cream) 2.5%, transparent) !important;
   outline: none !important;
   transition: border-color .18s ease, background .18s ease, box-shadow .18s ease !important;
 }
@@ -218,17 +218,13 @@
 }
 
 [data-exact-base44-auth="login"] form .form-input::placeholder {
-  color: rgba(255,255,255,.20) !important;
-}
-
-[data-exact-base44-auth="login"] form .form-input:hover {
-  border-color: rgba(255,255,255,.16) !important;
+  color: color-mix(in srgb, var(--rosta-cream) 20%, transparent) !important;
 }
 
 [data-exact-base44-auth="login"] form .form-input:focus {
-  border-color: rgba(226,199,107,.62) !important;
-  background: rgba(255,255,255,.07) !important;
-  box-shadow: 0 0 0 4px rgba(201,162,58,.10) !important;
+  border-color: color-mix(in srgb, var(--rosta-brick-b) 62%, transparent) !important;
+  background: color-mix(in srgb, var(--rosta-cream) 7%, transparent) !important;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--rosta-brick-b) 10%, transparent) !important;
 }
 
 [data-exact-base44-auth="login"] form .relative > button[aria-label*="Şifreyi"] {
@@ -238,16 +234,11 @@
   display: grid !important;
   place-items: center !important;
   border-radius: 10px !important;
-  color: rgba(255,255,255,.34) !important;
-}
-
-[data-exact-base44-auth="login"] form .relative > button[aria-label*="Şifreyi"]:hover {
-  background: rgba(255,255,255,.065) !important;
-  color: rgba(255,255,255,.74) !important;
+  color: color-mix(in srgb, var(--rosta-cream) 34%, transparent) !important;
 }
 
 [data-exact-base44-auth="login"] form a[href="/forgot-password"] {
-  color: rgba(230,210,139,.88) !important;
+  color: color-mix(in srgb, var(--rosta-kraft) 88%, transparent) !important;
   font-size: 10px !important;
   text-decoration: none !important;
 }
@@ -256,20 +247,37 @@
   height: 52px !important;
   margin-top: 6px !important;
   border-radius: 17px !important;
-  background: #fffaf0 !important;
-  color: #211a08 !important;
+  border: 1px solid var(--rosta-brick-b) !important;
+  background: var(--rosta-brick-b) !important;
+  color: var(--rosta-action-text) !important;
   font-size: 12px !important;
   font-weight: 650 !important;
-  box-shadow: 0 12px 30px rgba(255,255,255,.07) !important;
-}
-
-[data-exact-base44-auth="login"] form > button[type="submit"]:hover {
-  background: #f6edcf !important;
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--rosta-cream) 7%, transparent) !important;
 }
 
 [data-exact-base44-auth="login"] > section:last-child > div > p:last-child {
   margin-top: 26px !important;
-  color: rgba(255,255,255,.25) !important;
+  color: color-mix(in srgb, var(--rosta-cream) 25%, transparent) !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-exact-base44-auth="login"] form .form-input:hover {
+    border-color: var(--rosta-kraft) !important;
+  }
+
+  [data-exact-base44-auth="login"] form .relative > button[aria-label*="Şifreyi"]:hover {
+    background: color-mix(in srgb, var(--rosta-cream) 6.5%, transparent) !important;
+    color: var(--rosta-cream) !important;
+  }
+
+  [data-exact-base44-auth="login"] form > button[type="submit"]:hover {
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--rosta-cream) 74%, transparent), 0 12px 30px color-mix(in srgb, var(--rosta-carbon) 34%, transparent) !important;
+  }
+}
+
+[data-exact-base44-auth="login"] form > button[type="submit"]:active {
+  background: var(--rosta-espresso) !important;
+  border-color: var(--rosta-espresso) !important;
 }
 
 @media (min-width: 1024px) {
@@ -282,17 +290,17 @@
   }
 
   [data-exact-base44-auth="login"] > section:first-child {
-    border: 1px solid rgba(255,255,255,.085) !important;
+    border: 1px solid color-mix(in srgb, var(--rosta-cream) 8.5%, transparent) !important;
     border-right: 0 !important;
     border-radius: 34px 0 0 34px !important;
-    box-shadow: -24px 38px 100px rgba(0,0,0,.38) !important;
+    box-shadow: -24px 38px 100px color-mix(in srgb, var(--rosta-carbon) 58%, transparent) !important;
   }
 
   [data-exact-base44-auth="login"] > section:last-child {
-    border: 1px solid rgba(255,255,255,.085) !important;
-    border-left-color: rgba(255,255,255,.06) !important;
+    border: 1px solid color-mix(in srgb, var(--rosta-cream) 8.5%, transparent) !important;
+    border-left-color: color-mix(in srgb, var(--rosta-cream) 6%, transparent) !important;
     border-radius: 0 34px 34px 0 !important;
-    box-shadow: 24px 38px 100px rgba(0,0,0,.38) !important;
+    box-shadow: 24px 38px 100px color-mix(in srgb, var(--rosta-carbon) 58%, transparent) !important;
   }
 }
 
@@ -307,10 +315,10 @@
   [data-exact-base44-auth="login"] > section:last-child {
     width: min(520px, 100%);
     min-height: calc(100dvh - 36px) !important;
-    border: 1px solid rgba(255,255,255,.085) !important;
+    border: 1px solid color-mix(in srgb, var(--rosta-cream) 8.5%, transparent) !important;
     border-radius: 28px !important;
-    background: rgba(10,9,6,.52) !important;
-    box-shadow: 0 30px 90px rgba(0,0,0,.46) !important;
+    background: color-mix(in srgb, var(--rosta-carbon) 52%, transparent) !important;
+    box-shadow: 0 30px 90px color-mix(in srgb, var(--rosta-carbon) 66%, transparent) !important;
     padding: 24px !important;
   }
 
@@ -367,7 +375,7 @@
 
   html.dark aside[class*="z-sidebar"] > div:first-child > a::after {
     filter:
-      drop-shadow(0 0 1px rgba(255, 255, 255, 0.95))
+      drop-shadow(0 0 1px color-mix(in srgb, var(--rosta-cream) 95%, transparent))
       drop-shadow(0 0 4px rgba(255, 255, 255, 0.58));
   }
 }
