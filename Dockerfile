@@ -16,7 +16,7 @@ RUN target="$ROSTA_APP"; \
     service_hint="$(printf '%s %s %s %s' "$ZEABUR_SERVICE_NAME" "$ZEABUR_SERVICE_DOMAIN" "$ZEABUR_WEB_DOMAIN" "$ZEABUR_WEB_URL")"; \
     if [ -z "$target" ]; then \
       if printf '%s' "$service_hint" | grep -qi 'rostapanel'; then target="admin"; \
-      elif printf '%s' "$service_hint" | grep -Eqi 'rosta?c?offe(e)?company|ruthcoffe(e)?company'; then target="storefront"; \
+      elif printf '%s' "$service_hint" | grep -Eqi 'rostacoffecompany|rostacoffeecompany|ruthcoffecompany|ruthcoffeecompany'; then target="storefront"; \
       else target="storefront"; \
       fi; \
     fi; \
