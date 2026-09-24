@@ -68,6 +68,8 @@ Admin Zeabur service, for the integration status card:
 
 The storefront container loads only after marketing consent.
 
+When GTM is configured, it owns browser-side GA4 delivery so the storefront does not also load direct gtag and double-count the same browser events. Server-side GA4 Measurement Protocol remains independent.
+
 ## Microsoft Clarity
 
 Storefront Zeabur service:
