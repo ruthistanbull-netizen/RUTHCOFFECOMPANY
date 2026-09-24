@@ -23,7 +23,8 @@ RUN target="$ROSTA_APP"; \
     if [ "$target" = "admin" ]; then npm run build:admin; \
     elif [ "$target" = "storefront" ]; then npm run build:storefront; \
     else echo "Invalid ROSTA_APP: $target (expected admin or storefront)" >&2; exit 2; \
-    fi
+    fi; \
+    printf '%s' "$target" > /app/.rosta-app-target
 
 ENV NODE_ENV=production
 ENV HOSTNAME=0.0.0.0
