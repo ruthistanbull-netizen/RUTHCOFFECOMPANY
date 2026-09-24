@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { LogOut } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   adminRememberSessionEnabled,
   getSupabaseBrowser,
@@ -43,13 +43,10 @@ export function PanelHubProfiles() {
   const [active, setActive] = useState<PanelKey | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [signingOut, setSigningOut] = useState(false);
-
-  const remember = useMemo(() => {
-    if (typeof window === "undefined") return false;
-    return adminRememberSessionEnabled();
-  }, []);
+  const [remember, setRemember] = useState(false);
 
   useEffect(() => {
+    setRemember(adminRememberSessionEnabled());
     let alive = true;
     void getSupabaseBrowser().auth.getSession().then(({ data }) => {
       if (!alive) return;
