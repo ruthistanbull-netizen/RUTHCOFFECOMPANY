@@ -124,7 +124,7 @@ function TopHeader({ collapsed, onToggleSidebar, onOpenSearch, onOpenMore, dark,
     } catch {}
     window.location.assign("/profiles");
   };
-  return <header className="sticky top-0 z-header flex h-16 items-center gap-2 border-b border-border-subtle bg-surface-primary/80 px-3 pt-1 backdrop-blur-xl md:px-4">
+  return <header className="sticky top-0 z-header flex h-16 items-center gap-2 border-b border-border-subtle bg-surface-primary px-3 pt-1 md:px-4">
     <ExactIconButton icon={Menu} label="Menüyü aç" variant="ghost" size="icon-sm" className="lg:hidden" onClick={onOpenMore} />
     <ExactIconButton icon={collapsed ? PanelLeft : PanelLeftClose} label="Kenar çubuğunu değiştir" variant="ghost" size="icon-sm" className="hidden lg:flex" onClick={onToggleSidebar} />
     <span className="ruth-type-card-title hidden truncate text-main md:block">{currentItem?.label || "Kontrol Merkezi"}</span>
