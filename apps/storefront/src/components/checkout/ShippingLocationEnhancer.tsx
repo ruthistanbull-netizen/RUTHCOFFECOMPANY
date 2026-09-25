@@ -4,7 +4,10 @@ import { useEffect } from "react";
 import { findShippingDistrict, findShippingProvince, normalizeTurkishLocation, type ShippingLocation } from "@/lib/shippingLocations";
 
 const API_PATH = "/api/shipping/locations";
-const SELECT_CLASS = "mt-2 w-full rounded-lg border border-kraft/40 bg-carbon px-4 py-3 text-sm normal-case tracking-normal text-cream outline-none transition focus:border-brick focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick";
+const PICKER_ROOT_CLASS = "relative mt-2 w-full";
+const PICKER_BUTTON_CLASS = "flex w-full items-center justify-between gap-3 rounded-lg border border-kraft/40 bg-carbon px-4 py-3 text-left text-sm normal-case tracking-normal text-cream outline-none transition hover:border-kraft/65 focus:border-brick focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick";
+const PICKER_PANEL_CLASS = "absolute left-0 right-0 top-full z-[120] mt-2 max-h-72 overflow-y-auto border border-kraft/40 bg-carbon-soft p-2 text-cream shadow-[0_18px_50px_color-mix(in_srgb,var(--rosta-carbon)_52%,transparent)]";
+const PICKER_OPTION_CLASS = "block w-full px-3 py-2.5 text-left text-sm normal-case tracking-normal text-cream transition hover:bg-brick/10 focus:bg-brick/10 focus:outline-none";
 
 function clean(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
@@ -21,31 +24,112 @@ function selectProvince(locations: ShippingLocation[], value: string) {
   return findShippingProvince(locations, value);
 }
 
-function buildSelect(name: string, ariaLabel: string) {
-  const select = document.createElement("select");
-  select.className = SELECT_CLASS;
-  select.dataset.ruthShippingLocationSelect = name;
-  select.setAttribute("aria-label", ariaLabel);
-  return select;
+type LocationPicker = {
+  root: HTMLDivElement;
+  button: HTMLButtonElement;
+  label: HTMLSpanElement;
+  panel: HTMLDivElement;
+};
+
+function closeAllPickers(except?: HTMLElement | null) {
+  for (const panel of Array.from(document.querySelectorAll<HTMLElement>("[data-ruth-shipping-picker-panel]"))) {
+    const owner = panel.closest<HTMLElement>("[data-ruth-shipping-location-picker]");
+    if (except && owner === except) continue;
+    panel.hidden = true;
+    const button = owner?.querySelector<HTMLButtonElement>("[data-ruth-shipping-picker-button]");
+    button?.setAttribute("aria-expanded", "false");
+  }
 }
 
-function replaceSelectOptions(select: HTMLSelectElement, placeholder: string, options: string[], selected: string) {
-  select.replaceChildren();
-  const placeholderOption = document.createElement("option");
-  placeholderOption.value = "";
-  placeholderOption.textContent = placeholder;
-  select.appendChild(placeholderOption);
+function buildPicker(name: string, ariaLabel: string): LocationPicker {
+  const root = document.createElement("div");
+  root.className = PICKER_ROOT_CLASS;
+  root.dataset.ruthShippingLocationPicker = name;
 
-  for (const option of options) {
-    const item = document.createElement("option");
-    item.value = option;
-    item.textContent = option;
-    select.appendChild(item);
-  }
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = PICKER_BUTTON_CLASS;
+  button.dataset.ruthShippingPickerButton = "1";
+  button.setAttribute("aria-label", ariaLabel);
+  button.setAttribute("aria-haspopup", "listbox");
+  button.setAttribute("aria-expanded", "false");
 
+  const label = document.createElement("span");
+  label.className = "min-w-0 flex-1 truncate";
+
+  const chevron = document.createElement("span");
+  chevron.textContent = "⌄";
+  chevron.setAttribute("aria-hidden", "true");
+  chevron.className = "shrink-0 text-brick transition-transform";
+
+  const panel = document.createElement("div");
+  panel.className = PICKER_PANEL_CLASS;
+  panel.dataset.ruthShippingPickerPanel = "1";
+  panel.setAttribute("role", "listbox");
+  panel.hidden = true;
+
+  button.append(label, chevron);
+  root.append(button, panel);
+
+  button.addEventListener("click", () => {
+    const shouldOpen = panel.hidden;
+    closeAllPickers(shouldOpen ? root : null);
+    panel.hidden = !shouldOpen;
+    button.setAttribute("aria-expanded", shouldOpen ? "true" : "false");
+    chevron.style.transform = shouldOpen ? "rotate(180deg)" : "";
+  });
+
+  root.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    panel.hidden = true;
+    button.setAttribute("aria-expanded", "false");
+    chevron.style.transform = "";
+    button.focus();
+  });
+
+  return { root, button, label, panel };
+}
+
+function setPickerOptions(
+  picker: LocationPicker,
+  placeholder: string,
+  options: string[],
+  selected: string,
+  onSelect: (value: string) => void,
+) {
+  picker.panel.replaceChildren();
   const normalizedSelected = normalizeTurkishLocation(selected);
   const matched = options.find((option) => normalizeTurkishLocation(option) === normalizedSelected) || "";
-  select.value = matched;
+  picker.label.textContent = matched || placeholder;
+  picker.label.className = matched
+    ? "min-w-0 flex-1 truncate text-cream"
+    : "min-w-0 flex-1 truncate text-cream/65";
+
+  for (const option of options) {
+    const item = document.createElement("button");
+    item.type = "button";
+    item.className = PICKER_OPTION_CLASS;
+    item.textContent = option;
+    item.setAttribute("role", "option");
+    item.setAttribute("aria-selected", option === matched ? "true" : "false");
+    if (option === matched) item.className += " bg-brick/12 text-cream";
+    item.addEventListener("click", () => {
+      picker.label.textContent = option;
+      picker.label.className = "min-w-0 flex-1 truncate text-cream";
+      picker.panel.hidden = true;
+      picker.button.setAttribute("aria-expanded", "false");
+      onSelect(option);
+      picker.button.focus();
+    });
+    picker.panel.appendChild(item);
+  }
+
+  if (!options.length) {
+    const empty = document.createElement("div");
+    empty.className = "px-3 py-3 text-sm text-cream/55";
+    empty.textContent = "Önce il seç";
+    picker.panel.appendChild(empty);
+  }
 }
 
 export function ShippingLocationEnhancer() {
@@ -76,58 +160,66 @@ export function ShippingLocationEnhancer() {
       const districtInput = document.querySelector<HTMLInputElement>('input[autocomplete="address-level2"]');
       if (!cityInput || !districtInput) return;
 
-      const existingCitySelect = document.querySelector<HTMLSelectElement>('select[data-ruth-shipping-location-select="city"]');
-      const existingDistrictSelect = document.querySelector<HTMLSelectElement>('select[data-ruth-shipping-location-select="district"]');
+      const existingCityPicker = document.querySelector<HTMLElement>('[data-ruth-shipping-location-picker="city"]');
+      const existingDistrictPicker = document.querySelector<HTMLElement>('[data-ruth-shipping-location-picker="district"]');
       if (
         cityInput.dataset.ruthShippingLocationEnhanced === "1"
         && districtInput.dataset.ruthShippingLocationEnhanced === "1"
-        && existingCitySelect
-        && existingDistrictSelect
+        && existingCityPicker
+        && existingDistrictPicker
       ) {
         return;
       }
 
-      existingCitySelect?.remove();
-      existingDistrictSelect?.remove();
+      existingCityPicker?.remove();
+      existingDistrictPicker?.remove();
 
-      const citySelect = buildSelect("city", "İl seç");
-      const districtSelect = buildSelect("district", "İlçe seç");
+      const cityPicker = buildPicker("city", "İl seç");
+      const districtPicker = buildPicker("district", "İlçe seç");
 
       cityInput.dataset.ruthShippingLocationEnhanced = "1";
       districtInput.dataset.ruthShippingLocationEnhanced = "1";
       cityInput.classList.add("sr-only");
       districtInput.classList.add("sr-only");
-      cityInput.insertAdjacentElement("afterend", citySelect);
-      districtInput.insertAdjacentElement("afterend", districtSelect);
+      cityInput.insertAdjacentElement("afterend", cityPicker.root);
+      districtInput.insertAdjacentElement("afterend", districtPicker.root);
 
       const syncDistricts = (cityValue: string, districtValue = "") => {
         const province = selectProvince(locations, cityValue);
         const districts = province?.districts || [];
-        replaceSelectOptions(districtSelect, "İlçe seç", districts, districtValue);
-
         const matchedDistrict = findShippingDistrict(province, districtValue);
         const canonicalCity = province?.province || "";
-        const currentCity = clean(cityInput.value);
         const canonicalDistrict = matchedDistrict;
-        if (canonicalCity !== currentCity) setReactInputValue(cityInput, canonicalCity);
+        if (canonicalCity !== clean(cityInput.value)) setReactInputValue(cityInput, canonicalCity);
         if (canonicalDistrict !== clean(districtInput.value)) setReactInputValue(districtInput, canonicalDistrict);
+
+        setPickerOptions(districtPicker, "İlçe seç", districts, canonicalDistrict, (value) => {
+          setReactInputValue(districtInput, value);
+        });
       };
 
-      replaceSelectOptions(citySelect, "İl seç", locations.map((location) => location.province), cityInput.value);
+      setPickerOptions(
+        cityPicker,
+        "İl seç",
+        locations.map((location) => location.province),
+        cityInput.value,
+        (value) => {
+          const province = selectProvince(locations, value);
+          const canonicalCity = province?.province || "";
+          setReactInputValue(cityInput, canonicalCity);
+          setReactInputValue(districtInput, "");
+          syncDistricts(canonicalCity, "");
+        },
+      );
       syncDistricts(cityInput.value, districtInput.value);
-
-      citySelect.addEventListener("change", () => {
-        const province = selectProvince(locations, citySelect.value);
-        const canonicalCity = province?.province || "";
-        setReactInputValue(cityInput, canonicalCity);
-        setReactInputValue(districtInput, "");
-        syncDistricts(canonicalCity, "");
-      });
-
-      districtSelect.addEventListener("change", () => {
-        setReactInputValue(districtInput, districtSelect.value);
-      });
     };
+
+    const onDocumentPointerDown = (event: PointerEvent) => {
+      const target = event.target instanceof Element ? event.target : null;
+      if (target?.closest("[data-ruth-shipping-location-picker]")) return;
+      closeAllPickers();
+    };
+    document.addEventListener("pointerdown", onDocumentPointerDown, true);
 
     enhanceTimer = window.setInterval(enhance, 350);
     observer = new MutationObserver(() => enhance());
@@ -138,6 +230,7 @@ export function ShippingLocationEnhancer() {
       cancelled = true;
       if (enhanceTimer !== null) window.clearInterval(enhanceTimer);
       observer?.disconnect();
+      document.removeEventListener("pointerdown", onDocumentPointerDown, true);
     };
   }, []);
 
