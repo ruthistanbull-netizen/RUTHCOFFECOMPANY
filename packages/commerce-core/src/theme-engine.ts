@@ -1,6 +1,6 @@
 export type ThemeNavChild = { label: string; path: string };
 export type ThemeNavItem = { id: string; label: string; path: string; side?: "left" | "right"; children?: ThemeNavChild[] };
-export type ThemeMenuMediaCard = { id: string; imageSrc: string; label: string; href: string };
+export type ThemeMenuMediaCard = { id: string; imageSrc: string; mediaType?: "image" | "video"; label: string; href: string };
 
 export type ThemeLengthUnit = "px" | "%" | "vw" | "vh" | "svh";
 export type ThemeTextAlign = "left" | "center" | "right";
@@ -268,6 +268,13 @@ export function normalizeThemeCustomizerSettings(input: unknown): ThemeCustomize
         .map((item: any, index: number) => ({
           id: stringValue(item?.id, `menu-media-${index}`).slice(0, 80),
           imageSrc: safeUrl(item?.imageSrc, "", "image"),
+          mediaType: item?.mediaType === "video"
+            ? "video"
+            : item?.mediaType === "image"
+              ? "image"
+              : /\.(mp4|m4v|mov|webm)(?:$|[?#])/i.test(stringValue(item?.imageSrc))
+                ? "video"
+                : "image",
           label: stringValue(item?.label).slice(0, 80),
           href: safeUrl(item?.href, "/collections", "link"),
         }))
