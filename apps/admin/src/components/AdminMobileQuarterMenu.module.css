@@ -317,7 +317,9 @@
   border: 0;
   background: #111111;
   clip-path: circle(74px at 100% 100%);
-  box-shadow: -1px -1px 0 rgba(244, 240, 232, 0.14), -7px -7px 18px rgba(0, 0, 0, 0.2);
+  box-shadow:
+    -1px -1px 0 color-mix(in srgb, var(--rosta-cream, #FBF3E6) 14%, transparent),
+    -7px -7px 18px rgba(0, 0, 0, 0.2);
   pointer-events: auto;
   cursor: pointer;
   touch-action: manipulation;
