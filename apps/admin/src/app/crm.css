@@ -28,7 +28,7 @@
   padding: 12px 14px;
   border: 0;
   border-bottom: 1px solid var(--line);
-  background: #fff;
+  background: var(--surface-2, var(--ruth-color-surface-muted, #242424));
   color: var(--ink);
   display: grid;
   grid-template-columns: 40px minmax(190px, 1fr) 130px 130px;
@@ -43,10 +43,9 @@
   border-bottom: 0;
 }
 
-.cr-crm-row:hover,
 .cr-crm-row.is-selected {
-  background: #fafbfc;
-  box-shadow: inset 3px 0 0 var(--accent);
+  background: color-mix(in srgb, var(--rosta-brick-b, #C94A40) 15%, var(--ruth-color-surface-muted, #242424));
+  box-shadow: inset 3px 0 0 var(--accent, var(--rosta-brick-b, #C94A40));
 }
 
 .cr-crm-row.is-overdue {
@@ -113,12 +112,6 @@
   cursor: pointer;
 }
 
-.cr-reminder-presets button:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-  background: var(--accent-soft);
-}
-
 @media (max-width: 1080px) {
   .cr-crm-layout {
     grid-template-columns: 1fr;
@@ -150,5 +143,19 @@
     grid-column: 3;
     grid-row: 2;
     justify-items: end;
+  }
+}
+
+
+@media (hover: hover) and (pointer: fine) {
+  .cr-crm-row:hover {
+    background: color-mix(in srgb, var(--rosta-kraft, #C8A77D) 8%, var(--ruth-color-surface-muted, #242424));
+    box-shadow: inset 3px 0 0 var(--accent, var(--rosta-brick-b, #C94A40));
+  }
+
+  .cr-reminder-presets button:hover {
+    border-color: var(--accent, var(--rosta-brick-b, #C94A40));
+    color: var(--accent, var(--rosta-brick-b, #C94A40));
+    background: var(--accent-soft, color-mix(in srgb, var(--rosta-brick-b, #C94A40) 15%, transparent));
   }
 }
