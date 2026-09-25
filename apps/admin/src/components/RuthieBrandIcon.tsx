@@ -4,9 +4,9 @@ import { forwardRef } from "react";
 import type { LucideProps } from "lucide-react";
 
 /**
- * Technical compatibility name retained so the current Ruth-derived AI surfaces
- * do not need a risky import migration. The rendered mark is ROSTA Insight's
- * coffee-bean + sparkle symbol.
+ * Shared ROSTA Insight mark.
+ * Technical compatibility name is retained because many Ruth-derived surfaces
+ * already import this component. The rendered artwork is a clean coffee bean.
  */
 export const RuthieBrandIcon = forwardRef<SVGSVGElement, LucideProps>(function RuthieBrandIcon(
   { color = "currentColor", size = 24, className, strokeWidth = 1.8, ...props },
@@ -27,10 +27,8 @@ export const RuthieBrandIcon = forwardRef<SVGSVGElement, LucideProps>(function R
       aria-hidden={props["aria-hidden"] ?? true}
       {...props}
     >
-      <path d="M7.1 17.4c-2.7-2.7-2.6-7.3.3-10.2 2.9-2.9 7.5-3 10.2-.3 2.7 2.7 2.6 7.3-.3 10.2-2.9 2.9-7.5 3-10.2.3Z" />
-      <path d="M8.2 16.3c2.1-.7 3.2-2 3.8-3.8.7-2 .5-3.8 2.9-5.3" />
-      <path d="M18.4 3.4v3.2M16.8 5h3.2" />
-      <path d="M4.4 17.8v2.4M3.2 19h2.4" />
+      <path d="M17.9 4.5c3.1 3.1 2.7 8.6-.9 12.2-3.6 3.6-9.1 4-12.2.9-3.1-3.1-2.7-8.6.9-12.2 3.6-3.6 9.1-4 12.2-.9Z" />
+      <path d="M6.3 17.1c2.4-.7 4.2-2.1 5.2-4.2 1.2-2.5.8-4.8 4.8-6.9" />
     </svg>
   );
 });
