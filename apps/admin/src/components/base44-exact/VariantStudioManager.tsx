@@ -8,6 +8,7 @@ import { useEffect, useMemo, useState, type Dispatch, type SetStateAction } from
 import { ExactDataCard, ExactEmptyState } from "./data";
 import { ExactButton, ExactField, ExactIconButton, exactFormInputClass } from "./primitives";
 import { VariantMediaReorderItem } from "./VariantMediaReorderItem";
+import { adminRequest } from "@/lib/adminApi";
 
 export type StudioVariant = {
   id?: string;
@@ -23,6 +24,13 @@ export type StudioVariant = {
 };
 
 type AddOption = { id: string; label: string; color: string };
+type LibraryOptionDefinition = {
+  id: string;
+  name: string;
+  displayType: "list" | "color";
+  active: boolean;
+  values: Array<{ id: string; label: string; color?: string }>;
+};
 
 type Props = {
   variants: StudioVariant[];
@@ -61,10 +69,32 @@ export function VariantStudioManager({ variants, setVariants, productPhotos, bas
   ]);
   const [mediaIndex, setMediaIndex] = useState<number | null>(null);
   const [mediaOrder, setMediaOrder] = useState<string[]>([]);
+  const [optionLibrary, setOptionLibrary] = useState<LibraryOptionDefinition[]>([]);
+  const [optionLibraryLoaded, setOptionLibraryLoaded] = useState(false);
 
   const mediaVariant = mediaIndex == null ? null : variants[mediaIndex];
   const allProductPhotos = useMemo(() => unique(productPhotos), [productPhotos]);
   const portalTarget = typeof document === "undefined" ? null : document.body;
+
+  useEffect(() => {
+    if (!addOpen || optionLibraryLoaded) return;
+    let active = true;
+    void adminRequest<{ definitions?: LibraryOptionDefinition[] }>("/api/product-settings/options", {
+      ttlMs: 30_000,
+      staleMs: 120_000,
+    })
+      .then((payload) => {
+        if (!active) return;
+        setOptionLibrary((payload.definitions || []).filter((item) => item.active !== false));
+        setOptionLibraryLoaded(true);
+      })
+      .catch(() => {
+        if (active) setOptionLibraryLoaded(true);
+      });
+    return () => {
+      active = false;
+    };
+  }, [addOpen, optionLibraryLoaded]);
 
   useEffect(() => {
     if (!addOpen && mediaIndex == null) return;
@@ -106,6 +136,22 @@ export function VariantStudioManager({ variants, setVariants, productPhotos, bas
     setOptionName("Renk");
     setDisplayType("list");
     setAddOptions([{ id: crypto.randomUUID(), label: "", color: "#111111" }]);
+  };
+
+  const applyLibraryOption = (definitionId: string) => {
+    const definition = optionLibrary.find((item) => item.id === definitionId);
+    if (!definition) return;
+    setOptionName(definition.name);
+    setDisplayType(definition.displayType);
+    setAddOptions(
+      definition.values.length
+        ? definition.values.map((value) => ({
+            id: crypto.randomUUID(),
+            label: value.label,
+            color: value.color || "#111111",
+          }))
+        : [{ id: crypto.randomUUID(), label: "", color: "#111111" }],
+    );
   };
 
   const saveNewVariants = () => {
@@ -160,6 +206,40 @@ export function VariantStudioManager({ variants, setVariants, productPhotos, bas
 
             <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-5 sm:px-6 sm:py-7">
               <div className="mx-auto grid w-full max-w-2xl gap-5">
+                <div>
+                  <div className="mb-1.5 flex items-center justify-between gap-3">
+                    <span className="ruth-type-label text-muted">Ürün seçenekleri kütüphanesi</span>
+                    <a href="/product-options" className="ruth-type-caption font-semibold text-accent hover:underline">
+                      Kütüphaneyi yönet
+                    </a>
+                  </div>
+                  <select
+                    defaultValue=""
+                    onChange={(event) => {
+                      applyLibraryOption(event.target.value);
+                      event.currentTarget.value = "";
+                    }}
+                    className={exactFormInputClass}
+                    disabled={!optionLibraryLoaded || !optionLibrary.length}
+                  >
+                    <option value="">
+                      {!optionLibraryLoaded
+                        ? "Seçenekler yükleniyor…"
+                        : optionLibrary.length
+                          ? "Hazır bir seçenek seç…"
+                          : "Kayıtlı seçenek bulunamadı"}
+                    </option>
+                    {optionLibrary.map((definition) => (
+                      <option key={definition.id} value={definition.id}>
+                        {definition.name} · {definition.values.length} değer
+                      </option>
+                    ))}
+                  </select>
+                  <p className="ruth-type-caption mt-1.5 text-subtle">
+                    Seçtiğinde ad, gösterim türü ve kayıtlı değerler otomatik doldurulur; bu ürün için yine düzenleyebilirsin.
+                  </p>
+                </div>
+
                 <ExactField label="Seçenek adı">
                   <input value={optionName} onChange={(event) => setOptionName(event.target.value)} className={exactFormInputClass} placeholder="Örn. Renk, Zincir Uzunluğu, Beden" />
                 </ExactField>
