@@ -8,12 +8,12 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: "/",
     scope: "/",
     display: "standalone",
-    background_color: "#111111",
-    theme_color: "#111111",
+    background_color: "#242424",
+    theme_color: "#242424",
     orientation: "portrait-primary",
     icons: [
       {
-        src: "/rr-hub-icon-180.png?v=27",
+        src: "/rr-hub-icon-180.png?v=28",
         sizes: "180x180",
         type: "image/png",
         purpose: "any",
