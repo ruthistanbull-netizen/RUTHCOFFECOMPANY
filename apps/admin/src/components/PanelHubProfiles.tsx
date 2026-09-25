@@ -288,7 +288,7 @@ export function PanelHubProfiles() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.22 }}
-            className="fixed inset-0 z-[2147483645] flex items-center justify-center bg-[#141414] px-6 text-[#F4F0E8]"
+            className="fixed inset-0 z-[2147483645] flex items-center justify-center bg-[#111111] px-6 text-[#FBF3E6]"
             aria-live="polite"
             aria-busy="true"
           >
