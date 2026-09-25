@@ -229,7 +229,9 @@
   transition: transform var(--ruth-motion-normal) var(--ruth-easing);
 }
 
-.ruth-editorial-card:hover .ruth-editorial-card__arrow { transform: translateX(5px); }
+@media (hover: hover) and (pointer: fine) {
+  .ruth-editorial-card:hover .ruth-editorial-card__arrow { transform: translateX(5px); }
+}
 
 .ruth-editorial-card__content > span:not(.ruth-editorial-card__arrow) {
   display: block;
