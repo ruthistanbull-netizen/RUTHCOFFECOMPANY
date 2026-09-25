@@ -60,10 +60,10 @@ export function createV83Environment(ctx: CanvasRenderingContext2D): V83Environm
 
 export function radialGlowTo(context: CanvasRenderingContext2D, cx: number, cy: number, radius: number, alpha: number) {
   const gradient = context.createRadialGradient(cx, cy, 0, cx, cy, radius);
-  gradient.addColorStop(0, `rgba(255,240,196,${.98 * alpha})`);
-  gradient.addColorStop(.06, `rgba(255,204,99,${.80 * alpha})`);
-  gradient.addColorStop(.28, `rgba(215,138,35,${.26 * alpha})`);
-  gradient.addColorStop(1, "rgba(150,77,0,0)");
+  gradient.addColorStop(0, `rgba(251, 243, 230,${.98 * alpha})`);
+  gradient.addColorStop(.06, `rgba(200, 167, 125,${.80 * alpha})`);
+  gradient.addColorStop(.28, `rgba(201, 74, 64,${.26 * alpha})`);
+  gradient.addColorStop(1, "rgba(56, 37, 28,0)");
   context.fillStyle = gradient;
   context.beginPath();
   context.arc(cx, cy, radius, 0, Math.PI * 2);
