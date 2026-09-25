@@ -421,7 +421,7 @@ export function VisualThemeCustomizer() {
         },
       }));
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Görsel yüklenemedi.");
+      toast.error(error instanceof Error ? error.message : "Medya yüklenemedi.");
     } finally {
       setUploading(null);
     }
@@ -630,18 +630,18 @@ export function VisualThemeCustomizer() {
               path === "/" ? (
                 <div className="space-y-3">
                   <div className={panelCard()}>
-                    <div className="mb-3"><p className="text-[10px] font-semibold">Ana hero görselleri</p><p className="mt-1 text-[8px] leading-4 text-subtle">Masaüstü ve mobil görseller ayrı kaydedilir. İki cihaz da gerçek img kaynağı kullanır; desktop srcSet kullanılmaz.</p></div>
+                    <div className="mb-3"><p className="text-[10px] font-semibold">Ana hero medyaları</p><p className="mt-1 text-[8px] leading-4 text-subtle">Masaüstü ve mobil ayrı kaydedilir. Her alana ister fotoğraf ister video yükleyebilirsin; seçilen medya türü storefrontta aynı şekilde yayınlanır.</p></div>
                     <div className="grid grid-cols-2 gap-2">
                       <UploadCard title="Masaüstü" value={homepageHeroDeviceImage(settings, "desktop")} busy={uploading === "hero-desktop"} onFile={(file) => void uploadHero("desktop", file)} />
                       <UploadCard title="Mobil" value={homepageHeroDeviceImage(settings, "mobile")} busy={uploading === "hero-mobile"} onFile={(file) => void uploadHero("mobile", file)} />
                     </div>
                   </div>
                   <div className={panelCard()}>
-                    <p className="mb-3 text-[10px] font-semibold">Kayan görseller</p>
+                    <p className="mb-3 text-[10px] font-semibold">Kayan medya</p>
                     <div className="grid grid-cols-2 gap-2">{settings.homepageImages.scrollImages.map((src, index) => <UploadCard key={index} title={`Görsel ${index + 1}`} value={src} busy={uploading === `scroll-${index}`} onFile={(file) => void uploadScroll(index, file)} />)}</div>
                   </div>
                 </div>
-              ) : <div className="rounded-xl border border-dashed border-border-strong p-4 text-center text-[9px] text-subtle">Anasayfa fotoğrafları için Ana Sayfa’yı seç.</div>
+              ) : <div className="rounded-xl border border-dashed border-border-strong p-4 text-center text-[9px] text-subtle">Anasayfa medyaları için Ana Sayfa’yı seç.</div>
             ) : null}
 
             {!loading && sideView === "theme" ? (
