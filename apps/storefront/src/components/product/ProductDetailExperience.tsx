@@ -105,7 +105,19 @@ function firstImage(product: Product | null | undefined) {
   return product.main_image_url || product.image_urls?.[0] || null;
 }
 
-function productDetails(product: Product): ProductDetailItem[] {
+function productPageCopy(
+  content: Record<string, unknown> | undefined,
+  key: string,
+  fallback: string,
+) {
+  const value = content?.[key];
+  return typeof value === "string" && value.trim() ? value.trim() : fallback;
+}
+
+function productDetails(
+  product: Product,
+  productPageContent?: Record<string, unknown>,
+): ProductDetailItem[] {
   const productInfo = cleanLine(
     product.material || productMaterialDetails(product) || displayMaterial(product),
   );
@@ -115,24 +127,48 @@ function productDetails(product: Product): ProductDetailItem[] {
   const careDetails = cleanLine(product.care_advice || productCareDetails(product));
   const usage = cleanLine(product.size_usage);
 
+  const materialTitle = productPageCopy(productPageContent, "materialTitle", "Ürün Bilgisi");
+  const materialFallback = productPageCopy(
+    productPageContent,
+    "materialFallback",
+    "Çekirdek, içerik ve ürün bilgileri ürün bazında değişebilir.",
+  );
+  const careTitle = productPageCopy(productPageContent, "careTitle", "Saklama / Kullanım");
+  const careFallback = productPageCopy(
+    productPageContent,
+    "careFallback",
+    "Paketi serin, kuru ve doğrudan güneş almayan yerde saklayın.",
+  );
+  const sizeUsageTitle = productPageCopy(productPageContent, "sizeUsageTitle", "Paket / Kullanım");
+  const sizeUsageFallback = productPageCopy(
+    productPageContent,
+    "sizeUsageFallback",
+    "Paket, öğütüm ve kullanım bilgisi ürün bazında değişebilir.",
+  );
+  const shippingTitle = productPageCopy(productPageContent, "shippingTitle", "Kargo ve İade");
+  const shippingText = productPageCopy(
+    productPageContent,
+    "shippingText",
+    "Teslimat ve iade koşulları sipariş ve ürün tipine göre uygulanır. Güncel detaylar için kargo ve iade sayfasını inceleyebilirsiniz.",
+  );
+
   return [
     { id: "description", label: "Açıklama", content: description },
     {
       id: "material",
-      label: "Ürün Bilgisi",
+      label: materialTitle,
       content: [
-        productInfo || "Ürün bilgileri ürün bazında değişebilir.",
-        careDetails ? "" : null,
-        careDetails ? "SAKLAMA / KULLANIM" : null,
-        careDetails || null,
+        productInfo || materialFallback,
+        "",
+        careTitle.toLocaleUpperCase("tr-TR"),
+        careDetails || careFallback,
       ].filter((value): value is string => Boolean(value)).join("\n"),
     },
-    { id: "size-usage", label: "Kullanım", content: usage || "Detaylı kullanım bilgisi ürün açıklamasında yer alır." },
+    { id: "size-usage", label: sizeUsageTitle, content: usage || sizeUsageFallback },
     {
       id: "shipping-returns",
-      label: "Kargo ve İade",
-      content:
-        "Teslimat ve iade koşulları sipariş ve ürün tipine göre uygulanır. Güncel detaylar için kargo ve iade sayfasını inceleyebilirsiniz.",
+      label: shippingTitle,
+      content: shippingText,
     },
   ];
 }
@@ -215,8 +251,10 @@ function ProductBrowserPreview({ product }: { product: Product | null }) {
 
 export function ProductDetailExperience({
   initialWindow,
+  productPageContent,
 }: {
   initialWindow: ProductBrowserWindow;
+  productPageContent?: Record<string, unknown>;
 }) {
   const initialProducts = [
     initialWindow.previous,
@@ -713,7 +751,10 @@ export function ProductDetailExperience({
 
   const product = browserWindow.current;
   const images = useMemo(() => productImages(product), [product]);
-  const details = useMemo(() => productDetails(product), [product]);
+  const details = useMemo(
+    () => productDetails(product, productPageContent),
+    [product, productPageContent],
+  );
   const collectionName =
     displayCollectionName(product.collections?.name) || "ROSTA Coffee";
   const productPrice = Number(product.price ?? 0);
