@@ -4,6 +4,13 @@ WORKDIR /app
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Theme editor accepts MOV/M4V/WebM/MP4 uploads and normalizes them to
+# browser-safe H.264 MP4 in the admin API. The shared Zeabur Dockerfile is the
+# image actually used by both services, so ffmpeg must be available here.
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends ffmpeg \
+  && rm -rf /var/lib/apt/lists/*
+
 ARG ZEABUR_SERVICE_ID
 ARG ZEABUR_WEB_DOMAIN
 ARG ZEABUR_WEB_URL
