@@ -58,10 +58,6 @@ export function HomeHeroRuntimeAdjustments() {
           height: auto !important;
         }
 
-        html.ruth-home-page-active .ruth-zara-menu-button .ruth-zara-hamburger {
-          width: 48px !important;
-          height: 18px !important;
-        }
       }
 
       @media (max-width: 767px) {
