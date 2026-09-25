@@ -10,6 +10,11 @@ export const HOME_HERO_DESKTOP_IMAGE_ID = `${HOME_HERO_IMAGE_ID}--desktop-image`
 export const HOME_HERO_MOBILE_IMAGE_ID = `${HOME_HERO_IMAGE_ID}--mobile-image`;
 
 export type HomepageHeroDevice = "desktop" | "mobile";
+export type HomepageMediaType = "image" | "video";
+
+function inferredMediaType(value: string): HomepageMediaType {
+  return /\.(mp4|m4v|mov|webm)(?:$|[?#])/i.test(value) ? "video" : "image";
+}
 
 export function cleanThemeImage(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
@@ -90,26 +95,48 @@ export function setHomepageHeroImage(settings: ThemeCustomizerSettings, imageSrc
   };
 }
 
-export function setHomepageHeroDeviceImage(
+export function homepageHeroDeviceMediaType(
   settings: ThemeCustomizerSettings,
   device: HomepageHeroDevice,
-  imageSrc: string,
+): HomepageMediaType {
+  const normalized = normalizeThemeMediaSettings(settings);
+  const overrides = normalized.editor.pages["/"]?.overrides || [];
+  const override = deviceOverride(overrides, device);
+  if (override?.mediaType === "video") return "video";
+  if (override?.mediaType === "image") return "image";
+  return inferredMediaType(homepageHeroDeviceImage(normalized, device));
+}
+
+export function setHomepageHeroDeviceMedia(
+  settings: ThemeCustomizerSettings,
+  device: HomepageHeroDevice,
+  mediaSrc: string,
+  mediaType: HomepageMediaType,
 ) {
-  const src = cleanThemeImage(imageSrc);
+  const src = cleanThemeImage(mediaSrc);
   if (!src) return settings;
   const normalized = normalizeThemeMediaSettings(settings);
   const id = deviceId(device);
   return upsertThemeElementOverride(normalized, "/", {
     id,
     selector: `[data-theme-id="${id}"]`,
-    label: device === "desktop" ? "Ana sayfa hero görseli · Masaüstü" : "Ana sayfa hero görseli · Mobil",
-    tag: "img",
+    label: device === "desktop" ? "Ana sayfa hero medyası · Masaüstü" : "Ana sayfa hero medyası · Mobil",
+    tag: mediaType === "video" ? "video" : "img",
     kind: "image",
     hidden: false,
     imageSrc: src,
+    mediaType,
     desktop: {},
     mobile: {},
   });
+}
+
+export function setHomepageHeroDeviceImage(
+  settings: ThemeCustomizerSettings,
+  device: HomepageHeroDevice,
+  imageSrc: string,
+) {
+  return setHomepageHeroDeviceMedia(settings, device, imageSrc, "image");
 }
 
 export function homepageHeroDeviceForElement(id: string): HomepageHeroDevice | null {
