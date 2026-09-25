@@ -23,7 +23,7 @@
   padding: 12px 15px;
   border: 0;
   border-bottom: 1px solid var(--line);
-  background: #fff;
+  background: var(--surface-2, var(--ruth-color-surface-muted, #242424));
   color: var(--ink);
   display: grid;
   grid-template-columns: 40px minmax(180px, 1.2fr) 105px 72px 125px 105px minmax(150px, .8fr) 36px;
@@ -36,11 +36,6 @@
 
 .cr-customer-row:last-child {
   border-bottom: 0;
-}
-
-.cr-customer-row:hover {
-  background: #fafbfc;
-  box-shadow: inset 3px 0 0 var(--accent);
 }
 
 .cr-customer-row__identity,
@@ -83,7 +78,7 @@
   min-height: 64px;
   padding: 11px 14px;
   border-top: 1px solid var(--line);
-  background: #fff;
+  background: var(--surface-2, var(--ruth-color-surface-muted, #242424));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -157,7 +152,7 @@
 .cr-points-balance {
   min-height: 78px;
   padding: 12px;
-  border: 1px solid #b2ddff;
+  border: 1px solid color-mix(in srgb, var(--ruth-color-info, #4F94E8) 48%, transparent);
   border-radius: 12px;
   background: var(--info-soft);
   color: var(--info);
@@ -290,5 +285,13 @@
   .cr-customer-value-grid,
   .cr-points-form {
     grid-template-columns: 1fr;
+  }
+}
+
+
+@media (hover: hover) and (pointer: fine) {
+  .cr-customer-row:hover {
+    background: color-mix(in srgb, var(--rosta-kraft, #C8A77D) 8%, var(--ruth-color-surface-muted, #242424));
+    box-shadow: inset 3px 0 0 var(--accent, var(--rosta-brick-b, #C94A40));
   }
 }
