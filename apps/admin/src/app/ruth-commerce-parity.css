@@ -342,7 +342,7 @@ img,svg { display:block; }
 .admin-login-form label:not(.admin-check) { display:grid; gap:7px; }
 .admin-login-form label span { font-size:11px; color:var(--panel-muted); }
 .admin-login-form input[type="email"],.admin-login-form input[type="password"] {
-  width:100%; height:46px; border:1px solid var(--panel-line); border-radius:16px; background:var(--rosta-bone); padding:0 14px; color:var(--panel-ink); outline:0;
+  width:100%; height:46px; border:1px solid var(--panel-line); border-radius:16px; background:var(--rosta-carbon-soft); padding:0 14px; color:var(--panel-ink); outline:0;
 }
 .admin-loading-screen { min-height:100dvh; display:grid; place-items:center; align-content:center; gap:14px; background:var(--rosta-carbon); color:var(--panel-muted); }
 .admin-loader { width:40px; height:40px; border-radius:50%; border:3px solid color-mix(in srgb,var(--rosta-kraft) 42%,transparent); border-top-color:var(--rosta-brick-b); animation:admin-spin .8s linear infinite; }
