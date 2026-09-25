@@ -160,7 +160,7 @@ export function DesktopUnifiedNavigation() {
 
   const sections = useMemo<DesktopSection[]>(() => {
     const definitions = [
-      { label: "Genel", groups: ["GENEL", "RAPORLAMA"], primaryPath: "/" },
+      { label: "Genel", groups: ["GENEL", "RAPORLAMA"], primaryPath: "/dashboard" },
       { label: "Siparişler", groups: ["SİPARİŞ VE OPERASYON"], primaryPath: "/orders" },
       { label: "Ürünler", groups: ["ÜRÜN VE STOK"], primaryPath: "/products" },
       { label: "Müşteriler", groups: ["MÜŞTERİ"], primaryPath: "/customers" },
