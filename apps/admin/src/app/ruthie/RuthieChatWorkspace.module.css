@@ -718,7 +718,7 @@
 
 .actionCard footer button:first-child {
   border-color: var(--chat-line-strong);
-  background: rgba(201, 139, 55, .11);
+  background: color-mix(in srgb, var(--rosta-brick-b, #C94A40) 13%, transparent);
   color: var(--chat-accent-soft);
 }
 
