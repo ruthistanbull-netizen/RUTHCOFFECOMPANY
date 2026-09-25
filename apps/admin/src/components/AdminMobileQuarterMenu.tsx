@@ -339,7 +339,7 @@ export function AdminMobileQuarterMenu() {
     if (!group) return;
     if (group.label === "GENEL") {
       close();
-      router.push("/");
+      router.push("/dashboard");
       return;
     }
     setSelectedGroup((current) => current === index ? null : index);
@@ -350,6 +350,15 @@ export function AdminMobileQuarterMenu() {
     close();
     router.push(item.path);
   }, [close, router]);
+
+  const returnToHub = useCallback(() => {
+    close();
+    try {
+      window.sessionStorage.removeItem("rosta_panel_hub_entered_v1");
+      window.sessionStorage.removeItem("rr_hub_ruth_entered_v1");
+    } catch {}
+    window.location.assign("/profiles");
+  }, [close]);
 
   useEffect(() => {
     let frame = 0;
@@ -376,7 +385,7 @@ export function AdminMobileQuarterMenu() {
 
   useEffect(() => {
     exactNavStructure.forEach((group) => group.items.forEach((item) => router.prefetch(item.path)));
-    router.prefetch("/");
+    router.prefetch("/dashboard");
   }, [router]);
 
   useEffect(() => {
@@ -805,6 +814,20 @@ export function AdminMobileQuarterMenu() {
             setOpen(true);
           }}
         />
+        <button
+          type="button"
+          className={styles.hubHit}
+          aria-label="RR HUB'a dön"
+          title="RR HUB"
+          onPointerDown={(event) => event.stopPropagation()}
+          onPointerUp={(event) => event.stopPropagation()}
+          onClick={(event) => {
+            event.stopPropagation();
+            returnToHub();
+          }}
+        >
+          <img src="/rr-mark-cream.svg" alt="" draggable={false} />
+        </button>
       </div>
     </>,
     document.body,
