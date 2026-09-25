@@ -9,6 +9,7 @@ import { categoryHref } from "@/lib/catalogCategories";
 import {
   defaultThemeCustomizerSettings,
   type ThemeCustomizerSettings,
+  type ThemeMenuMediaCard,
   type ThemeNavItem,
 } from "@/lib/themeCustomizer";
 import type { Category, Collection } from "@/types/site";
@@ -41,6 +42,7 @@ export function MobileMenuAccordion({
   const pathname = usePathname();
   const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [liveMenuMediaCards, setLiveMenuMediaCards] = useState<ThemeMenuMediaCard[]>(themeSettings.header.mediaCards || []);
 
   const orderedCollectionItems = useMemo(
     () => orderedCollections(collections),
@@ -106,6 +108,21 @@ export function MobileMenuAccordion({
   useEffect(() => {
     setExpanded({});
   }, [pathname]);
+
+  useEffect(() => {
+    setLiveMenuMediaCards(themeSettings.header.mediaCards || []);
+  }, [themeSettings.header.mediaCards]);
+
+  useEffect(() => {
+    const onThemeMessage = (event: MessageEvent) => {
+      if (event.source !== window.parent || !event.data || typeof event.data !== "object") return;
+      if (event.data.type !== "RUTH_THEME_EDITOR_SETTINGS" || !event.data.settings) return;
+      const next = event.data.settings as ThemeCustomizerSettings;
+      setLiveMenuMediaCards(next.header?.mediaCards || []);
+    };
+    window.addEventListener("message", onThemeMessage);
+    return () => window.removeEventListener("message", onThemeMessage);
+  }, []);
 
   if (!portalTarget) return null;
 
@@ -252,7 +269,8 @@ export function MobileMenuAccordion({
             overflow:hidden;
             background:var(--ruth-color-surface-inverse);
           }
-          .ruth-mobile-photo-collection-card__media img{
+          .ruth-mobile-photo-collection-card__media img,
+          .ruth-mobile-photo-collection-card__media video{
             display:block;
             width:100%;
             height:100%;
@@ -338,8 +356,8 @@ export function MobileMenuAccordion({
         })}
       </div>
 
-      {photoCollections.length ? (
-        <div className="ruth-mobile-photo-collections" aria-label="Fotoğraflı koleksiyonlar">
+      {photoCollections.length || liveMenuMediaCards.length ? (
+        <div className="ruth-mobile-photo-collections" aria-label="Menü medyaları">
           {photoCollections.map((collection) => (
             <Link
               key={collection.id}
@@ -358,6 +376,39 @@ export function MobileMenuAccordion({
               <span className="ruth-mobile-photo-collection-card__label">
                 {collection.name}
               </span>
+            </Link>
+          ))}
+          {liveMenuMediaCards.map((card) => (
+            <Link
+              key={card.id}
+              href={card.href || "/collections"}
+              className="ruth-mobile-photo-collection-card"
+              data-theme-menu-media-card={card.id}
+            >
+              <span className="ruth-mobile-photo-collection-card__media">
+                {card.mediaType === "video" ? (
+                  <video
+                    src={card.imageSrc}
+                    aria-label={card.label || "Menü videosu"}
+                    muted
+                    loop
+                    autoPlay
+                    playsInline
+                    preload="metadata"
+                  />
+                ) : (
+                  <img
+                    src={card.imageSrc}
+                    alt={card.label || ""}
+                    loading="eager"
+                    decoding="async"
+                    draggable={false}
+                  />
+                )}
+              </span>
+              {card.label ? (
+                <span className="ruth-mobile-photo-collection-card__label">{card.label}</span>
+              ) : null}
             </Link>
           ))}
         </div>
