@@ -4,7 +4,8 @@ import { noStoreHeaders, revalidateWebsite } from "@/lib/websiteRevalidate";
 
 export const runtime = "nodejs";
 
-const KEY = "product_option_definitions_v1";
+const OPTION_KEY = "product_option_definitions_v1";
+const PRODUCT_PAGE_KEY = "product_page_content_v1";
 
 type OptionValue = {
   id: string;
@@ -18,6 +19,17 @@ type OptionDefinition = {
   displayType: "list" | "color";
   active: boolean;
   values: OptionValue[];
+};
+
+type ProductPageContent = {
+  materialTitle: string;
+  materialFallback: string;
+  careTitle: string;
+  careFallback: string;
+  sizeUsageTitle: string;
+  sizeUsageFallback: string;
+  shippingTitle: string;
+  shippingText: string;
 };
 
 const DEFAULT_DEFINITIONS: OptionDefinition[] = [
@@ -44,8 +56,24 @@ const DEFAULT_DEFINITIONS: OptionDefinition[] = [
   },
 ];
 
+const DEFAULT_PRODUCT_PAGE: ProductPageContent = {
+  materialTitle: "Ürün Bilgisi",
+  materialFallback: "Çekirdek, içerik ve ürün bilgileri ürün bazında değişebilir.",
+  careTitle: "Saklama / Kullanım",
+  careFallback: "Paketi serin, kuru ve doğrudan güneş almayan yerde saklayın. Açıldıktan sonra aromasını korumak için ağzını sıkıca kapatın.",
+  sizeUsageTitle: "Paket / Kullanım",
+  sizeUsageFallback: "Paket, öğütüm ve kullanım bilgisi ürün bazında değişebilir.",
+  shippingTitle: "Kargo ve İade",
+  shippingText: "Sipariş hazırlık süresi ürün ve sipariş tipine göre değişebilir. Teslimat ve iade koşulları için güncel kargo ve iade politikasını inceleyebilirsiniz.",
+};
+
 function clean(value: unknown, max = 120) {
   return typeof value === "string" ? value.trim().slice(0, max) : "";
+}
+
+function cleanLong(value: unknown, fallback: string, max = 2400) {
+  const text = typeof value === "string" ? value.trim().slice(0, max) : "";
+  return text || fallback;
 }
 
 function safeId(value: unknown, fallback: string) {
@@ -115,6 +143,20 @@ function normalizeDefinitions(input: unknown): OptionDefinition[] {
       values,
     };
   });
+}
+
+function normalizeProductPage(input: unknown): ProductPageContent {
+  const row = input && typeof input === "object" ? input as Record<string, unknown> : {};
+  return {
+    materialTitle: clean(row.materialTitle, 80) || DEFAULT_PRODUCT_PAGE.materialTitle,
+    materialFallback: cleanLong(row.materialFallback, DEFAULT_PRODUCT_PAGE.materialFallback),
+    careTitle: clean(row.careTitle, 80) || DEFAULT_PRODUCT_PAGE.careTitle,
+    careFallback: cleanLong(row.careFallback, DEFAULT_PRODUCT_PAGE.careFallback),
+    sizeUsageTitle: clean(row.sizeUsageTitle, 80) || DEFAULT_PRODUCT_PAGE.sizeUsageTitle,
+    sizeUsageFallback: cleanLong(row.sizeUsageFallback, DEFAULT_PRODUCT_PAGE.sizeUsageFallback),
+    shippingTitle: clean(row.shippingTitle, 80) || DEFAULT_PRODUCT_PAGE.shippingTitle,
+    shippingText: cleanLong(row.shippingText, DEFAULT_PRODUCT_PAGE.shippingText),
+  };
 }
 
 function normalizedKey(value: string) {
@@ -200,19 +242,22 @@ export async function GET(request: Request) {
 
   const { data, error } = await auth.supabase
     .from("site_settings")
-    .select("setting_value,updated_at")
-    .eq("setting_key", KEY)
-    .maybeSingle();
+    .select("setting_key,setting_value,updated_at")
+    .in("setting_key", [OPTION_KEY, PRODUCT_PAGE_KEY]);
 
   if (error) {
     return NextResponse.json({ ok: false, error: error.message }, { status: 400, headers: noStoreHeaders() });
   }
 
+  const rows = Array.isArray(data) ? data : [];
+  const optionRow = rows.find((row) => row.setting_key === OPTION_KEY);
+  const productPageRow = rows.find((row) => row.setting_key === PRODUCT_PAGE_KEY);
+
   let definitions: OptionDefinition[];
   let bootstrapped = false;
 
-  if (data?.setting_value) {
-    definitions = normalizeDefinitions(data.setting_value);
+  if (optionRow?.setting_value) {
+    definitions = normalizeDefinitions(optionRow.setting_value);
   } else {
     const { data: variantRows } = await auth.supabase
       .from("product_variants")
@@ -228,7 +273,8 @@ export async function GET(request: Request) {
   return NextResponse.json({
     ok: true,
     definitions,
-    updatedAt: data?.updated_at || null,
+    productPage: normalizeProductPage(productPageRow?.setting_value),
+    updatedAt: [optionRow?.updated_at, productPageRow?.updated_at].filter(Boolean).sort().at(-1) || null,
     bootstrapped,
   }, { headers: noStoreHeaders() });
 }
@@ -239,6 +285,8 @@ export async function PUT(request: Request) {
 
   const body = await request.json().catch(() => ({}));
   const definitions = normalizeDefinitions(body?.definitions);
+  const productPage = normalizeProductPage(body?.productPage);
+
   if (!definitions.length) {
     return NextResponse.json({ ok: false, error: "En az bir ürün seçeneği bırakmalısın." }, { status: 400, headers: noStoreHeaders() });
   }
@@ -246,12 +294,20 @@ export async function PUT(request: Request) {
   const now = new Date().toISOString();
   const { error } = await auth.supabase
     .from("site_settings")
-    .upsert({
-      setting_key: KEY,
-      setting_value: { version: 1, definitions },
-      is_public: false,
-      updated_at: now,
-    }, { onConflict: "setting_key" });
+    .upsert([
+      {
+        setting_key: OPTION_KEY,
+        setting_value: { version: 2, definitions },
+        is_public: false,
+        updated_at: now,
+      },
+      {
+        setting_key: PRODUCT_PAGE_KEY,
+        setting_value: { version: 1, ...productPage },
+        is_public: true,
+        updated_at: now,
+      },
+    ], { onConflict: "setting_key" });
 
   if (error) {
     return NextResponse.json({ ok: false, error: error.message }, { status: 400, headers: noStoreHeaders() });
@@ -261,6 +317,7 @@ export async function PUT(request: Request) {
   return NextResponse.json({
     ok: true,
     definitions,
+    productPage,
     updatedAt: now,
     revalidate,
     warning: revalidate.ok ? null : revalidate.message,
