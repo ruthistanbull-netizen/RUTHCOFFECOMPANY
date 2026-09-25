@@ -117,11 +117,15 @@ function EditorialMedia({
   const reduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const progress = useSpring(scrollYProgress, { stiffness: 72, damping: 32, mass: 0.48 });
-  const scale = useTransform(progress, [0, 1], [1.012, 0.996]);
+  const scale = useTransform(
+    progress,
+    [0, 0.72, 1],
+    index === 0 ? [1.04, 0.985, 0.92] : [1.02, 0.985, 0.95],
+  );
   const y = useTransform(progress, [0, 1], ["1.5%", "-1%"]);
   const opacity = useTransform(progress, [0, 0.82, 1], [1, 1, 0.96]);
   const wrapperClass = index === 0
-    ? "absolute inset-0 overflow-hidden"
+    ? "absolute -inset-x-[2vw] -inset-y-[2svh] overflow-hidden"
     : "absolute inset-x-[2vw] inset-y-[1svh] overflow-hidden lg:bottom-[32px] lg:left-[7vw] lg:right-[7vw] lg:top-[52px]";
 
   return (
@@ -133,9 +137,7 @@ function EditorialMedia({
       <div className="sticky top-0 h-[100svh] min-h-[560px] overflow-hidden bg-carbon lg:min-h-[700px]">
         <motion.div
           className={wrapperClass}
-          style={reduceMotion ? undefined : index === 0
-            ? { scale, opacity, willChange: "transform, opacity" }
-            : { y, scale, opacity, willChange: "transform, opacity" }}
+          style={reduceMotion ? undefined : { y, scale, opacity, willChange: "transform, opacity" }}
         >
           {slide.kind === "hero-image" ? (
             <div className="h-full w-full">
