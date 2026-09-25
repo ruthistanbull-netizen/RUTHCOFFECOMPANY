@@ -450,7 +450,7 @@ export function VisualThemeCustomizer() {
   const resetMediaLayout = useCallback(() => {
     patchMediaStyle({
       mediaScale: null,
-      objectFit: null,
+      objectFit: undefined,
       objectPositionX: null,
       objectPositionY: null,
       borderRadius: null,
