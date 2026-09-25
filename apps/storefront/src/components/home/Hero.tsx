@@ -121,16 +121,16 @@ function EditorialMedia({
   const ref = useRef<HTMLDivElement | null>(null);
   const reduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const progress = useSpring(scrollYProgress, { stiffness: 72, damping: 32, mass: 0.48 });
+  const progress = useSpring(scrollYProgress, { stiffness: 92, damping: 30, mass: 0.42 });
   const scale = useTransform(
     progress,
-    [0, 0.72, 1],
-    index === 0 ? [1.04, 0.985, 0.92] : [1.02, 0.985, 0.95],
+    [0, 0.16, 0.5, 1],
+    index === 0 ? [1, 0.975, 0.925, 0.88] : [1, 0.985, 0.955, 0.925],
   );
-  const y = useTransform(progress, [0, 1], ["1.5%", "-1%"]);
-  const opacity = useTransform(progress, [0, 0.82, 1], [1, 1, 0.96]);
+  const y = useTransform(progress, [0, 0.5, 1], ["0%", "-0.65%", "-1.35%"]);
+  const opacity = useTransform(progress, [0, 0.78, 1], [1, 1, 0.96]);
   const wrapperClass = index === 0
-    ? "absolute -inset-x-[2vw] -inset-y-[2svh] overflow-hidden"
+    ? "absolute inset-0 overflow-hidden"
     : "absolute inset-x-[2vw] inset-y-[1svh] overflow-hidden lg:bottom-[32px] lg:left-[7vw] lg:right-[7vw] lg:top-[52px]";
 
   return (
