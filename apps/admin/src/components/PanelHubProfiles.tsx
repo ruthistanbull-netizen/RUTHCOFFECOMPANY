@@ -8,6 +8,7 @@ import {
   getSupabaseBrowser,
   setAdminRememberSession,
 } from "@/lib/supabaseBrowser";
+import { markRRHubWorkspaceHandoff } from "@/lib/rrHubRuntime";
 
 const RUTH_ADMIN_URL = (
   process.env.NEXT_PUBLIC_RUTH_ADMIN_URL || "https://ruthcommerce.zeabur.app"
@@ -99,6 +100,7 @@ export function PanelHubProfiles() {
     setActive("rosta");
     try {
       window.sessionStorage.setItem(ROSTA_ENTERED_KEY, "1");
+      markRRHubWorkspaceHandoff();
     } catch {}
     window.setTimeout(() => {
       window.location.assign("/dashboard");
@@ -111,6 +113,7 @@ export function PanelHubProfiles() {
     setActive("ruth");
     try {
       window.sessionStorage.setItem(RUTH_ENTERED_KEY, "1");
+      markRRHubWorkspaceHandoff();
     } catch {}
     window.setTimeout(() => {
       window.location.assign("/ruth");
