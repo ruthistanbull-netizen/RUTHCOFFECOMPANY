@@ -387,16 +387,40 @@ export default function Hero({
     let timer = 0;
     const root = document.documentElement;
 
+    const headerToneState = new Map<string, { ink: string; candidate: string; hits: number }>();
+
     const setHeaderTone = (selector: string, variable: string, fallback = "#111111") => {
       const control = document.querySelector<HTMLElement>(selector);
+      const previous = headerToneState.get(variable) || { ink: fallback, candidate: fallback, hits: 0 };
       if (!control) {
-        root.style.setProperty(variable, fallback);
-        return fallback;
+        root.style.setProperty(variable, previous.ink);
+        return previous.ink;
       }
+
       const rect = control.getBoundingClientRect();
       const x = rect.left + rect.width / 2;
       const y = rect.top + rect.height / 2;
-      const ink = contrastInk(sampleToneAtPoint(x, y), fallback);
+      const luminance = sampleToneAtPoint(x, y);
+      if (luminance == null) {
+        root.style.setProperty(variable, previous.ink);
+        return previous.ink;
+      }
+
+      // Video frames can move rapidly under the fixed header. Use a wide
+      // hysteresis band and require consecutive readings before changing ink,
+      // so controls stay readable without flashing black/cream every frame.
+      const nextCandidate = previous.ink === "#111111"
+        ? (luminance < 92 ? "#FBF3E6" : "#111111")
+        : (luminance > 148 ? "#111111" : "#FBF3E6");
+
+      const hits = nextCandidate === previous.candidate ? previous.hits + 1 : 1;
+      const ink = nextCandidate !== previous.ink && hits >= 4 ? nextCandidate : previous.ink;
+      const next = {
+        ink,
+        candidate: ink === nextCandidate ? nextCandidate : nextCandidate,
+        hits: ink === nextCandidate ? 0 : hits,
+      };
+      headerToneState.set(variable, next);
       root.style.setProperty(variable, ink);
       return ink;
     };
@@ -482,7 +506,7 @@ export default function Hero({
       className="relative overflow-clip bg-carbon"
     >
       <style>{`
-        .home-editorial-wordmark{box-sizing:border-box;pointer-events:none;position:fixed;left:0;top:calc(100svh - clamp(184px,38vw,236px));z-index:40;width:min(100vw,1208px);max-width:100vw;height:auto;aspect-ratio:3175/1343;user-select:none;transition:color .24s ease,opacity .28s ease,visibility .28s ease}.home-editorial-wordmark[data-visible="false"]{opacity:0!important;visibility:hidden}.home-editorial-wordmark svg{display:block;width:100%;height:100%;overflow:visible}@media(min-width:1024px){.home-editorial-wordmark{right:1vw!important;left:auto!important;top:45vh;width:44.8vw!important;max-width:44.8vw!important;height:auto!important;aspect-ratio:3175/1343}}
+        .home-editorial-wordmark{box-sizing:border-box;pointer-events:none;position:fixed;left:0;top:calc(100svh - clamp(184px,38vw,236px) + 12px);z-index:40;width:min(100vw,1208px);max-width:100vw;height:auto;aspect-ratio:3175/1343;user-select:none;transition:color .24s ease,opacity .28s ease,visibility .28s ease}.home-editorial-wordmark[data-visible="false"]{opacity:0!important;visibility:hidden}.home-editorial-wordmark svg{display:block;width:100%;height:100%;overflow:visible}@media(min-width:1024px){.home-editorial-wordmark{right:1vw!important;left:auto!important;top:47vh;width:44.8vw!important;max-width:44.8vw!important;height:auto!important;aspect-ratio:3175/1343}}
       `}</style>
       <motion.div
         ref={wordmarkRef}
