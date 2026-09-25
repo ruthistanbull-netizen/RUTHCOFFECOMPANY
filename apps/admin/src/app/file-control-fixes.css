@@ -24,6 +24,14 @@ label.cr-icon-button:has(input:disabled) {
 
 .cr-settings-upload:focus-within,
 label.cr-icon-button:focus-within {
-  outline: 3px solid rgba(49, 94, 251, .22);
+  outline: 3px solid color-mix(in srgb, var(--rosta-brick-b, #C94A40) 28%, transparent);
   outline-offset: 2px;
+}
+
+
+@media (forced-colors: active) {
+  .cr-settings-upload:focus-within,
+  label.cr-icon-button:focus-within {
+    outline-color: Highlight;
+  }
 }
