@@ -41,6 +41,10 @@ function fileKind(file: File) {
   const name = String(file.name || "").toLowerCase();
   const passthrough = PASSTHROUGH_TYPES[type];
   if (passthrough) return { mode: "passthrough" as const, ...passthrough };
+  if (/\.mp4$/.test(name)) return { mode: "passthrough" as const, extension: "mp4", contentType: "video/mp4", mediaType: "video" as const };
+  if (/\.webm$/.test(name)) return { mode: "passthrough" as const, extension: "webm", contentType: "video/webm", mediaType: "video" as const };
+  if (/\.mov$/.test(name)) return { mode: "passthrough" as const, extension: "mov", contentType: "video/quicktime", mediaType: "video" as const };
+  if (/\.m4v$/.test(name)) return { mode: "passthrough" as const, extension: "m4v", contentType: "video/x-m4v", mediaType: "video" as const };
   if (CONVERT_TYPES.has(type) || /\.(avif|heic|heif)$/.test(name)) {
     return { mode: "convert" as const, extension: "webp", contentType: "image/webp", mediaType: "image" as const };
   }
