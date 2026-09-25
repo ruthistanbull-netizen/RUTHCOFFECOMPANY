@@ -437,6 +437,16 @@ export function VisualThemeCustomizer() {
       if (isHomepageHeroElement(path, selected.id)) {
         const selectedDevice = homepageHeroDeviceForElement(selected.id) || device;
         await persistHeroMedia(selectedDevice, src, mediaType);
+        setSelected((current) => current ? { ...current, tag: mediaType === "video" ? "video" : "img", mediaType, imageSrc: src } : current);
+        iframeRef.current?.contentWindow?.postMessage({
+          type: "RUTH_THEME_EDITOR_MEDIA_OVERRIDE",
+          id: selected.id,
+          selector: selected.selector,
+          imageSrc: src,
+          src,
+          mediaType,
+        }, "*");
+        return;
       }
 
       setSettings((current) => {
@@ -675,7 +685,7 @@ export function VisualThemeCustomizer() {
                   {(selectedOverride?.mediaType || selected.mediaType || (selected.tag === "video" ? "video" : "image")) === "video" ? "Video" : "Fotoğraf"}
                 </span>
               </div>
-              {selected.imageSrc ? (
+              {(selectedOverride?.imageSrc || selected.imageSrc) ? (
                 <div className="mb-2 h-[78px] overflow-hidden rounded-lg border border-border-subtle bg-surface-secondary">
                   {(selectedOverride?.mediaType || selected.mediaType || (selected.tag === "video" ? "video" : "image")) === "video" ? (
                     <video src={selectedOverride?.imageSrc || selected.imageSrc} className="h-full w-full object-cover" muted loop autoPlay playsInline preload="metadata" />
