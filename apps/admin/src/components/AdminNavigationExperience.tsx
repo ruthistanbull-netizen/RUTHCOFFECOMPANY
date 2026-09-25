@@ -8,7 +8,7 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
-import { Bot, Menu, Send, X } from "lucide-react";
+import { Menu, Send, X } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import {
@@ -20,6 +20,7 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
 } from "react";
 import { adminAuthHeaders } from "@/lib/adminApi";
+import { RuthieBrandIcon } from "@/components/RuthieBrandIcon";
 import {
   exactAllNavItems,
   exactItemIsActive,
@@ -247,7 +248,7 @@ function HeaderQuickControls({ onOpenMenu }: { onOpenMenu: () => void }) {
         aria-label={expanded ? "ROSTA Insight hızlı mesajını kapat" : "ROSTA Insight'a mesaj gönder"}
         aria-expanded={expanded}
       >
-        <Bot aria-hidden="true" />
+        <RuthieBrandIcon aria-hidden="true" />
         <span className={`${styles.providerDot} ${providerReady ? styles.providerOnline : styles.providerOffline}`} />
       </motion.button>
       <AnimatePresence>
@@ -295,7 +296,7 @@ function HeaderQuickControls({ onOpenMenu }: { onOpenMenu: () => void }) {
             aria-live="polite"
           >
             <header>
-              <Bot aria-hidden="true" />
+              <RuthieBrandIcon aria-hidden="true" />
               <strong>ROSTA Insight</strong>
               <button type="button" onClick={() => { setReply(null); setError(null); }} aria-label="Yanıtı kapat">
                 <X aria-hidden="true" />
