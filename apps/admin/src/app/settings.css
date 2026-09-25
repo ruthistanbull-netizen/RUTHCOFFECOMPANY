@@ -390,7 +390,7 @@
   height: 690px;
   border: 0;
   background: var(--ruth-color-surface-muted, #242424);
-  box-shadow: 0 10px 30px rgba(16,24,40,.14);
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--rosta-carbon, #111111) 34%, transparent);
   transition: width .2s ease;
 }
 
