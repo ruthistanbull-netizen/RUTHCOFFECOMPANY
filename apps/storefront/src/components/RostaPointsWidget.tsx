@@ -8,6 +8,7 @@ import {
   ChevronRight,
   Gift,
   ShoppingBag,
+  Sparkles,
   UserPlus,
   X,
 } from "lucide-react";
