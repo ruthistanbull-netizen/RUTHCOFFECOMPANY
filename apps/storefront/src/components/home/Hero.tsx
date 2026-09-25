@@ -384,40 +384,8 @@ export default function Hero({
 
   useEffect(() => {
     let frame = 0;
-    const root = document.documentElement;
-    let activeHeaderMedia: SampledMedia | null = null;
-    let activeHeaderInk = "#111111";
-    let activeWordmarkMedia: SampledMedia | null = null;
 
-    const applyHeaderInk = (ink: string) => {
-      activeHeaderInk = ink;
-      root.style.setProperty("--ruth-home-header-menu-ink", ink);
-      root.style.setProperty("--ruth-home-header-search-ink", ink);
-      root.style.setProperty("--ruth-home-header-account-ink", ink);
-      root.style.setProperty("--ruth-home-header-cart-ink", ink);
-      root.style.setProperty("--ruth-home-header-ink", ink);
-      root.style.setProperty("--ruth-home-header-invert", ink === "#FBF3E6" ? "1" : "0");
-    };
-
-    const sampleStableHeaderInk = (media: SampledMedia | null) => {
-      if (!media) return activeHeaderInk;
-      const headerHeight = window.innerWidth >= 1024 ? 92 : 64;
-      const probes = [
-        [36, headerHeight * 0.58],
-        [window.innerWidth * 0.25, headerHeight * 0.58],
-        [window.innerWidth * 0.5, headerHeight * 0.58],
-        [window.innerWidth * 0.75, headerHeight * 0.58],
-        [window.innerWidth - 48, headerHeight * 0.58],
-      ] as const;
-      const tones = probes
-        .map(([x, y]) => sampleMediaTone(media, x, y))
-        .filter((value): value is number => typeof value === "number" && Number.isFinite(value));
-      if (!tones.length) return activeHeaderInk;
-      const average = tones.reduce((sum, value) => sum + value, 0) / tones.length;
-      return contrastInk(average, activeHeaderInk);
-    };
-
-    const update = (forceTone = false) => {
+    const update = () => {
       window.cancelAnimationFrame(frame);
       frame = window.requestAnimationFrame(() => {
         const section = sectionRef.current;
@@ -429,56 +397,22 @@ export default function Hero({
         const scrollStoryHasEntered = scrollStory ? scrollStory.getBoundingClientRect().top <= window.innerHeight : false;
         const visible = sectionRect.bottom > 0 && sectionRect.top < window.innerHeight && !scrollStoryHasEntered;
         setWordmarkVisible(visible);
-
-        const headerHeight = window.innerWidth >= 1024 ? 92 : 64;
-        const headerMedia = editorialMediaAtPoint(window.innerWidth / 2, Math.min(headerHeight - 8, headerHeight * 0.58));
-        if (forceTone || headerMedia !== activeHeaderMedia) {
-          activeHeaderMedia = headerMedia;
-          applyHeaderInk(sampleStableHeaderInk(headerMedia));
-        } else {
-          // Re-apply the cached value only; never chase moving video frames.
-          applyHeaderInk(activeHeaderInk);
-        }
-
         if (!visible) return;
-        const wordmarkRect = wordmark.getBoundingClientRect();
-        const wordmarkMedia = editorialMediaAtPoint(
-          wordmarkRect.left + wordmarkRect.width / 2,
-          wordmarkRect.top + wordmarkRect.height / 2,
-        );
-        if (forceTone || wordmarkMedia !== activeWordmarkMedia) {
-          activeWordmarkMedia = wordmarkMedia;
-          const wordmarkTone = sampleToneAcrossRect(wordmarkRect);
-          setWordmarkColor(contrastInk(wordmarkTone, "#111111"));
-        }
+
+        const wordmarkTone = sampleToneAcrossRect(wordmark.getBoundingClientRect());
+        setWordmarkColor(contrastInk(wordmarkTone, "#111111"));
       });
     };
 
-    applyHeaderInk("#111111");
-    update(true);
-    const onScroll = () => update(false);
-    const onResize = () => update(true);
-    const onMediaChanged = () => {
-      activeHeaderMedia = null;
-      activeWordmarkMedia = null;
-      update(true);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onResize);
-    window.addEventListener("rosta:home-hero-media-changed", onMediaChanged);
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    window.addEventListener("rosta:home-hero-media-changed", update);
     return () => {
       window.cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onResize);
-      window.removeEventListener("rosta:home-hero-media-changed", onMediaChanged);
-      [
-        "--ruth-home-header-menu-ink",
-        "--ruth-home-header-search-ink",
-        "--ruth-home-header-account-ink",
-        "--ruth-home-header-cart-ink",
-        "--ruth-home-header-ink",
-        "--ruth-home-header-invert",
-      ].forEach((name) => root.style.removeProperty(name));
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+      window.removeEventListener("rosta:home-hero-media-changed", update);
     };
   }, []);
 
