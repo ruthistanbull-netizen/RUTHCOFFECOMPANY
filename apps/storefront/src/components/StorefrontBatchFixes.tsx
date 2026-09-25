@@ -100,7 +100,7 @@ export function StorefrontBatchFixes() {
         }
 
         html:not(.ruth-product-page-active) .ruth-zara-menu-button {
-          color: var(--ruth-header-left-ink, var(--rosta-carbon)) !important;
+          color: var(--ruth-home-header-menu-ink, var(--rosta-cream)) !important;
           mix-blend-mode: normal !important;
         }
 
