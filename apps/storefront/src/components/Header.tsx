@@ -735,7 +735,7 @@ export function Header({
       <AnimatePresence>
         {searchOpen ? (
           <motion.div
-            className="fixed inset-0 z-[110] bg-white px-5 text-black sm:px-8"
+            className="fixed inset-0 z-[110] bg-carbon px-5 text-cream sm:px-8"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -743,19 +743,19 @@ export function Header({
             <button
               type="button"
               onClick={() => setSearchOpen(false)}
-              className="absolute right-5 top-5 grid h-12 w-12 place-items-center sm:right-8 sm:top-7"
+              className="absolute right-5 top-5 grid h-12 w-12 place-items-center rounded-full active:bg-brick/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick sm:right-8 sm:top-7"
               aria-label="Aramayı kapat"
             >
               <X size={26} strokeWidth={1.1} />
             </button>
             <div className="mx-auto max-w-4xl pt-28 sm:pt-36">
-              <p className="mb-7 text-[10px] uppercase tracking-[0.22em] text-black/45">Ara</p>
+              <p className="mb-7 text-[10px] uppercase tracking-[0.22em] text-cream/55">Ara</p>
               <form
                 onSubmit={(event) => {
                   event.preventDefault();
                   submitSearch();
                 }}
-                className="flex items-center border-b border-black pb-4"
+                className="flex items-center border-b border-kraft/45 pb-4 focus-within:border-brick"
               >
                 <Search className="mr-4" size={22} strokeWidth={1.2} />
                 <input
@@ -763,7 +763,7 @@ export function Header({
                   value={searchValue}
                   onChange={(event) => setSearchValue(event.target.value)}
                   placeholder="Ne arıyorsunuz?"
-                  className="w-full bg-transparent text-[clamp(1.6rem,4vw,3.5rem)] font-normal outline-none placeholder:text-black/25"
+                  className="w-full bg-transparent text-[clamp(1.6rem,4vw,3.5rem)] font-normal text-cream outline-none placeholder:text-cream/35"
                 />
               </form>
               <div className="mt-10 grid grid-cols-2 gap-x-8 sm:grid-cols-3 lg:grid-cols-4">
@@ -772,7 +772,7 @@ export function Header({
                     key={item.path}
                     href={item.path}
                     onClick={() => setSearchOpen(false)}
-                    className="border-b border-black/10 py-4 text-[10px] uppercase tracking-[0.14em]"
+                    className="border-b border-kraft/30 py-4 text-[10px] uppercase tracking-[0.14em] text-cream focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
                   >
                     {item.label}
                   </Link>
