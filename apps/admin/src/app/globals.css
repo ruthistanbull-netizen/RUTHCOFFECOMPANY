@@ -285,6 +285,31 @@ body {
   border-bottom-color: var(--panel-line);
 }
 
+.admin-status-dot {
+  background: var(--ruth-color-success);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--ruth-color-success) 16%, transparent);
+}
+
+.admin-editor-panel {
+  background: var(--rosta-carbon-soft);
+  color: var(--rosta-cream);
+}
+
+.admin-editor-panel > footer,
+.admin-theme-savebar {
+  background: color-mix(in srgb, var(--rosta-carbon-soft) 92%, transparent);
+}
+
+.admin-chip.is-active {
+  border-color: var(--rosta-brick-b);
+  background: color-mix(in srgb, var(--rosta-brick-b) 14%, var(--rosta-carbon-soft));
+  color: var(--rosta-cream);
+}
+
+.admin-upload-control small {
+  color: var(--panel-muted);
+}
+
 .admin-topbar > div,
 .admin-page-header p,
 .admin-metric span,
