@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, SlidersHorizontal, X } from "lucide-react";
+import { Check, ChevronDown, SlidersHorizontal, X } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 import type { Product } from "@/types/site";
 import {
@@ -40,6 +40,14 @@ const PRICE_RANGES = [
   { id: "1000-2000", label: "1000.00 TL – 2000.00 TL", min: 1000, max: 2000 },
   { id: "over-2000", label: "2000.00 TL üzeri", min: 2000, max: Number.POSITIVE_INFINITY },
 ];
+
+const SORT_OPTIONS = [
+  { value: "featured", label: "Öne çıkanlar" },
+  { value: "newest", label: "En yeniler" },
+  { value: "price-low", label: "Fiyat: Artan" },
+  { value: "price-high", label: "Fiyat: Azalan" },
+  { value: "name", label: "İsme göre" },
+] as const;
 
 function numericPrice(product: Product) {
   const value = Number(product.price);
@@ -111,6 +119,7 @@ export function ProductCatalog({
 }) {
   const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
   const [sort, setSort] = useState("featured");
+  const [sortOpen, setSortOpen] = useState(false);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -390,23 +399,69 @@ export function ProductCatalog({
           {filteredProducts.length} ürün
         </p>
 
-        <label className="ml-auto flex items-center gap-3">
-          <span className="hidden text-[10px] uppercase tracking-wide-luxe text-cream/70 sm:block">
+        <div className="relative ml-auto flex items-center gap-3">
+          <span className="hidden text-[10px] uppercase tracking-wide-luxe text-cream/60 sm:block">
             Sırala
           </span>
-          <select
-            value={sort}
-            onChange={(event) => setSort(event.target.value)}
-            className="cursor-pointer border-b border-kraft/45 bg-carbon pb-1 text-sm text-cream outline-none focus:border-brick focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
+          <button
+            type="button"
+            onClick={() => setSortOpen((current) => !current)}
+            className="flex min-w-[168px] items-center justify-between gap-4 rounded-full border border-kraft/40 bg-carbon-soft px-4 py-2.5 text-sm text-cream shadow-[0_8px_24px_color-mix(in_srgb,var(--rosta-carbon)_26%,transparent)] transition-colors active:border-brick/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
             aria-label="Ürünleri sırala"
+            aria-haspopup="listbox"
+            aria-expanded={sortOpen}
           >
-            <option value="featured">Öne çıkanlar</option>
-            <option value="newest">En yeniler</option>
-            <option value="price-low">Fiyat: Artan</option>
-            <option value="price-high">Fiyat: Azalan</option>
-            <option value="name">İsme göre</option>
-          </select>
-        </label>
+            <span>{SORT_OPTIONS.find((option) => option.value === sort)?.label || "Öne çıkanlar"}</span>
+            <ChevronDown
+              size={16}
+              strokeWidth={1.4}
+              className={`shrink-0 transition-transform duration-200 ${sortOpen ? "rotate-180" : ""}`}
+              aria-hidden="true"
+            />
+          </button>
+
+          <AnimatePresence>
+            {sortOpen ? (
+              <>
+                <button
+                  type="button"
+                  className="fixed inset-0 z-[68] cursor-default"
+                  aria-label="Sıralama listesini kapat"
+                  onClick={() => setSortOpen(false)}
+                />
+                <motion.div
+                  role="listbox"
+                  aria-label="Ürün sıralaması"
+                  className="absolute right-0 top-full z-[69] mt-2 w-[220px] overflow-hidden rounded-[24px] border border-kraft/40 bg-carbon-soft p-2 text-cream shadow-[0_18px_50px_color-mix(in_srgb,var(--rosta-carbon)_52%,transparent)]"
+                  initial={{ opacity: 0, y: 6, scale: 0.985 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 5, scale: 0.985 }}
+                  transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  {SORT_OPTIONS.map((option) => {
+                    const selected = option.value === sort;
+                    return (
+                      <button
+                        key={option.value}
+                        type="button"
+                        role="option"
+                        aria-selected={selected}
+                        onClick={() => {
+                          setSort(option.value);
+                          setSortOpen(false);
+                        }}
+                        className={`flex w-full items-center justify-between rounded-[16px] px-4 py-3 text-left text-[11px] uppercase tracking-[0.16em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brick ${selected ? "bg-cream/[0.07] text-brick" : "text-cream hover:bg-cream/[0.05]"}`}
+                      >
+                        <span>{option.label}</span>
+                        {selected ? <Check size={14} strokeWidth={1.5} aria-hidden="true" /> : null}
+                      </button>
+                    );
+                  })}
+                </motion.div>
+              </>
+            ) : null}
+          </AnimatePresence>
+        </div>
       </div>
 
       <div className="flex gap-10">
