@@ -191,10 +191,10 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
         : "Hesabınız için yeni bir şifre belirleyin.";
 
   const fieldClass =
-    "h-[54px] w-full rounded-[4px] border border-white/14 bg-[#242424] px-4 text-[15px] text-[#F4F0E8] outline-none transition placeholder:text-[#F4F0E8]/36 focus:border-[#F4F0E8]/55 focus:bg-[#292929] focus:ring-2 focus:ring-[#F4F0E8]/10 disabled:opacity-50";
+    "h-[54px] w-full rounded-[4px] border border-white/14 bg-[#242424] px-4 text-[15px] text-[#FBF3E6] outline-none transition placeholder:text-[#FBF3E6]/36 focus:border-[#FBF3E6]/55 focus:bg-[#242424] focus:ring-2 focus:ring-[#FBF3E6]/10 disabled:opacity-50";
 
   return (
-    <main className="relative min-h-[100dvh] overflow-hidden bg-[#141414] text-[#F4F0E8]" data-exact-base44-auth={mode}>
+    <main className="relative min-h-[100dvh] overflow-hidden bg-[#111111] text-[#FBF3E6]" data-exact-base44-auth={mode}>
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_-10%,rgba(255,255,255,.075),transparent_34%),linear-gradient(180deg,rgba(0,0,0,.04),rgba(0,0,0,.34))]" />
 
       <header className="relative z-20 flex h-[72px] items-center px-5 pt-[env(safe-area-inset-top)] sm:h-[86px] sm:px-10 lg:px-12">
@@ -207,7 +207,7 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
       </header>
 
       <section className="relative z-10 flex min-h-[calc(100dvh-72px)] items-start justify-center px-5 pb-[max(2rem,env(safe-area-inset-bottom))] pt-8 sm:min-h-[calc(100dvh-86px)] sm:items-center sm:pb-16 sm:pt-0">
-        <div className="w-full max-w-[450px] rounded-[8px] border border-white/[0.08] bg-[#1b1b1b]/92 px-6 py-8 shadow-[0_30px_80px_rgba(0,0,0,.38)] backdrop-blur-[6px] sm:px-14 sm:py-12">
+        <div className="w-full max-w-[450px] rounded-[8px] border border-white/[0.08] bg-[#242424]/92 px-6 py-8 shadow-[0_30px_80px_rgba(0,0,0,.38)] backdrop-blur-[6px] sm:px-14 sm:py-12">
           <div className="mb-8">
             <img
               src="/rr-hub-cream.svg"
@@ -215,12 +215,12 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
               draggable={false}
               className="mx-auto mb-8 h-auto w-[184px] select-none object-contain sm:w-[210px]"
             />
-            <h1 className="text-[30px] font-bold tracking-[-0.035em] text-[#F4F0E8] sm:text-[34px]">{title}</h1>
-            <p className="mt-2 text-[12px] leading-relaxed text-[#F4F0E8]/46 sm:text-[13px]">{subtitle}</p>
+            <h1 className="text-[30px] font-bold tracking-[-0.035em] text-[#FBF3E6] sm:text-[34px]">{title}</h1>
+            <p className="mt-2 text-[12px] leading-relaxed text-[#FBF3E6]/46 sm:text-[13px]">{subtitle}</p>
           </div>
 
           {checkingRecovery ? (
-            <div className="mb-4 rounded-[4px] border border-white/10 bg-white/[0.055] px-4 py-3 text-[12px] text-[#F4F0E8]/62">
+            <div className="mb-4 rounded-[4px] border border-white/10 bg-white/[0.055] px-4 py-3 text-[12px] text-[#FBF3E6]/62">
               Güvenli bağlantı doğrulanıyor…
             </div>
           ) : null}
@@ -232,24 +232,24 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
           ) : null}
 
           {notice ? (
-            <div className="mb-4 rounded-[4px] border border-white/10 bg-white/[0.055] px-4 py-3 text-[12px] leading-relaxed text-[#F4F0E8]/62">
+            <div className="mb-4 rounded-[4px] border border-white/10 bg-white/[0.055] px-4 py-3 text-[12px] leading-relaxed text-[#FBF3E6]/62">
               {notice}
             </div>
           ) : null}
 
           {sent ? (
             <div>
-              <p className="text-[15px] leading-relaxed text-[#F4F0E8]/62">
-                Şifre yenileme bağlantısı <strong className="font-medium text-[#F4F0E8]">{email}</strong> adresine gönderildi.
+              <p className="text-[15px] leading-relaxed text-[#FBF3E6]/62">
+                Şifre yenileme bağlantısı <strong className="font-medium text-[#FBF3E6]">{email}</strong> adresine gönderildi.
               </p>
-              <Link href="/login" className="mt-7 inline-flex h-11 w-full items-center justify-center rounded-[4px] bg-[#F4F0E8] text-[14px] font-semibold text-[#141414] transition hover:bg-[#e9e3d8] active:scale-[0.985]">
+              <Link href="/login" className="mt-7 inline-flex h-11 w-full items-center justify-center rounded-[4px] bg-[#FBF3E6] text-[14px] font-semibold text-[#111111] transition hover:bg-[#C8A77D] active:scale-[0.985]">
                 Giriş ekranına dön
               </Link>
             </div>
           ) : resetComplete ? (
             <div>
-              <p className="text-[15px] leading-relaxed text-[#F4F0E8]/62">Yeni şifreniz kaydedildi.</p>
-              <Link href="/login" className="mt-7 inline-flex h-11 w-full items-center justify-center rounded-[4px] bg-[#F4F0E8] text-[14px] font-semibold text-[#141414] transition hover:bg-[#e9e3d8] active:scale-[0.985]">
+              <p className="text-[15px] leading-relaxed text-[#FBF3E6]/62">Yeni şifreniz kaydedildi.</p>
+              <Link href="/login" className="mt-7 inline-flex h-11 w-full items-center justify-center rounded-[4px] bg-[#FBF3E6] text-[14px] font-semibold text-[#111111] transition hover:bg-[#C8A77D] active:scale-[0.985]">
                 Giriş ekranına dön
               </Link>
             </div>
@@ -284,7 +284,7 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
                   <button
                     type="button"
                     onClick={() => setShowPassword((current) => !current)}
-                    className="absolute right-3 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full text-[#F4F0E8]/42 transition active:scale-90 active:bg-surface-tertiary focus-visible:bg-surface-tertiary focus-visible:text-[#F4F0E8] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                    className="absolute right-3 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full text-[#FBF3E6]/42 transition active:scale-90 active:bg-surface-tertiary focus-visible:bg-surface-tertiary focus-visible:text-[#FBF3E6] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                     aria-label={showPassword ? "Şifreyi gizle" : "Şifreyi göster"}
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -308,17 +308,17 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
 
               {mode === "login" ? (
                 <div className="flex items-center justify-between gap-4 pt-0.5">
-                  <label className="inline-flex min-h-9 cursor-pointer items-center gap-2 text-[12px] text-[#F4F0E8]/62">
+                  <label className="inline-flex min-h-9 cursor-pointer items-center gap-2 text-[12px] text-[#FBF3E6]/62">
                     <input
                       type="checkbox"
                       checked={rememberSession}
                       onChange={(event) => setRememberSession(event.target.checked)}
                       disabled={loading}
-                      className="h-4 w-4 rounded border-border-strong bg-transparent accent-[#F4F0E8]"
+                      className="h-4 w-4 rounded border-border-strong bg-transparent accent-[#FBF3E6]"
                     />
                     <span>Oturumu açık tut</span>
                   </label>
-                  <Link href="/forgot-password" className="text-[12px] text-[#F4F0E8]/62 transition focus-visible:text-[#F4F0E8] focus-visible:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+                  <Link href="/forgot-password" className="text-[12px] text-[#FBF3E6]/62 transition focus-visible:text-[#FBF3E6] focus-visible:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
                     Şifremi unuttum
                   </Link>
                 </div>
@@ -328,7 +328,7 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="mt-1 flex h-[48px] w-full touch-manipulation select-none items-center justify-center rounded-[4px] bg-[#F4F0E8] text-[14px] font-bold text-[#141414] transition-[transform,background,filter] duration-150 hover:bg-[#e9e3d8] active:scale-[0.965] active:brightness-90 disabled:cursor-wait disabled:opacity-55 [-webkit-tap-highlight-color:transparent]"
+                  className="mt-1 flex h-[48px] w-full touch-manipulation select-none items-center justify-center rounded-[4px] bg-[#FBF3E6] text-[14px] font-bold text-[#111111] transition-[transform,background,filter] duration-150 hover:bg-[#C8A77D] active:scale-[0.965] active:brightness-90 disabled:cursor-wait disabled:opacity-55 [-webkit-tap-highlight-color:transparent]"
                 >
                   {loading
                     ? "Kontrol ediliyor…"
@@ -341,20 +341,20 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
               ) : null}
 
               {mode === "reset" && !checkingRecovery && !recoveryReady ? (
-                <Link href="/forgot-password" className="flex h-[48px] w-full items-center justify-center rounded-[4px] bg-[#F4F0E8] text-[14px] font-bold text-[#141414] transition-[transform,background,filter] duration-150 hover:bg-[#e9e3d8] active:scale-[0.965] active:brightness-90 disabled:cursor-wait disabled:opacity-55 [-webkit-tap-highlight-color:transparent]">
+                <Link href="/forgot-password" className="flex h-[48px] w-full items-center justify-center rounded-[4px] bg-[#FBF3E6] text-[14px] font-bold text-[#111111] transition-[transform,background,filter] duration-150 hover:bg-[#C8A77D] active:scale-[0.965] active:brightness-90 disabled:cursor-wait disabled:opacity-55 [-webkit-tap-highlight-color:transparent]">
                   Yeni bağlantı iste
                 </Link>
               ) : null}
 
               {mode !== "login" ? (
-                <Link href="/login" className="block pt-2 text-center text-[12px] text-[#F4F0E8]/48 transition hover:text-[#F4F0E8]">
+                <Link href="/login" className="block pt-2 text-center text-[12px] text-[#FBF3E6]/48 transition hover:text-[#FBF3E6]">
                   Giriş ekranına dön
                 </Link>
               ) : null}
             </form>
           )}
 
-          <p className="mt-8 text-center text-[10px] leading-relaxed tracking-[0.03em] text-[#F4F0E8]/42">
+          <p className="mt-8 text-center text-[10px] leading-relaxed tracking-[0.03em] text-[#FBF3E6]/42">
             RR HUB · Güvenli yönetim erişimi
           </p>
         </div>
