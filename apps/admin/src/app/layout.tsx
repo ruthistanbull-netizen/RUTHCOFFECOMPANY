@@ -59,15 +59,15 @@ export const metadata: Metadata = {
   applicationName: "RR HUB",
   title: "RR HUB",
   description: "ROSTA Coffee Co. ve Ruth Istanbul güvenli yönetim erişimi",
-  manifest: "/manifest.webmanifest?v=27",
+  manifest: "/manifest.webmanifest?v=29",
   icons: {
     icon: [
-      { url: "/icon.svg", type: "image/svg+xml" },
-      { url: "/icon-192.png?v=25", sizes: "192x192", type: "image/png" },
-      { url: "/icon-512.png?v=25", sizes: "512x512", type: "image/png" },
+      { url: "/icon.svg?v=29", type: "image/svg+xml" },
+      { url: "/icon-192.png?v=29", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png?v=29", sizes: "512x512", type: "image/png" },
     ],
-    apple: [{ url: "/rr-hub-icon-180.png?v=28", sizes: "180x180", type: "image/png" }],
-    shortcut: ["/icon.svg"],
+    apple: [{ url: "/rr-hub-icon-180.png?v=29", sizes: "180x180", type: "image/png" }],
+    shortcut: ["/icon.svg?v=29"],
   },
   appleWebApp: { capable: true, title: "RR HUB", statusBarStyle: "default" },
 };
