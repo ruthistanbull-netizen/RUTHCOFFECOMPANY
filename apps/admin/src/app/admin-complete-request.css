@@ -17,7 +17,7 @@ main[class*="content"] > .cr-notice {
   right: max(18px, env(safe-area-inset-right));
   width: min(430px, calc(100vw - 36px));
   margin: 0;
-  box-shadow: 0 18px 55px rgba(16, 19, 24, .18);
+  box-shadow: 0 18px 55px color-mix(in srgb, var(--rosta-carbon, #111111) 38%, transparent);
   animation: cr-toast-enter .22s ease-out both;
 }
 
