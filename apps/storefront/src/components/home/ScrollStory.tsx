@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { storySlides as defaultStorySlides } from "@/data/storySlides";
+import { homeScrollMediaId, homepageDeviceMedia } from "@/lib/themeMedia";
+import type { ThemeCustomizerSettings } from "@/lib/themeCustomizer";
 
 type StorySlide = (typeof defaultStorySlides)[number];
 
@@ -42,9 +44,17 @@ function scrollImagesFromSettings(settings: unknown) {
   return homepageImages.scrollImages.map(cleanImage);
 }
 
-export default function ScrollStory({ images }: { images?: string[] | null }) {
+export default function ScrollStory({
+  images,
+  themeSettings,
+}: {
+  images?: string[] | null;
+  themeSettings: ThemeCustomizerSettings;
+}) {
   const sectionRef = useRef<HTMLElement>(null);
   const [liveImages, setLiveImages] = useState<string[] | null | undefined>(images);
+  const [liveThemeSettings, setLiveThemeSettings] = useState(themeSettings);
+  const [mobileViewport, setMobileViewport] = useState(false);
   const slides = useMemo(() => buildSlides(liveImages), [liveImages]);
   const [progress, setProgress] = useState(0);
 
@@ -53,13 +63,26 @@ export default function ScrollStory({ images }: { images?: string[] | null }) {
   }, [images]);
 
   useEffect(() => {
+    setLiveThemeSettings(themeSettings);
+  }, [themeSettings]);
+
+  useEffect(() => {
+    const update = () => setMobileViewport(window.innerWidth < 768);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  useEffect(() => {
     if (new URLSearchParams(window.location.search).get("themeEditor") !== "1") return;
     if (window.parent === window) return;
 
     const onMessage = (event: MessageEvent) => {
       if (event.source !== window.parent || !event.data || typeof event.data !== "object") return;
       if (event.data.type !== "RUTH_THEME_EDITOR_SETTINGS" || !event.data.settings) return;
-      const next = scrollImagesFromSettings(event.data.settings);
+      const nextSettings = event.data.settings as ThemeCustomizerSettings;
+      const next = scrollImagesFromSettings(nextSettings);
+      setLiveThemeSettings(nextSettings);
       if (next) setLiveImages(next);
     };
 
@@ -140,6 +163,8 @@ export default function ScrollStory({ images }: { images?: string[] | null }) {
             transition={{ repeat: Infinity, duration: 6.2, ease: "easeInOut" }}
           >
             {slides.map((slide, index) => {
+              const resolvedMedia = homepageDeviceMedia(liveThemeSettings, homeScrollMediaId(index), slide.image);
+              const activeMedia = mobileViewport ? resolvedMedia.mobile : resolvedMedia.desktop;
               const isCurrent = index === currentIndex;
               const isNext = index === nextIndex && nextIndex !== currentIndex;
               const opacity = isCurrent ? 1 - transitionProgress : isNext ? transitionProgress : 0;
@@ -151,7 +176,7 @@ export default function ScrollStory({ images }: { images?: string[] | null }) {
 
               return (
                 <Link
-                  key={`img-${slide.image}-${index}`}
+                  key={`img-${activeMedia.src}-${index}`}
                   href={slide.href}
                   aria-label={`${slide.title} ürününü incele`}
                   className="absolute inset-0 overflow-hidden rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brick"
@@ -164,9 +189,9 @@ export default function ScrollStory({ images }: { images?: string[] | null }) {
                     cursor: "pointer",
                   }}
                 >
-                  {isVideoMediaSource(slide.image) ? (
+                  {activeMedia.mediaType === "video" ? (
                     <video
-                      src={slide.image}
+                      src={activeMedia.src}
                       aria-label={slide.title}
                       className="h-full w-full object-cover"
                       autoPlay
@@ -175,13 +200,17 @@ export default function ScrollStory({ images }: { images?: string[] | null }) {
                       playsInline
                       preload={index <= 1 ? "auto" : "metadata"}
                       disablePictureInPicture
+                      data-theme-id={homeScrollMediaId(index)}
+                      data-theme-label={`Kayan medya ${index + 1}`}
                     />
                   ) : (
                     <img
-                      src={slide.image}
+                      src={activeMedia.src}
                       alt={slide.title}
                       className="h-full w-full object-cover"
                       loading={index <= 1 ? "eager" : "lazy"}
+                      data-theme-id={homeScrollMediaId(index)}
+                      data-theme-label={`Kayan medya ${index + 1}`}
                     />
                   )}
                 </Link>
