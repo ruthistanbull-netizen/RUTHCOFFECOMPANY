@@ -548,7 +548,6 @@ export function AdminMobileQuarterMenu() {
               returnToHub();
             }}
           >
-            <img src="/rr-mark-dark.svg" alt="" draggable={false} className={styles.hubTopLeftDark} />
             <img src="/rr-mark-cream.svg" alt="" draggable={false} className={styles.hubTopLeftCream} />
           </motion.button>
         ) : null}
@@ -772,16 +771,14 @@ export function AdminMobileQuarterMenu() {
             cy={CENTER}
             r="102"
             className={styles.core}
-            animate={{ scale: open ? 1.3 : 1, fill: open ? "hsl(var(--text-main))" : "hsl(var(--surface-primary))" }}
+            animate={{ scale: open ? 1.3 : 1 }}
             transition={open
               ? {
                   scale: { duration: reduceMotion ? 0.01 : 0.8, delay: reduceMotion ? 0 : 0.1, ease: CORE_ELASTIC },
-                  fill: { duration: reduceMotion ? 0.01 : 0.6, delay: reduceMotion ? 0 : 0.1, ease: power4Out },
-                }
+                 }
               : {
                   scale: { duration: reduceMotion ? 0.01 : 0.45, delay: reduceMotion ? 0 : 0.15, ease: BACK_IN_3 },
-                  fill: { duration: reduceMotion ? 0.01 : 0.45, delay: reduceMotion ? 0 : 0.15, ease: power4In },
-                }}
+                 }}
             style={{ transformOrigin: `${CENTER}px ${CENTER}px` }}
           />
 
