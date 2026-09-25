@@ -433,6 +433,31 @@ export function VisualThemeCustomizer() {
     });
   }, [baseOverride, device, selected, targetPage]);
 
+  const patchMediaStyle = useCallback((patch: Partial<ThemeDeviceStyle>) => {
+    patchDeviceStyle({
+      width: null,
+      height: null,
+      maxWidth: null,
+      minHeight: null,
+      paddingX: null,
+      paddingY: null,
+      marginTop: null,
+      marginBottom: null,
+      ...patch,
+    });
+  }, [patchDeviceStyle]);
+
+  const resetMediaLayout = useCallback(() => {
+    patchMediaStyle({
+      mediaScale: null,
+      objectFit: null,
+      objectPositionX: null,
+      objectPositionY: null,
+      borderRadius: null,
+      opacity: null,
+    });
+  }, [patchMediaStyle]);
+
   const resetSelectedOverride = useCallback(() => {
     if (!selected) return;
     setSettings((current) => removeThemeElementOverride(current, targetPage, selected.id));
@@ -612,34 +637,6 @@ export function VisualThemeCustomizer() {
         setMenu(null);
         pendingContextRef.current = { id: message.id, point: message.point as ContextPoint };
         iframeRef.current?.contentWindow?.postMessage({ type: "RUTH_THEME_EDITOR_SELECT_REQUEST", id: message.id, scroll: false }, "*");
-        return;
-      }
-
-      if (message.type === "RUTH_THEME_EDITOR_RESIZE" && typeof message.id === "string" && selected?.id === message.id) {
-        const width = Number(message.width);
-        const height = Number(message.height);
-        const targetDevice: Device = message.device === "mobile" ? "mobile" : "desktop";
-        if (Number.isFinite(width) && Number.isFinite(height) && width > 0 && height > 0) {
-          setSettings((current) => {
-            const base = baseOverride(current);
-            if (!base) return current;
-            const currentStyle = targetDevice === "mobile" ? base.mobile : base.desktop;
-            return upsertThemeElementOverride(current, targetPage, {
-              ...base,
-              [targetDevice]: {
-                ...(currentStyle || {}),
-                width: Math.round(width),
-                widthUnit: "px",
-                height: Math.round(height),
-                heightUnit: "px",
-              },
-            });
-          });
-          setSelected((current) => current ? {
-            ...current,
-            metrics: current.metrics ? { ...current.metrics, width: Math.round(width), height: Math.round(height) } : current.metrics,
-          } : current);
-        }
         return;
       }
 
@@ -941,7 +938,7 @@ export function VisualThemeCustomizer() {
             </section>
           ) : null}
 
-          {(selected.kind === "button" || selected.kind === "section" || selected.kind === "container" || selected.kind === "image") ? (
+          {(selected.kind === "button" || selected.kind === "section" || selected.kind === "container") ? (
             <section className="border-b border-border-subtle p-3">
               <p className="mb-2 text-[9px] font-semibold">Boyut ve görünüm</p>
               <div className="grid grid-cols-2 gap-2">
