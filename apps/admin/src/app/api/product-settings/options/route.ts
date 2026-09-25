@@ -162,6 +162,25 @@ function mergeCurrentProductValues(groups: FieldGroup[], products: Array<Record<
   });
 }
 
+async function migrateProductField(
+  supabase: Awaited<ReturnType<typeof requireAdmin>> extends { supabase: infer T } ? T : never,
+  field: FieldKey,
+  from: string,
+  to: string,
+  updatedAt: string,
+) {
+  if (field === "material") {
+    return supabase.from("products").update({ material: to, updated_at: updatedAt }).eq("material", from);
+  }
+  if (field === "finish_color") {
+    return supabase.from("products").update({ finish_color: to, updated_at: updatedAt }).eq("finish_color", from);
+  }
+  if (field === "size_usage") {
+    return supabase.from("products").update({ size_usage: to, updated_at: updatedAt }).eq("size_usage", from);
+  }
+  return supabase.from("products").update({ care_advice: to, updated_at: updatedAt }).eq("care_advice", from);
+}
+
 export async function GET(request: Request) {
   const auth = await requireAdmin(request);
   if ("error" in auth) return auth.error;
@@ -218,10 +237,13 @@ export async function PUT(request: Request) {
       const to = clean(option.value, group.template ? 2400 : 180);
       if (!from || !to || from === to) continue;
 
-      const { error: migrateError } = await auth.supabase
-        .from("products")
-        .update({ [group.field]: to, updated_at: now })
-        .eq(group.field, from);
+      const { error: migrateError } = await migrateProductField(
+        auth.supabase,
+        group.field,
+        from,
+        to,
+        now,
+      );
 
       if (migrateError) {
         return NextResponse.json(
