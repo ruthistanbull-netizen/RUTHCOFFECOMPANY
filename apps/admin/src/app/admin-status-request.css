@@ -1,35 +1,33 @@
-/* User-requested order and payment color system. */
+/* Order and payment states use the Ruth Commerce operational semantic palette.
+ * Brand colors never override status meaning.
+ */
 .cr-status--new {
-  background: #f4ebff !important;
-  color: #6941c6 !important;
+  background: var(--ruth-color-warning-soft, #FFF4D6) !important;
+  color: var(--ruth-color-warning-text, #9B6B17) !important;
 }
 
-.cr-status--ready {
-  background: #eff8ff !important;
-  color: #175cd3 !important;
-}
-
+.cr-status--ready,
 .cr-status--shipped {
-  background: #ecfdf3 !important;
-  color: #067647 !important;
+  background: var(--ruth-color-status-accent-soft, #F6EBC6) !important;
+  color: var(--ruth-color-status-accent-text, #3B2D0D) !important;
 }
 
 .cr-status--delivered {
-  background: #fdf2fa !important;
-  color: #c11574 !important;
+  background: var(--ruth-color-success-soft, #E3F8ED) !important;
+  color: var(--ruth-color-success-text, #147B63) !important;
 }
 
 .cr-payment-pill--info {
-  background: #eff8ff !important;
-  color: #175cd3 !important;
+  background: var(--ruth-color-info-soft, #EBF3FF) !important;
+  color: var(--ruth-color-info-text, #1C71D9) !important;
 }
 
 .cr-payment-pill--success {
-  background: #ecfdf3 !important;
-  color: #067647 !important;
+  background: var(--ruth-color-success-soft, #E3F8ED) !important;
+  color: var(--ruth-color-success-text, #147B63) !important;
 }
 
 .cr-payment-pill--danger {
-  background: #fef3f2 !important;
-  color: #b42318 !important;
+  background: var(--ruth-color-danger-soft, #FFE5E8) !important;
+  color: var(--ruth-color-danger-text, #D62937) !important;
 }
