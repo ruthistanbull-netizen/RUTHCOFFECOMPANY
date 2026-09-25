@@ -33,9 +33,32 @@ export type ProductOptionDefinition = {
   values: ProductOptionValue[];
 };
 
+type ProductPageContent = {
+  materialTitle: string;
+  materialFallback: string;
+  careTitle: string;
+  careFallback: string;
+  sizeUsageTitle: string;
+  sizeUsageFallback: string;
+  shippingTitle: string;
+  shippingText: string;
+};
+
+const EMPTY_PRODUCT_PAGE: ProductPageContent = {
+  materialTitle: "",
+  materialFallback: "",
+  careTitle: "",
+  careFallback: "",
+  sizeUsageTitle: "",
+  sizeUsageFallback: "",
+  shippingTitle: "",
+  shippingText: "",
+};
+
 type Payload = {
   ok: boolean;
   definitions?: ProductOptionDefinition[];
+  productPage?: ProductPageContent;
   updatedAt?: string | null;
   warning?: string | null;
 };
@@ -56,7 +79,9 @@ function cloneDefinitions(value: ProductOptionDefinition[]) {
 
 export function ExactProductOptions() {
   const [definitions, setDefinitions] = useState<ProductOptionDefinition[]>([]);
+  const [productPage, setProductPage] = useState<ProductPageContent>(EMPTY_PRODUCT_PAGE);
   const [savedSnapshot, setSavedSnapshot] = useState("[]");
+  const [savedProductPageSnapshot, setSavedProductPageSnapshot] = useState("{}");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [savedFlash, setSavedFlash] = useState(false);
@@ -64,8 +89,10 @@ export function ExactProductOptions() {
   const [updatedAt, setUpdatedAt] = useState<string | null>(null);
 
   const dirty = useMemo(
-    () => JSON.stringify(definitions) !== savedSnapshot,
-    [definitions, savedSnapshot],
+    () =>
+      JSON.stringify(definitions) !== savedSnapshot ||
+      JSON.stringify(productPage) !== savedProductPageSnapshot,
+    [definitions, productPage, savedProductPageSnapshot, savedSnapshot],
   );
 
   const load = async (hardRefresh = false) => {
@@ -78,8 +105,11 @@ export function ExactProductOptions() {
         staleMs: 120_000,
       });
       const next = cloneDefinitions(payload.definitions || []);
+      const nextProductPage = payload.productPage || EMPTY_PRODUCT_PAGE;
       setDefinitions(next);
+      setProductPage(nextProductPage);
       setSavedSnapshot(JSON.stringify(next));
+      setSavedProductPageSnapshot(JSON.stringify(nextProductPage));
       setUpdatedAt(payload.updatedAt || null);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Ürün seçenekleri yüklenemedi.");
@@ -100,12 +130,15 @@ export function ExactProductOptions() {
     try {
       const payload = await adminRequest<Payload>("/api/product-settings/options", {
         method: "PUT",
-        body: JSON.stringify({ definitions }),
+        body: JSON.stringify({ definitions, productPage }),
         invalidate: ["/api/product-settings/options"],
       });
       const next = cloneDefinitions(payload.definitions || definitions);
+      const nextProductPage = payload.productPage || productPage;
       setDefinitions(next);
+      setProductPage(nextProductPage);
       setSavedSnapshot(JSON.stringify(next));
+      setSavedProductPageSnapshot(JSON.stringify(nextProductPage));
       setUpdatedAt(payload.updatedAt || new Date().toISOString());
       setMessage(payload.warning || "Ürün seçenekleri kaydedildi.");
       setSavedFlash(true);
@@ -221,7 +254,7 @@ export function ExactProductOptions() {
 
       <div className="mb-4 rounded-[16px] border border-border-subtle bg-surface-secondary px-4 py-3">
         <p className="ruth-type-body text-main">
-          Buradaki seçenekler Ürün Oluştur ve Ürün Düzenleme Stüdyosu'nda hazır şablon olarak görünür.
+          Buradan hem ürün seçeneklerini hem de storefront ürün sayfasındaki bakım, ölçü/kullanım ve kargo metinlerini yönetebilirsin.
         </p>
         <p className="ruth-type-caption mt-1 text-muted">
           Bir seçeneği buradan kaldırmak mevcut ürünlerdeki kayıtlı varyantları silmez; yeni düzenlemelerde kütüphaneden kaldırır.
@@ -229,6 +262,102 @@ export function ExactProductOptions() {
         </p>
         {message ? <p className="ruth-type-caption mt-2 font-medium text-accent">{message}</p> : null}
       </div>
+
+      {!loading ? (
+        <ExactDataCard
+          title="Ürün Sayfası Bilgi Alanları"
+          className="mb-4"
+        >
+          <div className="grid gap-5">
+            <div className="grid gap-4 md:grid-cols-2">
+              <label>
+                <span className="ruth-type-label mb-1.5 block text-subtle">Ürün bilgisi başlığı</span>
+                <input
+                  value={productPage.materialTitle}
+                  onChange={(event) => setProductPage((current) => ({ ...current, materialTitle: event.target.value }))}
+                  className={exactFormInputClass}
+                  placeholder="Materyal ve Bakım / Ürün Bilgisi"
+                />
+              </label>
+              <label>
+                <span className="ruth-type-label mb-1.5 block text-subtle">Bakım başlığı</span>
+                <input
+                  value={productPage.careTitle}
+                  onChange={(event) => setProductPage((current) => ({ ...current, careTitle: event.target.value }))}
+                  className={exactFormInputClass}
+                  placeholder="Bakım / Saklama ve Kullanım"
+                />
+              </label>
+            </div>
+
+            <label>
+              <span className="ruth-type-label mb-1.5 block text-subtle">Ürün bilgisi varsayılan metni</span>
+              <textarea
+                value={productPage.materialFallback}
+                onChange={(event) => setProductPage((current) => ({ ...current, materialFallback: event.target.value }))}
+                className={`${exactFormInputClass} min-h-24`}
+                placeholder="Üründe özel bilgi girilmediyse storefrontta gösterilecek metin"
+              />
+            </label>
+
+            <label>
+              <span className="ruth-type-label mb-1.5 block text-subtle">Bakım / saklama varsayılan metni</span>
+              <textarea
+                value={productPage.careFallback}
+                onChange={(event) => setProductPage((current) => ({ ...current, careFallback: event.target.value }))}
+                className={`${exactFormInputClass} min-h-28`}
+                placeholder="Üründe özel bakım önerisi yoksa gösterilecek metin"
+              />
+            </label>
+
+            <div className="grid gap-4 md:grid-cols-[260px_minmax(0,1fr)]">
+              <label>
+                <span className="ruth-type-label mb-1.5 block text-subtle">Ölçü / kullanım başlığı</span>
+                <input
+                  value={productPage.sizeUsageTitle}
+                  onChange={(event) => setProductPage((current) => ({ ...current, sizeUsageTitle: event.target.value }))}
+                  className={exactFormInputClass}
+                  placeholder="Ölçü ve Kullanım"
+                />
+              </label>
+              <label>
+                <span className="ruth-type-label mb-1.5 block text-subtle">Ölçü / kullanım varsayılan metni</span>
+                <textarea
+                  value={productPage.sizeUsageFallback}
+                  onChange={(event) => setProductPage((current) => ({ ...current, sizeUsageFallback: event.target.value }))}
+                  className={`${exactFormInputClass} min-h-24`}
+                  placeholder="Üründe özel ölçü veya kullanım bilgisi yoksa gösterilecek metin"
+                />
+              </label>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-[260px_minmax(0,1fr)]">
+              <label>
+                <span className="ruth-type-label mb-1.5 block text-subtle">Kargo alanı başlığı</span>
+                <input
+                  value={productPage.shippingTitle}
+                  onChange={(event) => setProductPage((current) => ({ ...current, shippingTitle: event.target.value }))}
+                  className={exactFormInputClass}
+                  placeholder="Kargo İade ve Değişim"
+                />
+              </label>
+              <label>
+                <span className="ruth-type-label mb-1.5 block text-subtle">Kargo / iade / değişim metni</span>
+                <textarea
+                  value={productPage.shippingText}
+                  onChange={(event) => setProductPage((current) => ({ ...current, shippingText: event.target.value }))}
+                  className={`${exactFormInputClass} min-h-28`}
+                  placeholder="Ürün sayfasında gösterilecek kargo, iade ve değişim metni"
+                />
+              </label>
+            </div>
+
+            <p className="ruth-type-caption text-subtle">
+              Ürünün kendi bakım veya ölçü bilgisi varsa o ürünün özel metni kullanılır; boş bırakılan ürünlerde buradaki varsayılan metin devreye girer.
+            </p>
+          </div>
+        </ExactDataCard>
+      ) : null}
 
       {loading ? (
         <div className="grid gap-3">
