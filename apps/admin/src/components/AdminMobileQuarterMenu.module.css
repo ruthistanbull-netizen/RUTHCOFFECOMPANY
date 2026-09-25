@@ -339,8 +339,10 @@
 
 .hubHit:active {
   transform: scale(.94);
-  background: #191919;
-  box-shadow: -1px -1px 0 rgba(244, 240, 232, 0.2), -4px -4px 12px rgba(0, 0, 0, 0.22);
+  background: var(--rosta-carbon-soft, #242424);
+  box-shadow:
+    -1px -1px 0 color-mix(in srgb, var(--rosta-cream, #FBF3E6) 20%, transparent),
+    -4px -4px 12px rgba(0, 0, 0, 0.22);
 }
 
 @media (min-width: 1024px) {
