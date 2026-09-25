@@ -37,10 +37,12 @@ export function prepareRRHubWorkspaceForDocument() {
     window.sessionStorage.removeItem(RR_HUB_PWA_HANDOFF_KEY);
   } catch {}
 
-  // A navigation that immediately follows an explicit profile choice belongs
-  // to the same app run. A later cold PWA document starts without this marker,
-  // so it must ask for the brand again while keeping the auth session alive.
-  if (!isHubHandoff) clearRRHubWorkspaceSelection();
+  // Internal document loads, reloads and browser back/forward must keep the
+  // selected workspace. The PWA start URL is "/", so only a genuine root launch
+  // without an explicit handoff resets the brand choice and returns to RR HUB.
+  if (!isHubHandoff && window.location.pathname === "/") {
+    clearRRHubWorkspaceSelection();
+  }
 }
 
 export function hasRostaWorkspaceAccess() {
