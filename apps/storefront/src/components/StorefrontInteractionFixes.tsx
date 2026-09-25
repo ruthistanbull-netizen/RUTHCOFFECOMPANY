@@ -27,7 +27,7 @@ export function StorefrontInteractionFixes() {
 
       html:not(.ruth-home-page-active):not(.ruth-product-page-active)
         .ruth-zara-menu-button:not(.ruth-zara-menu-button--menu-open) {
-        color: var(--rosta-carbon) !important;
+        color: var(--rosta-cream) !important;
       }
 
       html.ruth-product-page-active
@@ -62,6 +62,16 @@ export function StorefrontInteractionFixes() {
 
       html.ruth-home-page-active[data-home-header-tone="light"] .header-wordmark {
         filter: brightness(0) !important;
+      }
+
+      html.ruth-home-page-active[data-home-header-tone="dark"] body.site-app-shell
+        .ruth-zara-menu-button:not(.ruth-zara-menu-button--menu-open),
+      html.ruth-home-page-active[data-home-header-tone="light"] body.site-app-shell
+        .ruth-zara-menu-button:not(.ruth-zara-menu-button--menu-open),
+      html.ruth-home-page-active:not([data-home-header-tone]) body.site-app-shell
+        .ruth-zara-menu-button:not(.ruth-zara-menu-button--menu-open) {
+        color: var(--ruth-home-header-menu-ink, var(--ruth-home-header-ink, var(--rosta-cream))) !important;
+        mix-blend-mode: normal !important;
       }
 
       html.ruth-home-page-active .ruth-zara-header button,
