@@ -579,7 +579,7 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
       return replacement;
     };
 
-    const positionOverlay = (element: Element) => {
+    const positionOverlay = (element: Element, _locked = false) => {
       const rect = element.getBoundingClientRect();
       overlay.style.display = "block";
       overlay.style.left = `${rect.left}px`;
