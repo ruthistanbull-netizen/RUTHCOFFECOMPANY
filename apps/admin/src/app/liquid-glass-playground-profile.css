@@ -27,25 +27,25 @@ body.ruth-admin-liquid-v3 {
   --lgp-damping: 0.84;
   --lgp-rgb-tint: 235 242 255;
 
-  --lgp-ink: rgba(19, 22, 29, 0.94);
-  --lgp-muted: rgba(57, 64, 77, 0.68);
-  --lgp-panel: rgba(235, 242, 255, 0.36);
-  --lgp-panel-strong: rgba(248, 251, 255, 0.52);
-  --lgp-panel-soft: rgba(244, 248, 255, 0.24);
+  --lgp-ink: color-mix(in srgb, var(--rosta-carbon, #111111) 94%, transparent);
+  --lgp-muted: color-mix(in srgb, var(--rosta-carbon-soft, #242424) 68%, transparent);
+  --lgp-panel: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 36%, transparent);
+  --lgp-panel-strong: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 52%, transparent);
+  --lgp-panel-soft: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 24%, transparent);
   --lgp-border: rgba(255, 255, 255, 0.72);
   --lgp-border-soft: rgba(255, 255, 255, 0.46);
-  --lgp-shadow: 0 16px 38px rgba(30, 38, 55, 0.14), 0 4px 12px rgba(30, 38, 55, 0.07);
-  --lgp-shadow-small: 0 8px 20px rgba(30, 38, 55, 0.1), 0 2px 7px rgba(30, 38, 55, 0.06);
+  --lgp-shadow: 0 16px 38px color-mix(in srgb, var(--rosta-carbon-soft, #242424) 14%, transparent), 0 4px 12px color-mix(in srgb, var(--rosta-carbon-soft, #242424) 7%, transparent);
+  --lgp-shadow-small: 0 8px 20px color-mix(in srgb, var(--rosta-carbon-soft, #242424) 10%, transparent), 0 2px 7px color-mix(in srgb, var(--rosta-carbon-soft, #242424) 6%, transparent);
   --lgp-spring-ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 html.dark body.ruth-admin-liquid-v3,
 html[data-theme="dark"] body.ruth-admin-liquid-v3 {
   --lgp-ink: rgba(255, 255, 255, 0.95);
-  --lgp-muted: rgba(232, 236, 244, 0.66);
-  --lgp-panel: rgba(22, 26, 34, 0.42);
-  --lgp-panel-strong: rgba(49, 55, 67, 0.46);
-  --lgp-panel-soft: rgba(27, 31, 40, 0.29);
+  --lgp-muted: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 66%, transparent);
+  --lgp-panel: color-mix(in srgb, var(--rosta-carbon, #111111) 42%, transparent);
+  --lgp-panel-strong: color-mix(in srgb, var(--rosta-carbon-soft, #242424) 46%, transparent);
+  --lgp-panel-soft: color-mix(in srgb, var(--rosta-carbon, #111111) 29%, transparent);
   --lgp-border: rgba(255, 255, 255, 0.2);
   --lgp-border-soft: rgba(255, 255, 255, 0.11);
   --lgp-shadow: 0 18px 44px rgba(0, 0, 0, 0.36), 0 4px 13px rgba(0, 0, 0, 0.2);
@@ -66,14 +66,14 @@ body.ruth-admin-liquid-v3 :is(
   border-color: var(--lgp-border) !important;
   background:
     radial-gradient(120% 92% at 30% -24%, rgba(255,255,255,0.72), transparent 48%),
-    linear-gradient(142deg, rgba(255,255,255,0.34), rgba(221,230,245,0.12) 56%, rgba(255,255,255,0.2)),
+    linear-gradient(142deg, rgba(255,255,255,0.34), color-mix(in srgb, var(--rosta-cream, #FBF3E6) 12%, transparent) 56%, rgba(255,255,255,0.2)),
     var(--lgp-panel) !important;
   box-shadow:
     var(--lgp-shadow-small),
     inset 0 1px 0 rgba(255,255,255,0.82),
-    inset 0 -1px 0 rgba(69,80,102,0.08),
-    inset 1px 0 0 rgba(255,212,111,0.08),
-    inset -1px 0 0 rgba(75,211,255,0.11) !important;
+    inset 0 -1px 0 color-mix(in srgb, var(--rosta-brick-b, #C94A40) 8%, transparent),
+    inset 1px 0 0 color-mix(in srgb, var(--rosta-kraft, #C8A77D) 8%, transparent),
+    inset -1px 0 0 color-mix(in srgb, var(--rosta-brick-b, #C94A40) 11%, transparent) !important;
   -webkit-backdrop-filter: blur(var(--lgp-blur)) saturate(1.28) brightness(1.02) !important;
   backdrop-filter: blur(var(--lgp-blur)) saturate(1.28) brightness(1.02) !important;
 }
@@ -134,9 +134,9 @@ body.ruth-admin-liquid-v3 [data-exact-base44-page] button[class*="border-"]:not(
   border: 1px solid var(--lgp-border-soft) !important;
   background:
     radial-gradient(100% 88% at 35% -24%, rgba(255,255,255,0.58), transparent 50%),
-    linear-gradient(145deg, rgba(255,255,255,0.27), rgba(221,230,245,0.1)),
+    linear-gradient(145deg, rgba(255,255,255,0.27), color-mix(in srgb, var(--rosta-cream, #FBF3E6) 10%, transparent)),
     var(--lgp-panel-soft) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 4px 13px rgba(35,44,61,0.06) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 4px 13px color-mix(in srgb, var(--rosta-carbon-soft, #242424) 6%, transparent) !important;
   -webkit-backdrop-filter: blur(15px) saturate(1.2) !important;
   backdrop-filter: blur(15px) saturate(1.2) !important;
 }
@@ -161,9 +161,9 @@ body.ruth-admin-liquid-v3 [data-exact-base44-page] select {
   border-radius: max(12px, var(--radius-control, 12px)) !important;
   color: var(--lgp-ink) !important;
   background:
-    linear-gradient(145deg, rgba(255,255,255,0.3), rgba(218,228,244,0.11)),
+    linear-gradient(145deg, rgba(255,255,255,0.3), color-mix(in srgb, var(--rosta-cream, #FBF3E6) 11%, transparent)),
     rgba(var(--lgp-rgb-tint), 0.2) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.68), inset 0 -1px 0 rgba(70,80,101,0.05) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.68), inset 0 -1px 0 color-mix(in srgb, var(--rosta-brick-b, #C94A40) 5%, transparent) !important;
   -webkit-backdrop-filter: blur(14px) saturate(1.2) !important;
   backdrop-filter: blur(14px) saturate(1.2) !important;
   transition: border-color 170ms ease, box-shadow 180ms ease, background 180ms ease !important;
@@ -179,7 +179,7 @@ body.ruth-admin-liquid-v3 [data-exact-base44-page] select:focus {
     0 0 0 3px color-mix(in srgb, hsl(var(--accent)) 12%, transparent),
     inset 0 1px 0 rgba(255,255,255,0.76) !important;
   background:
-    linear-gradient(145deg, rgba(255,255,255,0.39), rgba(218,228,244,0.14)),
+    linear-gradient(145deg, rgba(255,255,255,0.39), color-mix(in srgb, var(--rosta-cream, #FBF3E6) 14%, transparent)),
     rgba(var(--lgp-rgb-tint), 0.26) !important;
 }
 
@@ -189,7 +189,7 @@ body.ruth-admin-liquid-v3 [data-exact-base44-page] input[type="radio"] {
   width: 18px;
   height: 18px;
   accent-color: hsl(var(--accent));
-  filter: drop-shadow(0 2px 5px rgba(34,42,57,0.12));
+  filter: drop-shadow(0 2px 5px color-mix(in srgb, var(--rosta-carbon-soft, #242424) 12%, transparent));
 }
 
 body.ruth-admin-liquid-v3 [role="radiogroup"] {
@@ -209,9 +209,9 @@ body.ruth-admin-liquid-v3 [data-ruth-apple-card="true"] {
   border: 1px solid var(--lgp-border) !important;
   background:
     radial-gradient(96% 72% at 24% -18%, rgba(255,255,255,0.66), transparent 52%),
-    linear-gradient(145deg, rgba(255,255,255,0.31), rgba(220,230,246,0.12)),
+    linear-gradient(145deg, rgba(255,255,255,0.31), color-mix(in srgb, var(--rosta-cream, #FBF3E6) 12%, transparent)),
     var(--lgp-panel) !important;
-  box-shadow: var(--lgp-shadow-small), inset 0 1px 0 rgba(255,255,255,0.74), inset 0 -1px 0 rgba(66,79,103,0.06) !important;
+  box-shadow: var(--lgp-shadow-small), inset 0 1px 0 rgba(255,255,255,0.74), inset 0 -1px 0 color-mix(in srgb, var(--rosta-brick-b, #C94A40) 6%, transparent) !important;
   -webkit-backdrop-filter: blur(20px) saturate(1.26) !important;
   backdrop-filter: blur(20px) saturate(1.26) !important;
 }
@@ -225,9 +225,9 @@ body.ruth-admin-liquid-v3 [role="tablist"] {
   border: 1px solid var(--lgp-border-soft) !important;
   border-radius: 999px !important;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.24), rgba(219,229,245,0.08)),
+    linear-gradient(180deg, rgba(255,255,255,0.24), color-mix(in srgb, var(--rosta-cream, #FBF3E6) 8%, transparent)),
     rgba(var(--lgp-rgb-tint), 0.18) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.68), 0 5px 14px rgba(38,47,64,0.06) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.68), 0 5px 14px color-mix(in srgb, var(--rosta-carbon-soft, #242424) 6%, transparent) !important;
   -webkit-backdrop-filter: blur(18px) saturate(1.25) !important;
   backdrop-filter: blur(18px) saturate(1.25) !important;
 }
@@ -237,13 +237,13 @@ body.ruth-admin-liquid-v3 [data-ruth-segment-lens] {
   border-radius: 999px !important;
   background:
     radial-gradient(90% 95% at 35% -18%, rgba(255,255,255,0.72), transparent 52%),
-    linear-gradient(145deg, rgba(255,255,255,0.34), rgba(216,227,246,0.16)),
+    linear-gradient(145deg, rgba(255,255,255,0.34), color-mix(in srgb, var(--rosta-cream, #FBF3E6) 16%, transparent)),
     rgba(var(--lgp-rgb-tint), 0.26) !important;
   box-shadow:
-    0 6px 15px rgba(37,46,63,0.11),
+    0 6px 15px color-mix(in srgb, var(--rosta-carbon-soft, #242424) 11%, transparent),
     inset 0 1px 0 rgba(255,255,255,0.86),
-    inset 1px 0 0 rgba(255,211,103,0.1),
-    inset -1px 0 0 rgba(68,210,255,0.13) !important;
+    inset 1px 0 0 color-mix(in srgb, var(--rosta-kraft, #C8A77D) 10%, transparent),
+    inset -1px 0 0 color-mix(in srgb, var(--rosta-brick-b, #C94A40) 13%, transparent) !important;
   -webkit-backdrop-filter: blur(15px) saturate(1.33) !important;
   backdrop-filter: blur(15px) saturate(1.33) !important;
 }
@@ -284,7 +284,7 @@ body.ruth-admin-liquid-v3 :is(
   border: 1px solid var(--lgp-border) !important;
   background:
     radial-gradient(100% 68% at 26% -16%, rgba(255,255,255,0.72), transparent 52%),
-    linear-gradient(145deg, rgba(255,255,255,0.34), rgba(218,228,245,0.14)),
+    linear-gradient(145deg, rgba(255,255,255,0.34), color-mix(in srgb, var(--rosta-cream, #FBF3E6) 14%, transparent)),
     var(--lgp-panel-strong) !important;
   box-shadow: var(--lgp-shadow) !important;
   -webkit-backdrop-filter: blur(26px) saturate(1.36) brightness(1.02) !important;
@@ -329,7 +329,7 @@ body.ruth-admin-liquid-v3 :is([role="status"], [data-sonner-toast], [data-toast]
   border: 1px solid var(--lgp-border) !important;
   border-radius: 18px !important;
   background:
-    linear-gradient(145deg, rgba(255,255,255,0.35), rgba(219,229,245,0.12)),
+    linear-gradient(145deg, rgba(255,255,255,0.35), color-mix(in srgb, var(--rosta-cream, #FBF3E6) 12%, transparent)),
     var(--lgp-panel-strong) !important;
   box-shadow: var(--lgp-shadow) !important;
   -webkit-backdrop-filter: blur(24px) saturate(1.32) !important;
@@ -345,9 +345,9 @@ body.ruth-admin-liquid-v3 [data-ruth-command-trigger="true"] {
 body.ruth-admin-liquid-v3 :is([class~="z-command"], [data-ruth-command-palette]) > :is(div, section) {
   background:
     radial-gradient(100% 72% at 30% -12%, rgba(255,255,255,0.74), transparent 52%),
-    linear-gradient(145deg, rgba(255,255,255,0.35), rgba(218,229,247,0.14)),
+    linear-gradient(145deg, rgba(255,255,255,0.35), color-mix(in srgb, var(--rosta-cream, #FBF3E6) 14%, transparent)),
     var(--lgp-panel-strong) !important;
-  box-shadow: 0 28px 70px rgba(25,33,49,0.2), inset 0 1px 0 rgba(255,255,255,0.78) !important;
+  box-shadow: 0 28px 70px color-mix(in srgb, var(--rosta-carbon-soft, #242424) 20%, transparent), inset 0 1px 0 rgba(255,255,255,0.78) !important;
   -webkit-backdrop-filter: blur(30px) saturate(1.38) !important;
   backdrop-filter: blur(30px) saturate(1.38) !important;
 }
@@ -365,7 +365,7 @@ body.ruth-admin-liquid-v3 input[type="range"]::-webkit-slider-runnable-track {
   border: 1px solid var(--lgp-border-soft);
   border-radius: 999px;
   background: rgba(var(--lgp-rgb-tint), 0.24);
-  box-shadow: inset 0 1px 2px rgba(47,58,78,0.09), inset 0 1px 0 rgba(255,255,255,0.65);
+  box-shadow: inset 0 1px 2px color-mix(in srgb, var(--rosta-carbon-soft, #242424) 9%, transparent), inset 0 1px 0 rgba(255,255,255,0.65);
   -webkit-backdrop-filter: blur(12px) saturate(1.18);
 }
 
@@ -380,7 +380,7 @@ body.ruth-admin-liquid-v3 input[type="range"]::-webkit-slider-thumb {
   background:
     radial-gradient(circle at 38% 18%, rgba(255,255,255,0.78), transparent 45%),
     rgba(var(--lgp-rgb-tint), 0.48);
-  box-shadow: 0 5px 12px rgba(34,43,59,0.16), inset 0 1px 0 rgba(255,255,255,0.9);
+  box-shadow: 0 5px 12px color-mix(in srgb, var(--rosta-carbon-soft, #242424) 16%, transparent), inset 0 1px 0 rgba(255,255,255,0.9);
 }
 
 /* DOCK — override the old PWA profile with the Playground's clearer, refractive, slightly blurred lens. */
@@ -393,13 +393,13 @@ body.ruth-admin-liquid-v3 input[type="range"]::-webkit-slider-thumb {
     border-radius: 999px !important;
     background:
       radial-gradient(90% 130% at 28% -28%, rgba(255,255,255,0.52), transparent 50%),
-      linear-gradient(180deg, rgba(255,255,255,0.25), rgba(213,225,244,0.08)),
+      linear-gradient(180deg, rgba(255,255,255,0.25), color-mix(in srgb, var(--rosta-cream, #FBF3E6) 8%, transparent)),
       rgba(var(--lgp-rgb-tint), 0.2) !important;
     box-shadow:
-      0 16px 34px rgba(25,33,48,0.16),
-      0 4px 11px rgba(25,33,48,0.07),
+      0 16px 34px color-mix(in srgb, var(--rosta-carbon-soft, #242424) 16%, transparent),
+      0 4px 11px color-mix(in srgb, var(--rosta-carbon-soft, #242424) 7%, transparent),
       inset 0 1px 0 rgba(255,255,255,0.82),
-      inset 0 -1px 0 rgba(68,81,105,0.07) !important;
+      inset 0 -1px 0 color-mix(in srgb, var(--rosta-brick-b, #C94A40) 7%, transparent) !important;
     -webkit-backdrop-filter: blur(20px) saturate(1.28) contrast(1.02) !important;
     backdrop-filter: blur(20px) saturate(1.28) contrast(1.02) !important;
   }
@@ -417,7 +417,7 @@ body.ruth-admin-liquid-v3 input[type="range"]::-webkit-slider-thumb {
     width: 60px !important;
     height: 54px !important;
     border-radius: 25px !important;
-    filter: drop-shadow(0 9px 18px rgba(26,34,49,0.15)) !important;
+    filter: drop-shadow(0 9px 18px color-mix(in srgb, var(--rosta-carbon-soft, #242424) 15%, transparent)) !important;
     transition:
       transform 280ms var(--lgp-spring-ease),
       width 220ms var(--lgp-spring-ease),
@@ -437,14 +437,14 @@ body.ruth-admin-liquid-v3 input[type="range"]::-webkit-slider-thumb {
     border-radius: inherit !important;
     background:
       radial-gradient(85% 110% at 32% -16%, rgba(255,255,255,0.68), transparent 50%),
-      linear-gradient(145deg, rgba(255,255,255,0.34), rgba(211,224,244,0.13)),
+      linear-gradient(145deg, rgba(255,255,255,0.34), color-mix(in srgb, var(--rosta-cream, #FBF3E6) 13%, transparent)),
       rgba(var(--lgp-rgb-tint), 0.25) !important;
     box-shadow:
       inset 0 1px 0 rgba(255,255,255,0.91),
-      inset 0 -1px 0 rgba(67,81,107,0.08),
-      inset 1px 0 0 rgba(255,208,98,0.1),
-      inset -1px 0 0 rgba(65,211,255,0.13),
-      0 3px 9px rgba(29,38,54,0.08) !important;
+      inset 0 -1px 0 color-mix(in srgb, var(--rosta-brick-b, #C94A40) 8%, transparent),
+      inset 1px 0 0 color-mix(in srgb, var(--rosta-kraft, #C8A77D) 10%, transparent),
+      inset -1px 0 0 color-mix(in srgb, var(--rosta-brick-b, #C94A40) 13%, transparent),
+      0 3px 9px color-mix(in srgb, var(--rosta-carbon-soft, #242424) 8%, transparent) !important;
     -webkit-backdrop-filter: blur(11px) saturate(1.31) contrast(1.04) !important;
     backdrop-filter: blur(11px) saturate(1.31) contrast(1.04) !important;
     filter: url("#ruth-liquid-glass-displacement") saturate(1.06) contrast(1.03) !important;
@@ -464,9 +464,9 @@ body.ruth-admin-liquid-v3 input[type="range"]::-webkit-slider-thumb {
   body.ruth-admin-liquid-v3 nav[aria-label="ROSTA Coffee Co. mobil menü"] > div > span:first-child > span > span:nth-child(3) {
     border-radius: inherit !important;
     background:
-      radial-gradient(circle at 4% 52%, rgba(48,190,255,0.16), transparent 28%),
-      radial-gradient(circle at 96% 48%, rgba(255,72,137,0.13), transparent 28%),
-      radial-gradient(circle at 50% 1%, rgba(255,211,98,0.08), transparent 26%) !important;
+      radial-gradient(circle at 4% 52%, color-mix(in srgb, var(--rosta-brick-b, #C94A40) 16%, transparent), transparent 28%),
+      radial-gradient(circle at 96% 48%, color-mix(in srgb, var(--rosta-brick-b, #C94A40) 13%, transparent), transparent 28%),
+      radial-gradient(circle at 50% 1%, color-mix(in srgb, var(--rosta-kraft, #C8A77D) 8%, transparent), transparent 26%) !important;
     mix-blend-mode: screen !important;
     opacity: 0.72 !important;
   }
@@ -510,7 +510,7 @@ html[data-theme="dark"] body.ruth-admin-liquid-v3 :is(
 ) {
   background:
     radial-gradient(90% 80% at 28% -18%, rgba(255,255,255,0.16), transparent 52%),
-    linear-gradient(145deg, rgba(65,72,87,0.22), rgba(15,18,24,0.1)),
+    linear-gradient(145deg, color-mix(in srgb, var(--rosta-brick-b, #C94A40) 22%, transparent), color-mix(in srgb, var(--rosta-carbon, #111111) 10%, transparent)),
     var(--lgp-panel) !important;
 }
 
