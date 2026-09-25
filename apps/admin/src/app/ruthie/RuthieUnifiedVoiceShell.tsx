@@ -195,7 +195,7 @@ export function RuthieUnifiedVoiceShell() {
     };
   }, [conversationId, ready]);
 
-  if (!ready) return <div style={{ color: "rgba(246,238,223,.7)", padding: 24 }}>Ortak ROSTA Insight hafızası hazırlanıyor…</div>;
+  if (!ready) return <div style={{ color: "rgba(251,243,230,.7)", padding: 24 }}>Ortak ROSTA Insight hafızası hazırlanıyor…</div>;
   return (
     <>
       <RuthieVoiceOnly />
