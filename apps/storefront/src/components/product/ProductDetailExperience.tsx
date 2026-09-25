@@ -105,19 +105,7 @@ function firstImage(product: Product | null | undefined) {
   return product.main_image_url || product.image_urls?.[0] || null;
 }
 
-function productPageCopy(
-  content: Record<string, unknown> | undefined,
-  key: string,
-  fallback: string,
-) {
-  const value = content?.[key];
-  return typeof value === "string" && value.trim() ? value.trim() : fallback;
-}
-
-function productDetails(
-  product: Product,
-  productPageContent?: Record<string, unknown>,
-): ProductDetailItem[] {
+function productDetails(product: Product): ProductDetailItem[] {
   const productInfo = cleanLine(
     product.material || productMaterialDetails(product) || displayMaterial(product),
   );
@@ -127,51 +115,26 @@ function productDetails(
   const careDetails = cleanLine(product.care_advice || productCareDetails(product));
   const usage = cleanLine(product.size_usage);
 
-  const materialTitle = productPageCopy(productPageContent, "materialTitle", "Ürün Bilgisi");
-  const materialFallback = productPageCopy(
-    productPageContent,
-    "materialFallback",
-    "Çekirdek, içerik ve ürün bilgileri ürün bazında değişebilir.",
-  );
-  const careTitle = productPageCopy(productPageContent, "careTitle", "Saklama / Kullanım");
-  const careFallback = productPageCopy(
-    productPageContent,
-    "careFallback",
-    "Paketi serin, kuru ve doğrudan güneş almayan yerde saklayın.",
-  );
-  const sizeUsageTitle = productPageCopy(productPageContent, "sizeUsageTitle", "Paket / Kullanım");
-  const sizeUsageFallback = productPageCopy(
-    productPageContent,
-    "sizeUsageFallback",
-    "Paket, öğütüm ve kullanım bilgisi ürün bazında değişebilir.",
-  );
-  const shippingTitle = productPageCopy(productPageContent, "shippingTitle", "Kargo ve İade");
-  const shippingText = productPageCopy(
-    productPageContent,
-    "shippingText",
-    "Teslimat ve iade koşulları sipariş ve ürün tipine göre uygulanır. Güncel detaylar için kargo ve iade sayfasını inceleyebilirsiniz.",
-  );
-
   return [
     { id: "description", label: "Açıklama", content: description },
     {
       id: "material",
-      label: materialTitle,
+      label: "Ürün Bilgisi",
       content: [
-        productInfo || materialFallback,
-        "",
-        careTitle.toLocaleUpperCase("tr-TR"),
-        careDetails || careFallback,
+        productInfo || "Ürün bilgileri ürün bazında değişebilir.",
+        careDetails ? "" : null,
+        careDetails ? "SAKLAMA / KULLANIM" : null,
+        careDetails || null,
       ].filter((value): value is string => Boolean(value)).join("\n"),
     },
-    { id: "size-usage", label: sizeUsageTitle, content: usage || sizeUsageFallback },
+    { id: "size-usage", label: "Kullanım", content: usage || "Detaylı kullanım bilgisi ürün açıklamasında yer alır." },
     {
       id: "shipping-returns",
-      label: shippingTitle,
-      content: shippingText,
+      label: "Kargo ve İade",
+      content:
+        "Teslimat ve iade koşulları sipariş ve ürün tipine göre uygulanır. Güncel detaylar için kargo ve iade sayfasını inceleyebilirsiniz.",
     },
-  ];
-}
+  ];}
 
 function prefersReducedPreload() {
   if (typeof navigator === "undefined") return false;
@@ -191,13 +154,7 @@ function eligibleSwipeTarget(target: EventTarget | null) {
   );
 }
 
-function ProductBrowserPreview({
-  product,
-  productPageContent,
-}: {
-  product: Product | null;
-  productPageContent?: Record<string, unknown>;
-}) {
+function ProductBrowserPreview({ product }: { product: Product | null }) {
   if (!product) return <article className="product-browser-preview is-empty" />;
 
   const price = Number(product.price || 0);
@@ -225,9 +182,9 @@ function ProductBrowserPreview({
       <section className="product-browser-preview-details">
         <div className="product-browser-preview-tabs">
           <span>Açıklama</span>
-          <span>{productPageCopy(productPageContent, "materialTitle", "Ürün Bilgisi")}</span>
-          <span>{productPageCopy(productPageContent, "sizeUsageTitle", "Paket / Kullanım")}</span>
-          <span>{productPageCopy(productPageContent, "shippingTitle", "Kargo ve İade")}</span>
+          <span>Ürün Bilgisi</span>
+          <span>Kullanım</span>
+          <span>Kargo ve İade</span>
         </div>
         <div className="product-browser-preview-copy">
           <small>
@@ -257,10 +214,8 @@ function ProductBrowserPreview({
 
 export function ProductDetailExperience({
   initialWindow,
-  productPageContent,
 }: {
   initialWindow: ProductBrowserWindow;
-  productPageContent?: Record<string, unknown>;
 }) {
   const initialProducts = [
     initialWindow.previous,
@@ -757,10 +712,7 @@ export function ProductDetailExperience({
 
   const product = browserWindow.current;
   const images = useMemo(() => productImages(product), [product]);
-  const details = useMemo(
-    () => productDetails(product, productPageContent),
-    [product, productPageContent],
-  );
+  const details = useMemo(() => productDetails(product), [product]);
   const collectionName =
     displayCollectionName(product.collections?.name) || "ROSTA Coffee";
   const productPrice = Number(product.price ?? 0);
@@ -845,9 +797,9 @@ export function ProductDetailExperience({
 
       <div className="product-browser-stage" aria-hidden="true">
         <div ref={trackRef} className="product-browser-track">
-          <ProductBrowserPreview product={browserWindow.previous} productPageContent={productPageContent} />
-          <ProductBrowserPreview product={product} productPageContent={productPageContent} />
-          <ProductBrowserPreview product={browserWindow.next} productPageContent={productPageContent} />
+          <ProductBrowserPreview product={browserWindow.previous} />
+          <ProductBrowserPreview product={product} />
+          <ProductBrowserPreview product={browserWindow.next} />
         </div>
       </div>
 
