@@ -87,7 +87,6 @@ const RAW_STOREFRONT_URL = process.env.NEXT_PUBLIC_STOREFRONT_URL || "https://ro
 const STOREFRONT_URL = RAW_STOREFRONT_URL
   .replace(/^https:\/\/ruthistanbul\.com(?=\/|$)/, "https://rostacoffecompany.zeabur.app")
   .replace(/\/$/, "");
-const THEME_MEDIA_ACCEPT = "image/*,video/*,.jpg,.jpeg,.png,.webp,.avif,.heic,.heif,.mp4,.m4v,.mov,.webm";
 
 function mediaTypeForFile(file: File): HomepageMediaType {
   return file.type.startsWith("video/") || /\.(mp4|m4v|mov|webm)$/i.test(file.name || "") ? "video" : "image";
@@ -822,57 +821,68 @@ export function VisualThemeCustomizer() {
 
           {selected.kind === "image" ? (
             <section className="border-b border-border-subtle p-3">
-              <div className="mb-2 flex items-center justify-between gap-2">
-                <p className="text-[9px] font-semibold">Medya</p>
-                <span className="rounded-full border border-border-subtle bg-surface-secondary px-2 py-0.5 text-[7px] uppercase tracking-[0.12em] text-subtle">
-                  {(selectedOverride?.mediaType || selected.mediaType || (selected.tag === "video" ? "video" : "image")) === "video" ? "Video" : "Fotoğraf"}
-                </span>
+              <div className="mb-2">
+                <p className="text-[9px] font-semibold">Fotoğraf / video</p>
+                <p className="mt-1 text-[7px] leading-3 text-subtle">Masaüstü ve mobil medyayı birbirinden bağımsız değiştirebilirsin.</p>
               </div>
-              {(selectedOverride?.imageSrc || selected.imageSrc) ? (
-                <div className="mb-2 h-[78px] overflow-hidden rounded-lg border border-border-subtle bg-surface-secondary">
-                  {(selectedOverride?.mediaType || selected.mediaType || (selected.tag === "video" ? "video" : "image")) === "video" ? (
-                    <video src={selectedOverride?.imageSrc || selected.imageSrc} className="h-full w-full object-cover" muted loop autoPlay playsInline preload="auto" />
-                  ) : (
-                    <img src={selectedOverride?.imageSrc || selected.imageSrc} alt="" className="h-full w-full object-cover" />
-                  )}
-                </div>
-              ) : null}
-              <label className={cx("relative flex h-10 w-full items-center justify-center gap-2 overflow-hidden rounded-xl border border-border-subtle bg-surface-secondary text-[9px] font-medium focus-within:bg-surface-primary focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent", uploading === "selected" && "pointer-events-none opacity-40")}>
-                <ImageIcon className="h-3.5 w-3.5" />{uploading === "selected" ? "Yükleniyor…" : "Fotoğraf / video değiştir"}
-                <input
-                  type="file"
-                  accept={THEME_MEDIA_ACCEPT}
-                  disabled={uploading === "selected"}
-                  className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
-                  onChange={(event) => {
-                    const file = event.currentTarget.files?.[0];
-                    if (file) void uploadSelectedImage(file);
-                    event.currentTarget.value = "";
-                  }}
+
+              <div className="space-y-2">
+                <SelectedMediaUpload
+                  label="Masaüstü"
+                  value={selectedDesktopMediaSrc}
+                  mediaType={selectedDesktopMediaType}
+                  busy={uploading === "selected-desktop"}
+                  onFile={(file) => void uploadSelectedImage(file, "desktop")}
                 />
-              </label>
-              <p className="mt-1.5 text-[7px] leading-3 text-subtle">JPG, PNG, WebP, AVIF, HEIC veya MP4, MOV, M4V, WebM yükleyebilirsin. Seçtiğin dosya türüne göre alan otomatik fotoğraf ya da videoya dönüşür.</p>
+                <SelectedMediaUpload
+                  label="Mobil"
+                  value={selectedMobileMediaSrc}
+                  mediaType={selectedMobileMediaType}
+                  busy={uploading === "selected-mobile"}
+                  onFile={(file) => void uploadSelectedImage(file, "mobile")}
+                />
+              </div>
+
+              <p className="mt-2 text-[7px] leading-3 text-subtle">JPG, PNG, WebP, AVIF, HEIC veya MP4, MOV, M4V, WebM yükleyebilirsin. Her cihaz alanı kendi fotoğrafını veya videosunu kullanır.</p>
+
               <button
                 type="button"
                 onClick={duplicateSelectedMedia}
-                disabled={!(selectedOverride?.imageSrc || selected.imageSrc)}
+                disabled={!(selectedDesktopMediaSrc || selectedMobileMediaSrc)}
                 className="mt-2 inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-lg border border-border-subtle bg-surface-secondary text-[8px] font-medium text-muted transition hover:border-accent/60 hover:text-main focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-35"
               >
                 <Copy className="h-3.5 w-3.5" /> Aynısından çoğalt
               </button>
-              <div className="mt-3 grid grid-cols-2 gap-2">
-                <label className="block">
-                  <span className="mb-1 block text-[8px] font-medium text-muted">Doldurma</span>
-                  <select
-                    value={selectedDeviceStyle?.objectFit || selectedMetrics?.objectFit || "cover"}
-                    onChange={(event) => patchDeviceStyle({ objectFit: event.target.value as ThemeDeviceStyle["objectFit"] })}
-                    className="h-9 w-full rounded-lg border border-border-subtle bg-surface-secondary px-2 text-[9px] outline-none"
-                  >
-                    <option value="cover">Kırp / doldur</option>
-                    <option value="contain">Tamamını göster</option>
-                    <option value="fill">Esnet</option>
-                  </select>
-                </label>
+
+              <div className="mt-3">
+                <span className="mb-1.5 block text-[8px] font-medium text-muted">Doldurma</span>
+                <div className="grid grid-cols-3 gap-1">
+                  {([
+                    ["cover", "Kırp / doldur"],
+                    ["contain", "Tamamını göster"],
+                    ["fill", "Esnet"],
+                  ] as const).map(([value, label]) => {
+                    const active = (selectedDeviceStyle?.objectFit || selectedMetrics?.objectFit || "cover") === value;
+                    return (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() => patchDeviceStyle({ objectFit: value })}
+                        className={cx(
+                          "min-h-10 rounded-lg border px-1.5 py-2 text-[7px] font-medium leading-3 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+                          active
+                            ? "border-accent bg-accent-soft text-main"
+                            : "border-border-subtle bg-surface-secondary text-muted hover:border-accent/55 hover:text-main",
+                        )}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="mt-3">
                 <label className="block">
                   <span className="mb-1 block text-[8px] font-medium text-muted">Köşe</span>
                   <input type="number" min={0} max={1000} value={Math.round(numberStyle("borderRadius", selectedMetrics?.borderRadius || 0))} onChange={(event) => patchDeviceStyle({ borderRadius: Number(event.target.value) || 0 })} className="h-9 w-full rounded-lg border border-border-subtle bg-surface-secondary px-2 text-[9px] outline-none" />
@@ -888,7 +898,6 @@ export function VisualThemeCustomizer() {
               </div>
             </section>
           ) : null}
-
           {selected.textEditable ? (
             <section className="border-b border-border-subtle p-3">
               <span className="mb-1.5 flex items-center gap-1.5 text-[9px] font-semibold"><Type className="h-3 w-3" />Yazı</span>
