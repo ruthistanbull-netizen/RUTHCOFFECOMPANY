@@ -26,6 +26,7 @@ export type ThemeDeviceStyle = {
   opacity?: number | null;
   textAlign?: ThemeTextAlign;
   objectFit?: ThemeObjectFit;
+  mediaScale?: number | null;
   objectPositionX?: number | null;
   objectPositionY?: number | null;
   color?: string | null;
@@ -176,6 +177,7 @@ export function normalizeThemeDeviceStyle(input: unknown): ThemeDeviceStyle {
     opacity: nullableNumber(raw.opacity, 0, 1),
     textAlign: raw.textAlign === "left" || raw.textAlign === "center" || raw.textAlign === "right" ? raw.textAlign : undefined,
     objectFit: raw.objectFit === "cover" || raw.objectFit === "contain" || raw.objectFit === "fill" ? raw.objectFit : undefined,
+    mediaScale: nullableNumber(raw.mediaScale, 70, 140),
     objectPositionX: nullableNumber(raw.objectPositionX, 0, 100),
     objectPositionY: nullableNumber(raw.objectPositionY, 0, 100),
     color: colorValue(raw.color, null),
