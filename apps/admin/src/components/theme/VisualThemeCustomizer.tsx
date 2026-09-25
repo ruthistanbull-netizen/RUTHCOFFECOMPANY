@@ -510,47 +510,47 @@ export function VisualThemeCustomizer() {
     });
   }, [toast]);
 
-  const uploadSelectedImage = async (file: File) => {
+  const uploadSelectedImage = async (file: File, targetDevice: Device) => {
     if (!selected) return;
-    setUploading("selected");
+    setUploading(`selected-${targetDevice}`);
     try {
       const mediaType = mediaTypeForFile(file);
       const src = await uploadThemeImage(file);
 
       if (isHomepageHeroElement(path, selected.id)) {
-        const selectedDevice = homepageHeroDeviceForElement(selected.id) || device;
-        await persistHeroMedia(selectedDevice, src, mediaType);
-        setSelected((current) => current ? { ...current, tag: mediaType === "video" ? "video" : "img", mediaType, imageSrc: src } : current);
-        iframeRef.current?.contentWindow?.postMessage({
-          type: "RUTH_THEME_EDITOR_MEDIA_OVERRIDE",
-          id: selected.id,
-          selector: selected.selector,
-          imageSrc: src,
-          src,
-          mediaType,
-        }, "*");
+        await persistHeroMedia(targetDevice, src, mediaType);
+        if (device === targetDevice) {
+          setSelected((current) => current ? {
+            ...current,
+            tag: mediaType === "video" ? "video" : "img",
+            mediaType,
+            imageSrc: src,
+          } : current);
+        }
         return;
       }
 
       setSettings((current) => {
         const base = baseOverride(current);
         if (!base) return current;
+        const patch = targetDevice === "mobile"
+          ? { mobileImageSrc: src, mobileMediaType: mediaType }
+          : { desktopImageSrc: src, desktopMediaType: mediaType };
         return upsertThemeElementOverride(current, targetPage, {
           ...base,
-          imageSrc: src,
-          mediaType,
+          ...patch,
           kind: "image",
         });
       });
-      setSelected((current) => current ? { ...current, tag: mediaType === "video" ? "video" : "img", mediaType, imageSrc: src } : current);
-      iframeRef.current?.contentWindow?.postMessage({
-        type: "RUTH_THEME_EDITOR_MEDIA_OVERRIDE",
-        id: selected.id,
-        selector: selected.selector,
-        imageSrc: src,
-        src,
-        mediaType,
-      }, "*");
+
+      if (device === targetDevice) {
+        setSelected((current) => current ? {
+          ...current,
+          tag: mediaType === "video" ? "video" : "img",
+          mediaType,
+          imageSrc: src,
+        } : current);
+      }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Fotoğraf veya video yüklenemedi.");
     } finally {
@@ -578,8 +578,12 @@ export function VisualThemeCustomizer() {
       tag: mediaType === "video" ? "video" : "img",
       kind: "image",
       hidden: false,
-      imageSrc: source,
-      mediaType,
+      imageSrc: selectedOverride?.imageSrc || source,
+      mediaType: selectedOverride?.mediaType || mediaType,
+      desktopImageSrc: selectedOverride?.desktopImageSrc,
+      mobileImageSrc: selectedOverride?.mobileImageSrc,
+      desktopMediaType: selectedOverride?.desktopMediaType,
+      mobileMediaType: selectedOverride?.mobileMediaType,
       duplicateOf: selected.id,
       desktop: { ...(selectedOverride?.desktop || {}) },
       mobile: { ...(selectedOverride?.mobile || {}) },
