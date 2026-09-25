@@ -682,7 +682,13 @@ export function VisualThemeCustomizer() {
       if ((message.type === "RUTH_THEME_EDITOR_READY" || message.type === "RUTH_THEME_EDITOR_NAVIGATED") && typeof message.pathname === "string") {
         const nextPath = themePageKey(message.pathname);
         setPath(nextPath);
-        if (message.type === "RUTH_THEME_EDITOR_READY") window.setTimeout(() => sendSettings(settings), 20);
+        if (message.type === "RUTH_THEME_EDITOR_READY") {
+          pendingContextRef.current = null;
+          setMenu(null);
+          setSelected(null);
+          [20, 140, 420].forEach((delay) => window.setTimeout(() => sendSettings(settings), delay));
+          window.setTimeout(() => iframeRef.current?.contentWindow?.postMessage({ type: "RUTH_THEME_EDITOR_REFRESH_OUTLINE" }, "*"), 180);
+        }
       }
     };
 
@@ -800,7 +806,20 @@ export function VisualThemeCustomizer() {
 
         <main className="flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-hidden bg-background p-3 md:p-4">
           <div className={cx("relative overflow-hidden bg-surface-primary shadow-floating transition-all duration-300", device === "mobile" ? "h-full max-h-[820px] w-[430px] max-w-full rounded-[24px] border border-border-subtle" : "h-full w-full rounded-xl border border-border-subtle")}>
-            <iframe ref={iframeRef} key={`${path}-${nonce}`} src={previewUrl} title="Mağaza önizleme" className="h-full w-full border-0 bg-surface-primary" onLoad={() => window.setTimeout(() => sendSettings(settings), 40)} />
+            <iframe
+              ref={iframeRef}
+              key={`${path}-${nonce}`}
+              src={previewUrl}
+              title="Mağaza önizleme"
+              className="h-full w-full border-0 bg-surface-primary"
+              onLoad={() => {
+                pendingContextRef.current = null;
+                setMenu(null);
+                setSelected(null);
+                [40, 180, 520].forEach((delay) => window.setTimeout(() => sendSettings(settings), delay));
+                window.setTimeout(() => iframeRef.current?.contentWindow?.postMessage({ type: "RUTH_THEME_EDITOR_REFRESH_OUTLINE" }, "*"), 240);
+              }}
+            />
           </div>
         </main>
       </div>
