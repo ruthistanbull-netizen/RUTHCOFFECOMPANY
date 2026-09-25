@@ -1,4 +1,9 @@
 import { randomUUID } from "node:crypto";
+import { execFile } from "node:child_process";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { promisify } from "node:util";
 import { NextResponse } from "next/server";
 import sharp from "sharp";
 import { requireAdmin } from "@/lib/auth";
@@ -25,6 +30,35 @@ const CONVERT_TYPES = new Set([
   "image/x-heic",
   "image/x-heif",
 ]);
+
+const execFileAsync = promisify(execFile);
+
+async function browserSafeVideo(source: Uint8Array, extension: string) {
+  const dir = await mkdtemp(join(tmpdir(), "rosta-theme-video-"));
+  const input = join(dir, `input.${extension || "video"}`);
+  const output = join(dir, "output.mp4");
+  try {
+    await writeFile(input, source);
+    await execFileAsync("ffmpeg", [
+      "-hide_banner",
+      "-loglevel", "error",
+      "-y",
+      "-i", input,
+      "-map_metadata", "-1",
+      "-an",
+      "-c:v", "libx264",
+      "-preset", "veryfast",
+      "-crf", "22",
+      "-pix_fmt", "yuv420p",
+      "-vf", "scale=trunc(iw/2)*2:trunc(ih/2)*2",
+      "-movflags", "+faststart",
+      output,
+    ], { timeout: 180_000, maxBuffer: 8 * 1024 * 1024 });
+    return await readFile(output);
+  } finally {
+    await rm(dir, { recursive: true, force: true }).catch(() => undefined);
+  }
+}
 
 function safeName(value: string) {
   return String(value || "theme")
@@ -81,19 +115,28 @@ export async function POST(request: Request) {
 
   try {
     const source = new Uint8Array(await file.arrayBuffer());
-    const uploadBytes = kind.mode === "convert"
-      ? await sharp(source, { failOn: "none" })
-          .rotate()
-          .toColorspace("srgb")
-          .webp({ quality: 92 })
-          .toBuffer()
-      : source;
+    const video = kind.mediaType === "video";
+    const uploadBytes = video
+      ? await browserSafeVideo(source, kind.extension)
+      : kind.mode === "convert"
+        ? await sharp(source, { failOn: "none" })
+            .rotate()
+            .toColorspace("srgb")
+            .webp({ quality: 92 })
+            .toBuffer()
+        : source;
+    const outputExtension = video ? "mp4" : kind.extension;
+    const outputContentType = video ? "video/mp4" : kind.contentType;
 
-    const path = `theme/${Date.now()}-${randomUUID()}-${safeName(file.name)}.${kind.extension}`;
+    if (uploadBytes.byteLength > MAX_VIDEO_BYTES) {
+      return NextResponse.json({ ok: false, error: "İşlenmiş video 80 MB sınırını aşıyor." }, { status: 413 });
+    }
+
+    const path = `theme/${Date.now()}-${randomUUID()}-${safeName(file.name)}.${outputExtension}`;
     const { error } = await auth.supabase.storage
       .from(RUTH_PRODUCT_PHOTO_BUCKET)
       .upload(path, uploadBytes, {
-        contentType: kind.contentType,
+        contentType: outputContentType,
         upsert: false,
         cacheControl: "31536000",
       });
@@ -110,7 +153,8 @@ export async function POST(request: Request) {
       {
         ok: true,
         url: data.publicUrl,
-        converted: kind.mode === "convert",
+        converted: kind.mode === "convert" || video,
+        videoNormalized: video,
         mediaType: kind.mediaType || "image",
         preservedAspectRatio: true,
       },
