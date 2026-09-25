@@ -10,7 +10,7 @@ export default function PanelHubEntryPage() {
   }, []);
 
   return (
-    <main className="fixed inset-0 bg-[#141414]" aria-label="RR HUB açılıyor">
+    <main className="fixed inset-0 bg-[#111111]" aria-label="RR HUB açılıyor">
       <span className="sr-only">RR HUB açılıyor</span>
     </main>
   );
