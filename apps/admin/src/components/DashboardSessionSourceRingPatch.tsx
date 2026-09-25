@@ -11,7 +11,7 @@ const CENTER = 70;
 const RADIUS = 46;
 const STROKE = 13;
 const GAP_DEGREES = 2.6;
-const VIDEO_PALETTE = ["#C8A77D", "#C94A40", "#6B4638", "#38251C", "#858993", "#C9A33B", "#60636C"];
+const VIDEO_PALETTE = ["#C8A77D", "#C94A40", "#6B4638", "#38251C", "#FBF3E6", "#242424", "#111111"];
 
 type Segment = {
   name: string;
