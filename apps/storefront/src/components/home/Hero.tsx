@@ -133,7 +133,9 @@ function EditorialMedia({
       <div className="sticky top-0 h-[100svh] min-h-[560px] overflow-hidden bg-ivory lg:min-h-[700px]">
         <motion.div
           className={wrapperClass}
-          style={reduceMotion ? undefined : { y, scale, opacity, willChange: "transform, opacity" }}
+          style={reduceMotion ? undefined : index === 0
+            ? { scale, opacity, willChange: "transform, opacity" }
+            : { y, scale, opacity, willChange: "transform, opacity" }}
         >
           {slide.kind === "hero-image" ? (
             <div className="h-full w-full">
