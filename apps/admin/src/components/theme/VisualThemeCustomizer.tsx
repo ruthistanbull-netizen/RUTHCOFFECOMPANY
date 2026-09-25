@@ -516,6 +516,7 @@ export function VisualThemeCustomizer() {
           scrollImages: current.homepageImages.scrollImages.map((item, itemIndex) => itemIndex === index ? src : item),
         },
       }));
+      setNonce(Date.now());
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Medya yüklenemedi.");
     } finally {
@@ -566,15 +567,39 @@ export function VisualThemeCustomizer() {
       setSettings((current) => {
         const base = baseOverride(current);
         if (!base) return current;
-        const patch = targetDevice === "mobile"
-          ? { mobileImageSrc: src, mobileMediaType: mediaType }
-          : { desktopImageSrc: src, desktopMediaType: mediaType };
+
+        const sharedSrc = base.imageSrc || selected.imageSrc || "";
+        const sharedType: HomepageMediaType =
+          base.mediaType || selected.mediaType || (selected.tag === "video" ? "video" : "image");
+        const desktopImageSrc = targetDevice === "desktop"
+          ? src
+          : base.desktopImageSrc || sharedSrc;
+        const mobileImageSrc = targetDevice === "mobile"
+          ? src
+          : base.mobileImageSrc || sharedSrc;
+        const desktopMediaType = targetDevice === "desktop"
+          ? mediaType
+          : base.desktopMediaType || sharedType;
+        const mobileMediaType = targetDevice === "mobile"
+          ? mediaType
+          : base.mobileMediaType || sharedType;
+
         return upsertThemeElementOverride(current, targetPage, {
           ...base,
-          ...patch,
+          // Once device-specific media exists, remove the legacy shared source.
+          // Keeping it around caused React/theme-preview races where the old image
+          // could briefly be reinserted underneath the new one.
+          imageSrc: undefined,
+          mediaType: undefined,
+          desktopImageSrc,
+          mobileImageSrc,
+          desktopMediaType,
+          mobileMediaType,
           kind: "image",
         });
       });
+
+      setNonce(Date.now());
 
       if (device === targetDevice) {
         setSelected((current) => current ? {
