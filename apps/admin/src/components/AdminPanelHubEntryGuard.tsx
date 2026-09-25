@@ -15,15 +15,15 @@ export function AdminPanelHubEntryGuard({ children }: { children: ReactNode }) {
       return;
     }
 
-    if (pathname === "/") {
-      window.location.replace("/profiles");
-      return;
-    }
-
     let entered = false;
     try {
       entered = window.sessionStorage.getItem(ROSTA_ENTERED_KEY) === "1";
     } catch {}
+
+    if (pathname === "/") {
+      window.location.replace(entered ? "/dashboard" : "/profiles");
+      return;
+    }
 
     if (!entered) {
       window.location.replace("/profiles");
