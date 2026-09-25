@@ -20,9 +20,9 @@ export function RuthieMobileNavPolish() {
           height: 44px !important;
           padding: 4px !important;
           box-sizing: border-box !important;
-          border: 1px solid rgba(232, 217, 255, .14) !important;
+          border: 1px solid color-mix(in srgb, var(--rosta-kraft, #C8A77D) 18%, transparent) !important;
           border-radius: 16px !important;
-          background: rgba(15, 12, 21, .80) !important;
+          background: color-mix(in srgb, var(--rosta-carbon, #111111) 80%, transparent) !important;
           box-shadow:
             0 14px 40px rgba(0, 0, 0, .34),
             inset 0 1px 0 rgba(255, 255, 255, .055) !important;
@@ -57,7 +57,7 @@ export function RuthieMobileNavPolish() {
           border-radius: 11px !important;
           background: transparent !important;
           box-shadow: none !important;
-          color: rgba(239, 233, 247, .56) !important;
+          color: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 56%, transparent) !important;
           font-size: 9px !important;
           font-weight: 600 !important;
           line-height: 1 !important;
@@ -84,14 +84,14 @@ export function RuthieMobileNavPolish() {
         }
 
         nav[aria-label="ROSTA Insight AI menüsü"] > a[data-active="true"] {
-          color: #fff !important;
-          border-color: rgba(220, 194, 255, .18) !important;
+          color: var(--rosta-action-text, #FFFFFF) !important;
+          border-color: color-mix(in srgb, var(--rosta-kraft, #C8A77D) 24%, transparent) !important;
           background:
-            radial-gradient(circle at 50% 120%, rgba(150, 94, 255, .19), transparent 72%),
+            radial-gradient(circle at 50% 120%, color-mix(in srgb, var(--rosta-brick-b, #C94A40) 22%, transparent), transparent 72%),
             rgba(255, 255, 255, .065) !important;
           box-shadow:
             inset 0 1px 0 rgba(255, 255, 255, .07),
-            0 5px 16px rgba(79, 43, 150, .13) !important;
+            0 5px 16px color-mix(in srgb, var(--rosta-espresso, #38251C) 22%, transparent) !important;
         }
 
         nav[aria-label="ROSTA Insight AI menüsü"] > a:active {
