@@ -19,6 +19,11 @@ export const productGalleryStyles = `
 .product-gallery-progress{position:absolute;right:13px;bottom:13px;z-index:4;display:flex;gap:5px;padding:8px 10px;border-radius:999px;background:color-mix(in srgb,var(--ruth-color-canvas) 82%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 .product-gallery-progress button{width:5px;height:5px;padding:0;border:0;border-radius:50%;background:color-mix(in srgb,var(--ruth-color-text-primary) 25%,transparent);transition:transform .24s cubic-bezier(.22,1,.36,1),background .2s ease}
 .product-gallery-progress button.is-active{background:var(--ink);transform:scale(1.45)}
+.product-gallery-frame:not(.is-lightbox) .product-gallery-expand{border-color:color-mix(in srgb,var(--rosta-kraft,#A98F72) 62%,transparent);background:color-mix(in srgb,var(--rosta-cream,#FBF3E6) 94%,transparent);color:var(--rosta-carbon,#111111);box-shadow:0 7px 22px rgba(17,17,17,.10);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.product-gallery-frame:not(.is-lightbox) .product-gallery-expand svg{color:currentColor!important;stroke:currentColor!important}
+.product-gallery-frame:not(.is-lightbox) .product-gallery-progress{border:1px solid color-mix(in srgb,var(--rosta-kraft,#A98F72) 54%,transparent);background:color-mix(in srgb,var(--rosta-cream,#FBF3E6) 92%,transparent);box-shadow:0 5px 18px rgba(17,17,17,.08);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.product-gallery-frame:not(.is-lightbox) .product-gallery-progress button{background:color-mix(in srgb,var(--rosta-cocoa,#6B432D) 40%,transparent)}
+.product-gallery-frame:not(.is-lightbox) .product-gallery-progress button.is-active{background:var(--rosta-brick-b,#D34B43);transform:scale(1.45)}
 .ruth-product-lightbox{position:fixed;inset:0;z-index:1200;width:100vw;height:100dvh;overflow:hidden;background:color-mix(in srgb,var(--rosta-carbon,#111111) 72%,transparent);-webkit-backdrop-filter:blur(24px) saturate(.9);backdrop-filter:blur(24px) saturate(.9);overscroll-behavior:none;touch-action:none}
 .ruth-product-lightbox__surface{position:absolute;inset:0;overflow:hidden;background:transparent;color:var(--ink);transform-origin:center center}
 .ruth-product-lightbox__viewport{position:absolute;inset:0;display:grid;width:100%;height:100%;place-items:center;padding:clamp(28px,4vw,58px);overflow:hidden;background:transparent}
