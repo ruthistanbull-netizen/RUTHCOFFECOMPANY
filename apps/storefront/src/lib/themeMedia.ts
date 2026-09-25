@@ -17,8 +17,7 @@ export type HomepageDeviceMedia = {
   mobile: { src: string; mediaType: HomepageMediaType };
 };
 
-export const ROSTA_DEFAULT_HERO_IMAGE =
-  "/home/rosta-hero-v6?v=20260921-original-avif";
+export const ROSTA_DEFAULT_HERO_IMAGE = "";
 
 function clean(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
