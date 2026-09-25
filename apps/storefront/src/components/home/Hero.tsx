@@ -8,7 +8,7 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
-import { ROSTA_HOME_WORDMARK_SRC } from "@/components/brand/rostaWordmark";
+import { RostaHomeWordmark } from "@/components/brand/RostaHomeWordmark";
 import {
   HOME_HERO_DESKTOP_IMAGE_ID,
   HOME_HERO_MOBILE_IMAGE_ID,
@@ -305,7 +305,7 @@ export default function Hero({
       className="relative overflow-clip bg-carbon"
     >
       <style>{`
-        .home-editorial-wordmark{box-sizing:border-box;pointer-events:none;position:fixed;left:0;top:calc(100svh - clamp(184px,38vw,236px));z-index:40;width:min(100vw,1208px);max-width:100vw;height:auto;aspect-ratio:1208/512;user-select:none;transition:background-color .24s ease,opacity .28s ease,visibility .28s ease}.home-editorial-wordmark[data-visible="false"]{opacity:0!important;visibility:hidden}@media(min-width:1024px){.home-editorial-wordmark{right:1vw;left:auto;top:45vh;width:56vw;max-width:98vw;height:auto;aspect-ratio:1208/512}}
+        .home-editorial-wordmark{box-sizing:border-box;pointer-events:none;position:fixed;left:0;top:calc(100svh - clamp(184px,38vw,236px));z-index:40;width:min(100vw,1208px);max-width:100vw;height:auto;aspect-ratio:1208/512;user-select:none;transition:color .24s ease,opacity .28s ease,visibility .28s ease;transform:translateZ(0)}.home-editorial-wordmark[data-visible="false"]{opacity:0!important;visibility:hidden}.home-editorial-wordmark svg{display:block;width:100%;height:100%;overflow:visible}@media(min-width:1024px){.home-editorial-wordmark{right:1vw;left:auto;top:45vh;width:56vw;max-width:98vw;height:auto;aspect-ratio:1208/512}}
       `}</style>
       <motion.div
         ref={wordmarkRef}
@@ -314,16 +314,8 @@ export default function Hero({
         className="home-editorial-wordmark"
         data-visible={wordmarkVisible ? "true" : "false"}
         style={{
-          backgroundColor: wordmarkColor,
-          WebkitMaskImage: `url(${ROSTA_HOME_WORDMARK_SRC})`,
-          maskImage: `url(${ROSTA_HOME_WORDMARK_SRC})`,
-          WebkitMaskRepeat: "no-repeat",
-          maskRepeat: "no-repeat",
-          WebkitMaskPosition: "center",
-          maskPosition: "center",
-          WebkitMaskSize: "100% 100%",
-          maskSize: "100% 100%",
-          willChange: "opacity, background-color",
+          color: wordmarkColor,
+          willChange: "opacity, color",
         }}
         initial={reduceMotion ? false : { opacity: 0, scale: 0.995 }}
         animate={{ opacity: wordmarkVisible ? 1 : 0, scale: 1 }}
@@ -332,7 +324,9 @@ export default function Hero({
           delay: reduceMotion ? 0 : 0.04,
           ease: [0.22, 1, 0.36, 1],
         }}
-      />
+      >
+        <RostaHomeWordmark className="h-full w-full" />
+      </motion.div>
 
       {slides.map((slide, index) => (
         <EditorialMedia
