@@ -185,13 +185,21 @@ export async function GET(request: Request) {
     );
   }
 
-  const groups = mergeCurrentProductValues(
-    normalizeGroups(saved?.setting_value),
-    (products || []) as Array<Record<string, unknown>>,
-  );
+  const baseGroups = normalizeGroups(saved?.setting_value);
+  const groups = saved?.setting_value
+    ? baseGroups
+    : mergeCurrentProductValues(
+        baseGroups,
+        (products || []) as Array<Record<string, unknown>>,
+      );
 
   return NextResponse.json(
-    { ok: true, groups, updatedAt: saved?.updated_at || null },
+    {
+      ok: true,
+      groups,
+      updatedAt: saved?.updated_at || null,
+      source: saved?.setting_value ? "saved-library" : "bootstrap-from-products",
+    },
     { headers: noStoreHeaders() },
   );
 }
