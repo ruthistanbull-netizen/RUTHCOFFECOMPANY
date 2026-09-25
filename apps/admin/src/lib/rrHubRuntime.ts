@@ -60,3 +60,25 @@ export function hasRuthWorkspaceAccess() {
     return false;
   }
 }
+
+
+export function navigateRostaPanelDocument(target: string | URL, options?: { replace?: boolean }) {
+  if (typeof window === "undefined") return;
+
+  let url: URL;
+  try {
+    url = target instanceof URL ? target : new URL(String(target), window.location.href);
+  } catch {
+    return;
+  }
+
+  if (url.origin !== window.location.origin) {
+    window.location.assign(url.href);
+    return;
+  }
+
+  markRRHubWorkspaceHandoff();
+
+  if (options?.replace) window.location.replace(url.href);
+  else window.location.assign(url.href);
+}
