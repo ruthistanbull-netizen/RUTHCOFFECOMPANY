@@ -339,7 +339,7 @@ export function AdminMobileQuarterMenu() {
     if (!group) return;
     if (group.label === "GENEL") {
       close();
-      router.push("/");
+      router.push("/dashboard");
       return;
     }
     setSelectedGroup((current) => current === index ? null : index);
@@ -376,7 +376,7 @@ export function AdminMobileQuarterMenu() {
 
   useEffect(() => {
     exactNavStructure.forEach((group) => group.items.forEach((item) => router.prefetch(item.path)));
-    router.prefetch("/");
+    router.prefetch("/dashboard");
   }, [router]);
 
   useEffect(() => {
