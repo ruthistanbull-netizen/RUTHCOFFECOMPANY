@@ -360,7 +360,7 @@
   background:
     radial-gradient(circle at 50% 0, color-mix(in srgb, var(--rosta-brick-b, #C94A40) 10%, transparent), transparent 42%),
     color-mix(in srgb, var(--rosta-carbon, #111111) 96%, transparent);
-  box-shadow: 0 34px 100px rgba(0, 0, 0, .62), inset 0 1px rgba(255, 246, 223, .04);
+  box-shadow: 0 34px 100px rgba(0, 0, 0, .62), inset 0 1px color-mix(in srgb, var(--rosta-cream, #FBF3E6) 4%, transparent);
 }
 
 .settingsHeader {
@@ -428,7 +428,7 @@
   padding: 0 42px 0 14px;
   border: 1px solid var(--voice-line);
   border-radius: 14px;
-  background: rgba(255, 246, 223, .045);
+  background: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 5%, transparent);
   color: var(--voice-text);
   font: inherit;
   font-size: 14px;
