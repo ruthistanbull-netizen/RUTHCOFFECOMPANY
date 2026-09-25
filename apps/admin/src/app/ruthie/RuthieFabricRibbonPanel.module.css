@@ -174,7 +174,7 @@
       saturate(1.15)
       contrast(1.07)
       drop-shadow(0 0 12px color-mix(in srgb, var(--rosta-brick-b, #C94A40) 20%, transparent))
-      drop-shadow(0 0 24px rgba(167, 61, 255, .13)) !important;
+      drop-shadow(0 0 24px color-mix(in srgb, var(--rosta-espresso, #38251C) 18%, transparent)) !important;
   }
 
   .visualRoot::before {
