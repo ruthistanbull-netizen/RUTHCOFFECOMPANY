@@ -23,10 +23,9 @@ function templatePageKey(pathname: string) {
 
 function kind(element: Element): ThemeElementOverride["kind"] {
   const tag = element.tagName.toLowerCase();
-  if (tag === "img") return "image";
+  if (tag === "img" || tag === "video") return "image";
   if (tag === "button" || element.getAttribute("role") === "button") return "button";
   if (tag === "a") return "link";
-  if (tag === "video") return "other";
   return "text";
 }
 
