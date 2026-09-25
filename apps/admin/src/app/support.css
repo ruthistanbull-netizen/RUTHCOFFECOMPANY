@@ -19,7 +19,7 @@
   align-items: center;
 }
 .cr-search-result:last-child { border-bottom: 0; }
-.cr-search-result:hover { background: #fafbfc; box-shadow: inset 3px 0 0 var(--accent); }
+
 .cr-search-result__icon,
 .cr-search-result__media { width: 38px; height: 38px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; overflow: hidden; }
 .cr-search-result__icon svg { width: 17px; height: 17px; }
@@ -37,7 +37,7 @@
 .cr-carts-range button,
 .cr-review-tabs button { min-height: 34px; padding: 0 11px; border: 0; border-radius: 8px; background: transparent; color: var(--muted); font-size: 9px; font-weight: 780; cursor: pointer; }
 .cr-carts-range button.is-active,
-.cr-review-tabs button.is-active { background: #fff; color: var(--ink); box-shadow: var(--shadow-sm); }
+.cr-review-tabs button.is-active { background: color-mix(in srgb, var(--rosta-brick-b, #C94A40) 15%, var(--ruth-color-surface-muted, #242424)); color: var(--rosta-cream, #FBF3E6); box-shadow: inset 0 -2px 0 var(--rosta-brick-b, #C94A40); }
 .cr-cart-workspace { overflow: hidden; }
 .cr-cart-list { display: grid; }
 .cr-cart-row {
@@ -45,7 +45,7 @@
   padding: 12px 15px;
   border: 0;
   border-bottom: 1px solid var(--line);
-  background: #fff;
+  background: var(--ruth-color-surface-muted, #242424);
   color: var(--ink);
   display: grid;
   grid-template-columns: 120px minmax(190px, 1fr) 120px 105px 170px 36px;
@@ -54,7 +54,7 @@
   text-align: left;
   cursor: pointer;
 }
-.cr-cart-row:hover { background: #fafbfc; box-shadow: inset 3px 0 0 var(--accent); }
+
 .cr-cart-row:last-child { border-bottom: 0; }
 .cr-cart-row > div { min-width: 0; display: grid; gap: 3px; }
 .cr-cart-row strong,
@@ -64,7 +64,7 @@
 .cr-cart-row > .cr-icon-button { pointer-events: none; }
 .cr-cart-items { display: grid; gap: 7px; }
 .cr-cart-items > article { min-height: 64px; padding: 8px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); display: grid; grid-template-columns: 42px minmax(0, 1fr) auto; gap: 9px; align-items: center; }
-.cr-cart-items > article > div { width: 42px; aspect-ratio: 3 / 4; border-radius: 8px; overflow: hidden; background: #fff; display: grid; place-items: center; font: 800 14px Georgia,serif; }
+.cr-cart-items > article > div { width: 42px; aspect-ratio: 3 / 4; border-radius: 8px; overflow: hidden; background: var(--rosta-cream, #FBF3E6); display: grid; place-items: center; font: 800 14px Georgia,serif; }
 .cr-cart-items img { width: 100%; height: 100%; object-fit: cover; }
 .cr-cart-items > article > span { min-width: 0; display: grid; gap: 3px; }
 .cr-cart-items strong,
@@ -78,8 +78,8 @@
 .cr-review-card h2 { margin: 5px 0 6px; font-size: 14px; }
 .cr-review-card > header > small { color: var(--muted); font-size: 8px; text-align: right; }
 .cr-stars { display: inline-flex; gap: 2px; }
-.cr-stars svg { width: 14px; height: 14px; color: #d0d5dd; }
-.cr-stars svg.is-filled { color: #f79009; fill: currentColor; }
+.cr-stars svg { width: 14px; height: 14px; color: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 38%, transparent); }
+.cr-stars svg.is-filled { color: var(--rosta-kraft, #C8A77D); fill: currentColor; }
 .cr-review-card > p { min-height: 70px; margin: 0; color: var(--muted); font-size: 10px; line-height: 1.65; }
 .cr-review-card > dl { margin: 0; padding: 9px; border-radius: 10px; background: var(--surface-2); display: grid; gap: 6px; }
 .cr-review-card > dl > div { display: flex; justify-content: space-between; gap: 8px; }
@@ -110,14 +110,14 @@
 .cr-manual-product-results > article { padding: 8px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 .cr-manual-product-results > article > div { flex: 1 1 210px; min-width: 0; display: grid; grid-template-columns: 42px minmax(0, 1fr); grid-template-rows: auto auto; gap: 3px 8px; align-items: center; }
 .cr-manual-product-results img,
-.cr-manual-product-results > article > div > span { width: 42px; aspect-ratio: 3 / 4; grid-row: 1 / 3; border-radius: 8px; background: #fff; object-fit: cover; display: grid; place-items: center; font: 800 14px Georgia,serif; }
+.cr-manual-product-results > article > div > span { width: 42px; aspect-ratio: 3 / 4; grid-row: 1 / 3; border-radius: 8px; background: var(--rosta-cream, #FBF3E6); object-fit: cover; display: grid; place-items: center; font: 800 14px Georgia,serif; }
 .cr-manual-product-results strong { font-size: 10px; }
 .cr-manual-product-results small { color: var(--muted); font-size: 8px; }
 .cr-manual-product-results .cr-button { min-height: 31px; padding: 0 8px; font-size: 8px; }
 .cr-manual-items { margin-top: 10px; display: grid; gap: 8px; }
 .cr-manual-items > article { min-height: 72px; padding: 8px; border: 1px solid var(--line); border-radius: 11px; background: var(--surface-2); display: grid; grid-template-columns: 45px minmax(0, 1fr) 75px 100px auto 32px; gap: 8px; align-items: center; }
 .cr-manual-items > article > img,
-.cr-manual-items > article > span { width: 45px; aspect-ratio: 3 / 4; border-radius: 8px; background: #fff; object-fit: cover; display: grid; place-items: center; font: 800 14px Georgia,serif; }
+.cr-manual-items > article > span { width: 45px; aspect-ratio: 3 / 4; border-radius: 8px; background: var(--rosta-cream, #FBF3E6); object-fit: cover; display: grid; place-items: center; font: 800 14px Georgia,serif; }
 .cr-manual-items > article > div { min-width: 0; display: grid; gap: 3px; }
 .cr-manual-items strong,
 .cr-manual-items small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -159,4 +159,13 @@
   .cr-cart-row > .cr-icon-button { grid-column: 2; grid-row: 3; }
   .cr-manual-form-grid { grid-template-columns: 1fr; }
   .cr-manual-form-grid .cr-field--wide { grid-column: auto; }
+}
+
+
+@media (hover: hover) and (pointer: fine) {
+  .cr-search-result:hover,
+  .cr-cart-row:hover {
+    background: color-mix(in srgb, var(--rosta-kraft, #C8A77D) 8%, var(--ruth-color-surface-muted, #242424));
+    box-shadow: inset 3px 0 0 var(--accent, var(--rosta-brick-b, #C94A40));
+  }
 }
