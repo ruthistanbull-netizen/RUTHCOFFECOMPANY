@@ -23,7 +23,7 @@
   padding: 0 10px;
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: #fff;
+  background: var(--ruth-color-surface-muted, #242424);
   display: inline-flex;
   align-items: center;
   gap: 7px;
@@ -47,7 +47,7 @@
   min-height: 82px;
   padding: 11px 14px;
   border-bottom: 1px solid var(--line);
-  background: #fff;
+  background: var(--ruth-color-surface-muted, #242424);
   display: grid;
   grid-template-columns: 22px minmax(210px, 1fr) 105px 105px 36px;
   gap: 10px;
@@ -59,8 +59,8 @@
 }
 
 .cr-points-row.is-selected {
-  background: #fafbfc;
-  box-shadow: inset 3px 0 0 var(--accent);
+  background: color-mix(in srgb, var(--rosta-brick-b, #C94A40) 15%, var(--ruth-color-surface-muted, #242424));
+  box-shadow: inset 3px 0 0 var(--accent, var(--rosta-brick-b, #C94A40));
 }
 
 .cr-points-row > label input {
@@ -223,7 +223,7 @@
   min-height: 72px;
   padding: 14px 16px;
   border-bottom: 1px solid var(--line);
-  background: #fff;
+  background: var(--ruth-color-surface-muted, #242424);
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -246,7 +246,7 @@
   min-height: 62px;
   padding: 10px 14px;
   border-top: 1px solid var(--line);
-  background: #fff;
+  background: var(--ruth-color-surface-muted, #242424);
   display: flex;
   justify-content: flex-end;
   gap: 8px;
@@ -255,7 +255,7 @@
 .cr-import-zone {
   min-height: 130px;
   padding: 18px;
-  border: 1px dashed #98a2b3;
+  border: 1px dashed color-mix(in srgb, var(--rosta-kraft, #C8A77D) 58%, transparent);
   border-radius: 13px;
   background: var(--surface-2);
   display: flex;
