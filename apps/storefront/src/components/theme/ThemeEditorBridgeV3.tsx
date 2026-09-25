@@ -186,6 +186,23 @@ function restore(element: Element, original: Snapshot, preserveMedia = false) {
   }
 }
 
+function activateVideo(element: HTMLVideoElement, reload = false) {
+  element.muted = true;
+  element.defaultMuted = true;
+  element.autoplay = true;
+  element.loop = true;
+  element.playsInline = true;
+  element.setAttribute("muted", "");
+  element.setAttribute("autoplay", "");
+  element.setAttribute("loop", "");
+  element.setAttribute("playsinline", "");
+  if (reload) {
+    try { element.load(); } catch {}
+  }
+  const play = element.play();
+  if (play && typeof play.catch === "function") void play.catch(() => undefined);
+}
+
 function mergedStyle(desktop: ThemeDeviceStyle | undefined, mobile: ThemeDeviceStyle | undefined, useMobile: boolean) {
   return useMobile
     ? mergeThemeDeviceStyle(desktop, mobile)
@@ -282,23 +299,17 @@ function applyOverride(element: Element, override: ThemeElementOverride, mobile:
   if (override.hidden) { html.style.display = "none"; return; }
   if (override.text !== undefined && isPlainTextElement(element) && ["text", "button", "link"].includes(String(override.kind))) element.textContent = override.text;
   if (!preserveMedia && override.imageSrc && (element.tagName === "IMG" || element.tagName === "VIDEO")) {
-    (element as HTMLImageElement | HTMLVideoElement).setAttribute("src", override.imageSrc);
-    if (element.tagName === "IMG") (element as HTMLImageElement).setAttribute("srcset", override.imageSrc);
-    if (element instanceof HTMLVideoElement) {
-      element.muted = true;
-      element.defaultMuted = true;
-      element.autoplay = true;
-      element.loop = true;
-      element.playsInline = true;
-      element.setAttribute("muted", "");
-      element.setAttribute("autoplay", "");
-      element.setAttribute("loop", "");
-      element.setAttribute("playsinline", "");
-      try { element.load(); } catch {}
-      const play = element.play();
-      if (play && typeof play.catch === "function") void play.catch(() => undefined);
+    const media = element as HTMLImageElement | HTMLVideoElement;
+    const sourceChanged = media.getAttribute("src") !== override.imageSrc;
+    if (sourceChanged) media.setAttribute("src", override.imageSrc);
+    if (element.tagName === "IMG") {
+      const image = element as HTMLImageElement;
+      if (image.getAttribute("srcset") !== override.imageSrc) image.setAttribute("srcset", override.imageSrc);
     }
-    for (const source of pictureSources(element)) source.setAttribute("srcset", override.imageSrc);
+    if (element instanceof HTMLVideoElement) activateVideo(element, sourceChanged || element.readyState === 0);
+    for (const source of pictureSources(element)) {
+      if (source.getAttribute("srcset") !== override.imageSrc) source.setAttribute("srcset", override.imageSrc);
+    }
   }
   if (override.href !== undefined && element.tagName === "A") {
     if (override.href) (element as HTMLAnchorElement).setAttribute("href", override.href);
@@ -532,22 +543,6 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
       return replacement;
     };
 
-    const ensureVideoPlayback = (element: Element) => {
-      if (!(element instanceof HTMLVideoElement)) return;
-      element.muted = true;
-      element.defaultMuted = true;
-      element.autoplay = true;
-      element.loop = true;
-      element.playsInline = true;
-      element.setAttribute("muted", "");
-      element.setAttribute("autoplay", "");
-      element.setAttribute("loop", "");
-      element.setAttribute("playsinline", "");
-      try { element.load(); } catch {}
-      const play = element.play();
-      if (play && typeof play.catch === "function") void play.catch(() => undefined);
-    };
-
     const restoreMediaOrigin = (id: string) => {
       const current = findById(id);
       const origin = mediaOrigins.get(id);
@@ -722,9 +717,11 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
           const mediaType = event.data.mediaType === "video" ? "video" : "image";
           element = swapMediaElement(element, mediaType);
           const media = element as HTMLImageElement | HTMLVideoElement;
-          media.setAttribute("src", String(event.data.imageSrc));
-          if (element.tagName === "IMG") (element as HTMLImageElement).setAttribute("srcset", String(event.data.imageSrc));
-          ensureVideoPlayback(element);
+          const nextSource = String(event.data.imageSrc);
+          const sourceChanged = media.getAttribute("src") !== nextSource;
+          if (sourceChanged) media.setAttribute("src", nextSource);
+          if (element.tagName === "IMG") (element as HTMLImageElement).setAttribute("srcset", nextSource);
+          if (element instanceof HTMLVideoElement) activateVideo(element, sourceChanged || element.readyState === 0);
           selectedElement = element;
           select(element);
         }
