@@ -31,15 +31,6 @@ export function HomeHeroRuntimeAdjustments() {
         border-top: 0 !important;
       }
 
-      @media (min-width: 768px) {
-        html.ruth-home-page-active main.site-content {
-          margin-top: -12px !important;
-        }
-        html.ruth-home-page-active #home-editorial .home-editorial-slide:first-child > .sticky {
-          height: calc(100svh + 12px) !important;
-        }
-      }
-
       @media (min-width: 1024px) {
         .home-editorial-wordmark {
           top: 38vh !important;
