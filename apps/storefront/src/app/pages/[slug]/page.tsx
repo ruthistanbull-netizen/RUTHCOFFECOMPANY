@@ -37,6 +37,7 @@ export default async function CustomThemePage({ params, searchParams }: { params
           collections={collections}
           heroImages={heroImages}
           scrollImages={themeSettings.homepageImages.scrollImages}
+          themeSettings={themeSettings}
           freeShippingThreshold={freeShippingThreshold}
         />
       ))}
