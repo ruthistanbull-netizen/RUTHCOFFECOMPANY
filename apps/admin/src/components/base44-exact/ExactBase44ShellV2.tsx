@@ -104,11 +104,27 @@ function TopHeader({ collapsed, onToggleSidebar, onOpenSearch, onOpenMore, dark,
   const router = useRouter();
   const pathname = usePathname();
   const currentItem = exactCurrentItem(pathname);
+  const returnToHub = () => {
+    try {
+      window.sessionStorage.removeItem("rosta_panel_hub_entered_v1");
+      window.sessionStorage.removeItem("rr_hub_ruth_entered_v1");
+    } catch {}
+    window.location.assign("/profiles");
+  };
   return <header className="sticky top-0 z-header flex h-16 items-center gap-2 border-b border-border-subtle bg-surface-primary/80 px-3 backdrop-blur-xl md:px-4">
     <ExactIconButton icon={Menu} label="Menüyü aç" variant="ghost" size="icon-sm" className="lg:hidden" onClick={onOpenMore} />
     <ExactIconButton icon={collapsed ? PanelLeft : PanelLeftClose} label="Kenar çubuğunu değiştir" variant="ghost" size="icon-sm" className="hidden lg:flex" onClick={onToggleSidebar} />
     <span className="ruth-type-card-title hidden truncate text-main md:block">{currentItem?.label || "Kontrol Merkezi"}</span>
-    <button type="button" onClick={onOpenSearch} className="ruth-type-control ml-auto mr-1 flex h-11 items-center gap-2 border border-border-subtle bg-surface-secondary px-3 text-subtle radius-control transition-all hover:border-border-strong hover:text-muted md:h-9 md:w-64"><Search className="h-4 w-4 shrink-0" /><span className="hidden md:inline">Ara veya komut çalıştır…</span></button>
+    <button
+      type="button"
+      onClick={returnToHub}
+      aria-label="RR HUB'a dön"
+      title="RR HUB'a dön"
+      className="ml-auto hidden h-9 w-12 items-center justify-center bg-transparent p-0 opacity-75 transition duration-150 hover:scale-[1.06] hover:opacity-100 active:scale-[0.94] lg:flex"
+    >
+      <img src="/rr-mark-dark.svg" alt="" draggable={false} className="h-[22px] w-auto select-none object-contain dark:invert" />
+    </button>
+    <button type="button" onClick={onOpenSearch} className="ruth-type-control ml-auto mr-1 flex h-11 items-center gap-2 border border-border-subtle bg-surface-secondary px-3 text-subtle radius-control transition-all hover:border-border-strong hover:text-muted md:h-9 md:w-64 lg:ml-0"><Search className="h-4 w-4 shrink-0" /><span className="hidden md:inline">Ara veya komut çalıştır…</span></button>
     <ExactIconButton icon={Sparkles} label="ROSTA Insight" variant="ghost" size="icon-sm" className="text-accent" onClick={() => router.push("/rosta-insight")} />
     <ExactNotificationBell />
     <ExactIconButton icon={dark ? Sun : Moon} label="Temayı değiştir" variant="ghost" size="icon-sm" onClick={onToggleDark} />
