@@ -437,26 +437,35 @@ function metadata(element: Element): EditorElement {
   };
 }
 
+function isThemeEditorIgnored(element: Element) {
+  return Boolean(element.closest('[data-theme-editor-ignore="true"]'));
+}
+
 function pickTarget(raw: Element) {
+  if (isThemeEditorIgnored(raw)) return null;
   const picked = raw.closest(PICK_QUERY);
-  if (!picked || picked === document.body || picked === document.documentElement) return null;
+  if (!picked || picked === document.body || picked === document.documentElement || isThemeEditorIgnored(picked)) return null;
   return picked;
 }
 
 function findById(id: string) {
-  return Array.from(document.querySelectorAll("[data-theme-id]")).find((element) => element.getAttribute("data-theme-id") === id) || null;
+  return Array.from(document.querySelectorAll("[data-theme-id]")).find((element) =>
+    element.getAttribute("data-theme-id") === id && !isThemeEditorIgnored(element),
+  ) || null;
 }
 
 function registerElements(root: ParentNode = document) {
-  if (root instanceof Element && root.matches(EDITABLE_QUERY)) ensureThemeId(root);
-  for (const element of Array.from(root.querySelectorAll(EDITABLE_QUERY))) ensureThemeId(element);
+  if (root instanceof Element && root.matches(EDITABLE_QUERY) && !isThemeEditorIgnored(root)) ensureThemeId(root);
+  for (const element of Array.from(root.querySelectorAll(EDITABLE_QUERY))) {
+    if (!isThemeEditorIgnored(element)) ensureThemeId(element);
+  }
 }
 
 function buildOutline(settings: ThemeCustomizerSettings) {
   registerElements();
   const seen = new Set<string>();
   const items: Array<{ id: string; label: string; tag: string; kind: ThemeElementOverride["kind"] }> = [];
-  const elements = Array.from(document.querySelectorAll(EDITABLE_QUERY));
+  const elements = Array.from(document.querySelectorAll(EDITABLE_QUERY)).filter((element) => !isThemeEditorIgnored(element));
   const overrides = new Map(resolveThemeElementOverrides(settings, window.location.pathname).map((item) => [item.id, item]));
 
   const add = (element: Element, keepWhenCollapsed = false) => {
