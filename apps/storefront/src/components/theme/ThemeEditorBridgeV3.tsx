@@ -523,7 +523,7 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
         video.loop = true;
         video.muted = true;
         video.playsInline = true;
-        video.preload = "metadata";
+        video.preload = "auto";
       } else {
         (replacement as HTMLImageElement).alt = (origin as HTMLImageElement).alt || "";
       }
