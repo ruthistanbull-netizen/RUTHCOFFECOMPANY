@@ -440,6 +440,26 @@ export function VisualThemeCustomizer() {
     }
   };
 
+  const duplicateScrollMedia = useCallback((index: number) => {
+    setSettings((current) => {
+      const items = [...current.homepageImages.scrollImages];
+      const source = items[index];
+      if (!source) return current;
+      if (items.length >= 12) {
+        window.setTimeout(() => toast.error("Kayan medya alanında en fazla 12 öğe olabilir."), 0);
+        return current;
+      }
+      items.splice(index + 1, 0, source);
+      return {
+        ...current,
+        homepageImages: {
+          ...current.homepageImages,
+          scrollImages: items,
+        },
+      };
+    });
+  }, [toast]);
+
   const uploadSelectedImage = async (file: File) => {
     if (!selected) return;
     setUploading("selected");
@@ -487,6 +507,39 @@ export function VisualThemeCustomizer() {
       setUploading(null);
     }
   };
+
+  const duplicateSelectedMedia = useCallback(() => {
+    if (!selected || selected.kind !== "image") return;
+    const source = selectedOverride?.imageSrc || selected.imageSrc || "";
+    if (!source) {
+      toast.error("Çoğaltılacak medya kaynağı bulunamadı.");
+      return;
+    }
+
+    const baseId = selected.id.replace(/[^a-zA-Z0-9_-]/g, "-").slice(0, 92) || "media";
+    const duplicateId = `${baseId}--copy-${Date.now().toString(36)}`;
+    const mediaType: HomepageMediaType =
+      selectedOverride?.mediaType || selected.mediaType || (selected.tag === "video" ? "video" : "image");
+
+    const duplicate: ThemeElementOverride = {
+      id: duplicateId,
+      selector: `[data-theme-id="${duplicateId}"]`,
+      label: `${selected.label || "Medya"} · Kopya`,
+      tag: mediaType === "video" ? "video" : "img",
+      kind: "image",
+      hidden: false,
+      imageSrc: source,
+      mediaType,
+      duplicateOf: selected.id,
+      desktop: { ...(selectedOverride?.desktop || {}) },
+      mobile: { ...(selectedOverride?.mobile || {}) },
+    };
+
+    pendingSelectIdRef.current = duplicateId;
+    setSettings((current) => upsertThemeElementOverride(current, targetPage, duplicate));
+    setMenu(null);
+    toast.success("Medya çoğaltıldı.");
+  }, [selected, selectedOverride, targetPage, toast]);
 
   useEffect(() => {
     const onMessage = (event: MessageEvent) => {
@@ -543,6 +596,20 @@ export function VisualThemeCustomizer() {
             y: Math.max(70, Math.min(Math.max(70, window.innerHeight - 470), requestedY)),
           });
           pendingContextRef.current = null;
+        }
+        return;
+      }
+
+      if (message.type === "RUTH_THEME_EDITOR_SETTINGS_APPLIED" && pendingSelectIdRef.current) {
+        const pendingId = pendingSelectIdRef.current;
+        const missing = Array.isArray(message.missingIds) ? message.missingIds : [];
+        if (!missing.includes(pendingId)) {
+          pendingSelectIdRef.current = null;
+          iframeRef.current?.contentWindow?.postMessage({
+            type: "RUTH_THEME_EDITOR_SELECT_REQUEST",
+            id: pendingId,
+            scroll: true,
+          }, "*");
         }
         return;
       }
