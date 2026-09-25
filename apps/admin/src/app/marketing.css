@@ -139,7 +139,7 @@
   height: 22px;
   border-radius: 50%;
   background: var(--ruth-color-surface-muted, #242424);
-  box-shadow: 0 1px 3px rgba(16,24,40,.16);
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--rosta-carbon, #111111) 36%, transparent);
 }
 
 .cr-switch strong {
