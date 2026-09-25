@@ -10,15 +10,16 @@ import {
 } from "framer-motion";
 import { RostaHomeWordmark } from "@/components/brand/RostaHomeWordmark";
 import {
+  HOME_EDITORIAL_IMAGE_ID,
+  HOME_EDITORIAL_VIDEO_ID,
   HOME_HERO_DESKTOP_IMAGE_ID,
   HOME_HERO_MOBILE_IMAGE_ID,
+  homepageDeviceMedia,
   homepageHeroImages,
   type HomepageHeroImages,
+  type HomepageMediaType,
 } from "@/lib/themeMedia";
 import type { ThemeCustomizerSettings } from "@/lib/themeCustomizer";
-
-const HOME_EDITORIAL_VIDEO_ID = "home-editorial-video-1";
-const HOME_EDITORIAL_IMAGE_ID = "home-editorial-image-2";
 
 const EDITORIAL_SLIDES = [
   {
@@ -110,13 +111,17 @@ function EditorialMedia({
   index,
   heroImages,
   editorialVideo,
+  editorialVideoType,
   editorialImage,
+  editorialImageType,
 }: {
   slide: EditorialSlide;
   index: number;
   heroImages: HomepageHeroImages;
   editorialVideo: string;
+  editorialVideoType: HomepageMediaType;
   editorialImage: string;
+  editorialImageType: HomepageMediaType;
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const reduceMotion = useReducedMotion();
@@ -214,7 +219,7 @@ function EditorialMedia({
               )}
             </div>
           ) : slide.kind === "image" ? (
-            isVideoMediaSource(editorialImage) ? (
+            editorialImageType === "video" ? (
               <video
                 className="h-full w-full object-cover object-center"
                 src={editorialImage}
@@ -247,7 +252,7 @@ function EditorialMedia({
               </picture>
             )
           ) : (
-            isVideoMediaSource(editorialVideo) ? (
+            editorialVideoType === "video" ? (
               <video
                 className="h-full w-full object-cover object-center"
                 src={editorialVideo}
@@ -286,10 +291,12 @@ export default function Hero({
   heroImages,
   editorialVideo,
   editorialImage,
+  themeSettings,
 }: {
   heroImages: HomepageHeroImages;
   editorialVideo: string;
   editorialImage: string;
+  themeSettings: ThemeCustomizerSettings;
 }) {
   const reduceMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement | null>(null);
@@ -297,10 +304,23 @@ export default function Hero({
   const [wordmarkColor, setWordmarkColor] = useState("#FBF3E6");
   const [wordmarkVisible, setWordmarkVisible] = useState(true);
   const [liveHeroImages, setLiveHeroImages] = useState(heroImages);
+  const [liveThemeSettings, setLiveThemeSettings] = useState(themeSettings);
+  const [mobileViewport, setMobileViewport] = useState(false);
 
   useEffect(() => {
     setLiveHeroImages(heroImages);
   }, [heroImages.desktop, heroImages.mobile]);
+
+  useEffect(() => {
+    setLiveThemeSettings(themeSettings);
+  }, [themeSettings]);
+
+  useEffect(() => {
+    const update = () => setMobileViewport(window.innerWidth < 768);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
 
   useEffect(() => {
     notifyHeroMediaReady();
@@ -313,7 +333,9 @@ export default function Hero({
     const onMessage = (event: MessageEvent) => {
       if (event.source !== window.parent || !event.data || typeof event.data !== "object") return;
       if (event.data.type !== "RUTH_THEME_EDITOR_SETTINGS" || !event.data.settings) return;
-      setLiveHeroImages(homepageHeroImages(event.data.settings as ThemeCustomizerSettings));
+      const nextSettings = event.data.settings as ThemeCustomizerSettings;
+      setLiveThemeSettings(nextSettings);
+      setLiveHeroImages(homepageHeroImages(nextSettings));
     };
 
     window.addEventListener("message", onMessage);
@@ -364,6 +386,11 @@ export default function Hero({
     };
   }, []);
 
+  const editorialVideoMedia = homepageDeviceMedia(liveThemeSettings, HOME_EDITORIAL_VIDEO_ID, editorialVideo);
+  const editorialImageMedia = homepageDeviceMedia(liveThemeSettings, HOME_EDITORIAL_IMAGE_ID, editorialImage);
+  const activeEditorialVideo = mobileViewport ? editorialVideoMedia.mobile : editorialVideoMedia.desktop;
+  const activeEditorialImage = mobileViewport ? editorialImageMedia.mobile : editorialImageMedia.desktop;
+
   const slides: EditorialSlide[] = [
     { kind: "hero-image", alt: "Rosta Coffee Co ana sayfa görseli", priority: true },
     {
@@ -411,8 +438,10 @@ export default function Hero({
           slide={slide}
           index={index}
           heroImages={liveHeroImages}
-          editorialVideo={editorialVideo}
-          editorialImage={editorialImage}
+          editorialVideo={activeEditorialVideo.src}
+          editorialVideoType={activeEditorialVideo.mediaType}
+          editorialImage={activeEditorialImage.src}
+          editorialImageType={activeEditorialImage.mediaType}
         />
       ))}
     </section>
