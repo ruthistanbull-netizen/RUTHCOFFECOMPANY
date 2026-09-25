@@ -21,7 +21,6 @@ import { AdminProductMediaMobileStackV2 } from "@/components/AdminProductMediaMo
 import { AdminProductStudioResponsiveEnhancer } from "@/components/AdminProductStudioResponsiveEnhancer";
 import { AdminRefreshButtonCleaner } from "@/components/AdminRefreshButtonCleaner";
 import { AdminRetainedLiquidClass } from "@/components/AdminRetainedLiquidClass";
-import { AdminRouteViewTransition } from "@/components/AdminRouteViewTransition";
 import { AdminRuthieQuickChatV2 } from "@/components/AdminRuthieQuickChatV2";
 import { AdminSingleNavigationGuard } from "@/components/AdminSingleNavigationGuard";
 import { AdminUnifiedMotionEnhancer } from "@/components/AdminUnifiedMotionEnhancer";
@@ -169,7 +168,6 @@ export function AppFrame({ children }: { children: ReactNode }) {
     <RequireAdmin>
       {providers}
       <AdminPageRefreshTransition />
-      <AdminRouteViewTransition />
       <AdminRetainedLiquidClass />
       <AdminSingleNavigationGuard />
       <AdminRuthieQuickChatV2 />
