@@ -411,7 +411,7 @@ export function Header({
   const productPage = pathname.startsWith("/products/");
   const homePage = pathname === "/";
   const transparentProductHeader = productPage && !scrolled && !menuOpen && !searchOpen;
-  const transparentHomeHeader = homePage && overHomeEditorial && !menuOpen && !searchOpen;
+  const transparentHomeHeader = homePage && !menuOpen && !searchOpen;
   const contrastHeader = transparentProductHeader || transparentHomeHeader;
   const menuControlColor = "#FBF3E6";
   const menuToneStyle = {
@@ -542,7 +542,7 @@ export function Header({
   return (
     <>
       <style>{`
-        .site-app-shell{--announcement-height:0px!important}.has-announcement-bar{padding-top:0!important}.ruth-zara-header{height:64px;color:var(--rosta-cream);background:var(--rosta-carbon);border-bottom:1px solid color-mix(in srgb,var(--rosta-kraft) 24%,transparent);transition:background-color 450ms ease-in-out,border-color 450ms ease-in-out,box-shadow 450ms ease-in-out,backdrop-filter 450ms ease-in-out}.ruth-zara-header.is-scrolled{background:color-mix(in srgb,var(--rosta-carbon) 96%,transparent);border-color:color-mix(in srgb,var(--rosta-kraft) 42%,transparent);box-shadow:0 2px 18px color-mix(in srgb,var(--rosta-carbon) 44%,transparent);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}.ruth-zara-header.is-contrast{background:transparent;border-color:transparent;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}.ruth-zara-header.is-contrast .ruth-zara-header-inner{color:var(--rosta-cream);mix-blend-mode:normal}.ruth-zara-header.is-contrast .header-wordmark{filter:brightness(0) invert(1)}.ruth-zara-header-inner{height:64px;padding-inline:16px}.ruth-zara-header-inner :where(button,a){color:inherit}.ruth-zara-header:not(.is-contrast) .ruth-zara-header-actions,.ruth-zara-header:not(.is-contrast) .ruth-zara-header-actions :where(button,a,svg){color:var(--rosta-cream)!important;stroke:currentColor!important;opacity:1!important}.ruth-zara-header.is-contrast .ruth-zara-header-actions button[aria-label="Ara"],.ruth-zara-header.is-contrast .ruth-zara-header-actions button[aria-label="Ara"] svg{color:var(--ruth-home-header-search-ink,var(--rosta-cream))!important;stroke:currentColor!important;opacity:1!important}.ruth-zara-header.is-contrast .ruth-zara-header-actions button[aria-label="Hesap menüsü"],.ruth-zara-header.is-contrast .ruth-zara-header-actions button[aria-label="Hesap menüsü"] svg{color:var(--ruth-home-header-account-ink,var(--rosta-cream))!important;stroke:currentColor!important;opacity:1!important}.ruth-zara-header.is-contrast .ruth-zara-header-actions button[aria-label^="Sepet"],.ruth-zara-header.is-contrast .ruth-zara-header-actions button[aria-label^="Sepet"] svg{color:var(--ruth-home-header-cart-ink,var(--rosta-cream))!important;stroke:currentColor!important;opacity:1!important}.header-wordmark-link{align-items:center}.header-wordmark{display:block;width:110px;height:auto;max-height:54px;filter:brightness(0) invert(1)}.ruth-zara-menu-slot{display:block;width:48px;height:64px}.ruth-zara-menu-button{display:flex;width:48px;height:64px;align-items:center;justify-content:flex-start;color:var(--rosta-cream);-webkit-tap-highlight-color:transparent}.ruth-zara-menu-button--contrast{color:var(--rosta-cream);mix-blend-mode:normal}.ruth-zara-menu-button--menu-open{color:var(--ruth-menu-control-color)!important;mix-blend-mode:normal!important}.ruth-zara-hamburger{position:relative;display:flex;width:32px;height:12px;flex-direction:column;justify-content:space-between}.site-app-shell .ruth-zara-menu-button .ruth-zara-hamburger>span{display:block!important}.site-app-shell .ruth-zara-menu-button .ruth-zara-hamburger::before,.site-app-shell .ruth-zara-menu-button .ruth-zara-hamburger::after{content:none!important;display:none!important}.ruth-zara-hamburger__line{display:block;width:100%;height:1px;background:currentColor;transform-origin:center;transition:transform 500ms ease-in-out}.ruth-zara-hamburger[data-open=true] .ruth-zara-hamburger__line--top{transform:translateY(5.5px) rotate(45deg)}.ruth-zara-hamburger[data-open=true] .ruth-zara-hamburger__line--bottom{transform:translateY(-5.5px) rotate(-45deg)}
+        .site-app-shell{--announcement-height:0px!important}.has-announcement-bar{padding-top:0!important}.ruth-zara-header{height:64px;color:var(--rosta-cream);background:var(--rosta-carbon);border-bottom:1px solid color-mix(in srgb,var(--rosta-kraft) 24%,transparent);transition:background-color 450ms ease-in-out,border-color 450ms ease-in-out,box-shadow 450ms ease-in-out,backdrop-filter 450ms ease-in-out}.ruth-zara-header.is-scrolled{background:color-mix(in srgb,var(--rosta-carbon) 96%,transparent);border-color:color-mix(in srgb,var(--rosta-kraft) 42%,transparent);box-shadow:0 2px 18px color-mix(in srgb,var(--rosta-carbon) 44%,transparent);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}.ruth-zara-header.is-contrast{background:transparent;border-color:transparent;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}.ruth-zara-header.is-home{background:transparent!important;border-color:transparent!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}.ruth-zara-header.is-contrast .ruth-zara-header-inner{color:var(--rosta-cream);mix-blend-mode:normal}.ruth-zara-header.is-contrast .header-wordmark{filter:brightness(0) invert(1)}.ruth-zara-header-inner{height:64px;padding-inline:16px}.ruth-zara-header-inner :where(button,a){color:inherit}.ruth-zara-header:not(.is-contrast) .ruth-zara-header-actions,.ruth-zara-header:not(.is-contrast) .ruth-zara-header-actions :where(button,a,svg){color:var(--rosta-cream)!important;stroke:currentColor!important;opacity:1!important}.ruth-zara-header.is-contrast .ruth-zara-header-actions button[aria-label="Ara"],.ruth-zara-header.is-contrast .ruth-zara-header-actions button[aria-label="Ara"] svg{color:var(--ruth-home-header-search-ink,var(--rosta-cream))!important;stroke:currentColor!important;opacity:1!important}.ruth-zara-header.is-contrast .ruth-zara-header-actions button[aria-label="Hesap menüsü"],.ruth-zara-header.is-contrast .ruth-zara-header-actions button[aria-label="Hesap menüsü"] svg{color:var(--ruth-home-header-account-ink,var(--rosta-cream))!important;stroke:currentColor!important;opacity:1!important}.ruth-zara-header.is-contrast .ruth-zara-header-actions button[aria-label^="Sepet"],.ruth-zara-header.is-contrast .ruth-zara-header-actions button[aria-label^="Sepet"] svg{color:var(--ruth-home-header-cart-ink,var(--rosta-cream))!important;stroke:currentColor!important;opacity:1!important}.header-wordmark-link{align-items:center}.header-wordmark{display:block;width:110px;height:auto;max-height:54px;filter:brightness(0) invert(1)}.ruth-zara-menu-slot{display:block;width:48px;height:64px}.ruth-zara-menu-button{display:flex;width:48px;height:64px;align-items:center;justify-content:flex-start;color:var(--rosta-cream);-webkit-tap-highlight-color:transparent}.ruth-zara-menu-button--contrast{color:var(--rosta-cream);mix-blend-mode:normal}.ruth-zara-menu-button--menu-open{color:var(--ruth-menu-control-color)!important;mix-blend-mode:normal!important}.ruth-zara-hamburger{position:relative;display:flex;width:32px;height:12px;flex-direction:column;justify-content:space-between}.site-app-shell .ruth-zara-menu-button .ruth-zara-hamburger>span{display:block!important}.site-app-shell .ruth-zara-menu-button .ruth-zara-hamburger::before,.site-app-shell .ruth-zara-menu-button .ruth-zara-hamburger::after{content:none!important;display:none!important}.ruth-zara-hamburger__line{display:block;width:100%;height:1px;background:currentColor;transform-origin:center;transition:transform 500ms ease-in-out}.ruth-zara-hamburger[data-open=true] .ruth-zara-hamburger__line--top{transform:translateY(5.5px) rotate(45deg)}.ruth-zara-hamburger[data-open=true] .ruth-zara-hamburger__line--bottom{transform:translateY(-5.5px) rotate(-45deg)}
         .ruth-zara-menu-surface{--ruth-menu-left:clamp(232px,calc(3.77vw + 200px),274px);--ruth-menu-right:clamp(272px,calc(5.75vw + 194px),304px);--ink:var(--rosta-cream);--cream:var(--rosta-carbon);--gold:var(--rosta-brick-b);--gold-dark:var(--rosta-brick-b);background:var(--rosta-carbon);color:var(--rosta-cream);font-family:var(--font-body)}.ruth-zara-menu-content{position:relative;width:100%;height:100%}.ruth-zara-menu-logo{position:absolute;top:15px;left:var(--ruth-menu-left);z-index:2;display:block;width:clamp(199px,14.6vw,281px);height:auto;aspect-ratio:1208/536}.ruth-zara-menu-logo img{display:block;width:100%;height:100%;filter:var(--ruth-menu-logo-filter,brightness(0));object-fit:contain;object-position:left center}.ruth-zara-menu-actions{position:absolute;top:28px;right:32px;z-index:3;width:135px;color:var(--ink);font-size:13px;font-weight:400;line-height:22px;text-align:right;text-transform:uppercase}.ruth-zara-menu-actions__search{display:flex;width:135px;height:28px;align-items:flex-start;justify-content:flex-end;padding-bottom:5px;border-bottom:1px solid currentColor}.ruth-zara-menu-actions__links{display:flex;margin-top:104px;flex-direction:column;align-items:flex-end}.ruth-zara-menu-actions__links>*{display:flex;min-height:32px;align-items:center;justify-content:flex-end;padding-block:5px}
         .ruth-zara-menu-desktop{position:absolute;top:175px;right:var(--ruth-menu-right);bottom:48px;left:calc(var(--ruth-menu-left) - 20px);display:grid;min-height:0;grid-template-columns:minmax(280px,360px) minmax(0,1fr);column-gap:clamp(28px,4vw,64px);overflow:hidden}.ruth-zara-desktop-accordion{min-width:0;overflow-y:auto;padding:0 8px 20px 20px;scrollbar-width:thin;scrollbar-color:transparent transparent}.ruth-zara-desktop-item{width:100%}.ruth-zara-desktop-row{display:grid;grid-template-columns:minmax(0,1fr) 34px;align-items:start;column-gap:8px;min-height:31px}.ruth-zara-desktop-link{display:block;min-width:0;color:var(--ink);font-family:var(--font-heading);font-size:24px;font-weight:900;line-height:25px;letter-spacing:-.04em;text-decoration:none;text-transform:uppercase;transition:color 180ms ease}.ruth-zara-desktop-toggle{display:grid;width:34px;height:31px;place-items:center;border:0;background:transparent;color:var(--ink);font-family:var(--font-body)}.ruth-zara-desktop-toggle span{display:block;font-size:24px;font-weight:400;line-height:24px;transform:translateY(-1px)}.ruth-zara-desktop-children{display:flex;overflow:hidden;flex-direction:column;padding:5px 38px 15px 16px}.ruth-zara-desktop-child{display:block;padding:4px 0;color:var(--ink);font-family:var(--font-body);font-size:12px;font-weight:400;line-height:18px;text-decoration:none;text-transform:uppercase;transition:color 180ms ease}.ruth-zara-main-tabs{position:relative;min-width:0;padding-left:20px}.ruth-zara-main-tab{position:relative;display:flex;width:max-content;max-width:100%;min-height:31px;align-items:flex-start;border:0;background:transparent;color:var(--ink);font-family:var(--font-heading);font-size:24px;font-weight:900;line-height:25px;letter-spacing:-.04em;text-align:left;text-transform:uppercase}.ruth-zara-main-tab__dot{position:absolute;top:10.5px;left:-20px;width:4px;height:4px;border-radius:50%;background:var(--gold)}.ruth-zara-menu-copy{min-width:0;overflow-y:auto;padding-right:8px;scrollbar-width:thin;scrollbar-color:transparent transparent}.ruth-zara-menu-copy__title{display:flex;min-height:36px;align-items:flex-start;color:var(--gold-dark);font-size:13px;font-weight:500;line-height:20px;text-transform:uppercase}.ruth-zara-menu-copy__group{display:grid;margin-top:32px;grid-template-columns:clamp(80px,8.8vw,120px) minmax(0,1fr);column-gap:clamp(12px,1.75vw,24px)}.ruth-zara-menu-copy__index{padding-top:8px;color:var(--gold-dark);font-size:11px;font-weight:400;line-height:16px;text-transform:uppercase}.ruth-zara-menu-copy__links{display:flex;min-width:0;flex-direction:column}.ruth-zara-menu-copy__link{display:flex;min-height:36px;align-items:center;padding:8px;color:var(--ink);font-size:13px;font-weight:400;line-height:20px;text-transform:uppercase;transition:color 180ms ease}
         .ruth-menu-collection-rail{display:flex;min-width:0;cursor:grab;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch}.ruth-menu-collection-rail::-webkit-scrollbar{display:none}.ruth-menu-collection-rail[data-dragging=true]{cursor:grabbing;user-select:none}.ruth-menu-collection-rail--desktop{height:max-content;gap:6px;padding:0 8px 8px}.ruth-menu-collection-card{display:block;width:clamp(34px,calc(14.7vw - 166px),116px);min-width:clamp(34px,calc(14.7vw - 166px),116px);color:var(--ink);text-decoration:none}.ruth-menu-collection-card__media{display:block;width:100%;aspect-ratio:2/3;overflow:hidden;background:var(--rosta-cream)}.ruth-menu-collection-card__media img{display:block;width:100%;height:100%;object-fit:cover;object-position:center;transition:transform 450ms ease-in-out;pointer-events:none}.ruth-menu-collection-card__label{display:block;margin-top:4px;font-size:clamp(8px,calc(.36vw + 3.1px),10px);font-weight:400;line-height:clamp(11px,calc(.695vw + 1.5px),14.87px);letter-spacing:clamp(.25px,calc(.088vw - .95px),.74px);overflow-wrap:anywhere;text-transform:uppercase}.ruth-zara-menu-mobile,.ruth-zara-menu-mobile-actions{display:none}
@@ -571,7 +571,7 @@ export function Header({
 
       <header
         data-menu-open={menuOpen ? "true" : "false"}
-        className={`ruth-zara-header fixed inset-x-0 top-0 z-[80] w-full ${transparentProductHeader ? "product-header-transparent" : ""} ${contrastHeader ? "is-contrast" : ""} ${scrolled && !contrastHeader ? "is-scrolled" : ""}`}
+        className={`ruth-zara-header fixed inset-x-0 top-0 z-[80] w-full ${homePage ? "is-home" : ""} ${transparentProductHeader ? "product-header-transparent" : ""} ${contrastHeader ? "is-contrast" : ""} ${scrolled && !contrastHeader ? "is-scrolled" : ""}`}
       >
         <div className="ruth-zara-header-inner grid w-full grid-cols-[1fr_auto_1fr] items-center">
           <span className="ruth-zara-menu-slot" aria-hidden="true" />
@@ -735,50 +735,94 @@ export function Header({
       <AnimatePresence>
         {searchOpen ? (
           <motion.div
-            className="fixed inset-0 z-[110] bg-carbon px-5 text-cream sm:px-8"
+            className="rosta-search-overlay fixed inset-0 z-[110] overflow-y-auto bg-carbon px-5 text-cream sm:px-8"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
           >
             <button
               type="button"
               onClick={() => setSearchOpen(false)}
-              className="absolute right-5 top-5 grid h-12 w-12 place-items-center rounded-full active:bg-brick/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick sm:right-8 sm:top-7"
+              className="absolute right-5 top-5 grid h-11 w-11 place-items-center rounded-full border border-kraft/35 bg-carbon-soft text-cream transition-colors hover:border-brick/70 hover:text-brick focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick sm:right-8 sm:top-7"
               aria-label="Aramayı kapat"
             >
-              <X size={26} strokeWidth={1.1} />
+              <X size={21} strokeWidth={1.25} />
             </button>
-            <div className="mx-auto max-w-4xl pt-28 sm:pt-36">
-              <p className="mb-7 text-[10px] uppercase tracking-[0.22em] text-cream/55">Ara</p>
+            <div className="mx-auto w-full max-w-5xl pb-16 pt-[clamp(112px,18vh,190px)]">
+              <div className="mb-8 flex items-end justify-between gap-5">
+                <div>
+                  <p className="mb-2 text-[9px] uppercase tracking-[0.24em] text-brick">Arama</p>
+                  <h2 className="font-heading text-[clamp(1.5rem,3vw,2.65rem)] font-medium tracking-[-0.02em] text-cream">
+                    Ne arıyorsunuz?
+                  </h2>
+                </div>
+                <span className="hidden text-[9px] uppercase tracking-[0.16em] text-cream/35 sm:block">
+                  ROSTA COFFEE CO.
+                </span>
+              </div>
               <form
                 onSubmit={(event) => {
                   event.preventDefault();
                   submitSearch();
                 }}
-                className="flex items-center border-b border-kraft/45 pb-4 focus-within:border-brick"
+                className="rosta-search-form flex items-center gap-4 rounded-[24px] border border-kraft/40 bg-carbon-soft px-5 py-3.5 shadow-[0_18px_56px_rgba(0,0,0,.16)] transition-colors focus-within:border-brick/75 sm:px-6 sm:py-4"
               >
-                <Search className="mr-4" size={22} strokeWidth={1.2} />
+                <Search className="shrink-0 text-cream/70" size={22} strokeWidth={1.25} />
                 <input
                   autoFocus
                   value={searchValue}
                   onChange={(event) => setSearchValue(event.target.value)}
-                  placeholder="Ne arıyorsunuz?"
-                  className="w-full bg-transparent text-[clamp(1.6rem,4vw,3.5rem)] font-normal text-cream outline-none placeholder:text-cream/35"
+                  placeholder="Ürün, kahve veya kategori ara"
+                  className="min-w-0 flex-1 !appearance-none !border-0 !bg-transparent !p-0 text-[clamp(1.05rem,2.2vw,1.55rem)] font-normal text-cream !shadow-none outline-none placeholder:text-cream/32"
                 />
+                <button
+                  type="submit"
+                  className="shrink-0 rounded-full bg-brick px-5 py-2.5 text-[9px] font-medium uppercase tracking-[0.16em] text-white transition-transform active:scale-[.97]"
+                >
+                  Ara
+                </button>
               </form>
-              <div className="mt-10 grid grid-cols-2 gap-x-8 sm:grid-cols-3 lg:grid-cols-4">
-                {categoryLinks.slice(0, 12).map((item) => (
-                  <Link
-                    key={item.path}
-                    href={item.path}
-                    onClick={() => setSearchOpen(false)}
-                    className="border-b border-kraft/30 py-4 text-[10px] uppercase tracking-[0.14em] text-cream focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
+              {categoryLinks.length ? (
+                <div className="mt-9 overflow-hidden rounded-[24px] border border-kraft/30 bg-carbon-soft/55">
+                  <div className="border-b border-kraft/25 px-5 py-4 sm:px-6">
+                    <p className="text-[9px] uppercase tracking-[0.2em] text-cream/45">Kategoriler</p>
+                  </div>
+                  <div className="grid sm:grid-cols-2">
+                    {categoryLinks.slice(0, 12).map((item, index) => (
+                      <Link
+                        key={item.path}
+                        href={item.path}
+                        onClick={() => setSearchOpen(false)}
+                        className={`group flex items-center justify-between gap-4 px-5 py-4 text-[10px] uppercase tracking-[0.15em] text-cream transition-colors hover:bg-cream/[0.045] hover:text-brick focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brick sm:px-6 ${index % 2 === 0 ? "sm:border-r sm:border-kraft/20" : ""} ${index < categoryLinks.slice(0, 12).length - 2 ? "border-b border-kraft/20" : ""}`}
+                      >
+                        <span>{item.label}</span>
+                        <span className="text-cream/30 transition-transform group-hover:translate-x-1 group-hover:text-brick" aria-hidden="true">→</span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
             </div>
+            <style>{`
+              .rosta-search-overlay input,
+              .rosta-search-overlay input:focus,
+              .rosta-search-overlay input:active {
+                background: transparent !important;
+                background-color: transparent !important;
+                border: 0 !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                outline: none !important;
+              }
+              .rosta-search-overlay input:-webkit-autofill,
+              .rosta-search-overlay input:-webkit-autofill:hover,
+              .rosta-search-overlay input:-webkit-autofill:focus {
+                -webkit-text-fill-color: var(--rosta-cream) !important;
+                -webkit-box-shadow: 0 0 0 1000px var(--rosta-carbon-soft) inset !important;
+                transition: background-color 9999s ease-out 0s;
+              }
+            `}</style>
           </motion.div>
         ) : null}
       </AnimatePresence>
