@@ -287,10 +287,6 @@
   font-size: 12px;
 }
 
-.cameraControls button:hover:not(:disabled) {
-  border-color: color-mix(in srgb, var(--ruth-color-accent-soft) 36%, transparent);
-  background: rgb(20 23 31 / 86%);
-}
 
 .cameraControls button:disabled {
   opacity: .46;
@@ -359,6 +355,13 @@
 
 @keyframes cameraSpin {
   to { transform: rotate(1turn); }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cameraControls button:hover:not(:disabled) {
+    border-color: color-mix(in srgb, var(--ruth-color-accent-soft) 36%, transparent);
+    background: color-mix(in srgb, var(--rosta-carbon-soft, #242424) 86%, transparent);
+  }
 }
 
 @media (max-width: 760px) {
