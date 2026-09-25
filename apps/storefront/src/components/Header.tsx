@@ -15,6 +15,7 @@ import { ROSTA_WORDMARK_SRC } from "@/components/brand/rostaWordmark";
 import {
   defaultThemeCustomizerSettings,
   type ThemeCustomizerSettings,
+  type ThemeMenuMediaCard,
   type ThemeNavItem,
 } from "@/lib/themeCustomizer";
 import { categoryHref } from "@/lib/catalogCategories";
@@ -53,10 +54,12 @@ function ZaraMenuIcon({ open = false }: { open?: boolean }) {
 
 function PhotoCollectionsRail({
   collections,
+  mediaCards,
   closeMenu,
   placement,
 }: {
   collections: Collection[];
+  mediaCards: ThemeMenuMediaCard[];
   closeMenu: () => void;
   placement: "desktop" | "mobile";
 }) {
@@ -107,7 +110,7 @@ function PhotoCollectionsRail({
     } catch {}
   };
 
-  if (!visibleCollections.length) return null;
+  if (!visibleCollections.length && !mediaCards.length) return null;
 
   return (
     <div
@@ -142,6 +145,28 @@ function PhotoCollectionsRail({
             />
           </span>
           <span className="ruth-menu-collection-card__label">{collection.name}</span>
+        </Link>
+      ))}
+      {mediaCards.map((card) => (
+        <Link
+          key={card.id}
+          href={card.href || "/collections"}
+          onClick={(event) => {
+            if (dragged.current) {
+              event.preventDefault();
+              dragged.current = false;
+              return;
+            }
+            closeMenu();
+          }}
+          className="ruth-menu-collection-card"
+          draggable={false}
+          data-theme-menu-media-card={card.id}
+        >
+          <span className="ruth-menu-collection-card__media">
+            <img src={card.imageSrc} alt={card.label || ""} draggable={false} />
+          </span>
+          {card.label ? <span className="ruth-menu-collection-card__label">{card.label}</span> : null}
         </Link>
       ))}
     </div>
@@ -407,6 +432,7 @@ export function Header({
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [desktopOpenMenuId, setDesktopOpenMenuId] = useState<string | null>(null);
   const [overHomeEditorial, setOverHomeEditorial] = useState(() => pathname === "/");
+  const [liveMenuMediaCards, setLiveMenuMediaCards] = useState<ThemeMenuMediaCard[]>(themeSettings.header.mediaCards || []);
 
   const productPage = pathname.startsWith("/products/");
   const homePage = pathname === "/";
@@ -487,6 +513,21 @@ export function Header({
     setSearchOpen(false);
     setDesktopOpenMenuId(null);
   }, [pathname]);
+
+  useEffect(() => {
+    setLiveMenuMediaCards(themeSettings.header.mediaCards || []);
+  }, [themeSettings.header.mediaCards]);
+
+  useEffect(() => {
+    const onThemeMessage = (event: MessageEvent) => {
+      if (event.source !== window.parent || !event.data || typeof event.data !== "object") return;
+      if (event.data.type !== "RUTH_THEME_EDITOR_SETTINGS" || !event.data.settings) return;
+      const next = event.data.settings as ThemeCustomizerSettings;
+      setLiveMenuMediaCards(next.header?.mediaCards || []);
+    };
+    window.addEventListener("message", onThemeMessage);
+    return () => window.removeEventListener("message", onThemeMessage);
+  }, []);
 
   useEffect(() => {
     if (!menuOpen) {
@@ -693,6 +734,7 @@ export function Header({
                 />
                 <PhotoCollectionsRail
                   collections={collections}
+                  mediaCards={liveMenuMediaCards}
                   closeMenu={closeMenu}
                   placement="desktop"
                 />
@@ -708,6 +750,7 @@ export function Header({
                 />
                 <PhotoCollectionsRail
                   collections={collections}
+                  mediaCards={liveMenuMediaCards}
                   closeMenu={closeMenu}
                   placement="mobile"
                 />
