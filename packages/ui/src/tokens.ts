@@ -75,8 +75,8 @@ export const ruthTokens = {
     pill: "999px",
   },
   shadow: {
-    soft: "0 12px 36px rgba(23, 21, 18, 0.08)",
-    elevated: "0 24px 64px rgba(23, 21, 18, 0.14)",
+    soft: "0 12px 36px rgba(17, 17, 17, 0.08)",
+    elevated: "0 24px 64px rgba(17, 17, 17, 0.14)",
   },
   space: {
     1: "4px",
