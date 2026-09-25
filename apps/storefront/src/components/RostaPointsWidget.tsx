@@ -24,7 +24,6 @@ import {
 } from "@/lib/rewards";
 import { useRostaPointsSettings } from "@/lib/useRostaPointsSettings";
 import { displayBirthDate, formatManualDateInput } from "@/lib/manualDate";
-import rostaPointsPhoto from "../../public/home/rosta-under-hero-photo.jpg";
 
 function formatLira(value: number) {
   return new Intl.NumberFormat("tr-TR", {
@@ -808,7 +807,7 @@ export function RostaPointsWidget() {
                   transition={{ delay: reduceMotion ? 0 : 0.08, duration: 0.55 }}
                 >
                   <motion.img
-                    src={rostaPointsPhoto.src}
+                    src="/home/rosta-under-hero-photo.jpg?v=20260926"
                     alt="ROSTA Coffee Co. kahve"
                     initial={reduceMotion ? undefined : { scale: 1.035 }}
                     animate={{ scale: 1 }}
