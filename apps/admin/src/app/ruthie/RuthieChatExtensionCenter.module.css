@@ -302,7 +302,7 @@
   position: relative;
   width: 43px;
   height: 24px;
-  border: 1px solid rgba(239, 199, 127, .18);
+  border: 1px solid color-mix(in srgb, var(--rosta-kraft, #C8A77D) 28%, transparent);
   border-radius: 999px;
   background: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 7%, transparent);
 }
