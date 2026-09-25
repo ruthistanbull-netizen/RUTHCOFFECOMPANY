@@ -102,6 +102,46 @@ function notifyHeroMediaReady() {
   window.dispatchEvent(new Event("rosta:home-hero-media-changed"));
 }
 
+function contrastInk(luminance: number | null, fallback = "#111111") {
+  if (luminance == null) return fallback;
+  return luminance >= 118 ? "#111111" : "#FBF3E6";
+}
+
+function editorialMediaAtPoint(x: number, y: number) {
+  return document.elementsFromPoint(x, y).find(
+    (element): element is SampledMedia =>
+      (element instanceof HTMLImageElement || element instanceof HTMLVideoElement)
+      && element.hasAttribute("data-home-editorial-media")
+      && window.getComputedStyle(element).display !== "none"
+      && window.getComputedStyle(element).visibility !== "hidden",
+  ) || null;
+}
+
+function sampleToneAtPoint(x: number, y: number) {
+  const media = editorialMediaAtPoint(x, y);
+  return media ? sampleMediaTone(media, x, y) : null;
+}
+
+function sampleToneAcrossRect(rect: DOMRect) {
+  const points = [
+    [0.18, 0.24],
+    [0.5, 0.24],
+    [0.82, 0.24],
+    [0.24, 0.58],
+    [0.5, 0.58],
+    [0.76, 0.58],
+    [0.28, 0.82],
+    [0.5, 0.82],
+    [0.72, 0.82],
+  ] as const;
+  const tones = points
+    .map(([rx, ry]) => sampleToneAtPoint(rect.left + rect.width * rx, rect.top + rect.height * ry))
+    .filter((value): value is number => typeof value === "number" && Number.isFinite(value));
+  if (!tones.length) return null;
+  tones.sort((a, b) => a - b);
+  return tones[Math.floor(tones.length / 2)] ?? null;
+}
+
 function isVideoMediaSource(value: string) {
   return /\.(mp4|m4v|mov|webm)(?:$|[?#])/i.test(value || "");
 }
@@ -301,7 +341,7 @@ export default function Hero({
   const reduceMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement | null>(null);
   const wordmarkRef = useRef<HTMLDivElement | null>(null);
-  const [wordmarkColor, setWordmarkColor] = useState("#FBF3E6");
+  const [wordmarkColor, setWordmarkColor] = useState("#111111");
   const [wordmarkVisible, setWordmarkVisible] = useState(true);
   const [liveHeroImages, setLiveHeroImages] = useState(heroImages);
   const [liveThemeSettings, setLiveThemeSettings] = useState(themeSettings);
@@ -345,30 +385,52 @@ export default function Hero({
   useEffect(() => {
     let frame = 0;
     let timer = 0;
+    const root = document.documentElement;
+
+    const setHeaderTone = (selector: string, variable: string, fallback = "#111111") => {
+      const control = document.querySelector<HTMLElement>(selector);
+      if (!control) {
+        root.style.setProperty(variable, fallback);
+        return fallback;
+      }
+      const rect = control.getBoundingClientRect();
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + rect.height / 2;
+      const ink = contrastInk(sampleToneAtPoint(x, y), fallback);
+      root.style.setProperty(variable, ink);
+      return ink;
+    };
+
     const update = () => {
       window.cancelAnimationFrame(frame);
       frame = window.requestAnimationFrame(() => {
         const section = sectionRef.current;
         const wordmark = wordmarkRef.current;
         if (!section || !wordmark) return;
+
         const sectionRect = section.getBoundingClientRect();
         const scrollStory = document.querySelector<HTMLElement>(".scroll-story-section");
         const scrollStoryHasEntered = scrollStory ? scrollStory.getBoundingClientRect().top <= window.innerHeight : false;
         const visible = sectionRect.bottom > 0 && sectionRect.top < window.innerHeight && !scrollStoryHasEntered;
         setWordmarkVisible(visible);
+
+        // Header controls sample the real hero pixels under their own center.
+        const menuInk = setHeaderTone(".ruth-zara-menu-button", "--ruth-home-header-menu-ink");
+        const searchInk = setHeaderTone('.ruth-zara-header-actions button[aria-label="Ara"]', "--ruth-home-header-search-ink");
+        const accountInk = setHeaderTone('.ruth-zara-header-actions button[aria-label="Hesap menüsü"]', "--ruth-home-header-account-ink");
+        const cartInk = setHeaderTone('.ruth-zara-header-actions button[aria-label^="Sepet"]', "--ruth-home-header-cart-ink");
+        root.style.setProperty("--ruth-home-header-ink", menuInk);
+        root.style.setProperty("--ruth-home-header-invert", menuInk === "#FBF3E6" ? "1" : "0");
+
         if (!visible) return;
-        const wordmarkRect = wordmark.getBoundingClientRect();
-        const pointX = wordmarkRect.left + wordmarkRect.width / 2;
-        const pointY = wordmarkRect.top + wordmarkRect.height / 2;
-        const media = document.elementsFromPoint(pointX, pointY).find(
-          (element): element is SampledMedia =>
-            (element instanceof HTMLImageElement || element instanceof HTMLVideoElement)
-            && element.hasAttribute("data-home-editorial-media"),
-        );
-        if (!media) return;
-        const luminance = sampleMediaTone(media, pointX, pointY);
-        if (luminance == null) return;
-        setWordmarkColor(luminance > 148 ? "#111111" : "#FBF3E6");
+        const wordmarkTone = sampleToneAcrossRect(wordmark.getBoundingClientRect());
+        setWordmarkColor(contrastInk(wordmarkTone, "#111111"));
+
+        // Keep these values warm even if one control is temporarily absent while
+        // React opens/closes a panel.
+        if (!searchInk) root.style.setProperty("--ruth-home-header-search-ink", "#111111");
+        if (!accountInk) root.style.setProperty("--ruth-home-header-account-ink", "#111111");
+        if (!cartInk) root.style.setProperty("--ruth-home-header-cart-ink", "#111111");
       });
     };
 
@@ -376,13 +438,21 @@ export default function Hero({
     window.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update);
     window.addEventListener("rosta:home-hero-media-changed", update);
-    timer = window.setInterval(update, 420);
+    timer = window.setInterval(update, 320);
     return () => {
       window.cancelAnimationFrame(frame);
       window.clearInterval(timer);
       window.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
       window.removeEventListener("rosta:home-hero-media-changed", update);
+      [
+        "--ruth-home-header-menu-ink",
+        "--ruth-home-header-search-ink",
+        "--ruth-home-header-account-ink",
+        "--ruth-home-header-cart-ink",
+        "--ruth-home-header-ink",
+        "--ruth-home-header-invert",
+      ].forEach((name) => root.style.removeProperty(name));
     };
   }, []);
 
