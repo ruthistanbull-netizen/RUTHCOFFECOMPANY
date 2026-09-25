@@ -17,7 +17,7 @@
   padding: 9px 14px;
   border-top: 0;
   border-bottom: 1px solid var(--line);
-  box-shadow: 0 8px 18px rgba(16, 24, 40, 0.06);
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--rosta-carbon, #111111) 24%, transparent);
   z-index: 2;
 }
 
