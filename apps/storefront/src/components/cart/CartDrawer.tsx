@@ -36,6 +36,32 @@ export function CartDrawer() {
           isolation: isolate;
         }
 
+        .ruth-cart-panel {
+          top: 12px !important;
+          right: 12px !important;
+          bottom: 12px !important;
+          left: auto !important;
+          width: min(430px, calc(100vw - 24px)) !important;
+          max-height: calc(100dvh - 24px) !important;
+          overflow: hidden !important;
+          border: 1px solid color-mix(in srgb, var(--rosta-kraft) 42%, transparent) !important;
+          border-radius: 28px !important;
+          box-shadow: 0 26px 80px color-mix(in srgb, var(--rosta-carbon) 58%, transparent) !important;
+          transform-origin: right center;
+        }
+
+        @media (max-width: 767px) {
+          .ruth-cart-panel {
+            top: max(8px, env(safe-area-inset-top)) !important;
+            right: 8px !important;
+            bottom: max(8px, env(safe-area-inset-bottom)) !important;
+            left: 8px !important;
+            width: auto !important;
+            max-height: calc(100dvh - 16px) !important;
+            border-radius: 23px !important;
+          }
+        }
+
         html.ruth-cart-open .product-purchase-mobile,
         html.ruth-cart-open .product-page-swipe-stage,
         html.ruth-cart-open .whatsapp-floating-bubble,
@@ -63,11 +89,11 @@ export function CartDrawer() {
               aria-modal="true"
               aria-label="Sepet"
               tabIndex={-1}
-              className="absolute bottom-0 right-0 top-0 z-[1] flex w-full flex-col bg-carbon-soft text-cream sm:w-[430px]"
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+              className="ruth-cart-panel absolute z-[1] flex flex-col bg-carbon-soft text-cream"
+              initial={{ x: 28, opacity: 0.92 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: 28, opacity: 0 }}
+              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
             >
               <div className="flex items-center justify-between border-b border-kraft/35 px-5 py-5 sm:px-6">
                 <div className="flex items-center gap-3">
