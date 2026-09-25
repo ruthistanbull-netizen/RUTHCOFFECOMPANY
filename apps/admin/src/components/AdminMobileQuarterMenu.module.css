@@ -271,8 +271,8 @@
 }
 
 .root[data-open="true"] .core {
-  fill: hsl(var(--text-main)) !important;
-  stroke: hsl(var(--border-strong));
+  fill: var(--quarter-menu-surface-raised) !important;
+  stroke: color-mix(in srgb, var(--rosta-kraft) 46%, transparent);
 }
 
 .burgerLine {
@@ -339,15 +339,11 @@
   filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.16));
 }
 
+.hubTopLeftDark {
+  display: none !important;
+}
+
 .hubTopLeftCream {
-  display: none !important;
-}
-
-:global(html.dark) .hubTopLeftDark {
-  display: none !important;
-}
-
-:global(html.dark) .hubTopLeftCream {
   display: block !important;
   filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.28));
 }
