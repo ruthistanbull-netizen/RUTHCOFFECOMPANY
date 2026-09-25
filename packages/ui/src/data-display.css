@@ -50,7 +50,6 @@
   .ruth-data-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .ruth-data-table tbody { display: grid; gap: 10px; }
   .ruth-data-table tbody tr { display: grid; gap: 0; overflow: hidden; border: 1px solid var(--ruth-border); border-radius: var(--ruth-radius-sm); background: var(--ruth-surface); }
-  .ruth-data-table tbody tr:hover { background: var(--ruth-surface); }
   .ruth-data-table td,
   .ruth-data-table--compact td { display: grid; grid-template-columns: minmax(92px, 0.42fr) minmax(0, 1fr); align-items: start; gap: 12px; padding: 10px 12px; text-align: left !important; overflow-wrap: anywhere; }
   .ruth-data-table td::before { content: attr(data-label); color: var(--ruth-ink-muted); font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
@@ -101,7 +100,6 @@
 }
 
 .ruth-segmented--compact button { min-height: 30px; padding-inline: 10px; }
-.ruth-segmented button:hover:not(:disabled) { color: var(--ruth-ink); }
 .ruth-segmented button:active:not(:disabled) { transform: scale(0.98); }
 .ruth-segmented button.is-active { background: var(--ruth-surface); color: var(--ruth-ink); box-shadow: 0 2px 8px color-mix(in srgb, var(--rosta-carbon) 28%, transparent); }
 .ruth-segmented button:focus-visible { outline: 2px solid var(--ruth-color-focus, var(--ruth-gold)); outline-offset: 2px; }
@@ -119,4 +117,5 @@
 @media (hover: hover) and (pointer: fine) {
   .ruth-tabs__trigger:hover:not(:disabled) { color: var(--ruth-color-accent); }
   .ruth-data-table tbody tr:hover { background: var(--ruth-color-accent-wash); }
+  .ruth-segmented button:hover:not(:disabled) { color: var(--ruth-ink); }
 }
