@@ -12,6 +12,7 @@ import { themeSectionPage } from "@ruth-commerce/commerce-core/theme-sections";
 import { SITE_URL } from "@/lib/seo";
 
 export const metadata: Metadata = { alternates: { canonical: SITE_URL } };
+// Deploy marker: media replacement fixes verified for storefront.
 export const revalidate = 10;
 
 export default async function Home({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
