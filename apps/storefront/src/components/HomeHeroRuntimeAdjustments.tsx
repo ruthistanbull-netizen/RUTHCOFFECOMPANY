@@ -19,16 +19,25 @@ export function HomeHeroRuntimeAdjustments() {
 
   return (
     <style>{`
-      html.ruth-home-page-active body,
-      html.ruth-home-page-active .site-app-shell,
-      html.ruth-home-page-active main.site-content,
-      html.ruth-home-page-active main.site-content > [data-theme-section-id]:first-child,
-      html.ruth-home-page-active #home-editorial,
-      html.ruth-home-page-active #home-editorial .home-editorial-slide:first-child,
-      html.ruth-home-page-active #home-editorial .home-editorial-slide:first-child > .sticky {
-        margin-top: 0 !important;
+      body,
+      .site-app-shell,
+      main.site-content,
+      main.site-content > [data-theme-section-id]:first-child,
+      #home-editorial,
+      #home-editorial .home-editorial-slide:first-child,
+      #home-editorial .home-editorial-slide:first-child > .sticky {
         padding-top: 0 !important;
         border-top: 0 !important;
+      }
+
+      main.site-content {
+        margin-top: -8px !important;
+      }
+
+      #home-editorial,
+      #home-editorial .home-editorial-slide:first-child,
+      #home-editorial .home-editorial-slide:first-child > .sticky {
+        margin-top: 0 !important;
       }
 
       @media (min-width: 1024px) {
