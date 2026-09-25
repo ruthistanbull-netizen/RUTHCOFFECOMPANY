@@ -30,10 +30,12 @@ import {
 import {
   homepageHeroDeviceForElement,
   homepageHeroDeviceImage,
+  homepageHeroDeviceMediaType,
   isHomepageHeroElement,
   normalizeThemeMediaSettings,
-  setHomepageHeroDeviceImage,
+  setHomepageHeroDeviceMedia,
   type HomepageHeroDevice,
+  type HomepageMediaType,
 } from "@/lib/themeMedia";
 import { uploadThemeImage } from "@/lib/themeImageUpload";
 import { ThemeImageInput } from "@/components/theme/ThemeImageInput";
@@ -86,8 +88,12 @@ const STOREFRONT_URL = RAW_STOREFRONT_URL
   .replace(/\/$/, "");
 const THEME_MEDIA_ACCEPT = "image/*,video/*,.jpg,.jpeg,.png,.webp,.avif,.heic,.heif,.mp4,.m4v,.mov,.webm";
 
-function mediaTypeForFile(file: File): "image" | "video" {
+function mediaTypeForFile(file: File): HomepageMediaType {
   return file.type.startsWith("video/") || /\.(mp4|m4v|mov|webm)$/i.test(file.name || "") ? "video" : "image";
+}
+
+function mediaTypeForUrl(value: string): HomepageMediaType {
+  return /\.(mp4|m4v|mov|webm)(?:$|[?#])/i.test(value || "") ? "video" : "image";
 }
 const FALLBACK_PAGES: PageItem[] = [
   { path: "/", label: "Ana Sayfa", group: "Mağaza" },
@@ -130,18 +136,40 @@ function groupedPages(pages: PageItem[]) {
   return [...groups.entries()];
 }
 
-function UploadCard({ title, value, busy, onFile }: { title: string; value: string; busy: boolean; onFile: (file: File) => void }) {
+function UploadCard({
+  title,
+  value,
+  busy,
+  onFile,
+  mediaType,
+}: {
+  title: string;
+  value: string;
+  busy: boolean;
+  onFile: (file: File) => void;
+  mediaType?: HomepageMediaType;
+}) {
+  const resolvedType = mediaType || mediaTypeForUrl(value);
   return (
     <div className="min-w-0 rounded-xl border border-border-subtle bg-surface-secondary p-2.5">
-      <p className="mb-2 text-[9px] font-semibold">{title}</p>
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <p className="truncate text-[9px] font-semibold">{title}</p>
+        <span className="rounded-full border border-border-subtle bg-surface-primary px-2 py-0.5 text-[7px] font-medium uppercase tracking-[0.12em] text-subtle">
+          {resolvedType === "video" ? "Video" : "Fotoğraf"}
+        </span>
+      </div>
       <div className="aspect-[4/3] overflow-hidden rounded-lg border border-border-subtle bg-surface-primary">
         {value ? (
-          <img src={value} alt="" className="h-full w-full object-cover" />
+          resolvedType === "video" ? (
+            <video src={value} className="h-full w-full object-cover" muted loop autoPlay playsInline preload="metadata" />
+          ) : (
+            <img src={value} alt="" className="h-full w-full object-cover" />
+          )
         ) : (
           <div className="grid h-full place-items-center text-subtle"><ImageIcon className="h-5 w-5" /></div>
         )}
       </div>
-      <ThemeImageInput busy={busy} hasValue={Boolean(value)} onFile={onFile} />
+      <ThemeImageInput busy={busy} hasValue={Boolean(value)} onFile={onFile} media="any" />
     </div>
   );
 }
@@ -340,8 +368,12 @@ export function VisualThemeCustomizer() {
     setMenu(null);
   }, [selected, targetPage]);
 
-  const persistHeroImage = useCallback(async (heroDevice: HomepageHeroDevice, src: string) => {
-    const nextToSave = normalizeThemeMediaSettings(setHomepageHeroDeviceImage(settings, heroDevice, src));
+  const persistHeroMedia = useCallback(async (
+    heroDevice: HomepageHeroDevice,
+    src: string,
+    mediaType: HomepageMediaType,
+  ) => {
+    const nextToSave = normalizeThemeMediaSettings(setHomepageHeroDeviceMedia(settings, heroDevice, src, mediaType));
 
     setSettings(nextToSave);
     sendSettings(nextToSave);
@@ -352,8 +384,8 @@ export function VisualThemeCustomizer() {
       confirmation: false,
     });
     const persisted = normalizeThemeMediaSettings(normalizeThemeCustomizerSettings(result.settings || nextToSave));
-    if (homepageHeroDeviceImage(persisted, heroDevice) !== src) {
-      throw new Error(`${heroDevice === "desktop" ? "Masaüstü" : "Mobil"} hero görseli veritabanına doğru URL ile kaydedilemedi.`);
+    if (homepageHeroDeviceImage(persisted, heroDevice) !== src || homepageHeroDeviceMediaType(persisted, heroDevice) !== mediaType) {
+      throw new Error(`${heroDevice === "desktop" ? "Masaüstü" : "Mobil"} hero medyası veritabanına doğru kaydedilemedi.`);
     }
 
     setSettings(persisted);
@@ -361,16 +393,17 @@ export function VisualThemeCustomizer() {
     sendSettings(persisted);
     setNonce(Date.now());
     if (result.warning) toast.warning(`Hero kaydedildi. ${result.warning}`);
-    else toast.success(`${heroDevice === "desktop" ? "Masaüstü" : "Mobil"} hero görseli değiştirildi ve yayınlandı.`);
+    else toast.success(`${heroDevice === "desktop" ? "Masaüstü" : "Mobil"} hero ${mediaType === "video" ? "videosu" : "fotoğrafı"} değiştirildi ve yayınlandı.`);
   }, [sendSettings, settings, toast]);
 
   const uploadHero = async (heroDevice: HomepageHeroDevice, file: File) => {
     setUploading(`hero-${heroDevice}`);
     try {
+      const mediaType = mediaTypeForFile(file);
       const src = await uploadThemeImage(file);
-      await persistHeroImage(heroDevice, src);
+      await persistHeroMedia(heroDevice, src, mediaType);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Hero görseli yüklenemedi.");
+      toast.error(error instanceof Error ? error.message : "Hero medyası yüklenemedi.");
     } finally {
       setUploading(null);
     }
@@ -401,9 +434,9 @@ export function VisualThemeCustomizer() {
       const mediaType = mediaTypeForFile(file);
       const src = await uploadThemeImage(file);
 
-      if (isHomepageHeroElement(path, selected.id) && mediaType === "image") {
+      if (isHomepageHeroElement(path, selected.id)) {
         const selectedDevice = homepageHeroDeviceForElement(selected.id) || device;
-        await persistHeroImage(selectedDevice, src);
+        await persistHeroMedia(selectedDevice, src, mediaType);
       }
 
       setSettings((current) => {
@@ -634,16 +667,25 @@ export function VisualThemeCustomizer() {
             </div>
           </div>
 
-          {selected.kind === "image" && selected.tag !== "video" ? (
+          {selected.kind === "image" ? (
             <section className="border-b border-border-subtle p-3">
-              <p className="mb-2 text-[9px] font-semibold">Görsel</p>
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <p className="text-[9px] font-semibold">Medya</p>
+                <span className="rounded-full border border-border-subtle bg-surface-secondary px-2 py-0.5 text-[7px] uppercase tracking-[0.12em] text-subtle">
+                  {(selectedOverride?.mediaType || selected.mediaType || (selected.tag === "video" ? "video" : "image")) === "video" ? "Video" : "Fotoğraf"}
+                </span>
+              </div>
               {selected.imageSrc ? (
-                <div className="mb-2 h-[68px] overflow-hidden rounded-lg border border-border-subtle bg-surface-secondary">
-                  <img src={selectedOverride?.imageSrc || selected.imageSrc} alt="" className="h-full w-full object-cover" />
+                <div className="mb-2 h-[78px] overflow-hidden rounded-lg border border-border-subtle bg-surface-secondary">
+                  {(selectedOverride?.mediaType || selected.mediaType || (selected.tag === "video" ? "video" : "image")) === "video" ? (
+                    <video src={selectedOverride?.imageSrc || selected.imageSrc} className="h-full w-full object-cover" muted loop autoPlay playsInline preload="metadata" />
+                  ) : (
+                    <img src={selectedOverride?.imageSrc || selected.imageSrc} alt="" className="h-full w-full object-cover" />
+                  )}
                 </div>
               ) : null}
               <label className={cx("relative flex h-10 w-full items-center justify-center gap-2 overflow-hidden rounded-xl border border-border-subtle bg-surface-secondary text-[9px] font-medium focus-within:bg-surface-primary focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent", uploading === "selected" && "pointer-events-none opacity-40")}>
-                <ImageIcon className="h-3.5 w-3.5" />{uploading === "selected" ? "Yükleniyor…" : "Fotoğrafı değiştir"}
+                <ImageIcon className="h-3.5 w-3.5" />{uploading === "selected" ? "Yükleniyor…" : "Fotoğraf / video değiştir"}
                 <input
                   type="file"
                   accept={THEME_MEDIA_ACCEPT}
@@ -656,6 +698,7 @@ export function VisualThemeCustomizer() {
                   }}
                 />
               </label>
+              <p className="mt-1.5 text-[7px] leading-3 text-subtle">JPG, PNG, WebP, AVIF, HEIC veya MP4, MOV, M4V, WebM yükleyebilirsin. Seçtiğin dosya türüne göre alan otomatik fotoğraf ya da videoya dönüşür.</p>
               <div className="mt-3 grid grid-cols-2 gap-2">
                 <label className="block">
                   <span className="mb-1 block text-[8px] font-medium text-muted">Doldurma</span>
