@@ -605,7 +605,7 @@ export function ThemeSectionPanelV4() {
   };
 
   const panelClass = contextPanel
-    ? "fixed z-[2147483645] flex max-h-[72dvh] w-[390px] max-w-[calc(100vw-24px)] flex-col overflow-hidden rounded-xl border border-border-subtle bg-surface-primary shadow-[0_24px_80px_rgba(15,23,42,.28)]"
+    ? "fixed z-[2147483645] flex max-h-[72dvh] w-[390px] max-w-[calc(100vw-24px)] flex-col overflow-hidden rounded-xl border border-border-subtle bg-surface-primary shadow-[0_24px_80px_rgba(17,17,17,.28)]"
     : "fixed bottom-0 left-0 top-[70px] z-[2147483550] flex w-[390px] flex-col border-r border-border-subtle bg-surface-primary max-md:top-auto max-md:h-[52dvh] max-md:w-full max-md:border-r-0 max-md:border-t";
 
   return (
