@@ -20,6 +20,10 @@ function cleanImage(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
 }
 
+function isVideoMediaSource(value: string) {
+  return /\.(mp4|m4v|mov|webm)(?:$|[?#])/i.test(value || "");
+}
+
 function buildSlides(images: string[] | undefined | null): StorySlide[] {
   if (!images?.length) return defaultStorySlides;
 
@@ -160,12 +164,26 @@ export default function ScrollStory({ images }: { images?: string[] | null }) {
                     cursor: "pointer",
                   }}
                 >
-                  <img
-                    src={slide.image}
-                    alt={slide.title}
-                    className="h-full w-full object-cover"
-                    loading={index <= 1 ? "eager" : "lazy"}
-                  />
+                  {isVideoMediaSource(slide.image) ? (
+                    <video
+                      src={slide.image}
+                      aria-label={slide.title}
+                      className="h-full w-full object-cover"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      preload={index <= 1 ? "auto" : "metadata"}
+                      disablePictureInPicture
+                    />
+                  ) : (
+                    <img
+                      src={slide.image}
+                      alt={slide.title}
+                      className="h-full w-full object-cover"
+                      loading={index <= 1 ? "eager" : "lazy"}
+                    />
+                  )}
                 </Link>
               );
             })}
