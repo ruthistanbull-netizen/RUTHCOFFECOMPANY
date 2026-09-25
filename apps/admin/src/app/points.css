@@ -267,11 +267,6 @@
   cursor: pointer;
 }
 
-.cr-import-zone:hover {
-  border-color: var(--accent);
-  background: var(--accent-soft);
-}
-
 .cr-import-zone > svg {
   width: 24px;
   height: 24px;
@@ -293,6 +288,13 @@
 
 .cr-import-zone input {
   display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cr-import-zone:hover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
 }
 
 @media (max-width: 1080px) {
