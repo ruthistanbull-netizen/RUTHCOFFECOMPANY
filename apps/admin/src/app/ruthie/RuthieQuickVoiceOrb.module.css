@@ -78,11 +78,11 @@
 .root::before {
   width: 72%;
   height: 72%;
-  border: 1px solid rgba(230, 210, 139, 0);
+  border: 1px solid color-mix(in srgb, var(--rosta-kraft, #C8A77D) 0%, transparent);
   box-shadow:
-    0 0 0 rgba(201, 162, 58, 0),
-    0 0 0 rgba(226, 199, 107, 0),
-    inset 0 0 0 rgba(246, 235, 200, 0);
+    0 0 0 color-mix(in srgb, var(--rosta-brick-b, #C94A40) 0%, transparent),
+    0 0 0 color-mix(in srgb, var(--rosta-kraft, #C8A77D) 0%, transparent),
+    inset 0 0 0 color-mix(in srgb, var(--rosta-cream, #FBF3E6) 0%, transparent);
   transform: translate3d(-50%, -50%, 0) scale(.84);
   transition:
     opacity .38s cubic-bezier(.2, .75, .2, 1),
@@ -94,7 +94,7 @@
 .root::after {
   width: 82%;
   height: 82%;
-  background: radial-gradient(circle, rgba(201, 162, 58, .10) 0 42%, rgba(226, 199, 107, .045) 56%, transparent 72%);
+  background: radial-gradient(circle, color-mix(in srgb, var(--rosta-brick-b, #C94A40) 12%, transparent) 0 42%, color-mix(in srgb, var(--rosta-kraft, #C8A77D) 6%, transparent) 56%, transparent 72%);
   filter: blur(8px);
   transform: translate3d(-50%, -50%, 0) scale(.76);
   transition:
@@ -104,11 +104,11 @@
 
 .root[data-listening="true"]::before {
   opacity: .92;
-  border-color: rgba(246, 235, 200, .78);
+  border-color: color-mix(in srgb, var(--rosta-kraft, #C8A77D) 78%, transparent);
   box-shadow:
-    0 0 9px rgba(201, 162, 58, .30),
-    0 0 22px rgba(226, 199, 107, .12),
-    inset 0 0 12px rgba(246, 235, 200, .08);
+    0 0 9px color-mix(in srgb, var(--rosta-brick-b, #C94A40) 32%, transparent),
+    0 0 22px color-mix(in srgb, var(--rosta-kraft, #C8A77D) 14%, transparent),
+    inset 0 0 12px color-mix(in srgb, var(--rosta-cream, #FBF3E6) 8%, transparent);
   transform: translate3d(-50%, -50%, 0) scale(1.04);
 }
 
@@ -208,7 +208,7 @@
 }
 
 /* Keep the original water-ripple timing and shape, but use only the
-   #C9A23A gold family so activation never flashes purple or blue. */
+   ROSTA Brick/Kraft family so activation never flashes purple or blue. */
 .activationWave {
   --wave-x: 50vw;
   --wave-y: 50vh;
@@ -244,13 +244,13 @@
   background:
     radial-gradient(ellipse at 47% 45%,
       transparent 0 43.4%,
-      rgba(246, 235, 200, .24) 44.6%,
-      rgba(226, 199, 107, .16) 46.2%,
-      rgba(201, 162, 58, .075) 48.2%,
+      color-mix(in srgb, var(--rosta-kraft, #C8A77D) 26%, transparent) 44.6%,
+      color-mix(in srgb, var(--rosta-kraft, #C8A77D) 18%, transparent) 46.2%,
+      color-mix(in srgb, var(--rosta-brick-b, #C94A40) 9%, transparent) 48.2%,
       transparent 51.1%),
     radial-gradient(ellipse at 52% 49%,
       transparent 0 46.1%,
-      rgba(230, 210, 139, .055) 47.1%,
+      color-mix(in srgb, var(--rosta-kraft, #C8A77D) 7%, transparent) 47.1%,
       transparent 49.7%);
 }
 
@@ -274,13 +274,13 @@
   background:
     radial-gradient(ellipse at 52% 48%,
       transparent 0 41.7%,
-      rgba(246, 235, 200, .15) 43.8%,
-      rgba(201, 162, 58, .10) 47.1%,
-      rgba(226, 199, 107, .05) 50.2%,
+      color-mix(in srgb, var(--rosta-kraft, #C8A77D) 17%, transparent) 43.8%,
+      color-mix(in srgb, var(--rosta-brick-b, #C94A40) 12%, transparent) 47.1%,
+      color-mix(in srgb, var(--rosta-kraft, #C8A77D) 7%, transparent) 50.2%,
       transparent 53.6%),
     radial-gradient(ellipse at 47% 53%,
       transparent 0 46.3%,
-      rgba(230, 210, 139, .045) 47.5%,
+      color-mix(in srgb, var(--rosta-kraft, #C8A77D) 6%, transparent) 47.5%,
       transparent 50.4%);
   animation: ruthieWaterRippleFour 2.02s .255s cubic-bezier(.13, .60, .18, 1) forwards;
 }
