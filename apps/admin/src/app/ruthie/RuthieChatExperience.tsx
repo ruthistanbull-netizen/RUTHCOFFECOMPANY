@@ -27,6 +27,7 @@ import {
   type KeyboardEvent,
 } from "react";
 import { adminAuthHeaders } from "@/lib/adminApi";
+import { RuthieBrandIcon } from "@/components/RuthieBrandIcon";
 import {
   activeConversationId,
   executeApprovedAction,
@@ -340,7 +341,7 @@ export function RuthieChatExperience() {
         <aside className={styles.sidebar} data-open={sidebarOpen ? "true" : "false"}>
           <div className={styles.brandRow}>
             <Link href="/" className={styles.brand} aria-label="ROSTA Commerce paneline dön">
-              <span className={styles.brandMark} />
+              <span className={styles.brandMark}><RuthieBrandIcon aria-hidden="true" /></span>
               <span className={styles.brandText}><strong>ROSTA Insight</strong><small>Commerce intelligence</small></span>
             </Link>
             <button className={`${styles.iconButton} ${styles.mobileToggle}`} type="button" onClick={() => setSidebarOpen(false)} aria-label="Menüyü kapat"><X /></button>
