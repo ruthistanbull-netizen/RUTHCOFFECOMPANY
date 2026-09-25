@@ -1302,14 +1302,14 @@ export function CheckoutClient() {
                   <button
                     type="button"
                     onClick={goPreviousStep}
-                    className="rounded-full border border-kraft/45 px-6 py-4 text-xs uppercase tracking-wide-luxe text-cream transition hover:border-brick"
+                    className="rounded-full border border-kraft/45 px-6 py-4 text-xs uppercase tracking-wide-luxe text-cream transition active:border-brick focus-visible:border-brick focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
                   >
                     Geri
                   </button>
                   <button
                     type="button"
                     onClick={goNextStep}
-                    className="rounded-full bg-brick px-6 py-4 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)] transition active:bg-espresso sm:min-w-52"
+                    className="rounded-full bg-brick px-6 py-4 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)] transition active:bg-espresso focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick sm:min-w-52"
                   >
                     Ödemeye Devam Et
                   </button>
@@ -1392,7 +1392,7 @@ export function CheckoutClient() {
                   </div>
 
                 {paytrTestMode && (
-                  <div className="mt-4 rounded-lg border border-[var(--ruth-color-warning)]/40 bg-[var(--ruth-color-warning-soft)] px-4 py-3 text-xs leading-5 text-amber-800">
+                  <div className="mt-4 rounded-lg border border-[var(--ruth-color-warning)]/40 bg-[var(--ruth-color-warning-soft)] px-4 py-3 text-xs leading-5 text-[var(--ruth-color-warning-text)]">
                     PayTR test modu açık. Direct API yetkisi açıldığında PayTR test kartlarıyla işlemi deneyebilirsin.
                   </div>
                 )}
@@ -1511,7 +1511,7 @@ export function CheckoutClient() {
                             <label
                               key={option.count}
                               className={`flex cursor-pointer items-center justify-between gap-3 rounded-lg border px-4 py-3 transition ${
-                                checked ? "border-brick bg-brick/10" : "border-kraft/35 bg-carbon hover:border-kraft/55"
+                                checked ? "border-brick bg-brick/10" : "border-kraft/35 bg-carbon focus-within:border-brick"
                               }`}
                             >
                               <span className="flex items-center gap-3">
@@ -1552,7 +1552,7 @@ export function CheckoutClient() {
                     <button
                       type="button"
                       onClick={goPreviousStep}
-                      className="rounded-full border border-kraft/45 px-5 py-3 text-[11px] uppercase tracking-wide-luxe text-cream transition hover:border-brick"
+                      className="rounded-full border border-kraft/45 px-5 py-3 text-[11px] uppercase tracking-wide-luxe text-cream transition active:border-brick focus-visible:border-brick focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
                     >
                       Adrese Dön
                     </button>
@@ -1583,7 +1583,7 @@ export function CheckoutClient() {
                       <button
                         type="button"
                         onClick={() => setIsRostaPointsOpen((current) => !current)}
-                        className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left transition hover:bg-carbon-soft/70"
+                        className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left transition active:bg-brick/10 focus-visible:bg-brick/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
                         aria-expanded={isRostaPointsOpen}
                       >
                         <span>
@@ -1614,7 +1614,7 @@ export function CheckoutClient() {
                                 <button
                                   type="button"
                                   onClick={() => selectRostaPointAmount(0)}
-                                  className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs transition ${selectedRostaPoints === 0 ? "border-brick bg-carbon-soft text-cream" : "border-kraft/35 bg-carbon-soft text-cream hover:border-brick"}`}
+                                  className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs transition ${selectedRostaPoints === 0 ? "border-brick bg-carbon-soft text-cream" : "border-kraft/35 bg-carbon-soft text-cream active:border-brick focus-visible:border-brick focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"}`}
                                 >
                                   <span>Puan kullanma</span>
                                   <span>0 TL</span>
@@ -1626,7 +1626,7 @@ export function CheckoutClient() {
                                       key={amount}
                                       type="button"
                                       onClick={() => selectRostaPointAmount(amount)}
-                                      className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs transition ${selected ? "border-brick bg-brick text-[var(--rosta-action-text)]" : "border-kraft/35 bg-carbon-soft text-cream hover:border-brick"}`}
+                                      className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs transition ${selected ? "border-brick bg-brick text-[var(--rosta-action-text)]" : "border-kraft/35 bg-carbon-soft text-cream active:border-brick focus-visible:border-brick focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"}`}
                                     >
                                       <span>{amount.toLocaleString("tr-TR")} Points</span>
                                       <span>-{formatPrice(pointsToLira(amount), "TRY")}</span>
@@ -1636,7 +1636,7 @@ export function CheckoutClient() {
                                 <button
                                   type="button"
                                   onClick={useAllRostaPoints}
-                                  className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs font-medium uppercase tracking-wide-luxe transition ${useRostaPoints && selectedRostaPoints === maxRostaPointsForCheckout ? "border-brick bg-brick text-[var(--rosta-action-text)]" : "border-kraft/35 bg-carbon-soft text-cream hover:border-brick"}`}
+                                  className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs font-medium uppercase tracking-wide-luxe transition ${useRostaPoints && selectedRostaPoints === maxRostaPointsForCheckout ? "border-brick bg-brick text-[var(--rosta-action-text)]" : "border-kraft/35 bg-carbon-soft text-cream active:border-brick focus-visible:border-brick focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"}`}
                                 >
                                   <span>Hepsini Kullan</span>
                                   <span>{maxRostaPointsForCheckout.toLocaleString("tr-TR")} Points</span>
@@ -1695,7 +1695,7 @@ export function CheckoutClient() {
                               key={discount.code}
                               type="button"
                               onClick={() => selected ? clearAccountDiscount() : selectAccountDiscount(discount)}
-                              className={`w-full rounded-lg border px-3 py-3 text-left transition ${selected ? "border-brick bg-brick text-[var(--rosta-action-text)]" : "border-kraft/35 bg-carbon-soft text-cream hover:border-brick"}`}
+                              className={`w-full rounded-lg border px-3 py-3 text-left transition ${selected ? "border-brick bg-brick text-[var(--rosta-action-text)]" : "border-kraft/35 bg-carbon-soft text-cream active:border-brick focus-visible:border-brick focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"}`}
                             >
                               <span className="block font-heading text-sm">{discount.title || "Yorum indirimi"}</span>
                               <span className={`mt-1 block text-xs ${selected ? "text-cream/75" : "text-cream/70"}`}>%{discount.discountPercent} indirim · Ödemede kullan</span>
