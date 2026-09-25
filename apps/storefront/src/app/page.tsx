@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { HomeSectionRenderer } from "@/components/theme/HomeSectionRenderer";
 import { HomeHeroRuntimeAdjustments } from "@/components/HomeHeroRuntimeAdjustments";
+import { HomeHeaderAdaptiveTone } from "@/components/HomeHeaderAdaptiveTone";
 import { ThemeEditorHomeScrollBridge } from "@/components/theme/ThemeEditorHomeScrollBridge";
 import { getFeaturedProducts, getProducts } from "@/data/catalogReadModel";
 import { getCachedCollections, getCachedSiteSettings } from "@/data/catalogCache";
@@ -39,6 +40,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
 
   return <>
     <HomeHeroRuntimeAdjustments />
+    <HomeHeaderAdaptiveTone />
     <ThemeEditorHomeScrollBridge />
     <h1 className="sr-only">Rosta Coffee Co kahve, kahve danışmanlığı ve kahve tedariği</h1>
     {page.sections.map((section) => (
