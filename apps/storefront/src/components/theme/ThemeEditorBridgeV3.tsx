@@ -594,7 +594,7 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
           element = swapMediaElement(element, override.mediaType);
         }
         if (!originals.current.has(element)) originals.current.set(element, snapshot(element));
-        applyOverride(element, override, mobile, isHeroImageId(override.id));
+        applyOverride(element, override, mobile, isHeroImageId(override.id) && override.mediaType !== "video");
         if (selectedElement && ensureThemeId(selectedElement) === override.id) {
           selectedElement = element;
           positionOverlay(element, true);
