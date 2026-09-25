@@ -31,7 +31,7 @@ export function HomeHeroRuntimeAdjustments() {
       }
 
       main.site-content {
-        margin-top: -8px !important;
+        margin-top: 0 !important;
       }
 
       #home-editorial,
