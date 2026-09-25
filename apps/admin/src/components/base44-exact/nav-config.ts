@@ -33,7 +33,6 @@ import {
   ShoppingBag,
   ShoppingCart,
   SlidersHorizontal,
-  Sparkles,
   Star,
   Tag,
   Target,
@@ -114,7 +113,7 @@ export const exactNavStructure: ExactNavGroup[] = [
     items: [
       { label: "Meta Reklamları", path: "/meta-ads", icon: Target, exact: true, badge: "META" },
       { label: "Meta Katalogları", path: "/meta-ads/catalogs", icon: Layers, exact: true, badge: "META" },
-      { label: "ROSTA Insight Reklam Analizi", path: "/meta-ads/analysis", icon: Sparkles, badge: "AI" },
+      { label: "ROSTA Insight Reklam Analizi", path: "/meta-ads/analysis", icon: RuthieBrandIcon, badge: "AI" },
     ],
   },
   {
