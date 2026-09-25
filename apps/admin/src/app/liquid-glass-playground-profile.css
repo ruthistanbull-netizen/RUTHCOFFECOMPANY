@@ -300,11 +300,6 @@ body.ruth-admin-liquid-v3 :is([role="menuitem"], [role="option"]):active {
   transform: scale(0.975);
 }
 
-body.ruth-admin-liquid-v3 :is([role="menuitem"], [role="option"]):hover,
-body.ruth-admin-liquid-v3 [role="option"][aria-selected="true"] {
-  background: rgba(var(--lgp-rgb-tint), 0.26) !important;
-}
-
 /* MODAL / POPOVER PANEL */
 body.ruth-admin-liquid-v3 [data-ruth-glass-panel="true"],
 body.ruth-admin-liquid-v3 [role="dialog"] > :is(div, section, article) {
@@ -384,6 +379,13 @@ body.ruth-admin-liquid-v3 input[type="range"]::-webkit-slider-thumb {
 }
 
 /* DOCK — override the old PWA profile with the Playground's clearer, refractive, slightly blurred lens. */
+@media (hover: hover) and (pointer: fine) {
+  body.ruth-admin-liquid-v3 :is([role="menuitem"], [role="option"]):hover,
+  body.ruth-admin-liquid-v3 [role="option"][aria-selected="true"] {
+    background: rgba(var(--lgp-rgb-tint), 0.26) !important;
+  }
+}
+
 @media (max-width: 1023px) {
   body.ruth-admin-liquid-v3 nav[aria-label="ROSTA Coffee Co. mobil menü"] {
     height: 64px !important;
