@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Bell,
@@ -16,6 +16,7 @@ import {
   X,
 } from "lucide-react";
 import { useOverlayBehavior } from "@ruth-commerce/ui";
+import { navigateRostaPanelDocument } from "@/lib/rrHubRuntime";
 import { createPortal } from "react-dom";
 import { useCallback, useEffect, useMemo, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from "react";
 import {
@@ -145,12 +146,11 @@ function TopHeader({ collapsed, onToggleSidebar, onOpenSearch, onOpenMore, dark,
 }
 
 function CommandPalette({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const router = useRouter();
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const overlay = useOverlayBehavior({ active: open, onClose, dismissalPolicy: "light-dismiss" });
   const results = useMemo(() => { const normalized = query.trim().toLocaleLowerCase("tr-TR"); return normalized ? exactAllNavItems.filter((item) => `${item.label} ${item.group}`.toLocaleLowerCase("tr-TR").includes(normalized)) : exactAllNavItems.slice(0, 10); }, [query]);
-  const select = useCallback((index: number) => { const item = results[index]; if (!item) return; router.push(item.path); onClose(); }, [onClose, results, router]);
+  const select = useCallback((index: number) => { const item = results[index]; if (!item) return; onClose(); navigateRostaPanelDocument(item.path); }, [onClose, results]);
   useEffect(() => { if (!open) return; setQuery(""); setSelectedIndex(0); }, [open]);
   const onInputKeyDown = (event: ReactKeyboardEvent<HTMLInputElement>) => {
     if (event.key === "ArrowDown") { event.preventDefault(); setSelectedIndex((index) => Math.min(index + 1, Math.max(0, results.length - 1))); return; }
