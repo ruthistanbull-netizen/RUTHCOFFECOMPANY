@@ -6,6 +6,7 @@ import {
   adminRememberSessionEnabled,
   getSupabaseBrowser,
 } from "@/lib/supabaseBrowser";
+import { hasRuthWorkspaceAccess, prepareRRHubWorkspaceForDocument } from "@/lib/rrHubRuntime";
 
 const RUTH_ADMIN_URL = (
   process.env.NEXT_PUBLIC_RUTH_ADMIN_URL || "https://ruthcommerce.zeabur.app"
@@ -39,10 +40,8 @@ export function RuthWorkspaceShell() {
     };
     window.addEventListener("message", onHubMessage);
 
-    let entered = false;
-    try {
-      entered = window.sessionStorage.getItem(RUTH_ENTERED_KEY) === "1";
-    } catch {}
+    prepareRRHubWorkspaceForDocument();
+    const entered = hasRuthWorkspaceAccess();
 
     if (!entered) {
       window.location.replace("/profiles");
