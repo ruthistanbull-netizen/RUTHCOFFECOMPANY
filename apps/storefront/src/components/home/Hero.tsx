@@ -305,7 +305,7 @@ export default function Hero({
       className="relative overflow-clip bg-carbon"
     >
       <style>{`
-        .home-editorial-wordmark{box-sizing:border-box;pointer-events:none;position:fixed;left:0;top:calc(100svh - clamp(184px,38vw,236px));z-index:40;width:min(100vw,1208px);max-width:100vw;height:auto;aspect-ratio:1208/512;user-select:none;transition:color .24s ease,opacity .28s ease,visibility .28s ease}.home-editorial-wordmark[data-visible="false"]{opacity:0!important;visibility:hidden}.home-editorial-wordmark svg{display:block;width:100%;height:100%;overflow:visible}@media(min-width:1024px){.home-editorial-wordmark{right:1vw;left:auto;top:45vh;width:56vw;max-width:98vw;height:auto;aspect-ratio:1208/512}}
+        .home-editorial-wordmark{box-sizing:border-box;pointer-events:none;position:fixed;left:0;top:calc(100svh - clamp(184px,38vw,236px));z-index:40;width:min(100vw,1208px);max-width:100vw;height:auto;aspect-ratio:3151/1318;user-select:none;transition:color .24s ease,opacity .28s ease,visibility .28s ease}.home-editorial-wordmark[data-visible="false"]{opacity:0!important;visibility:hidden}.home-editorial-wordmark svg{display:block;width:100%;height:100%;overflow:visible}@media(min-width:1024px){.home-editorial-wordmark{right:1vw;left:auto;top:45vh;width:56vw;max-width:98vw;height:auto;aspect-ratio:3151/1318}}
       `}</style>
       <motion.div
         ref={wordmarkRef}
