@@ -514,10 +514,15 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
     const dedupeThemeMedia = (id: string, keep: Element) => {
       const escaped = typeof CSS !== "undefined" && typeof CSS.escape === "function"
         ? CSS.escape(id)
-        : id.replace(/["\\]/g, "\\const dedupeThemeMedia = (id: string, keep: Element) => {
-      const escaped = typeof CSS !== "undefined" && typeof CSS.escape === "function"
-        ? CSS.escape(id)
-        : id.replace(/["\\]/g, "\\    const rememberMediaOrigin = (element: Element) => {");
+        : id.replace(/["\\]/g, "\\$&");
+      const matches = Array.from(document.querySelectorAll(`[data-theme-id="${escaped}"]`));
+      for (const candidate of matches) {
+        if (candidate === keep) continue;
+        candidate.remove();
+      }
+    };
+
+    const rememberMediaOrigin = (element: Element) => {");
       const matches = Array.from(document.querySelectorAll(`[data-theme-id="${escaped}"]`));");
       const matches = Array.from(document.querySelectorAll(`[data-theme-id="${escaped}"]`));
       for (const candidate of matches) {
