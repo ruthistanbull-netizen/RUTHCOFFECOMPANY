@@ -109,7 +109,7 @@ export function StorefrontRevisionStyles() {
           html.ruth-product-page-active:has(.product-variant-overlay) .product-purchase-mobile { display:none !important; opacity:0 !important; visibility:hidden !important; pointer-events:none !important; }
           html.ruth-product-page-active .product-variant-overlay { z-index:2147483600 !important; align-items:flex-end !important; padding:max(8px,env(safe-area-inset-top)) 8px max(8px,env(safe-area-inset-bottom)) !important; overflow:hidden !important; overscroll-behavior:none !important; }
           html.ruth-product-page-active .product-variant-sheet { width:100% !important; height:auto !important; min-height:0 !important; max-height:calc(100dvh - max(16px,env(safe-area-inset-top)) - max(16px,env(safe-area-inset-bottom))) !important; margin:0 !important; overflow-x:hidden !important; overflow-y:auto !important; padding-bottom:calc(28px + env(safe-area-inset-bottom)) !important; overscroll-behavior:contain !important; touch-action:pan-y !important; -webkit-overflow-scrolling:touch !important; scrollbar-gutter:stable !important; }
-          html.ruth-product-page-active .product-purchase-mobile::before { content:""; position:absolute; inset:0; z-index:-1; background:var(--cream); }
+          html.ruth-product-page-active .product-purchase-mobile::before { content:""; position:absolute; inset:0; z-index:-1; background:var(--rosta-carbon); }
         }
       `}</style>
     </>
