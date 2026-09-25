@@ -618,7 +618,7 @@ export function VisualThemeCustomizer() {
 
   const duplicateSelectedMedia = useCallback(() => {
     if (!selected || selected.kind !== "image") return;
-    const source = selectedOverride?.imageSrc || selected.imageSrc || "";
+    const source = device === "mobile" ? selectedMobileMediaSrc : selectedDesktopMediaSrc;
     if (!source) {
       toast.error("Çoğaltılacak medya kaynağı bulunamadı.");
       return;
@@ -651,7 +651,7 @@ export function VisualThemeCustomizer() {
     setSettings((current) => upsertThemeElementOverride(current, targetPage, duplicate));
     setMenu(null);
     toast.success("Medya çoğaltıldı.");
-  }, [selected, selectedOverride, targetPage, toast]);
+  }, [device, selected, selectedDesktopMediaSrc, selectedMobileMediaSrc, selectedOverride, targetPage, toast]);
 
   useEffect(() => {
     const onMessage = (event: MessageEvent) => {
