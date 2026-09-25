@@ -141,7 +141,7 @@ export function RuthieChatExperience() {
 
     const previousBackground = document.body.style.background;
     const previousOverflow = document.body.style.overflow;
-    document.body.style.background = "#07060a";
+    document.body.style.background = "#111111";
     document.body.style.overflow = "hidden";
 
     void (async () => {
