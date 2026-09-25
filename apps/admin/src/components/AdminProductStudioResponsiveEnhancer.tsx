@@ -330,7 +330,7 @@ export function AdminProductStudioResponsiveEnhancer() {
           border: 1px solid hsl(var(--border-subtle));
           border-radius: 18px;
           background: hsl(var(--surface-primary));
-          box-shadow: var(--shadow-card, 0 8px 22px rgba(20,25,38,.06));
+          box-shadow: var(--shadow-card, 0 8px 22px rgba(17,17,17,.06));
         }
         .ruth-product-catalog-head {
           display: grid;
@@ -475,7 +475,7 @@ export function AdminProductStudioResponsiveEnhancer() {
           font-weight: 700;
           white-space: nowrap;
         }
-        .ruth-product-catalog-status.status-active { background: rgba(16,185,129,.12); color: rgb(5,150,105); }
+        .ruth-product-catalog-status.status-active { background: color-mix(in srgb, var(--ruth-color-success, #1BA786) 12%, transparent); color: var(--ruth-color-success-text, #147B63); }
         .ruth-product-catalog-loading,
         .ruth-product-catalog-empty {
           min-height: 120px;
