@@ -522,18 +522,6 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
       }
     };
 
-    const rememberMediaOrigin = (element: Element) => {");
-      const matches = Array.from(document.querySelectorAll(`[data-theme-id="${escaped}"]`));");
-      const matches = Array.from(document.querySelectorAll(`[data-theme-id="${escaped}"]`));
-      for (const candidate of matches) {
-        if (candidate === keep) continue;
-        // A theme id represents one real storefront element. Direct DOM swaps can
-        // briefly leave React's previous media node behind; remove that stale node
-        // instead of allowing old and new photos/videos to stack.
-        candidate.remove();
-      }
-    };
-
     const rememberMediaOrigin = (element: Element) => {
       const id = ensureThemeId(element);
       if (!mediaOrigins.has(id)) mediaOrigins.set(id, element.cloneNode(true) as Element);
