@@ -1,15 +1,15 @@
 .panel {
-  --voice-bg: color-mix(in srgb, var(--ruth-color-text-primary) 92%, var(--ruth-color-info));
-  --voice-panel: rgba(8, 13, 29, .88);
-  --voice-panel-soft: rgba(121, 169, 255, .06);
-  --voice-line: rgba(124, 164, 255, .20);
-  --voice-line-strong: rgba(89, 214, 255, .48);
-  --voice-text: var(--ruth-color-text-inverse);
-  --voice-muted: rgba(210, 222, 246, .56);
-  --voice-gold: color-mix(in srgb, var(--ruth-color-info) 42%, cyan);
-  --voice-gold-deep: color-mix(in srgb, var(--ruth-color-info) 54%, rebeccapurple);
-  --voice-gold-light: color-mix(in srgb, var(--ruth-color-text-inverse) 84%, var(--ruth-color-info));
-  --voice-gold-white: var(--ruth-color-text-inverse);
+  --voice-bg: color-mix(in srgb, var(--rosta-carbon, #111111) 92%, var(--rosta-espresso, #38251C));
+  --voice-panel: color-mix(in srgb, var(--rosta-carbon, #111111) 88%, transparent);
+  --voice-panel-soft: color-mix(in srgb, var(--rosta-brick-b, #C94A40) 7%, transparent);
+  --voice-line: color-mix(in srgb, var(--rosta-kraft, #C8A77D) 24%, transparent);
+  --voice-line-strong: color-mix(in srgb, var(--rosta-brick-b, #C94A40) 52%, transparent);
+  --voice-text: var(--rosta-cream, #FBF3E6);
+  --voice-muted: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 56%, transparent);
+  --voice-gold: var(--rosta-brick-b, #C94A40);
+  --voice-gold-deep: var(--rosta-espresso, #38251C);
+  --voice-gold-light: var(--rosta-kraft, #C8A77D);
+  --voice-gold-white: var(--rosta-cream, #FBF3E6);
 }
 
 .visualRoot {
@@ -33,7 +33,7 @@
   transform: translate(-50%, -50%);
   border-radius: 50%;
   background:
-    radial-gradient(ellipse, rgba(55, 187, 255, .17), rgba(84, 77, 255, .09) 43%, rgba(218, 53, 255, .045) 64%, transparent 79%);
+    radial-gradient(ellipse, color-mix(in srgb, var(--rosta-brick-b, #C94A40) 18%, transparent), color-mix(in srgb, var(--rosta-espresso, #38251C) 18%, transparent) 43%, color-mix(in srgb, var(--rosta-kraft, #C8A77D) 7%, transparent) 64%, transparent 79%);
   filter: blur(46px);
   pointer-events: none;
 }
@@ -49,7 +49,7 @@
   transform: translate(-50%, -50%);
   border-radius: 50%;
   background:
-    radial-gradient(ellipse, rgba(125, 206, 255, .105), rgba(97, 76, 255, .052) 48%, transparent 76%);
+    radial-gradient(ellipse, color-mix(in srgb, var(--rosta-kraft, #C8A77D) 12%, transparent), color-mix(in srgb, var(--rosta-espresso, #38251C) 10%, transparent) 48%, transparent 76%);
   filter: blur(30px);
   pointer-events: none;
 }
@@ -86,8 +86,8 @@
     brightness(1.07)
     saturate(1.16)
     contrast(1.08)
-    drop-shadow(0 0 13px rgba(55, 206, 255, .2))
-    drop-shadow(0 0 30px rgba(167, 61, 255, .15)) !important;
+    drop-shadow(0 0 13px color-mix(in srgb, var(--rosta-brick-b, #C94A40) 22%, transparent))
+    drop-shadow(0 0 30px color-mix(in srgb, var(--rosta-espresso, #38251C) 20%, transparent)) !important;
 }
 
 .visualRoot[data-phase="thinking"] .canvasScale,
@@ -118,7 +118,7 @@
   justify-content: center;
   gap: clamp(2px, .24vw, 4px);
   pointer-events: none;
-  filter: drop-shadow(0 0 9px rgba(71, 179, 255, .3));
+  filter: drop-shadow(0 0 9px color-mix(in srgb, var(--rosta-kraft, #C8A77D) 32%, transparent));
 }
 
 .waveform::after {
@@ -130,7 +130,7 @@
   height: 18px;
   transform: translateY(-50%);
   background:
-    linear-gradient(90deg, rgba(31, 219, 255, .1), rgba(83, 99, 255, .11), rgba(221, 53, 255, .1));
+    linear-gradient(90deg, color-mix(in srgb, var(--rosta-kraft, #C8A77D) 12%, transparent), color-mix(in srgb, var(--rosta-brick-b, #C94A40) 13%, transparent), color-mix(in srgb, var(--rosta-espresso, #38251C) 16%, transparent));
   filter: blur(12px);
 }
 
@@ -142,8 +142,8 @@
   max-width: 4px;
   height: 7px;
   border-radius: 999px;
-  background: hsl(var(--wave-hue) 100% 69%);
-  box-shadow: 0 0 7px hsl(var(--wave-hue) 100% 62% / .32);
+  background: linear-gradient(180deg, var(--rosta-kraft, #C8A77D), var(--rosta-brick-b, #C94A40));
+  box-shadow: 0 0 7px color-mix(in srgb, var(--rosta-brick-b, #C94A40) 34%, transparent);
   transition: height 120ms linear, opacity 120ms linear;
 }
 
@@ -173,7 +173,7 @@
       brightness(1.06)
       saturate(1.15)
       contrast(1.07)
-      drop-shadow(0 0 12px rgba(53, 202, 255, .18))
+      drop-shadow(0 0 12px color-mix(in srgb, var(--rosta-brick-b, #C94A40) 20%, transparent))
       drop-shadow(0 0 24px rgba(167, 61, 255, .13)) !important;
   }
 
