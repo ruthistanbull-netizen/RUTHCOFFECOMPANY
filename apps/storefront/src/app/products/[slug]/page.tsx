@@ -6,7 +6,6 @@ import {
   type ProductBrowserWindow,
 } from "@/components/product/ProductDetailExperience";
 import { getProductPageWindow } from "@/data/productPageData";
-import { getCachedSiteSettings } from "@/data/catalogCache";
 import { getProductPageWindowForSource } from "@/data/productNavigationContext";
 import { productPrimaryDetailImageSrc } from "@/lib/productDisplayImage";
 import { absoluteUrl, cleanSeoText, SITE_NAME, SITE_URL } from "@/lib/seo";
@@ -63,16 +62,8 @@ export default async function ProductPage({
   const { slug } = await params;
   const cookieStore = await cookies();
   const source = cookieStore.get("rosta_product_source")?.value || "";
-  const [productWindow, siteSettings] = await Promise.all([
-    getProductPageWindowForSource(slug, source),
-    getCachedSiteSettings(),
-  ]);
+  const productWindow = await getProductPageWindowForSource(slug, source);
   if (!productWindow.current) return notFound();
-
-  const productPageContent =
-    siteSettings.product_page_content_v1 && typeof siteSettings.product_page_content_v1 === "object"
-      ? siteSettings.product_page_content_v1 as Record<string, unknown>
-      : {};
 
   const initialWindow: ProductBrowserWindow = {
     previous: productWindow.previous,
@@ -130,7 +121,7 @@ export default async function ProductPage({
           />
         ) : null;
       })}
-      <ProductDetailExperience initialWindow={initialWindow} productPageContent={productPageContent} />
+      <ProductDetailExperience initialWindow={initialWindow} />
     </>
   );
 }
