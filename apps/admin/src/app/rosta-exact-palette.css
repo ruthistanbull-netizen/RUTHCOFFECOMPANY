@@ -128,3 +128,11 @@ html.dark body {
     outline-offset: 2px;
   }
 }
+
+
+/* ROSTA desktop sidebar wordmark: the source artwork is black, but the
+   Carbon sidebar always needs the light Cream brand treatment. */
+[data-rosta-panel="true"] aside[class*="z-sidebar"] img[src*="/rosta-coffee-co.svg"] {
+  filter: brightness(0) saturate(100%) invert(96%) sepia(12%) saturate(430%) hue-rotate(326deg) brightness(103%) contrast(97%) !important;
+  opacity: 1 !important;
+}
