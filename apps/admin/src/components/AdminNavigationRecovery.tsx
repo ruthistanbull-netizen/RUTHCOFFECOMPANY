@@ -84,13 +84,6 @@ export function AdminNavigationRecovery() {
     let reloadTimer = 0;
     let lastDocumentPath = window.location.pathname;
 
-    const rememberTarget = (value: string | URL | null | undefined) => {
-      const url = safeUrl(value);
-      if (!url) return;
-      if (url.pathname === window.location.pathname && url.search === window.location.search) return;
-      pendingTarget = routeTarget(url);
-    };
-
     // Admin navigation intentionally uses full document requests. Zeabur/iOS
     // intermittently drops streamed RSC navigations; a normal document request is
     // substantially more reliable and still keeps the selected RR HUB workspace.
@@ -136,8 +129,8 @@ export function AdminNavigationRecovery() {
     const onError = (event: ErrorEvent) => recover(event.error || event.message);
     const onUnhandledRejection = (event: PromiseRejectionEvent) => recover(event.reason);
 
-    // Back/forward should stay client-side too. Track the destination so the
-    // same recovery fallback can be used only if the RSC transition actually fails.
+    // Track browser history destinations so a later network failure can still
+    // recover the exact page with a clean document request.
     const onPopState = () => {
       if (window.location.pathname === lastDocumentPath) return;
       lastDocumentPath = window.location.pathname;
