@@ -17,7 +17,7 @@ import {
   useTransform,
   type MotionValue,
 } from "framer-motion";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { createPortal } from "react-dom";
 import {
   useCallback,
@@ -34,6 +34,7 @@ import {
   type ExactNavGroup,
   type ExactNavItem,
 } from "@/components/base44-exact/nav-config";
+import { navigateRostaPanelDocument } from "@/lib/rrHubRuntime";
 import styles from "./AdminMobileQuarterMenu.module.css";
 
 const VIEWBOX = 360;
@@ -275,7 +276,6 @@ function TrackItem({
 
 export function AdminMobileQuarterMenu() {
   const pathname = usePathname();
-  const router = useRouter();
   const reduceMotion = useReducedMotion();
   const [mounted, setMounted] = useState(false);
   const [viewport, setViewport] = useState({ width: 390, height: 844 });
@@ -339,17 +339,17 @@ export function AdminMobileQuarterMenu() {
     if (!group) return;
     if (group.label === "GENEL") {
       close();
-      router.push("/dashboard");
+      navigateRostaPanelDocument("/dashboard");
       return;
     }
     setSelectedGroup((current) => current === index ? null : index);
-  }, [close, maxPosition, position, router]);
+  }, [close, maxPosition, position]);
 
   const navigate = useCallback((item: ExactNavItem) => {
     if (suppressClick.current) return;
     close();
-    router.push(item.path);
-  }, [close, router]);
+    navigateRostaPanelDocument(item.path);
+  }, [close]);
 
   const returnToHub = useCallback(() => {
     close();
@@ -382,11 +382,6 @@ export function AdminMobileQuarterMenu() {
       window.removeEventListener("orientationchange", resize);
     };
   }, [close]);
-
-  useEffect(() => {
-    exactNavStructure.forEach((group) => group.items.forEach((item) => router.prefetch(item.path)));
-    router.prefetch("/dashboard");
-  }, [router]);
 
   useEffect(() => {
     const activeIndex = exactNavStructure.findIndex((group) => group.items.some((item) => exactItemIsActive(pathname, item)));
