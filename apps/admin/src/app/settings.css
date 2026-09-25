@@ -158,10 +158,6 @@
   cursor: pointer;
 }
 
-.cr-settings-upload:hover {
-  border-color: var(--accent);
-  background: var(--accent-soft);
-}
 
 .cr-settings-upload svg {
   width: 18px;
@@ -417,6 +413,13 @@
 .cr-site-preview__footer span {
   color: var(--muted);
   font-size: 8px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cr-settings-upload:hover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
 }
 
 @media (max-width: 1200px) {
