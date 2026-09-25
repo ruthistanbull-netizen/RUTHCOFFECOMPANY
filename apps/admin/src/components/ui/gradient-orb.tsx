@@ -141,10 +141,10 @@ const fragmentShader = /* glsl */ `
     return vec4(colorIn.rgb / (a + 1e-5), a);
   }
 
-  const vec3 baseColor0 = vec3(0.239, 0.353, 1.0);   // blue
-  const vec3 baseColor1 = vec3(0.788, 0.635, 0.227); // gold (#C9A23A)
-  const vec3 baseColor2 = vec3(1.0, 0.373, 0.122);   // orange
-  const vec3 baseColor3 = vec3(0.0, 0.0, 0.0);       // black
+  const vec3 baseColor0 = vec3(0.788, 0.290, 0.251); // ROSTA Brick B (#C94A40)
+  const vec3 baseColor1 = vec3(0.784, 0.655, 0.490); // ROSTA Kraft (#C8A77D)
+  const vec3 baseColor2 = vec3(0.220, 0.145, 0.110); // ROSTA Espresso (#38251C)
+  const vec3 baseColor3 = vec3(0.067, 0.067, 0.067); // ROSTA Carbon (#111111)
 
   float light1(float intensity, float attenuation, float dist) {
     return intensity / (1.0 + dist * attenuation);
