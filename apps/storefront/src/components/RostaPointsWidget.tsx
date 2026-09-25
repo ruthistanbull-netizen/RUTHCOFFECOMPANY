@@ -8,7 +8,6 @@ import {
   ChevronRight,
   Gift,
   ShoppingBag,
-  Sparkles,
   UserPlus,
   X,
 } from "lucide-react";
@@ -43,6 +42,41 @@ type BirthdayStatus = {
   rewardPointsBalance?: number;
   error?: string;
 };
+
+function CoffeeBeanMark({ size = 18 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path
+        d="M19.15 4.86C15.98 1.7 10.5 2.06 6.9 5.67c-3.62 3.62-3.98 9.1-.82 12.27 3.17 3.16 8.65 2.8 12.27-.82 3.61-3.61 3.97-9.09.8-12.26Z"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M17.9 3.95c-1.9 2.52-4.16 3.52-6.08 4.38-2.53 1.13-4.48 2.01-5.72 5.77-.47 1.43-.55 2.7-.31 3.75"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M6.2 19.18c1.87-2.46 4.08-3.46 5.98-4.3 2.54-1.14 4.52-2.03 5.77-5.82.45-1.37.54-2.61.33-3.64"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 
 export function RostaPointsWidget() {
   const { isLoggedIn, isLoading, session } = useAuth();
@@ -646,7 +680,7 @@ export function RostaPointsWidget() {
         whileTap={reduceMotion ? undefined : { scale: 0.96 }}
         transition={{ type: "spring", stiffness: 430, damping: 28 }}
       >
-        <span className="rewards-floating-icon"><Sparkles size={17} /></span>
+        <span className="rewards-floating-icon"><CoffeeBeanMark size={18} /></span>
         <span>Avantajlar</span>
       </motion.button>
 
