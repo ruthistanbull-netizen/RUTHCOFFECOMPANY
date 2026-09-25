@@ -293,7 +293,7 @@ export function LiquidDockHybridEnhancer() {
       nextBridgePath.setAttribute("stroke", "rgba(255, 255, 255, 0.68)");
       nextBridgePath.setAttribute("stroke-linejoin", "round");
       nextBridgePath.setAttribute("vector-effect", "non-scaling-stroke");
-      nextBridgePath.style.filter = "drop-shadow(0 1px 2px rgba(31, 35, 41, 0.10))";
+      nextBridgePath.style.filter = "drop-shadow(0 1px 2px rgba(17,17,17,0.10))";
       nextBridgeSvg.appendChild(nextBridgePath);
       nextTrack.appendChild(nextBridgeSvg);
       bridgeSvg = nextBridgeSvg;
