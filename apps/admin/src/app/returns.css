@@ -213,7 +213,7 @@
 
 .cr-return-items > button.is-selected {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(49, 94, 251, .1);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--rosta-brick-b, #C94A40) 18%, transparent);
 }
 
 .cr-return-items > button > img,
