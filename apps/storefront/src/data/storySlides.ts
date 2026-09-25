@@ -3,7 +3,7 @@ export const storySlides = [
     eyebrow: "",
     title: "Çekirdeğin karakteri fincanda.",
     body: "ROSTA’da ürün seçimi; aroma, gövde ve kullanım deneyimini anlaşılır biçimde sunmakla başlar.",
-    image: "/home/rosta-hero-current.webp",
+    image: "/home/rosta-under-hero-photo.jpg",
     href: "/products",
   },
   {
@@ -17,7 +17,7 @@ export const storySlides = [
     eyebrow: "",
     title: "Kavrumdan servise tutarlı bir çizgi.",
     body: "Çekirdeğin karakterini koruyan kavrum yaklaşımı ve doğru kullanım bilgisi, her fincanda daha öngörülebilir sonuç verir.",
-    image: "/home/rosta-hero-v4.webp",
+    image: "/home/rosta-under-hero-v4.jpg",
     href: "/products",
   },
   {
@@ -38,7 +38,7 @@ export const storySlides = [
     eyebrow: "",
     title: "ROSTA Coffee Co.",
     body: "Perakendeden profesyonel kahve ihtiyaçlarına kadar aynı yaklaşım: tutarlı ürün, açık bilgi ve güçlü deneyim.",
-    image: "/home/rosta-hero.webp",
+    image: "/home/rosta-espresso.webp",
     href: "/about",
   },
 ];
