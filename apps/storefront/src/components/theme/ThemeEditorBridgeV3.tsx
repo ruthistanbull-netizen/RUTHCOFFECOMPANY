@@ -294,21 +294,34 @@ function applyDeviceStyle(element: HTMLElement, style: ThemeDeviceStyle) {
   if (lockedBackground) element.style.backgroundColor = lockedBackground;
 }
 
+function overrideMediaSource(override: ThemeElementOverride, mobile: boolean) {
+  return mobile
+    ? override.mobileImageSrc || override.imageSrc || override.desktopImageSrc || ""
+    : override.desktopImageSrc || override.imageSrc || override.mobileImageSrc || "";
+}
+
+function overrideMediaType(override: ThemeElementOverride, mobile: boolean): "image" | "video" | undefined {
+  return mobile
+    ? override.mobileMediaType || override.mediaType || override.desktopMediaType
+    : override.desktopMediaType || override.mediaType || override.mobileMediaType;
+}
+
 function applyOverride(element: Element, override: ThemeElementOverride, mobile: boolean, preserveMedia = false) {
   const html = element as HTMLElement;
   if (override.hidden) { html.style.display = "none"; return; }
   if (override.text !== undefined && isPlainTextElement(element) && ["text", "button", "link"].includes(String(override.kind))) element.textContent = override.text;
-  if (!preserveMedia && override.imageSrc && (element.tagName === "IMG" || element.tagName === "VIDEO")) {
+  const activeMediaSource = overrideMediaSource(override, mobile);
+  if (!preserveMedia && activeMediaSource && (element.tagName === "IMG" || element.tagName === "VIDEO")) {
     const media = element as HTMLImageElement | HTMLVideoElement;
-    const sourceChanged = media.getAttribute("src") !== override.imageSrc;
-    if (sourceChanged) media.setAttribute("src", override.imageSrc);
+    const sourceChanged = media.getAttribute("src") !== activeMediaSource;
+    if (sourceChanged) media.setAttribute("src", activeMediaSource);
     if (element.tagName === "IMG") {
       const image = element as HTMLImageElement;
-      if (image.getAttribute("srcset") !== override.imageSrc) image.setAttribute("srcset", override.imageSrc);
+      if (image.getAttribute("srcset") !== activeMediaSource) image.setAttribute("srcset", activeMediaSource);
     }
     if (element instanceof HTMLVideoElement) activateVideo(element, sourceChanged || element.readyState === 0);
     for (const source of pictureSources(element)) {
-      if (source.getAttribute("srcset") !== override.imageSrc) source.setAttribute("srcset", override.imageSrc);
+      if (source.getAttribute("srcset") !== activeMediaSource) source.setAttribute("srcset", activeMediaSource);
     }
   }
   if (override.href !== undefined && element.tagName === "A") {
@@ -678,7 +691,10 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
         if (!nextIds.has(id) && mediaOrigins.has(id)) element = restoreMediaOrigin(id);
         const original = element ? originals.current.get(element) : null;
         const activeOverride = overrideById.get(id);
-        const preserveActiveMedia = Boolean(activeOverride?.kind === "image" && activeOverride.imageSrc);
+        const preserveActiveMedia = Boolean(
+          activeOverride?.kind === "image"
+          && (activeOverride.imageSrc || activeOverride.desktopImageSrc || activeOverride.mobileImageSrc),
+        );
         if (element && original) restore(element, original, isHeroImageId(id) || preserveActiveMedia);
       }
       const mobile = window.innerWidth < 768;
@@ -690,11 +706,12 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
           missingIds.push(override.id);
           continue;
         }
-        if (override.kind === "image" && override.mediaType) {
-          element = swapMediaElement(element, override.mediaType);
+        const activeMediaType = override.kind === "image" ? overrideMediaType(override, mobile) : undefined;
+        if (override.kind === "image" && activeMediaType) {
+          element = swapMediaElement(element, activeMediaType);
         }
         if (!originals.current.has(element)) originals.current.set(element, snapshot(element));
-        applyOverride(element, override, mobile, isHeroImageId(override.id) && override.mediaType !== "video");
+        applyOverride(element, override, mobile, isHeroImageId(override.id) && activeMediaType !== "video");
         if (selectedElement && ensureThemeId(selectedElement) === override.id) {
           selectedElement = element;
           positionOverlay(element, true);
