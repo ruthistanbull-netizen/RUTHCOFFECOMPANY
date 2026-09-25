@@ -93,18 +93,25 @@ type SaveResponse = {
   warning?: string;
   variantMediaHandled?: boolean;
 };
+type ProductFieldOption = { id: string; label: string; value: string; originalValue?: string };
+type ProductFieldGroup = {
+  field: "material" | "finish_color" | "size_usage" | "care_advice";
+  title: string;
+  template: boolean;
+  options: ProductFieldOption[];
+};
 
-const defaultMaterials = ["Arabica", "Robusta", "Arabica + Robusta Blend", "Kafeinsiz"];
-const defaultFinishes = ["Açık Kavrum", "Orta Kavrum", "Koyu Kavrum", "Espresso Kavrum"];
+const fallbackMaterials = ["Arabica", "Robusta", "Arabica + Robusta Blend", "Kafeinsiz"];
+const fallbackFinishes = ["Açık Kavrum", "Orta Kavrum", "Koyu Kavrum", "Espresso Kavrum"];
 const SIZE_GUIDE_VALUE = "__legacy_size_guide__";
 const PRODUCT_CACHE_STALE_MS = 2 * 60 * 60_000;
-const sizePresets = [
+const fallbackSizePresets = [
   { value: "250 g", label: "250 g paket" },
   { value: "500 g", label: "500 g paket" },
   { value: "1 kg", label: "1 kg paket" },
   { value: "Çekirdek / öğütülmüş seçenekleri", label: "Çekirdek / öğütülmüş seçenekleri" },
 ];
-const carePresets = [
+const fallbackCarePresets = [
   { value: "Serin, kuru ve güneş almayan bir yerde; paketi hava almayacak şekilde kapalı saklayın.", label: "Standart kahve saklama önerisi" },
   { value: "En iyi aroma için açıldıktan sonra kısa sürede tüketin ve nemden uzak tutun.", label: "Tazelik önerisi" },
   { value: "Demlemeden hemen önce öğütmek aromayı daha iyi korur.", label: "Öğütme önerisi" },
@@ -120,7 +127,7 @@ const emptyForm: ProductForm = {
   short_description: "",
   description: "",
   size_usage: "250 g",
-  care_advice: carePresets[0].value,
+  care_advice: fallbackCarePresets[0].value,
   status: "active",
   stock_status: "in_stock",
   collection_ids: [],
@@ -136,6 +143,17 @@ function groupIds(product: Product, type: "collection" | "category") { return ty
 function money(value: number) { return new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY", maximumFractionDigits: 2 }).format(Number(value || 0)); }
 function presetMode(value: string, presets: Array<{ value: string }>) { return presets.some((item) => item.value === value) ? value : "__custom__"; }
 
+const fallbackFieldGroups: ProductFieldGroup[] = [
+  { field: "material", title: "Kahve Türü", template: false, options: fallbackMaterials.map((value) => ({ id: value, label: value, value })) },
+  { field: "finish_color", title: "Kavrum Profili", template: false, options: fallbackFinishes.map((value) => ({ id: value, label: value, value })) },
+  { field: "size_usage", title: "Paket / Gramaj", template: false, options: fallbackSizePresets.map((item) => ({ id: item.value, ...item })) },
+  { field: "care_advice", title: "Bakım Önerisi Şablonu", template: true, options: fallbackCarePresets.map((item) => ({ id: item.value, ...item })) },
+];
+
+function fieldOptions(groups: ProductFieldGroup[], field: ProductFieldGroup["field"]) {
+  return groups.find((group) => group.field === field)?.options || [];
+}
+
 export function ExactProductStudioV2() {
   const searchParams = useSearchParams();
   const toast = useExactToast();
@@ -145,7 +163,8 @@ export function ExactProductStudioV2() {
   const [products, setProducts] = useState<Product[]>([]);
   const [collections, setCollections] = useState<Group[]>([]);
   const [categories, setCategories] = useState<Group[]>([]);
-  const [materials, setMaterials] = useState(defaultMaterials);
+  const [fieldGroups, setFieldGroups] = useState<ProductFieldGroup[]>(fallbackFieldGroups);
+  const [materials, setMaterials] = useState(fallbackMaterials);
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<Product | null>(null);
   const [form, setForm] = useState<ProductForm>({ ...emptyForm, productType: requestedType });
@@ -161,6 +180,10 @@ export function ExactProductStudioV2() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
 
+  const finishOptions = useMemo(() => fieldOptions(fieldGroups, "finish_color"), [fieldGroups]);
+  const sizePresets = useMemo(() => fieldOptions(fieldGroups, "size_usage"), [fieldGroups]);
+  const carePresets = useMemo(() => fieldOptions(fieldGroups, "care_advice"), [fieldGroups]);
+
   const commitProductCache = useCallback((nextProducts: Product[]) => {
     setProducts(nextProducts);
     seedAdminApiCache("/api/products?q=", {
@@ -174,31 +197,42 @@ export function ExactProductStudioV2() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [catalog, materialResult] = await Promise.all([
+      const [catalog, optionResult] = await Promise.all([
         adminRequest<{ products?: Product[]; collections?: Group[]; categories?: Group[] }>("/api/products?q=", { hardRefresh: true }),
-        adminRequest<{ options?: string[] }>("/api/product-settings/materials").catch(() => ({ options: defaultMaterials })),
+        adminRequest<{ groups?: ProductFieldGroup[] }>("/api/product-settings/options", { hardRefresh: true })
+          .catch(() => ({ groups: fallbackFieldGroups })),
       ]);
+      const nextGroups = optionResult.groups?.length ? optionResult.groups : fallbackFieldGroups;
       setProducts(catalog.products || []);
       setCollections(catalog.collections || []);
       setCategories(catalog.categories || []);
-      setMaterials([...new Set([...(materialResult.options || []), ...defaultMaterials].filter(Boolean))]);
+      setFieldGroups(nextGroups);
+      setMaterials(fieldOptions(nextGroups, "material").map((item) => item.value).filter(Boolean));
     } catch (caught) { toast.error(caught instanceof Error ? caught.message : "Ürün stüdyosu verileri alınamadı."); }
     finally { setLoading(false); }
   }, [toast]);
   useEffect(() => { void load(); }, [load]);
 
   const reset = useCallback((type: "single" | "bundle" = requestedType) => {
+    const nextSize = sizePresets[0]?.value || emptyForm.size_usage;
+    const nextCare = carePresets[0]?.value || emptyForm.care_advice;
     setSelected(null);
-    setForm({ ...emptyForm, productType: type });
-    setSizeMode(emptyForm.size_usage);
-    setCareMode(emptyForm.care_advice);
+    setForm({
+      ...emptyForm,
+      productType: type,
+      material: materials[0] || emptyForm.material,
+      size_usage: nextSize,
+      care_advice: nextCare,
+    });
+    setSizeMode(nextSize);
+    setCareMode(nextCare);
     setPhotos([]);
     setPhotoUrl("");
     setEditingPhotoIndex(null);
     setVariants([]);
     setBundleItems([]);
     setBundleProductId("");
-  }, [requestedType]);
+  }, [carePresets, materials, requestedType, sizePresets]);
 
   const open = useCallback((product: Product) => {
     const nextSize = product.size_usage || emptyForm.size_usage;
@@ -343,7 +377,7 @@ export function ExactProductStudioV2() {
       <div className="space-y-3 xl:sticky xl:top-20"><ExactSearchInput value={query} onChange={setQuery} placeholder="Düzenlenecek ürünü ara..." />{loading ? <ExactSkeleton className="h-[620px]" /> : <ExactDataCard noPadding><div className="max-h-[70vh] divide-y divide-border-subtle overflow-y-auto no-scrollbar">{visible.map((product) => <button key={product.id} type="button" onClick={() => open(product)} className={`flex w-full items-center gap-3 p-3 text-left transition-all active:bg-surface-secondary focus-visible:bg-surface-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${selected?.id === product.id ? "bg-accent-soft" : ""}`}><div className="h-14 w-11 shrink-0 overflow-hidden bg-surface-tertiary radius-small">{product.main_image_url ? <img src={product.main_image_url} alt="" className="h-full w-full object-cover" /> : null}</div><div className="min-w-0 flex-1"><p className="truncate text-sm font-semibold text-main">{product.name}</p><p className="truncate text-[10px] text-muted">{product.material || "Kahve türü yok"} · {product.product_variants?.length || 0} varyant</p><p className="mt-1 text-xs font-medium text-main">{money(product.price)}</p></div><ExactStatusBadge status={product.status} label={product.status === "active" ? "Aktif" : product.status === "archived" ? "Arşiv" : "Taslak"} size="sm" /></button>)}{!visible.length ? <ExactEmptyState compact icon={Search} title="Ürün bulunamadı" /> : null}</div></ExactDataCard>}</div>
       <div className="space-y-4">
         <ExactDataCard title={selected ? `Ürünü düzenle · ${selected.name}` : "Yeni ürün"} action={<ExactSegmentedControl size="sm" value={form.productType} onChange={(value) => updateForm({ productType: value as "single" | "bundle" })} options={[{ value: "single", label: "Tekil Ürün", icon: PackagePlus }, { value: "bundle", label: "Paket Ürün", icon: Boxes }]} />}>
-          <div className="grid gap-3 md:grid-cols-2"><ExactField label="Ürün adı" required><input value={form.name} onChange={(event) => updateForm({ name: event.target.value, slug: form.slug || slugify(event.target.value) })} className={exactFormInputClass} /></ExactField><ExactField label="Slug"><input value={form.slug} onChange={(event) => updateForm({ slug: event.target.value })} className={exactFormInputClass} /></ExactField><ExactField label="Satış fiyatı" required><input type="number" min="0" step="0.01" value={form.price} onChange={(event) => updateForm({ price: event.target.value })} className={exactFormInputClass} /></ExactField><ExactField label="Karşılaştırma fiyatı"><input type="number" min="0" step="0.01" value={form.compare_at_price} onChange={(event) => updateForm({ compare_at_price: event.target.value })} className={exactFormInputClass} /></ExactField><ExactField label="Kahve türü"><select value={form.material} onChange={(event) => updateForm({ material: event.target.value })} className={exactFormInputClass}>{materials.map((item) => <option key={item} value={item}>{item}</option>)}</select></ExactField><ExactField label="Kavrum profili"><select value={form.finish_color} onChange={(event) => updateForm({ finish_color: event.target.value })} className={exactFormInputClass}><option value="">Seçilmedi</option>{defaultFinishes.map((item) => <option key={item} value={item}>{item}</option>)}</select></ExactField><ExactField label="Yayın durumu"><select value={form.status} onChange={(event) => updateForm({ status: event.target.value })} className={exactFormInputClass}><option value="active">Aktif</option><option value="draft">Taslak</option><option value="archived">Arşiv</option></select></ExactField><ExactField label="Stok durumu"><select value={form.stock_status} onChange={(event) => updateForm({ stock_status: event.target.value })} className={exactFormInputClass}><option value="in_stock">Stokta</option><option value="out_of_stock">Stok yok</option><option value="preorder">Ön sipariş</option></select></ExactField></div>
+          <div className="grid gap-3 md:grid-cols-2"><ExactField label="Ürün adı" required><input value={form.name} onChange={(event) => updateForm({ name: event.target.value, slug: form.slug || slugify(event.target.value) })} className={exactFormInputClass} /></ExactField><ExactField label="Slug"><input value={form.slug} onChange={(event) => updateForm({ slug: event.target.value })} className={exactFormInputClass} /></ExactField><ExactField label="Satış fiyatı" required><input type="number" min="0" step="0.01" value={form.price} onChange={(event) => updateForm({ price: event.target.value })} className={exactFormInputClass} /></ExactField><ExactField label="Karşılaştırma fiyatı"><input type="number" min="0" step="0.01" value={form.compare_at_price} onChange={(event) => updateForm({ compare_at_price: event.target.value })} className={exactFormInputClass} /></ExactField><ExactField label="Kahve türü"><select value={form.material} onChange={(event) => updateForm({ material: event.target.value })} className={exactFormInputClass}>{materials.map((item) => <option key={item} value={item}>{item}</option>)}</select></ExactField><ExactField label="Kavrum profili"><select value={form.finish_color} onChange={(event) => updateForm({ finish_color: event.target.value })} className={exactFormInputClass}><option value="">Seçilmedi</option>{finishOptions.map((item) => <option key={item.id} value={item.value}>{item.label}</option>)}</select></ExactField><ExactField label="Yayın durumu"><select value={form.status} onChange={(event) => updateForm({ status: event.target.value })} className={exactFormInputClass}><option value="active">Aktif</option><option value="draft">Taslak</option><option value="archived">Arşiv</option></select></ExactField><ExactField label="Stok durumu"><select value={form.stock_status} onChange={(event) => updateForm({ stock_status: event.target.value })} className={exactFormInputClass}><option value="in_stock">Stokta</option><option value="out_of_stock">Stok yok</option><option value="preorder">Ön sipariş</option></select></ExactField></div>
           <div className="mt-3 grid gap-3"><ExactField label="Kısa açıklama"><textarea value={form.short_description} onChange={(event) => updateForm({ short_description: event.target.value })} className={`${exactFormInputClass} min-h-20`} /></ExactField><ExactField label="Ürün açıklaması"><textarea value={form.description} onChange={(event) => updateForm({ description: event.target.value })} className={`${exactFormInputClass} min-h-32`} /></ExactField></div>
         </ExactDataCard>
 
