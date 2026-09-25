@@ -851,47 +851,147 @@ export function VisualThemeCustomizer() {
                 <Copy className="h-3.5 w-3.5" /> Aynısından çoğalt
               </button>
 
-              <div className="mt-3">
-                <span className="mb-1.5 block text-[8px] font-medium text-muted">Doldurma</span>
-                <div className="grid grid-cols-3 gap-1">
-                  {([
-                    ["cover", "Kırp / doldur"],
-                    ["contain", "Tamamını göster"],
-                    ["fill", "Esnet"],
-                  ] as const).map(([value, label]) => {
-                    const active = (selectedDeviceStyle?.objectFit || selectedMetrics?.objectFit || "cover") === value;
-                    return (
+              <div className="mt-3 rounded-xl border border-border-subtle bg-surface-secondary p-2.5">
+                <div className="mb-2 flex items-center justify-between gap-2">
+                  <div>
+                    <p className="text-[8px] font-semibold">Medya yerleşimi</p>
+                    <p className="mt-0.5 text-[6.5px] leading-3 text-subtle">Alan boyutunu bozmaz; fotoğraf/video kendi çerçevesinin içinde ayarlanır.</p>
+                  </div>
+                  <div className="flex rounded-lg border border-border-subtle bg-surface-primary p-0.5">
+                    <button
+                      type="button"
+                      onClick={() => setDevice("desktop")}
+                      aria-label="Masaüstü medya ayarı"
+                      className={cx("grid h-7 w-8 place-items-center rounded-md transition", device === "desktop" ? "bg-accent-soft text-accent" : "text-subtle")}
+                    >
+                      <Monitor className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDevice("mobile")}
+                      aria-label="Mobil medya ayarı"
+                      className={cx("grid h-7 w-8 place-items-center rounded-md transition", device === "mobile" ? "bg-accent-soft text-accent" : "text-subtle")}
+                    >
+                      <Smartphone className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <span className="mb-1.5 block text-[7px] font-medium text-muted">Görünüm</span>
+                  <div className="grid grid-cols-3 gap-1">
+                    {([
+                      ["cover", "Doldur"],
+                      ["contain", "Tamamı"],
+                      ["fill", "Esnet"],
+                    ] as const).map(([value, label]) => {
+                      const active = (selectedDeviceStyle?.objectFit || selectedMetrics?.objectFit || "cover") === value;
+                      return (
+                        <button
+                          key={value}
+                          type="button"
+                          onClick={() => patchMediaStyle({ objectFit: value })}
+                          className={cx(
+                            "min-h-9 rounded-lg border px-1.5 py-2 text-[7px] font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+                            active
+                              ? "border-accent bg-accent-soft text-main"
+                              : "border-border-subtle bg-surface-primary text-muted hover:border-accent/55 hover:text-main",
+                          )}
+                        >
+                          {label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="mt-3">
+                  <div className="mb-1 flex items-center justify-between text-[7px] text-muted">
+                    <span>Medya boyutu</span>
+                    <span className="font-semibold text-main">{Math.round(numberStyle("mediaScale", 100))}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min={70}
+                    max={140}
+                    step={1}
+                    value={numberStyle("mediaScale", 100)}
+                    onChange={(event) => patchMediaStyle({ mediaScale: Number(event.target.value) })}
+                    className="w-full accent-[#C94A40]"
+                  />
+                  <div className="mt-1.5 grid grid-cols-4 gap-1">
+                    {[85, 100, 115, 130].map((value) => (
                       <button
                         key={value}
                         type="button"
-                        onClick={() => patchDeviceStyle({ objectFit: value })}
+                        onClick={() => patchMediaStyle({ mediaScale: value })}
                         className={cx(
-                          "min-h-10 rounded-lg border px-1.5 py-2 text-[7px] font-medium leading-3 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
-                          active
+                          "h-7 rounded-md border text-[6.5px] font-medium transition",
+                          Math.round(numberStyle("mediaScale", 100)) === value
                             ? "border-accent bg-accent-soft text-main"
-                            : "border-border-subtle bg-surface-secondary text-muted hover:border-accent/55 hover:text-main",
+                            : "border-border-subtle bg-surface-primary text-subtle",
                         )}
                       >
-                        {label}
+                        {value}%
                       </button>
-                    );
-                  })}
+                    ))}
+                  </div>
                 </div>
-              </div>
 
-              <div className="mt-3">
-                <label className="block">
-                  <span className="mb-1 block text-[8px] font-medium text-muted">Köşe</span>
-                  <input type="number" min={0} max={1000} value={Math.round(numberStyle("borderRadius", selectedMetrics?.borderRadius || 0))} onChange={(event) => patchDeviceStyle({ borderRadius: Number(event.target.value) || 0 })} className="h-9 w-full rounded-lg border border-border-subtle bg-surface-secondary px-2 text-[9px] outline-none" />
-                </label>
-              </div>
-              <div className="mt-3">
-                <div className="mb-1 flex justify-between text-[8px] text-muted"><span>Yatay odak</span><span>{Math.round(numberStyle("objectPositionX", selectedMetrics?.objectPositionX ?? 50))}%</span></div>
-                <input type="range" min={0} max={100} value={numberStyle("objectPositionX", selectedMetrics?.objectPositionX ?? 50)} onChange={(event) => patchDeviceStyle({ objectPositionX: Number(event.target.value) })} className="w-full accent-[#C94A40]" />
-              </div>
-              <div className="mt-2">
-                <div className="mb-1 flex justify-between text-[8px] text-muted"><span>Dikey odak</span><span>{Math.round(numberStyle("objectPositionY", selectedMetrics?.objectPositionY ?? 50))}%</span></div>
-                <input type="range" min={0} max={100} value={numberStyle("objectPositionY", selectedMetrics?.objectPositionY ?? 50)} onChange={(event) => patchDeviceStyle({ objectPositionY: Number(event.target.value) })} className="w-full accent-[#C94A40]" />
+                <div className="mt-3">
+                  <div className="mb-1.5 flex items-center justify-between">
+                    <span className="text-[7px] font-medium text-muted">Odak noktası</span>
+                    <span className="text-[6.5px] text-subtle">{Math.round(numberStyle("objectPositionX", 50))}% · {Math.round(numberStyle("objectPositionY", 50))}%</span>
+                  </div>
+                  <div className="grid w-[86px] grid-cols-3 gap-1 rounded-lg border border-border-subtle bg-surface-primary p-1">
+                    {([
+                      [0, 0], [50, 0], [100, 0],
+                      [0, 50], [50, 50], [100, 50],
+                      [0, 100], [50, 100], [100, 100],
+                    ] as const).map(([x, y]) => {
+                      const activeX = Math.abs(numberStyle("objectPositionX", 50) - x) < 20;
+                      const activeY = Math.abs(numberStyle("objectPositionY", 50) - y) < 20;
+                      return (
+                        <button
+                          key={`${x}-${y}`}
+                          type="button"
+                          aria-label={`Odak ${x} ${y}`}
+                          onClick={() => patchMediaStyle({ objectPositionX: x, objectPositionY: y })}
+                          className={cx(
+                            "grid h-6 w-6 place-items-center rounded-md border transition",
+                            activeX && activeY ? "border-accent bg-accent-soft" : "border-transparent hover:border-border-subtle",
+                          )}
+                        >
+                          <span className={cx("h-1.5 w-1.5 rounded-full", activeX && activeY ? "bg-accent" : "bg-muted")} />
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="mt-3">
+                  <div className="mb-1 flex items-center justify-between text-[7px] text-muted">
+                    <span>Köşe</span>
+                    <span>{Math.round(numberStyle("borderRadius", selectedMetrics?.borderRadius || 0))} px</span>
+                  </div>
+                  <input
+                    type="range"
+                    min={0}
+                    max={64}
+                    step={1}
+                    value={Math.min(64, numberStyle("borderRadius", selectedMetrics?.borderRadius || 0))}
+                    onChange={(event) => patchMediaStyle({ borderRadius: Number(event.target.value) })}
+                    className="w-full accent-[#C94A40]"
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  onClick={resetMediaLayout}
+                  className="mt-3 inline-flex h-8 w-full items-center justify-center gap-1.5 rounded-lg border border-border-subtle bg-surface-primary text-[7px] font-medium text-muted transition hover:border-accent/60 hover:text-main"
+                >
+                  <RefreshCw className="h-3 w-3" /> Yerleşimi sıfırla
+                </button>
               </div>
             </section>
           ) : null}
