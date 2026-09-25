@@ -122,7 +122,7 @@ function productDetails(product: Product): ProductDetailItem[] {
       id: "material",
       label: "Ürün Bilgisi",
       content: [
-        "KAHVE TÜRÜ",
+        "ÇEKİRDEK TÜRÜ",
         beanType || "Belirtilmedi",
         "",
         "KAVRUM PROFİLİ",
