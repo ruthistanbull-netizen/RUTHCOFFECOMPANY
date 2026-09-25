@@ -384,48 +384,41 @@ export default function Hero({
 
   useEffect(() => {
     let frame = 0;
-    let timer = 0;
     const root = document.documentElement;
+    let activeHeaderMedia: SampledMedia | null = null;
+    let activeHeaderInk = "#111111";
+    let activeWordmarkMedia: SampledMedia | null = null;
 
-    const headerToneState = new Map<string, { ink: string; candidate: string; hits: number }>();
-
-    const setHeaderTone = (selector: string, variable: string, fallback = "#111111") => {
-      const control = document.querySelector<HTMLElement>(selector);
-      const previous = headerToneState.get(variable) || { ink: fallback, candidate: fallback, hits: 0 };
-      if (!control) {
-        root.style.setProperty(variable, previous.ink);
-        return previous.ink;
-      }
-
-      const rect = control.getBoundingClientRect();
-      const x = rect.left + rect.width / 2;
-      const y = rect.top + rect.height / 2;
-      const luminance = sampleToneAtPoint(x, y);
-      if (luminance == null) {
-        root.style.setProperty(variable, previous.ink);
-        return previous.ink;
-      }
-
-      // Video frames can move rapidly under the fixed header. Use a wide
-      // hysteresis band and require consecutive readings before changing ink,
-      // so controls stay readable without flashing black/cream every frame.
-      const nextCandidate = previous.ink === "#111111"
-        ? (luminance < 92 ? "#FBF3E6" : "#111111")
-        : (luminance > 148 ? "#111111" : "#FBF3E6");
-
-      const hits = nextCandidate === previous.candidate ? previous.hits + 1 : 1;
-      const ink = nextCandidate !== previous.ink && hits >= 4 ? nextCandidate : previous.ink;
-      const next = {
-        ink,
-        candidate: ink === nextCandidate ? nextCandidate : nextCandidate,
-        hits: ink === nextCandidate ? 0 : hits,
-      };
-      headerToneState.set(variable, next);
-      root.style.setProperty(variable, ink);
-      return ink;
+    const applyHeaderInk = (ink: string) => {
+      activeHeaderInk = ink;
+      root.style.setProperty("--ruth-home-header-menu-ink", ink);
+      root.style.setProperty("--ruth-home-header-search-ink", ink);
+      root.style.setProperty("--ruth-home-header-account-ink", ink);
+      root.style.setProperty("--ruth-home-header-cart-ink", ink);
+      root.style.setProperty("--ruth-home-header-ink", ink);
+      root.style.setProperty("--ruth-home-header-invert", ink === "#FBF3E6" ? "1" : "0");
     };
 
-    const update = () => {
+    const sampleStableHeaderInk = (media: SampledMedia | null) => {
+      if (!media) return activeHeaderInk;
+      const rect = media.getBoundingClientRect();
+      const headerHeight = window.innerWidth >= 1024 ? 92 : 64;
+      const probes = [
+        [36, headerHeight * 0.58],
+        [window.innerWidth * 0.25, headerHeight * 0.58],
+        [window.innerWidth * 0.5, headerHeight * 0.58],
+        [window.innerWidth * 0.75, headerHeight * 0.58],
+        [window.innerWidth - 48, headerHeight * 0.58],
+      ] as const;
+      const tones = probes
+        .map(([x, y]) => sampleMediaTone(media, x, y))
+        .filter((value): value is number => typeof value === "number" && Number.isFinite(value));
+      if (!tones.length) return activeHeaderInk;
+      const average = tones.reduce((sum, value) => sum + value, 0) / tones.length;
+      return contrastInk(average, activeHeaderInk);
+    };
+
+    const update = (forceTone = false) => {
       window.cancelAnimationFrame(frame);
       frame = window.requestAnimationFrame(() => {
         const section = sectionRef.current;
@@ -438,37 +431,47 @@ export default function Hero({
         const visible = sectionRect.bottom > 0 && sectionRect.top < window.innerHeight && !scrollStoryHasEntered;
         setWordmarkVisible(visible);
 
-        // Header controls sample the real hero pixels under their own center.
-        const menuInk = setHeaderTone(".ruth-zara-menu-button", "--ruth-home-header-menu-ink");
-        const searchInk = setHeaderTone('.ruth-zara-header-actions button[aria-label="Ara"]', "--ruth-home-header-search-ink");
-        const accountInk = setHeaderTone('.ruth-zara-header-actions button[aria-label="Hesap menüsü"]', "--ruth-home-header-account-ink");
-        const cartInk = setHeaderTone('.ruth-zara-header-actions button[aria-label^="Sepet"]', "--ruth-home-header-cart-ink");
-        root.style.setProperty("--ruth-home-header-ink", menuInk);
-        root.style.setProperty("--ruth-home-header-invert", menuInk === "#FBF3E6" ? "1" : "0");
+        const headerHeight = window.innerWidth >= 1024 ? 92 : 64;
+        const headerMedia = editorialMediaAtPoint(window.innerWidth / 2, Math.min(headerHeight - 8, headerHeight * 0.58));
+        if (forceTone || headerMedia !== activeHeaderMedia) {
+          activeHeaderMedia = headerMedia;
+          applyHeaderInk(sampleStableHeaderInk(headerMedia));
+        } else {
+          // Re-apply the cached value only; never chase moving video frames.
+          applyHeaderInk(activeHeaderInk);
+        }
 
         if (!visible) return;
-        const wordmarkTone = sampleToneAcrossRect(wordmark.getBoundingClientRect());
-        setWordmarkColor(contrastInk(wordmarkTone, "#111111"));
-
-        // Keep these values warm even if one control is temporarily absent while
-        // React opens/closes a panel.
-        if (!searchInk) root.style.setProperty("--ruth-home-header-search-ink", "#111111");
-        if (!accountInk) root.style.setProperty("--ruth-home-header-account-ink", "#111111");
-        if (!cartInk) root.style.setProperty("--ruth-home-header-cart-ink", "#111111");
+        const wordmarkRect = wordmark.getBoundingClientRect();
+        const wordmarkMedia = editorialMediaAtPoint(
+          wordmarkRect.left + wordmarkRect.width / 2,
+          wordmarkRect.top + wordmarkRect.height / 2,
+        );
+        if (forceTone || wordmarkMedia !== activeWordmarkMedia) {
+          activeWordmarkMedia = wordmarkMedia;
+          const wordmarkTone = sampleToneAcrossRect(wordmarkRect);
+          setWordmarkColor(contrastInk(wordmarkTone, "#111111"));
+        }
       });
     };
 
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
-    window.addEventListener("rosta:home-hero-media-changed", update);
-    timer = window.setInterval(update, 320);
+    applyHeaderInk("#111111");
+    update(true);
+    const onScroll = () => update(false);
+    const onResize = () => update(true);
+    const onMediaChanged = () => {
+      activeHeaderMedia = null;
+      activeWordmarkMedia = null;
+      update(true);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onResize);
+    window.addEventListener("rosta:home-hero-media-changed", onMediaChanged);
     return () => {
       window.cancelAnimationFrame(frame);
-      window.clearInterval(timer);
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
-      window.removeEventListener("rosta:home-hero-media-changed", update);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("rosta:home-hero-media-changed", onMediaChanged);
       [
         "--ruth-home-header-menu-ink",
         "--ruth-home-header-search-ink",
@@ -506,7 +509,7 @@ export default function Hero({
       className="relative overflow-clip bg-carbon"
     >
       <style>{`
-        .home-editorial-wordmark{box-sizing:border-box;pointer-events:none;position:fixed;left:0;top:calc(100svh - clamp(184px,38vw,236px) + 12px);z-index:40;width:min(100vw,1208px);max-width:100vw;height:auto;aspect-ratio:3175/1343;user-select:none;transition:color .24s ease,opacity .28s ease,visibility .28s ease}.home-editorial-wordmark[data-visible="false"]{opacity:0!important;visibility:hidden}.home-editorial-wordmark svg{display:block;width:100%;height:100%;overflow:visible}@media(min-width:1024px){.home-editorial-wordmark{right:1vw!important;left:auto!important;top:47vh;width:44.8vw!important;max-width:44.8vw!important;height:auto!important;aspect-ratio:3175/1343}}
+        .home-editorial-wordmark{box-sizing:border-box;pointer-events:none;position:fixed;left:0;top:calc(100svh - clamp(184px,38vw,236px) + 20px);z-index:40;width:min(100vw,1208px);max-width:100vw;height:auto;aspect-ratio:3175/1343;user-select:none;transition:color .24s ease,opacity .28s ease,visibility .28s ease}.home-editorial-wordmark[data-visible="false"]{opacity:0!important;visibility:hidden}.home-editorial-wordmark svg{display:block;width:100%;height:100%;overflow:visible}@media(min-width:1024px){.home-editorial-wordmark{right:1vw!important;left:auto!important;top:calc(47vh + 18px)!important;width:44.8vw!important;max-width:44.8vw!important;height:auto!important;aspect-ratio:3175/1343}}
       `}</style>
       <motion.div
         ref={wordmarkRef}
