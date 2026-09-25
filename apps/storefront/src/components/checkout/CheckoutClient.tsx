@@ -1112,7 +1112,7 @@ export function CheckoutClient() {
   }
 
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-carbon px-4 pb-24 pt-24 md:px-8 md:pt-32">
+    <div data-theme-editor-ignore="true" className="min-h-screen w-full max-w-full overflow-x-hidden bg-carbon px-4 pb-24 pt-24 md:px-8 md:pt-32">
       <div className="mx-auto w-full max-w-7xl min-w-0">
         <div className="mb-6 text-center md:mb-10">
           <p className="mb-3 text-xs uppercase tracking-wide-luxe text-brick">
@@ -1324,7 +1324,7 @@ export function CheckoutClient() {
                 onMouseEnter={() => setPaymentReached(true)}
                 className="w-full min-w-0 max-w-full overflow-hidden rounded-xl border border-kraft/35 bg-carbon-soft p-4 md:p-5"
               >
-                <div className="mb-5 overflow-hidden rounded-xl border border-kraft/35 bg-carbon-soft">
+                <div className="checkout-order-preview mb-5 overflow-hidden rounded-xl border border-kraft/35 bg-carbon-soft text-cream">
                     <div className="border-b border-kraft/25 bg-carbon/70 px-4 py-4 md:px-5">
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div>
@@ -1347,8 +1347,8 @@ export function CheckoutClient() {
                             .filter((value) => value && value.toLocaleLowerCase("tr-TR") !== "standart"),
                         ));
                         return (
-                          <div key={item.key} className="grid min-w-0 grid-cols-[64px_minmax(0,1fr)] gap-3 px-4 py-4 sm:grid-cols-[72px_minmax(0,1fr)_auto] md:grid-cols-[82px_minmax(0,1fr)_auto] md:px-5">
-                            <div className="h-24 overflow-hidden rounded-lg border border-kraft/35 bg-carbon md:h-28">
+                          <div key={item.key} className="grid min-w-0 grid-cols-[76px_minmax(0,1fr)] items-center gap-4 px-4 py-4 sm:grid-cols-[88px_minmax(0,1fr)_auto] md:px-5">
+                            <div className="aspect-[4/5] w-full overflow-hidden rounded-lg border border-kraft/35 bg-carbon">
                               {item.image ? (
                                 <img src={item.image} alt={item.name} className="h-full w-full object-cover" />
                               ) : (
