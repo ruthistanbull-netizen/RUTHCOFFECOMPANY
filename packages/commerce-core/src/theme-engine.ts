@@ -42,6 +42,7 @@ export type ThemeElementOverride = {
   text?: string;
   imageSrc?: string;
   mediaType?: "image" | "video";
+  duplicateOf?: string;
   href?: string;
   desktop?: ThemeDeviceStyle;
   mobile?: ThemeDeviceStyle;
@@ -193,6 +194,7 @@ function normalizeElementOverride(input: unknown, index: number): ThemeElementOv
     text: typeof raw.text === "string" ? raw.text.slice(0, 16000) : undefined,
     imageSrc: typeof raw.imageSrc === "string" ? safeUrl(raw.imageSrc, "", "image") : undefined,
     mediaType: raw.mediaType === "video" ? "video" : raw.mediaType === "image" ? "image" : undefined,
+    duplicateOf: typeof raw.duplicateOf === "string" ? stringValue(raw.duplicateOf).slice(0, 140) || undefined : undefined,
     href: typeof raw.href === "string" ? safeUrl(raw.href, "", "link") : undefined,
     desktop: normalizeThemeDeviceStyle(raw.desktop),
     mobile: normalizeThemeDeviceStyle(raw.mobile),
