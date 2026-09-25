@@ -113,13 +113,13 @@ main {
   overflow-x: clip;
 }
 
-.site-content {
-  margin: 0;
+html.ruth-home-page-active main.site-content {
+  margin-top: 0 !important;
   padding-top: 0 !important;
 }
 
-#main-content > [data-theme-section-id="home-hero"]:first-child,
-#main-content > [data-theme-section-id="home-hero"]:first-child > #home-editorial {
+html.ruth-home-page-active main.site-content > [data-theme-section-id="home-hero"]:first-child,
+html.ruth-home-page-active main.site-content > [data-theme-section-id="home-hero"]:first-child > #home-editorial {
   margin-top: 0 !important;
   padding-top: 0 !important;
 }
