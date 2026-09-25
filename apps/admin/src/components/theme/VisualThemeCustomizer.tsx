@@ -494,6 +494,7 @@ export function VisualThemeCustomizer() {
   const uploadScroll = async (index: number, file: File) => {
     setUploading(`scroll-${index}`);
     try {
+      const mediaType = mediaTypeForFile(file);
       const src = await uploadThemeImage(file);
       setSettings((current) => ({
         ...current,
@@ -532,6 +533,7 @@ export function VisualThemeCustomizer() {
   const addMenuMedia = async (file: File) => {
     setUploading("menu-media-new");
     try {
+      const mediaType = mediaTypeForFile(file);
       const src = await uploadThemeImage(file);
       const id = `menu-media-${Date.now().toString(36)}`;
       setSettings((current) => ({
@@ -540,11 +542,11 @@ export function VisualThemeCustomizer() {
           ...current.header,
           mediaCards: [
             ...(current.header.mediaCards || []),
-            { id, imageSrc: src, label: "Yeni görsel", href: "/collections" },
+            { id, imageSrc: src, mediaType, label: mediaType === "video" ? "Yeni video" : "Yeni görsel", href: "/collections" },
           ].slice(0, 12),
         },
       }));
-      toast.success("Menü görseli eklendi. Kaydet'e basınca yayınlanacak.");
+      toast.success(`Menü ${mediaType === "video" ? "videosu" : "görseli"} eklendi. Kaydet'e basınca yayınlanacak.`);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Menü görseli yüklenemedi.");
     } finally {
@@ -561,7 +563,7 @@ export function VisualThemeCustomizer() {
         header: {
           ...current.header,
           mediaCards: (current.header.mediaCards || []).map((card) =>
-            card.id === id ? { ...card, imageSrc: src } : card,
+            card.id === id ? { ...card, imageSrc: src, mediaType } : card,
           ),
         },
       }));
@@ -879,7 +881,7 @@ export function VisualThemeCustomizer() {
           <div className="sticky top-0 z-10 -mx-3 -mt-3 mb-3 flex items-start justify-between gap-3 border-b border-border-subtle bg-surface-primary px-3 py-3">
             <div>
               <p className="text-[11px] font-semibold">Menü görselleri</p>
-              <p className="mt-1 text-[8px] leading-4 text-subtle">Koleksiyon kartlarıyla aynı ölçüde özel fotoğraflar ekle. Başlık ve bağlantı ayrı düzenlenir.</p>
+              <p className="mt-1 text-[8px] leading-4 text-subtle">Koleksiyon kartlarıyla aynı ölçüde özel fotoğraf veya video ekle. Başlık ve bağlantı ayrı düzenlenir.</p>
             </div>
             <button type="button" onClick={() => setMenuMediaOpen(false)} className="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-subtle hover:bg-surface-secondary">×</button>
           </div>
@@ -888,20 +890,24 @@ export function VisualThemeCustomizer() {
             {(settings.header.mediaCards || []).map((card, index) => (
               <div key={card.id} className="rounded-xl border border-border-subtle bg-surface-secondary p-2.5">
                 <div className="mb-2 flex items-center justify-between gap-2">
-                  <span className="text-[9px] font-semibold">Özel görsel {index + 1}</span>
+                  <span className="text-[9px] font-semibold">Özel {card.mediaType === "video" ? "video" : "görsel"} {index + 1}</span>
                   <div className="flex items-center gap-1">
                     <button type="button" onClick={() => duplicateMenuMedia(card.id)} className="grid h-7 w-7 place-items-center rounded-lg border border-border-subtle bg-surface-primary text-muted" aria-label="Çoğalt"><Copy className="h-3 w-3" /></button>
                     <button type="button" onClick={() => removeMenuMedia(card.id)} className="grid h-7 w-7 place-items-center rounded-lg border border-border-subtle bg-surface-primary text-muted hover:text-accent" aria-label="Sil"><Trash2 className="h-3 w-3" /></button>
                   </div>
                 </div>
                 <div className="aspect-[4/3] overflow-hidden rounded-lg border border-border-subtle bg-surface-primary">
-                  <img src={card.imageSrc} alt="" className="h-full w-full object-cover" />
+                  {card.mediaType === "video" ? (
+                    <video src={card.imageSrc} className="h-full w-full object-cover" muted loop autoPlay playsInline preload="metadata" />
+                  ) : (
+                    <img src={card.imageSrc} alt="" className="h-full w-full object-cover" />
+                  )}
                 </div>
                 <ThemeImageInput
                   busy={uploading === `menu-media-${card.id}`}
                   hasValue={Boolean(card.imageSrc)}
                   onFile={(file) => void replaceMenuMedia(card.id, file)}
-                  media="image"
+                  media="any"
                   compact
                 />
                 <label className="mt-2 block">
@@ -920,15 +926,15 @@ export function VisualThemeCustomizer() {
                 <div className="mb-2 flex items-center gap-2">
                   <span className="grid h-8 w-8 place-items-center rounded-lg bg-accent-soft text-accent"><Plus className="h-4 w-4" /></span>
                   <div>
-                    <p className="text-[9px] font-semibold">Yeni menü fotoğrafı ekle</p>
-                    <p className="mt-0.5 text-[7px] text-subtle">Storefrontta koleksiyon fotoğraflarıyla aynı kart ölçüsünde görünür.</p>
+                    <p className="text-[9px] font-semibold">Yeni menü medyası ekle</p>
+                    <p className="mt-0.5 text-[7px] text-subtle">Fotoğraf veya video, storefrontta koleksiyon kartlarıyla aynı ölçüde görünür.</p>
                   </div>
                 </div>
                 <ThemeImageInput
                   busy={uploading === "menu-media-new"}
                   hasValue={false}
                   onFile={(file) => void addMenuMedia(file)}
-                  media="image"
+                  media="any"
                 />
               </div>
             ) : null}
