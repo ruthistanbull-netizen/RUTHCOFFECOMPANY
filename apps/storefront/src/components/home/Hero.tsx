@@ -100,6 +100,10 @@ function notifyHeroMediaReady() {
   window.dispatchEvent(new Event("rosta:home-hero-media-changed"));
 }
 
+function isVideoMediaSource(value: string) {
+  return /\.(mp4|m4v|mov|webm)(?:$|[?#])/i.test(value || "");
+}
+
 function EditorialMedia({
   slide,
   index,
@@ -141,64 +145,131 @@ function EditorialMedia({
         >
           {slide.kind === "hero-image" ? (
             <div className="h-full w-full">
-              <img
-                key={`hero-mobile:${heroImages.mobile}`}
-                src={heroImages.mobile}
-                alt={slide.alt}
-                className="h-full w-full object-cover object-center md:hidden"
-                loading="eager"
-                fetchPriority="high"
-                decoding="async"
-                draggable={false}
-                onLoad={notifyHeroMediaReady}
-                data-home-editorial-media
-                data-theme-id={HOME_HERO_MOBILE_IMAGE_ID}
-                data-theme-label="Ana sayfa hero görseli · Mobil"
-              />
-              <img
-                key={`hero-desktop:${heroImages.desktop}`}
-                src={heroImages.desktop}
-                alt={slide.alt}
-                className="hidden h-full w-full object-cover object-center md:block"
-                loading="eager"
-                fetchPriority="high"
-                decoding="async"
-                draggable={false}
-                onLoad={notifyHeroMediaReady}
-                data-home-editorial-media
-                data-theme-id={HOME_HERO_DESKTOP_IMAGE_ID}
-                data-theme-label="Ana sayfa hero görseli · Masaüstü"
-              />
+              {isVideoMediaSource(heroImages.mobile) ? (
+                <video
+                  key={`hero-mobile-video:${heroImages.mobile}`}
+                  src={heroImages.mobile}
+                  className="h-full w-full object-cover object-center md:hidden"
+                  aria-label={slide.alt}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload="auto"
+                  disablePictureInPicture
+                  onLoadedData={notifyHeroMediaReady}
+                  data-home-editorial-media
+                  data-theme-id={HOME_HERO_MOBILE_IMAGE_ID}
+                  data-theme-label="Ana sayfa hero medyası · Mobil"
+                />
+              ) : (
+                <img
+                  key={`hero-mobile:${heroImages.mobile}`}
+                  src={heroImages.mobile}
+                  alt={slide.alt}
+                  className="h-full w-full object-cover object-center md:hidden"
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
+                  draggable={false}
+                  onLoad={notifyHeroMediaReady}
+                  data-home-editorial-media
+                  data-theme-id={HOME_HERO_MOBILE_IMAGE_ID}
+                  data-theme-label="Ana sayfa hero medyası · Mobil"
+                />
+              )}
+              {isVideoMediaSource(heroImages.desktop) ? (
+                <video
+                  key={`hero-desktop-video:${heroImages.desktop}`}
+                  src={heroImages.desktop}
+                  className="hidden h-full w-full object-cover object-center md:block"
+                  aria-label={slide.alt}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload="auto"
+                  disablePictureInPicture
+                  onLoadedData={notifyHeroMediaReady}
+                  data-home-editorial-media
+                  data-theme-id={HOME_HERO_DESKTOP_IMAGE_ID}
+                  data-theme-label="Ana sayfa hero medyası · Masaüstü"
+                />
+              ) : (
+                <img
+                  key={`hero-desktop:${heroImages.desktop}`}
+                  src={heroImages.desktop}
+                  alt={slide.alt}
+                  className="hidden h-full w-full object-cover object-center md:block"
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
+                  draggable={false}
+                  onLoad={notifyHeroMediaReady}
+                  data-home-editorial-media
+                  data-theme-id={HOME_HERO_DESKTOP_IMAGE_ID}
+                  data-theme-label="Ana sayfa hero medyası · Masaüstü"
+                />
+              )}
             </div>
           ) : slide.kind === "image" ? (
-            <picture className="block h-full w-full">
-              <source media="(min-width: 768px)" srcSet={editorialImage} />
-              <img
+            isVideoMediaSource(editorialImage) ? (
+              <video
+                className="h-full w-full object-cover object-center"
                 src={editorialImage}
-                alt={slide.alt}
+                aria-label={slide.alt}
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="auto"
+                disablePictureInPicture
+                data-home-editorial-media
+                data-theme-id={HOME_EDITORIAL_IMAGE_ID}
+                data-theme-label="Ana sayfa editoryal medyası"
+              />
+            ) : (
+              <picture className="block h-full w-full">
+                <source media="(min-width: 768px)" srcSet={editorialImage} />
+                <img
+                  src={editorialImage}
+                  alt={slide.alt}
+                  className="h-full w-full object-cover object-center"
+                  loading="lazy"
+                  fetchPriority="auto"
+                  decoding="async"
+                  draggable={false}
+                  data-home-editorial-media
+                  data-theme-id={HOME_EDITORIAL_IMAGE_ID}
+                  data-theme-label="Ana sayfa editoryal medyası"
+                />
+              </picture>
+            )
+          ) : (
+            isVideoMediaSource(editorialVideo) ? (
+              <video
+                className="h-full w-full object-cover object-center"
+                src={editorialVideo}
+                aria-label={slide.label}
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="auto"
+                disablePictureInPicture
+                data-home-editorial-media
+              />
+            ) : (
+              <img
+                src={editorialVideo}
+                alt={slide.label}
                 className="h-full w-full object-cover object-center"
                 loading="lazy"
-                fetchPriority="auto"
                 decoding="async"
                 draggable={false}
                 data-home-editorial-media
-                data-theme-id={HOME_EDITORIAL_IMAGE_ID}
-                data-theme-label="Ana sayfa editoryal görseli"
               />
-            </picture>
-          ) : (
-            <video
-              className="h-full w-full object-cover object-center"
-              src={editorialVideo}
-              aria-label={slide.label}
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="auto"
-              disablePictureInPicture
-              data-home-editorial-media
-            />
+            )
           )}
         </motion.div>
       </div>
