@@ -100,13 +100,11 @@
   box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 10px 28px color-mix(in srgb, var(--rosta-brick-b, #C94A40) 15%, transparent);
 }
 
-.brandMark::after {
-  content: "";
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--rosta-cream, #FBF3E6), var(--rosta-cream, #FBF3E6) 58%, var(--rosta-espresso, #38251C));
-  box-shadow: 0 0 13px color-mix(in srgb, var(--rosta-brick-b, #C94A40) 85%, transparent);
+.brandMark svg {
+  width: 18px;
+  height: 18px;
+  color: var(--rosta-cream, #FBF3E6);
+  stroke: currentColor;
 }
 
 .brandText { display: grid; gap: 1px; }
