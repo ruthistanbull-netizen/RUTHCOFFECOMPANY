@@ -514,7 +514,11 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
     const dedupeThemeMedia = (id: string, keep: Element) => {
       const escaped = typeof CSS !== "undefined" && typeof CSS.escape === "function"
         ? CSS.escape(id)
+        : id.replace(/["\\]/g, "\\const dedupeThemeMedia = (id: string, keep: Element) => {
+      const escaped = typeof CSS !== "undefined" && typeof CSS.escape === "function"
+        ? CSS.escape(id)
         : id.replace(/["\\]/g, "\\    const rememberMediaOrigin = (element: Element) => {");
+      const matches = Array.from(document.querySelectorAll(`[data-theme-id="${escaped}"]`));");
       const matches = Array.from(document.querySelectorAll(`[data-theme-id="${escaped}"]`));
       for (const candidate of matches) {
         if (candidate === keep) continue;
@@ -741,6 +745,40 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
       window.location.assign(url.toString());
     };
 
+    const onContextMenu = (event: MouseEvent) => {
+      if (!editorMode || window.parent === window) return;
+      const raw = event.target instanceof Element ? event.target : null;
+      if (!raw || raw.closest("[data-ruth-theme-editor-ui]")) return;
+      const target = pickTarget(raw);
+      if (!target) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+
+      const rect = target.getBoundingClientRect();
+      const id = ensureThemeId(target);
+      window.parent.postMessage({
+        type: "RUTH_THEME_EDITOR_CONTEXT_REQUEST",
+        pathname: themePageKey(window.location.pathname),
+        id,
+        pointerType: "mouse",
+        point: {
+          x: Math.max(0, event.clientX),
+          y: Math.max(0, event.clientY),
+          viewportWidth: window.innerWidth,
+          viewportHeight: window.innerHeight,
+        },
+        rect: {
+          left: rect.left,
+          top: rect.top,
+          width: rect.width,
+          height: rect.height,
+        },
+      }, "*");
+      select(target);
+    };
+
     const onClick = (event: MouseEvent) => {
       if (!editorMode) return;
       const raw = event.target instanceof Element ? event.target : null;
@@ -808,6 +846,7 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
     window.addEventListener("resize", onResize);
     window.addEventListener("popstate", onPopState);
     if (editorMode) {
+      document.addEventListener("contextmenu", onContextMenu, true);
       document.addEventListener("click", onClick, true);
       document.addEventListener("mousemove", onMove, true);
       window.parent.postMessage({ type: "RUTH_THEME_EDITOR_READY", pathname: themePageKey(window.location.pathname) }, "*");
@@ -818,6 +857,7 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
       window.removeEventListener("message", onMessage);
       window.removeEventListener("resize", onResize);
       window.removeEventListener("popstate", onPopState);
+      document.removeEventListener("contextmenu", onContextMenu, true);
       document.removeEventListener("click", onClick, true);
       document.removeEventListener("mousemove", onMove, true);
       observer.disconnect();
