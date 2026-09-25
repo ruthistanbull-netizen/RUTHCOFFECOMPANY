@@ -163,7 +163,7 @@ function mergeCurrentProductValues(groups: FieldGroup[], products: Array<Record<
 }
 
 async function migrateProductField(
-  supabase: Awaited<ReturnType<typeof requireAdmin>> extends { supabase: infer T } ? T : never,
+  supabase: any,
   field: FieldKey,
   from: string,
   to: string,
