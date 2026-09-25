@@ -150,7 +150,7 @@ function pictureSources(element: Element) {
 }
 
 function isHeroImageId(id: string) {
-  return /^home-hero-image-\d+$/.test(id);
+  return /^home-hero-image-\d+(?:--(?:desktop|mobile)-image)?$/.test(id);
 }
 
 function snapshot(element: Element): Snapshot {
