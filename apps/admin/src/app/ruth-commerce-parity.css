@@ -1,20 +1,28 @@
 /* ROSTA Coffee panel visual parity layer. */
 :root {
   --rosta-carbon:#111111;
-  --rosta-bone:#F4F0E8;
-  --rosta-espresso:#2B1B16;
-  --rosta-oxide:#B9563D;
-  --rosta-olive:#6F725B;
-  --rosta-steel:#AAA8A1;
+  --rosta-carbon-soft:#242424;
+  --rosta-cream:#FBF3E6;
+  --rosta-espresso:#38251C;
+  --rosta-brick-b:#C94A40;
+  --rosta-cocoa:#6B4638;
+  --rosta-kraft:#C8A77D;
+  --rosta-action-text:#FFFFFF;
+
+  /* Compatibility aliases stay inside the locked v2.3 palette. */
+  --rosta-bone:var(--rosta-cream);
+  --rosta-oxide:var(--rosta-brick-b);
+  --rosta-olive:var(--rosta-cocoa);
+  --rosta-steel:var(--rosta-kraft);
   --font-archivo:var(--font-inter);
 
-  --panel-canvas:var(--rosta-bone);
-  --panel-surface:var(--rosta-bone);
-  --panel-surface-2:color-mix(in srgb,var(--rosta-bone) 90%,var(--rosta-steel));
-  --panel-ink:var(--rosta-carbon);
-  --panel-muted:var(--rosta-olive);
-  --panel-line:color-mix(in srgb,var(--rosta-steel) 64%,transparent);
-  --panel-accent:var(--rosta-oxide);
+  --panel-canvas:var(--rosta-carbon);
+  --panel-surface:var(--rosta-carbon-soft);
+  --panel-surface-2:var(--rosta-carbon-soft);
+  --panel-ink:var(--rosta-cream);
+  --panel-muted:color-mix(in srgb,var(--rosta-cream) 70%,transparent);
+  --panel-line:color-mix(in srgb,var(--rosta-kraft) 42%,transparent);
+  --panel-accent:var(--rosta-brick-b);
   --panel-accent-strong:var(--rosta-espresso);
 }
 
@@ -33,7 +41,7 @@ img,svg { display:block; }
   position:fixed; inset:0 auto 0 0; z-index:40; width:248px;
   display:flex; flex-direction:column;
   border-right:1px solid var(--panel-line);
-  background:color-mix(in srgb,var(--rosta-bone) 88%,transparent);
+  background:color-mix(in srgb,var(--rosta-carbon) 94%,transparent);
   -webkit-backdrop-filter:blur(24px) saturate(1.2);
   backdrop-filter:blur(24px) saturate(1.2);
   transition:width 300ms cubic-bezier(.22,1,.36,1);
@@ -47,7 +55,7 @@ img,svg { display:block; }
 .rosta-commerce-brand-logo {
   width:38px; height:38px; flex:0 0 38px; display:grid; place-items:center;
   overflow:hidden; border:1px solid var(--panel-line); border-radius:12px;
-  background:var(--rosta-bone); box-shadow:0 1px 2px rgba(17,17,17,.05);
+  background:var(--rosta-carbon-soft); box-shadow:0 1px 2px color-mix(in srgb,var(--rosta-carbon) 38%,transparent);
 }
 .rosta-commerce-brand-logo img { width:32px; height:32px; object-fit:contain; }
 .rosta-commerce-brand-copy { min-width:0; white-space:nowrap; }
@@ -71,8 +79,8 @@ img,svg { display:block; }
   padding:0 10px; border-radius:12px; color:var(--panel-muted);
   font-size:13px; font-weight:600; transition:background .15s ease,color .15s ease;
 }
-.rosta-commerce-nav-link:hover { background:color-mix(in srgb,var(--rosta-steel) 16%,transparent); color:var(--panel-ink); }
-.rosta-commerce-nav-link.is-active { color:var(--rosta-oxide); background:color-mix(in srgb,var(--rosta-oxide) 11%,var(--rosta-bone)); }
+
+.rosta-commerce-nav-link.is-active { color:var(--rosta-oxide); background:color-mix(in srgb,var(--rosta-brick-b) 15%,var(--rosta-carbon-soft)); }
 .rosta-commerce-nav-link.is-active::before {
   content:""; position:absolute; left:0; top:50%; width:3px; height:20px; transform:translateY(-50%);
   border-radius:0 999px 999px 0; background:var(--rosta-oxide);
@@ -85,7 +93,7 @@ img,svg { display:block; }
 .rosta-commerce-sidebar-footer-row { display:flex; gap:8px; }
 .rosta-commerce-sidebar-footer a,.rosta-commerce-sidebar-footer button {
   min-height:36px; display:inline-flex; align-items:center; justify-content:center; gap:7px;
-  border:1px solid var(--panel-line); border-radius:12px; background:var(--rosta-bone);
+  border:1px solid var(--panel-line); border-radius:12px; background:var(--rosta-carbon-soft);
   color:var(--panel-muted); cursor:pointer; font-size:11px; font-weight:600;
 }
 .rosta-commerce-sidebar-footer a { flex:1; }
@@ -96,7 +104,7 @@ img,svg { display:block; }
 .rosta-commerce-header {
   position:sticky; top:0; z-index:35; height:64px; display:flex; align-items:center; gap:10px;
   padding:0 16px; border-bottom:1px solid var(--panel-line);
-  background:color-mix(in srgb,var(--rosta-bone) 82%,transparent);
+  background:color-mix(in srgb,var(--rosta-carbon) 94%,transparent);
   -webkit-backdrop-filter:blur(22px) saturate(1.2);
   backdrop-filter:blur(22px) saturate(1.2);
 }
@@ -104,32 +112,32 @@ img,svg { display:block; }
   width:36px; height:36px; display:grid; place-items:center; flex:0 0 36px;
   border:1px solid transparent; border-radius:12px; background:transparent; color:var(--panel-muted); cursor:pointer;
 }
-.rosta-commerce-icon-button:hover { border-color:var(--panel-line); background:var(--rosta-bone); color:var(--panel-ink); }
+
 .rosta-commerce-page-title { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:14px; font-weight:650; }
 .rosta-commerce-mobile-brand { display:none; }
 .rosta-commerce-search {
   margin-left:auto; width:min(360px,36vw); height:38px; display:flex; align-items:center; gap:9px;
   border:1px solid var(--panel-line); border-radius:16px; padding:0 12px;
-  background:color-mix(in srgb,var(--rosta-bone) 92%,transparent); color:var(--panel-muted); cursor:pointer;
+  background:var(--rosta-carbon-soft); color:var(--panel-muted); cursor:pointer;
   box-shadow:0 1px 2px rgba(17,17,17,.03);
 }
 .rosta-commerce-search span { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12px; }
 .rosta-commerce-search kbd {
   margin-left:auto; border:1px solid var(--panel-line); border-radius:7px; padding:2px 6px;
-  background:color-mix(in srgb,var(--rosta-steel) 11%,var(--rosta-bone)); color:var(--panel-muted); font-size:9px;
+  background:color-mix(in srgb,var(--rosta-kraft) 12%,var(--rosta-carbon-soft)); color:var(--panel-muted); font-size:9px;
 }
 
 .rosta-commerce-content { width:100%; max-width:1600px; margin:0 auto; padding:28px; }
 .rosta-route-surface { min-height:calc(100dvh - 64px); }
 
 .rosta-command-backdrop,.rosta-mobile-drawer-backdrop {
-  position:fixed; inset:0; z-index:90; background:rgba(17,17,17,.28);
+  position:fixed; inset:0; z-index:90; background:color-mix(in srgb,var(--rosta-carbon) 72%,transparent);
   -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px);
 }
 .rosta-command-wrap { position:fixed; inset:0; z-index:91; display:flex; align-items:flex-start; justify-content:center; padding:15vh 16px 20px; pointer-events:none; }
 .rosta-command {
   pointer-events:auto; width:min(960px,86vw); max-height:65dvh; overflow:hidden;
-  border:1px solid var(--panel-line); border-radius:22px; background:var(--rosta-bone);
+  border:1px solid var(--panel-line); border-radius:22px; background:var(--rosta-carbon-soft);
   box-shadow:var(--shadow-overlay);
 }
 .rosta-command-search { height:56px; display:flex; align-items:center; gap:10px; padding:0 16px; border-bottom:1px solid var(--panel-line); }
@@ -139,12 +147,12 @@ img,svg { display:block; }
   width:100%; min-height:44px; display:flex; align-items:center; gap:10px; padding:8px 10px;
   border:0; border-radius:12px; background:transparent; color:var(--panel-ink); text-align:left; cursor:pointer;
 }
-.rosta-command-result:hover,.rosta-command-result.is-active { background:color-mix(in srgb,var(--rosta-oxide) 10%,var(--rosta-bone)); color:var(--rosta-oxide); }
+.rosta-command-result.is-active { background:color-mix(in srgb,var(--rosta-brick-b) 15%,var(--rosta-carbon-soft)); color:var(--rosta-brick-b); }
 .rosta-command-result small { margin-left:auto; color:var(--panel-muted); font-size:10px; }
 
 .rosta-mobile-drawer {
   position:fixed; inset:0 auto 0 0; z-index:92; width:min(360px,88vw); display:flex; flex-direction:column;
-  border-right:1px solid var(--panel-line); background:var(--rosta-bone); box-shadow:24px 0 70px rgba(17,17,17,.18);
+  border-right:1px solid var(--panel-line); background:var(--rosta-carbon-soft); box-shadow:24px 0 70px color-mix(in srgb,var(--rosta-carbon) 62%,transparent);
 }
 .rosta-mobile-drawer-head { height:66px; display:flex; align-items:center; justify-content:space-between; padding:0 14px; border-bottom:1px solid var(--panel-line); }
 .rosta-mobile-drawer-brand { height:44px; width:154px; }
@@ -155,8 +163,8 @@ img,svg { display:block; }
 .rosta-mobile-dock {
   position:relative; display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:2px;
   width:100%; max-width:460px; margin:0 auto; padding:6px;
-  overflow:hidden; border:1px solid rgba(255,255,255,.72); border-radius:30px;
-  background:rgba(244,240,232,.62); box-shadow:0 18px 44px rgba(17,17,17,.16),0 4px 14px rgba(17,17,17,.08),inset 0 1px 0 rgba(255,255,255,.85);
+  overflow:hidden; border:1px solid color-mix(in srgb,var(--rosta-kraft) 42%,transparent); border-radius:30px;
+  background:color-mix(in srgb,var(--rosta-carbon-soft) 92%,transparent); box-shadow:0 18px 44px color-mix(in srgb,var(--rosta-carbon) 64%,transparent),0 4px 14px color-mix(in srgb,var(--rosta-carbon) 36%,transparent),inset 0 1px 0 color-mix(in srgb,var(--rosta-cream) 16%,transparent);
   -webkit-backdrop-filter:blur(28px) saturate(1.5); backdrop-filter:blur(28px) saturate(1.5);
 }
 .rosta-mobile-dock-item {
@@ -165,9 +173,9 @@ img,svg { display:block; }
 }
 .rosta-mobile-dock-item.is-active { color:var(--rosta-oxide); }
 .rosta-mobile-dock-pill {
-  position:absolute; inset:0 4px; border:1px solid rgba(255,255,255,.78); border-radius:22px;
-  background:rgba(244,240,232,.78);
-  box-shadow:0 7px 22px rgba(185,86,61,.16),inset 0 1px 0 rgba(255,255,255,.94),inset 0 -1px 0 rgba(185,86,61,.08);
+  position:absolute; inset:0 4px; border:1px solid color-mix(in srgb,var(--rosta-brick-b) 55%,transparent); border-radius:22px;
+  background:color-mix(in srgb,var(--rosta-brick-b) 15%,var(--rosta-carbon-soft));
+  box-shadow:0 7px 22px color-mix(in srgb,var(--rosta-brick-b) 24%,transparent),inset 0 1px 0 color-mix(in srgb,var(--rosta-cream) 20%,transparent),inset 0 -1px 0 color-mix(in srgb,var(--rosta-brick-b) 18%,transparent);
 }
 .rosta-mobile-dock-item svg,.rosta-mobile-dock-item span:not(.rosta-mobile-dock-pill) { position:relative; z-index:2; }
 
@@ -189,7 +197,7 @@ img,svg { display:block; }
 .admin-metric strong { font-size:30px; line-height:1.05; letter-spacing:-.04em; font-weight:650; }
 .admin-grid.metrics .admin-metric:first-child {
   border-color:color-mix(in srgb,var(--rosta-oxide) 52%,var(--panel-line));
-  box-shadow:0 0 0 1px rgba(185,86,61,.03),0 0 18px rgba(185,86,61,.11),0 0 34px rgba(185,86,61,.055);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--rosta-brick-b) 10%,transparent),0 0 18px color-mix(in srgb,var(--rosta-brick-b) 20%,transparent),0 0 34px color-mix(in srgb,var(--rosta-brick-b) 12%,transparent);
 }
 
 .admin-table-wrap { overflow:auto; }
@@ -201,22 +209,22 @@ img,svg { display:block; }
 .admin-table td { padding:13px 14px; border-bottom:1px solid color-mix(in srgb,var(--panel-line) 78%,transparent); font-size:12px; vertical-align:middle; }
 .admin-table tbody tr:last-child td { border-bottom:0; }
 .admin-table tbody tr { transition:background .14s ease; }
-.admin-table tbody tr:hover { background:color-mix(in srgb,var(--rosta-steel) 8%,transparent); }
+
 
 .admin-pill {
   min-height:26px; display:inline-flex; align-items:center; justify-content:center; padding:0 9px;
-  border:1px solid color-mix(in srgb,var(--rosta-olive) 35%,transparent); border-radius:999px;
-  background:color-mix(in srgb,var(--rosta-olive) 8%,var(--rosta-bone)); color:var(--rosta-olive);
+  border:1px solid color-mix(in srgb,var(--rosta-kraft) 42%,transparent); border-radius:999px;
+  background:var(--rosta-carbon-soft); color:var(--panel-muted);
   font-size:10px; font-weight:700; white-space:nowrap;
 }
 .admin-primary-button,.admin-secondary-button {
   min-height:38px; display:inline-flex; align-items:center; justify-content:center; gap:8px;
   border-radius:12px; padding:0 14px; cursor:pointer; font-size:12px; font-weight:700;
 }
-.admin-primary-button { border:1px solid var(--rosta-oxide); background:var(--rosta-oxide); color:var(--rosta-bone); box-shadow:0 5px 14px rgba(185,86,61,.18); }
-.admin-primary-button:hover { background:var(--rosta-espresso); border-color:var(--rosta-espresso); }
-.admin-secondary-button { border:1px solid var(--panel-line); background:var(--rosta-bone); color:var(--panel-ink); }
-.admin-secondary-button:hover { border-color:var(--rosta-steel); }
+.admin-primary-button { border:1px solid var(--rosta-oxide); background:var(--rosta-oxide); color:var(--rosta-action-text); box-shadow:0 5px 14px color-mix(in srgb,var(--rosta-brick-b) 24%,transparent); }
+
+.admin-secondary-button { border:1px solid var(--panel-line); background:var(--rosta-carbon-soft); color:var(--panel-ink); }
+
 
 .admin-loading,.admin-empty {
   min-height:calc(100dvh - 190px); display:flex; align-items:center; justify-content:center;
@@ -224,7 +232,7 @@ img,svg { display:block; }
 }
 .admin-error,.admin-inline-message {
   padding:12px 14px; border:1px solid var(--panel-line); border-radius:14px;
-  background:var(--rosta-bone); color:var(--rosta-espresso); font-size:12px;
+  background:color-mix(in srgb,var(--ruth-color-danger-soft,#FFE5E8) 16%,var(--rosta-carbon-soft)); color:var(--ruth-color-danger,#E1606B); font-size:12px;
 }
 .admin-toolbar { display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:14px; }
 .admin-toolbar>div { display:grid; gap:3px; }
@@ -233,7 +241,7 @@ img,svg { display:block; }
 
 .admin-row-actions { display:flex; align-items:center; gap:10px; }
 .admin-row-actions button { border:0; background:transparent; color:var(--panel-muted); font-size:10px; cursor:pointer; padding:6px 0; }
-.admin-row-actions button:hover { color:var(--rosta-oxide); }
+
 .admin-resource-name { display:flex; align-items:center; gap:10px; min-width:220px; }
 .admin-resource-name>img,.admin-resource-name>span {
   width:42px; height:56px; flex:0 0 42px; border:1px solid var(--panel-line); border-radius:10px;
@@ -246,34 +254,34 @@ img,svg { display:block; }
 .admin-field-wide { grid-column:1/-1; }
 .admin-field>span { color:var(--panel-muted); font-size:9px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
 .admin-field input,.admin-field select,.admin-field textarea,.admin-table-input,.admin-table-select {
-  width:100%; border:1px solid var(--panel-line); border-radius:12px; background:var(--rosta-bone); color:var(--panel-ink); outline:0;
+  width:100%; border:1px solid var(--panel-line); border-radius:12px; background:var(--rosta-carbon-soft); color:var(--panel-ink); outline:0;
 }
 .admin-field input,.admin-field select { height:42px; padding:0 12px; }
 .admin-field textarea { padding:12px; resize:vertical; }
 .admin-field input:focus,.admin-field select:focus,.admin-field textarea:focus,.admin-table-input:focus,.admin-table-select:focus {
-  border-color:var(--rosta-oxide); box-shadow:0 0 0 3px rgba(185,86,61,.10);
+  border-color:var(--rosta-oxide); box-shadow:0 0 0 3px color-mix(in srgb,var(--rosta-brick-b) 15%,transparent);
 }
 .admin-table-input,.admin-table-select { min-width:96px; height:34px; padding:0 9px; font-size:10px; }
 
 .admin-editor-backdrop {
   position:fixed; inset:0; z-index:110; display:flex; justify-content:flex-end;
-  background:rgba(17,17,17,.32); -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px);
+  background:color-mix(in srgb,var(--rosta-carbon) 72%,transparent); -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px);
 }
 .admin-editor-panel {
   width:min(640px,100vw); height:100dvh; overflow:auto; padding:22px;
-  border-left:1px solid var(--panel-line); background:var(--rosta-bone); box-shadow:-24px 0 70px rgba(17,17,17,.18);
+  border-left:1px solid var(--panel-line); background:var(--rosta-carbon-soft); box-shadow:-24px 0 70px color-mix(in srgb,var(--rosta-carbon) 62%,transparent);
 }
 .admin-editor-panel>header,.admin-editor-panel>footer { display:flex; align-items:center; justify-content:space-between; gap:12px; }
 .admin-editor-panel>header { padding-bottom:20px; border-bottom:1px solid var(--panel-line); }
 .admin-editor-panel>header h2 { margin:5px 0 0; font-size:28px; font-weight:650; letter-spacing:-.04em; }
 .admin-editor-panel>footer {
   position:sticky; bottom:-22px; margin:24px -22px -22px; padding:14px 22px calc(14px + env(safe-area-inset-bottom));
-  border-top:1px solid var(--panel-line); background:rgba(244,240,232,.94);
+  border-top:1px solid var(--panel-line); background:color-mix(in srgb,var(--rosta-carbon-soft) 96%,transparent);
   -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px);
 }
 .admin-icon-button {
   width:40px; height:40px; display:grid; place-items:center; border:1px solid var(--panel-line);
-  border-radius:14px; background:var(--rosta-bone); color:var(--panel-ink); cursor:pointer;
+  border-radius:14px; background:var(--rosta-carbon-soft); color:var(--panel-ink); cursor:pointer;
 }
 .admin-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; padding:20px 0; }
 .admin-check { display:flex; align-items:center; gap:8px; color:var(--panel-muted); font-size:11px; }
@@ -281,16 +289,16 @@ img,svg { display:block; }
 .admin-chip-grid { display:flex; flex-wrap:wrap; gap:7px; }
 .admin-chip {
   min-height:34px; padding:0 11px; border:1px solid var(--panel-line); border-radius:999px;
-  background:var(--rosta-bone); color:var(--panel-muted); font-size:10px; cursor:pointer;
+  background:var(--rosta-carbon); color:var(--panel-muted); font-size:10px; cursor:pointer;
 }
-.admin-chip.is-active { border-color:var(--rosta-oxide); background:color-mix(in srgb,var(--rosta-oxide) 12%,var(--rosta-bone)); color:var(--rosta-espresso); }
+.admin-chip.is-active { border-color:var(--rosta-oxide); background:color-mix(in srgb,var(--rosta-brick-b) 15%,var(--rosta-carbon-soft)); color:var(--rosta-cream); }
 
 .admin-segmented {
   width:max-content; display:flex; gap:3px; margin-bottom:14px; padding:3px;
-  border:1px solid var(--panel-line); border-radius:14px; background:color-mix(in srgb,var(--rosta-steel) 8%,var(--rosta-bone));
+  border:1px solid var(--panel-line); border-radius:14px; background:var(--rosta-carbon-soft);
 }
 .admin-segmented button { min-height:34px; border:0; border-radius:11px; padding:0 13px; background:transparent; color:var(--panel-muted); font-size:10px; font-weight:700; cursor:pointer; }
-.admin-segmented button.is-active { background:var(--rosta-carbon); color:var(--rosta-bone); }
+.admin-segmented button.is-active { background:var(--rosta-brick-b); color:var(--rosta-action-text); }
 
 .admin-theme-layout { display:grid; grid-template-columns:minmax(240px,.68fr) minmax(0,1.55fr); gap:18px; align-items:start; }
 .admin-theme-palette { position:sticky; top:84px; }
@@ -308,20 +316,20 @@ img,svg { display:block; }
 .admin-theme-preview p { margin:5px 0 0; color:var(--panel-ink); font-size:9px; overflow-wrap:anywhere; }
 .admin-theme-savebar {
   position:sticky; bottom:14px; z-index:20; display:flex; align-items:center; justify-content:space-between; gap:16px;
-  padding:12px 14px; border:1px solid var(--panel-line); border-radius:16px; background:rgba(244,240,232,.90);
+  padding:12px 14px; border:1px solid var(--panel-line); border-radius:16px; background:color-mix(in srgb,var(--rosta-carbon-soft) 96%,transparent);
   -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px); box-shadow:0 14px 40px rgba(17,17,17,.12);
 }
 .admin-theme-savebar>span { color:var(--panel-muted); font-size:10px; }
 
 .admin-login {
-  min-height:100dvh; display:grid; grid-template-columns:minmax(0,1.08fr) minmax(420px,.92fr); background:var(--rosta-bone);
+  min-height:100dvh; display:grid; grid-template-columns:minmax(0,1.08fr) minmax(420px,.92fr); background:var(--rosta-carbon);
 }
 .admin-login-brand {
   position:relative; overflow:hidden; padding:clamp(32px,6vw,88px); display:flex; flex-direction:column; justify-content:flex-end;
-  background:var(--rosta-carbon); color:var(--rosta-bone);
+  background:var(--rosta-brick-b); color:var(--rosta-action-text);
 }
 .admin-login-brand::after {
-  content:"ROSTA"; position:absolute; right:-2vw; bottom:-6vw; color:rgba(244,240,232,.025);
+  content:"ROSTA"; position:absolute; right:-2vw; bottom:-6vw; color:color-mix(in srgb,var(--rosta-cream) 3%,transparent);
   font-size:min(24vw,360px); font-weight:900; letter-spacing:-.08em; pointer-events:none;
 }
 .admin-login-brand>img { position:absolute; top:clamp(32px,5vw,64px); left:clamp(32px,6vw,88px); width:min(320px,56%); height:auto; filter:brightness(0) invert(1); }
@@ -336,8 +344,8 @@ img,svg { display:block; }
 .admin-login-form input[type="email"],.admin-login-form input[type="password"] {
   width:100%; height:46px; border:1px solid var(--panel-line); border-radius:16px; background:var(--rosta-bone); padding:0 14px; color:var(--panel-ink); outline:0;
 }
-.admin-loading-screen { min-height:100dvh; display:grid; place-items:center; align-content:center; gap:14px; background:var(--rosta-bone); color:var(--panel-muted); }
-.admin-loader { width:40px; height:40px; border-radius:50%; border:3px solid var(--rosta-steel); border-top-color:var(--rosta-oxide); animation:admin-spin .8s linear infinite; }
+.admin-loading-screen { min-height:100dvh; display:grid; place-items:center; align-content:center; gap:14px; background:var(--rosta-carbon); color:var(--panel-muted); }
+.admin-loader { width:40px; height:40px; border-radius:50%; border:3px solid color-mix(in srgb,var(--rosta-kraft) 42%,transparent); border-top-color:var(--rosta-brick-b); animation:admin-spin .8s linear infinite; }
 @keyframes admin-spin { to { transform:rotate(360deg); } }
 
 @media(max-width:1023px) {
@@ -395,4 +403,28 @@ img,svg { display:block; }
   .rosta-mobile-dock { border-radius:28px; }
   .rosta-mobile-dock-item { min-height:56px; font-size:8px; }
   .admin-grid.metrics { grid-template-columns:1fr 1fr; }
+}
+
+
+@media (hover: hover) and (pointer: fine) {
+  .rosta-commerce-nav-link:hover { background:var(--rosta-carbon-soft); color:var(--panel-ink); }
+  .rosta-commerce-icon-button:hover { border-color:var(--panel-line); background:var(--rosta-carbon-soft); color:var(--panel-ink); }
+  .rosta-command-result:hover { background:color-mix(in srgb,var(--rosta-brick-b) 15%,var(--rosta-carbon-soft)); color:var(--rosta-brick-b); }
+  .admin-table tbody tr:hover { background:color-mix(in srgb,var(--rosta-kraft) 8%,transparent); }
+  .admin-primary-button:hover { background:var(--rosta-espresso); border-color:var(--rosta-espresso); }
+  .admin-secondary-button:hover { border-color:var(--rosta-kraft); }
+  .admin-row-actions button:hover { color:var(--rosta-brick-b); }
+}
+
+@media (forced-colors: active) {
+  .rosta-commerce-nav-link:focus-visible,
+  .rosta-commerce-icon-button:focus-visible,
+  .rosta-command-result:focus-visible,
+  .admin-primary-button:focus-visible,
+  .admin-secondary-button:focus-visible,
+  .admin-field :is(input,select,textarea):focus-visible,
+  .admin-chip:focus-visible {
+    outline:2px solid Highlight;
+    outline-offset:2px;
+  }
 }
