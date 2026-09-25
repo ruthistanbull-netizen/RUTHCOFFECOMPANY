@@ -69,11 +69,7 @@ export function HomeHeroRuntimeAdjustments() {
           .home-editorial-slide:first-child
           > .sticky
           > div {
-          inset: 0 !important;
-          top: 0 !important;
-          right: 0 !important;
-          bottom: 0 !important;
-          left: 0 !important;
+          inset: -2svh -2vw !important;
         }
 
         html.ruth-home-page-active .home-editorial-wordmark {
