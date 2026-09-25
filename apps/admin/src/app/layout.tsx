@@ -66,7 +66,7 @@ export const metadata: Metadata = {
       { url: "/icon-192.png?v=25", sizes: "192x192", type: "image/png" },
       { url: "/icon-512.png?v=25", sizes: "512x512", type: "image/png" },
     ],
-    apple: [{ url: "/rr-hub-icon-180.png?v=27", sizes: "180x180", type: "image/png" }],
+    apple: [{ url: "/rr-hub-icon-180.png?v=28", sizes: "180x180", type: "image/png" }],
     shortcut: ["/icon.svg"],
   },
   appleWebApp: { capable: true, title: "RR HUB", statusBarStyle: "default" },
@@ -77,7 +77,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   interactiveWidget: "resizes-content",
-  themeColor: "#111111",
+  themeColor: "#242424",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
