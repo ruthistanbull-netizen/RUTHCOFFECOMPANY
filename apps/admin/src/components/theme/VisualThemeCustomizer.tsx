@@ -3,6 +3,7 @@
 import {
   ArrowLeft,
   ChevronRight,
+  Copy,
   Image as ImageIcon,
   Link2,
   Monitor,
@@ -142,12 +143,14 @@ function UploadCard({
   busy,
   onFile,
   mediaType,
+  onDuplicate,
 }: {
   title: string;
   value: string;
   busy: boolean;
   onFile: (file: File) => void;
   mediaType?: HomepageMediaType;
+  onDuplicate?: () => void;
 }) {
   const resolvedType = mediaType || mediaTypeForUrl(value);
   return (
@@ -170,6 +173,15 @@ function UploadCard({
         )}
       </div>
       <ThemeImageInput busy={busy} hasValue={Boolean(value)} onFile={onFile} media="any" />
+      {onDuplicate && value ? (
+        <button
+          type="button"
+          onClick={onDuplicate}
+          className="mt-2 inline-flex h-8 w-full items-center justify-center gap-1.5 rounded-lg border border-border-subtle bg-surface-primary text-[8px] font-medium text-muted transition hover:border-accent/60 hover:text-main focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        >
+          <Copy className="h-3 w-3" /> Aynısından çoğalt
+        </button>
+      ) : null}
     </div>
   );
 }
@@ -226,6 +238,7 @@ export function VisualThemeCustomizer() {
   const saveLifecycle = useSaveLifecycle();
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const pendingContextRef = useRef<ContextRequest | null>(null);
+  const pendingSelectIdRef = useRef<string | null>(null);
   const [settings, setSettings] = useState<ThemeCustomizerSettings>(defaultThemeCustomizerSettings);
   const [saved, setSaved] = useState<ThemeCustomizerSettings>(defaultThemeCustomizerSettings);
   const [pages, setPages] = useState<PageItem[]>(FALLBACK_PAGES);
