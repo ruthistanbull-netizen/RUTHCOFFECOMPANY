@@ -19,9 +19,9 @@
   place-items: center;
   margin-top: 2px;
   border-radius: 10px;
-  color: #B9563D;
-  background: rgba(185, 86, 61, .09);
-  border: 1px solid rgba(185, 86, 61, .16);
+  color: var(--rosta-brick-b, #C94A40);
+  background: color-mix(in srgb, var(--rosta-brick-b, #C94A40) 11%, transparent);
+  border: 1px solid color-mix(in srgb, var(--rosta-brick-b, #C94A40) 18%, transparent);
 }
 
 .avatar svg { width: 15px; height: 15px; }
@@ -42,10 +42,10 @@
   gap: 9px;
   align-items: start;
   padding: 12px;
-  border: 1px solid rgba(185, 86, 61, .15);
+  border: 1px solid color-mix(in srgb, var(--rosta-brick-b, #C94A40) 18%, transparent);
   border-radius: 14px;
-  background: linear-gradient(145deg, rgba(185, 86, 61,.09), rgba(255,255,255,.022));
-  color: #F4F0E8;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--rosta-brick-b, #C94A40) 11%, transparent), rgba(255,255,255,.022));
+  color: var(--rosta-cream, #FBF3E6);
   overflow: hidden;
 }
 
@@ -53,16 +53,15 @@
   width: 16px;
   height: 16px;
   margin: 3px auto 0;
-  color: #B9563D;
+  color: var(--rosta-brick-b, #C94A40);
   animation: ruthiePresentationSpin .8s linear infinite;
 }
 
 .experienceLoading div { min-width: 0; }
-.experienceLoading small { display: block; color: rgba(170, 168, 161,.56); font-size: 7px; letter-spacing: .12em; }
+.experienceLoading small { display: block; color: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 56%, transparent); font-size: 7px; letter-spacing: .12em; }
 .experienceLoading strong { display: block; margin-top: 3px; font-size: 10px; font-weight: 600; }
-.experienceLoading p { margin: 7px 0 0; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; color: rgba(244, 240, 232,.5); font-size: 8px; line-height: 1.45; }
-.experienceLoading button { width: 26px; height: 26px; display: grid; place-items: center; border: 0; border-radius: 8px; background: rgba(255,255,255,.035); color: rgba(244, 240, 232,.45); cursor: pointer; }
-.experienceLoading button:hover { color: #fff; background: rgba(255,255,255,.06); }
+.experienceLoading p { margin: 7px 0 0; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; color: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 50%, transparent); font-size: 8px; line-height: 1.45; }
+.experienceLoading button { width: 26px; height: 26px; display: grid; place-items: center; border: 0; border-radius: 8px; background: rgba(255,255,255,.035); color: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 45%, transparent); cursor: pointer; }
 .experienceLoading button svg { width: 12px; height: 12px; }
 
 .loadingLayer {
@@ -81,11 +80,11 @@
   padding: 18px;
   overflow: hidden;
   pointer-events: auto;
-  color: #F4F0E8;
-  border: 1px solid rgba(185, 86, 61, .18);
+  color: var(--rosta-cream, #FBF3E6);
+  border: 1px solid color-mix(in srgb, var(--rosta-brick-b, #C94A40) 22%, transparent);
   border-radius: 22px;
-  background: linear-gradient(155deg, rgba(43, 27, 22, .96), rgba(17, 17, 17, .97));
-  box-shadow: 0 24px 70px rgba(0, 0, 0, .42), 0 0 60px rgba(185, 86, 61,.08);
+  background: linear-gradient(155deg, color-mix(in srgb, var(--rosta-espresso, #38251C) 96%, transparent), rgba(17, 17, 17, .97));
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .42), 0 0 60px color-mix(in srgb, var(--rosta-brick-b, #C94A40) 10%, transparent);
   backdrop-filter: blur(24px);
 }
 
@@ -101,19 +100,19 @@
   height: 38px;
   display: grid;
   place-items: center;
-  color: #B9563D;
+  color: var(--rosta-brick-b, #C94A40);
   border-radius: 12px;
-  background: rgba(185, 86, 61, .10);
-  border: 1px solid rgba(185, 86, 61, .15);
+  background: color-mix(in srgb, var(--rosta-brick-b, #C94A40) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--rosta-brick-b, #C94A40) 18%, transparent);
 }
 
 .loadingPanel header > span svg { width: 18px; height: 18px; animation: ruthiePresentationSpin .75s linear infinite; }
 .loadingPanel header div { min-width: 0; display: grid; gap: 3px; }
-.loadingPanel header small { color: rgba(170, 168, 161, .7); font-size: 9px; letter-spacing: .16em; }
+.loadingPanel header small { color: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 70%, transparent); font-size: 9px; letter-spacing: .16em; }
 .loadingPanel header strong { font-size: 17px; font-weight: 600; }
-.loadingPanel button { width: 34px; height: 34px; display: grid; place-items: center; color: rgba(244, 240, 232, .72); border: 0; border-radius: 10px; background: rgba(255, 255, 255, .05); cursor: pointer; }
+.loadingPanel button { width: 34px; height: 34px; display: grid; place-items: center; color: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 72%, transparent); border: 0; border-radius: 10px; background: rgba(255, 255, 255, .05); cursor: pointer; }
 .loadingPanel button svg { width: 15px; height: 15px; }
-.loadingPanel p { margin: 18px 0 14px; overflow: hidden; color: rgba(244, 240, 232, .7); font-size: 13px; line-height: 1.45; text-overflow: ellipsis; white-space: nowrap; }
+.loadingPanel p { margin: 18px 0 14px; overflow: hidden; color: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 70%, transparent); font-size: 13px; line-height: 1.45; text-overflow: ellipsis; white-space: nowrap; }
 .loadingBars { display: grid; gap: 7px; }
 .loadingBars i { height: 8px; border-radius: 999px; background: linear-gradient(90deg, rgba(185, 86, 61,.06), rgba(185, 86, 61,.28), rgba(185, 86, 61,.06)); background-size: 200% 100%; animation: ruthiePresentationPulse .95s ease-in-out infinite; }
 .loadingBars i:nth-child(2) { width: 82%; animation-delay: .08s; }
@@ -124,6 +123,13 @@
   0% { background-position: 100% 0; opacity: .45; }
   50% { opacity: 1; }
   100% { background-position: -100% 0; opacity: .45; }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .experienceLoading button:hover {
+    color: var(--rosta-action-text, #FFFFFF);
+    background: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 7%, transparent);
+  }
 }
 
 @media (max-width: 700px) {
