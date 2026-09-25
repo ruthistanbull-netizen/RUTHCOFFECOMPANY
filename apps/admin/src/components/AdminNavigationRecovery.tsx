@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { navigateRostaPanelDocument } from "@/lib/rrHubRuntime";
 
 const RECOVERY_KEY = "ruth_admin_navigation_recovery_v2";
 const RECOVERY_WINDOW_MS = 12_000;
@@ -77,24 +78,6 @@ function shouldTrackNavigation(event: MouseEvent, anchor: HTMLAnchorElement, url
   return isCrossPageTarget(url);
 }
 
-function markHubInternalDocumentHandoff() {
-  try {
-    const hasWorkspace =
-      window.sessionStorage.getItem("rosta_panel_hub_entered_v1") === "1" ||
-      window.sessionStorage.getItem("rr_hub_ruth_entered_v1") === "1";
-    if (hasWorkspace) window.sessionStorage.setItem("rr_hub_pwa_handoff_v1", "1");
-  } catch {}
-}
-
-function armHubInternalDocumentHandoff() {
-  markHubInternalDocumentHandoff();
-  window.setTimeout(() => {
-    try {
-      window.sessionStorage.removeItem("rr_hub_pwa_handoff_v1");
-    } catch {}
-  }, 1500);
-}
-
 export function AdminNavigationRecovery() {
   useEffect(() => {
     let pendingTarget: string | null = null;
@@ -108,34 +91,21 @@ export function AdminNavigationRecovery() {
       pendingTarget = routeTarget(url);
     };
 
-    // Keep normal Next.js SPA navigation as the primary path. Forcing every
-    // cross-page tap into a document navigation makes standalone/PWA shells look
-    // like a fresh launch and can send the user back to RR HUB. We only remember
-    // the intended destination here; a document request remains a recovery path.
+    // Admin navigation intentionally uses full document requests. Zeabur/iOS
+    // intermittently drops streamed RSC navigations; a normal document request is
+    // substantially more reliable and still keeps the selected RR HUB workspace.
     const onDocumentClick = (event: MouseEvent) => {
       const anchor = anchorFromEvent(event);
       if (!anchor) return;
       const url = safeUrl(anchor.href);
       if (!url || !shouldTrackNavigation(event, anchor, url)) return;
+
       pendingTarget = routeTarget(url);
-      // Raw <a> links still perform a real document navigation. Arm a short-lived
-      // handoff marker so a same-panel document load is not mistaken for a cold
-      // standalone launch. Successful SPA transitions clear the marker shortly after.
-      armHubInternalDocumentHandoff();
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+      navigateRostaPanelDocument(url);
     };
-
-    const originalPushState = window.history.pushState.bind(window.history);
-    const originalReplaceState = window.history.replaceState.bind(window.history);
-
-    window.history.pushState = ((data: unknown, unused: string, url?: string | URL | null) => {
-      rememberTarget(url);
-      originalPushState(data, unused, url);
-    }) as History["pushState"];
-
-    window.history.replaceState = ((data: unknown, unused: string, url?: string | URL | null) => {
-      rememberTarget(url);
-      originalReplaceState(data, unused, url);
-    }) as History["replaceState"];
 
     const recover = (reason: unknown) => {
       if (!isRecoverableNavigationFailure(reason)) return;
@@ -158,8 +128,7 @@ export function AdminNavigationRecovery() {
 
       reloadTimer = window.setTimeout(() => {
         const destination = safeUrl(target);
-        markHubInternalDocumentHandoff();
-        if (destination) window.location.assign(destination.href);
+        if (destination) navigateRostaPanelDocument(destination);
         else window.location.reload();
       }, 20);
     };
@@ -189,8 +158,6 @@ export function AdminNavigationRecovery() {
       window.removeEventListener("error", onError);
       window.removeEventListener("unhandledrejection", onUnhandledRejection);
       window.removeEventListener("popstate", onPopState);
-      window.history.pushState = originalPushState;
-      window.history.replaceState = originalReplaceState;
       if (reloadTimer) window.clearTimeout(reloadTimer);
     };
   }, []);
