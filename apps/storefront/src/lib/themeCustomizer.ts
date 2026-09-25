@@ -18,6 +18,7 @@ export type {
   ThemeDeviceStyle,
   ThemeElementOverride,
   ThemeLengthUnit,
+  ThemeMenuMediaCard,
   ThemeNavChild,
   ThemeNavItem,
   ThemePageEditorConfig,
