@@ -14,13 +14,13 @@ import {
   Paperclip,
   Send,
   Settings2,
-  Sparkles,
   Square,
   Volume2,
   VolumeX,
   X,
 } from "lucide-react";
 import { LoadingIndicator } from "@ruth-commerce/ui";
+import { RuthieBrandIcon } from "@/components/RuthieBrandIcon";
 import {
   useCallback,
   useEffect,
@@ -135,7 +135,7 @@ function ExactRuthieOrb({ state, size = 112 }: { state: RuthieState; size?: numb
       <span className="ruthie-particle" style={{ width: size * .2, height: size * .2, top: "18%", left: "12%", animationDelay: "0s", animationDuration: "5s" }} />
       <span className="ruthie-particle" style={{ width: size * .15, height: size * .15, top: "55%", left: "55%", animationDelay: "1.3s", animationDuration: "6.5s" }} />
       <span className="ruthie-particle" style={{ width: size * .12, height: size * .12, top: "32%", left: "62%", animationDelay: "2.6s", animationDuration: "4.5s" }} />
-      <div className="absolute inset-0 flex items-center justify-center"><Sparkles style={{ width: size * .3, height: size * .3 }} className="text-white/90" strokeWidth={2.5} /></div>
+      <div className="absolute inset-0 flex items-center justify-center"><RuthieBrandIcon style={{ width: size * .32, height: size * .32 }} className="text-white/90" strokeWidth={2.2} /></div>
     </div>
     {state === "thinking" || state === "executing" ? <div className="absolute inset-0 rounded-full border-[1.5px] border-white/25 pointer-events-none" style={{ animation: "orb-rotate 3s linear infinite" }} /> : null}
   </div>;
