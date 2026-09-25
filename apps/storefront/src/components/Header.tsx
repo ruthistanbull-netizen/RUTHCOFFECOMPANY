@@ -605,7 +605,26 @@ export function Header({
         @media(hover:hover) and (pointer:fine){.ruth-zara-desktop-accordion:hover{scrollbar-color:color-mix(in srgb,var(--gold) 45%,transparent) transparent}.ruth-zara-desktop-link:hover{color:var(--gold)}.ruth-zara-desktop-child:hover{color:var(--gold)}.ruth-zara-menu-copy:hover{scrollbar-color:color-mix(in srgb,var(--gold) 48%,transparent) transparent}.ruth-zara-menu-copy__link:hover{color:var(--gold)}.ruth-menu-collection-card:hover .ruth-menu-collection-card__media img,.ruth-menu-collection-card:hover .ruth-menu-collection-card__media video{transform:scale(1.025)}}
         .ruth-zara-header :where(button,a):focus-visible,.ruth-zara-menu-surface :where(button,a):focus-visible{outline:2px solid var(--rosta-brick-b);outline-offset:2px}
         @media(forced-colors:active){.ruth-zara-header :where(button,a):focus-visible,.ruth-zara-menu-surface :where(button,a):focus-visible{outline:2px solid Highlight}}
-        @media(prefers-reduced-motion:reduce){.ruth-zara-header,.ruth-zara-hamburger__line,.ruth-menu-collection-card__media img{transition-duration:1ms}}
+        @media(prefers-reduced-motion:reduce){.ruth-zara-header,.ruth-zara-hamburger__line,.ruth-menu-collection-card__media img,.ruth-menu-collection-card__media video{transition-duration:1ms}}
+        /* Zara reference geometry: desktop lines at x=36, y=44/60, 64px wide. */
+        @media(min-width:1024px){
+          .ruth-zara-menu-button{left:36px!important;top:0!important;width:64px!important;height:92px!important;display:block!important;padding:0!important}
+          .ruth-zara-menu-button .ruth-zara-hamburger{position:absolute!important;left:0!important;top:44px!important;display:block!important;width:64px!important;height:17px!important}
+          .ruth-zara-menu-button .ruth-zara-hamburger__line{position:absolute!important;left:0!important;width:64px!important;height:1px!important;background:currentColor!important}
+          .ruth-zara-menu-button .ruth-zara-hamburger__line--top{top:0!important}
+          .ruth-zara-menu-button .ruth-zara-hamburger__line--bottom{top:16px!important}
+          .ruth-zara-menu-button .ruth-zara-hamburger[data-open=true] .ruth-zara-hamburger__line--top{transform:translateY(8px) rotate(45deg)!important}
+          .ruth-zara-menu-button .ruth-zara-hamburger[data-open=true] .ruth-zara-hamburger__line--bottom{transform:translateY(-8px) rotate(-45deg)!important}
+        }
+        @media(max-width:1023px){
+          .ruth-zara-menu-button{left:32px!important;top:0!important;width:44px!important;height:64px!important;display:block!important;padding:0!important}
+          .ruth-zara-menu-button .ruth-zara-hamburger{position:absolute!important;left:0!important;top:35px!important;display:block!important;width:44px!important;height:18px!important}
+          .ruth-zara-menu-button .ruth-zara-hamburger__line{position:absolute!important;left:0!important;width:44px!important;height:1px!important;background:currentColor!important}
+          .ruth-zara-menu-button .ruth-zara-hamburger__line--top{top:0!important}
+          .ruth-zara-menu-button .ruth-zara-hamburger__line--bottom{top:17px!important}
+          .ruth-zara-menu-button .ruth-zara-hamburger[data-open=true] .ruth-zara-hamburger__line--top{transform:translateY(8.5px) rotate(45deg)!important}
+          .ruth-zara-menu-button .ruth-zara-hamburger[data-open=true] .ruth-zara-hamburger__line--bottom{transform:translateY(-8.5px) rotate(-45deg)!important}
+        }
       `}</style>
 
       {!searchOpen ? (
