@@ -164,7 +164,7 @@ function UploadCard({
       <div className="aspect-[4/3] overflow-hidden rounded-lg border border-border-subtle bg-surface-primary">
         {value ? (
           resolvedType === "video" ? (
-            <video src={value} className="h-full w-full object-cover" muted loop autoPlay playsInline preload="metadata" />
+            <video src={value} className="h-full w-full object-cover" muted loop autoPlay playsInline preload="auto" />
           ) : (
             <img src={value} alt="" className="h-full w-full object-cover" />
           )
@@ -718,7 +718,7 @@ export function VisualThemeCustomizer() {
                   </div>
                   <div className={panelCard()}>
                     <p className="mb-3 text-[10px] font-semibold">Kayan medya</p>
-                    <div className="grid grid-cols-2 gap-2">{settings.homepageImages.scrollImages.map((src, index) => <UploadCard key={index} title={`Görsel ${index + 1}`} value={src} busy={uploading === `scroll-${index}`} onFile={(file) => void uploadScroll(index, file)} />)}</div>
+                    <div className="grid grid-cols-2 gap-2">{settings.homepageImages.scrollImages.map((src, index) => <UploadCard key={`${src}-${index}`} title={`Medya ${index + 1}`} value={src} busy={uploading === `scroll-${index}`} onFile={(file) => void uploadScroll(index, file)} onDuplicate={() => duplicateScrollMedia(index)} />)}</div>
                   </div>
                 </div>
               ) : <div className="rounded-xl border border-dashed border-border-strong p-4 text-center text-[9px] text-subtle">Anasayfa medyaları için Ana Sayfa’yı seç.</div>
@@ -768,7 +768,7 @@ export function VisualThemeCustomizer() {
               {(selectedOverride?.imageSrc || selected.imageSrc) ? (
                 <div className="mb-2 h-[78px] overflow-hidden rounded-lg border border-border-subtle bg-surface-secondary">
                   {(selectedOverride?.mediaType || selected.mediaType || (selected.tag === "video" ? "video" : "image")) === "video" ? (
-                    <video src={selectedOverride?.imageSrc || selected.imageSrc} className="h-full w-full object-cover" muted loop autoPlay playsInline preload="metadata" />
+                    <video src={selectedOverride?.imageSrc || selected.imageSrc} className="h-full w-full object-cover" muted loop autoPlay playsInline preload="auto" />
                   ) : (
                     <img src={selectedOverride?.imageSrc || selected.imageSrc} alt="" className="h-full w-full object-cover" />
                   )}
@@ -789,6 +789,14 @@ export function VisualThemeCustomizer() {
                 />
               </label>
               <p className="mt-1.5 text-[7px] leading-3 text-subtle">JPG, PNG, WebP, AVIF, HEIC veya MP4, MOV, M4V, WebM yükleyebilirsin. Seçtiğin dosya türüne göre alan otomatik fotoğraf ya da videoya dönüşür.</p>
+              <button
+                type="button"
+                onClick={duplicateSelectedMedia}
+                disabled={!(selectedOverride?.imageSrc || selected.imageSrc)}
+                className="mt-2 inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-lg border border-border-subtle bg-surface-secondary text-[8px] font-medium text-muted transition hover:border-accent/60 hover:text-main focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-35"
+              >
+                <Copy className="h-3.5 w-3.5" /> Aynısından çoğalt
+              </button>
               <div className="mt-3 grid grid-cols-2 gap-2">
                 <label className="block">
                   <span className="mb-1 block text-[8px] font-medium text-muted">Doldurma</span>
