@@ -17,6 +17,7 @@ import {
 } from "@/lib/themeMedia";
 import type { ThemeCustomizerSettings } from "@/lib/themeCustomizer";
 
+const HOME_EDITORIAL_VIDEO_ID = "home-editorial-video-1";
 const HOME_EDITORIAL_IMAGE_ID = "home-editorial-image-2";
 
 const EDITORIAL_SLIDES = [
@@ -258,6 +259,8 @@ function EditorialMedia({
                 preload="auto"
                 disablePictureInPicture
                 data-home-editorial-media
+                data-theme-id={HOME_EDITORIAL_VIDEO_ID}
+                data-theme-label="Ana sayfa ikinci editoryal medyası"
               />
             ) : (
               <img
@@ -268,6 +271,8 @@ function EditorialMedia({
                 decoding="async"
                 draggable={false}
                 data-home-editorial-media
+                data-theme-id={HOME_EDITORIAL_VIDEO_ID}
+                data-theme-label="Ana sayfa ikinci editoryal medyası"
               />
             )
           )}
