@@ -51,6 +51,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
         editorialVideo={editorialVideo}
         editorialImage={editorialImage}
         scrollImages={themeSettings.homepageImages.scrollImages}
+        themeSettings={themeSettings}
         freeShippingThreshold={freeShippingThreshold}
       />
     ))}
