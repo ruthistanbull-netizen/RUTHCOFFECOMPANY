@@ -543,6 +543,30 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
       return replacement;
     };
 
+    const ensureDuplicateElement = (override: ThemeElementOverride) => {
+      if (!override.duplicateOf) return findById(override.id);
+      const existing = findById(override.id);
+      if (existing) return existing;
+
+      const source = findById(override.duplicateOf);
+      if (!source || !source.parentElement) return null;
+
+      const clone = source.cloneNode(true) as Element;
+      clone.setAttribute("data-theme-id", override.id);
+      clone.setAttribute("data-theme-duplicate-of", override.duplicateOf);
+      clone.removeAttribute("id");
+      for (const child of Array.from(clone.querySelectorAll("[data-theme-id]"))) child.removeAttribute("data-theme-id");
+      for (const child of Array.from(clone.querySelectorAll("[id]"))) child.removeAttribute("id");
+
+      const siblings = Array.from(source.parentElement.children)
+        .filter((item) => item.getAttribute("data-theme-duplicate-of") === override.duplicateOf);
+      const anchor = siblings.length ? siblings[siblings.length - 1] : source;
+      anchor.insertAdjacentElement("afterend", clone);
+
+      if (clone instanceof HTMLVideoElement) activateVideo(clone, clone.readyState === 0);
+      return clone;
+    };
+
     const restoreMediaOrigin = (id: string) => {
       const current = findById(id);
       const origin = mediaOrigins.get(id);
@@ -639,17 +663,29 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
       if (scanDocument) registerElements();
       const overrides = combinedOverrides(next);
       const nextIds = new Set(overrides.map((item) => item.id));
+      const overrideById = new Map(overrides.map((item) => [item.id, item]));
+
+      for (const override of overrides) {
+        if (override.duplicateOf) ensureDuplicateElement(override);
+      }
+
       for (const id of new Set([...trackedIds.current, ...nextIds])) {
         let element = findById(id);
+        if (!nextIds.has(id) && element?.hasAttribute("data-theme-duplicate-of")) {
+          element.remove();
+          continue;
+        }
         if (!nextIds.has(id) && mediaOrigins.has(id)) element = restoreMediaOrigin(id);
         const original = element ? originals.current.get(element) : null;
-        if (element && original) restore(element, original, isHeroImageId(id));
+        const activeOverride = overrideById.get(id);
+        const preserveActiveMedia = Boolean(activeOverride?.kind === "image" && activeOverride.imageSrc);
+        if (element && original) restore(element, original, isHeroImageId(id) || preserveActiveMedia);
       }
       const mobile = window.innerWidth < 768;
       const missingIds: string[] = [];
       let appliedCount = 0;
       for (const override of overrides) {
-        let element = findById(override.id);
+        let element = findById(override.id) || ensureDuplicateElement(override);
         if (!element) {
           missingIds.push(override.id);
           continue;
