@@ -1,5 +1,6 @@
 export type ThemeNavChild = { label: string; path: string };
 export type ThemeNavItem = { id: string; label: string; path: string; side?: "left" | "right"; children?: ThemeNavChild[] };
+export type ThemeMenuMediaCard = { id: string; imageSrc: string; label: string; href: string };
 
 export type ThemeLengthUnit = "px" | "%" | "vw" | "vh" | "svh";
 export type ThemeTextAlign = "left" | "center" | "right";
@@ -65,7 +66,7 @@ export type ThemeCustomizerSettings = {
   announcement: { enabled: boolean; text: string; text2: string; href: string; intervalSeconds: number };
   logo: { src: string; desktopWidth: number; mobileWidth: number };
   colors: { ivory: string; cream: string; ink: string; gold: string; goldDark: string; muted: string };
-  header: { links: ThemeNavItem[] };
+  header: { links: ThemeNavItem[]; mediaCards: ThemeMenuMediaCard[] };
   whatsapp: { enabled: boolean; phone: string; label: string };
   homepageImages: { heroImage: string; heroDesktopImage: string; heroMobileImage: string; editorialVideo: string; editorialImage: string; scrollImages: string[] };
   editor: ThemeVisualEditorSettings;
@@ -82,7 +83,7 @@ export const defaultThemeCustomizerSettings: ThemeCustomizerSettings = {
     { id: "collections", label: "Koleksiyonlar", path: "/collections", side: "right", children: [] },
     { id: "tracking", label: "Sipariş Takip", path: "/siparis-takip", side: "right", children: [] },
     { id: "contact", label: "İletişim", path: "/contact", side: "right", children: [] },
-  ] },
+  ], mediaCards: [] },
   whatsapp: { enabled: false, phone: "", label: "WhatsApp" },
   homepageImages: { heroImage: "", heroDesktopImage: "", heroMobileImage: "", editorialVideo: "/home/rosta-under-hero-video.mp4", editorialImage: "/home/rosta-under-hero-photo.jpg", scrollImages: ["/home/rosta-hero-current.webp", "/home/rosta-espresso.webp", "/home/rosta-hero-v4.webp", "/home/rosta-under-hero-photo.jpg", "/home/rosta-under-hero-v4.jpg", "/home/rosta-hero.webp"] },
   editor: { pages: {} },
@@ -261,6 +262,17 @@ export function normalizeThemeCustomizerSettings(input: unknown): ThemeCustomize
     side: item?.side === "right" ? "right" : "left",
     children: Array.isArray(item?.children) ? item.children.map((child: any) => ({ label: stringValue(child?.label).slice(0, 80), path: safeUrl(child?.path, "/", "link") })).filter((child: ThemeNavChild) => child.label) : [],
   })).filter((item: ThemeNavItem) => item.label) : defaultThemeCustomizerSettings.header.links;
+  const mediaCards: ThemeMenuMediaCard[] = Array.isArray(header.mediaCards)
+    ? header.mediaCards
+        .slice(0, 12)
+        .map((item: any, index: number) => ({
+          id: stringValue(item?.id, `menu-media-${index}`).slice(0, 80),
+          imageSrc: safeUrl(item?.imageSrc, "", "image"),
+          label: stringValue(item?.label).slice(0, 80),
+          href: safeUrl(item?.href, "/collections", "link"),
+        }))
+        .filter((item: ThemeMenuMediaCard) => item.imageSrc)
+    : defaultThemeCustomizerSettings.header.mediaCards;
   const scrollImages = Array.isArray(homepageImages.scrollImages) ? homepageImages.scrollImages.map((item: unknown) => safeUrl(item, "", "image")).filter(Boolean).slice(0, 12) : defaultThemeCustomizerSettings.homepageImages.scrollImages;
   return {
     announcement: {
@@ -283,7 +295,10 @@ export function normalizeThemeCustomizerSettings(input: unknown): ThemeCustomize
       goldDark: defaultThemeCustomizerSettings.colors.goldDark,
       muted: defaultThemeCustomizerSettings.colors.muted,
     },
-    header: { links: links.length ? links : defaultThemeCustomizerSettings.header.links },
+    header: {
+      links: links.length ? links : defaultThemeCustomizerSettings.header.links,
+      mediaCards,
+    },
     whatsapp: {
       enabled: typeof whatsapp.enabled === "boolean" ? whatsapp.enabled : defaultThemeCustomizerSettings.whatsapp.enabled,
       phone: stringValue(whatsapp.phone, defaultThemeCustomizerSettings.whatsapp.phone).replace(/\D/g, "").slice(0, 20),
