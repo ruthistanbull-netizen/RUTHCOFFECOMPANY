@@ -66,7 +66,7 @@ export type ThemeCustomizerSettings = {
   announcement: { enabled: boolean; text: string; text2: string; href: string; intervalSeconds: number };
   logo: { src: string; desktopWidth: number; mobileWidth: number };
   colors: { ivory: string; cream: string; ink: string; gold: string; goldDark: string; muted: string };
-  header: { links: ThemeNavItem[]; mediaCards: ThemeMenuMediaCard[] };
+  header: { links: ThemeNavItem[]; mediaCards?: ThemeMenuMediaCard[] };
   whatsapp: { enabled: boolean; phone: string; label: string };
   homepageImages: { heroImage: string; heroDesktopImage: string; heroMobileImage: string; editorialVideo: string; editorialImage: string; scrollImages: string[] };
   editor: ThemeVisualEditorSettings;
