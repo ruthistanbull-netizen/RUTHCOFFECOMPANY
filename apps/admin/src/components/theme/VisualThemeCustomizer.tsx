@@ -296,6 +296,18 @@ export function VisualThemeCustomizer() {
   const selectedOverride = selected
     ? themePage(settings, targetPage).overrides.find((item) => item.id === selected.id) || null
     : null;
+  const selectedDesktopMediaSrc = selected
+    ? selectedOverride?.desktopImageSrc || selectedOverride?.imageSrc || selected.imageSrc || ""
+    : "";
+  const selectedMobileMediaSrc = selected
+    ? selectedOverride?.mobileImageSrc || selectedOverride?.imageSrc || selected.imageSrc || ""
+    : "";
+  const selectedDesktopMediaType: HomepageMediaType = selected
+    ? selectedOverride?.desktopMediaType || selectedOverride?.mediaType || selected.mediaType || (selected.tag === "video" ? "video" : "image")
+    : "image";
+  const selectedMobileMediaType: HomepageMediaType = selected
+    ? selectedOverride?.mobileMediaType || selectedOverride?.mediaType || selected.mediaType || (selected.tag === "video" ? "video" : "image")
+    : "image";
 
   const sendSettings = useCallback((next: ThemeCustomizerSettings) => {
     iframeRef.current?.contentWindow?.postMessage({
