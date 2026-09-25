@@ -4,150 +4,161 @@ import { noStoreHeaders, revalidateWebsite } from "@/lib/websiteRevalidate";
 
 export const runtime = "nodejs";
 
-const KEY = "product_option_definitions_v1";
+const KEY = "product_field_options_v1";
+const FIELDS = ["material", "finish_color", "size_usage", "care_advice"] as const;
+type FieldKey = (typeof FIELDS)[number];
 
-type OptionValue = {
+type FieldOption = {
   id: string;
   label: string;
-  color?: string;
+  value: string;
+  originalValue?: string;
 };
 
-type OptionDefinition = {
-  id: string;
-  name: string;
-  displayType: "list" | "color";
-  active: boolean;
-  values: OptionValue[];
+type FieldGroup = {
+  field: FieldKey;
+  title: string;
+  template: boolean;
+  options: FieldOption[];
 };
 
-function clean(value: unknown, max = 120) {
+const DEFAULT_GROUPS: FieldGroup[] = [
+  {
+    field: "material",
+    title: "Kahve Türü",
+    template: false,
+    options: [
+      { id: "arabica", label: "Arabica", value: "Arabica" },
+      { id: "robusta", label: "Robusta", value: "Robusta" },
+      { id: "blend", label: "Arabica + Robusta Blend", value: "Arabica + Robusta Blend" },
+      { id: "decaf", label: "Kafeinsiz", value: "Kafeinsiz" },
+    ],
+  },
+  {
+    field: "finish_color",
+    title: "Kavrum Profili",
+    template: false,
+    options: [
+      { id: "acik", label: "Açık Kavrum", value: "Açık Kavrum" },
+      { id: "orta", label: "Orta Kavrum", value: "Orta Kavrum" },
+      { id: "koyu", label: "Koyu Kavrum", value: "Koyu Kavrum" },
+      { id: "espresso", label: "Espresso Kavrum", value: "Espresso Kavrum" },
+    ],
+  },
+  {
+    field: "size_usage",
+    title: "Paket / Gramaj",
+    template: false,
+    options: [
+      { id: "250g", label: "250 g", value: "250 g" },
+      { id: "500g", label: "500 g", value: "500 g" },
+      { id: "1kg", label: "1 kg", value: "1 kg" },
+    ],
+  },
+  {
+    field: "care_advice",
+    title: "Bakım Önerisi Şablonu",
+    template: true,
+    options: [
+      {
+        id: "standart-saklama",
+        label: "Standart kahve saklama önerisi",
+        value: "Serin, kuru ve güneş almayan bir yerde; paketi hava almayacak şekilde kapalı saklayın.",
+      },
+      {
+        id: "tazelik",
+        label: "Tazelik önerisi",
+        value: "En iyi aroma için açıldıktan sonra kısa sürede tüketin ve nemden uzak tutun.",
+      },
+      {
+        id: "ogutme",
+        label: "Öğütme önerisi",
+        value: "Demlemeden hemen önce öğütmek aromayı daha iyi korur.",
+      },
+    ],
+  },
+];
+
+function clean(value: unknown, max = 2400) {
   return typeof value === "string" ? value.trim().slice(0, max) : "";
 }
 
 function safeId(value: unknown, fallback: string) {
   const raw = clean(value, 100)
     .toLocaleLowerCase("tr-TR")
-    .replace(/ğ/g, "g")
-    .replace(/ü/g, "u")
-    .replace(/ş/g, "s")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
     .replace(/ı/g, "i")
-    .replace(/ö/g, "o")
-    .replace(/ç/g, "c")
-    .replace(/[^a-z0-9_-]+/g, "-")
+    .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
   return raw || fallback;
 }
 
-function normalizedKey(value: string) {
-  return value
-    .toLocaleLowerCase("tr-TR")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/ı/g, "i")
-    .replace(/[^a-z0-9]+/g, "");
-}
-
-function color(value: unknown) {
-  const raw = clean(value, 20);
-  return /^#[0-9a-f]{6}$/i.test(raw) ? raw.toUpperCase() : undefined;
-}
-
-function definitionsFromVariants(rows: Array<{ options?: unknown }>): OptionDefinition[] {
-  const groups = new Map<string, OptionDefinition>();
-
-  for (const row of rows) {
-    const options = row?.options && typeof row.options === "object"
-      ? row.options as Record<string, unknown>
-      : {};
-    const displayType = options.__displayType === "color" ? "color" : "list";
-    const fallbackColor = color(options.__colorValue);
-
-    for (const [rawName, rawValue] of Object.entries(options)) {
-      if (rawName.startsWith("__")) continue;
-      const name = clean(rawName, 80);
-      const label = clean(rawValue, 100);
-      if (!name || !label) continue;
-
-      const groupId = safeId(name, `option-${groups.size + 1}`);
-      const key = normalizedKey(name);
-      const existing = groups.get(key) || {
-        id: groupId,
-        name,
-        displayType,
-        active: true,
-        values: [],
-      };
-      if (displayType === "color") existing.displayType = "color";
-
-      const valueId = safeId(`${groupId}-${label}`, `${groupId}-value-${existing.values.length + 1}`);
-      if (!existing.values.some((item) => normalizedKey(item.label) === normalizedKey(label))) {
-        existing.values.push({
-          id: valueId,
-          label,
-          ...(existing.displayType === "color" ? { color: fallbackColor || "#111111" } : {}),
-        });
-      }
-      groups.set(key, existing);
-    }
-  }
-
-  return [...groups.values()].sort((a, b) => a.name.localeCompare(b.name, "tr"));
-}
-
-function storedDefinitions(input: unknown): OptionDefinition[] {
-  const raw = input && typeof input === "object" && Array.isArray((input as { definitions?: unknown }).definitions)
-    ? (input as { definitions: unknown[] }).definitions
+function normalizeGroups(input: unknown): FieldGroup[] {
+  const source = input && typeof input === "object" && Array.isArray((input as { groups?: unknown }).groups)
+    ? (input as { groups: unknown[] }).groups
     : [];
-  return raw.flatMap((item, index) => {
-    if (!item || typeof item !== "object") return [];
-    const row = item as Record<string, unknown>;
-    const id = clean(row.id, 100) || `option-${index + 1}`;
-    const name = clean(row.name, 80);
-    const displayType = row.displayType === "color" ? "color" : "list";
-    const values = Array.isArray(row.values)
-      ? row.values.flatMap((candidate, valueIndex) => {
-          const valueRow: Record<string, unknown> = candidate && typeof candidate === "object"
-            ? candidate as Record<string, unknown>
-            : { label: candidate };
-          const label = clean(valueRow.label, 100);
-          if (!label) return [];
-          return [{
-            id: clean(valueRow.id, 100) || `${id}-value-${valueIndex + 1}`,
-            label,
-            ...(displayType === "color" ? { color: color(valueRow.color) || "#111111" } : {}),
-          }];
-        })
-      : [];
-    return [{ id, name, displayType, active: row.active !== false, values }];
+
+  return DEFAULT_GROUPS.map((fallback) => {
+    const candidate = source.find((item) =>
+      item && typeof item === "object" && (item as Record<string, unknown>).field === fallback.field
+    ) as Record<string, unknown> | undefined;
+
+    if (!candidate || !Array.isArray(candidate.options)) {
+      return {
+        ...fallback,
+        options: fallback.options.map((option) => ({ ...option, originalValue: option.value })),
+      };
+    }
+
+    const seen = new Set<string>();
+    const options = candidate.options.flatMap((item, index) => {
+      const row: Record<string, unknown> = item && typeof item === "object"
+        ? item as Record<string, unknown>
+        : {};
+      const value = clean(row.value, fallback.template ? 2400 : 180);
+      const label = clean(row.label, 100) || value;
+      if (!value) return [];
+      const key = value.toLocaleLowerCase("tr-TR");
+      if (seen.has(key)) return [];
+      seen.add(key);
+      return [{
+        id: clean(row.id, 100) || safeId(label, `${fallback.field}-${index + 1}`),
+        label,
+        value,
+        originalValue: clean(row.originalValue, fallback.template ? 2400 : 180) || value,
+      }];
+    });
+
+    return {
+      field: fallback.field,
+      title: fallback.title,
+      template: fallback.template,
+      options,
+    };
   });
 }
 
-function overlaySavedPresentation(
-  actual: OptionDefinition[],
-  stored: OptionDefinition[],
-): OptionDefinition[] {
-  const byId = new Map(stored.map((group) => [group.id, group]));
-  return actual.map((group) => {
-    const saved = byId.get(group.id);
-    if (!saved) return group;
-    const savedValues = new Map(saved.values.map((value) => [value.id, value]));
-    return {
-      ...group,
-      name: saved.name || group.name,
-      displayType: saved.displayType || group.displayType,
-      values: group.values.map((value) => {
-        const savedValue = savedValues.get(value.id);
-        return savedValue
-          ? {
-              ...value,
-              label: savedValue.label || value.label,
-              ...(saved.displayType === "color"
-                ? { color: savedValue.color || value.color || "#111111" }
-                : {}),
-            }
-          : value;
-      }),
-    };
+function mergeCurrentProductValues(groups: FieldGroup[], products: Array<Record<string, unknown>>) {
+  return groups.map((group) => {
+    const next = group.options.map((option) => ({ ...option }));
+    const seen = new Set(next.map((option) => option.value.toLocaleLowerCase("tr-TR")));
+
+    for (const product of products) {
+      const value = clean(product[group.field], group.template ? 2400 : 180);
+      if (!value) continue;
+      const key = value.toLocaleLowerCase("tr-TR");
+      if (seen.has(key)) continue;
+      seen.add(key);
+      next.push({
+        id: safeId(value, `${group.field}-${next.length + 1}`),
+        label: group.template && value.length > 64 ? `Mevcut şablon ${next.length + 1}` : value,
+        value,
+        originalValue: value,
+      });
+    }
+
+    return { ...group, options: next };
   });
 }
 
@@ -155,42 +166,32 @@ export async function GET(request: Request) {
   const auth = await requireAdmin(request);
   if ("error" in auth) return auth.error;
 
-  const [{ data: variantRows, error: variantError }, { data: savedRow, error: savedError }] =
-    await Promise.all([
-      auth.supabase.from("product_variants").select("options").limit(5000),
-      auth.supabase
-        .from("site_settings")
-        .select("setting_value,updated_at")
-        .eq("setting_key", KEY)
-        .maybeSingle(),
-    ]);
+  const [{ data: saved, error: savedError }, { data: products, error: productsError }] = await Promise.all([
+    auth.supabase
+      .from("site_settings")
+      .select("setting_value,updated_at")
+      .eq("setting_key", KEY)
+      .maybeSingle(),
+    auth.supabase
+      .from("products")
+      .select("material,finish_color,size_usage,care_advice")
+      .limit(5000),
+  ]);
 
-  if (variantError) {
+  if (savedError || productsError) {
     return NextResponse.json(
-      { ok: false, error: variantError.message },
-      { status: 400, headers: noStoreHeaders() },
-    );
-  }
-  if (savedError) {
-    return NextResponse.json(
-      { ok: false, error: savedError.message },
+      { ok: false, error: savedError?.message || productsError?.message || "Ürün seçenekleri okunamadı." },
       { status: 400, headers: noStoreHeaders() },
     );
   }
 
-  const actual = definitionsFromVariants((variantRows || []) as Array<{ options?: unknown }>);
-  const definitions = overlaySavedPresentation(
-    actual,
-    storedDefinitions(savedRow?.setting_value),
+  const groups = mergeCurrentProductValues(
+    normalizeGroups(saved?.setting_value),
+    (products || []) as Array<Record<string, unknown>>,
   );
 
   return NextResponse.json(
-    {
-      ok: true,
-      definitions,
-      updatedAt: savedRow?.updated_at || null,
-      source: "product_variants",
-    },
+    { ok: true, groups, updatedAt: saved?.updated_at || null },
     { headers: noStoreHeaders() },
   );
 }
@@ -200,31 +201,41 @@ export async function PUT(request: Request) {
   if ("error" in auth) return auth.error;
 
   const body = await request.json().catch(() => ({}));
-  const requested = storedDefinitions({ definitions: body?.definitions });
+  const groups = normalizeGroups({ groups: body?.groups });
+  const now = new Date().toISOString();
 
-  const { data: variantRows, error: variantError } = await auth.supabase
-    .from("product_variants")
-    .select("options")
-    .limit(5000);
+  for (const group of groups) {
+    for (const option of group.options) {
+      const from = clean(option.originalValue, group.template ? 2400 : 180);
+      const to = clean(option.value, group.template ? 2400 : 180);
+      if (!from || !to || from === to) continue;
 
-  if (variantError) {
-    return NextResponse.json(
-      { ok: false, error: variantError.message },
-      { status: 400, headers: noStoreHeaders() },
-    );
+      const { error: migrateError } = await auth.supabase
+        .from("products")
+        .update({ [group.field]: to, updated_at: now })
+        .eq(group.field, from);
+
+      if (migrateError) {
+        return NextResponse.json(
+          { ok: false, error: `${group.title} güncellenemedi: ${migrateError.message}` },
+          { status: 400, headers: noStoreHeaders() },
+        );
+      }
+      option.originalValue = to;
+    }
   }
 
-  const actual = definitionsFromVariants((variantRows || []) as Array<{ options?: unknown }>);
-  const actualIds = new Set(actual.map((group) => group.id));
-  const definitions = requested.filter((group) => actualIds.has(group.id));
+  const storedGroups = groups.map((group) => ({
+    ...group,
+    options: group.options.map(({ originalValue: _originalValue, ...option }) => option),
+  }));
 
-  const now = new Date().toISOString();
   const { error } = await auth.supabase
     .from("site_settings")
     .upsert(
       {
         setting_key: KEY,
-        setting_value: { version: 3, definitions },
+        setting_value: { version: 1, groups: storedGroups },
         is_public: false,
         updated_at: now,
       },
@@ -238,11 +249,14 @@ export async function PUT(request: Request) {
     );
   }
 
-  const revalidate = await revalidateWebsite({ source: "admin-product-option-definitions" });
+  const revalidate = await revalidateWebsite({ source: "admin-product-field-options" });
   return NextResponse.json(
     {
       ok: true,
-      definitions: overlaySavedPresentation(actual, definitions),
+      groups: groups.map((group) => ({
+        ...group,
+        options: group.options.map((option) => ({ ...option, originalValue: option.value })),
+      })),
       updatedAt: now,
       revalidate,
       warning: revalidate.ok ? null : revalidate.message,
