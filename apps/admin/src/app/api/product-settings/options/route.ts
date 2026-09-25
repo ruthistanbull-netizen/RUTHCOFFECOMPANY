@@ -91,7 +91,7 @@ function normalizeDefinitions(input: unknown): OptionDefinition[] {
     const values: OptionValue[] = [];
 
     rawValues.slice(0, 80).forEach((candidate, valueIndex) => {
-      const valueRow = candidate && typeof candidate === "object"
+      const valueRow: Record<string, unknown> = candidate && typeof candidate === "object"
         ? candidate as Record<string, unknown>
         : { label: candidate };
       const label = clean(valueRow.label, 100);
