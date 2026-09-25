@@ -8,6 +8,7 @@ import TrustSection from "@/components/home/TrustSection";
 import { ThemeProductSlider } from "@/components/theme/ThemeProductSlider";
 import type { Collection, Product } from "@/types/site";
 import type { HomepageHeroImages } from "@/lib/themeMedia";
+import type { ThemeCustomizerSettings } from "@/lib/themeCustomizer";
 import type { ThemeSection } from "@ruth-commerce/commerce-core/theme-sections";
 import { ROSTA_PALETTE, sanitizeRostaPaletteColor } from "@/lib/rostaDesignSystem";
 
@@ -57,6 +58,7 @@ export function HomeSectionRenderer({
   editorialVideo = "/home/rosta-under-hero-video.mp4",
   editorialImage = "/home/rosta-under-hero-photo.jpg",
   scrollImages,
+  themeSettings,
   freeShippingThreshold,
 }: {
   section: ThemeSection;
@@ -67,11 +69,12 @@ export function HomeSectionRenderer({
   editorialVideo?: string;
   editorialImage?: string;
   scrollImages: string[];
+  themeSettings: ThemeCustomizerSettings;
   freeShippingThreshold: number;
 }) {
   if (!section.enabled) return null;
-  if (section.type === "hero") return <div data-theme-section-id={section.id}><Hero heroImages={heroImages} editorialVideo={editorialVideo} editorialImage={editorialImage} /></div>;
-  if (section.type === "scroll-story") return <div data-theme-section-id={section.id}><ScrollStory images={scrollImages} /></div>;
+  if (section.type === "hero") return <div data-theme-section-id={section.id}><Hero heroImages={heroImages} editorialVideo={editorialVideo} editorialImage={editorialImage} themeSettings={themeSettings} /></div>;
+  if (section.type === "scroll-story") return <div data-theme-section-id={section.id}><ScrollStory images={scrollImages} themeSettings={themeSettings} /></div>;
   if (section.type === "collections") return <div data-theme-section-id={section.id}><CollectionCards collections={collections} /></div>;
   if (section.type === "featured-products" && !hasProductSectionCustomization(section)) return <div data-theme-section-id={section.id}><FeaturedProducts products={featuredProducts} /></div>;
   if (section.type === "brand-story") return <div data-theme-section-id={section.id}><BrandStory /></div>;
