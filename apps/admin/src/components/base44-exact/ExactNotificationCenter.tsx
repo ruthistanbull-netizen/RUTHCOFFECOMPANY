@@ -374,7 +374,7 @@ export function ExactUnifiedToastLayer() {
               animate={{ opacity: 1, y: 0, x: 0, scale: 1 }}
               exit={{ opacity: 0, y: 12, x: 20, scale: 0.97 }}
               transition={{ type: "spring", stiffness: 460, damping: 32, mass: 0.7 }}
-              className={exactCx("pointer-events-auto group relative overflow-hidden rounded-[var(--radius-card)] border border-border-subtle bg-surface-primary/95 p-3 shadow-[0_16px_44px_rgba(18,18,24,0.13),0_4px_12px_rgba(18,18,24,0.06)] backdrop-blur-xl", danger ? "border-danger/20" : "")}
+              className={exactCx("pointer-events-auto group relative overflow-hidden rounded-[var(--radius-card)] border border-border-subtle bg-surface-primary/95 p-3 shadow-[0_16px_44px_rgba(17,17,17,0.13),0_4px_12px_rgba(17,17,17,0.06)] backdrop-blur-xl", danger ? "border-danger/20" : "")}
               role={danger ? "alert" : "status"}
             >
               <span className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/60 to-transparent" />
