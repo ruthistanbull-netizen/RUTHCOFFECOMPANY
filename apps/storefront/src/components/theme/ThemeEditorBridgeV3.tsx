@@ -505,33 +505,11 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
     let releaseTimer = 0;
     let outlineTimer = 0;
     let mutationTimer = 0;
-    let resizeFrame = 0;
     let selectedElement: Element | null = null;
     const mediaOrigins = new Map<string, Element>();
     const overlay = document.createElement("div");
     overlay.dataset.ruthThemeEditorUi = "true";
     overlay.style.cssText = "position:fixed;pointer-events:none;z-index:2147483646;border:2px solid #C94A40;background:color-mix(in srgb,#C94A40 10%,transparent);display:none;box-sizing:border-box;border-radius:6px";
-
-    const resizeDirections = ["nw", "n", "ne", "e", "se", "s", "sw", "w"] as const;
-    const handlePosition: Record<(typeof resizeDirections)[number], string> = {
-      nw: "left:-7px;top:-7px;cursor:nwse-resize",
-      n: "left:50%;top:-7px;transform:translateX(-50%);cursor:ns-resize",
-      ne: "right:-7px;top:-7px;cursor:nesw-resize",
-      e: "right:-7px;top:50%;transform:translateY(-50%);cursor:ew-resize",
-      se: "right:-7px;bottom:-7px;cursor:nwse-resize",
-      s: "left:50%;bottom:-7px;transform:translateX(-50%);cursor:ns-resize",
-      sw: "left:-7px;bottom:-7px;cursor:nesw-resize",
-      w: "left:-7px;top:50%;transform:translateY(-50%);cursor:ew-resize",
-    };
-
-    const handles = resizeDirections.map((direction) => {
-      const handle = document.createElement("span");
-      handle.dataset.ruthThemeResizeHandle = direction;
-      handle.dataset.ruthThemeEditorUi = "true";
-      handle.style.cssText = `position:absolute;width:12px;height:12px;border-radius:999px;background:#FBF3E6;border:2px solid #C94A40;box-shadow:0 1px 4px rgba(17,17,17,.28);pointer-events:auto;touch-action:none;display:none;${handlePosition[direction]}`;
-      overlay.appendChild(handle);
-      return handle;
-    });
 
     const rememberMediaOrigin = (element: Element) => {
       const id = ensureThemeId(element);
@@ -601,80 +579,14 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
       return replacement;
     };
 
-    const canResize = (element: Element | null) => {
-      if (!(element instanceof HTMLElement)) return false;
-      if (kindFor(element) !== "image") return false;
-      const rect = element.getBoundingClientRect();
-      return rect.width >= 180 && rect.height >= 100;
-    };
-
-    const positionOverlay = (element: Element, locked = false) => {
+    const positionOverlay = (element: Element) => {
       const rect = element.getBoundingClientRect();
       overlay.style.display = "block";
       overlay.style.left = `${rect.left}px`;
       overlay.style.top = `${rect.top}px`;
       overlay.style.width = `${rect.width}px`;
       overlay.style.height = `${rect.height}px`;
-      const showHandles = locked && canResize(element);
-      for (const handle of handles) handle.style.display = showHandles ? "block" : "none";
     };
-
-    for (const handle of handles) {
-      handle.addEventListener("pointerdown", (event) => {
-        if (!(selectedElement instanceof HTMLElement) || !canResize(selectedElement)) return;
-        event.preventDefault();
-        event.stopPropagation();
-        const direction = handle.dataset.ruthThemeResizeHandle || "se";
-        const element = selectedElement;
-        const start = element.getBoundingClientRect();
-        const startX = event.clientX;
-        const startY = event.clientY;
-        const pointerId = event.pointerId;
-        handle.setPointerCapture?.(pointerId);
-
-        const move = (moveEvent: PointerEvent) => {
-          if (moveEvent.pointerId !== pointerId) return;
-          moveEvent.preventDefault();
-          const dx = moveEvent.clientX - startX;
-          const dy = moveEvent.clientY - startY;
-          let width = start.width;
-          let height = start.height;
-          if (direction.includes("e")) width += dx;
-          if (direction.includes("w")) width -= dx;
-          if (direction.includes("s")) height += dy;
-          if (direction.includes("n")) height -= dy;
-          width = Math.max(48, Math.min(5000, width));
-          height = Math.max(48, Math.min(5000, height));
-          element.style.width = `${Math.round(width)}px`;
-          element.style.height = `${Math.round(height)}px`;
-          positionOverlay(element, true);
-
-          window.cancelAnimationFrame(resizeFrame);
-          resizeFrame = window.requestAnimationFrame(() => {
-            if (window.parent === window) return;
-            window.parent.postMessage({
-              type: "RUTH_THEME_EDITOR_RESIZE",
-              id: ensureThemeId(element),
-              width: Math.round(width),
-              height: Math.round(height),
-              device: window.innerWidth < 768 ? "mobile" : "desktop",
-            }, "*");
-          });
-        };
-
-        const end = (endEvent: PointerEvent) => {
-          if (endEvent.pointerId !== pointerId) return;
-          handle.removeEventListener("pointermove", move);
-          handle.removeEventListener("pointerup", end);
-          handle.removeEventListener("pointercancel", end);
-          try { handle.releasePointerCapture?.(pointerId); } catch {}
-        };
-
-        handle.addEventListener("pointermove", move);
-        handle.addEventListener("pointerup", end);
-        handle.addEventListener("pointercancel", end);
-      });
-    }
 
     if (editorMode) document.body.appendChild(overlay);
 
@@ -892,7 +804,6 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
       window.clearTimeout(releaseTimer);
       window.clearTimeout(outlineTimer);
       window.clearTimeout(mutationTimer);
-      window.cancelAnimationFrame(resizeFrame);
       overlay.remove();
     };
   }, []);
