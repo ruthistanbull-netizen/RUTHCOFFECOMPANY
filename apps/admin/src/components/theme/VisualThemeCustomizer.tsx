@@ -186,6 +186,44 @@ function UploadCard({
   );
 }
 
+
+function SelectedMediaUpload({
+  label,
+  value,
+  mediaType,
+  busy,
+  onFile,
+}: {
+  label: string;
+  value: string;
+  mediaType: HomepageMediaType;
+  busy: boolean;
+  onFile: (file: File) => void;
+}) {
+  return (
+    <div className="rounded-xl border border-border-subtle bg-surface-secondary p-2">
+      <div className="mb-1.5 flex items-center justify-between gap-2">
+        <span className="text-[8px] font-semibold">{label}</span>
+        <span className="rounded-full border border-border-subtle bg-surface-primary px-1.5 py-0.5 text-[6px] uppercase tracking-[0.12em] text-subtle">
+          {mediaType === "video" ? "Video" : "Fotoğraf"}
+        </span>
+      </div>
+      <div className="mb-2 h-[72px] overflow-hidden rounded-lg border border-border-subtle bg-surface-primary">
+        {value ? (
+          mediaType === "video" ? (
+            <video src={value} className="h-full w-full object-cover" muted loop autoPlay playsInline preload="auto" />
+          ) : (
+            <img src={value} alt="" className="h-full w-full object-cover" />
+          )
+        ) : (
+          <div className="grid h-full place-items-center text-[7px] text-subtle">Medya seçilmedi</div>
+        )}
+      </div>
+      <ThemeImageInput busy={busy} hasValue={Boolean(value)} onFile={onFile} media="any" compact />
+    </div>
+  );
+}
+
 const ROSTA_EDITOR_COLORS = [
   { label: "Carbon", value: "#111111" },
   { label: "Carbon Soft", value: "#242424" },
