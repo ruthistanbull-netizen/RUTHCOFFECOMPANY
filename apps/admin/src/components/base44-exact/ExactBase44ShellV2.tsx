@@ -62,7 +62,7 @@ function Brand({ collapsed = false }: { collapsed?: boolean }) {
         )}
       >
         <img
-          src="/rosta-coffee-co.svg"
+          src="/rosta-coffee-co-cream.svg"
           alt="ROSTA Coffee Co."
           draggable={false}
           className={collapsed ? "h-8 w-8 object-contain" : "block h-full w-full object-contain object-center"}
@@ -81,7 +81,7 @@ function MobileDrawerBrand({ onClick }: { onClick: () => void }) {
       className="relative block h-14 w-[176px] shrink-0 overflow-hidden"
     >
       <img
-        src="/rosta-coffee-co.svg"
+        src="/rosta-coffee-co-cream.svg"
         alt="ROSTA Coffee Co."
         width={1000}
         height={500}
