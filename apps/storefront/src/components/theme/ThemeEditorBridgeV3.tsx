@@ -266,28 +266,38 @@ function themeBrandColor(value: string | null | undefined) {
   return ROSTA_THEME_COLOR_MAP[normalized] || null;
 }
 
-function applyDeviceStyle(element: HTMLElement, style: ThemeDeviceStyle) {
+function applyDeviceStyle(element: HTMLElement, style: ThemeDeviceStyle, media = false) {
   const computedDisplay = window.getComputedStyle(element).display;
-  const needsBox = style.width != null || style.height != null || style.paddingX != null || style.paddingY != null || style.marginTop != null || style.marginBottom != null;
+  const needsBox = !media && (style.width != null || style.height != null || style.paddingX != null || style.paddingY != null || style.marginTop != null || style.marginBottom != null);
   if (computedDisplay === "inline" && needsBox) element.style.display = "inline-block";
 
-  const width = len(style.width, style.widthUnit); if (width) element.style.width = width;
-  const height = len(style.height, style.heightUnit); if (height) element.style.height = height;
-  const maxWidth = len(style.maxWidth, style.maxWidthUnit); if (maxWidth) element.style.maxWidth = maxWidth;
-  const minHeight = len(style.minHeight, style.minHeightUnit); if (minHeight) element.style.minHeight = minHeight;
+  // Media keeps the storefront's original responsive frame. Legacy pixel width
+  // and height overrides are ignored so editor sizing cannot break the live layout.
+  if (!media) {
+    const width = len(style.width, style.widthUnit); if (width) element.style.width = width;
+    const height = len(style.height, style.heightUnit); if (height) element.style.height = height;
+    const maxWidth = len(style.maxWidth, style.maxWidthUnit); if (maxWidth) element.style.maxWidth = maxWidth;
+    const minHeight = len(style.minHeight, style.minHeightUnit); if (minHeight) element.style.minHeight = minHeight;
+    if (style.paddingX != null) { element.style.paddingLeft = `${style.paddingX}px`; element.style.paddingRight = `${style.paddingX}px`; }
+    if (style.paddingY != null) { element.style.paddingTop = `${style.paddingY}px`; element.style.paddingBottom = `${style.paddingY}px`; }
+    if (style.marginTop != null) element.style.marginTop = `${style.marginTop}px`;
+    if (style.marginBottom != null) element.style.marginBottom = `${style.marginBottom}px`;
+  }
+
   if (style.fontSize != null) element.style.fontSize = `${style.fontSize}px`;
   if (style.lineHeight != null) element.style.lineHeight = String(style.lineHeight);
   if (style.letterSpacing != null) element.style.letterSpacing = `${style.letterSpacing}px`;
-  if (style.paddingX != null) { element.style.paddingLeft = `${style.paddingX}px`; element.style.paddingRight = `${style.paddingX}px`; }
-  if (style.paddingY != null) { element.style.paddingTop = `${style.paddingY}px`; element.style.paddingBottom = `${style.paddingY}px`; }
-  if (style.marginTop != null) element.style.marginTop = `${style.marginTop}px`;
-  if (style.marginBottom != null) element.style.marginBottom = `${style.marginBottom}px`;
   if (style.gap != null) element.style.gap = `${style.gap}px`;
   if (style.borderRadius != null) element.style.borderRadius = `${style.borderRadius}px`;
   if (style.opacity != null) element.style.opacity = String(style.opacity);
   if (style.textAlign) element.style.textAlign = style.textAlign;
   if (style.objectFit) element.style.objectFit = style.objectFit;
   if (style.objectPositionX != null || style.objectPositionY != null) element.style.objectPosition = `${style.objectPositionX ?? 50}% ${style.objectPositionY ?? 50}%`;
+  if (media) {
+    const scale = style.mediaScale == null ? 100 : Math.max(70, Math.min(140, style.mediaScale));
+    element.style.setProperty("scale", String(scale / 100));
+    element.style.transformOrigin = `${style.objectPositionX ?? 50}% ${style.objectPositionY ?? 50}%`;
+  }
   const lockedColor = themeBrandColor(style.color);
   const lockedBackground = themeBrandColor(style.backgroundColor);
   if (lockedColor) element.style.color = lockedColor;
@@ -328,7 +338,7 @@ function applyOverride(element: Element, override: ThemeElementOverride, mobile:
     if (override.href) (element as HTMLAnchorElement).setAttribute("href", override.href);
     else element.removeAttribute("href");
   }
-  applyDeviceStyle(html, mergedStyle(override.desktop, override.mobile, mobile));
+  applyDeviceStyle(html, mergedStyle(override.desktop, override.mobile, mobile), override.kind === "image");
 }
 
 function applyGlobal(settings: ThemeCustomizerSettings) {
