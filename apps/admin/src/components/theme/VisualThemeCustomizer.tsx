@@ -494,7 +494,6 @@ export function VisualThemeCustomizer() {
   const uploadScroll = async (index: number, file: File) => {
     setUploading(`scroll-${index}`);
     try {
-      const mediaType = mediaTypeForFile(file);
       const src = await uploadThemeImage(file);
       setSettings((current) => ({
         ...current,
@@ -557,6 +556,7 @@ export function VisualThemeCustomizer() {
   const replaceMenuMedia = async (id: string, file: File) => {
     setUploading(`menu-media-${id}`);
     try {
+      const mediaType = mediaTypeForFile(file);
       const src = await uploadThemeImage(file);
       setSettings((current) => ({
         ...current,
