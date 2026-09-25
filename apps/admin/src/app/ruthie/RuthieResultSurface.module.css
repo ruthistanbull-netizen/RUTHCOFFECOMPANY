@@ -25,7 +25,7 @@
     linear-gradient(155deg, color-mix(in srgb, var(--rosta-espresso, #38251C) 98%, transparent), rgba(17, 17, 17, .99));
   border: 1px solid var(--result-border);
   border-radius: 22px;
-  box-shadow: 0 28px 90px rgba(0,0,0,.52), 0 0 70px rgba(185, 86, 61,.08), inset 0 1px rgba(255,255,255,.035);
+  box-shadow: 0 28px 90px rgba(0,0,0,.52), 0 0 70px color-mix(in srgb, var(--rosta-brick-b, #C94A40) 10%, transparent), inset 0 1px rgba(255,255,255,.035);
 }
 
 .inline {
