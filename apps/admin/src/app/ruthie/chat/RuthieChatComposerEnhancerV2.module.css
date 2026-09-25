@@ -12,8 +12,6 @@
   cursor: pointer;
   transition: color .16s ease, background .16s ease, transform .16s ease;
 }
-.plusButton:hover,
-.plusButton[aria-expanded="true"] { color: hsl(var(--text-main)); background: hsl(var(--surface-secondary)); }
 .plusButton span { display: grid; place-items: center; }
 .plusButton svg { width: 16px; height: 16px; stroke-width: 1.8; }
 
@@ -72,8 +70,6 @@
   cursor: pointer;
   transition: background .14s ease, transform .14s ease;
 }
-.commandItems button:hover,
-.commandItems button:focus-visible { outline: none; background: hsl(var(--surface-secondary)); }
 .commandIcon {
   width: 38px;
   height: 38px;
@@ -150,7 +146,6 @@
   color: hsl(var(--text-muted));
   cursor: pointer;
 }
-.previewCard > button:hover { background: hsl(var(--surface-secondary)); color: hsl(var(--text-main)); }
 .previewCard > button svg { width: 12px; height: 12px; }
 
 .imageDock {
@@ -201,7 +196,6 @@
   color: inherit;
   cursor: pointer;
 }
-.commandPill button:hover { filter: brightness(1.03); }
 .commandPill button svg { width: 10px; height: 10px; }
 .imageDockHint { color: hsl(var(--text-muted)); font-size: 8px; }
 
@@ -225,7 +219,6 @@
   cursor: pointer;
   transition: color .14s ease, background .14s ease, border-color .14s ease, transform .14s ease;
 }
-.optionGroup button:hover { color: hsl(var(--text-main)); border-color: hsl(var(--accent) / .24); }
 .optionGroup button[data-active="true"] { color: hsl(var(--accent)); border-color: hsl(var(--accent) / .28); background: hsl(var(--accent) / .09); }
 .optionGroup button svg { width: 10px; height: 10px; }
 .featureButtons { flex-wrap: nowrap !important; }
@@ -271,7 +264,6 @@
   color: hsl(var(--text-muted));
   cursor: pointer;
 }
-.subPanelHeader > button:hover { background: hsl(var(--surface-primary)); color: hsl(var(--text-main)); }
 .subPanelHeader > button svg { width: 13px; height: 13px; }
 
 .productSearch {
@@ -339,7 +331,6 @@
   cursor: pointer;
   transition: border-color .15s ease, background .15s ease, box-shadow .15s ease;
 }
-.productCard:hover { border-color: hsl(var(--accent) / .22); }
 .productCard[data-active="true"] { border-color: hsl(var(--accent) / .34); background: hsl(var(--accent) / .055); box-shadow: inset 0 0 0 1px hsl(var(--accent) / .04); }
 .productImage {
   position: relative;
@@ -393,7 +384,6 @@
   font: inherit;
   cursor: pointer;
 }
-.accordionTrigger:hover { background: hsl(var(--surface-primary) / .65); }
 .accordionTrigger > span:first-child { min-width: 0; display: grid; gap: 3px; }
 .accordionTrigger strong { font-size: 9px; font-weight: 650; }
 .accordionTrigger small { overflow: hidden; color: hsl(var(--text-muted)); font-size: 7.5px; white-space: nowrap; text-overflow: ellipsis; }
@@ -415,7 +405,6 @@
   font-size: 8px;
   cursor: pointer;
 }
-.accordionBody button:hover { color: hsl(var(--text-main)); border-color: hsl(var(--accent) / .22); }
 .accordionBody button[data-active="true"] { color: hsl(var(--accent)); border-color: hsl(var(--accent) / .30); background: hsl(var(--accent) / .08); }
 .accordionBody button svg { width: 10px; height: 10px; }
 .fineTuneTitle { min-height: 36px; display: flex; align-items: center; gap: 6px; padding: 7px 8px 4px; color: hsl(var(--accent)); font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
@@ -464,8 +453,6 @@
 }
 .dockActions > button,
 .confirmButton { border: 0; background: hsl(var(--accent)); color: hsl(var(--accent-foreground)); box-shadow: 0 7px 18px hsl(var(--accent) / .16); }
-.dockActions > button:hover,
-.confirmButton:hover { filter: brightness(1.03); }
 .dockActions > button:disabled { opacity: .45; cursor: default; }
 .dockActions > button svg,
 .confirmButton svg { width: 11px; height: 11px; }
@@ -506,6 +493,31 @@
 .toast small { color: hsl(var(--text-muted)); }
 
 @keyframes spin { to { transform: rotate(360deg); } }
+
+@media (hover: hover) and (pointer: fine) {
+  .plusButton:hover,
+  .plusButton[aria-expanded="true"] { color: hsl(var(--text-main)); background: hsl(var(--surface-secondary)); }
+
+  .commandItems button:hover,
+  .commandItems button:focus-visible { outline: none; background: hsl(var(--surface-secondary)); }
+
+  .previewCard > button:hover { background: hsl(var(--surface-secondary)); color: hsl(var(--text-main)); }
+
+  .commandPill button:hover { filter: brightness(1.03); }
+
+  .optionGroup button:hover { color: hsl(var(--text-main)); border-color: hsl(var(--accent) / .24); }
+
+  .subPanelHeader > button:hover { background: hsl(var(--surface-primary)); color: hsl(var(--text-main)); }
+
+  .productCard:hover { border-color: hsl(var(--accent) / .22); }
+
+  .accordionTrigger:hover { background: hsl(var(--surface-primary) / .65); }
+
+  .accordionBody button:hover { color: hsl(var(--text-main)); border-color: hsl(var(--accent) / .22); }
+
+  .dockActions > button:hover,
+  .confirmButton:hover { filter: brightness(1.03); }
+}
 
 @media (max-width: 760px) {
   .commandMenu { left: 4px; width: min(350px, calc(100vw - 20px)); border-radius: 16px; }
