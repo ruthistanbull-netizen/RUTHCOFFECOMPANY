@@ -646,7 +646,7 @@ export function VisualThemeCustomizer() {
                 <ImageIcon className="h-3.5 w-3.5" />{uploading === "selected" ? "Yükleniyor…" : "Fotoğrafı değiştir"}
                 <input
                   type="file"
-                  accept={THEME_IMAGE_ACCEPT}
+                  accept={THEME_MEDIA_ACCEPT}
                   disabled={uploading === "selected"}
                   className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
                   onChange={(event) => {
