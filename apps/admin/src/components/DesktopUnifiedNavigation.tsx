@@ -9,7 +9,7 @@ import {
   useTransform,
 } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   exactAllNavItems,
@@ -17,6 +17,7 @@ import {
   exactNavStructure,
   type ExactNavItem,
 } from "@/components/base44-exact/nav-config";
+import { navigateRostaPanelDocument } from "@/lib/rrHubRuntime";
 import styles from "./DesktopUnifiedNavigation.module.css";
 
 type DesktopSection = {
@@ -153,7 +154,6 @@ function SectionButton({
 
 export function DesktopUnifiedNavigation() {
   const pathname = usePathname();
-  const router = useRouter();
   const rootRef = useRef<HTMLElement>(null);
   const pointerY = useMotionValue(Number.POSITIVE_INFINITY);
   const [openSection, setOpenSection] = useState<number | null>(null);
@@ -211,8 +211,8 @@ export function DesktopUnifiedNavigation() {
 
   const navigate = useCallback((path: string) => {
     setOpenSection(null);
-    router.push(path);
-  }, [router]);
+    navigateRostaPanelDocument(path);
+  }, []);
 
   return (
     <motion.nav
