@@ -114,7 +114,7 @@
 .loadingPanel button svg { width: 15px; height: 15px; }
 .loadingPanel p { margin: 18px 0 14px; overflow: hidden; color: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 70%, transparent); font-size: 13px; line-height: 1.45; text-overflow: ellipsis; white-space: nowrap; }
 .loadingBars { display: grid; gap: 7px; }
-.loadingBars i { height: 8px; border-radius: 999px; background: linear-gradient(90deg, rgba(185, 86, 61,.06), rgba(185, 86, 61,.28), rgba(185, 86, 61,.06)); background-size: 200% 100%; animation: ruthiePresentationPulse .95s ease-in-out infinite; }
+.loadingBars i { height: 8px; border-radius: 999px; background: linear-gradient(90deg, color-mix(in srgb, var(--rosta-brick-b, #C94A40) 8%, transparent), color-mix(in srgb, var(--rosta-brick-b, #C94A40) 30%, transparent), color-mix(in srgb, var(--rosta-brick-b, #C94A40) 8%, transparent)); background-size: 200% 100%; animation: ruthiePresentationPulse .95s ease-in-out infinite; }
 .loadingBars i:nth-child(2) { width: 82%; animation-delay: .08s; }
 .loadingBars i:nth-child(3) { width: 64%; animation-delay: .16s; }
 
