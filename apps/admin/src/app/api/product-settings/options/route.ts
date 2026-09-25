@@ -117,6 +117,83 @@ function normalizeDefinitions(input: unknown): OptionDefinition[] {
   });
 }
 
+function normalizedKey(value: string) {
+  return value
+    .toLocaleLowerCase("tr-TR")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/ı/g, "i")
+    .replace(/[^a-z0-9]+/g, "");
+}
+
+function definitionsFromVariants(rows: Array<{ options?: unknown }>) {
+  const groups = new Map<string, OptionDefinition>();
+
+  for (const row of rows) {
+    const options = row?.options && typeof row.options === "object"
+      ? row.options as Record<string, unknown>
+      : {};
+    const displayType = options.__displayType === "color" ? "color" : "list";
+    const fallbackColor = color(options.__colorValue);
+
+    for (const [rawName, rawValue] of Object.entries(options)) {
+      if (rawName.startsWith("__")) continue;
+      const name = clean(rawName, 80);
+      const label = clean(rawValue, 100);
+      if (!name || !label) continue;
+
+      const key = normalizedKey(name);
+      const existing = groups.get(key) || {
+        id: safeId(name, `option-${groups.size + 1}`),
+        name,
+        displayType,
+        active: true,
+        values: [],
+      };
+      if (displayType === "color") existing.displayType = "color";
+
+      if (!existing.values.some((value) => normalizedKey(value.label) === normalizedKey(label))) {
+        existing.values.push({
+          id: safeId(`${existing.id}-${label}`, `${existing.id}-value-${existing.values.length + 1}`),
+          label,
+          ...(existing.displayType === "color" ? { color: fallbackColor || "#111111" } : {}),
+        });
+      }
+      groups.set(key, existing);
+    }
+  }
+
+  return [...groups.values()];
+}
+
+function mergeBootstrapDefinitions(base: OptionDefinition[], discovered: OptionDefinition[]) {
+  const next = base.map((group) => ({
+    ...group,
+    values: group.values.map((value) => ({ ...value })),
+  }));
+  const byName = new Map(next.map((group) => [normalizedKey(group.name), group]));
+
+  for (const candidate of discovered) {
+    const key = normalizedKey(candidate.name);
+    const existing = byName.get(key);
+    if (!existing) {
+      next.push(candidate);
+      byName.set(key, candidate);
+      continue;
+    }
+    if (candidate.displayType === "color") existing.displayType = "color";
+    for (const value of candidate.values) {
+      if (existing.values.some((item) => normalizedKey(item.label) === normalizedKey(value.label))) continue;
+      existing.values.push({
+        ...value,
+        ...(existing.displayType === "color" ? { color: value.color || "#111111" } : {}),
+      });
+    }
+  }
+
+  return normalizeDefinitions(next);
+}
+
 export async function GET(request: Request) {
   const auth = await requireAdmin(request);
   if ("error" in auth) return auth.error;
@@ -131,10 +208,28 @@ export async function GET(request: Request) {
     return NextResponse.json({ ok: false, error: error.message }, { status: 400, headers: noStoreHeaders() });
   }
 
+  let definitions: OptionDefinition[];
+  let bootstrapped = false;
+
+  if (data?.setting_value) {
+    definitions = normalizeDefinitions(data.setting_value);
+  } else {
+    const { data: variantRows } = await auth.supabase
+      .from("product_variants")
+      .select("options")
+      .limit(2500);
+    definitions = mergeBootstrapDefinitions(
+      normalizeDefinitions(DEFAULT_DEFINITIONS),
+      definitionsFromVariants((variantRows || []) as Array<{ options?: unknown }>),
+    );
+    bootstrapped = true;
+  }
+
   return NextResponse.json({
     ok: true,
-    definitions: normalizeDefinitions(data?.setting_value),
+    definitions,
     updatedAt: data?.updated_at || null,
+    bootstrapped,
   }, { headers: noStoreHeaders() });
 }
 
