@@ -74,7 +74,6 @@ export function HomeHeroRuntimeAdjustments() {
           right: 0 !important;
           bottom: 0 !important;
           left: 0 !important;
-          transform: none !important;
         }
 
         html.ruth-home-page-active .home-editorial-wordmark {
