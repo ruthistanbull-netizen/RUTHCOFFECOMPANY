@@ -34,6 +34,14 @@ export function HomeHeroRuntimeAdjustments() {
         margin-top: 0 !important;
       }
 
+      html.ruth-home-page-active .ruth-zara-header.is-contrast {
+        background: transparent !important;
+        border-color: transparent !important;
+        box-shadow: none !important;
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+      }
+
       #home-editorial,
       #home-editorial .home-editorial-slide:first-child,
       #home-editorial .home-editorial-slide:first-child > .sticky {
