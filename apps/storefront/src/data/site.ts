@@ -959,7 +959,7 @@ async function fetchThemeCustomizerSettings(): Promise<ThemeCustomizerSettings> 
 
 const getCachedThemeCustomizerSettings = unstable_cache(
   fetchThemeCustomizerSettings,
-  ["rosta-theme-customizer-v1"],
+  ["rosta-theme-customizer-v2"],
   { revalidate: THEME_CACHE_REVALIDATE_SECONDS, tags: ["rosta-theme"] },
 );
 
