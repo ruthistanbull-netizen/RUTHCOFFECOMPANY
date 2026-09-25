@@ -91,6 +91,13 @@ type ProductsResponse = {
   pricing?: DiscountPricing[];
   pagination?: ProductPagination | null;
 };
+type ProductFieldOption = { id: string; label: string; value: string; originalValue?: string };
+type ProductFieldGroup = {
+  field: "material" | "finish_color" | "size_usage" | "care_advice";
+  title: string;
+  template: boolean;
+  options: ProductFieldOption[];
+};
 type BulkField =
   | "finish_color"
   | "size_usage"
@@ -164,6 +171,22 @@ const DEFAULT_FINISHES = ["Açık Kavrum", "Orta Kavrum", "Koyu Kavrum", "Espres
 const STANDARD_CARE_VALUE = "Serin, kuru ve güneş almayan bir yerde; paketi hava almayacak şekilde kapalı saklayın.";
 const PACKAGE_250G_VALUE = "250 g paket";
 const PACKAGE_500G_VALUE = "500 g paket";
+const FALLBACK_FIELD_GROUPS: ProductFieldGroup[] = [
+  { field: "material", title: "Kahve Türü", template: false, options: ["Arabica","Robusta","Arabica + Robusta Blend","Kafeinsiz"].map((value) => ({ id: value, label: value, value })) },
+  { field: "finish_color", title: "Kavrum Profili", template: false, options: DEFAULT_FINISHES.map((value) => ({ id: value, label: value, value })) },
+  { field: "size_usage", title: "Paket / Gramaj", template: false, options: [
+    { id: "250-g", label: "250 g", value: "250 g" },
+    { id: "500-g", label: "500 g", value: "500 g" },
+    { id: "1-kg", label: "1 kg", value: "1 kg" },
+  ] },
+  { field: "care_advice", title: "Bakım Önerisi Şablonu", template: true, options: [
+    { id: "standart", label: "Standart kahve saklama önerisi", value: STANDARD_CARE_VALUE },
+  ] },
+];
+
+function managedFieldOptions(groups: ProductFieldGroup[], field: ProductFieldGroup["field"]) {
+  return groups.find((group) => group.field === field)?.options || [];
+}
 const DEFAULT_COLUMNS: ColumnVisibility = {
   material: true,
   collections: true,
@@ -358,11 +381,16 @@ function isNumericBulkField(field: BulkField) {
   return NUMERIC_BULK_FIELDS.has(field);
 }
 
-function defaultBulkValue(field: BulkField, materials: string[], categories: Group[], collections: Group[]) {
-  if (field === "finish_color") return DEFAULT_FINISHES[0];
-  if (field === "size_usage") return PACKAGE_500G_VALUE;
-  if (field === "care_advice") return STANDARD_CARE_VALUE;
-  if (field === "material") return materials[0] || "Arabica";
+function defaultBulkValue(
+  field: BulkField,
+  fieldGroups: ProductFieldGroup[],
+  categories: Group[],
+  collections: Group[],
+) {
+  if (field === "finish_color") return managedFieldOptions(fieldGroups, "finish_color")[0]?.value || "";
+  if (field === "size_usage") return managedFieldOptions(fieldGroups, "size_usage")[0]?.value || "";
+  if (field === "care_advice") return managedFieldOptions(fieldGroups, "care_advice")[0]?.value || "";
+  if (field === "material") return managedFieldOptions(fieldGroups, "material")[0]?.value || "Arabica";
   if (field === "stock_status") return "in_stock";
   if (field === "status") return "active";
   if (field === "discount_remove") return "remove";
@@ -375,27 +403,33 @@ function defaultBulkValue(field: BulkField, materials: string[], categories: Gro
   return "true";
 }
 
-function bulkValueOptions(field: BulkField, materials: string[], categories: Group[], collections: Group[]) {
+function bulkValueOptions(
+  field: BulkField,
+  fieldGroups: ProductFieldGroup[],
+  categories: Group[],
+  collections: Group[],
+) {
   if (field === "finish_color") {
     return [
-      ...DEFAULT_FINISHES.map((value) => ({ value, label: value })),
+      ...managedFieldOptions(fieldGroups, "finish_color").map(({ value, label }) => ({ value, label })),
       { value: "", label: "Kavrum profilini kaldır" },
     ];
   }
   if (field === "size_usage") {
     return [
-      { value: PACKAGE_500G_VALUE, label: "500 g paket" },
-      { value: PACKAGE_250G_VALUE, label: "250 g paket" },
+      ...managedFieldOptions(fieldGroups, "size_usage").map(({ value, label }) => ({ value, label })),
       { value: "", label: "Paket bilgisini kaldır" },
     ];
   }
   if (field === "care_advice") {
     return [
-      { value: STANDARD_CARE_VALUE, label: "Standart kahve saklama önerisi" },
+      ...managedFieldOptions(fieldGroups, "care_advice").map(({ value, label }) => ({ value, label })),
       { value: "", label: "Saklama / demleme önerisini kaldır" },
     ];
   }
-  if (field === "material") return materials.map((value) => ({ value, label: value }));
+  if (field === "material") {
+    return managedFieldOptions(fieldGroups, "material").map(({ value, label }) => ({ value, label }));
+  }
   if (field === "stock_status") {
     return [
       { value: "in_stock", label: "Stokta" },
@@ -417,14 +451,19 @@ function bulkValueOptions(field: BulkField, materials: string[], categories: Gro
   ];
 }
 
-function nextBulkAction(actions: BulkAction[], materials: string[], categories: Group[], collections: Group[]): BulkAction | null {
+function nextBulkAction(
+  actions: BulkAction[],
+  fieldGroups: ProductFieldGroup[],
+  categories: Group[],
+  collections: Group[],
+): BulkAction | null {
   const usedFamilies = new Set(actions.map((action) => bulkFieldFamily(action.field)));
   const field = BULK_FIELDS.find((option) => !usedFamilies.has(bulkFieldFamily(option.value)))?.value;
   if (!field) return null;
   return {
     id: `bulk-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
     field,
-    value: defaultBulkValue(field, materials, categories, collections),
+    value: defaultBulkValue(field, fieldGroups, categories, collections),
   };
 }
 
@@ -482,7 +521,10 @@ export function ExactProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [collections, setCollections] = useState<Group[]>([]);
   const [categories, setCategories] = useState<Group[]>([]);
-  const [materials, setMaterials] = useState<string[]>(["Arabica", "Robusta", "Arabica + Robusta Blend", "Kafeinsiz"]);
+  const [fieldGroups, setFieldGroups] = useState<ProductFieldGroup[]>(FALLBACK_FIELD_GROUPS);
+  const [materials, setMaterials] = useState<string[]>(
+    managedFieldOptions(FALLBACK_FIELD_GROUPS, "material").map((item) => item.value),
+  );
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [mobile, setMobile] = useState(true);
@@ -591,18 +633,20 @@ export function ExactProducts() {
             signal: controller.signal,
           };
 
-      const [catalog, materialResult] = await Promise.all([
+      const [catalog, optionResult] = await Promise.all([
         adminRequest<ProductsResponse>(catalogPath, catalogOptions),
-        adminRequest<{ options?: string[] }>("/api/product-settings/materials", { signal: controller.signal })
-          .catch(() => ({ options: ["Arabica", "Robusta", "Arabica + Robusta Blend", "Kafeinsiz"] })),
+        adminRequest<{ groups?: ProductFieldGroup[] }>("/api/product-settings/options", { signal: controller.signal })
+          .catch(() => ({ groups: FALLBACK_FIELD_GROUPS })),
       ]);
       if (controller.signal.aborted || loadSequenceRef.current !== sequence) return;
 
+      const nextFieldGroups = optionResult.groups?.length ? optionResult.groups : FALLBACK_FIELD_GROUPS;
       const firstProducts = catalog.products || [];
       setProducts(firstProducts);
       setCollections(catalog.collections || []);
       setCategories(catalog.categories || []);
-      setMaterials([...new Set([...(materialResult.options || []), "Arabica", "Robusta", "Arabica + Robusta Blend", "Kafeinsiz"].filter(Boolean))]);
+      setFieldGroups(nextFieldGroups);
+      setMaterials(managedFieldOptions(nextFieldGroups, "material").map((item) => item.value));
       seedProgressiveProductCache(catalog, firstProducts, catalog.pagination);
 
       if (mode === "initial") setLoading(false);
@@ -803,16 +847,16 @@ export function ExactProducts() {
 
   const addBulkAction = useCallback(() => {
     setBulkActions((current) => {
-      const next = nextBulkAction(current, materials, categories, collections);
+      const next = nextBulkAction(current, fieldGroups, categories, collections);
       return next ? [...current, next] : current;
     });
-  }, [categories, collections, materials]);
+  }, [categories, collections, fieldGroups]);
 
   const updateBulkActionField = useCallback((actionId: string, field: BulkField) => {
     setBulkActions((current) => current.map((action) => action.id === actionId
-      ? { ...action, field, value: defaultBulkValue(field, materials, categories, collections) }
+      ? { ...action, field, value: defaultBulkValue(field, fieldGroups, categories, collections) }
       : action));
-  }, [categories, collections, materials]);
+  }, [categories, collections, fieldGroups]);
 
   const updateBulkActionValue = useCallback((actionId: string, value: string) => {
     setBulkActions((current) => current.map((action) => action.id === actionId ? { ...action, value } : action));
@@ -1178,7 +1222,7 @@ export function ExactProducts() {
             <div className="space-y-2 p-3 md:p-4">
               {bulkActions.map((action) => {
                 const usedFamiliesByOthers = new Set(bulkActions.filter((item) => item.id !== action.id).map((item) => bulkFieldFamily(item.field)));
-                const valueOptions = bulkValueOptions(action.field, materials, categories, collections);
+                const valueOptions = bulkValueOptions(action.field, fieldGroups, categories, collections);
                 return (
                   <div key={action.id} className="grid min-w-0 grid-cols-[minmax(0,1fr)_44px] gap-2 rounded-xl bg-surface-secondary p-2 sm:grid-cols-[minmax(0,.9fr)_minmax(0,1.1fr)_40px]">
                     <select value={action.field} onChange={(event) => updateBulkActionField(action.id, event.target.value as BulkField)} className="h-10 min-w-0 rounded-lg border border-border-subtle bg-surface-primary px-2 text-xs text-main outline-none" aria-label="Toplu işlem alanı" disabled={bulkSaving}>
