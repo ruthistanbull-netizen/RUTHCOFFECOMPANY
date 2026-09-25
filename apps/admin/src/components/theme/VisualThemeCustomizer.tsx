@@ -359,7 +359,7 @@ export function VisualThemeCustomizer() {
       const persisted = normalizeThemeMediaSettings(normalizeThemeCustomizerSettings(result.settings || nextToSave));
       setSettings(persisted);
       setSaved(persisted);
-      setNonce(Date.now());
+      sendSettings(persisted);
       if (result.warning) toast.success(`Kaydedildi. ${result.warning}`);
       return true;
     } catch (error) {
@@ -464,40 +464,23 @@ export function VisualThemeCustomizer() {
     setMenu(null);
   }, [selected, targetPage]);
 
-  const persistHeroMedia = useCallback(async (
+  const stageHeroMedia = useCallback((
     heroDevice: HomepageHeroDevice,
     src: string,
     mediaType: HomepageMediaType,
   ) => {
-    const nextToSave = normalizeThemeMediaSettings(setHomepageHeroDeviceMedia(settings, heroDevice, src, mediaType));
-
-    setSettings(nextToSave);
-    sendSettings(nextToSave);
-
-    const result = await adminRequest<{ settings?: unknown; warning?: string }>("/api/theme", {
-      method: "PUT",
-      body: JSON.stringify({ settings: nextToSave }),
-      confirmation: false,
-    });
-    const persisted = normalizeThemeMediaSettings(normalizeThemeCustomizerSettings(result.settings || nextToSave));
-    if (homepageHeroDeviceImage(persisted, heroDevice) !== src || homepageHeroDeviceMediaType(persisted, heroDevice) !== mediaType) {
-      throw new Error(`${heroDevice === "desktop" ? "Masaüstü" : "Mobil"} hero medyası veritabanına doğru kaydedilemedi.`);
-    }
-
-    setSettings(persisted);
-    setSaved(persisted);
-    sendSettings(persisted);
-    setNonce(Date.now());
-    if (result.warning) toast.warning(`Hero kaydedildi. ${result.warning}`);
-    else toast.success(`${heroDevice === "desktop" ? "Masaüstü" : "Mobil"} hero ${mediaType === "video" ? "videosu" : "fotoğrafı"} değiştirildi ve yayınlandı.`);
-  }, [sendSettings, settings, toast]);
+    setSettings((current) => normalizeThemeMediaSettings(
+      setHomepageHeroDeviceMedia(current, heroDevice, src, mediaType),
+    ));
+    toast.success(`${heroDevice === "desktop" ? "Masaüstü" : "Mobil"} hero ${mediaType === "video" ? "videosu" : "fotoğrafı"} önizlemeye uygulandı. Kaydet'e basınca yayınlanacak.`);
+  }, [toast]);
 
   const uploadHero = async (heroDevice: HomepageHeroDevice, file: File) => {
     setUploading(`hero-${heroDevice}`);
     try {
       const mediaType = mediaTypeForFile(file);
       const src = await uploadThemeImage(file);
-      await persistHeroMedia(heroDevice, src, mediaType);
+      stageHeroMedia(heroDevice, src, mediaType);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Hero medyası yüklenemedi.");
     } finally {
@@ -516,7 +499,6 @@ export function VisualThemeCustomizer() {
           scrollImages: current.homepageImages.scrollImages.map((item, itemIndex) => itemIndex === index ? src : item),
         },
       }));
-      setNonce(Date.now());
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Medya yüklenemedi.");
     } finally {
@@ -552,7 +534,7 @@ export function VisualThemeCustomizer() {
       const src = await uploadThemeImage(file);
 
       if (isHomepageHeroElement(path, selected.id)) {
-        await persistHeroMedia(targetDevice, src, mediaType);
+        stageHeroMedia(targetDevice, src, mediaType);
         if (device === targetDevice) {
           setSelected((current) => current ? {
             ...current,
@@ -599,7 +581,6 @@ export function VisualThemeCustomizer() {
         });
       });
 
-      setNonce(Date.now());
 
       if (device === targetDevice) {
         setSelected((current) => current ? {
