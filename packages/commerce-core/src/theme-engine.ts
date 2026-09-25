@@ -185,17 +185,35 @@ export function normalizeThemeDeviceStyle(input: unknown): ThemeDeviceStyle {
   };
 }
 
+function normalizeMediaDeviceStyle(input: unknown): ThemeDeviceStyle {
+  const style = normalizeThemeDeviceStyle(input);
+  return {
+    ...style,
+    // The old editor stored arbitrary pixel boxes on media. The new media
+    // system always inherits the storefront's responsive frame instead.
+    width: null,
+    height: null,
+    maxWidth: null,
+    minHeight: null,
+    paddingX: null,
+    paddingY: null,
+    marginTop: null,
+    marginBottom: null,
+  };
+}
+
 function normalizeElementOverride(input: unknown, index: number): ThemeElementOverride | null {
   const raw = input && typeof input === "object" ? input as Record<string, any> : {};
   const selector = stringValue(raw.selector).slice(0, 700);
   if (!selector) return null;
   const kindValues = new Set(["section", "text", "image", "button", "link", "container", "other"]);
+  const kind = kindValues.has(raw.kind) ? raw.kind as ThemeElementOverride["kind"] : "other";
   return {
     id: stringValue(raw.id, `element-${index}`).slice(0, 140),
     selector,
     label: stringValue(raw.label, "Öğe").slice(0, 180),
     tag: stringValue(raw.tag).slice(0, 40),
-    kind: kindValues.has(raw.kind) ? raw.kind : "other",
+    kind,
     hidden: typeof raw.hidden === "boolean" ? raw.hidden : undefined,
     text: typeof raw.text === "string" ? raw.text.slice(0, 16000) : undefined,
     imageSrc: typeof raw.imageSrc === "string" ? safeUrl(raw.imageSrc, "", "image") : undefined,
@@ -206,8 +224,8 @@ function normalizeElementOverride(input: unknown, index: number): ThemeElementOv
     mobileMediaType: raw.mobileMediaType === "video" ? "video" : raw.mobileMediaType === "image" ? "image" : undefined,
     duplicateOf: typeof raw.duplicateOf === "string" ? stringValue(raw.duplicateOf).slice(0, 140) || undefined : undefined,
     href: typeof raw.href === "string" ? safeUrl(raw.href, "", "link") : undefined,
-    desktop: normalizeThemeDeviceStyle(raw.desktop),
-    mobile: normalizeThemeDeviceStyle(raw.mobile),
+    desktop: kind === "image" ? normalizeMediaDeviceStyle(raw.desktop) : normalizeThemeDeviceStyle(raw.desktop),
+    mobile: kind === "image" ? normalizeMediaDeviceStyle(raw.mobile) : normalizeThemeDeviceStyle(raw.mobile),
   };
 }
 
