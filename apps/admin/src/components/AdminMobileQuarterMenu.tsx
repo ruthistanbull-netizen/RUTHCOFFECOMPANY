@@ -351,6 +351,15 @@ export function AdminMobileQuarterMenu() {
     router.push(item.path);
   }, [close, router]);
 
+  const returnToHub = useCallback(() => {
+    close();
+    try {
+      window.sessionStorage.removeItem("rosta_panel_hub_entered_v1");
+      window.sessionStorage.removeItem("rr_hub_ruth_entered_v1");
+    } catch {}
+    window.location.assign("/profiles");
+  }, [close]);
+
   useEffect(() => {
     let frame = 0;
     const sync = () => {
@@ -805,6 +814,20 @@ export function AdminMobileQuarterMenu() {
             setOpen(true);
           }}
         />
+        <button
+          type="button"
+          className={styles.hubHit}
+          aria-label="RR HUB'a dön"
+          title="RR HUB"
+          onPointerDown={(event) => event.stopPropagation()}
+          onPointerUp={(event) => event.stopPropagation()}
+          onClick={(event) => {
+            event.stopPropagation();
+            returnToHub();
+          }}
+        >
+          <img src="/rr-mark-cream.svg" alt="" draggable={false} />
+        </button>
       </div>
     </>,
     document.body,
