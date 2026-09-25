@@ -86,6 +86,15 @@ function markHubInternalDocumentHandoff() {
   } catch {}
 }
 
+function armHubInternalDocumentHandoff() {
+  markHubInternalDocumentHandoff();
+  window.setTimeout(() => {
+    try {
+      window.sessionStorage.removeItem("rr_hub_pwa_handoff_v1");
+    } catch {}
+  }, 1500);
+}
+
 export function AdminNavigationRecovery() {
   useEffect(() => {
     let pendingTarget: string | null = null;
@@ -109,6 +118,10 @@ export function AdminNavigationRecovery() {
       const url = safeUrl(anchor.href);
       if (!url || !shouldTrackNavigation(event, anchor, url)) return;
       pendingTarget = routeTarget(url);
+      // Raw <a> links still perform a real document navigation. Arm a short-lived
+      // handoff marker so a same-panel document load is not mistaken for a cold
+      // standalone launch. Successful SPA transitions clear the marker shortly after.
+      armHubInternalDocumentHandoff();
     };
 
     const originalPushState = window.history.pushState.bind(window.history);
