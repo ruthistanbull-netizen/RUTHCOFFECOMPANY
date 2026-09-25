@@ -34,7 +34,7 @@
 }
 
 [class*="brandCopy"] strong {
-  color: #ffffff !important;
+  color: var(--rosta-cream, #FBF3E6) !important;
   font-family: Cinzel, Georgia, serif !important;
   font-size: 10px !important;
   font-weight: 600 !important;
@@ -87,7 +87,7 @@
   }
 
   [class*="sidebar"] > [data-panel-brand] [class*="brandCopy"] strong {
-    color: #101318 !important;
+    color: var(--rosta-cream, #FBF3E6) !important;
     font-size: 11px !important;
     font-weight: 700 !important;
     letter-spacing: .22em !important;
