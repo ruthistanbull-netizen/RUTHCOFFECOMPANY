@@ -208,16 +208,13 @@ input[type="radio"]:not(:disabled) {
 
   .ruth-zara-header:not(.is-contrast) .ruth-zara-header-inner,
   .ruth-zara-menu-button:not(.ruth-zara-menu-button--contrast) {
-    color: var(--ink) !important;
+    color: var(--rosta-cream) !important;
     mix-blend-mode: normal !important;
   }
 
-  .ruth-zara-header.is-contrast .header-wordmark {
-    filter: brightness(0) invert(1) !important;
-  }
-
+  .ruth-zara-header.is-contrast .header-wordmark,
   .ruth-zara-header:not(.is-contrast) .header-wordmark {
-    filter: brightness(0) !important;
+    filter: brightness(0) invert(1) !important;
   }
 
   .ruth-zara-header-inner svg,
