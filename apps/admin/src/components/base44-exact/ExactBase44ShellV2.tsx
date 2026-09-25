@@ -115,20 +115,22 @@ function TopHeader({ collapsed, onToggleSidebar, onOpenSearch, onOpenMore, dark,
     <ExactIconButton icon={Menu} label="Menüyü aç" variant="ghost" size="icon-sm" className="lg:hidden" onClick={onOpenMore} />
     <ExactIconButton icon={collapsed ? PanelLeft : PanelLeftClose} label="Kenar çubuğunu değiştir" variant="ghost" size="icon-sm" className="hidden lg:flex" onClick={onToggleSidebar} />
     <span className="ruth-type-card-title hidden truncate text-main md:block">{currentItem?.label || "Kontrol Merkezi"}</span>
-    <button type="button" onClick={onOpenSearch} className="ruth-type-control ml-auto mr-1 flex h-11 items-center gap-2 border border-border-subtle bg-surface-secondary px-3 text-subtle radius-control transition-all hover:border-border-strong hover:text-muted md:h-9 md:w-64 lg:ml-0"><Search className="h-4 w-4 shrink-0" /><span className="hidden md:inline">Ara veya komut çalıştır…</span></button>
-    <ExactIconButton icon={Sparkles} label="ROSTA Insight" variant="ghost" size="icon-sm" className="text-accent" onClick={() => router.push("/rosta-insight")} />
-    <ExactNotificationBell />
-    <ExactIconButton icon={dark ? Sun : Moon} label="Temayı değiştir" variant="ghost" size="icon-sm" onClick={onToggleDark} />
-    <button
-      type="button"
-      onClick={returnToHub}
-      aria-label="RR HUB'a dön"
-      title="RR HUB'a dön"
-      className="ml-1 hidden h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-control)] border border-border-subtle bg-surface-secondary shadow-sm transition duration-150 hover:scale-[1.06] hover:border-border-strong hover:bg-surface-tertiary active:scale-[0.94] lg:flex"
-    >
-      <img src="/rr-mark-dark.svg" alt="" draggable={false} className="h-[19px] w-[21px] select-none object-contain dark:hidden" />
-      <img src="/rr-mark-cream.svg" alt="" draggable={false} className="hidden h-[19px] w-[21px] select-none object-contain dark:block" />
-    </button>
+    <div className="ml-auto flex min-w-0 items-center gap-1.5">
+      <button
+        type="button"
+        onClick={returnToHub}
+        aria-label="RR HUB'a dön"
+        title="RR HUB'a dön"
+        className="hidden h-9 w-11 shrink-0 items-center justify-center bg-transparent p-0 transition duration-150 hover:scale-[1.06] active:scale-[0.92] lg:flex"
+      >
+        <img src="/rr-mark-dark.svg" alt="" draggable={false} className="block h-[23px] w-auto select-none object-contain dark:hidden" />
+        <img src="/rr-mark-cream.svg" alt="" draggable={false} className="hidden h-[23px] w-auto select-none object-contain dark:block" />
+      </button>
+      <button type="button" onClick={onOpenSearch} className="ruth-type-control mr-1 flex h-11 items-center gap-2 border border-border-subtle bg-surface-secondary px-3 text-subtle radius-control transition-all hover:border-border-strong hover:text-muted md:h-9 md:w-64"><Search className="h-4 w-4 shrink-0" /><span className="hidden md:inline">Ara veya komut çalıştır…</span></button>
+      <ExactIconButton icon={Sparkles} label="ROSTA Insight" variant="ghost" size="icon-sm" className="text-accent" onClick={() => router.push("/rosta-insight")} />
+      <ExactNotificationBell />
+      <ExactIconButton icon={dark ? Sun : Moon} label="Temayı değiştir" variant="ghost" size="icon-sm" onClick={onToggleDark} />
+    </div>
   </header>;
 }
 
