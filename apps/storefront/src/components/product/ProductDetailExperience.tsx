@@ -106,14 +106,15 @@ function firstImage(product: Product | null | undefined) {
 }
 
 function productDetails(product: Product): ProductDetailItem[] {
-  const productInfo = cleanLine(
+  const beanType = cleanLine(
     product.material || productMaterialDetails(product) || displayMaterial(product),
   );
+  const roastProfile = cleanLine(product.finish_color);
   const description =
     cleanLine(cleanedProductDescription(product)) ||
     "ROSTA Coffee Co. ürünü.";
   const careDetails = cleanLine(product.care_advice || productCareDetails(product));
-  const usage = cleanLine(product.size_usage);
+  const packageUsage = cleanLine(product.size_usage);
 
   return [
     { id: "description", label: "Açıklama", content: description },
@@ -121,13 +122,25 @@ function productDetails(product: Product): ProductDetailItem[] {
       id: "material",
       label: "Ürün Bilgisi",
       content: [
-        productInfo || "Ürün bilgileri ürün bazında değişebilir.",
-        careDetails ? "" : null,
+        "KAHVE TÜRÜ",
+        beanType || "Belirtilmedi",
+        "",
+        "KAVRUM PROFİLİ",
+        roastProfile || "Belirtilmedi",
+      ].join("\n"),
+    },
+    {
+      id: "size-usage",
+      label: "Paket / Kullanım",
+      content: [
+        packageUsage ? "PAKET / GRAMAJ" : null,
+        packageUsage || null,
+        packageUsage && careDetails ? "" : null,
         careDetails ? "SAKLAMA / KULLANIM" : null,
         careDetails || null,
-      ].filter((value): value is string => Boolean(value)).join("\n"),
+      ].filter((value): value is string => Boolean(value)).join("\n") ||
+        "Paket ve kullanım bilgisi ürün bazında değişebilir.",
     },
-    { id: "size-usage", label: "Kullanım", content: usage || "Detaylı kullanım bilgisi ürün açıklamasında yer alır." },
     {
       id: "shipping-returns",
       label: "Kargo ve İade",
@@ -183,7 +196,7 @@ function ProductBrowserPreview({ product }: { product: Product | null }) {
         <div className="product-browser-preview-tabs">
           <span>Açıklama</span>
           <span>Ürün Bilgisi</span>
-          <span>Kullanım</span>
+          <span>Paket / Kullanım</span>
           <span>Kargo ve İade</span>
         </div>
         <div className="product-browser-preview-copy">
