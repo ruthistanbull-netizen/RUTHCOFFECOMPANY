@@ -11,7 +11,7 @@
   min-height: 104px;
   padding: 13px 15px;
   border-bottom: 1px solid var(--line);
-  background: #fff;
+  background: var(--ruth-color-surface-muted, #242424);
   display: grid;
   grid-template-columns: minmax(230px, 1.15fr) 145px 118px minmax(200px, .9fr) auto;
   gap: 12px;
@@ -20,10 +20,6 @@
 
 .cr-return-card:last-child {
   border-bottom: 0;
-}
-
-.cr-return-card:hover {
-  background: #fafbfc;
 }
 
 .cr-return-card__identity {
@@ -135,7 +131,7 @@
 .cr-reverse-code {
   min-height: 54px;
   padding: 9px 11px;
-  border: 1px solid #abefc6;
+  border: 1px solid color-mix(in srgb, var(--ruth-color-success, #1BA786) 48%, transparent);
   border-radius: 11px;
   background: var(--success-soft);
   color: var(--success);
@@ -205,7 +201,7 @@
   padding: 7px;
   border: 1px solid var(--line);
   border-radius: 11px;
-  background: #fff;
+  background: var(--ruth-color-surface-muted, #242424);
   color: inherit;
   display: grid;
   grid-template-columns: 42px minmax(0, 1fr) auto;
@@ -297,7 +293,7 @@
   padding: 8px;
   border: 1px solid var(--line);
   border-radius: 11px;
-  background: #fff;
+  background: var(--ruth-color-surface-muted, #242424);
   display: flex;
   align-items: center;
   gap: 6px;
@@ -332,7 +328,7 @@
   padding: 8px;
   border: 1px solid var(--line);
   border-radius: 11px;
-  background: #fff;
+  background: var(--ruth-color-surface-muted, #242424);
   display: grid;
   grid-template-columns: 42px minmax(0, 1fr) 82px auto 32px;
   gap: 8px;
@@ -436,5 +432,12 @@
   .cr-exchange-list > article > strong {
     grid-column: 2 / 4;
     grid-row: 2;
+  }
+}
+
+
+@media (hover: hover) and (pointer: fine) {
+  .cr-return-card:hover {
+    background: color-mix(in srgb, var(--rosta-kraft, #C8A77D) 8%, var(--ruth-color-surface-muted, #242424));
   }
 }
