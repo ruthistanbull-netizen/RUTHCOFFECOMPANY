@@ -191,7 +191,13 @@ function eligibleSwipeTarget(target: EventTarget | null) {
   );
 }
 
-function ProductBrowserPreview({ product }: { product: Product | null }) {
+function ProductBrowserPreview({
+  product,
+  productPageContent,
+}: {
+  product: Product | null;
+  productPageContent?: Record<string, unknown>;
+}) {
   if (!product) return <article className="product-browser-preview is-empty" />;
 
   const price = Number(product.price || 0);
@@ -219,9 +225,9 @@ function ProductBrowserPreview({ product }: { product: Product | null }) {
       <section className="product-browser-preview-details">
         <div className="product-browser-preview-tabs">
           <span>Açıklama</span>
-          <span>Ürün Bilgisi</span>
-          <span>Kullanım</span>
-          <span>Kargo ve İade</span>
+          <span>{productPageCopy(productPageContent, "materialTitle", "Ürün Bilgisi")}</span>
+          <span>{productPageCopy(productPageContent, "sizeUsageTitle", "Paket / Kullanım")}</span>
+          <span>{productPageCopy(productPageContent, "shippingTitle", "Kargo ve İade")}</span>
         </div>
         <div className="product-browser-preview-copy">
           <small>
@@ -839,9 +845,9 @@ export function ProductDetailExperience({
 
       <div className="product-browser-stage" aria-hidden="true">
         <div ref={trackRef} className="product-browser-track">
-          <ProductBrowserPreview product={browserWindow.previous} />
-          <ProductBrowserPreview product={product} />
-          <ProductBrowserPreview product={browserWindow.next} />
+          <ProductBrowserPreview product={browserWindow.previous} productPageContent={productPageContent} />
+          <ProductBrowserPreview product={product} productPageContent={productPageContent} />
+          <ProductBrowserPreview product={browserWindow.next} productPageContent={productPageContent} />
         </div>
       </div>
 
