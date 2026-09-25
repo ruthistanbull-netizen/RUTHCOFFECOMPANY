@@ -50,7 +50,7 @@ export function HomeHeroRuntimeAdjustments() {
 
       @media (min-width: 1024px) {
         html.ruth-home-page-active .home-editorial-wordmark {
-          top: 38vh !important;
+          top: calc(47vh + 18px) !important;
           right: 1vw !important;
           left: auto !important;
           width: 44.8vw !important;
