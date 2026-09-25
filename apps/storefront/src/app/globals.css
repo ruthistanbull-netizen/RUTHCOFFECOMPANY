@@ -200,20 +200,20 @@ input[type="radio"]:not(:disabled) {
     font-weight: 400;
   }
 
-  .ruth-zara-header.is-contrast .ruth-zara-header-inner,
-  .ruth-zara-menu-button--contrast {
+  html:not(.ruth-home-page-active):not(.ruth-product-page-active) .ruth-zara-header.is-contrast .ruth-zara-header-inner,
+  html:not(.ruth-home-page-active):not(.ruth-product-page-active) .ruth-zara-menu-button--contrast {
     color: var(--rosta-bone) !important;
     mix-blend-mode: difference !important;
   }
 
-  .ruth-zara-header:not(.is-contrast) .ruth-zara-header-inner,
-  .ruth-zara-menu-button:not(.ruth-zara-menu-button--contrast) {
+  html:not(.ruth-home-page-active):not(.ruth-product-page-active) .ruth-zara-header:not(.is-contrast) .ruth-zara-header-inner,
+  html:not(.ruth-home-page-active):not(.ruth-product-page-active) .ruth-zara-menu-button:not(.ruth-zara-menu-button--contrast) {
     color: var(--rosta-cream) !important;
     mix-blend-mode: normal !important;
   }
 
-  .ruth-zara-header.is-contrast .header-wordmark,
-  .ruth-zara-header:not(.is-contrast) .header-wordmark {
+  html:not(.ruth-home-page-active):not(.ruth-product-page-active) .ruth-zara-header.is-contrast .header-wordmark,
+  html:not(.ruth-home-page-active):not(.ruth-product-page-active) .ruth-zara-header:not(.is-contrast) .header-wordmark {
     filter: brightness(0) invert(1) !important;
   }
 
