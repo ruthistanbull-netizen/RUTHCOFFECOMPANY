@@ -511,6 +511,20 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
     overlay.dataset.ruthThemeEditorUi = "true";
     overlay.style.cssText = "position:fixed;pointer-events:none;z-index:2147483646;border:2px solid #C94A40;background:color-mix(in srgb,#C94A40 10%,transparent);display:none;box-sizing:border-box;border-radius:6px";
 
+    const dedupeThemeMedia = (id: string, keep: Element) => {
+      const escaped = typeof CSS !== "undefined" && typeof CSS.escape === "function"
+        ? CSS.escape(id)
+        : id.replace(/["\\]/g, "\\    const rememberMediaOrigin = (element: Element) => {");
+      const matches = Array.from(document.querySelectorAll(`[data-theme-id="${escaped}"]`));
+      for (const candidate of matches) {
+        if (candidate === keep) continue;
+        // A theme id represents one real storefront element. Direct DOM swaps can
+        // briefly leave React's previous media node behind; remove that stale node
+        // instead of allowing old and new photos/videos to stack.
+        candidate.remove();
+      }
+    };
+
     const rememberMediaOrigin = (element: Element) => {
       const id = ensureThemeId(element);
       if (!mediaOrigins.has(id)) mediaOrigins.set(id, element.cloneNode(true) as Element);
@@ -541,6 +555,7 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
       }
 
       element.replaceWith(replacement);
+      dedupeThemeMedia(id, replacement);
       return replacement;
     };
 
@@ -634,6 +649,7 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
         }
         if (!originals.current.has(element)) originals.current.set(element, snapshot(element));
         applyOverride(element, override, mobile, isHeroImageId(override.id) && activeMediaType !== "video");
+        if (override.kind === "image") dedupeThemeMedia(override.id, element);
         if (selectedElement && ensureThemeId(selectedElement) === override.id) {
           selectedElement = element;
           positionOverlay(element, true);
@@ -695,8 +711,12 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
           const nextSource = String(event.data.imageSrc);
           const sourceChanged = media.getAttribute("src") !== nextSource;
           if (sourceChanged) media.setAttribute("src", nextSource);
-          if (element.tagName === "IMG") (element as HTMLImageElement).setAttribute("srcset", nextSource);
+          if (element.tagName === "IMG") {
+            (element as HTMLImageElement).setAttribute("srcset", nextSource);
+            for (const source of pictureSources(element)) source.setAttribute("srcset", nextSource);
+          }
           if (element instanceof HTMLVideoElement) activateVideo(element, sourceChanged || element.readyState === 0);
+          dedupeThemeMedia(event.data.id, element);
           selectedElement = element;
           select(element);
         }
