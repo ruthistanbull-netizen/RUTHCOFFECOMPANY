@@ -9,9 +9,11 @@ import {
   Monitor,
   MousePointer2,
   Palette,
+  Plus,
   RefreshCw,
   Save,
   Smartphone,
+  Trash2,
   Type,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -287,6 +289,7 @@ export function VisualThemeCustomizer() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState<string | null>(null);
   const [nonce, setNonce] = useState(Date.now());
+  const [menuMediaOpen, setMenuMediaOpen] = useState(false);
 
   const canonicalSettings = useMemo(() => normalizeThemeMediaSettings(settings), [settings]);
   const dirty = JSON.stringify(canonicalSettings) !== JSON.stringify(saved);
@@ -526,6 +529,88 @@ export function VisualThemeCustomizer() {
     });
   }, [toast]);
 
+  const addMenuMedia = async (file: File) => {
+    setUploading("menu-media-new");
+    try {
+      const src = await uploadThemeImage(file);
+      const id = `menu-media-${Date.now().toString(36)}`;
+      setSettings((current) => ({
+        ...current,
+        header: {
+          ...current.header,
+          mediaCards: [
+            ...(current.header.mediaCards || []),
+            { id, imageSrc: src, label: "Yeni görsel", href: "/collections" },
+          ].slice(0, 12),
+        },
+      }));
+      toast.success("Menü görseli eklendi. Kaydet'e basınca yayınlanacak.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Menü görseli yüklenemedi.");
+    } finally {
+      setUploading(null);
+    }
+  };
+
+  const replaceMenuMedia = async (id: string, file: File) => {
+    setUploading(`menu-media-${id}`);
+    try {
+      const src = await uploadThemeImage(file);
+      setSettings((current) => ({
+        ...current,
+        header: {
+          ...current.header,
+          mediaCards: (current.header.mediaCards || []).map((card) =>
+            card.id === id ? { ...card, imageSrc: src } : card,
+          ),
+        },
+      }));
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Menü görseli değiştirilemedi.");
+    } finally {
+      setUploading(null);
+    }
+  };
+
+  const patchMenuMedia = (id: string, patch: { label?: string; href?: string }) => {
+    setSettings((current) => ({
+      ...current,
+      header: {
+        ...current.header,
+        mediaCards: (current.header.mediaCards || []).map((card) =>
+          card.id === id ? { ...card, ...patch } : card,
+        ),
+      },
+    }));
+  };
+
+  const removeMenuMedia = (id: string) => {
+    setSettings((current) => ({
+      ...current,
+      header: {
+        ...current.header,
+        mediaCards: (current.header.mediaCards || []).filter((card) => card.id !== id),
+      },
+    }));
+  };
+
+  const duplicateMenuMedia = (id: string) => {
+    setSettings((current) => {
+      const cards = current.header.mediaCards || [];
+      const source = cards.find((card) => card.id === id);
+      if (!source || cards.length >= 12) return current;
+      const index = cards.findIndex((card) => card.id === id);
+      const copy = {
+        ...source,
+        id: `${source.id}-copy-${Date.now().toString(36)}`,
+        label: source.label ? `${source.label} Kopya` : "Kopya",
+      };
+      const next = [...cards];
+      next.splice(index + 1, 0, copy);
+      return { ...current, header: { ...current.header, mediaCards: next } };
+    });
+  };
+
   const uploadSelectedImage = async (file: File, targetDevice: Device) => {
     if (!selected) return;
     setUploading(`selected-${targetDevice}`);
@@ -633,6 +718,29 @@ export function VisualThemeCustomizer() {
     setMenu(null);
     toast.success("Medya çoğaltıldı.");
   }, [device, selected, selectedDesktopMediaSrc, selectedMobileMediaSrc, selectedOverride, targetPage, toast]);
+
+  const duplicateSelectedContent = useCallback(() => {
+    if (!selected || !["text", "link", "button"].includes(String(selected.kind))) return;
+    const baseId = selected.id.replace(/[^a-zA-Z0-9_-]/g, "-").slice(0, 92) || "content";
+    const duplicateId = `${baseId}--copy-${Date.now().toString(36)}`;
+    const duplicate: ThemeElementOverride = {
+      id: duplicateId,
+      selector: `[data-theme-id="${duplicateId}"]`,
+      label: `${selected.label || "Öğe"} · Kopya`,
+      tag: selected.tag,
+      kind: selected.kind,
+      hidden: false,
+      text: selectedOverride?.text ?? selected.text ?? "",
+      href: selected.kind === "link" ? (selectedOverride?.href ?? selected.href ?? "") : undefined,
+      duplicateOf: selected.id,
+      desktop: { ...(selectedOverride?.desktop || {}) },
+      mobile: { ...(selectedOverride?.mobile || {}) },
+    };
+    pendingSelectIdRef.current = duplicateId;
+    setSettings((current) => upsertThemeElementOverride(current, targetPage, duplicate));
+    setMenu(null);
+    toast.success(selected.kind === "link" ? "Bağlantılı başlık çoğaltıldı." : "Yazı çoğaltıldı.");
+  }, [selected, selectedOverride, targetPage, toast]);
 
   useEffect(() => {
     const onMessage = (event: MessageEvent) => {
@@ -749,12 +857,84 @@ export function VisualThemeCustomizer() {
         </div>
 
         <div className="flex flex-1 items-center justify-end gap-2">
+          <button
+            type="button"
+            onClick={() => setMenuMediaOpen((current) => !current)}
+            className={cx("hidden h-9 items-center gap-1.5 rounded-xl border px-3 text-[9px] font-medium md:inline-flex", menuMediaOpen ? "border-accent bg-accent-soft text-main" : "border-border-subtle bg-surface-primary text-muted")}
+          >
+            <ImageIcon className="h-3.5 w-3.5" /> Menü görselleri
+          </button>
           {dirty ? <button type="button" onClick={discard} disabled={saveLifecycle.saving} className="hidden h-9 rounded-xl border border-border-subtle bg-surface-primary px-3 text-[9px] font-medium sm:inline-flex sm:items-center">Geri al</button> : null}
           <button type="button" onClick={() => void saveLifecycle.save()} disabled={!dirty || saveLifecycle.saving || loading} className="inline-flex h-9 items-center gap-2 rounded-xl bg-accent px-3.5 text-[9px] font-semibold text-[var(--rosta-action-text)] active:bg-[var(--rosta-espresso)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-35">
             {saveLifecycle.saving ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}Kaydet
           </button>
         </div>
       </header>
+
+      {menuMediaOpen ? (
+        <div
+          className="fixed right-4 top-[72px] z-[2147483635] w-[380px] max-w-[calc(100vw-32px)] max-h-[calc(100vh-88px)] overflow-y-auto rounded-2xl border border-border-subtle bg-surface-primary p-3 shadow-overlay"
+          data-ruth-theme-editor-ui
+        >
+          <div className="sticky top-0 z-10 -mx-3 -mt-3 mb-3 flex items-start justify-between gap-3 border-b border-border-subtle bg-surface-primary px-3 py-3">
+            <div>
+              <p className="text-[11px] font-semibold">Menü görselleri</p>
+              <p className="mt-1 text-[8px] leading-4 text-subtle">Koleksiyon kartlarıyla aynı ölçüde özel fotoğraflar ekle. Başlık ve bağlantı ayrı düzenlenir.</p>
+            </div>
+            <button type="button" onClick={() => setMenuMediaOpen(false)} className="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-subtle hover:bg-surface-secondary">×</button>
+          </div>
+
+          <div className="space-y-3">
+            {(settings.header.mediaCards || []).map((card, index) => (
+              <div key={card.id} className="rounded-xl border border-border-subtle bg-surface-secondary p-2.5">
+                <div className="mb-2 flex items-center justify-between gap-2">
+                  <span className="text-[9px] font-semibold">Özel görsel {index + 1}</span>
+                  <div className="flex items-center gap-1">
+                    <button type="button" onClick={() => duplicateMenuMedia(card.id)} className="grid h-7 w-7 place-items-center rounded-lg border border-border-subtle bg-surface-primary text-muted" aria-label="Çoğalt"><Copy className="h-3 w-3" /></button>
+                    <button type="button" onClick={() => removeMenuMedia(card.id)} className="grid h-7 w-7 place-items-center rounded-lg border border-border-subtle bg-surface-primary text-muted hover:text-accent" aria-label="Sil"><Trash2 className="h-3 w-3" /></button>
+                  </div>
+                </div>
+                <div className="aspect-[4/3] overflow-hidden rounded-lg border border-border-subtle bg-surface-primary">
+                  <img src={card.imageSrc} alt="" className="h-full w-full object-cover" />
+                </div>
+                <ThemeImageInput
+                  busy={uploading === `menu-media-${card.id}`}
+                  hasValue={Boolean(card.imageSrc)}
+                  onFile={(file) => void replaceMenuMedia(card.id, file)}
+                  media="image"
+                  compact
+                />
+                <label className="mt-2 block">
+                  <span className="mb-1 block text-[8px] text-muted">Başlık</span>
+                  <input value={card.label} onChange={(event) => patchMenuMedia(card.id, { label: event.target.value })} className={fieldClass()} placeholder="Örn. Ethiopia" />
+                </label>
+                <label className="mt-2 block">
+                  <span className="mb-1 block text-[8px] text-muted">Bağlantı</span>
+                  <input value={card.href} onChange={(event) => patchMenuMedia(card.id, { href: event.target.value })} className={fieldClass()} placeholder="/collections/..." />
+                </label>
+              </div>
+            ))}
+
+            {(settings.header.mediaCards || []).length < 12 ? (
+              <div className="rounded-xl border border-dashed border-border-strong bg-surface-secondary/60 p-3">
+                <div className="mb-2 flex items-center gap-2">
+                  <span className="grid h-8 w-8 place-items-center rounded-lg bg-accent-soft text-accent"><Plus className="h-4 w-4" /></span>
+                  <div>
+                    <p className="text-[9px] font-semibold">Yeni menü fotoğrafı ekle</p>
+                    <p className="mt-0.5 text-[7px] text-subtle">Storefrontta koleksiyon fotoğraflarıyla aynı kart ölçüsünde görünür.</p>
+                  </div>
+                </div>
+                <ThemeImageInput
+                  busy={uploading === "menu-media-new"}
+                  hasValue={false}
+                  onFile={(file) => void addMenuMedia(file)}
+                  media="image"
+                />
+              </div>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
 
       <div className="flex min-h-0 flex-1 flex-col md:flex-row">
         <aside
@@ -1024,6 +1204,15 @@ export function VisualThemeCustomizer() {
             <section className="border-b border-border-subtle p-3">
               <span className="mb-1.5 flex items-center gap-1.5 text-[9px] font-semibold"><Type className="h-3 w-3" />Yazı</span>
               <textarea rows={3} value={selectedOverride?.text ?? selected.text ?? ""} onChange={(event) => patchOverride({ text: event.target.value })} className="w-full resize-y rounded-xl border border-border-subtle bg-surface-secondary p-2.5 text-[9px] leading-4 outline-none focus:border-accent" />
+              {["text", "link", "button"].includes(String(selected.kind)) ? (
+                <button
+                  type="button"
+                  onClick={duplicateSelectedContent}
+                  className="mt-2 inline-flex h-8 w-full items-center justify-center gap-1.5 rounded-lg border border-border-subtle bg-surface-secondary text-[8px] font-medium text-muted transition hover:border-accent/60 hover:text-main"
+                >
+                  <Copy className="h-3 w-3" /> Aynısından çoğalt
+                </button>
+              ) : null}
             </section>
           ) : null}
 
