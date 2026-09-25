@@ -49,8 +49,18 @@ export function HomeHeroRuntimeAdjustments() {
       }
 
       @media (min-width: 1024px) {
-        .home-editorial-wordmark {
+        html.ruth-home-page-active .home-editorial-wordmark {
           top: 38vh !important;
+          right: 1vw !important;
+          left: auto !important;
+          width: 44.8vw !important;
+          max-width: 44.8vw !important;
+          height: auto !important;
+        }
+
+        html.ruth-home-page-active .ruth-zara-menu-button .ruth-zara-hamburger {
+          width: 48px !important;
+          height: 18px !important;
         }
       }
 
