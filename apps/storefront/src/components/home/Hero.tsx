@@ -401,7 +401,6 @@ export default function Hero({
 
     const sampleStableHeaderInk = (media: SampledMedia | null) => {
       if (!media) return activeHeaderInk;
-      const rect = media.getBoundingClientRect();
       const headerHeight = window.innerWidth >= 1024 ? 92 : 64;
       const probes = [
         [36, headerHeight * 0.58],
