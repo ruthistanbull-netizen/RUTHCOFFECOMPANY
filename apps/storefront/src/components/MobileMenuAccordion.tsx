@@ -141,14 +141,14 @@ export function MobileMenuAccordion({
             overflow-x:hidden;
             overflow-y:auto;
             padding:0 0 calc(42px + env(safe-area-inset-bottom));
-            background:var(--ruth-color-surface)!important;
+            background:var(--rosta-carbon)!important;
             color:var(--ruth-color-text-primary);
             -webkit-overflow-scrolling:touch;
             overscroll-behavior:contain;
           }
           .ruth-mobile-link-accordion__links{
             padding:0 18px 0 36px;
-            background:var(--ruth-color-surface)!important;
+            background:var(--rosta-carbon)!important;
           }
           .ruth-mobile-link-accordion__item,
           .ruth-mobile-link-accordion__row,
@@ -157,7 +157,7 @@ export function MobileMenuAccordion({
           .ruth-mobile-link-accordion__children,
           .ruth-mobile-link-accordion__children-inner,
           .ruth-mobile-link-accordion__child{
-            background:var(--ruth-color-surface)!important;
+            background:var(--rosta-carbon)!important;
           }
           .ruth-mobile-link-accordion__item{border:0}
           .ruth-mobile-link-accordion__row{
@@ -231,7 +231,7 @@ export function MobileMenuAccordion({
             padding:0 16px 8px;
             overflow-x:auto;
             overflow-y:hidden;
-            background:var(--ruth-color-surface)!important;
+            background:var(--rosta-carbon)!important;
             overscroll-behavior-x:contain;
             scrollbar-width:none;
             -webkit-overflow-scrolling:touch;
@@ -242,7 +242,7 @@ export function MobileMenuAccordion({
             width:92px;
             min-width:92px;
             color:var(--ruth-color-text-primary);
-            background:var(--ruth-color-surface)!important;
+            background:var(--rosta-carbon)!important;
             text-decoration:none;
           }
           .ruth-mobile-photo-collection-card__media{
@@ -263,7 +263,7 @@ export function MobileMenuAccordion({
             display:block;
             margin-top:4px;
             color:var(--ruth-color-text-primary);
-            background:var(--ruth-color-surface)!important;
+            background:var(--rosta-carbon)!important;
             font-family:var(--font-body)!important;
             font-size:9px;
             font-weight:400;
