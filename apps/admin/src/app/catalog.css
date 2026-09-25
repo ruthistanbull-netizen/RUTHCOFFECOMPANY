@@ -29,9 +29,9 @@
 }
 
 .cr-catalog-tabs button.is-active {
-  background: #fff;
-  color: var(--ink);
-  box-shadow: var(--shadow-sm);
+  background: color-mix(in srgb, var(--rosta-brick-b, #C94A40) 15%, var(--ruth-color-surface-muted, #242424));
+  color: var(--rosta-cream, #FBF3E6);
+  box-shadow: inset 0 -2px 0 var(--rosta-brick-b, #C94A40);
 }
 
 .cr-catalog-workspace {
@@ -51,7 +51,7 @@
   border: 1px solid var(--line);
   border-radius: 14px;
   overflow: hidden;
-  background: #fff;
+  background: var(--surface-2, var(--ruth-color-surface-muted, #242424));
   box-shadow: var(--shadow-sm);
 }
 
@@ -62,7 +62,7 @@
   background: var(--surface-2);
   display: grid;
   place-items: center;
-  color: #344054;
+  color: var(--ruth-color-text-primary, #FBF3E6);
   font: 900 30px Georgia, serif;
   overflow: hidden;
   cursor: pointer;
@@ -160,7 +160,7 @@
 .cr-catalog-upload {
   min-height: 100px;
   padding: 15px;
-  border: 1px dashed #98a2b3;
+  border: 1px dashed color-mix(in srgb, var(--rosta-kraft, #C8A77D) 58%, transparent);
   border-radius: 12px;
   background: var(--surface-2);
   display: flex;
@@ -170,11 +170,6 @@
   gap: 6px;
   text-align: center;
   cursor: pointer;
-}
-
-.cr-catalog-upload:hover {
-  border-color: var(--accent);
-  background: var(--accent-soft);
 }
 
 .cr-catalog-upload svg {
@@ -261,5 +256,13 @@
   .cr-catalog-footer > div,
   .cr-catalog-footer .cr-button {
     width: 100%;
+  }
+}
+
+
+@media (hover: hover) and (pointer: fine) {
+  .cr-catalog-upload:hover {
+    border-color: var(--accent, var(--rosta-brick-b, #C94A40));
+    background: var(--accent-soft, color-mix(in srgb, var(--rosta-brick-b, #C94A40) 15%, transparent));
   }
 }
