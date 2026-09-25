@@ -15,7 +15,7 @@
   position: absolute;
   inset: 8% 0;
   border-radius: inherit;
-  background: linear-gradient(90deg, rgba(152, 162, 179, .15), rgba(152, 162, 179, .34), rgba(152, 162, 179, .15));
+  background: linear-gradient(90deg, color-mix(in srgb, var(--rosta-cream, #FBF3E6) 8%, transparent), color-mix(in srgb, var(--rosta-kraft, #C8A77D) 20%, transparent), color-mix(in srgb, var(--rosta-cream, #FBF3E6) 8%, transparent));
   background-size: 220% 100%;
   animation: cr-number-skeleton-shimmer var(--ruth-motion-slow) linear infinite;
 }
