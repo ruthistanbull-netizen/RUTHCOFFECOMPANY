@@ -12,6 +12,14 @@ const RUTH_ADMIN_URL = (
 ).replace(/\/$/, "");
 
 const RUTH_ENTERED_KEY = "rr_hub_ruth_entered_v1";
+const ROSTA_ENTERED_KEY = "rosta_panel_hub_entered_v1";
+const RUTH_ADMIN_ORIGIN = (() => {
+  try {
+    return new URL(RUTH_ADMIN_URL).origin;
+  } catch {
+    return "";
+  }
+})();
 
 export function RuthWorkspaceShell() {
   const frameRef = useRef<HTMLIFrameElement | null>(null);
@@ -20,6 +28,17 @@ export function RuthWorkspaceShell() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const onHubMessage = (event: MessageEvent) => {
+      if (RUTH_ADMIN_ORIGIN && event.origin !== RUTH_ADMIN_ORIGIN) return;
+      if (event.data?.type !== "RR_HUB_RETURN") return;
+      try {
+        window.sessionStorage.removeItem(ROSTA_ENTERED_KEY);
+        window.sessionStorage.removeItem(RUTH_ENTERED_KEY);
+      } catch {}
+      window.location.assign("/profiles");
+    };
+    window.addEventListener("message", onHubMessage);
+
     let entered = false;
     try {
       entered = window.sessionStorage.getItem(RUTH_ENTERED_KEY) === "1";
@@ -74,6 +93,7 @@ export function RuthWorkspaceShell() {
 
     return () => {
       cancelled = true;
+      window.removeEventListener("message", onHubMessage);
     };
   }, []);
 
