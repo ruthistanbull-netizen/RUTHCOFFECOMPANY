@@ -96,6 +96,7 @@ function imageOverridesFromSettings(settings: unknown) {
     const overrides = Array.isArray(page?.overrides) ? page.overrides : [];
     for (const item of overrides) {
       const id = typeof item?.id === "string" ? item.id.trim() : "";
+      if (item?.mediaType === "video") continue;
       const src = validImageSrc(item?.imageSrc);
       if (id && src) result.push([id, src]);
     }
