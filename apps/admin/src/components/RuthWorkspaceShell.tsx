@@ -136,7 +136,7 @@ export function RuthWorkspaceShell() {
           window.setTimeout(() => setReady(true), 220);
         }}
         allow="clipboard-read; clipboard-write; camera; microphone"
-        className="absolute inset-0 h-full w-full border-0 bg-[#FFF9F5]"
+        className="absolute inset-0 h-full w-full border-0 bg-[#FBF3E6]"
         style={{
           width: "100%",
           height: "100dvh",
