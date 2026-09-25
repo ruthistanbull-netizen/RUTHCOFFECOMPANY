@@ -24,6 +24,7 @@ import {
 } from "@/lib/rewards";
 import { useRostaPointsSettings } from "@/lib/useRostaPointsSettings";
 import { displayBirthDate, formatManualDateInput } from "@/lib/manualDate";
+import rostaPointsPhoto from "../../public/home/rosta-under-hero-photo.jpg";
 
 function formatLira(value: number) {
   return new Intl.NumberFormat("tr-TR", {
@@ -341,13 +342,15 @@ export function RostaPointsWidget() {
           align-items: center;
           margin-bottom: 28px;
         }
-        .rosta-points-offer-brand img {
+        .rosta-points-offer-brand-mark {
           display: block;
-          width: auto;
+          width: 142px;
           max-width: 142px;
-          height: 26px;
-          object-fit: contain;
-          object-position: left center;
+          height: 60px;
+          background: currentColor;
+          -webkit-mask: url("/rosta-wordmark.svg") left center / contain no-repeat;
+          mask: url("/rosta-wordmark.svg") left center / contain no-repeat;
+          color: inherit;
         }
         .rosta-points-offer-brand-fallback {
           font-family: var(--font-heading);
@@ -643,7 +646,7 @@ export function RostaPointsWidget() {
             padding: calc(44px + env(safe-area-inset-top)) 24px 34px;
           }
           .rosta-points-offer-brand { margin-bottom: 22px; }
-          .rosta-points-offer-brand img { height: 23px; max-width: 124px; }
+          .rosta-points-offer-brand-mark { width: 124px; max-width: 124px; height: 52px; }
           .rosta-points-offer-copy h2 { font-size: 34px; }
           .rosta-points-offer-copy > p { margin-top: 12px; font-size: 13px; }
           .rosta-points-offer-action-row {
@@ -731,7 +734,11 @@ export function RostaPointsWidget() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: reduceMotion ? 0 : 0.12, duration: 0.36 }}
                   >
-                    <img src="/rosta-wordmark.svg" alt="ROSTA Coffee Co." />
+                    <span
+                      className="rosta-points-offer-brand-mark"
+                      role="img"
+                      aria-label="ROSTA Coffee Co."
+                    />
                   </motion.div>
 
                   <motion.h2
@@ -801,7 +808,7 @@ export function RostaPointsWidget() {
                   transition={{ delay: reduceMotion ? 0 : 0.08, duration: 0.55 }}
                 >
                   <motion.img
-                    src="/home/rosta-under-hero-photo.jpg"
+                    src={rostaPointsPhoto.src}
                     alt="ROSTA Coffee Co. kahve"
                     initial={reduceMotion ? undefined : { scale: 1.035 }}
                     animate={{ scale: 1 }}
