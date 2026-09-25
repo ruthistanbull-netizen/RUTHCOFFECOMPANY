@@ -77,11 +77,6 @@
     border-color var(--ruthie-tool-motion) ease !important;
 }
 
-[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-11"]:hover {
-  border-color: hsl(var(--accent) / .16) !important;
-  background: hsl(var(--surface-secondary)) !important;
-}
-
 [data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-11"] > span:first-child > svg {
   width: 34px !important;
   height: 34px !important;
@@ -103,11 +98,6 @@
     transform var(--ruthie-tool-motion) var(--ruthie-tool-ease),
     background var(--ruthie-tool-motion) ease,
     border-color var(--ruthie-tool-motion) ease !important;
-}
-
-[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] div[class*="grid-cols-3"] > button:hover {
-  border-color: hsl(var(--accent) / .16) !important;
-  background: hsl(var(--surface-secondary)) !important;
 }
 
 [data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] div[class*="grid-cols-3"] > button[class*="bg-accent"] {
@@ -199,10 +189,6 @@ section[role="dialog"][aria-label="Ürün ekle"] div[class*="max-h-[324px]"] > b
     border-color var(--ruthie-tool-motion) ease !important;
 }
 
-section[role="dialog"][aria-label="Ürün ekle"] div[class*="max-h-[324px]"] > button:hover {
-  background: hsl(var(--surface-secondary)) !important;
-}
-
 section[role="dialog"][aria-label="Ürün ekle"] div[class*="max-h-[324px]"] > button[class*="bg-accent-soft"] {
   border-color: hsl(var(--accent) / .18) !important;
   background: hsl(var(--accent) / .07) !important;
@@ -238,11 +224,6 @@ section[role="dialog"][aria-label="Fotoğraf tarzı"] div[class*="overflow-hidde
     background var(--ruthie-tool-motion) ease;
 }
 
-section[role="dialog"][aria-label="Fotoğraf tarzı"] div[class*="overflow-hidden"][class*="border-b"]:hover {
-  border-color: hsl(var(--accent) / .12) !important;
-  background: hsl(var(--surface-secondary) / .84) !important;
-}
-
 section[role="dialog"][aria-label="Fotoğraf tarzı"] div[class*="overflow-hidden"][class*="border-b"][class*="bg-accent-soft"] {
   border-color: hsl(var(--accent) / .18) !important;
   background: hsl(var(--accent) / .065) !important;
@@ -271,11 +252,6 @@ section[role="dialog"][aria-label="Fotoğraf tarzı"] div[class*="overflow-hidde
     background var(--ruthie-tool-motion) ease,
     border-color var(--ruthie-tool-motion) ease,
     color var(--ruthie-tool-motion) ease !important;
-}
-
-section[role="dialog"][aria-label="Fotoğraf tarzı"] div[class*="overflow-hidden"] div[class*="flex-wrap"] > button:hover {
-  background: hsl(var(--surface-secondary)) !important;
-  color: hsl(var(--text-main)) !important;
 }
 
 section[role="dialog"][aria-label="Fotoğraf tarzı"] div[class*="overflow-hidden"] div[class*="flex-wrap"] > button[class*="bg-accent"] {
@@ -367,11 +343,6 @@ section[role="dialog"][aria-label="Fotoğraf tarzı"] div[class*="overflow-hidde
   box-shadow: none !important;
 }
 
-[class*="RuthieChatComposerEnhancerV3_productCard"]:hover,
-[class*="productCard"]:hover {
-  background: hsl(var(--surface-secondary)) !important;
-}
-
 [class*="RuthieChatComposerEnhancerV3_productCard"][data-active="true"],
 [class*="productCard"][data-active="true"] {
   border-color: hsl(var(--accent) / .18) !important;
@@ -409,6 +380,37 @@ section[role="dialog"][aria-label="Fotoğraf tarzı"] div[class*="overflow-hidde
 [class*="RuthieChatComposerEnhancerV3_accordionBody"] > div,
 [class*="accordionBody"] > div {
   animation: ruthie-tool-reveal var(--ruthie-tool-motion) var(--ruthie-tool-ease) both;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-11"]:hover {
+    border-color: hsl(var(--accent) / .16) !important;
+    background: hsl(var(--surface-secondary)) !important;
+  }
+
+  [data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] div[class*="grid-cols-3"] > button:hover {
+    border-color: hsl(var(--accent) / .16) !important;
+    background: hsl(var(--surface-secondary)) !important;
+  }
+
+  section[role="dialog"][aria-label="Ürün ekle"] div[class*="max-h-[324px]"] > button:hover {
+    background: hsl(var(--surface-secondary)) !important;
+  }
+
+  section[role="dialog"][aria-label="Fotoğraf tarzı"] div[class*="overflow-hidden"][class*="border-b"]:hover {
+    border-color: hsl(var(--accent) / .12) !important;
+    background: hsl(var(--surface-secondary) / .84) !important;
+  }
+
+  section[role="dialog"][aria-label="Fotoğraf tarzı"] div[class*="overflow-hidden"] div[class*="flex-wrap"] > button:hover {
+    background: hsl(var(--surface-secondary)) !important;
+    color: hsl(var(--text-main)) !important;
+  }
+
+  [class*="RuthieChatComposerEnhancerV3_productCard"]:hover,
+  [class*="productCard"]:hover {
+    background: hsl(var(--surface-secondary)) !important;
+  }
 }
 
 @media (max-width: 640px) {
