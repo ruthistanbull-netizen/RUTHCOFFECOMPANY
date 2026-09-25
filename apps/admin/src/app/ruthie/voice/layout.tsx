@@ -33,7 +33,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   interactiveWidget: "resizes-content",
-  themeColor: "#050403",
+  themeColor: "#111111",
 };
 
 export default function RuthieVoiceLayout({ children }: Readonly<{ children: React.ReactNode }>) {
