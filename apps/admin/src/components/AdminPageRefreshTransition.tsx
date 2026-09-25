@@ -450,8 +450,8 @@ export function AdminPageRefreshTransition() {
           overflow: hidden;
           pointer-events: none;
           user-select: none;
-          background: #222;
-          color: #fff;
+          background: var(--rosta-carbon-soft);
+          color: var(--rosta-cream);
           text-align: center;
           transform: translate3d(0, var(--ptr-visual-y), 0);
           will-change: transform;
@@ -489,11 +489,11 @@ export function AdminPageRefreshTransition() {
           height: 75px;
           display: grid;
           place-items: center;
-          color: #fff;
+          color: var(--rosta-cream);
           opacity: 0;
           transform: translate3d(-50%, -50%, 0);
           transition: opacity .15s ease-in-out;
-          filter: drop-shadow(0 4px 12px rgba(0, 0, 0, .18));
+          filter: drop-shadow(0 4px 12px color-mix(in srgb, var(--rosta-carbon) 48%, transparent));
         }
 
         #admin-character-ptr [data-ruthie-refresh-logo] > svg {

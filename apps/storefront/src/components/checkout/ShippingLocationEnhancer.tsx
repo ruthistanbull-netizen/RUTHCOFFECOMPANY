@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { findShippingDistrict, findShippingProvince, normalizeTurkishLocation, type ShippingLocation } from "@/lib/shippingLocations";
 
 const API_PATH = "/api/shipping/locations";
-const SELECT_CLASS = "mt-2 w-full rounded-lg border border-gold/20 bg-ivory px-4 py-3 text-sm normal-case tracking-normal text-ink outline-none transition focus:border-gold-dark";
+const SELECT_CLASS = "mt-2 w-full rounded-lg border border-kraft/40 bg-carbon px-4 py-3 text-sm normal-case tracking-normal text-cream outline-none transition focus:border-brick focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick";
 
 function clean(value: unknown) {
   return typeof value === "string" ? value.trim() : "";

@@ -11,7 +11,7 @@ html body.site-app-shell .product-browser-preview-media {
   position: relative !important;
   aspect-ratio: 3 / 4 !important;
   overflow: hidden !important;
-  background: var(--ruth-product-media-top, var(--ruth-color-surface, var(--cream))) !important;
+  background: var(--ruth-product-media-top, var(--ruth-color-surface-inverse, var(--rosta-cream))) !important;
 }
 
 html body.site-app-shell .product-card-image-frame img,
@@ -45,7 +45,7 @@ html.ruth-product-page-active body.site-app-shell .product-gallery-placeholder {
   max-height: 100% !important;
   object-fit: cover !important;
   object-position: center center !important;
-  background: var(--ruth-product-media-top, var(--ruth-color-surface, var(--cream))) !important;
+  background: var(--ruth-product-media-top, var(--ruth-color-surface-inverse, var(--rosta-cream))) !important;
 }
 
 html.ruth-product-page-active body.site-app-shell .product-gallery-image img,

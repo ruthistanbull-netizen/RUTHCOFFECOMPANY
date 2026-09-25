@@ -275,7 +275,7 @@ export function Switch({ checked, onCheckedChange, onClick, label, description, 
   );
 }
 
-export type StatusTone = "neutral" | "success" | "warning" | "danger" | "info";
+export type StatusTone = "neutral" | "success" | "warning" | "danger" | "info" | "accent";
 
 export interface StatusBadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   tone?: StatusTone;

@@ -38,7 +38,7 @@ export function StorefrontBatchFixes() {
   useEffect(() => {
     const root = document.documentElement;
     const headerInk =
-      pathname === "/" ? "var(--ruth-home-header-ink, #111111)" : "#111111";
+      pathname === "/" ? "var(--ruth-home-header-ink, var(--rosta-carbon))" : "#111111";
     root.style.setProperty("--ruth-header-left-ink", headerInk);
     root.style.setProperty("--ruth-header-right-ink", headerInk);
 
@@ -100,12 +100,12 @@ export function StorefrontBatchFixes() {
         }
 
         html:not(.ruth-product-page-active) .ruth-zara-menu-button {
-          color: var(--ruth-header-left-ink, #111111) !important;
+          color: var(--ruth-header-left-ink, var(--rosta-carbon)) !important;
           mix-blend-mode: normal !important;
         }
 
         html:not(.ruth-product-page-active) .ruth-zara-header-inner > div:last-child {
-          color: var(--ruth-header-right-ink, #111111) !important;
+          color: var(--ruth-header-right-ink, var(--rosta-carbon)) !important;
           mix-blend-mode: normal !important;
         }
 
@@ -122,7 +122,7 @@ export function StorefrontBatchFixes() {
         }
 
         .ruth-zara-menu-close {
-          color: #111111 !important;
+          color: var(--rosta-cream) !important;
         }
       }
 

@@ -297,7 +297,7 @@ export function LiquidDockHybridEnhancerV2() {
       path.setAttribute("fill", "rgba(255,255,255,0.13)");
       path.setAttribute("stroke", "rgba(255,255,255,0.72)");
       path.setAttribute("stroke-width", "0.8");
-      path.style.filter = "drop-shadow(0 1px 2px rgba(22,28,36,0.12))";
+      path.style.filter = "drop-shadow(0 1px 2px rgba(17,17,17,0.12))";
       svg.appendChild(path);
       nextTrack.appendChild(svg);
       bridgeSvg = svg;

@@ -12,7 +12,7 @@ export default function CollectionCards({ collections }: { collections: Collecti
   if (visibleCollections.length === 0) return null;
 
   return (
-    <section className="bg-ivory px-4 py-20 md:px-8 md:py-28">
+    <section className="bg-carbon px-4 py-20 text-cream md:px-8 md:py-28">
       <div className="mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 26 }}
@@ -21,8 +21,8 @@ export default function CollectionCards({ collections }: { collections: Collecti
           transition={{ duration: 0.62, ease: "easeOut" }}
           className="mb-10 text-center md:mb-14"
         >
-          <p className="mb-3 text-[10px] font-medium uppercase tracking-[0.22em] text-gold-dark">Keşfet</p>
-          <h2 className="font-heading font-editorial text-[clamp(1.9rem,4vw,3.2rem)] font-normal text-ink">
+          <p className="mb-3 text-[10px] font-medium uppercase tracking-[0.22em] text-brick">Keşfet</p>
+          <h2 className="font-heading font-editorial text-[clamp(1.9rem,4vw,3.2rem)] font-normal text-cream">
             Koleksiyonlar
           </h2>
         </motion.div>
@@ -40,13 +40,13 @@ export default function CollectionCards({ collections }: { collections: Collecti
                 transition={{ duration: 0.6, delay: index * 0.06 }}
                 className="min-w-0"
               >
-                <Link href={`/collections/${collection.slug}`} className="group block">
-                  <div className="relative aspect-[16/10] overflow-hidden rounded-[22px] bg-cream shadow-[0_14px_38px_rgba(65,47,31,.08)]">
+                <Link href={`/collections/${collection.slug}`} className="group block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brick">
+                  <div className="relative aspect-[16/10] overflow-hidden rounded-[22px] bg-cream shadow-[0_14px_38px_color-mix(in_srgb,var(--rosta-carbon)_52%,transparent)]">
                     {cover ? (
                       <img
                         src={cover}
                         alt={collection.name}
-                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]"
+                        className="collection-card-image h-full w-full object-cover transition-transform duration-700"
                       />
                     ) : (
                       <div className="ruth-card-gradient h-full w-full" />
@@ -64,6 +64,14 @@ export default function CollectionCards({ collections }: { collections: Collecti
           })}
         </div>
       </div>
+      <style>{`
+        @media (hover: hover) and (pointer: fine) {
+          .group:hover .collection-card-image { transform: scale(1.025); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .collection-card-image { transition: none; }
+        }
+      `}</style>
     </section>
   );
 }

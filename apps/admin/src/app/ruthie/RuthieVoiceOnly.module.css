@@ -1,15 +1,15 @@
 .app {
-  --voice-bg: #050403;
-  --voice-panel: #0d0a07;
-  --voice-panel-soft: rgba(255, 246, 223, .045);
-  --voice-line: rgba(231, 184, 102, .2);
-  --voice-line-strong: rgba(244, 202, 126, .42);
-  --voice-text: #f6eedf;
-  --voice-muted: rgba(246, 238, 223, .52);
-  --voice-gold: #c98b37;
-  --voice-gold-deep: #76501f;
-  --voice-gold-light: #efc77f;
-  --voice-gold-white: #fff4d5;
+  --voice-bg: var(--rosta-carbon, #111111);
+  --voice-panel: var(--rosta-carbon-soft, #242424);
+  --voice-panel-soft: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 5%, transparent);
+  --voice-line: color-mix(in srgb, var(--rosta-kraft, #C8A77D) 28%, transparent);
+  --voice-line-strong: color-mix(in srgb, var(--rosta-kraft, #C8A77D) 48%, transparent);
+  --voice-text: var(--rosta-cream, #FBF3E6);
+  --voice-muted: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 52%, transparent);
+  --voice-gold: var(--rosta-brick-b, #C94A40);
+  --voice-gold-deep: var(--rosta-espresso, #38251C);
+  --voice-gold-light: var(--rosta-kraft, #C8A77D);
+  --voice-gold-white: var(--rosta-cream, #FBF3E6);
   position: fixed;
   inset: 0;
   z-index: 100;
@@ -24,8 +24,8 @@
   overflow: hidden;
   overscroll-behavior: none;
   background:
-    radial-gradient(ellipse 60% 52% at 50% 42%, rgba(145, 83, 20, .17), transparent 68%),
-    linear-gradient(180deg, #030302 0%, var(--voice-bg) 56%, #020202 100%);
+    radial-gradient(ellipse 60% 52% at 50% 42%, color-mix(in srgb, var(--rosta-espresso, #38251C) 17%, transparent), transparent 68%),
+    linear-gradient(180deg, var(--rosta-carbon, #111111) 0%, var(--voice-bg) 56%, var(--rosta-carbon, #111111) 100%);
   color: var(--voice-text);
   transition: background 500ms ease;
 }
@@ -37,8 +37,8 @@
   z-index: -1;
   pointer-events: none;
   background:
-    linear-gradient(90deg, transparent 0 16%, rgba(255, 222, 158, .018) 50%, transparent 84%),
-    radial-gradient(circle at 50% 42%, rgba(255, 203, 104, .07), transparent 45%);
+    linear-gradient(90deg, transparent 0 16%, color-mix(in srgb, var(--rosta-cream, #FBF3E6) 2%, transparent) 50%, transparent 84%),
+    radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--rosta-kraft, #C8A77D) 7%, transparent), transparent 45%);
   opacity: .9;
 }
 
@@ -63,8 +63,8 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   gap: 16px;
-  border-bottom: 1px solid rgba(231, 184, 102, .09);
-  background: linear-gradient(180deg, rgba(2, 2, 2, .88), rgba(2, 2, 2, .22));
+  border-bottom: 1px solid color-mix(in srgb, var(--rosta-kraft, #C8A77D) 9%, transparent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--rosta-carbon, #111111) 88%, transparent), color-mix(in srgb, var(--rosta-carbon, #111111) 22%, transparent));
 }
 
 .identity {
@@ -96,7 +96,7 @@
 }
 
 .identity small {
-  color: rgba(239, 199, 127, .38);
+  color: color-mix(in srgb, var(--rosta-kraft, #C8A77D) 38%, transparent);
   font-size: 8px;
   letter-spacing: .12em;
 }
@@ -110,7 +110,7 @@
   padding: 0 14px;
   border: 1px solid var(--voice-line);
   border-radius: 999px;
-  background: rgba(7, 5, 3, .52);
+  background: color-mix(in srgb, var(--rosta-carbon, #111111) 52%, transparent);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
 }
@@ -120,17 +120,17 @@
   height: 6px;
   border-radius: 50%;
   background: var(--voice-gold-light);
-  box-shadow: 0 0 0 5px rgba(239, 199, 127, .08), 0 0 14px rgba(239, 199, 127, .65);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--rosta-kraft, #C8A77D) 8%, transparent), 0 0 14px color-mix(in srgb, var(--rosta-kraft, #C8A77D) 65%, transparent);
   transition: background 500ms ease, box-shadow 500ms ease;
 }
 
 .state i.stateError {
-  background: #e05b49;
-  box-shadow: 0 0 0 5px rgba(224, 91, 73, .08), 0 0 14px rgba(224, 91, 73, .58);
+  background: var(--ruth-color-danger, #E1606B);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--ruth-color-danger, #E1606B) 8%, transparent), 0 0 14px color-mix(in srgb, var(--ruth-color-danger, #E1606B) 58%, transparent);
 }
 
 .state strong {
-  color: rgba(246, 238, 223, .68);
+  color: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 68%, transparent);
   font-size: 10px;
   font-weight: 680;
   letter-spacing: .055em;
@@ -153,21 +153,15 @@
   padding: 0;
   border: 1px solid var(--voice-line);
   border-radius: 50%;
-  background: rgba(10, 7, 4, .48);
-  color: rgba(239, 199, 127, .78);
+  background: color-mix(in srgb, var(--rosta-carbon, #111111) 48%, transparent);
+  color: color-mix(in srgb, var(--rosta-kraft, #C8A77D) 78%, transparent);
   text-decoration: none;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   transition: transform 180ms ease, border-color 180ms ease, color 180ms ease, background 180ms ease;
 }
 
-.actions button:hover,
-.actions a:hover {
-  transform: translateY(-1px);
-  border-color: var(--voice-line-strong);
-  background: rgba(201, 139, 55, .1);
-  color: var(--voice-gold-white);
-}
+
 
 .actions button:disabled {
   opacity: .32;
@@ -204,7 +198,7 @@
   transform: translate(-50%, -50%);
   border-radius: 50%;
   pointer-events: none;
-  background: radial-gradient(circle, rgba(184, 109, 28, .12), rgba(110, 59, 12, .045) 48%, transparent 73%);
+  background: radial-gradient(circle, color-mix(in srgb, var(--rosta-brick-b, #C94A40) 12%, transparent), color-mix(in srgb, var(--rosta-espresso, #38251C) 5%, transparent) 48%, transparent 73%);
   filter: blur(22px);
 }
 
@@ -265,11 +259,11 @@
   margin: 5px auto 12px;
   border-radius: 50%;
   background: var(--voice-gold-white);
-  box-shadow: 0 0 10px 3px rgba(239, 199, 127, .44);
+  box-shadow: 0 0 10px 3px color-mix(in srgb, var(--rosta-kraft, #C8A77D) 44%, transparent);
 }
 
 .copy small {
-  color: rgba(239, 199, 127, .72);
+  color: color-mix(in srgb, var(--rosta-kraft, #C8A77D) 72%, transparent);
   font-size: 11px;
   font-weight: 560;
   letter-spacing: .12em;
@@ -328,7 +322,7 @@
   gap: 8px;
   border: 1px solid var(--voice-line-strong);
   border-radius: 999px;
-  background: rgba(201, 139, 55, .1);
+  background: color-mix(in srgb, var(--rosta-brick-b, #C94A40) 10%, transparent);
   color: var(--voice-gold-light);
   font: inherit;
   font-size: 12px;
@@ -364,9 +358,9 @@
   border-radius: 28px;
   padding: 24px;
   background:
-    radial-gradient(circle at 50% 0, rgba(201, 139, 55, .1), transparent 42%),
-    rgba(11, 8, 5, .96);
-  box-shadow: 0 34px 100px rgba(0, 0, 0, .62), inset 0 1px rgba(255, 246, 223, .04);
+    radial-gradient(circle at 50% 0, color-mix(in srgb, var(--rosta-brick-b, #C94A40) 10%, transparent), transparent 42%),
+    color-mix(in srgb, var(--rosta-carbon, #111111) 96%, transparent);
+  box-shadow: 0 34px 100px rgba(0, 0, 0, .62), inset 0 1px color-mix(in srgb, var(--rosta-cream, #FBF3E6) 4%, transparent);
 }
 
 .settingsHeader {
@@ -434,7 +428,7 @@
   padding: 0 42px 0 14px;
   border: 1px solid var(--voice-line);
   border-radius: 14px;
-  background: rgba(255, 246, 223, .045);
+  background: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 5%, transparent);
   color: var(--voice-text);
   font: inherit;
   font-size: 14px;
@@ -443,7 +437,7 @@
 
 .voicePickerRow select:focus {
   border-color: var(--voice-line-strong);
-  box-shadow: 0 0 0 3px rgba(201, 139, 55, .1);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--rosta-brick-b, #C94A40) 10%, transparent);
 }
 
 .voicePickerRow option {
@@ -456,7 +450,7 @@
   padding: 0 18px;
   border: 1px solid var(--voice-line-strong);
   border-radius: 14px;
-  background: rgba(201, 139, 55, .12);
+  background: color-mix(in srgb, var(--rosta-brick-b, #C94A40) 12%, transparent);
   color: var(--voice-gold-light);
   font: inherit;
   font-size: 13px;
@@ -497,7 +491,7 @@
 
 .previewError {
   margin: 12px 0 0;
-  color: #e87864;
+  color: var(--ruth-color-danger, #E1606B);
   font-size: 12px;
 }
 
@@ -526,6 +520,16 @@
 
 .settingsFooter button {
   min-height: 44px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .actions button:hover,
+  .actions a:hover {
+    transform: translateY(-1px);
+    border-color: var(--voice-line-strong);
+    background: color-mix(in srgb, var(--rosta-brick-b, #C94A40) 10%, transparent);
+    color: var(--voice-gold-white);
+  }
 }
 
 @media (max-width: 760px) {

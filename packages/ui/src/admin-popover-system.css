@@ -4,11 +4,11 @@
  */
 
 html[data-ruth-theme="admin"] {
-  --admin-popover-bg: rgba(255, 252, 247, .985);
-  --admin-popover-border: rgba(184, 151, 106, .3);
+  --admin-popover-bg: var(--ruth-color-surface-elevated);
+  --admin-popover-border: var(--ruth-color-border-subtle);
   --admin-popover-radius: 22px;
   --admin-popover-item-radius: 14px;
-  --admin-popover-shadow: 0 24px 70px rgba(23, 21, 18, .2), 0 4px 18px rgba(23, 21, 18, .08);
+  --admin-popover-shadow: 0 24px 70px color-mix(in srgb, var(--rosta-carbon) 58%, transparent), 0 4px 18px color-mix(in srgb, var(--rosta-carbon) 34%, transparent);
   --admin-popover-item-height: 54px;
 }
 
@@ -33,13 +33,13 @@ html[data-ruth-theme="admin"] :where(
   border: 1px solid var(--admin-popover-border) !important;
   border-radius: var(--admin-popover-radius) !important;
   background: var(--admin-popover-bg) !important;
-  color: var(--admin-ink, #171512) !important;
+  color: var(--admin-ink, var(--rosta-cream)) !important;
   box-shadow: var(--admin-popover-shadow) !important;
   -webkit-backdrop-filter: blur(22px) saturate(1.08);
   backdrop-filter: blur(22px) saturate(1.08);
   overscroll-behavior: contain;
   scrollbar-width: thin;
-  scrollbar-color: rgba(118, 90, 55, .28) transparent;
+  scrollbar-color: var(--rosta-kraft) var(--rosta-carbon-soft);
   transform-origin: var(--radix-dropdown-menu-content-transform-origin, top center);
   animation: admin-popover-enter 190ms cubic-bezier(.22, 1, .36, 1) both;
 }
@@ -77,7 +77,7 @@ html[data-ruth-theme="admin"] :where(
   border: 0 !important;
   border-radius: var(--admin-popover-item-radius) !important;
   background: transparent !important;
-  color: var(--admin-ink, #171512) !important;
+  color: var(--admin-ink, var(--rosta-cream)) !important;
   font-family: var(--ruth-font-body, Montserrat, Arial, sans-serif) !important;
   font-size: .72rem !important;
   font-weight: 600 !important;
@@ -114,7 +114,7 @@ html[data-ruth-theme="admin"] :where(
   [role="menuitem"],
   [role="option"]
 ) :where(small, p, em, [data-secondary], [data-description]) {
-  color: var(--admin-muted, #6a6056) !important;
+  color: var(--admin-muted, color-mix(in srgb, var(--rosta-cream) 70%, transparent)) !important;
   font-size: .66rem !important;
   font-style: normal !important;
   font-weight: 500 !important;
@@ -124,31 +124,15 @@ html[data-ruth-theme="admin"] :where(
 }
 
 html[data-ruth-theme="admin"] :where(
-  .ruth-overlay-item,
-  [data-ruth-overlay-item="true"],
-  [role="menuitem"],
-  [role="menuitemcheckbox"],
-  [role="menuitemradio"],
-  [role="option"],
-  [role="treeitem"]
-):where(:hover, :focus-visible, [data-highlighted], [data-active-item]) {
-  outline: 0 !important;
-  background: rgba(184, 151, 106, .14) !important;
-  color: var(--admin-ink, #171512) !important;
-  box-shadow: inset 0 0 0 1px rgba(184, 151, 106, .14) !important;
-  transform: translateX(2px);
-}
-
-html[data-ruth-theme="admin"] :where(
   [role="option"][aria-selected="true"],
   [role="menuitemcheckbox"][aria-checked="true"],
   [role="menuitemradio"][aria-checked="true"],
   [data-ruth-overlay-item="true"][aria-current="page"],
   [data-ruth-overlay-item="true"].is-active
 ) {
-  background: var(--admin-ink, #171512) !important;
-  color: #fff !important;
-  box-shadow: 0 8px 22px rgba(23, 21, 18, .16) !important;
+  background: var(--rosta-brick-b) !important;
+  color: var(--rosta-action-text) !important;
+  box-shadow: inset 3px 0 0 var(--rosta-espresso), 0 8px 22px color-mix(in srgb, var(--rosta-carbon) 42%, transparent) !important;
 }
 
 html[data-ruth-theme="admin"] :where(
@@ -158,7 +142,7 @@ html[data-ruth-theme="admin"] :where(
   [data-ruth-overlay-item="true"][aria-current="page"],
   [data-ruth-overlay-item="true"].is-active
 ) :where(small, p, em, [data-secondary], [data-description]) {
-  color: rgba(255, 255, 255, .72) !important;
+  color: color-mix(in srgb, var(--rosta-action-text) 86%, transparent) !important;
 }
 
 html[data-ruth-theme="admin"] :where(
@@ -180,7 +164,7 @@ html[data-ruth-theme="admin"] :where(
   [data-ruth-overlay-surface="popover"] [class*="label"]
 ) {
   padding: 10px 16px 6px;
-  color: var(--admin-accent-strong, #765a37);
+  color: var(--admin-accent, var(--rosta-brick-b));
   font-size: .62rem;
   font-weight: 700;
   letter-spacing: .16em;
@@ -195,7 +179,7 @@ html[data-ruth-theme="admin"] :where(
   height: 1px !important;
   margin: 7px 12px !important;
   border: 0 !important;
-  background: rgba(184, 151, 106, .2) !important;
+  background: color-mix(in srgb, var(--rosta-kraft) 42%, transparent) !important;
 }
 
 /* Search fields placed inside dropdowns use the same calm surface. */
@@ -208,10 +192,10 @@ html[data-ruth-theme="admin"] :where(
   min-height: 44px;
   margin-bottom: 8px;
   padding-inline: 14px;
-  border: 1px solid var(--admin-border, #e7ded2) !important;
+  border: 1px solid var(--admin-border, color-mix(in srgb, var(--rosta-kraft) 42%, transparent)) !important;
   border-radius: 13px !important;
-  background: rgba(255, 255, 255, .78) !important;
-  color: var(--admin-ink, #171512) !important;
+  background: var(--rosta-carbon-soft) !important;
+  color: var(--admin-ink, var(--rosta-cream)) !important;
   outline: 0;
 }
 
@@ -220,8 +204,10 @@ html[data-ruth-theme="admin"] :where(
   [role="listbox"],
   [role="menu"]
 ) :where(input, [role="searchbox"]):focus {
-  border-color: var(--admin-accent, #b8976a) !important;
-  box-shadow: 0 0 0 3px rgba(184, 151, 106, .16) !important;
+  border-color: var(--admin-accent, var(--rosta-brick-b)) !important;
+  outline: 2px solid var(--rosta-brick-b) !important;
+  outline-offset: 2px;
+  box-shadow: none !important;
 }
 
 @keyframes admin-popover-enter {
@@ -274,5 +260,54 @@ html[data-ruth-theme="admin"] :where(
     [role="tree"]
   ) {
     animation: none !important;
+  }
+}
+
+html[data-ruth-theme="admin"] :where(
+  .ruth-overlay-item,
+  [data-ruth-overlay-item="true"],
+  [role="menuitem"],
+  [role="menuitemcheckbox"],
+  [role="menuitemradio"],
+  [role="option"],
+  [role="treeitem"]
+):where(:focus-visible, [data-highlighted], [data-active-item]) {
+  outline: 2px solid var(--rosta-brick-b) !important;
+  outline-offset: -2px;
+  background: var(--ruth-color-accent-wash) !important;
+  color: var(--rosta-cream) !important;
+  box-shadow: inset 3px 0 0 var(--rosta-brick-b) !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  html[data-ruth-theme="admin"] :where(
+    .ruth-overlay-item,
+    [data-ruth-overlay-item="true"],
+    [role="menuitem"],
+    [role="menuitemcheckbox"],
+    [role="menuitemradio"],
+    [role="option"],
+    [role="treeitem"]
+  ):hover {
+    background: var(--ruth-color-accent-wash) !important;
+    color: var(--rosta-cream) !important;
+    box-shadow: inset 3px 0 0 var(--rosta-brick-b) !important;
+    transform: translateX(2px);
+  }
+}
+
+@media (forced-colors: active) {
+  html[data-ruth-theme="admin"] :where(
+    .ruth-overlay-item,
+    [data-ruth-overlay-item="true"],
+    [role="menuitem"],
+    [role="menuitemcheckbox"],
+    [role="menuitemradio"],
+    [role="option"],
+    [role="treeitem"],
+    input,
+    [role="searchbox"]
+  ):focus-visible {
+    outline: 2px solid Highlight !important;
   }
 }

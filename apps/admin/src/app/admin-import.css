@@ -63,7 +63,7 @@
 
 .cr-import-errors > div {
   padding: 10px;
-  border: 1px solid #fecdca;
+  border: 1px solid color-mix(in srgb, var(--ruth-color-danger, #E1606B) 48%, transparent);
   border-radius: 10px;
   background: var(--danger-soft);
   display: grid;

@@ -498,7 +498,7 @@ function ProductPrice({ product, align = "left" }: { product: Product; align?: "
   return (
     <div className={`flex flex-wrap items-center gap-1.5 ${align === "right" ? "justify-end" : ""}`}>
       <span className="text-[10px] text-subtle line-through">{money(pricing.originalPrice, product.currency)}</span>
-      <span className="inline-flex items-center gap-1 rounded-sm bg-danger-foreground px-1.5 py-1 text-[11px] font-bold text-white">
+      <span className="inline-flex items-center gap-1 rounded-sm bg-danger-soft px-1.5 py-1 text-[11px] font-bold text-danger-foreground">
         {money(pricing.discountedPrice, product.currency)}
         <span className="text-[9px] font-medium">-%{pricing.discountPercentage}</span>
       </span>
@@ -1103,13 +1103,13 @@ export function ExactProducts() {
 
       {!bulkMode ? (
         <div className="grid gap-3 md:grid-cols-3">
-          <Link href="/products/studio?type=single" className="group rounded-[var(--radius-card)] bg-surface-primary p-4 shadow-card transition-all hover:shadow-floating">
+          <Link href="/products/studio?type=single" className="group rounded-[var(--radius-card)] bg-surface-primary p-4 shadow-card transition-all focus-visible:shadow-floating focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
             <div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center radius-small bg-accent-soft text-accent"><PackagePlus className="h-5 w-5" /></div><div><p className="text-sm font-semibold text-main">Ürün oluştur</p><p className="text-[11px] text-muted">Görseller, açıklamalar, kategori, koleksiyon ve varyantlar</p></div></div>
           </Link>
-          <Link href="/products/studio?type=bundle" className="group rounded-[var(--radius-card)] bg-surface-primary p-4 shadow-card transition-all hover:shadow-floating">
+          <Link href="/products/studio?type=bundle" className="group rounded-[var(--radius-card)] bg-surface-primary p-4 shadow-card transition-all focus-visible:shadow-floating focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
             <div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center radius-small bg-accent-soft text-accent"><Boxes className="h-5 w-5" /></div><div><p className="text-sm font-semibold text-main">Paket ürün oluştur</p><p className="text-[11px] text-muted">Birden fazla ürünü set olarak birleştir ve fiyatlandır</p></div></div>
           </Link>
-          <Link href="/products/studio" className="group rounded-[var(--radius-card)] bg-surface-primary p-4 shadow-card transition-all hover:shadow-floating">
+          <Link href="/products/studio" className="group rounded-[var(--radius-card)] bg-surface-primary p-4 shadow-card transition-all focus-visible:shadow-floating focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
             <div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center radius-small bg-accent-soft text-accent"><Edit3 className="h-5 w-5" /></div><div><p className="text-sm font-semibold text-main">Gelişmiş ürün düzenleme</p><p className="text-[11px] text-muted">Varyant, medya, stok ve storefront bilgilerini birlikte düzenle</p></div></div>
           </Link>
         </div>
@@ -1248,7 +1248,7 @@ export function ExactProducts() {
                         {valueOptions.map((option) => <option key={`${option.value}-${option.label}`} value={option.value}>{option.label}</option>)}
                       </select>
                     )}
-                    <button type="button" onClick={() => removeBulkAction(action.id)} className="col-start-2 row-span-2 row-start-1 flex h-10 w-10 items-center justify-center justify-self-end rounded-lg border border-border-subtle bg-surface-primary text-muted transition-colors hover:text-danger-foreground sm:col-start-3 sm:row-span-1" aria-label="Toplu işlemi kaldır" disabled={bulkSaving}><X className="h-4 w-4" /></button>
+                    <button type="button" onClick={() => removeBulkAction(action.id)} className="col-start-2 row-span-2 row-start-1 flex h-10 w-10 items-center justify-center justify-self-end rounded-lg border border-border-subtle bg-surface-primary text-muted transition-colors active:text-danger-foreground focus-visible:text-danger-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:col-start-3 sm:row-span-1" aria-label="Toplu işlemi kaldır" disabled={bulkSaving}><X className="h-4 w-4" /></button>
                   </div>
                 );
               })}
@@ -1265,10 +1265,10 @@ export function ExactProducts() {
       {!loading && view === "grid" ? (
         <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ${density === "compact" ? "gap-2" : "gap-3"}`}>
           {renderedProducts.map((product) => (
-            <div key={product.id} className={`group relative overflow-hidden bg-surface-primary radius-card shadow-card transition-all duration-200 ${selectedIds.has(product.id) ? "ring-2 ring-accent ring-offset-1" : "hover:shadow-floating"}`}>
-              {bulkMode ? <label className="absolute left-1.5 top-1.5 z-20 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full" aria-label={`${product.name} seç`}><span className={`flex h-7 w-7 items-center justify-center rounded-full border shadow-sm ${selectedIds.has(product.id) ? "border-accent bg-accent text-white" : "border-white/90 bg-white/90 text-transparent"}`}><input type="checkbox" checked={selectedIds.has(product.id)} onChange={() => toggleProduct(product.id)} className="sr-only" /><Check className="h-4 w-4" /></span></label> : null}
+            <div key={product.id} className={`group relative overflow-hidden bg-surface-primary radius-card shadow-card transition-all duration-200 ${selectedIds.has(product.id) ? "ring-2 ring-accent ring-offset-1" : ""}`}>
+              {bulkMode ? <label className="absolute left-1.5 top-1.5 z-20 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full" aria-label={`${product.name} seç`}><span className={`flex h-7 w-7 items-center justify-center rounded-full border shadow-sm ${selectedIds.has(product.id) ? "border-accent bg-accent text-[var(--rosta-action-text)]" : "border-border-strong bg-[var(--rosta-cream)] text-transparent"}`}><input type="checkbox" checked={selectedIds.has(product.id)} onChange={() => toggleProduct(product.id)} className="sr-only" /><Check className="h-4 w-4" /></span></label> : null}
               <Link href={`/products/studio?id=${encodeURIComponent(product.id)}`} className="block text-left">{gridCardBody(product)}</Link>
-              {!bulkMode ? <Link href={`/products/studio?id=${encodeURIComponent(product.id)}`} className="absolute bottom-2 right-2 hidden min-h-9 items-center gap-1 rounded-lg border border-border-subtle bg-surface-primary/95 px-2.5 text-[11px] font-semibold text-main opacity-0 shadow-sm transition-opacity group-hover:opacity-100 md:flex"><Edit3 className="h-3.5 w-3.5" /> Düzenle</Link> : null}
+              {!bulkMode ? <Link href={`/products/studio?id=${encodeURIComponent(product.id)}`} className="absolute bottom-2 right-2 hidden min-h-9 items-center gap-1 rounded-lg border border-border-subtle bg-surface-primary/95 px-2.5 text-[11px] font-semibold text-main opacity-0 shadow-sm transition-opacity group-focus-within:opacity-100 md:group-hover:opacity-100 md:flex"><Edit3 className="h-3.5 w-3.5" /> Düzenle</Link> : null}
               {!bulkMode ? <details className="absolute bottom-2 right-2 z-20 md:hidden"><summary className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-full border border-border-subtle bg-surface-primary/95 text-main shadow-sm" aria-label={`${product.name} işlemleri`}><MoreHorizontal className="h-4 w-4" /></summary><div className="absolute bottom-12 right-0 min-w-32 rounded-lg border border-border-subtle bg-surface-primary p-1 shadow-floating"><Link href={`/products/studio?id=${encodeURIComponent(product.id)}`} className="flex min-h-10 items-center gap-2 rounded-md px-3 text-xs font-medium text-main"><Edit3 className="h-3.5 w-3.5" /> Düzenle</Link></div></details> : null}
             </div>
           ))}
@@ -1288,8 +1288,8 @@ export function ExactProducts() {
             <span className="w-20 shrink-0" />
           </div>
           {renderedProducts.map((product) => (
-            <div key={product.id} className={`group relative flex items-center gap-2 bg-surface-primary radius-card shadow-card transition-all ${density === "compact" ? "p-2" : "p-3"} ${selectedIds.has(product.id) ? "ring-2 ring-accent ring-offset-1" : "hover:shadow-floating"}`}>
-              {bulkMode ? <label className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center" aria-label={`${product.name} seç`}><span className={`flex h-7 w-7 items-center justify-center rounded-full border ${selectedIds.has(product.id) ? "border-accent bg-accent text-white" : "border-border-subtle bg-surface-primary text-transparent"}`}><input type="checkbox" checked={selectedIds.has(product.id)} onChange={() => toggleProduct(product.id)} className="sr-only" /><Check className="h-4 w-4" /></span></label> : null}
+            <div key={product.id} className={`group relative flex items-center gap-2 bg-surface-primary radius-card shadow-card transition-all ${density === "compact" ? "p-2" : "p-3"} ${selectedIds.has(product.id) ? "ring-2 ring-accent ring-offset-1" : ""}`}>
+              {bulkMode ? <label className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center" aria-label={`${product.name} seç`}><span className={`flex h-7 w-7 items-center justify-center rounded-full border ${selectedIds.has(product.id) ? "border-accent bg-accent text-[var(--rosta-action-text)]" : "border-border-subtle bg-surface-primary text-transparent"}`}><input type="checkbox" checked={selectedIds.has(product.id)} onChange={() => toggleProduct(product.id)} className="sr-only" /><Check className="h-4 w-4" /></span></label> : null}
               <Link href={`/products/studio?id=${encodeURIComponent(product.id)}`} className="flex min-w-0 flex-1 items-center gap-3 md:hidden">{mobileListCardBody(product)}</Link>
               <Link href={`/products/studio?id=${encodeURIComponent(product.id)}`} className="hidden min-w-0 flex-1 items-center gap-3 md:flex">
                 <div className={`${density === "compact" ? "h-10 w-10" : "h-12 w-12"} shrink-0 overflow-hidden bg-surface-tertiary radius-small`}><ProductPhoto product={product} /></div>
@@ -1300,7 +1300,7 @@ export function ExactProducts() {
                 {columns.stock ? <span className={`w-20 shrink-0 text-right text-xs font-medium ${stockCount(product) === 0 ? "text-danger-foreground" : stockCount(product) < 10 ? "text-warning-foreground" : "text-muted"}`}>{stockCount(product)}</span> : null}
                 {columns.price ? <span className="w-28 shrink-0 text-right"><ProductPrice product={product} align="right" /></span> : null}
               </Link>
-              <Link href={`/products/studio?id=${encodeURIComponent(product.id)}`} className="hidden min-h-9 w-20 shrink-0 items-center justify-center gap-1 rounded-lg border border-border-subtle bg-surface-secondary px-2 text-[11px] font-semibold text-main opacity-0 transition-opacity group-hover:opacity-100 md:flex"><Edit3 className="h-3.5 w-3.5" /> Aç</Link>
+              <Link href={`/products/studio?id=${encodeURIComponent(product.id)}`} className="hidden min-h-9 w-20 shrink-0 items-center justify-center gap-1 rounded-lg border border-border-subtle bg-surface-secondary px-2 text-[11px] font-semibold text-main opacity-0 transition-opacity group-focus-within:opacity-100 md:group-hover:opacity-100 md:flex"><Edit3 className="h-3.5 w-3.5" /> Aç</Link>
               <details className="relative md:hidden"><summary className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-full text-muted" aria-label={`${product.name} işlemleri`}><MoreHorizontal className="h-4 w-4" /></summary><div className="absolute right-0 top-11 z-20 min-w-32 rounded-lg border border-border-subtle bg-surface-primary p-1 shadow-floating"><Link href={`/products/studio?id=${encodeURIComponent(product.id)}`} className="flex min-h-10 items-center gap-2 rounded-md px-3 text-xs font-medium text-main"><Edit3 className="h-3.5 w-3.5" /> Düzenle</Link></div></details>
             </div>
           ))}

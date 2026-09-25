@@ -41,7 +41,7 @@ section[data-ruthie-experience="chat"] textarea {
 
 section[data-ruthie-experience="chat"] textarea:focus {
   transform: translateY(-1px);
-  text-shadow: 0 0 20px rgba(184, 137, 255, .12);
+  text-shadow: 0 0 20px color-mix(in srgb, var(--rosta-brick-b, #C94A40) 14%, transparent);
 }
 
 section[data-ruthie-experience="chat"] main > div:last-child {

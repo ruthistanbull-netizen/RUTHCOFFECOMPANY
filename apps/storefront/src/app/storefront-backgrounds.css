@@ -1,12 +1,12 @@
-/* Soft off-white palette for the customer-facing storefront. */
+/* ROSTA Global Color System v2.3 — storefront surface compatibility. */
 [data-ruth-theme="storefront"] {
-  --ruth-storefront-canvas: #F4F0E8;
-  --ruth-storefront-surface: #F4F0E8;
-  --ruth-storefront-surface-muted: #F4F0E8;
-  --ruth-storefront-surface-soft: #F4F0E8;
-  --ruth-storefront-border: #AAA8A1;
-  --ruth-storefront-border-strong: #AAA8A1;
-  --ruth-storefront-translucent: rgba(244, 240, 232, 0.94);
+  --ruth-storefront-canvas: var(--rosta-carbon);
+  --ruth-storefront-surface: var(--rosta-carbon-soft);
+  --ruth-storefront-surface-muted: var(--rosta-carbon-soft);
+  --ruth-storefront-surface-soft: var(--rosta-carbon-soft);
+  --ruth-storefront-border: color-mix(in srgb, var(--rosta-kraft) 42%, transparent);
+  --ruth-storefront-border-strong: var(--rosta-kraft);
+  --ruth-storefront-translucent: color-mix(in srgb, var(--rosta-carbon-soft) 94%, transparent);
 }
 
 .site-app-shell:not(:has(.ds-page)),
@@ -21,11 +21,9 @@
   .ruth-card,
   .ruth-drawer,
   .ruth-modal,
-  .ruth-page-section,
   .ruth-overlay__header,
   .ruth-overlay__body,
   .ruth-overlay__footer,
-  footer,
   input,
   select,
   textarea
@@ -34,7 +32,8 @@
 }
 
 .site-app-shell:not(:has(.ds-page)) :where(.bg-white, .bg-ivory, .bg-cream) {
-  background-color: var(--ruth-color-surface) !important;
+  background-color: var(--rosta-cream) !important;
+  color: var(--rosta-carbon);
 }
 
 .site-app-shell:not(:has(.ds-page)) :where(
@@ -44,9 +43,9 @@
   .phase1d-cart-item__media,
   span[class*="collectionImage"]
 ) {
-  background-color: var(--ruth-color-surface) !important;
+  background-color: var(--ruth-color-surface-inverse) !important;
 }
 
 .site-app-shell:not(:has(.ds-page)) header[data-scrolled="false"] [class*="bar"] {
-  background-color: var(--ruth-color-surface) !important;
+  background-color: transparent !important;
 }

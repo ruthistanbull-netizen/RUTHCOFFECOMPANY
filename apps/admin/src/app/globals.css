@@ -2,37 +2,72 @@
 
 :root {
   --rosta-carbon: #111111;
-  --rosta-bone: #F4F0E8;
-  --rosta-espresso: #2B1B16;
-  --rosta-oxide: #B9563D;
-  --rosta-olive: #6F725B;
-  --rosta-steel: #AAA8A1;
-  --panel-canvas: var(--rosta-bone);
-  --panel-surface: var(--rosta-bone);
-  --panel-surface-2: var(--rosta-bone);
-  --panel-ink: var(--rosta-carbon);
-  --panel-muted: var(--rosta-olive);
-  --panel-line: var(--rosta-steel);
-  --panel-accent: var(--rosta-oxide);
+  --rosta-carbon-soft: #242424;
+  --rosta-cream: #FBF3E6;
+  --rosta-espresso: #38251C;
+  --rosta-brick-b: #C94A40;
+  --rosta-cocoa: #6B4638;
+  --rosta-kraft: #C8A77D;
+  --rosta-action-text: #FFFFFF;
+
+  /* Legacy aliases stay inside the locked palette. */
+  --rosta-bone: var(--rosta-cream);
+  --rosta-oxide: var(--rosta-brick-b);
+  --rosta-olive: var(--rosta-cocoa);
+  --rosta-steel: var(--rosta-kraft);
+
+  --panel-canvas: var(--rosta-carbon);
+  --panel-surface: var(--rosta-carbon-soft);
+  --panel-surface-2: var(--rosta-carbon-soft);
+  --panel-ink: var(--rosta-cream);
+  --panel-muted: color-mix(in srgb, var(--rosta-cream) 70%, transparent);
+  --panel-line: color-mix(in srgb, var(--rosta-kraft) 42%, transparent);
+  --panel-accent: var(--rosta-brick-b);
   --panel-accent-strong: var(--rosta-espresso);
 
-  --ruth-color-canvas: var(--rosta-bone);
-  --ruth-color-surface: var(--rosta-bone);
-  --ruth-color-surface-muted: var(--rosta-bone);
-  --ruth-color-text-primary: var(--rosta-carbon);
-  --ruth-color-text-muted: var(--rosta-olive);
-  --ruth-color-text-inverse: var(--rosta-bone);
-  --ruth-color-accent: var(--rosta-oxide);
-  --ruth-color-accent-soft: var(--rosta-oxide);
+  --ruth-color-canvas: var(--rosta-carbon);
+  --ruth-color-surface: var(--rosta-carbon-soft);
+  --ruth-color-surface-muted: var(--rosta-carbon-soft);
+  --ruth-color-surface-elevated: var(--rosta-carbon-soft);
+  --ruth-color-surface-inverse: var(--rosta-cream);
+  --ruth-color-text-primary: var(--rosta-cream);
+  --ruth-color-text-muted: color-mix(in srgb, var(--rosta-cream) 70%, transparent);
+  --ruth-color-text-inverse: var(--rosta-cream);
+  --ruth-color-text-on-light: var(--rosta-carbon);
+  --ruth-color-text-on-action: var(--rosta-action-text);
+  --ruth-color-accent: var(--rosta-brick-b);
+  --ruth-color-accent-soft: color-mix(in srgb, var(--rosta-brick-b) 15%, transparent);
   --ruth-color-accent-strong: var(--rosta-espresso);
-  --ruth-color-border-subtle: var(--rosta-steel);
-  --ruth-color-border-strong: var(--rosta-steel);
-  --ruth-color-focus: var(--rosta-oxide);
-  --ruth-color-overlay: rgb(17 17 17 / 44%);
+  --ruth-color-accent-wash: color-mix(in srgb, var(--rosta-brick-b) 15%, transparent);
+  --ruth-color-border-subtle: color-mix(in srgb, var(--rosta-kraft) 42%, transparent);
+  --ruth-color-border-strong: var(--rosta-kraft);
+  --ruth-color-focus: var(--rosta-brick-b);
+  --ruth-color-selected: var(--rosta-brick-b);
+  --ruth-color-overlay: color-mix(in srgb, var(--rosta-carbon) 72%, transparent);
+
+  --ruth-color-success: #1BA786;
+  --ruth-color-success-soft: #E3F8ED;
+  --ruth-color-success-text: #147B63;
+  --ruth-color-warning: #D99620;
+  --ruth-color-warning-soft: #FFF4D6;
+  --ruth-color-warning-text: #9B6B17;
+  --ruth-color-danger: #E1606B;
+  --ruth-color-danger-soft: #FFE5E8;
+  --ruth-color-danger-text: #D62937;
+  --ruth-color-info: #4F94E8;
+  --ruth-color-info-soft: #EBF3FF;
+  --ruth-color-info-text: #1C71D9;
+  --ruth-color-neutral: #858993;
+  --ruth-color-neutral-soft: #EBECF0;
+  --ruth-color-neutral-text: #60636C;
+  --ruth-color-status-accent: #C9A33B;
+  --ruth-color-status-accent-soft: #F6EBC6;
+  --ruth-color-status-accent-text: #3B2D0D;
+
   --ruth-font-display: var(--font-archivo), "Arial Black", "Helvetica Neue", Arial, sans-serif;
   --ruth-font-body: var(--font-inter), "Helvetica Neue", Arial, sans-serif;
   --panel-radius: 16px;
-  --panel-shadow: 0 18px 55px rgba(17,17,17,.08);
+  --panel-shadow: 0 18px 55px color-mix(in srgb, var(--rosta-carbon) 42%, transparent);
 }
 
 * { box-sizing: border-box; }
@@ -53,10 +88,9 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .admin-sidebar-brand small { margin-top:3px; color:color-mix(in srgb,var(--rosta-bone) 60%,transparent); font-size:8px; letter-spacing:.22em; }
 .admin-nav { display:grid; gap:5px; }
 .admin-nav-link { min-height:42px; display:flex; align-items:center; gap:11px; padding:0 12px; border-radius:11px; color:color-mix(in srgb,var(--rosta-bone) 70%,transparent); font-size:13px; transition:background .18s ease,color .18s ease,transform .18s ease; }
-.admin-nav-link:hover { color:var(--rosta-bone); background:rgba(244,240,232,.06); transform:translateX(2px); }
-.admin-nav-link.is-active { color:var(--rosta-bone); background:rgba(185,86,61,.18); box-shadow:inset 3px 0 0 var(--rosta-oxide); }
+.admin-nav-link.is-active { color:var(--rosta-bone); background:color-mix(in srgb,var(--rosta-brick-b) 18%,transparent); box-shadow:inset 3px 0 0 var(--rosta-oxide); }
 .admin-sidebar-footer { margin-top:auto; display:grid; gap:8px; }
-.admin-sidebar-footer a,.admin-sidebar-footer button { min-height:38px; border:1px solid rgba(244,240,232,.12); border-radius:10px; background:transparent; color:var(--rosta-bone); display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; font-size:11px; }
+.admin-sidebar-footer a,.admin-sidebar-footer button { min-height:38px; border:1px solid color-mix(in srgb,var(--rosta-cream) 12%,transparent); border-radius:10px; background:transparent; color:var(--rosta-bone); display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; font-size:11px; }
 .admin-main { min-width:0; }
 .admin-topbar { position:sticky; top:0; z-index:20; height:68px; display:flex; align-items:center; justify-content:space-between; padding:0 28px; background:color-mix(in srgb,var(--rosta-bone) 90%,transparent); backdrop-filter:blur(18px); border-bottom:1px solid var(--panel-line); font-size:10px; letter-spacing:.16em; }
 .admin-topbar>div { display:flex; align-items:center; gap:7px; color:var(--panel-muted); }
@@ -71,7 +105,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .admin-kicker { margin:0; color:var(--panel-accent); font-size:9px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; }
 .admin-grid { display:grid; gap:14px; }
 .admin-grid.metrics { grid-template-columns:repeat(4,minmax(0,1fr)); }
-.admin-card { border:1px solid var(--panel-line); border-radius:var(--panel-radius); background:var(--panel-surface); box-shadow:0 1px 0 rgba(17,17,17,.02); overflow:hidden; }
+.admin-card { border:1px solid var(--panel-line); border-radius:var(--panel-radius); background:var(--panel-surface); box-shadow:0 1px 0 color-mix(in srgb,var(--rosta-carbon) 2%,transparent); overflow:hidden; }
 .admin-card-body { padding:18px; }
 .admin-metric { min-height:132px; display:flex; flex-direction:column; justify-content:space-between; }
 .admin-metric span { color:var(--panel-muted); font-size:11px; }
@@ -138,13 +172,12 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .admin-inline-message { margin:0 0 14px; padding:10px 12px; border:1px solid var(--panel-line); border-radius:10px; background:var(--panel-surface); color:var(--panel-muted); font-size:11px; }
 .admin-row-actions { display:flex; align-items:center; gap:7px; }
 .admin-row-actions button { border:0; background:transparent; color:var(--panel-muted); font-size:10px; cursor:pointer; padding:6px 0; }
-.admin-row-actions button:hover { color:var(--panel-accent); }
 .admin-resource-name { display:flex; align-items:center; gap:10px; min-width:220px; }
 .admin-resource-name>img,.admin-resource-name>span { width:42px; height:56px; flex:0 0 42px; border-radius:8px; object-fit:cover; background:var(--panel-surface-2); border:1px solid var(--panel-line); }
 .admin-resource-name strong,.admin-resource-name small,.admin-cell-sub { display:block; }
 .admin-resource-name small,.admin-cell-sub { margin-top:3px; color:var(--panel-muted); font-size:9px; }
-.admin-editor-backdrop { position:fixed; inset:0; z-index:100; display:flex; justify-content:flex-end; background:var(--ruth-color-overlay,rgba(17,17,17,.46)); backdrop-filter:blur(4px); }
-.admin-editor-panel { width:min(620px,100vw); height:100dvh; overflow:auto; background:var(--rosta-bone); border-left:1px solid var(--panel-line); box-shadow:-24px 0 70px rgba(17,17,17,.14); padding:22px; }
+.admin-editor-backdrop { position:fixed; inset:0; z-index:100; display:flex; justify-content:flex-end; background:var(--ruth-color-overlay,color-mix(in srgb,var(--rosta-carbon) 46%,transparent)); backdrop-filter:blur(4px); }
+.admin-editor-panel { width:min(620px,100vw); height:100dvh; overflow:auto; background:var(--rosta-bone); border-left:1px solid var(--panel-line); box-shadow:-24px 0 70px color-mix(in srgb,var(--rosta-carbon) 14%,transparent); padding:22px; }
 .admin-editor-panel>header,.admin-editor-panel>footer { display:flex; align-items:center; justify-content:space-between; gap:12px; }
 .admin-editor-panel>header { padding-bottom:20px; border-bottom:1px solid var(--panel-line); }
 .admin-editor-panel>header h2 { margin:5px 0 0; font-family:var(--font-archivo),Arial Black,sans-serif; font-size:28px; letter-spacing:-.04em; }
@@ -199,7 +232,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .admin-theme-preview p { margin:5px 0 0; color:var(--panel-ink); font-size:9px; overflow-wrap:anywhere; }
 .admin-theme-editors { display:grid; gap:18px; }
 .admin-section-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
-.admin-theme-savebar { position:sticky; bottom:14px; z-index:20; display:flex; align-items:center; justify-content:space-between; gap:16px; padding:12px 14px; border:1px solid var(--panel-line); border-radius:14px; background:color-mix(in srgb,var(--rosta-bone) 90%,transparent); backdrop-filter:blur(18px); box-shadow:0 14px 40px rgba(17,17,17,.12); }
+.admin-theme-savebar { position:sticky; bottom:14px; z-index:20; display:flex; align-items:center; justify-content:space-between; gap:16px; padding:12px 14px; border:1px solid var(--panel-line); border-radius:14px; background:color-mix(in srgb,var(--rosta-bone) 90%,transparent); backdrop-filter:blur(18px); box-shadow:0 14px 40px color-mix(in srgb,var(--rosta-carbon) 12%,transparent); }
 .admin-theme-savebar>span { color:var(--panel-muted); font-size:10px; }
 
 @media(max-width:980px){
@@ -209,4 +242,179 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 @media(max-width:620px){
   .admin-theme-savebar { bottom:90px; align-items:flex-start; flex-direction:column; }
   .admin-theme-savebar .admin-primary-button { width:100%; justify-content:center; }
+}
+
+
+/* ROSTA Global Color System v2.3 - admin compatibility lock.
+   Keeps legacy admin classes inside the same semantic palette. */
+html,
+body {
+  background: var(--panel-canvas);
+  color: var(--panel-ink);
+}
+
+.admin-sidebar {
+  background: var(--rosta-carbon);
+  color: var(--rosta-cream);
+}
+
+.admin-sidebar-mark {
+  background: var(--rosta-brick-b);
+  color: var(--rosta-action-text);
+}
+
+.admin-nav-link {
+  color: color-mix(in srgb, var(--rosta-cream) 72%, transparent);
+}
+
+.admin-nav-link.is-active {
+  color: var(--rosta-cream);
+  background: color-mix(in srgb, var(--rosta-brick-b) 16%, var(--rosta-carbon-soft));
+  box-shadow: inset 3px 0 0 var(--rosta-brick-b);
+}
+
+.admin-sidebar-footer a,
+.admin-sidebar-footer button {
+  border-color: color-mix(in srgb, var(--rosta-kraft) 36%, transparent);
+  color: var(--rosta-cream);
+}
+
+.admin-topbar {
+  background: color-mix(in srgb, var(--rosta-carbon) 94%, transparent);
+  color: var(--rosta-cream);
+  border-bottom-color: var(--panel-line);
+}
+
+.admin-status-dot {
+  background: var(--ruth-color-success);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--ruth-color-success) 16%, transparent);
+}
+
+.admin-editor-panel {
+  background: var(--rosta-carbon-soft);
+  color: var(--rosta-cream);
+}
+
+.admin-editor-panel > footer,
+.admin-theme-savebar {
+  background: color-mix(in srgb, var(--rosta-carbon-soft) 92%, transparent);
+}
+
+.admin-chip.is-active {
+  border-color: var(--rosta-brick-b);
+  background: color-mix(in srgb, var(--rosta-brick-b) 14%, var(--rosta-carbon-soft));
+  color: var(--rosta-cream);
+}
+
+.admin-upload-control small {
+  color: var(--panel-muted);
+}
+
+.admin-topbar > div,
+.admin-page-header p,
+.admin-metric span,
+.admin-table th,
+.admin-toolbar span,
+.admin-inline-message,
+.admin-row-actions button,
+.admin-check,
+.admin-login-form label span,
+.admin-loading-screen {
+  color: var(--panel-muted);
+}
+
+.admin-card,
+.admin-inline-message,
+.admin-login-form input[type="email"],
+.admin-login-form input[type="password"] {
+  background: var(--panel-surface);
+  color: var(--panel-ink);
+  border-color: var(--panel-line);
+}
+
+.admin-table th,
+.admin-table td {
+  border-bottom-color: var(--panel-line);
+}
+
+.admin-primary-button {
+  border-color: var(--rosta-brick-b);
+  background: var(--rosta-brick-b);
+  color: var(--rosta-action-text);
+}
+
+.admin-primary-button:active {
+  border-color: var(--rosta-espresso);
+  background: var(--rosta-espresso);
+}
+
+.admin-secondary-button {
+  border-color: var(--panel-line);
+  background: var(--rosta-carbon-soft);
+  color: var(--rosta-cream);
+}
+
+.admin-pill {
+  border: 1px solid color-mix(in srgb, var(--rosta-kraft) 34%, transparent);
+  background: var(--rosta-carbon-soft);
+  color: var(--rosta-cream);
+}
+
+.admin-error {
+  border-color: color-mix(in srgb, var(--ruth-color-danger) 44%, transparent);
+  background: color-mix(in srgb, var(--ruth-color-danger) 14%, var(--rosta-carbon-soft));
+  color: var(--ruth-color-danger-soft);
+}
+
+.admin-login,
+.admin-loading-screen {
+  background: var(--rosta-carbon);
+}
+
+.admin-login-brand {
+  background: var(--rosta-carbon);
+  color: var(--rosta-cream);
+}
+
+.admin-loader {
+  border-color: color-mix(in srgb, var(--rosta-kraft) 42%, transparent);
+  border-top-color: var(--rosta-brick-b);
+}
+
+::selection {
+  background: var(--rosta-brick-b);
+  color: var(--rosta-action-text);
+}
+
+* {
+  scrollbar-color: var(--rosta-kraft) var(--rosta-carbon);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .admin-nav-link:hover {
+    color: var(--rosta-cream);
+    background: var(--rosta-carbon-soft);
+  }
+
+  .admin-primary-button:hover {
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--rosta-cream) 74%, transparent);
+  }
+
+  .admin-secondary-button:hover,
+  .admin-row-actions button:hover {
+    color: var(--rosta-brick-b);
+    border-color: var(--rosta-brick-b);
+  }
+}
+
+@media (max-width: 620px) {
+  .admin-nav-link.is-active {
+    box-shadow: inset 0 -3px 0 var(--rosta-brick-b);
+  }
+}
+
+@media (forced-colors: active) {
+  :where(button, a[href], input, select, textarea):focus-visible {
+    outline: 2px solid Highlight !important;
+  }
 }

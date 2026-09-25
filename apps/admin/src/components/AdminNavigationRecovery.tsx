@@ -69,13 +69,30 @@ function anchorFromEvent(event: MouseEvent) {
   return target?.closest("a[href]") as HTMLAnchorElement | null;
 }
 
-function shouldUseDocumentNavigation(event: MouseEvent, anchor: HTMLAnchorElement, url: URL) {
+function shouldTrackNavigation(event: MouseEvent, anchor: HTMLAnchorElement, url: URL) {
   if (event.defaultPrevented || event.button !== 0) return false;
   if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return false;
   if (anchor.hasAttribute("download")) return false;
   if (anchor.target && anchor.target !== "_self") return false;
-  if (anchor.dataset.adminSpaNavigation === "true") return false;
   return isCrossPageTarget(url);
+}
+
+function markHubInternalDocumentHandoff() {
+  try {
+    const hasWorkspace =
+      window.sessionStorage.getItem("rosta_panel_hub_entered_v1") === "1" ||
+      window.sessionStorage.getItem("rr_hub_ruth_entered_v1") === "1";
+    if (hasWorkspace) window.sessionStorage.setItem("rr_hub_pwa_handoff_v1", "1");
+  } catch {}
+}
+
+function armHubInternalDocumentHandoff() {
+  markHubInternalDocumentHandoff();
+  window.setTimeout(() => {
+    try {
+      window.sessionStorage.removeItem("rr_hub_pwa_handoff_v1");
+    } catch {}
+  }, 1500);
 }
 
 export function AdminNavigationRecovery() {
@@ -91,41 +108,27 @@ export function AdminNavigationRecovery() {
       pendingTarget = routeTarget(url);
     };
 
-    const navigateDocument = (url: URL) => {
-      pendingTarget = routeTarget(url);
-      window.location.assign(url.href);
-    };
-
-    // Zeabur occasionally closes a streamed Next.js RSC navigation before the
-    // client finishes reading it. Cross-page admin navigation is more important
-    // than preserving an SPA transition, so pathname changes use a normal
-    // document request. Same-page query/filter updates remain client-side.
+    // Keep normal Next.js SPA navigation as the primary path. Forcing every
+    // cross-page tap into a document navigation makes standalone/PWA shells look
+    // like a fresh launch and can send the user back to RR HUB. We only remember
+    // the intended destination here; a document request remains a recovery path.
     const onDocumentClick = (event: MouseEvent) => {
       const anchor = anchorFromEvent(event);
       if (!anchor) return;
       const url = safeUrl(anchor.href);
-      if (!url || !shouldUseDocumentNavigation(event, anchor, url)) return;
-
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation();
-      navigateDocument(url);
+      if (!url || !shouldTrackNavigation(event, anchor, url)) return;
+      pendingTarget = routeTarget(url);
+      // Raw <a> links still perform a real document navigation. Arm a short-lived
+      // handoff marker so a same-panel document load is not mistaken for a cold
+      // standalone launch. Successful SPA transitions clear the marker shortly after.
+      armHubInternalDocumentHandoff();
     };
 
     const originalPushState = window.history.pushState.bind(window.history);
     const originalReplaceState = window.history.replaceState.bind(window.history);
 
     window.history.pushState = ((data: unknown, unused: string, url?: string | URL | null) => {
-      const destination = safeUrl(url);
       rememberTarget(url);
-
-      // Programmatic router.push() calls are not necessarily backed by an anchor
-      // click. If they change pathname, use the same reliable document path.
-      if (destination && isCrossPageTarget(destination)) {
-        navigateDocument(destination);
-        return;
-      }
-
       originalPushState(data, unused, url);
     }) as History["pushState"];
 
@@ -155,6 +158,7 @@ export function AdminNavigationRecovery() {
 
       reloadTimer = window.setTimeout(() => {
         const destination = safeUrl(target);
+        markHubInternalDocumentHandoff();
         if (destination) window.location.assign(destination.href);
         else window.location.reload();
       }, 20);
@@ -163,12 +167,12 @@ export function AdminNavigationRecovery() {
     const onError = (event: ErrorEvent) => recover(event.error || event.message);
     const onUnhandledRejection = (event: PromiseRejectionEvent) => recover(event.reason);
 
-    // Back/forward can also ask the client router for an RSC stream. If pathname
-    // changed, immediately turn the history destination into a document load.
+    // Back/forward should stay client-side too. Track the destination so the
+    // same recovery fallback can be used only if the RSC transition actually fails.
     const onPopState = () => {
       if (window.location.pathname === lastDocumentPath) return;
       lastDocumentPath = window.location.pathname;
-      window.setTimeout(() => window.location.reload(), 0);
+      pendingTarget = `${window.location.pathname}${window.location.search}${window.location.hash}`;
     };
 
     document.addEventListener("click", onDocumentClick, true);

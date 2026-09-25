@@ -86,16 +86,16 @@ function FilterOption({
     <button
       type="button"
       onClick={onClick}
-      className="flex w-full items-center gap-3 text-left text-sm"
+      className="flex w-full items-center gap-3 text-left text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
     >
       <span
         className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border transition ${
-          checked ? "border-ink bg-ink text-cream" : "border-gold/35"
+          checked ? "border-brick bg-brick text-[var(--rosta-action-text)]" : "border-kraft/45 bg-carbon-soft"
         }`}
       >
         {checked && <Check size={11} />}
       </span>
-      <span className={checked ? "text-ink" : "text-muted-ruth"}>{label}</span>
+      <span className={checked ? "text-cream" : "text-cream/70"}>{label}</span>
     </button>
   );
 }
@@ -355,14 +355,14 @@ export function ProductCatalog({
           value={searchTerm}
           onChange={(event) => setSearchTerm(event.target.value)}
           placeholder="Ürünlerde ara..."
-          className="w-full rounded-full border border-gold/20 bg-cream px-5 py-3 text-sm outline-none transition focus:border-gold-dark"
+          className="w-full rounded-full border border-kraft/40 bg-carbon-soft px-5 py-3 text-sm text-cream outline-none transition placeholder:text-cream/45 focus:border-brick focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-brick"
         />
       </div>
 
       {searchTerm && (
-        <div className="mb-6 flex items-center justify-between gap-4 rounded-lg border border-gold/15 bg-cream px-4 py-3 text-sm text-muted-ruth">
+        <div className="mb-6 flex items-center justify-between gap-4 rounded-lg border border-kraft/35 bg-carbon-soft px-4 py-3 text-sm text-cream/70">
           <span>
-            Arama: <span className="text-ink">{searchTerm}</span>
+            Arama: <span className="text-cream">{searchTerm}</span>
           </span>
           <button
             type="button"
@@ -370,34 +370,34 @@ export function ProductCatalog({
               window.history.replaceState(null, "", window.location.pathname);
               setSearchTerm("");
             }}
-            className="text-xs uppercase tracking-wide-luxe text-gold-dark"
+            className="text-xs uppercase tracking-wide-luxe text-brick focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
           >
             Temizle
           </button>
         </div>
       )}
 
-      <div className="mb-8 flex items-center justify-between gap-4 border-b border-gold/15 pb-4">
+      <div className="mb-8 flex items-center justify-between gap-4 border-b border-kraft/35 pb-4">
         <button
           type="button"
           onClick={() => setMobileFiltersOpen(true)}
-          className="flex items-center gap-2 text-sm lg:hidden"
+          className="flex items-center gap-2 text-sm text-cream focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick lg:hidden"
         >
           <SlidersHorizontal size={16} />
           Filtrele {activeCount > 0 && `(${activeCount})`}
         </button>
-        <p className="hidden text-sm text-muted-ruth lg:block">
+        <p className="hidden text-sm text-cream/70 lg:block">
           {filteredProducts.length} ürün
         </p>
 
         <label className="ml-auto flex items-center gap-3">
-          <span className="hidden text-[10px] uppercase tracking-wide-luxe text-muted-ruth sm:block">
+          <span className="hidden text-[10px] uppercase tracking-wide-luxe text-cream/70 sm:block">
             Sırala
           </span>
           <select
             value={sort}
             onChange={(event) => setSort(event.target.value)}
-            className="cursor-pointer border-b border-gold/35 bg-transparent pb-1 text-sm outline-none"
+            className="cursor-pointer border-b border-kraft/45 bg-carbon pb-1 text-sm text-cream outline-none focus:border-brick focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
             aria-label="Ürünleri sırala"
           >
             <option value="featured">Öne çıkanlar</option>
@@ -425,12 +425,12 @@ export function ProductCatalog({
               ))}
             </div>
           ) : (
-            <div className="rounded-lg border border-gold/15 bg-cream px-6 py-20 text-center">
+            <div className="rounded-lg border border-kraft/35 bg-carbon-soft px-6 py-20 text-center text-cream">
               <p className="font-heading text-xl">{emptyMessage}</p>
               <button
                 type="button"
                 onClick={() => setFilters(EMPTY_FILTERS)}
-                className="mt-5 text-xs uppercase tracking-wide-luxe text-gold-dark"
+                className="mt-5 text-xs uppercase tracking-wide-luxe text-brick focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
               >
                 Filtreleri Temizle
               </button>
@@ -442,28 +442,28 @@ export function ProductCatalog({
       <AnimatePresence>
         {mobileFiltersOpen && (
           <motion.div
-            className="fixed inset-0 z-[85] bg-ink/45 lg:hidden"
+            className="fixed inset-0 z-[85] bg-carbon/75 lg:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setMobileFiltersOpen(false)}
           >
             <motion.aside
-              className="absolute bottom-0 left-0 right-0 max-h-[85dvh] overflow-y-auto rounded-t-2xl bg-cream"
+              className="absolute bottom-0 left-0 right-0 max-h-[85dvh] overflow-y-auto rounded-t-2xl border-t border-kraft/35 bg-carbon-soft text-cream"
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
               onClick={(event) => event.stopPropagation()}
             >
-              <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gold/15 bg-cream px-6 py-4">
+              <div className="sticky top-0 z-10 flex items-center justify-between border-b border-kraft/35 bg-carbon-soft px-6 py-4">
                 <h2 className="font-heading text-sm uppercase tracking-wide-luxe">
                   Filtreler {activeCount > 0 && `(${activeCount})`}
                 </h2>
                 <button
                   type="button"
                   onClick={() => setMobileFiltersOpen(false)}
-                  className="flex h-9 w-9 items-center justify-center"
+                  className="flex h-9 w-9 items-center justify-center text-cream focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
                   aria-label="Filtreleri kapat"
                 >
                   <X size={19} />
@@ -475,14 +475,14 @@ export function ProductCatalog({
                   <button
                     type="button"
                     onClick={() => setFilters(EMPTY_FILTERS)}
-                    className="border border-gold/30 py-3 text-xs uppercase tracking-wide-luxe"
+                    className="border border-kraft/45 py-3 text-xs uppercase tracking-wide-luxe text-cream active:border-espresso active:bg-espresso focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
                   >
                     Temizle
                   </button>
                   <button
                     type="button"
                     onClick={() => setMobileFiltersOpen(false)}
-                    className="bg-ink py-3 text-xs uppercase tracking-wide-luxe text-cream"
+                    className="bg-brick py-3 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)] active:bg-espresso focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
                   >
                     Göster ({filteredProducts.length})
                   </button>

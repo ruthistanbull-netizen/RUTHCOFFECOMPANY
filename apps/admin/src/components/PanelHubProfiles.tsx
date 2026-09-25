@@ -145,7 +145,7 @@ export function PanelHubProfiles() {
       caption: "Yönetim Alanı",
       image: "/rosta-coffee-co.svg",
       imageClass: "h-[62%] w-[78%] object-contain",
-      surface: "bg-[#F4F0E8]",
+      surface: "bg-[#FBF3E6]",
       action: enterRosta,
     },
     {
@@ -154,13 +154,13 @@ export function PanelHubProfiles() {
       caption: "Yönetim Alanı",
       image: `${RUTH_ADMIN_URL}/ruth-commerce-user-logo.svg`,
       imageClass: "h-[72%] w-[84%] object-contain",
-      surface: "bg-[#F4F0E8]",
+      surface: "bg-[#FBF3E6]",
       action: enterRuth,
     },
   ];
 
   return (
-    <main className="relative min-h-[100dvh] overflow-hidden bg-[#141414] text-white" data-panel-hub>
+    <main className="relative min-h-[100dvh] overflow-hidden bg-[#111111] text-[#FBF3E6]" data-panel-hub>
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_-12%,rgba(255,255,255,.075),transparent_37%),linear-gradient(180deg,rgba(0,0,0,.04),rgba(0,0,0,.32))]" />
 
       <header className="relative z-20 flex h-[68px] items-center justify-between px-5 pt-[env(safe-area-inset-top)] sm:h-[72px] sm:px-8 lg:px-12">
@@ -174,9 +174,9 @@ export function PanelHubProfiles() {
           type="button"
           onClick={() => void signOut()}
           disabled={signingOut}
-          className="group inline-flex h-9 items-center gap-2 rounded-md px-2.5 text-[12px] font-medium text-white/55 transition hover:bg-white/[0.055] hover:text-white active:scale-[0.97] disabled:opacity-40"
+          className="group inline-flex h-9 items-center gap-2 rounded-md px-2.5 text-[12px] font-medium text-[#FBF3E6]/60 transition active:scale-[0.97] active:bg-[#C94A40]/15 focus-visible:bg-[#C94A40]/15 focus-visible:text-[#FBF3E6] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C94A40] disabled:opacity-40"
         >
-          <LogOut className="h-3.5 w-3.5 transition-transform duration-200 group-hover:-translate-x-0.5" />
+          <LogOut className="h-3.5 w-3.5 transition-transform duration-200 group-focus-visible:-translate-x-0.5" />
           {signingOut ? "Çıkılıyor…" : "Oturumu kapat"}
         </button>
       </header>
@@ -192,13 +192,13 @@ export function PanelHubProfiles() {
           transition={{ duration: 0.26, ease: [0.2, 0.8, 0.2, 1] }}
           className="mb-8 max-w-[720px] text-center sm:mb-12"
         >
-          <p className="mb-3 text-[13px] font-medium tracking-[-0.015em] text-white/48 sm:mb-4 sm:text-[15px]">
+          <p className="mb-3 text-[13px] font-medium tracking-[-0.015em] text-[#FBF3E6]/52 sm:mb-4 sm:text-[15px]">
             Hoş geldiniz{fullName ? `, ${fullName}` : ""}
           </p>
-          <h1 className="text-[30px] font-normal leading-[1.08] tracking-[-0.045em] text-white/94 sm:text-[45px] lg:text-[53px]">
+          <h1 className="text-[30px] font-normal leading-[1.08] tracking-[-0.045em] text-[#FBF3E6] sm:text-[45px] lg:text-[53px]">
             Hangi markayla devam etmek istiyorsunuz?
           </h1>
-          <p className="mt-3 text-[10px] text-white/22 sm:text-[11px]">
+          <p className="mt-3 text-[10px] text-[#FBF3E6]/30 sm:text-[11px]">
             {email || "Yönetici hesabı"}
           </p>
         </motion.div>
@@ -233,8 +233,8 @@ export function PanelHubProfiles() {
                 <div
                   className={[
                     "relative aspect-square w-full overflow-hidden rounded-[4px] border-[3px] border-transparent shadow-[0_18px_45px_rgba(0,0,0,.24)] transition-[border-color,filter,box-shadow,outline-color,outline-offset] duration-200",
-                    "group-hover:border-black group-hover:outline group-hover:outline-2 group-hover:outline-black/70 group-hover:outline-offset-[3px] group-focus-visible:border-black group-focus-visible:outline group-focus-visible:outline-2 group-focus-visible:outline-black group-focus-visible:outline-offset-[3px]",
-                    selected ? "border-[5px] border-black outline outline-[3px] outline-[#6f665a] outline-offset-[4px] shadow-[0_26px_76px_rgba(0,0,0,.58),inset_0_0_0_1px_rgba(255,255,255,.16)]" : "",
+                    "group-hover:border-[#C94A40] group-hover:outline group-hover:outline-2 group-hover:outline-[#C94A40]/70 group-hover:outline-offset-[3px] group-focus-visible:border-[#C94A40] group-focus-visible:outline group-focus-visible:outline-2 group-focus-visible:outline-[#C94A40] group-focus-visible:outline-offset-[3px]",
+                    selected ? "border-[5px] border-[#C94A40] outline outline-[3px] outline-[#C8A77D] outline-offset-[4px] shadow-[0_26px_76px_rgba(0,0,0,.58),inset_0_0_0_1px_rgba(251,243,230,.18)]" : "",
                     card.surface,
                   ].join(" ")}
                 >
@@ -243,17 +243,17 @@ export function PanelHubProfiles() {
                       src={card.image}
                       alt={card.label}
                       draggable={false}
-                      className={`${card.imageClass} pointer-events-none select-none transition-transform duration-200 group-hover:scale-[1.035]`}
+                      className={`${card.imageClass} pointer-events-none select-none transition-transform duration-200 group-focus-visible:scale-[1.035] sm:group-hover:scale-[1.035]`}
                     />
                   </div>
                   <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(145deg,rgba(255,255,255,.06),transparent_38%,rgba(0,0,0,.08))]" />
                 </div>
 
                 <div className="pt-3 text-center sm:pt-4">
-                  <p className="truncate text-[14px] font-normal text-[#808080] transition-colors duration-200 group-hover:text-white group-focus-visible:text-white sm:text-[18px]">
+                  <p className="truncate text-[14px] font-normal text-[#FBF3E6]/68 transition-colors duration-200 group-hover:text-[#FBF3E6] group-focus-visible:text-[#FBF3E6] sm:text-[18px]">
                     {card.label}
                   </p>
-                  <p className="mt-1 text-[8px] font-medium uppercase tracking-[0.16em] text-white/24 sm:text-[9px]">
+                  <p className="mt-1 text-[8px] font-medium uppercase tracking-[0.16em] text-[#FBF3E6]/32 sm:text-[9px]">
                     {card.caption}
                   </p>
                 </div>
@@ -268,14 +268,14 @@ export function PanelHubProfiles() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 4 }}
-              className="mt-9 max-w-md rounded-md border border-red-400/20 bg-red-500/10 px-4 py-3 text-center text-[12px] text-red-100/85"
+              className="mt-9 max-w-md rounded-md border border-[var(--ruth-color-danger)]/35 bg-[var(--ruth-color-danger-soft)] px-4 py-3 text-center text-[12px] text-[var(--ruth-color-danger-text)]"
             >
               {error}
             </motion.div>
           ) : null}
         </AnimatePresence>
 
-        <p className="mt-10 text-center text-[10px] tracking-[0.02em] text-white/20 sm:mt-12">
+        <p className="mt-10 text-center text-[10px] tracking-[0.02em] text-[#FBF3E6]/28 sm:mt-12">
           {remember ? "Oturum bu cihazda açık tutuluyor." : "Bu oturum tarayıcı kapatıldığında sona erebilir."}
         </p>
       </motion.section>
@@ -288,7 +288,7 @@ export function PanelHubProfiles() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.22 }}
-            className="fixed inset-0 z-[2147483645] flex items-center justify-center bg-[#141414] px-6 text-[#F4F0E8]"
+            className="fixed inset-0 z-[2147483645] flex items-center justify-center bg-[#111111] px-6 text-[#FBF3E6]"
             aria-live="polite"
             aria-busy="true"
           >

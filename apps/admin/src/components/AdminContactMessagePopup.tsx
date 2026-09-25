@@ -135,7 +135,7 @@ export function AdminContactMessagePopup() {
               type="button"
               onClick={() => setActivity(null)}
               aria-label="Bildirimi kapat"
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-subtle transition-colors hover:bg-surface-secondary hover:text-main"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-subtle transition-colors active:bg-surface-secondary focus-visible:bg-surface-secondary focus-visible:text-main focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
               <X className="h-4 w-4" />
             </button>

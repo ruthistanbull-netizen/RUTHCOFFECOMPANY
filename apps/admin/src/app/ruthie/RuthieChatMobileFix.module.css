@@ -34,8 +34,8 @@
     overscroll-behavior: contain !important;
     -webkit-overflow-scrolling: touch;
     background:
-      radial-gradient(circle at 50% 0, rgba(201, 139, 55, .12), transparent 34%),
-      #080604 !important;
+      radial-gradient(circle at 50% 0, color-mix(in srgb, var(--rosta-brick-b, #C94A40) 14%, transparent), transparent 34%),
+      var(--rosta-carbon, #111111) !important;
     box-shadow: 30px 0 90px rgba(0, 0, 0, .78) !important;
     transition:
       transform 340ms cubic-bezier(.2, .8, .2, 1),

@@ -94,13 +94,8 @@
     transform var(--ruth-motion-fast) var(--ruth-easing);
 }
 
-.carrierOption:hover {
-  border-color: var(--ruth-color-border-strong);
-  transform: translateY(-1px);
-}
-
 .carrierOptionSelected {
-  border-color: var(--ruth-color-accent-strong);
+  border-color: var(--rosta-brick-b);
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--ruth-color-accent) 20%, transparent);
 }
 
@@ -108,7 +103,7 @@
   width: 18px;
   height: 18px;
   margin: 0;
-  accent-color: var(--ruth-color-accent-strong);
+  accent-color: var(--rosta-brick-b);
 }
 
 .logo {
@@ -133,7 +128,7 @@
 .logo svg {
   width: 19px;
   height: 19px;
-  color: var(--ruth-color-accent-strong);
+  color: var(--rosta-brick-b);
 }
 
 .carrierCopy {
@@ -199,6 +194,18 @@
 
 @keyframes carrier-picker-spin {
   to { transform: rotate(360deg); }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .carrierOption:hover {
+    border-color: var(--ruth-color-border-strong);
+    transform: translateY(-1px);
+  }
+}
+
+.carrierOption:focus-within {
+  border-color: var(--rosta-brick-b);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--rosta-brick-b) 18%, transparent);
 }
 
 @media (max-width: 560px) {

@@ -97,9 +97,9 @@ export function RuthWorkspaceShell() {
   }, []);
 
   return (
-    <main className="fixed inset-0 z-[2147483646] overflow-hidden bg-[#141414]" data-ruth-workspace-shell>
+    <main className="fixed inset-0 z-[2147483646] overflow-hidden bg-[#111111]" data-ruth-workspace-shell>
       {!ready ? (
-        <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#141414] text-[#F4F0E8]">
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#111111] text-[#FBF3E6]">
           <div className="text-center">
             <LoaderCircle className="mx-auto h-7 w-7 animate-spin opacity-60" />
             <p className="mt-4 text-[13px] font-medium tracking-[-0.01em] opacity-72">
@@ -111,14 +111,14 @@ export function RuthWorkspaceShell() {
       ) : null}
 
       {error ? (
-        <div className="absolute inset-0 z-20 flex items-center justify-center bg-[#141414] px-6 text-[#F4F0E8]">
+        <div className="absolute inset-0 z-20 flex items-center justify-center bg-[#111111] px-6 text-[#FBF3E6]">
           <div className="max-w-sm text-center">
             <p className="text-[17px] font-semibold">Ruth Istanbul açılamadı</p>
             <p className="mt-2 text-[12px] leading-5 opacity-55">{error}</p>
             <button
               type="button"
               onClick={() => window.location.replace("/profiles")}
-              className="mt-6 h-10 rounded-md bg-[#F4F0E8] px-5 text-[12px] font-semibold text-[#141414]"
+              className="mt-6 h-10 rounded-md bg-[#FBF3E6] px-5 text-[12px] font-semibold text-[#111111]"
             >
               RR HUB'a dön
             </button>
@@ -136,7 +136,7 @@ export function RuthWorkspaceShell() {
           window.setTimeout(() => setReady(true), 220);
         }}
         allow="clipboard-read; clipboard-write; camera; microphone"
-        className="absolute inset-0 h-full w-full border-0 bg-[#FFF9F5]"
+        className="absolute inset-0 h-full w-full border-0 bg-[#FBF3E6]"
         style={{
           width: "100%",
           height: "100dvh",

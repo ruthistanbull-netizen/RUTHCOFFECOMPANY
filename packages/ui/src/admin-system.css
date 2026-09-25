@@ -4,25 +4,25 @@
  */
 
 html[data-ruth-theme="admin"] {
-  --admin-canvas: var(--ruth-color-canvas, #faf7f2);
-  --admin-surface: var(--ruth-color-surface, #fff);
-  --admin-surface-muted: var(--ruth-color-surface-muted, #f5efe7);
-  --admin-ink: var(--ruth-color-text-primary, #171512);
-  --admin-muted: var(--ruth-color-text-muted, #6a6056);
-  --admin-accent: var(--ruth-color-accent, #b8976a);
-  --admin-accent-strong: var(--ruth-color-accent-strong, #765a37);
-  --admin-border: var(--ruth-color-border-subtle, #e7ded2);
-  --admin-border-strong: var(--ruth-color-border-strong, #cdbeac);
-  --admin-success: var(--ruth-color-success, #2f6b4f);
-  --admin-warning: var(--ruth-color-warning, #80500f);
-  --admin-danger: var(--ruth-color-danger, #9b3a36);
-  --admin-info: var(--ruth-color-info, #355c7d);
+  --admin-canvas: var(--ruth-color-canvas, #111111);
+  --admin-surface: var(--ruth-color-surface, #242424);
+  --admin-surface-muted: var(--ruth-color-surface-muted, #242424);
+  --admin-ink: var(--ruth-color-text-primary, #FBF3E6);
+  --admin-muted: var(--ruth-color-text-muted, color-mix(in srgb, #FBF3E6 70%, transparent));
+  --admin-accent: var(--ruth-color-accent, #C94A40);
+  --admin-accent-strong: var(--ruth-color-accent-strong, #38251C);
+  --admin-border: var(--ruth-color-border-subtle, color-mix(in srgb, #C8A77D 42%, transparent));
+  --admin-border-strong: var(--ruth-color-border-strong, #C8A77D);
+  --admin-success: var(--ruth-color-success, #1BA786);
+  --admin-warning: var(--ruth-color-warning, #D99620);
+  --admin-danger: var(--ruth-color-danger, #E1606B);
+  --admin-info: var(--ruth-color-info, #4F94E8);
   --admin-radius-control: var(--ruth-radius-sm, 10px);
   --admin-radius-surface: var(--ruth-radius-md, 16px);
   --admin-radius-overlay: var(--ruth-radius-lg, 24px);
   --admin-control-height: var(--ruth-control-md, 44px);
-  --admin-shadow-surface: 0 1px 2px rgba(23, 21, 18, .035), 0 12px 32px rgba(23, 21, 18, .045);
-  --admin-shadow-overlay: 0 28px 90px rgba(23, 21, 18, .22);
+  --admin-shadow-surface: 0 1px 2px color-mix(in srgb, var(--rosta-carbon) 30%, transparent), 0 12px 32px color-mix(in srgb, var(--rosta-carbon) 34%, transparent);
+  --admin-shadow-overlay: 0 28px 90px color-mix(in srgb, var(--rosta-carbon) 64%, transparent);
 
   /* Legacy aliases until every route uses ruth-* primitives directly. */
   --bg: var(--admin-canvas);
@@ -32,9 +32,9 @@ html[data-ruth-theme="admin"] {
   --muted: var(--admin-muted);
   --line: var(--admin-border);
   --line-strong: var(--admin-border-strong);
-  --accent: var(--admin-accent-strong);
-  --accent-strong: var(--admin-ink);
-  --accent-soft: var(--ruth-color-accent-wash, rgba(184, 151, 106, .18));
+  --accent: var(--admin-accent);
+  --accent-strong: var(--admin-accent-strong);
+  --accent-soft: var(--ruth-color-accent-wash, color-mix(in srgb, #C94A40 15%, transparent));
   --success: var(--admin-success);
   --warning: var(--admin-warning);
   --danger: var(--admin-danger);
@@ -61,7 +61,7 @@ html[data-ruth-theme="admin"] :where(.cr-page-header h1, .ruth-page-header h1) {
 }
 
 html[data-ruth-theme="admin"] :where(.cr-eyebrow, .ruth-page-header__eyebrow, .ruth-page-section__eyebrow) {
-  color: var(--admin-accent-strong);
+  color: var(--admin-accent);
   font-size: .68rem;
   font-weight: 700;
   letter-spacing: .17em;
@@ -131,11 +131,6 @@ html[data-ruth-theme="admin"] :where(.cr-order-card, .cr-return-card, .cr-row) {
   transition: background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
-html[data-ruth-theme="admin"] :where(.cr-order-card, .cr-return-card):hover {
-  background: #fcfaf7;
-  box-shadow: inset 3px 0 0 var(--admin-accent);
-}
-
 /* Inputs */
 html[data-ruth-theme="admin"] :where(.cr-field, .ruth-field) {
   display: grid;
@@ -177,7 +172,9 @@ html[data-ruth-theme="admin"] :where(
 ):focus {
   border-color: var(--admin-accent);
   outline: 0;
-  box-shadow: 0 0 0 3px rgba(184, 151, 106, .18);
+  outline: 2px solid var(--admin-accent);
+  outline-offset: 2px;
+  box-shadow: none;
 }
 
 html[data-ruth-theme="admin"] :where(.cr-field textarea, .ruth-textarea) {
@@ -202,10 +199,10 @@ html[data-ruth-theme="admin"] .cr-button {
 }
 
 html[data-ruth-theme="admin"] :where(.cr-button--primary, .ruth-button--primary) {
-  border-color: var(--admin-ink);
-  background: var(--admin-ink);
-  color: #fff;
-  box-shadow: 0 8px 20px rgba(23, 21, 18, .14);
+  border-color: var(--admin-accent);
+  background: var(--admin-accent);
+  color: var(--ruth-color-text-on-action, #FFFFFF);
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--rosta-carbon) 42%, transparent);
 }
 
 html[data-ruth-theme="admin"] :where(.cr-button--secondary, .ruth-button--secondary) {
@@ -216,9 +213,9 @@ html[data-ruth-theme="admin"] :where(.cr-button--secondary, .ruth-button--second
 }
 
 html[data-ruth-theme="admin"] :where(.cr-button--danger, .ruth-button--danger) {
-  border-color: #e7c5c2;
-  background: #fbefee;
-  color: var(--admin-danger);
+  border-color: color-mix(in srgb, var(--ruth-color-danger) 42%, transparent);
+  background: var(--ruth-color-danger-soft);
+  color: var(--ruth-color-danger-text);
   box-shadow: none;
 }
 
@@ -231,7 +228,7 @@ html[data-ruth-theme="admin"] :where(.cr-icon-button, .ruth-icon-button) {
   border-radius: 50%;
   background: var(--admin-surface);
   color: var(--admin-ink);
-  box-shadow: 0 6px 18px rgba(23, 21, 18, .06);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--rosta-carbon) 34%, transparent);
 }
 
 /* Statuses */
@@ -266,9 +263,9 @@ html[data-ruth-theme="admin"] .cr-filter-row button {
 }
 
 html[data-ruth-theme="admin"] .cr-filter-row button.is-active {
-  background: var(--admin-surface);
+  background: var(--ruth-color-accent-wash);
   color: var(--admin-ink);
-  box-shadow: 0 2px 8px rgba(23, 21, 18, .08);
+  box-shadow: inset 0 -3px 0 var(--admin-accent);
 }
 
 html[data-ruth-theme="admin"] :where(.cr-notice, .ruth-notice) {
@@ -289,7 +286,7 @@ html[data-ruth-theme="admin"] :where(
   .cr-manual-return-modal,
   [data-ruth-overlay-backdrop="true"]
 ) {
-  background: rgba(23, 21, 18, .42) !important;
+  background: var(--ruth-color-overlay) !important;
   -webkit-backdrop-filter: blur(7px) !important;
   backdrop-filter: blur(7px) !important;
 }
@@ -306,9 +303,9 @@ html[data-ruth-theme="admin"] :where(
   max-width: calc(100vw - 24px);
   max-height: calc(100dvh - 24px);
   overflow: hidden;
-  border: 1px solid rgba(184, 151, 106, .3) !important;
+  border: 1px solid var(--admin-border) !important;
   border-radius: var(--admin-radius-overlay) !important;
-  background: var(--admin-canvas) !important;
+  background: var(--admin-surface) !important;
   color: var(--admin-ink) !important;
   box-shadow: var(--admin-shadow-overlay) !important;
 }
@@ -335,7 +332,7 @@ html[data-ruth-theme="admin"] :where(
   min-height: 70px;
   padding: 18px 20px !important;
   border-bottom: 1px solid var(--admin-border) !important;
-  background: rgba(255, 255, 255, .86) !important;
+  background: var(--admin-surface) !important;
   -webkit-backdrop-filter: blur(18px);
   backdrop-filter: blur(18px);
 }
@@ -370,7 +367,7 @@ html[data-ruth-theme="admin"] :where(
   min-height: 0 !important;
   padding: 10px 14px max(10px, env(safe-area-inset-bottom)) !important;
   border-top: 1px solid var(--admin-border) !important;
-  background: rgba(255, 255, 255, .94) !important;
+  background: var(--admin-surface) !important;
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
 }
@@ -520,5 +517,44 @@ html[data-ruth-theme="admin"] :where(th, .ruth-data-table th) {
     animation-duration: .01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: .01ms !important;
+  }
+}
+
+html[data-ruth-theme="admin"] :where(.cr-button--primary, .ruth-button--primary):active {
+  border-color: var(--rosta-espresso);
+  background: var(--rosta-espresso);
+  color: var(--rosta-cream);
+}
+
+html[data-ruth-theme="admin"] :where(
+  .cr-field input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+  .cr-field select,
+  .cr-field textarea,
+  .cr-search-field input,
+  .ruth-input,
+  .cr-button,
+  .ruth-button,
+  .cr-icon-button,
+  .ruth-icon-button
+):focus-visible {
+  outline: 2px solid var(--admin-accent);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  html[data-ruth-theme="admin"] :where(.cr-order-card, .cr-return-card):hover {
+    border-color: var(--admin-accent);
+    background: var(--admin-surface);
+    box-shadow: inset 3px 0 0 var(--admin-accent);
+  }
+
+  html[data-ruth-theme="admin"] :where(.cr-button--secondary, .ruth-button--secondary, .cr-icon-button, .ruth-icon-button):hover {
+    border-color: var(--admin-accent);
+  }
+}
+
+@media (forced-colors: active) {
+  html[data-ruth-theme="admin"] :where(button, a[href], input, select, textarea):focus-visible {
+    outline: 2px solid Highlight !important;
   }
 }

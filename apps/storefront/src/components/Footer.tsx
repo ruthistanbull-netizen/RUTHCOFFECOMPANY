@@ -46,15 +46,15 @@ function TikTokIcon() {
 }
 
 function WhatsAppIcon() {
-  return <img src="/whatsapp-icon-black.png" alt="" aria-hidden="true" className="h-8 w-8 object-contain" loading="lazy" />;
+  return <img src="/whatsapp-icon-black.png" alt="" aria-hidden="true" className="h-8 w-8 object-contain brightness-0 invert" loading="lazy" />;
 }
 
 function FooterColumn({ title, links }: { title: string; links: Array<{ label: string; href: string }> }) {
   return (
     <div className="min-w-0">
-      <h4 className="mb-3 text-[8px] uppercase leading-tight tracking-[0.14em] sm:text-[9px]" style={{ color: "var(--gold-dark)" }}>{title}</h4>
-      <ul className="space-y-2 text-[9px] leading-[1.45] sm:text-[10px] md:text-[11px]" style={{ color: "var(--muted-foreground)" }}>
-        {links.map((item) => <li key={`${title}-${item.href}`}><Link href={item.href} className="break-words transition hover:text-ink">{item.label}</Link></li>)}
+      <h4 className="mb-3 text-[8px] uppercase leading-tight tracking-[0.14em] sm:text-[9px]" style={{ color: "var(--rosta-brick-b)" }}>{title}</h4>
+      <ul className="space-y-2 text-[9px] leading-[1.45] sm:text-[10px] md:text-[11px]" style={{ color: "var(--ruth-color-text-muted)" }}>
+        {links.map((item) => <li key={`${title}-${item.href}`}><Link href={item.href} className="break-words transition focus-visible:text-cream focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick">{item.label}</Link></li>)}
       </ul>
     </div>
   );
@@ -82,26 +82,26 @@ export async function Footer({ categories = [], collections = [], themeSettings 
 
   return (
     <>
-      <footer className="bg-cream px-4 pb-8 pt-14 md:px-8 md:pt-20" style={{ borderTop: "1px solid color-mix(in srgb, var(--rosta-steel) 45%, transparent)" }}>
+      <footer className="bg-carbon px-4 pb-8 pt-14 text-cream md:px-8 md:pt-20" style={{ borderTop: "1px solid color-mix(in srgb, var(--rosta-kraft) 45%, transparent)" }}>
         <div className="mx-auto max-w-7xl">
           <div className="mb-10 flex flex-col items-center text-center md:mb-12">
-            <Link href="/" aria-label="Rosta Coffee Co anasayfa" className="mb-4 inline-flex"><img src={ROSTA_WORDMARK_SRC} alt="" className="h-auto w-[190px] object-contain sm:w-[220px]" /></Link>
+            <Link href="/" aria-label="Rosta Coffee Co anasayfa" className="mb-4 inline-flex"><img src={ROSTA_WORDMARK_SRC} alt="" className="h-auto w-[190px] object-contain brightness-0 invert sm:w-[220px]" /></Link>
             <p className="max-w-sm text-xs leading-relaxed sm:text-sm" style={{ color: "var(--muted-foreground)" }}>Kahve, danışmanlık ve tedarik için sade, güvenilir çözümler.</p>
             <div className="mt-5 flex justify-center gap-3">
-              {SOCIAL_LINKS.map((social) => <a key={social.label} href={social.href} target="_blank" rel="noreferrer" aria-label={social.label} className="flex h-10 w-10 items-center justify-center rounded-full border border-gold/20 text-ink transition-colors hover:border-gold hover:bg-ivory">{social.icon}</a>)}
-              <Link href="/contact#contact-form" aria-label="Bizimle iletişime geç" className="flex h-10 w-10 items-center justify-center rounded-full border border-gold/20 text-ink transition-colors hover:border-gold hover:bg-ivory"><Mail size={18} strokeWidth={1.65} /></Link>
+              {SOCIAL_LINKS.map((social) => <a key={social.label} href={social.href} target="_blank" rel="noreferrer" aria-label={social.label} className="flex h-10 w-10 items-center justify-center rounded-full border border-kraft/40 text-cream transition-colors active:bg-carbon-soft focus-visible:border-brick focus-visible:bg-carbon-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick">{social.icon}</a>)}
+              <Link href="/contact#contact-form" aria-label="Bizimle iletişime geç" className="flex h-10 w-10 items-center justify-center rounded-full border border-kraft/40 text-cream transition-colors active:bg-carbon-soft focus-visible:border-brick focus-visible:bg-carbon-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"><Mail size={18} strokeWidth={1.65} /></Link>
             </div>
           </div>
           <div className="mb-10 grid grid-cols-3 gap-x-3 sm:gap-x-8 md:mx-auto md:max-w-4xl md:gap-x-16">
             <FooterColumn title="Alışveriş" links={shoppingLinks} /><FooterColumn title="Müşteri Hizmetleri" links={supportLinks} /><FooterColumn title="Yasal" links={legalLinks} />
           </div>
-          <div className="mb-7 flex flex-col gap-4 rounded-[1.25rem] border border-gold/15 bg-ivory/65 p-4 md:flex-row md:items-center md:justify-between">
-            <div><p className="text-[9px] uppercase tracking-wide-luxe text-gold-dark">Güvenli Ödeme</p><p className="mt-1.5 text-[10px] text-muted-ruth sm:text-xs">PAYTR ile Güvenli Ödeme.</p></div>
+          <div className="mb-7 flex flex-col gap-4 rounded-[1.25rem] border border-kraft/35 bg-carbon-soft p-4 md:flex-row md:items-center md:justify-between">
+            <div><p className="text-[9px] uppercase tracking-wide-luxe text-brick">Güvenli Ödeme</p><p className="mt-1.5 text-[10px] text-cream/70 sm:text-xs">PAYTR ile Güvenli Ödeme.</p></div>
             <div className="flex flex-nowrap items-center justify-center gap-1.5 overflow-x-auto pb-1 md:justify-end md:gap-2 md:overflow-visible md:pb-0" role="region" aria-label="Desteklenen ödeme yöntemleri" tabIndex={0}>
-              {PAYMENT_LOGOS.map((logo) => <span key={logo.label} className="flex h-8 w-[58px] shrink-0 items-center justify-center rounded-lg border border-gold/10 bg-cream p-0.5 shadow-sm md:h-10 md:w-[74px]" aria-label={logo.label} title={logo.label}><img src={logo.src} alt={logo.label} className="h-full w-full object-contain" loading="lazy" /></span>)}
+              {PAYMENT_LOGOS.map((logo) => <span key={logo.label} className="flex h-8 w-[58px] shrink-0 items-center justify-center rounded-lg border border-kraft/25 bg-cream p-0.5 shadow-sm md:h-10 md:w-[74px]" aria-label={logo.label} title={logo.label}><img src={logo.src} alt={logo.label} className="h-full w-full object-contain" loading="lazy" /></span>)}
             </div>
           </div>
-          <div className="flex flex-col justify-between gap-2 border-t border-gold/15 pt-6 text-[9px] sm:text-[10px] md:flex-row" style={{ color: "var(--muted-foreground)" }}><p>Copyright © 2026, ROSTA COFFEE CO. Tüm Hakları Saklıdır.</p><p>Kahvenin her adımında.</p></div>
+          <div className="flex flex-col justify-between gap-2 border-t border-kraft/35 pt-6 text-[9px] sm:text-[10px] md:flex-row" style={{ color: "var(--muted-foreground)" }}><p>Copyright © 2026, ROSTA COFFEE CO. Tüm Hakları Saklıdır.</p><p>Kahvenin her adımında.</p></div>
         </div>
       </footer>
       <ThemeEditorNativeNavigation />

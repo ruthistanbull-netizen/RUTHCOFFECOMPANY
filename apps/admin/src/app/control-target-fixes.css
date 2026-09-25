@@ -39,7 +39,7 @@ input[type="radio"] {
   min-width: 22px;
   min-height: 22px;
   flex: 0 0 22px;
-  accent-color: var(--accent, #315efb);
+  accent-color: var(--accent, var(--rosta-brick-b, #C94A40));
 }
 
 label:has(input[type="checkbox"]),

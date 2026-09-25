@@ -794,7 +794,7 @@ export function AdminMobileQuarterMenu() {
           >
             <motion.line
               x1="306" y1="306" x2="336" y2="306" className={styles.burgerLine}
-              animate={{ y: open ? 12 : 0, rotate: open ? 45 : 0, stroke: open ? "#fff" : "hsl(var(--text-main))" }}
+              animate={{ y: open ? 12 : 0, rotate: open ? 45 : 0, stroke: open ? "#FFFFFF" : "hsl(var(--text-main))" }}
               transition={open ? {
                 y: { duration: reduceMotion ? 0.01 : 0.2, delay: reduceMotion ? 0 : 0.1 },
                 rotate: { duration: reduceMotion ? 0.01 : 0.4, delay: reduceMotion ? 0 : 0.1 },
@@ -816,7 +816,7 @@ export function AdminMobileQuarterMenu() {
             />
             <motion.line
               x1="306" y1="332" x2="336" y2="332" className={styles.burgerLine}
-              animate={{ y: open ? -12 : 0, rotate: open ? -45 : 0, stroke: open ? "#fff" : "hsl(var(--text-main))" }}
+              animate={{ y: open ? -12 : 0, rotate: open ? -45 : 0, stroke: open ? "#FFFFFF" : "hsl(var(--text-main))" }}
               transition={open ? {
                 y: { duration: reduceMotion ? 0.01 : 0.2, delay: reduceMotion ? 0 : 0.1 },
                 rotate: { duration: reduceMotion ? 0.01 : 0.4, delay: reduceMotion ? 0 : 0.1 },

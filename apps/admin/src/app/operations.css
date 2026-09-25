@@ -19,7 +19,7 @@
 .cr-webhook-list > article {
   padding: 14px 16px;
   border-bottom: 1px solid var(--line);
-  background: #fff;
+  background: var(--ruth-color-surface-muted, #242424);
 }
 
 .cr-ops-card:last-child,

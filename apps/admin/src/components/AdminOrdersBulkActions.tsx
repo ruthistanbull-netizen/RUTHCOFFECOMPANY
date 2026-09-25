@@ -218,7 +218,7 @@ export function AdminOrdersBulkActions() {
             </label>
           </div>
 
-          <button type="button" onClick={toggleVisible} className="flex w-full items-center justify-between rounded-[12px] bg-surface-secondary px-3 py-2.5 text-left transition-colors hover:bg-surface-tertiary">
+          <button type="button" onClick={toggleVisible} className="flex w-full items-center justify-between rounded-[12px] bg-surface-secondary px-3 py-2.5 text-left transition-colors active:bg-surface-tertiary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
             <span className="flex items-center gap-2 text-xs font-semibold text-main">
               {allVisibleSelected ? <CheckSquare2 className="h-4 w-4 text-accent" /> : <Square className="h-4 w-4 text-subtle" />}
               {allVisibleSelected ? "Görünenlerin seçimini kaldır" : "Görünen siparişlerin tamamını seç"}
@@ -237,7 +237,7 @@ export function AdminOrdersBulkActions() {
                   type="button"
                   key={order.id}
                   onClick={() => toggleOrder(order.id)}
-                  className={`flex w-full items-center gap-3 rounded-[12px] border px-3 py-2.5 text-left transition-all ${checked ? "border-accent bg-accent-soft" : "border-border-subtle bg-surface-primary hover:bg-surface-secondary"}`}
+                  className={`flex w-full items-center gap-3 rounded-[12px] border px-3 py-2.5 text-left transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${checked ? "border-accent bg-accent-soft" : "border-border-subtle bg-surface-primary active:bg-surface-secondary"}`}
                 >
                   {checked ? <CheckSquare2 className="h-4 w-4 shrink-0 text-accent" /> : <Square className="h-4 w-4 shrink-0 text-subtle" />}
                   <span className="min-w-0 flex-1">

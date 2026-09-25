@@ -27,7 +27,14 @@ export type CommerceStatusKey =
   | "partially_paid"
   | "picking"
   | "packed"
-  | "delivery_failed";
+  | "delivery_failed"
+  | "ready_packing"
+  | "active"
+  | "in_stock"
+  | "out_of_stock"
+  | "succeeded"
+  | "success"
+  | "archived";
 
 export interface CommerceStatusPresentation {
   label: string;
@@ -41,24 +48,34 @@ export interface CommerceStatusOption<Status extends string = string> extends Co
 const orderStatusDictionary: Record<string, CommerceStatusPresentation> = {
   created: { label: "Oluşturuldu", tone: "warning" },
   draft: { label: "Taslak", tone: "neutral" },
+  archived: { label: "Arşivlendi", tone: "neutral" },
   awaiting_payment: { label: "Ödeme Bekleniyor", tone: "warning" },
   pending: { label: "Bekliyor", tone: "warning" },
   confirmed: { label: "Onaylandı", tone: "warning" },
-  paid: { label: "Yeni Sipariş", tone: "warning" },
+  paid: { label: "Yeni Sipariş", tone: "success" },
+  succeeded: { label: "Başarılı", tone: "success" },
+  success: { label: "Başarılı", tone: "success" },
+  active: { label: "Aktif", tone: "success" },
+  in_stock: { label: "Stokta", tone: "success" },
+  out_of_stock: { label: "Stok Yok", tone: "danger" },
   processing: { label: "Hazırlanıyor", tone: "info" },
   queued: { label: "Hazırlanıyor", tone: "info" },
-  in_production: { label: "Hazırlanıyor", tone: "info" },
-  quality_control: { label: "Hazırlanıyor", tone: "info" },
+  in_production: { label: "Üretimde", tone: "warning" },
+  quality_control: { label: "Kontrol Ediliyor", tone: "info" },
   preparing: { label: "Hazırlanıyor", tone: "info" },
-  prepared: { label: "Kargoya Hazır", tone: "info" },
-  ready: { label: "Kargoya Hazır", tone: "info" },
-  ready_to_ship: { label: "Kargoya Hazır", tone: "info" },
-  shipped: { label: "Gönderildi", tone: "success" },
+  prepared: { label: "Kargoya Hazır", tone: "accent" },
+  ready: { label: "Kargoya Hazır", tone: "accent" },
+  ready_packing: { label: "Paketlemeye Hazır", tone: "accent" },
+  ready_to_ship: { label: "Kargoya Hazır", tone: "accent" },
+  shipped: { label: "Gönderildi", tone: "accent" },
+  in_transit: { label: "Transferde", tone: "info" },
   delivered: { label: "Teslim Edildi", tone: "success" },
   completed: { label: "Teslim Edildi", tone: "success" },
   reviewed: { label: "Değerlendirildi", tone: "neutral" },
-  cancelled: { label: "İptal Edildi", tone: "danger" },
-  return_requested: { label: "İade Talebi", tone: "warning" },
+  cancelled: { label: "İptal Edildi", tone: "neutral" },
+  canceled: { label: "İptal Edildi", tone: "neutral" },
+  return_requested: { label: "İade Talebi", tone: "danger" },
+  refunded: { label: "İade Edildi", tone: "danger" },
   returned: { label: "Geri Döndü", tone: "neutral" },
 };
 
@@ -70,52 +87,60 @@ const paymentStatusDictionary: Record<string, CommerceStatusPresentation> = {
   authorized: { label: "Ödeme Onaylandı", tone: "info" },
   unpaid: { label: "Ödenmedi", tone: "warning" },
   paid: { label: "Ödeme Alındı", tone: "success" },
+  succeeded: { label: "Ödeme Başarılı", tone: "success" },
+  success: { label: "Ödeme Başarılı", tone: "success" },
   partially_paid: { label: "Kısmen Ödendi", tone: "info" },
   failed: { label: "Ödeme Başarısız", tone: "danger" },
-  cancelled: { label: "Ödeme İptal Edildi", tone: "danger" },
-  partially_refunded: { label: "Kısmen İade Edildi", tone: "info" },
-  refunded: { label: "Ödeme İade Edildi", tone: "neutral" },
+  cancelled: { label: "Ödeme İptal Edildi", tone: "neutral" },
+  canceled: { label: "Ödeme İptal Edildi", tone: "neutral" },
+  partially_refunded: { label: "Kısmen İade Edildi", tone: "danger" },
+  refunded: { label: "Ödeme İade Edildi", tone: "danger" },
 };
 
 const fulfillmentStatusDictionary: Record<string, CommerceStatusPresentation> = {
   unfulfilled: { label: "Hazırlanmadı", tone: "neutral" },
   queued: { label: "Hazırlanıyor", tone: "info" },
-  in_production: { label: "Hazırlanıyor", tone: "info" },
-  quality_control: { label: "Hazırlanıyor", tone: "info" },
-  picking: { label: "Hazırlanıyor", tone: "info" },
-  packed: { label: "Paketlendi", tone: "info" },
-  ready: { label: "Hazır", tone: "info" },
+  in_production: { label: "Üretimde", tone: "warning" },
+  quality_control: { label: "Kontrol Ediliyor", tone: "info" },
+  picking: { label: "Toplanıyor", tone: "info" },
+  packed: { label: "Paketlendi", tone: "accent" },
+  ready_packing: { label: "Paketlemeye Hazır", tone: "accent" },
+  ready: { label: "Hazır", tone: "accent" },
+  ready_to_ship: { label: "Kargoya Hazır", tone: "accent" },
   fulfilled: { label: "Tamamlandı", tone: "success" },
-  cancelled: { label: "Hazırlama İptal Edildi", tone: "danger" },
+  cancelled: { label: "Hazırlama İptal Edildi", tone: "neutral" },
+  canceled: { label: "Hazırlama İptal Edildi", tone: "neutral" },
 };
 
 const shippingStatusDictionary: Record<string, CommerceStatusPresentation> = {
   not_created: { label: "Kargo Oluşturulmadı", tone: "neutral" },
-  label_created: { label: "Kargoya Hazır", tone: "info" },
-  ready_for_handover: { label: "Kargoya Hazır", tone: "info" },
-  ready_to_ship: { label: "Kargoya Hazır", tone: "info" },
-  shipped: { label: "Gönderildi", tone: "success" },
-  in_transit: { label: "Gönderildi", tone: "success" },
+  label_created: { label: "Kargoya Hazır", tone: "accent" },
+  ready_for_handover: { label: "Kargoya Hazır", tone: "accent" },
+  ready_to_ship: { label: "Kargoya Hazır", tone: "accent" },
+  shipped: { label: "Gönderildi", tone: "accent" },
+  in_transit: { label: "Transferde", tone: "info" },
   delivered: { label: "Teslim Edildi", tone: "success" },
   exception: { label: "Kargo İstisnası", tone: "danger" },
   delivery_failed: { label: "Teslim Edilemedi", tone: "danger" },
-  cancelled: { label: "Kargo İptal Edildi", tone: "danger" },
+  cancelled: { label: "Kargo İptal Edildi", tone: "neutral" },
+  canceled: { label: "Kargo İptal Edildi", tone: "neutral" },
   returned: { label: "Geri Döndü", tone: "neutral" },
 };
 
 const refundStatusDictionary: Record<string, CommerceStatusPresentation> = {
-  requested: { label: "İade Talep Edildi", tone: "warning" },
-  return_requested: { label: "İade Talep Edildi", tone: "warning" },
+  requested: { label: "İade Talep Edildi", tone: "danger" },
+  return_requested: { label: "İade Talep Edildi", tone: "danger" },
   approved: { label: "İade Onaylandı", tone: "info" },
   rejected: { label: "İade Reddedildi", tone: "danger" },
   in_transit: { label: "İade Kargoda", tone: "info" },
   received: { label: "İade Teslim Alındı", tone: "info" },
   inspected: { label: "İade İncelendi", tone: "info" },
-  partially_refunded: { label: "Kısmen İade Edildi", tone: "info" },
-  refunded: { label: "İade Edildi", tone: "success" },
+  partially_refunded: { label: "Kısmen İade Edildi", tone: "danger" },
+  refunded: { label: "İade Edildi", tone: "danger" },
   exchanged: { label: "Değişim Tamamlandı", tone: "success" },
   returned: { label: "Geri Döndü", tone: "neutral" },
-  cancelled: { label: "İade İptal Edildi", tone: "danger" },
+  cancelled: { label: "İade İptal Edildi", tone: "neutral" },
+  canceled: { label: "İade İptal Edildi", tone: "neutral" },
 };
 
 const statusDictionaries: Record<CommerceStatusDomain, Record<string, CommerceStatusPresentation>> = {

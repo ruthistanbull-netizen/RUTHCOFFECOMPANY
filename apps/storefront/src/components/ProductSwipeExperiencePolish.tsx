@@ -629,7 +629,7 @@ export function ProductSwipeExperiencePolish() {
           border: 0 !important;
           background: transparent !important;
           box-shadow: none !important;
-          color: #211912 !important;
+          color: var(--ruth-product-header-ink, var(--rosta-carbon)) !important;
           pointer-events: none !important;
           transform: translateY(-50%) !important;
         }
@@ -653,7 +653,7 @@ export function ProductSwipeExperiencePolish() {
         }
 
         .ruth-product-swipe-guide-copy > span {
-          color: color-mix(in srgb, #211912 62%, transparent) !important;
+          color: color-mix(in srgb, var(--ruth-product-header-ink, var(--rosta-carbon)) 62%, transparent) !important;
           font-family: var(--ruth-font-body) !important;
           font-size: 9.5px !important;
           font-weight: 500 !important;
@@ -662,7 +662,7 @@ export function ProductSwipeExperiencePolish() {
         }
 
         .ruth-product-swipe-guide-copy > strong {
-          color: #211912 !important;
+          color: var(--ruth-product-header-ink, var(--rosta-carbon)) !important;
           font-family: var(--ruth-font-body) !important;
           font-size: 12px !important;
           font-weight: 650 !important;
@@ -742,7 +742,7 @@ export function ProductSwipeExperiencePolish() {
         }
 
         .product-browser-preview-purchase {
-          box-shadow: 0 -18px 48px rgba(33,25,18,.16) !important;
+          box-shadow: 0 -18px 48px color-mix(in srgb, var(--rosta-carbon) 52%, transparent) !important;
         }
 
         .product-browser-preview-buy-row > strong {
@@ -818,13 +818,13 @@ export function ProductSwipeExperiencePolish() {
           grid-template-columns: repeat(4,minmax(0,1fr)) !important;
           height: 16px !important;
           overflow: hidden !important;
-          border-top: 1px solid rgba(184,151,106,.22) !important;
-          border-bottom: 1px solid rgba(184,151,106,.22) !important;
-          background: var(--cream) !important;
+          border-top: 1px solid color-mix(in srgb, var(--rosta-kraft) 40%, transparent) !important;
+          border-bottom: 1px solid color-mix(in srgb, var(--rosta-kraft) 40%, transparent) !important;
+          background: var(--rosta-carbon-soft) !important;
         }
 
         .product-browser-preview-detail-strip span {
-          border-right: 1px solid rgba(184,151,106,.18) !important;
+          border-right: 1px solid color-mix(in srgb, var(--rosta-kraft) 32%, transparent) !important;
           color: transparent !important;
           font-size: 0 !important;
         }

@@ -59,19 +59,13 @@
   text-transform: uppercase;
 }
 
-.cr-contact-value:hover {
-  border-color: var(--line-strong);
-  background: #fff;
-  transform: translateY(-1px);
-}
-
 .cr-contact-copy-button {
   min-width: 92px;
   min-height: 58px;
   padding: 0 12px;
   border: 1px solid var(--line);
   border-radius: 13px;
-  background: #fff;
+  background: var(--surface-2, var(--ruth-color-surface-muted, #242424));
   color: var(--ink);
   display: inline-flex;
   align-items: center;
@@ -81,12 +75,6 @@
   cursor: pointer;
   box-shadow: var(--shadow-sm);
   transition: border-color .16s ease, background .16s ease, transform .16s ease;
-}
-
-.cr-contact-copy-button:hover {
-  border-color: var(--accent);
-  background: var(--accent-soft);
-  transform: translateY(-1px);
 }
 
 .cr-contact-copy-button > span {
@@ -105,8 +93,8 @@
 }
 
 .cr-product-card[data-ruth-product-media-preview="off"]:focus-visible {
-  outline: 3px solid rgba(49, 94, 251, .22);
-  outline-offset: 3px;
+  outline: 2px solid var(--ruth-color-focus, var(--rosta-brick-b, #C94A40));
+  outline-offset: 2px;
 }
 
 .cr-product-card[data-ruth-product-media-preview="off"] .cr-product-card__media img {
@@ -133,9 +121,9 @@ html[data-ruth-theme="admin"] .ruth-drawer > .ruth-overlay__footer {
   padding-block: 11px;
   border-top: 0;
   border-bottom: 1px solid var(--ruth-border);
-  background: rgba(255, 255, 255, .96);
+  background: color-mix(in srgb, var(--rosta-carbon-soft, #242424) 96%, transparent);
   backdrop-filter: blur(14px);
-  box-shadow: 0 9px 24px rgba(16, 24, 40, .08);
+  box-shadow: 0 9px 24px color-mix(in srgb, var(--rosta-carbon, #111111) 52%, transparent);
 }
 
 html[data-ruth-theme="admin"] .ruth-drawer > .ruth-overlay__body {
@@ -162,9 +150,9 @@ html[data-ruth-theme="admin"] .ruth-drawer > .ruth-overlay__body {
   min-height: 62px;
   border-top: 0 !important;
   border-bottom: 1px solid var(--line);
-  background: rgba(255, 255, 255, .97);
+  background: color-mix(in srgb, var(--rosta-carbon-soft, #242424) 97%, transparent);
   backdrop-filter: blur(14px);
-  box-shadow: 0 9px 24px rgba(16, 24, 40, .08);
+  box-shadow: 0 9px 24px color-mix(in srgb, var(--rosta-carbon, #111111) 52%, transparent);
 }
 
 .cr-drawer--product > .cr-product-editor-tabs {
@@ -193,8 +181,8 @@ html[data-ruth-theme="admin"] .ruth-drawer > .ruth-overlay__body {
   z-index: 4;
   border-top: 0;
   border-bottom: 1px solid var(--line);
-  background: rgba(255, 255, 255, .97);
-  box-shadow: 0 9px 24px rgba(16, 24, 40, .08);
+  background: color-mix(in srgb, var(--rosta-carbon-soft, #242424) 97%, transparent);
+  box-shadow: 0 9px 24px color-mix(in srgb, var(--rosta-carbon, #111111) 52%, transparent);
 }
 
 .cr-drawer-layer > .cr-drawer:not(.cr-drawer--product):has(> .cr-drawer__footer) > .cr-drawer__body {
@@ -209,7 +197,7 @@ html[data-ruth-theme="admin"] .ruth-fullscreen-overlay-root:has(.cr-image-lightb
   display: grid !important;
   place-items: center !important;
   padding: 16px !important;
-  background: rgba(16, 19, 24, .62) !important;
+  background: color-mix(in srgb, var(--rosta-carbon, #111111) 72%, transparent) !important;
   backdrop-filter: blur(8px);
 }
 
@@ -221,10 +209,10 @@ html[data-ruth-theme="admin"] .cr-image-lightbox__panel {
   max-width: 860px !important;
   max-height: min(780px, calc(100dvh - 32px)) !important;
   overflow: auto !important;
-  border: 1px solid rgba(184, 151, 106, .28) !important;
+  border: 1px solid color-mix(in srgb, var(--rosta-kraft, #C8A77D) 42%, transparent) !important;
   border-radius: 20px !important;
-  background: #fff !important;
-  box-shadow: 0 30px 90px rgba(16, 19, 24, .3) !important;
+  background: var(--ruth-color-surface-muted, #242424) !important;
+  box-shadow: 0 30px 90px color-mix(in srgb, var(--rosta-carbon, #111111) 72%, transparent) !important;
 }
 
 html[data-ruth-theme="admin"] .ruth-product-media-preview__layout,
@@ -245,7 +233,7 @@ html[data-ruth-theme="admin"] .cr-image-lightbox__media {
   place-items: center !important;
   overflow: hidden !important;
   padding: 24px !important;
-  background: radial-gradient(circle at 50% 42%, #fff 0%, #f5f1ea 72%, #ebe3d8 100%) !important;
+  background: radial-gradient(circle at 50% 42%, var(--rosta-cream, #FBF3E6) 0%, color-mix(in srgb, var(--rosta-cream, #FBF3E6) 88%, var(--rosta-kraft, #C8A77D)) 72%, color-mix(in srgb, var(--rosta-cream, #FBF3E6) 76%, var(--rosta-kraft, #C8A77D)) 100%) !important;
 }
 
 html[data-ruth-theme="admin"] .ruth-product-media-preview__media img,
@@ -257,7 +245,7 @@ html[data-ruth-theme="admin"] .cr-image-lightbox__media img {
   max-height: min(62dvh, 580px) !important;
   object-fit: contain !important;
   cursor: default !important;
-  filter: drop-shadow(0 18px 34px rgba(39, 28, 18, .14));
+  filter: drop-shadow(0 18px 34px color-mix(in srgb, var(--rosta-carbon, #111111) 44%, transparent));
 }
 
 html[data-ruth-theme="admin"] .ruth-product-media-preview__copy,
@@ -269,7 +257,7 @@ html[data-ruth-theme="admin"] .cr-image-lightbox__info {
   gap: 13px !important;
   padding: 28px !important;
   border-left: 1px solid var(--line) !important;
-  background: #fff !important;
+  background: var(--ruth-color-surface-muted, #242424) !important;
 }
 
 html[data-ruth-theme="admin"] .cr-image-lightbox__info h2 {
@@ -316,8 +304,8 @@ html[data-ruth-theme="admin"] .ruth-fullscreen-overlay-root:has(.cr-image-lightb
   right: 12px !important;
   z-index: 8 !important;
   margin: 0 !important;
-  background: rgba(255, 255, 255, .94) !important;
-  box-shadow: 0 8px 24px rgba(16, 19, 24, .14);
+  background: color-mix(in srgb, var(--rosta-carbon-soft, #242424) 96%, transparent) !important;
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--rosta-carbon, #111111) 58%, transparent);
 }
 
 @media (max-width: 700px) {
@@ -421,5 +409,30 @@ html[data-ruth-theme="admin"] .ruth-fullscreen-overlay-root:has(.cr-image-lightb
 
   .cr-contact-copy-button {
     min-width: 78px;
+  }
+}
+
+
+@media (hover: hover) and (pointer: fine) {
+  .cr-contact-value:hover {
+    border-color: var(--line-strong, var(--rosta-kraft, #C8A77D));
+    background: color-mix(in srgb, var(--rosta-kraft, #C8A77D) 8%, var(--ruth-color-surface-muted, #242424));
+    transform: translateY(-1px);
+  }
+
+  .cr-contact-copy-button:hover {
+    border-color: var(--accent, var(--rosta-brick-b, #C94A40));
+    background: var(--accent-soft, color-mix(in srgb, var(--rosta-brick-b, #C94A40) 15%, transparent));
+    transform: translateY(-1px);
+  }
+}
+
+@media (forced-colors: active) {
+  .cr-contact-value:focus-visible,
+  .cr-contact-copy-button:focus-visible,
+  .cr-product-card[data-ruth-product-media-preview="off"]:focus-visible,
+  html[data-ruth-theme="admin"] .ruth-fullscreen-overlay__close:focus-visible {
+    outline: 2px solid Highlight !important;
+    outline-offset: 2px;
   }
 }

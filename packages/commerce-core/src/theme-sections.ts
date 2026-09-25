@@ -71,9 +71,31 @@ function numberValue(value: unknown, fallback: number, min: number, max: number)
   return Number.isFinite(number) ? Math.min(max, Math.max(min, number)) : fallback;
 }
 
+const ROSTA_SECTION_COLORS: Record<string, string> = {
+  "#111111": "#111111",
+  "#242424": "#242424",
+  "#fbf3e6": "#FBF3E6",
+  "#38251c": "#38251C",
+  "#c94a40": "#C94A40",
+  "#6b4638": "#6B4638",
+  "#c8a77d": "#C8A77D",
+  "#ffffff": "#FFFFFF",
+  "#fff": "#FFFFFF",
+  "#f4f0e8": "#FBF3E6",
+  "#b9563d": "#C94A40",
+  "#aaa8a1": "#C8A77D",
+  "#6f725b": "#6B4638",
+  "#2b1b16": "#38251C",
+  "#faf7f2": "#FBF3E6",
+  "#faf7f1": "#FBF3E6",
+  "#b8976a": "#C94A40",
+  "#d4b896": "#C94A40",
+  "#9a7b52": "#38251C",
+};
+
 function color(value: unknown) {
-  const raw = text(value, "", 20);
-  return /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(raw) ? raw : undefined;
+  const raw = text(value, "", 20).toLowerCase();
+  return raw ? ROSTA_SECTION_COLORS[raw] : undefined;
 }
 
 function link(value: unknown, fallback = "") {

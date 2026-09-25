@@ -88,7 +88,7 @@ test("upsert and remove page element overrides", () => {
   assert.equal(themePage(removed, "/contact").overrides.length, 0);
 });
 
-test("all editable visual fields survive normalization", () => {
+test("layout fields survive normalization while colors stay inside the ROSTA palette", () => {
   const settings = normalizeThemeCustomizerSettings({
     ...defaultThemeCustomizerSettings,
     editor: { pages: { "/": { overrides: [{
@@ -126,12 +126,46 @@ test("all editable visual fields survive normalization", () => {
     paddingX: 24, paddingY: 16, marginTop: -12, marginBottom: 32, gap: 18,
     borderRadius: 20, opacity: 0.85, textAlign: "center", objectFit: "contain",
     objectPositionX: 25, objectPositionY: 75,
-    color: "#112233", backgroundColor: "#fefefe",
+    color: null, backgroundColor: null,
   });
   assert.equal(override.mobile?.width, 88);
   assert.equal(override.mobile?.widthUnit, "%");
   assert.equal(override.mobile?.fontSize, 18);
   assert.equal(override.mobile?.paddingX, 12);
+});
+
+
+test("theme colors are locked to the ROSTA palette and legacy aliases migrate", () => {
+  const settings = normalizeThemeCustomizerSettings({
+    ...defaultThemeCustomizerSettings,
+    colors: {
+      ivory: "#ffffff",
+      cream: "#faf7f2",
+      ink: "#112233",
+      gold: "#B9563D",
+      goldDark: "#2B1B16",
+      muted: "#6F725B",
+    },
+    editor: { pages: { "/": { overrides: [{
+      id: "palette",
+      selector: "[data-theme-id=palette]",
+      label: "Palette",
+      kind: "text",
+      desktop: { color: "#B9563D", backgroundColor: "#F4F0E8" },
+    }] } } },
+  });
+
+  assert.deepEqual(settings.colors, {
+    ivory: "#111111",
+    cream: "#242424",
+    ink: "#FBF3E6",
+    gold: "#C94A40",
+    goldDark: "#38251C",
+    muted: "#6B4638",
+  });
+  const override = themePage(settings, "/").overrides[0];
+  assert.equal(override.desktop?.color, "#C94A40");
+  assert.equal(override.desktop?.backgroundColor, "#FBF3E6");
 });
 
 test("mobile sparse styles inherit desktop values instead of clearing them", () => {
@@ -148,7 +182,7 @@ test("mobile sparse styles inherit desktop values instead of clearing them", () 
 
   assert.equal(mobile.width, 80);
   assert.equal(mobile.widthUnit, "%");
-  assert.equal(mobile.color, "#112233");
+  assert.equal(mobile.color, null);
   assert.equal(mobile.fontSize, 22);
 });
 

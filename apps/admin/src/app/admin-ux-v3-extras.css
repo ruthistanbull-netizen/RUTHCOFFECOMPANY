@@ -3,7 +3,7 @@
   padding: 13px 16px;
   border: 1px solid var(--line);
   border-radius: 15px;
-  background: #fff;
+  background: var(--surface-2, var(--ruth-color-surface-muted, #242424));
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -19,7 +19,7 @@
   padding: 11px;
   border: 1px solid var(--line);
   border-radius: 14px;
-  background: #fff;
+  background: var(--surface-2, var(--ruth-color-surface-muted, #242424));
   display: grid;
   grid-template-columns: 64px minmax(0, 1fr) auto;
   align-items: center;
@@ -32,7 +32,7 @@
   height: 64px;
   border-radius: 11px;
   object-fit: cover;
-  background: #eef1f5;
+  background: var(--rosta-cream, #FBF3E6);
   display: grid;
   place-items: center;
 }
@@ -47,20 +47,20 @@
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 11px;
-  background: #f7f8fa;
+  background: var(--ruth-color-canvas, #111111);
 }
 .cr-transactional-mail-grid > article {
   min-width: 0;
   padding: 17px;
   border: 1px solid var(--line);
   border-radius: 15px;
-  background: #fff;
+  background: var(--surface-2, var(--ruth-color-surface-muted, #242424));
   display: flex;
   flex-direction: column;
   gap: 11px;
 }
 .cr-transactional-mail-grid > article > header { display: flex; align-items: center; justify-content: space-between; gap: 9px; }
-.cr-transactional-mail-grid > article > header > span:first-child { width: 38px; height: 38px; border-radius: 11px; background: #eef3ff; color: var(--accent); display: grid; place-items: center; }
+.cr-transactional-mail-grid > article > header > span:first-child { width: 38px; height: 38px; border-radius: 11px; background: color-mix(in srgb, var(--rosta-brick-b, #C94A40) 15%, var(--ruth-color-surface-muted, #242424)); color: var(--accent); display: grid; place-items: center; }
 .cr-transactional-mail-grid > article > header svg { width: 18px; height: 18px; }
 .cr-transactional-mail-grid h3 { margin: 0; font-size: 15px; }
 .cr-transactional-mail-grid p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.55; }
@@ -71,7 +71,7 @@
 .cr-transactional-mail-grid footer svg { width: 13px; height: 13px; flex: 0 0 13px; }
 
 .cr-core-package { display: flex; align-items: center; gap: 10px; }
-.cr-core-package > svg { width: 30px; height: 30px; padding: 7px; border-radius: 9px; background: #eef3ff; color: var(--accent); }
+.cr-core-package > svg { width: 30px; height: 30px; padding: 7px; border-radius: 9px; background: color-mix(in srgb, var(--rosta-brick-b, #C94A40) 15%, var(--ruth-color-surface-muted, #242424)); color: var(--accent); }
 .cr-core-package > span { display: grid; gap: 2px; }
 .cr-core-package strong { font-size: 11px; }
 .cr-core-package small { color: var(--muted); font-size: 9px; }

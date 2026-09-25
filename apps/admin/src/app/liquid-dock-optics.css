@@ -2,13 +2,13 @@
   nav[aria-label="ROSTA Coffee Co. mobil menü"] {
     border-color: rgba(255, 255, 255, 0.74) !important;
     background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.20), rgba(224, 229, 232, 0.08)),
-      rgba(235, 239, 241, 0.18) !important;
+      linear-gradient(180deg, rgba(255, 255, 255, 0.20), color-mix(in srgb, var(--rosta-cream, #FBF3E6) 8%, transparent)),
+      color-mix(in srgb, var(--rosta-cream, #FBF3E6) 18%, transparent) !important;
     box-shadow:
-      0 12px 30px rgba(31, 27, 24, 0.16),
-      0 2px 8px rgba(31, 27, 24, 0.055),
+      0 12px 30px color-mix(in srgb, var(--rosta-carbon, #111111) 16%, transparent),
+      0 2px 8px color-mix(in srgb, var(--rosta-carbon, #111111) 5.5%, transparent),
       inset 0 1px 0 rgba(255, 255, 255, 0.96),
-      inset 0 -1px 0 rgba(62, 52, 44, 0.085),
+      inset 0 -1px 0 color-mix(in srgb, var(--rosta-carbon-soft, #242424) 8.5%, transparent),
       inset 27px 0 24px rgba(255, 255, 255, 0.14),
       inset -27px 0 24px rgba(255, 255, 255, 0.14) !important;
     /* The live DOM mirror supplies the refracted pixels. This parent layer
@@ -24,10 +24,10 @@
     background:
       radial-gradient(ellipse 54% 72% at 50% -18%, rgba(255,255,255,.13), transparent 66%),
       radial-gradient(ellipse 66% 55% at 50% 118%, rgba(255,255,255,.025), transparent 72%),
-      linear-gradient(180deg, rgba(255,255,255,.018), transparent 48%, rgba(70,58,48,.026)) !important;
+      linear-gradient(180deg, rgba(255,255,255,.018), transparent 48%, color-mix(in srgb, var(--rosta-kraft, #C8A77D) 2.6%, transparent)) !important;
     box-shadow:
       inset 0 1px 0 rgba(255,255,255,.45),
-      inset 0 -1px 0 rgba(69,55,43,.09) !important;
+      inset 0 -1px 0 color-mix(in srgb, var(--rosta-kraft, #C8A77D) 9%, transparent) !important;
     mix-blend-mode: screen !important;
     opacity: .96 !important;
   }
@@ -40,15 +40,15 @@
     background:
       radial-gradient(ellipse 98px 150% at -2% 50%, rgba(255,255,255,.52), rgba(255,255,255,.16) 34%, rgba(255,255,255,.035) 57%, transparent 72%),
       radial-gradient(ellipse 98px 150% at 102% 50%, rgba(255,255,255,.52), rgba(255,255,255,.16) 34%, rgba(255,255,255,.035) 57%, transparent 72%),
-      linear-gradient(180deg, rgba(255,255,255,.16), transparent 42%, rgba(32,27,23,.06)) !important;
+      linear-gradient(180deg, rgba(255,255,255,.16), transparent 42%, color-mix(in srgb, var(--rosta-carbon, #111111) 6%, transparent)) !important;
     box-shadow:
       inset 0 0 0 .5px rgba(255,255,255,.58),
       inset 0 1px 0 rgba(255,255,255,.30),
-      inset 0 -1px 0 rgba(35,29,24,.11),
+      inset 0 -1px 0 color-mix(in srgb, var(--rosta-carbon, #111111) 11%, transparent),
       inset 18px 0 22px rgba(255,255,255,.18),
       inset -18px 0 22px rgba(255,255,255,.18),
-      inset 5px 0 4px rgba(255,229,151,.06),
-      inset -5px 0 4px rgba(117,225,255,.07) !important;
+      inset 5px 0 4px color-mix(in srgb, var(--rosta-kraft, #C8A77D) 6%, transparent),
+      inset -5px 0 4px color-mix(in srgb, var(--rosta-brick-b, #C94A40) 7%, transparent) !important;
     -webkit-backdrop-filter: blur(1.25px) saturate(1.46) contrast(1.12) !important;
     backdrop-filter: blur(1.25px) saturate(1.46) contrast(1.12) !important;
     filter: none !important;
@@ -66,7 +66,7 @@
   }
 
   nav[aria-label="ROSTA Coffee Co. mobil menü"] > span:nth-of-type(2) > span:last-child {
-    background: rgba(226, 232, 236, .12) !important;
+    background: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 12%, transparent) !important;
     -webkit-backdrop-filter: blur(2.4px) saturate(1.30) contrast(1.06) !important;
     backdrop-filter: blur(2.4px) saturate(1.30) contrast(1.06) !important;
   }
@@ -80,8 +80,8 @@
   html.dark nav[aria-label="ROSTA Coffee Co. mobil menü"] {
     border-color: rgba(255,255,255,.24) !important;
     background:
-      linear-gradient(180deg, rgba(72,72,76,.58), rgba(24,24,27,.42)),
-      rgba(18,18,20,.40) !important;
+      linear-gradient(180deg, color-mix(in srgb, var(--rosta-carbon-soft, #242424) 58%, transparent), color-mix(in srgb, var(--rosta-carbon, #111111) 42%, transparent)),
+      color-mix(in srgb, var(--rosta-carbon, #111111) 40%, transparent) !important;
     box-shadow:
       0 14px 34px rgba(0,0,0,.35),
       inset 0 1px 0 rgba(255,255,255,.30),

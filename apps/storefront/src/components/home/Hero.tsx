@@ -130,7 +130,7 @@ function EditorialMedia({
       className={`home-editorial-slide relative h-[108svh] ${index ? "-mt-[8svh]" : ""}`}
       data-editorial-kind={slide.kind}
     >
-      <div className="sticky top-0 h-[100svh] min-h-[560px] overflow-hidden bg-ivory lg:min-h-[700px]">
+      <div className="sticky top-0 h-[100svh] min-h-[560px] overflow-hidden bg-carbon lg:min-h-[700px]">
         <motion.div
           className={wrapperClass}
           style={reduceMotion ? undefined : index === 0
@@ -216,7 +216,7 @@ export default function Hero({
   const reduceMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement | null>(null);
   const wordmarkRef = useRef<HTMLDivElement | null>(null);
-  const [wordmarkColor, setWordmarkColor] = useState("#F4F0E8");
+  const [wordmarkColor, setWordmarkColor] = useState("#FBF3E6");
   const [wordmarkVisible, setWordmarkVisible] = useState(true);
   const [liveHeroImages, setLiveHeroImages] = useState(heroImages);
 
@@ -268,7 +268,7 @@ export default function Hero({
         if (!media) return;
         const luminance = sampleMediaTone(media, pointX, pointY);
         if (luminance == null) return;
-        setWordmarkColor(luminance > 148 ? "#111111" : "#F4F0E8");
+        setWordmarkColor(luminance > 148 ? "#111111" : "#FBF3E6");
       });
     };
 
@@ -304,7 +304,7 @@ export default function Hero({
       ref={sectionRef}
       id="home-editorial"
       aria-label="Rosta Coffee Co ana sayfa editoryali"
-      className="relative m-0 overflow-clip bg-ivory p-0"
+      className="relative overflow-clip bg-carbon"
     >
       <style>{`
         .home-editorial-wordmark{box-sizing:border-box;pointer-events:none;position:fixed;left:0;top:calc(100svh - clamp(184px,38vw,236px));z-index:40;width:min(100vw,1208px);max-width:100vw;height:auto;aspect-ratio:3175/1343;user-select:none;transition:color .24s ease,opacity .28s ease,visibility .28s ease}.home-editorial-wordmark[data-visible="false"]{opacity:0!important;visibility:hidden}.home-editorial-wordmark svg{display:block;width:100%;height:100%;overflow:visible}@media(min-width:1024px){.home-editorial-wordmark{right:1vw;left:auto;top:45vh;width:56vw;max-width:98vw;height:auto;aspect-ratio:3175/1343}}

@@ -110,8 +110,6 @@
   border-color: color-mix(in srgb, var(--ruth-color-text-inverse) 13%, transparent);
   background: color-mix(in srgb, var(--ruth-color-text-inverse) 7%, transparent);
 }
-.newChatButton:hover,
-.workspaceLinks button:hover:not(:disabled) { background: color-mix(in srgb, var(--ruth-color-text-inverse) 11%, transparent); }
 .newChatButton svg,
 .workspaceLinks button svg { width: 17px; height: 17px; flex: 0 0 17px; }
 .workspaceLinks button:disabled { opacity: .42; cursor: not-allowed; }
@@ -180,8 +178,6 @@
   text-align: left;
   cursor: pointer;
 }
-.conversationItem > button:first-child:hover,
-.activeConversation > button:first-child { background: var(--rw-sidebar-surface); color: var(--ruth-color-text-inverse); }
 .conversationItem > button:first-child > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 11px; font-weight: 710; }
 .conversationItem > button:first-child small {
   display: flex;
@@ -206,9 +202,6 @@
   opacity: 0;
   cursor: pointer;
 }
-.conversationItem:hover .deleteConversationButton,
-.activeConversation .deleteConversationButton { opacity: 1; }
-.deleteConversationButton:hover { background: color-mix(in srgb, var(--rw-danger) 18%, transparent); color: color-mix(in srgb, var(--rw-danger) 45%, var(--ruth-color-text-inverse)); }
 .deleteConversationButton svg { width: 14px; height: 14px; }
 .noHistory { margin: 18px 10px; color: color-mix(in srgb, var(--ruth-color-text-inverse) 45%, transparent); font-size: 10px; text-align: center; }
 
@@ -276,7 +269,6 @@
   gap: 7px;
   cursor: pointer;
 }
-.modelButton:hover { background: var(--rw-surface-2); }
 .modelButton span { font-size: 14px; font-weight: 820; }
 .modelButton small { color: var(--rw-muted); font-size: 10px; }
 .modelButton svg { width: 15px; height: 15px; color: var(--rw-muted); }
@@ -297,7 +289,6 @@
   font-weight: 760;
   cursor: pointer;
 }
-.topbarActions button:hover:not(:disabled) { background: var(--rw-surface-2); border-color: var(--rw-line-strong); }
 .topbarActions button:disabled { opacity: .45; cursor: not-allowed; }
 .topbarActions svg { width: 16px; height: 16px; }
 .topbarActions .voiceTopButton { background: var(--rw-ink); border-color: var(--rw-ink); color: var(--ruth-color-text-inverse); }
@@ -362,7 +353,6 @@
   cursor: pointer;
   transition: transform var(--ruth-motion-fast) var(--ruth-easing), border-color var(--ruth-motion-fast) var(--ruth-easing), background var(--ruth-motion-fast) var(--ruth-easing);
 }
-.suggestions button:hover:not(:disabled) { transform: translateY(-1px); border-color: color-mix(in srgb, var(--rw-accent) 50%, var(--rw-line)); background: var(--rw-accent-soft); }
 .suggestions button:disabled { opacity: .45; cursor: not-allowed; }
 .suggestions svg { width: 16px; height: 16px; color: var(--rw-accent); }
 
@@ -459,7 +449,6 @@
   cursor: pointer;
 }
 .composerIconButton { background: transparent; color: var(--rw-muted); }
-.composerIconButton:hover:not(:disabled) { background: var(--rw-surface-2); color: var(--rw-ink); }
 .composerIconButton:disabled { opacity: .35; cursor: not-allowed; }
 .composerIconButton svg { width: 18px; height: 18px; }
 .sendButton { width: 42px; height: 42px; background: var(--rw-ink); color: var(--ruth-color-text-inverse); }
@@ -479,7 +468,6 @@
 }
 .composerMeta > div { display: flex; gap: 10px; }
 .composerMeta button { border: 0; background: transparent; color: var(--rw-muted); display: inline-flex; align-items: center; gap: 4px; font-size: 8px; cursor: pointer; }
-.composerMeta button:hover:not(:disabled) { color: var(--rw-ink); }
 .composerMeta button:disabled { opacity: .4; cursor: not-allowed; }
 .composerMeta svg { width: 11px; height: 11px; }
 .mobileHistoryBackdrop { display: none; }
@@ -601,7 +589,6 @@
 .voiceError svg { width: 16px; height: 16px; }
 .voiceControls { width: min(560px, 100%); margin: 0 auto; display: flex; align-items: center; justify-content: center; gap: 16px; }
 .voiceControls button { min-width: 104px; min-height: 76px; padding: 10px 15px; border: 1px solid color-mix(in srgb, var(--ruth-color-text-inverse) 15%, transparent); border-radius: 22px; background: color-mix(in srgb, var(--ruth-color-text-inverse) 8%, transparent); color: var(--ruth-color-text-inverse); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; font-size: 9px; font-weight: 700; cursor: pointer; }
-.voiceControls button:hover:not(:disabled) { background: color-mix(in srgb, var(--ruth-color-text-inverse) 13%, transparent); }
 .voiceControls button:disabled { opacity: .42; cursor: not-allowed; }
 .voiceControls svg { width: 22px; height: 22px; }
 .voiceControls .mutedControl { background: color-mix(in srgb, var(--rw-danger) 20%, transparent); }
@@ -616,6 +603,31 @@
 @keyframes rwBreathe { 0%, 100% { transform: scale(.96); } 50% { transform: scale(1.04); } }
 @keyframes rwRotateGlow { 0% { box-shadow: 0 0 0 18px color-mix(in srgb, var(--rw-accent) 7%, transparent), 0 0 70px color-mix(in srgb, var(--rw-accent) 24%, transparent); } 50% { box-shadow: 0 0 0 30px color-mix(in srgb, var(--rw-accent) 3%, transparent), 0 0 120px color-mix(in srgb, var(--rw-accent) 44%, transparent); } 100% { box-shadow: 0 0 0 18px color-mix(in srgb, var(--rw-accent) 7%, transparent), 0 0 70px color-mix(in srgb, var(--rw-accent) 24%, transparent); } }
 @keyframes rwSpeaking { from { transform: scale(.98); } to { transform: scale(1.055); } }
+
+@media (hover: hover) and (pointer: fine) {
+  .newChatButton:hover,
+  .workspaceLinks button:hover:not(:disabled) { background: color-mix(in srgb, var(--ruth-color-text-inverse) 11%, transparent); }
+
+  .conversationItem > button:first-child:hover,
+  .activeConversation > button:first-child { background: var(--rw-sidebar-surface); color: var(--ruth-color-text-inverse); }
+
+  .conversationItem:hover .deleteConversationButton,
+  .activeConversation .deleteConversationButton { opacity: 1; }
+
+  .deleteConversationButton:hover { background: color-mix(in srgb, var(--rw-danger) 18%, transparent); color: color-mix(in srgb, var(--rw-danger) 45%, var(--ruth-color-text-inverse)); }
+
+  .modelButton:hover { background: var(--rw-surface-2); }
+
+  .topbarActions button:hover:not(:disabled) { background: var(--rw-surface-2); border-color: var(--rw-line-strong); }
+
+  .suggestions button:hover:not(:disabled) { transform: translateY(-1px); border-color: color-mix(in srgb, var(--rw-accent) 50%, var(--rw-line)); background: var(--rw-accent-soft); }
+
+  .composerIconButton:hover:not(:disabled) { background: var(--rw-surface-2); color: var(--rw-ink); }
+
+  .composerMeta button:hover:not(:disabled) { color: var(--rw-ink); }
+
+  .voiceControls button:hover:not(:disabled) { background: color-mix(in srgb, var(--ruth-color-text-inverse) 13%, transparent); }
+}
 
 @media (max-width: 1080px) {
   .workspace { grid-template-columns: 238px minmax(0, 1fr); }

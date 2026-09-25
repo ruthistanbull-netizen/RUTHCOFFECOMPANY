@@ -20,10 +20,10 @@
     overflow-x: hidden !important;
     overflow-y: auto !important;
     background:
-      radial-gradient(circle at 50% 0, rgba(201, 139, 55, .14), transparent 34%),
-      #080604 !important;
-    color: #f6eedf !important;
-    box-shadow: 32px 0 90px rgba(0, 0, 0, .82) !important;
+      radial-gradient(circle at 50% 0, color-mix(in srgb, var(--rosta-brick-b) 14%, transparent), transparent 34%),
+      var(--rosta-carbon) !important;
+    color: var(--rosta-cream) !important;
+    box-shadow: 32px 0 90px color-mix(in srgb, var(--rosta-carbon) 82%, transparent) !important;
   }
 
   .hardOpen :global(aside[aria-label="ROSTA Insight Chat menüsü"][class*="sidebarOpen"]) {

@@ -258,7 +258,7 @@ function centerOf(element: Element | null, fallbackX: number, fallbackY: number)
 function applyTargetTone(target: ToneTarget, rgb: Rgb) {
   const root = document.documentElement;
   const dark = isDark(rgb);
-  const ink = dark ? "#ffffff" : "#111111";
+  const ink = dark ? "#FBF3E6" : "#111111";
   root.style.setProperty(`--ruth-home-header-${target}-ink`, ink);
   root.style.setProperty(`--ruth-home-header-${target}-surface`, cssColor(rgb));
 

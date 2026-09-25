@@ -15,9 +15,9 @@
   min-height: 78px;
   padding: 12px clamp(18px, 3.5vw, 58px) calc(12px + env(safe-area-inset-bottom));
   border-top: 1px solid var(--ruth-color-border-subtle);
-  background: color-mix(in srgb, var(--ruth-color-canvas) 96%, transparent);
+  background: var(--ruth-color-canvas);
   color: var(--ruth-color-text-primary);
-  backdrop-filter: blur(18px);
+  backdrop-filter: none;
 }
 
 .identity {
@@ -69,20 +69,28 @@
 .drawerAddButton:global(.ruth-button) {
   width: 100%;
   min-height: 50px;
-  border: 1px solid var(--ruth-color-text-primary);
+  border: 1px solid var(--rosta-brick-b);
   border-radius: 0;
-  background: var(--ruth-color-text-primary);
-  color: var(--ruth-color-text-inverse);
+  background: var(--rosta-brick-b);
+  color: var(--rosta-action-text);
   font-size: 0.6875rem;
   font-weight: 400;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
-.primaryButton:global(.ruth-button):hover:not(:disabled),
-.drawerAddButton:global(.ruth-button):hover:not(:disabled) {
-  background: color-mix(in srgb, var(--ruth-color-text-primary) 88%, var(--ruth-color-canvas));
-  transform: none;
+@media (hover: hover) and (pointer: fine) {
+  .primaryButton:global(.ruth-button):hover:not(:disabled),
+  .drawerAddButton:global(.ruth-button):hover:not(:disabled) {
+    background: color-mix(in srgb, var(--rosta-brick-b) 88%, var(--rosta-cocoa));
+    transform: none;
+  }
+}
+
+.primaryButton:global(.ruth-button):active:not(:disabled),
+.drawerAddButton:global(.ruth-button):active:not(:disabled) {
+  border-color: var(--rosta-espresso);
+  background: var(--rosta-espresso);
 }
 
 .drawerTopline,
@@ -158,13 +166,19 @@
     color var(--ruth-motion-fast) ease;
 }
 
-.option:hover {
-  background: var(--ruth-color-surface-muted);
+@media (hover: hover) and (pointer: fine) {
+  .option:hover {
+    background: var(--ruth-color-surface-muted);
+  }
 }
 
 .optionActive {
-  background: var(--ruth-color-text-primary);
-  color: var(--ruth-color-text-inverse);
+  background: var(--rosta-brick-b);
+  color: var(--rosta-action-text);
+}
+
+ .optionActive:active {
+  background: var(--rosta-espresso);
 }
 
 .option:focus-visible,

@@ -8,10 +8,10 @@
   max-height: calc(100dvh - 20px) !important;
   overflow: auto !important;
   pointer-events: auto !important;
-  border: 1px solid rgba(49, 94, 251, .22) !important;
+  border: 1px solid color-mix(in srgb, var(--rosta-kraft, #C8A77D) 42%, transparent) !important;
   border-radius: 17px !important;
-  background: #fff !important;
-  box-shadow: 0 24px 70px rgba(16, 24, 40, .32) !important;
+  background: var(--ruth-color-surface-muted, #242424) !important;
+  box-shadow: 0 24px 70px color-mix(in srgb, var(--rosta-carbon, #111111) 72%, transparent) !important;
   isolation: isolate;
 }
 
@@ -22,7 +22,7 @@
   max-height: min(52dvh, 440px) !important;
   aspect-ratio: 3 / 4;
   object-fit: contain !important;
-  background: radial-gradient(circle at 50% 40%, #fff 0%, #f4f6ff 72%, #e9edff 100%) !important;
+  background: radial-gradient(circle at 50% 40%, var(--rosta-cream, #FBF3E6) 0%, color-mix(in srgb, var(--rosta-cream, #FBF3E6) 88%, var(--rosta-kraft, #C8A77D)) 72%, color-mix(in srgb, var(--rosta-cream, #FBF3E6) 76%, var(--rosta-kraft, #C8A77D)) 100%) !important;
 }
 
 .cr-order-inline-preview__copy {
@@ -63,7 +63,7 @@
   height: 34px !important;
   border: 1px solid var(--line) !important;
   border-radius: 50% !important;
-  background: rgba(255, 255, 255, .96) !important;
+  background: color-mix(in srgb, var(--rosta-carbon-soft, #242424) 96%, transparent) !important;
   color: var(--ink) !important;
   box-shadow: var(--shadow-sm);
 }
@@ -127,5 +127,18 @@ body:has(.cr-order-inline-preview) .ruth-fullscreen-overlay-root:has(.cr-image-l
   .cr-dashboard-order-detail .cr-inspector-product > strong:last-child {
     grid-column: 2;
     justify-self: start;
+  }
+}
+
+.cr-order-inline-preview__close:focus-visible {
+  outline: 2px solid var(--ruth-color-focus, var(--rosta-brick-b, #C94A40)) !important;
+  outline-offset: 2px;
+}
+
+@media (forced-colors: active) {
+  .cr-order-inline-preview,
+  .cr-order-inline-preview__close:focus-visible {
+    outline-color: Highlight !important;
+    border-color: ButtonText !important;
   }
 }

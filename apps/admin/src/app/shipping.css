@@ -96,7 +96,7 @@
   min-height: 104px;
   padding: 13px 15px;
   border-bottom: 1px solid var(--line);
-  background: #fff;
+  background: var(--ruth-color-surface-muted, #242424);
   display: grid;
   grid-template-columns: 24px minmax(220px, 1.2fr) 145px 155px minmax(220px, auto);
   gap: 12px;
@@ -130,13 +130,13 @@
   height: 17px;
   border: 1px solid var(--line-strong);
   border-radius: 5px;
-  background: #fff;
+  background: var(--ruth-color-surface-muted, #242424);
 }
 
 .cr-check input:checked + span {
   background: var(--accent);
   border-color: var(--accent);
-  box-shadow: inset 0 0 0 4px #fff;
+  box-shadow: inset 0 0 0 4px var(--rosta-cream, #FBF3E6);
 }
 
 .cr-check input:disabled + span {

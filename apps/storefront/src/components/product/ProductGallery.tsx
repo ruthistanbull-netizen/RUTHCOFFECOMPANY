@@ -716,7 +716,7 @@ export function ProductGallery({
   if (!displayImages.length) {
     return (
       <div className="product-gallery-empty">
-        <span className="font-heading text-3xl text-ink/70">{product.name}</span>
+        <span className="font-heading text-3xl text-cream/70">{product.name}</span>
       </div>
     );
   }

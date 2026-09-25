@@ -14,22 +14,22 @@ export default function ProductPageError({
   }, [error]);
 
   return (
-    <main className="grid min-h-screen place-items-center bg-ivory px-6 py-28 text-center text-ink">
+    <main className="grid min-h-screen place-items-center bg-carbon px-6 py-28 text-center text-cream">
       <div className="max-w-md">
-        <p className="text-[9px] uppercase tracking-[0.2em] text-gold-dark">
+        <p className="text-[9px] uppercase tracking-[0.2em] text-brick">
           Geçici bağlantı sorunu
         </p>
         <h1 className="mt-4 font-heading text-3xl font-normal">
           Ürün şu anda görüntülenemiyor
         </h1>
-        <p className="mt-4 text-sm leading-7 text-muted-ruth">
+        <p className="mt-4 text-sm leading-7 text-cream/70">
           Sayfa kilitli kalmak yerine güvenli biçimde durduruldu. Bağlantıyı yeniden
           deneyebilirsin.
         </p>
         <button
           type="button"
           onClick={reset}
-          className="mt-7 min-h-12 border border-ink bg-ink px-7 text-[10px] uppercase tracking-[0.18em] text-cream"
+          className="mt-7 min-h-12 border border-brick bg-brick px-7 text-[10px] uppercase tracking-[0.18em] text-[var(--rosta-action-text)]"
         >
           Tekrar Dene
         </button>

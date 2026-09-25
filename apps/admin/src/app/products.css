@@ -25,15 +25,9 @@
   border: 1px solid var(--line);
   border-radius: 14px;
   overflow: hidden;
-  background: #fff;
+  background: var(--ruth-color-surface-muted, #242424);
   box-shadow: var(--shadow-sm);
   transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
-}
-
-.cr-product-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--line-strong);
-  box-shadow: 0 12px 28px rgba(16, 24, 40, .09);
 }
 
 .cr-product-card__media {
@@ -45,7 +39,7 @@
   background: var(--surface-2);
   display: grid;
   place-items: center;
-  color: #344054;
+  color: var(--ruth-color-text-primary, #FBF3E6);
   font: 900 34px Georgia, serif;
   cursor: pointer;
 }
@@ -74,13 +68,13 @@
 
 .cr-product-card__media em {
   right: 8px;
-  background: rgba(16, 19, 24, .78);
-  color: #fff;
+  background: color-mix(in srgb, var(--rosta-carbon, #111111) 78%, transparent);
+  color: var(--rosta-cream, #FBF3E6);
 }
 
 .cr-product-card__media > strong {
   left: 8px;
-  background: #fff;
+  background: var(--ruth-color-surface-muted, #242424);
   color: var(--ink);
 }
 
@@ -162,7 +156,7 @@
   min-height: 44px;
   padding: 5px 12px;
   border-bottom: 1px solid var(--line);
-  background: #fff;
+  background: var(--ruth-color-surface-muted, #242424);
   display: flex;
   gap: 5px;
   overflow-x: auto;
@@ -193,7 +187,7 @@
 .cr-product-upload {
   min-height: 108px;
   padding: 16px;
-  border: 1px dashed #98a2b3;
+  border: 1px dashed color-mix(in srgb, var(--rosta-kraft, #C8A77D) 58%, transparent);
   border-radius: 13px;
   background: var(--surface-2);
   display: flex;
@@ -203,11 +197,6 @@
   gap: 6px;
   text-align: center;
   cursor: pointer;
-}
-
-.cr-product-upload:hover {
-  border-color: var(--accent);
-  background: var(--accent-soft);
 }
 
 .cr-product-upload > svg {
@@ -271,14 +260,14 @@
 
 .cr-product-photo-grid > article > div:first-child strong {
   left: 7px;
-  background: #fff;
+  background: var(--ruth-color-surface-muted, #242424);
   color: var(--ink);
 }
 
 .cr-product-photo-grid > article > div:first-child span {
   right: 7px;
-  background: rgba(16,19,24,.75);
-  color: #fff;
+  background: color-mix(in srgb, var(--rosta-carbon, #111111) 75%, transparent);
+  color: var(--rosta-cream, #FBF3E6);
 }
 
 .cr-product-photo-grid > article > div:last-child {
@@ -294,7 +283,7 @@
 
 .cr-icon-button--danger {
   color: var(--danger);
-  border-color: #fecdca;
+  border-color: color-mix(in srgb, var(--ruth-color-danger, #E1606B) 48%, transparent);
   background: var(--danger-soft);
 }
 
@@ -325,7 +314,7 @@
   position: relative;
   overflow: hidden;
   border-radius: 9px;
-  background: #fff;
+  background: var(--rosta-cream, #FBF3E6);
   display: grid;
   place-items: center;
   font: 800 18px Georgia, serif;
@@ -344,7 +333,7 @@
   width: 25px;
   height: 25px;
   border-radius: 8px;
-  background: rgba(255,255,255,.94);
+  background: color-mix(in srgb, var(--rosta-carbon-soft, #242424) 96%, transparent);
   display: grid;
   place-items: center;
   cursor: pointer;
@@ -464,7 +453,7 @@
   position: absolute;
   inset: 0;
   border: 0;
-  background: rgba(16, 19, 24, .64);
+  background: color-mix(in srgb, var(--rosta-carbon, #111111) 72%, transparent);
   backdrop-filter: blur(3px);
 }
 
@@ -476,7 +465,7 @@
   overflow: hidden;
   border-radius: 20px;
   background: var(--bg);
-  box-shadow: 0 28px 90px rgba(0,0,0,.32);
+  box-shadow: 0 28px 90px color-mix(in srgb, var(--rosta-carbon, #111111) 72%, transparent);
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
 }
@@ -485,7 +474,7 @@
   min-height: 78px;
   padding: 15px 18px;
   border-bottom: 1px solid var(--line);
-  background: #fff;
+  background: var(--ruth-color-surface-muted, #242424);
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -526,7 +515,7 @@
   overflow: hidden;
   border: 0;
   border-radius: 15px;
-  background: #dfe3e8;
+  background: var(--rosta-cream, #FBF3E6);
   cursor: crosshair;
   justify-self: center;
   box-shadow: 0 0 0 1px var(--line), var(--shadow-md);
@@ -545,13 +534,13 @@
   height: 28px;
   position: absolute;
   transform: translate(-50%, -50%);
-  border: 2px solid #fff;
+  border: 2px solid var(--rosta-cream, #FBF3E6);
   border-radius: 50%;
-  background: rgba(49,94,251,.8);
-  color: #fff;
+  background: var(--rosta-brick-b, #C94A40);
+  color: var(--rosta-action-text, #FFFFFF);
   display: grid;
   place-items: center;
-  box-shadow: 0 2px 12px rgba(0,0,0,.24);
+  box-shadow: 0 2px 12px color-mix(in srgb, var(--rosta-carbon, #111111) 64%, transparent);
   pointer-events: none;
 }
 
@@ -567,8 +556,8 @@
   min-height: 25px;
   padding: 0 9px;
   border-radius: 8px;
-  background: rgba(16,19,24,.78);
-  color: #fff;
+  background: color-mix(in srgb, var(--rosta-carbon, #111111) 78%, transparent);
+  color: var(--rosta-cream, #FBF3E6);
   display: inline-flex;
   align-items: center;
   font-size: 9px;
@@ -579,7 +568,7 @@
   padding: 10px;
   border: 1px solid var(--line);
   border-radius: 11px;
-  background: #fff;
+  background: var(--ruth-color-surface-muted, #242424);
   display: grid;
   grid-template-columns: 18px minmax(0, 1fr) auto;
   gap: 9px;
@@ -624,7 +613,7 @@
   padding: 11px;
   border: 1px solid var(--line);
   border-radius: 11px;
-  background: #fff;
+  background: var(--ruth-color-surface-muted, #242424);
   display: grid;
   gap: 9px;
 }
@@ -675,7 +664,7 @@
   min-height: 66px;
   padding: 11px 16px max(11px, env(safe-area-inset-bottom));
   border-top: 1px solid var(--line);
-  background: #fff;
+  background: var(--ruth-color-surface-muted, #242424);
   display: flex;
   justify-content: flex-end;
   gap: 8px;
@@ -796,5 +785,28 @@
     height: 100%;
     max-height: none;
     border-radius: 0;
+  }
+}
+
+
+@media (hover: hover) and (pointer: fine) {
+  .cr-product-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--line-strong, var(--rosta-kraft, #C8A77D));
+    box-shadow: 0 12px 28px color-mix(in srgb, var(--rosta-carbon, #111111) 54%, transparent);
+  }
+
+  .cr-product-upload:hover {
+    border-color: var(--accent, var(--rosta-brick-b, #C94A40));
+    background: var(--accent-soft, color-mix(in srgb, var(--rosta-brick-b, #C94A40) 15%, transparent));
+  }
+}
+
+@media (forced-colors: active) {
+  .cr-product-card:focus-visible,
+  .cr-product-upload:focus-visible,
+  .cr-cropper__preview:focus-visible {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
   }
 }

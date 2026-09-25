@@ -13,7 +13,7 @@
   padding: 13px 15px;
   border: 0;
   border-bottom: 1px solid var(--line);
-  background: #fff;
+  background: var(--ruth-color-surface-muted, #242424);
   color: var(--ink);
   display: grid;
   grid-template-columns: minmax(170px, 1fr) minmax(170px, 1fr) 150px 112px 125px 36px;
@@ -26,11 +26,6 @@
 
 .cr-payment-row:last-child {
   border-bottom: 0;
-}
-
-.cr-payment-row:hover {
-  background: #fafbfc;
-  box-shadow: inset 3px 0 0 var(--accent);
 }
 
 .cr-payment-row > div {
@@ -70,8 +65,8 @@
   padding: 12px;
   border: 1px solid var(--line);
   border-radius: 11px;
-  background: #111318;
-  color: #d0d5dd;
+  background: var(--rosta-carbon, #111111);
+  color: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 70%, transparent);
   font-size: 9px;
   line-height: 1.6;
   white-space: pre-wrap;
@@ -108,15 +103,15 @@
   height: 11px;
   margin-top: 3px;
   border-radius: 50%;
-  border: 2px solid #fff;
+  border: 2px solid var(--rosta-cream, #FBF3E6);
   box-shadow: 0 0 0 2px var(--line);
   background: var(--muted-2);
 }
 
-.cr-timeline__dot--success { background: var(--success); box-shadow: 0 0 0 2px #abefc6; }
-.cr-timeline__dot--warning { background: var(--warning); box-shadow: 0 0 0 2px #fedf89; }
-.cr-timeline__dot--danger { background: var(--danger); box-shadow: 0 0 0 2px #fecdca; }
-.cr-timeline__dot--info { background: var(--info); box-shadow: 0 0 0 2px #b2ddff; }
+.cr-timeline__dot--success { background: var(--success); box-shadow: 0 0 0 2px var(--ruth-color-success-soft, #E3F8ED); }
+.cr-timeline__dot--warning { background: var(--warning); box-shadow: 0 0 0 2px var(--ruth-color-warning-soft, #FFF4D6); }
+.cr-timeline__dot--danger { background: var(--danger); box-shadow: 0 0 0 2px var(--ruth-color-danger-soft, #FFE5E8); }
+.cr-timeline__dot--info { background: var(--info); box-shadow: 0 0 0 2px var(--ruth-color-info-soft, #EBF3FF); }
 
 .cr-timeline > div > div {
   min-width: 0;
@@ -173,4 +168,12 @@
   .cr-payment-row > div:nth-child(3) { grid-column: 1; grid-row: 3; }
   .cr-payment-row > .cr-payment-pill { grid-column: 2; grid-row: 1; align-self: start; }
   .cr-payment-row > .cr-icon-button { grid-column: 2; grid-row: 3; }
+}
+
+
+@media (hover: hover) and (pointer: fine) {
+  .cr-payment-row:hover {
+    background: color-mix(in srgb, var(--rosta-kraft, #C8A77D) 8%, var(--ruth-color-surface-muted, #242424));
+    box-shadow: inset 3px 0 0 var(--accent, var(--rosta-brick-b, #C94A40));
+  }
 }

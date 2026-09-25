@@ -10,7 +10,7 @@ export const metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-ivory pt-24">
+    <div className="min-h-screen bg-carbon pt-24 text-cream">
       <section className="px-4 py-16 md:px-8 md:py-24">
         <PageIntro
           eyebrow="ROSTA Coffee Co."

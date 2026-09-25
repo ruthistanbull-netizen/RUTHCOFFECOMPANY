@@ -281,7 +281,7 @@ function ResultBreakdownContent({ ad, compactNumber }: {
       {core.map((item) => {
         const Icon = item.icon;
         return (
-          <div key={item.label} className="flex items-center justify-between gap-3 rounded-lg px-2 py-1.5 hover:bg-surface-secondary">
+          <div key={item.label} className="flex items-center justify-between gap-3 rounded-lg px-2 py-1.5 active:bg-surface-secondary focus-visible:bg-surface-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
             <span className="flex min-w-0 items-center gap-2 text-[10px] text-muted">
               <Icon className="h-3.5 w-3.5 shrink-0" />
               <span className="truncate">{item.label}</span>
@@ -353,7 +353,7 @@ function AdPreviewSection({ adId }: { adId: string }) {
                 key={key}
                 type="button"
                 onClick={() => setActive(key)}
-                className={`shrink-0 rounded-full border px-3 py-1.5 text-[10px] font-semibold transition ${active === key ? "border-accent bg-accent-soft text-accent" : "border-border-subtle bg-surface-primary text-muted hover:bg-surface-secondary"}`}
+                className={`shrink-0 rounded-full border px-3 py-1.5 text-[10px] font-semibold transition ${active === key ? "border-accent bg-accent-soft text-accent" : "border-border-subtle bg-surface-primary text-muted active:bg-surface-secondary focus-visible:bg-surface-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"}`}
               >
                 {label}
                 {!loading && payload && !available ? <span className="ml-1 opacity-50">×</span> : null}
@@ -377,12 +377,12 @@ function AdPreviewSection({ adId }: { adId: string }) {
             onRetry={() => void load()}
           />
         ) : placement?.available && placement.iframeUrl ? (
-          <div className="mx-auto w-full max-w-[440px] bg-[#eef0f3] p-2 sm:p-3">
-            <div className="mb-2 flex items-center justify-between gap-2 px-1 text-[9px] text-[#65676b]">
+          <div className="mx-auto w-full max-w-[440px] border border-border-subtle bg-surface-secondary p-2 sm:p-3">
+            <div className="mb-2 flex items-center justify-between gap-2 px-1 text-[9px] text-muted">
               <span>{placement.label}</span>
               <span>Meta canlı önizleme</span>
             </div>
-            <div className="w-full overflow-hidden border border-black/10 bg-white shadow-sm leading-[0]">
+            <div className="w-full overflow-hidden border border-border-subtle bg-[var(--rosta-cream)] shadow-sm leading-[0]">
               <iframe
                 key={`${placement.key}:${placement.iframeUrl}`}
                 src={placement.iframeUrl}
@@ -558,7 +558,7 @@ export function ExactMetaAds() {
             const campaignOpen = expandedCampaigns.has(campaign.key);
             return (
               <div key={campaign.key} className="overflow-hidden rounded-2xl border border-border-subtle bg-surface-primary">
-                <button type="button" onClick={() => toggleCampaign(campaign.key)} className="flex w-full flex-col gap-3 p-4 text-left hover:bg-surface-secondary sm:flex-row sm:items-center sm:justify-between">
+                <button type="button" onClick={() => toggleCampaign(campaign.key)} className="flex w-full flex-col gap-3 p-4 text-left active:bg-surface-secondary focus-visible:bg-surface-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex min-w-0 items-center gap-3">
                     <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent"><Megaphone className="h-4 w-4" /></span>
                     <div className="min-w-0">
@@ -579,7 +579,7 @@ export function ExactMetaAds() {
                         const adsetOpen = expandedAdsets.has(adset.key);
                         return (
                           <div key={adset.key} className="overflow-hidden rounded-xl border border-border-subtle bg-surface-primary">
-                            <button type="button" onClick={() => toggleAdset(adset.key)} className="flex w-full flex-col gap-2.5 p-3 text-left hover:bg-surface-secondary sm:flex-row sm:items-center sm:justify-between">
+                            <button type="button" onClick={() => toggleAdset(adset.key)} className="flex w-full flex-col gap-2.5 p-3 text-left active:bg-surface-secondary focus-visible:bg-surface-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:flex-row sm:items-center sm:justify-between">
                               <div className="flex min-w-0 items-center gap-2.5">
                                 <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-surface-secondary text-muted"><Layers className="h-3.5 w-3.5" /></span>
                                 <div className="min-w-0">
@@ -596,7 +596,7 @@ export function ExactMetaAds() {
                             {adsetOpen ? (
                               <div className="border-t border-border-subtle">
                                 {adset.ads.map((ad) => (
-                                  <button key={ad.id} type="button" onClick={() => setSelected(ad)} className="flex w-full items-center justify-between gap-3 border-b border-border-subtle px-3 py-2.5 text-left last:border-b-0 hover:bg-surface-secondary">
+                                  <button key={ad.id} type="button" onClick={() => setSelected(ad)} className="flex w-full items-center justify-between gap-3 border-b border-border-subtle px-3 py-2.5 text-left last:border-b-0 active:bg-surface-secondary focus-visible:bg-surface-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
                                     <div className="flex min-w-0 items-center gap-2.5">
                                       <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-soft text-accent"><MousePointerClick className="h-3.5 w-3.5" /></span>
                                       <div className="min-w-0">
@@ -632,7 +632,7 @@ export function ExactMetaAds() {
                 <p className="truncate text-base font-bold text-main">{selected.name}</p>
                 <p className="mt-0.5 truncate text-[10px] text-muted">{selected.campaign.name} · {selected.adset.name}</p>
               </div>
-              <button type="button" onClick={() => setSelected(null)} className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-muted hover:bg-surface-secondary"><X className="h-4 w-4" /></button>
+              <button type="button" onClick={() => setSelected(null)} className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-muted active:bg-surface-secondary focus-visible:bg-surface-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><X className="h-4 w-4" /></button>
             </div>
 
             <div className="space-y-4 p-4 sm:p-5">

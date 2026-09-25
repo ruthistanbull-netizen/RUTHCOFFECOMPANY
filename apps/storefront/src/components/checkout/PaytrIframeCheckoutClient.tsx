@@ -78,7 +78,7 @@ const CHECKOUT_DRAFT_TOKEN_KEY = "rosta-checkout-draft-token";
 const LEGACY_CHECKOUT_DRAFT_TOKEN_KEY = "ruth-checkout-draft-token";
 const SELECTED_DISCOUNT_CODE_KEY = "rosta-selected-discount-code";
 const LEGACY_SELECTED_DISCOUNT_CODE_KEY = "ruth-selected-discount-code";
-const inputClass = "mt-2 w-full rounded-lg border border-gold/20 bg-ivory px-4 py-3 text-sm normal-case tracking-normal text-ink outline-none transition focus:border-gold-dark";
+const inputClass = "mt-2 w-full rounded-lg border border-kraft/40 bg-carbon px-4 py-3 text-sm normal-case tracking-normal text-cream outline-none transition focus:border-brick";
 
 function makeLocalDraftToken() {
   return `local_${Date.now()}_${Math.random().toString(36).slice(2, 12)}`;
@@ -96,7 +96,7 @@ function RequiredMark() {
 
 function Field({ label, required, children }: { label: string; required?: boolean; children: ReactNode }) {
   return (
-    <label className="block text-xs uppercase tracking-wide-luxe text-muted-ruth">
+    <label className="block text-xs uppercase tracking-wide-luxe text-cream/70">
       {label} {required ? <RequiredMark /> : null}
       {children}
     </label>
@@ -547,43 +547,43 @@ export function PaytrIframeCheckoutClient() {
 
   const rewardsAndCoupons = (
     <div className="space-y-4">
-      <div className="rounded-xl border border-gold/15 bg-white text-sm">
+      <div className="rounded-xl border border-kraft/35 bg-carbon-soft text-sm">
         {user ? (
           <>
             <button
               type="button"
               onClick={() => setIsRuthiePointsOpen((current) => !current)}
-              className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left transition hover:bg-cream/70"
+              className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left transition active:bg-brick/10"
               aria-expanded={isRuthiePointsOpen}
             >
               <span>
-                <span className="block font-heading text-sm text-ink">ROSTA Points Kullan</span>
-                <span className="mt-1 block text-xs leading-5 text-muted-ruth">
+                <span className="block font-heading text-sm text-cream">ROSTA Points Kullan</span>
+                <span className="mt-1 block text-xs leading-5 text-cream/70">
                   Hesabında {availableRuthiePoints.toLocaleString("tr-TR")} ROSTA Points var.
                 </span>
                 {selectedRuthiePoints > 0 ? (
-                  <span className="mt-1 block text-xs font-medium text-gold-dark">
+                  <span className="mt-1 block text-xs font-medium text-brick">
                     Seçilen: {selectedRuthiePoints.toLocaleString("tr-TR")} Points · -{formatPrice(ruthieDiscount, "TRY")}
                   </span>
                 ) : null}
               </span>
               <ChevronDown
                 size={18}
-                className={`shrink-0 text-gold-dark transition-transform duration-300 ${isRuthiePointsOpen ? "rotate-180" : ""}`}
+                className={`shrink-0 text-brick transition-transform duration-300 ${isRuthiePointsOpen ? "rotate-180" : ""}`}
               />
             </button>
             {isRuthiePointsOpen ? (
-              <div className="border-t border-gold/10 px-4 pb-4 pt-3">
+              <div className="border-t border-kraft/25 px-4 pb-4 pt-3">
                 {availableRuthiePoints > 0 ? (
                   <div>
-                    <p className="text-xs leading-5 text-muted-ruth">
+                    <p className="text-xs leading-5 text-cream/70">
                       Kullanmak istediğin puanı seç. Hepsini kullan dediğinde hesabındaki kullanılabilir puanın tamamı uygulanır.
                     </p>
                     <div className="mt-3 grid gap-2">
                       <button
                         type="button"
                         onClick={() => selectRuthiePointAmount(0)}
-                        className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs transition ${selectedRuthiePoints === 0 ? "border-gold-dark bg-cream text-ink" : "border-gold/15 bg-white text-ink hover:border-gold-dark"}`}
+                        className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs transition ${selectedRuthiePoints === 0 ? "border-brick bg-carbon-soft text-cream" : "border-kraft/35 bg-carbon-soft text-cream focus-visible:border-brick"}`}
                       >
                         <span>Puan kullanma</span><span>0 TL</span>
                       </button>
@@ -592,7 +592,7 @@ export function PaytrIframeCheckoutClient() {
                           key={amount}
                           type="button"
                           onClick={() => selectRuthiePointAmount(amount)}
-                          className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs transition ${selectedRuthiePoints === amount ? "border-gold-dark bg-ink text-cream" : "border-gold/15 bg-white text-ink hover:border-gold-dark"}`}
+                          className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs transition ${selectedRuthiePoints === amount ? "border-brick bg-brick text-[var(--rosta-action-text)]" : "border-kraft/35 bg-carbon-soft text-cream focus-visible:border-brick"}`}
                         >
                           <span>{amount.toLocaleString("tr-TR")} Points</span>
                           <span>-{formatPrice(pointsToLira(amount), "TRY")}</span>
@@ -601,7 +601,7 @@ export function PaytrIframeCheckoutClient() {
                       <button
                         type="button"
                         onClick={() => selectRuthiePointAmount(availableRuthiePoints)}
-                        className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs font-medium uppercase tracking-wide-luxe transition ${selectedRuthiePoints === availableRuthiePoints ? "border-gold-dark bg-ink text-cream" : "border-gold/15 bg-white text-ink hover:border-gold-dark"}`}
+                        className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs font-medium uppercase tracking-wide-luxe transition ${selectedRuthiePoints === availableRuthiePoints ? "border-brick bg-brick text-[var(--rosta-action-text)]" : "border-kraft/35 bg-carbon-soft text-cream focus-visible:border-brick"}`}
                       >
                         <span>Hepsini Kullan</span>
                         <span>{availableRuthiePoints.toLocaleString("tr-TR")} Points</span>
@@ -609,7 +609,7 @@ export function PaytrIframeCheckoutClient() {
                     </div>
                   </div>
                 ) : (
-                  <p className="rounded-lg border border-gold/10 bg-cream/70 px-3 py-2 text-xs leading-5 text-muted-ruth">
+                  <p className="rounded-lg border border-kraft/25 bg-carbon-soft/70 px-3 py-2 text-xs leading-5 text-cream/70">
                     Kullanılabilir ROSTA Points bulunmuyor. Alışveriş tamamladıkça puanın burada görünecek.
                   </p>
                 )}
@@ -618,39 +618,39 @@ export function PaytrIframeCheckoutClient() {
           </>
         ) : (
           <div className="px-4 py-4 text-sm">
-            <p className="font-heading text-ink">ROSTA Points</p>
-            <p className="mt-1 text-xs leading-5 text-muted-ruth">
+            <p className="font-heading text-cream">ROSTA Points</p>
+            <p className="mt-1 text-xs leading-5 text-cream/70">
               Üye ol, {rewardSettings.signupPoints.toLocaleString("tr-TR")} ROSTA Points kazan ve ödeme adımında {formatPrice(pointsToLira(rewardSettings.signupPoints), "TRY")} indirim kullan.
             </p>
-            <Link href="/login?redirect=/checkout" className="mt-3 inline-block text-xs uppercase tracking-wide-luxe text-gold-dark underline underline-offset-4">
+            <Link href="/login?redirect=/checkout" className="mt-3 inline-block text-xs uppercase tracking-wide-luxe text-brick underline underline-offset-4">
               Giriş Yap / Üye Ol
             </Link>
           </div>
         )}
       </div>
 
-      <div className="rounded-xl border border-gold/10 bg-white p-4 text-sm">
-        <p className="font-heading text-ink">İndirim Kullan</p>
-        <p className="mt-1 text-xs leading-5 text-muted-ruth">Kupon kodunu veya hesabındaki yorum indirimini kullan.</p>
+      <div className="rounded-xl border border-kraft/25 bg-carbon-soft p-4 text-sm">
+        <p className="font-heading text-cream">İndirim Kullan</p>
+        <p className="mt-1 text-xs leading-5 text-cream/70">Kupon kodunu veya hesabındaki yorum indirimini kullan.</p>
         <div className="mt-3 flex gap-2">
           <input
             value={couponInput}
             onChange={(event) => setCouponInput(event.target.value.toLocaleUpperCase("tr-TR").replace(/\s+/g, ""))}
             placeholder="KUPON KODU"
-            className="min-w-0 flex-1 rounded-lg border border-gold/15 bg-ivory px-3 py-2.5 text-sm uppercase outline-none transition focus:border-gold-dark"
+            className="min-w-0 flex-1 rounded-lg border border-kraft/35 bg-carbon px-3 py-2.5 text-sm uppercase outline-none transition focus:border-brick"
           />
           <button
             type="button"
             onClick={() => void applyCouponCode()}
             disabled={quoteLoading}
             aria-busy={quoteLoading && quoteFeedbackOwner === "coupon-input" || undefined}
-            className="inline-flex items-center justify-center gap-2 rounded-lg border border-gold-dark bg-ink px-4 py-2 text-xs uppercase tracking-wide-luxe text-cream disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-2 rounded-lg border border-brick bg-brick px-4 py-2 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)] disabled:opacity-50"
           >
             {quoteLoading && quoteFeedbackOwner === "coupon-input" ? <><LoadingIndicator size="sm" label="Kupon uygulanıyor" /> Uygulanıyor</> : "Uygula"}
           </button>
         </div>
         {appliedCoupon ? (
-          <button type="button" onClick={clearCoupon} className="mt-2 text-xs text-gold-dark underline underline-offset-4">
+          <button type="button" onClick={clearCoupon} className="mt-2 text-xs text-brick underline underline-offset-4">
             {appliedCoupon.code} kodunu kaldır
           </button>
         ) : null}
@@ -670,34 +670,34 @@ export function PaytrIframeCheckoutClient() {
                     disabled={quoteLoading}
                     aria-busy={applying || undefined}
                     onClick={() => selected ? clearCoupon() : void selectAccountDiscount(discount)}
-                    className={`w-full rounded-lg border px-3 py-3 text-left transition disabled:opacity-50 ${selected ? "border-gold-dark bg-ink text-cream" : "border-gold/15 bg-cream text-ink hover:border-gold-dark"}`}
+                    className={`w-full rounded-lg border px-3 py-3 text-left transition disabled:opacity-50 ${selected ? "border-brick bg-brick text-[var(--rosta-action-text)]" : "border-kraft/35 bg-carbon-soft text-cream focus-visible:border-brick"}`}
                   >
                     <span className="flex items-center gap-2 font-heading text-sm">{applying ? <LoadingIndicator size="sm" label={`${discount.title || "İndirim"} uygulanıyor`} /> : null}{discount.title || "Yorum indirimi"}</span>
-                    <span className={`mt-1 block text-xs ${selected ? "text-cream/75" : "text-muted-ruth"}`}>
+                    <span className={`mt-1 block text-xs ${selected ? "text-cream/75" : "text-cream/70"}`}>
                       %{discount.discountPercent} indirim · Ödemede kullan
                     </span>
                   </button>
                 );
               })
             ) : (
-              <p className="rounded-lg border border-gold/10 bg-cream px-3 py-3 text-xs leading-5 text-muted-ruth">
+              <p className="rounded-lg border border-kraft/25 bg-carbon-soft px-3 py-3 text-xs leading-5 text-cream/70">
                 Hesabında kullanılabilir indirim yok.
               </p>
             )}
           </div>
         ) : (
-          <Link href="/login?redirect=/checkout" className="mt-3 inline-block text-xs uppercase tracking-wide-luxe text-gold-dark underline underline-offset-4">
+          <Link href="/login?redirect=/checkout" className="mt-3 inline-block text-xs uppercase tracking-wide-luxe text-brick underline underline-offset-4">
             İndirimlerini görmek için giriş yap
           </Link>
         )}
-        {couponMessage ? <p className="mt-2 text-xs leading-5 text-muted-ruth">{couponMessage}</p> : null}
+        {couponMessage ? <p className="mt-2 text-xs leading-5 text-cream/70">{couponMessage}</p> : null}
       </div>
     </div>
   );
 
   if (!isReady || isLoadingDraft) {
     return (
-      <div className="min-h-screen bg-ivory px-4 pb-24 pt-32" role="status" aria-busy="true" aria-label="Ödeme bilgileri yükleniyor">
+      <div className="min-h-screen bg-carbon px-4 pb-24 pt-32" role="status" aria-busy="true" aria-label="Ödeme bilgileri yükleniyor">
         <div className="mx-auto max-w-4xl">
           <Skeleton className="h-8 w-44 rounded" />
           <Skeleton className="mt-5 h-64 rounded-xl" />
@@ -708,14 +708,14 @@ export function PaytrIframeCheckoutClient() {
 
   if (!items.length) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-ivory px-4 pt-20 text-center">
+      <div className="flex min-h-screen items-center justify-center bg-carbon px-4 pt-20 text-center">
         <div>
-          <ShoppingBag className="mx-auto mb-5 text-gold-dark" size={32} />
+          <ShoppingBag className="mx-auto mb-5 text-brick" size={32} />
           <h1 className="font-heading text-3xl">{error ? "Ödeme bağlantısı açılamadı" : "Sepetin boş"}</h1>
-          <p className="mt-3 max-w-md text-sm leading-6 text-muted-ruth">
+          <p className="mt-3 max-w-md text-sm leading-6 text-cream/70">
             {error || "Ödeme adımına geçmek için önce sepetine bir parça ekle."}
           </p>
-          <Link href="/products" className="mt-7 inline-block bg-ink px-8 py-4 text-xs uppercase tracking-wide-luxe text-cream">
+          <Link href="/products" className="mt-7 inline-block bg-brick px-8 py-4 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)]">
             Ürünleri Keşfet
           </Link>
         </div>
@@ -724,14 +724,14 @@ export function PaytrIframeCheckoutClient() {
   }
 
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-ivory px-4 pb-24 pt-24 md:px-8 md:pt-32">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-carbon px-4 pb-24 pt-24 md:px-8 md:pt-32">
       <div className="mx-auto w-full max-w-7xl min-w-0">
         <div className="mb-6 text-center md:mb-10">
-          <p className="mb-3 text-xs uppercase tracking-wide-luxe text-gold-dark">Ödeme</p>
+          <p className="mb-3 text-xs uppercase tracking-wide-luxe text-brick">Ödeme</p>
           <h1 className="font-heading text-4xl md:text-5xl">
             {checkoutStep === 1 ? "Teslimat Bilgileri" : checkoutStep === 2 ? "Siparişini Kontrol Et" : "Güvenli Ödeme"}
           </h1>
-          <p className="mx-auto mt-3 hidden max-w-xl text-sm leading-7 text-muted-ruth md:block">
+          <p className="mx-auto mt-3 hidden max-w-xl text-sm leading-7 text-cream/70 md:block">
             {checkoutStep === 1
               ? "İletişim ve teslimat bilgilerini tek adımda tamamla."
               : checkoutStep === 2
@@ -740,7 +740,7 @@ export function PaytrIframeCheckoutClient() {
           </p>
         </div>
 
-        <div ref={checkoutStepsRef} className="mb-6 scroll-mt-24 rounded-2xl border border-gold/15 bg-cream p-3 shadow-sm md:scroll-mt-32">
+        <div ref={checkoutStepsRef} className="mb-6 scroll-mt-24 rounded-2xl border border-kraft/35 bg-carbon-soft p-3 shadow-sm md:scroll-mt-32">
           <div className="grid grid-cols-3 gap-2">
             {checkoutSteps.map((step, index) => {
               const isActive = checkoutStep === step.id;
@@ -754,10 +754,10 @@ export function PaytrIframeCheckoutClient() {
                   onClick={() => goToCheckoutStep(step.id)}
                   className={`rounded-xl px-2 py-3 text-center transition disabled:cursor-not-allowed disabled:opacity-45 ${
                     isActive
-                      ? "bg-ink text-cream shadow-md"
+                      ? "bg-brick text-[var(--rosta-action-text)] shadow-md"
                       : isDone
-                        ? "bg-gold/15 text-ink"
-                        : "bg-ivory text-muted-ruth"
+                        ? "bg-brick/15 text-[var(--rosta-action-text)]"
+                        : "bg-carbon text-cream/70"
                   }`}
                 >
                   <span className="mx-auto mb-1 flex h-6 w-6 items-center justify-center rounded-full border border-current text-[11px] font-medium">
@@ -780,10 +780,10 @@ export function PaytrIframeCheckoutClient() {
         >
           {checkoutStep === 1 ? (
             <section className="mx-auto w-full max-w-4xl space-y-6">
-              <div className="rounded-xl border border-gold/15 bg-cream p-4 md:p-6">
+              <div className="rounded-xl border border-kraft/35 bg-carbon-soft p-4 md:p-6">
                 <div className="mb-5">
-                  <p className="text-[10px] uppercase tracking-wide-luxe text-gold-dark">İletişim Bilgileri</p>
-                  <h2 className="mt-1 font-heading text-lg text-ink">Sana ulaşabileceğimiz bilgiler</h2>
+                  <p className="text-[10px] uppercase tracking-wide-luxe text-brick">İletişim Bilgileri</p>
+                  <h2 className="mt-1 font-heading text-lg text-cream">Sana ulaşabileceğimiz bilgiler</h2>
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <Field label="Ad Soyad" required>
@@ -800,10 +800,10 @@ export function PaytrIframeCheckoutClient() {
                 </div>
               </div>
 
-              <div className="rounded-xl border border-gold/15 bg-cream p-4 md:p-6">
+              <div className="rounded-xl border border-kraft/35 bg-carbon-soft p-4 md:p-6">
                 <div className="mb-5">
-                  <p className="text-[10px] uppercase tracking-wide-luxe text-gold-dark">Teslimat Adresi</p>
-                  <h2 className="mt-1 font-heading text-lg text-ink">Siparişin nereye gelsin?</h2>
+                  <p className="text-[10px] uppercase tracking-wide-luxe text-brick">Teslimat Adresi</p>
+                  <h2 className="mt-1 font-heading text-lg text-cream">Siparişin nereye gelsin?</h2>
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <Field label="İl" required>
@@ -830,13 +830,13 @@ export function PaytrIframeCheckoutClient() {
                 </div>
 
                 {error ? (
-                  <p className="mt-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-xs leading-5 text-red-700">{error}</p>
+                  <p className="mt-5 rounded-lg border border-[var(--ruth-color-danger)]/40 bg-[var(--ruth-color-danger-soft)] px-4 py-3 text-xs leading-5 text-[var(--ruth-color-danger-text)]">{error}</p>
                 ) : null}
 
                 <button
                   type="button"
                   onClick={() => void continueToOrderReview()}
-                  className="mt-6 w-full rounded-full bg-ink px-6 py-4 text-xs uppercase tracking-wide-luxe text-cream transition hover:bg-gold-dark sm:w-auto sm:min-w-56"
+                  className="mt-6 w-full rounded-full bg-brick px-6 py-4 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)] transition active:bg-espresso sm:w-auto sm:min-w-56"
                 >
                   Siparişi Kontrol Et
                 </button>
@@ -847,15 +847,15 @@ export function PaytrIframeCheckoutClient() {
           {checkoutStep === 2 ? (
             <>
               <section className="min-w-0 space-y-5">
-                <div className="overflow-hidden rounded-xl border border-gold/15 bg-white">
-                  <div className="border-b border-gold/10 bg-ivory/70 px-4 py-3 md:px-5">
+                <div className="overflow-hidden rounded-xl border border-kraft/35 bg-carbon-soft">
+                  <div className="border-b border-kraft/25 bg-carbon/70 px-4 py-3 md:px-5">
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
-                        <p className="text-[10px] uppercase tracking-wide-luxe text-gold-dark">Sipariş Önizlemesi</p>
-                        <h2 className="mt-1 font-heading text-base text-ink">Aldığın Ürünler</h2>
+                        <p className="text-[10px] uppercase tracking-wide-luxe text-brick">Sipariş Önizlemesi</p>
+                        <h2 className="mt-1 font-heading text-base text-cream">Aldığın Ürünler</h2>
                       </div>
                       {loadedCheckoutDraft?.orderNo ? (
-                        <span className="rounded-full border border-gold/20 bg-cream px-3 py-1.5 text-[10px] uppercase tracking-[0.14em] text-muted-ruth">
+                        <span className="rounded-full border border-kraft/40 bg-carbon-soft px-3 py-1.5 text-[10px] uppercase tracking-[0.14em] text-cream/70">
                           {loadedCheckoutDraft.orderNo}
                         </span>
                       ) : null}
@@ -873,35 +873,35 @@ export function PaytrIframeCheckoutClient() {
                           key={item.key}
                           className="grid min-w-0 grid-cols-[54px_minmax(0,1fr)] gap-3 px-4 py-3 sm:grid-cols-[60px_minmax(0,1fr)_auto] md:grid-cols-[68px_minmax(0,1fr)_auto] md:px-5"
                         >
-                          <div className="h-16 overflow-hidden rounded-lg border border-gold/15 bg-ivory md:h-20">
+                          <div className="h-16 overflow-hidden rounded-lg border border-kraft/35 bg-carbon md:h-20">
                             {item.image ? (
                               <img src={item.image} alt={item.name} className="h-full w-full object-cover" />
                             ) : (
-                              <div className="grid h-full place-items-center font-heading text-lg text-gold-dark">R</div>
+                              <div className="grid h-full place-items-center font-heading text-lg text-brick">R</div>
                             )}
                           </div>
                           <div className="min-w-0 self-center">
-                            <h3 className="font-heading text-sm leading-5 text-ink">{item.name}</h3>
-                            <p className="mt-0.5 text-[11px] leading-5 text-muted-ruth">{variants.length ? variants.join(" · ") : "Standart ürün"}</p>
-                            <p className="mt-1 text-[11px] text-muted-ruth">Adet: {item.quantity}</p>
+                            <h3 className="font-heading text-sm leading-5 text-cream">{item.name}</h3>
+                            <p className="mt-0.5 text-[11px] leading-5 text-cream/70">{variants.length ? variants.join(" · ") : "Standart ürün"}</p>
+                            <p className="mt-1 text-[11px] text-cream/70">Adet: {item.quantity}</p>
                           </div>
-                          <strong className="col-span-2 self-center text-right text-sm text-ink sm:col-span-1 sm:whitespace-nowrap">
+                          <strong className="col-span-2 self-center text-right text-sm text-cream sm:col-span-1 sm:whitespace-nowrap">
                             {formatPrice(Number(item.price || 0) * Number(item.quantity || 1), "TRY")}
                           </strong>
                         </div>
                       );
                     })}
                   </div>
-                  <div className="grid gap-3 border-t border-gold/10 bg-ivory/55 px-4 py-3 md:grid-cols-2 md:px-5">
+                  <div className="grid gap-3 border-t border-kraft/25 bg-carbon/55 px-4 py-3 md:grid-cols-2 md:px-5">
                     <div>
-                      <p className="text-[10px] uppercase tracking-wide-luxe text-muted-ruth">Teslim Alacak Kişi</p>
-                      <p className="mt-1.5 font-heading text-sm text-ink">{form.fullName || "—"}</p>
-                      <p className="mt-1 text-xs leading-5 text-muted-ruth">{form.phone || "—"}</p>
-                      <p className="text-xs leading-5 text-muted-ruth">{form.email || "—"}</p>
+                      <p className="text-[10px] uppercase tracking-wide-luxe text-cream/70">Teslim Alacak Kişi</p>
+                      <p className="mt-1.5 font-heading text-sm text-cream">{form.fullName || "—"}</p>
+                      <p className="mt-1 text-xs leading-5 text-cream/70">{form.phone || "—"}</p>
+                      <p className="text-xs leading-5 text-cream/70">{form.email || "—"}</p>
                     </div>
                     <div>
-                      <p className="text-[10px] uppercase tracking-wide-luxe text-muted-ruth">Teslimat Adresi</p>
-                      <p className="mt-1.5 text-xs leading-5 text-ink">
+                      <p className="text-[10px] uppercase tracking-wide-luxe text-cream/70">Teslimat Adresi</p>
+                      <p className="mt-1.5 text-xs leading-5 text-cream">
                         {[form.addressLine, [form.district, form.city].filter(Boolean).join(" / ")].filter(Boolean).join(", ") || "—"}
                       </p>
                     </div>
@@ -913,77 +913,77 @@ export function PaytrIframeCheckoutClient() {
                 <button
                   type="button"
                   onClick={() => goToCheckoutStep(1)}
-                  className="rounded-full border border-gold/25 px-5 py-3 text-[11px] uppercase tracking-wide-luxe text-ink transition hover:border-gold-dark"
+                  className="rounded-full border border-kraft/45 px-5 py-3 text-[11px] uppercase tracking-wide-luxe text-cream transition focus-visible:border-brick"
                 >
                   Bilgileri Düzenle
                 </button>
               </section>
 
               <aside className="w-full min-w-0 max-w-full xl:sticky xl:top-28 xl:self-start">
-                <div className="rounded-xl border border-gold/15 bg-cream p-4 md:p-6">
+                <div className="rounded-xl border border-kraft/35 bg-carbon-soft p-4 md:p-6">
                   <h2 className="font-heading text-lg">Ödeme Özeti</h2>
                   <div className="mt-5 space-y-3 text-sm">
-                    <div className="flex justify-between text-muted-ruth">
+                    <div className="flex justify-between text-cream/70">
                       <span>Ara toplam</span><span>{formatPrice(quoteSubtotal, "TRY")}</span>
                     </div>
-                    <div className="flex justify-between text-muted-ruth">
+                    <div className="flex justify-between text-cream/70">
                       <span>Kargo</span><span>{shippingFee > 0 ? formatPrice(shippingFee, "TRY") : "Ücretsiz"}</span>
                     </div>
                     {(automaticDiscount > 0 || ruthieDiscount > 0 || couponDiscount > 0) ? (
-                      <div className="rounded-lg border border-gold/10 bg-ivory/75 p-3 text-sm">
-                        <p className="mb-2 text-[10px] uppercase tracking-wide-luxe text-muted-ruth">Kullanılan indirim ve puanlar</p>
+                      <div className="rounded-lg border border-kraft/25 bg-carbon/75 p-3 text-sm">
+                        <p className="mb-2 text-[10px] uppercase tracking-wide-luxe text-cream/70">Kullanılan indirim ve puanlar</p>
                         {automaticDiscount > 0 ? (
-                          <div className="flex justify-between text-gold-dark">
+                          <div className="flex justify-between text-brick">
                             <span>Otomatik ürün/kampanya indirimi</span><span>-{formatPrice(automaticDiscount, "TRY")}</span>
                           </div>
                         ) : null}
                         {ruthieDiscount > 0 ? (
-                          <div className="flex justify-between text-gold-dark">
+                          <div className="flex justify-between text-brick">
                             <span>{selectedRuthiePoints.toLocaleString("tr-TR")} ROSTA Points</span><span>-{formatPrice(ruthieDiscount, "TRY")}</span>
                           </div>
                         ) : null}
                         {couponDiscount > 0 ? (
-                          <div className="mt-1 flex justify-between text-gold-dark">
+                          <div className="mt-1 flex justify-between text-brick">
                             <span>{appliedCoupon?.title || "Kupon indirimi"}</span><span>-{formatPrice(couponDiscount, "TRY")}</span>
                           </div>
                         ) : null}
                       </div>
                     ) : null}
-                    <div className="border-t border-gold/15 pt-4">
+                    <div className="border-t border-kraft/35 pt-4">
                       {checkoutTotal < normalCheckoutTotal ? (
                         <>
-                          <div className="flex items-center justify-between text-sm text-muted-ruth">
+                          <div className="flex items-center justify-between text-sm text-cream/70">
                             <span>Siparişin normal fiyatı</span>
                             <span className="line-through opacity-70">{formatPrice(normalCheckoutTotal, "TRY")}</span>
                           </div>
                           <div className="mt-2 flex items-end justify-between gap-4 font-heading">
                             <span className="text-base">İndirimli toplam</span>
-                            <span className="text-2xl text-ink">{formatPrice(checkoutTotal, "TRY")}</span>
+                            <span className="text-2xl text-cream">{formatPrice(checkoutTotal, "TRY")}</span>
                           </div>
-                          <p className="mt-2 text-right text-xs font-medium text-gold-dark">
+                          <p className="mt-2 text-right text-xs font-medium text-brick">
                             Toplam {formatPrice(Math.max(0, normalCheckoutTotal - checkoutTotal), "TRY")} avantaj sağladın.
                           </p>
                         </>
                       ) : (
                         <div className="flex items-end justify-between gap-4 font-heading">
-                          <span className="text-base">Toplam</span><span className="text-2xl text-ink">{formatPrice(checkoutTotal, "TRY")}</span>
+                          <span className="text-base">Toplam</span><span className="text-2xl text-cream">{formatPrice(checkoutTotal, "TRY")}</span>
                         </div>
                       )}
                     </div>
                   </div>
 
                   {draftNotice ? (
-                    <p className="mt-5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-xs leading-5 text-green-700">{draftNotice}</p>
+                    <p className="mt-5 rounded-lg border border-[var(--ruth-color-success)]/40 bg-[var(--ruth-color-success-soft)] px-4 py-3 text-xs leading-5 text-[var(--ruth-color-success-text)]">{draftNotice}</p>
                   ) : null}
                   {error ? (
-                    <p className="mt-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-xs leading-5 text-red-700">{error}</p>
+                    <p className="mt-5 rounded-lg border border-[var(--ruth-color-danger)]/40 bg-[var(--ruth-color-danger-soft)] px-4 py-3 text-xs leading-5 text-[var(--ruth-color-danger-text)]">{error}</p>
                   ) : null}
 
                   <button
                     type="submit"
                     disabled={isSubmitting || quoteLoading}
                     aria-busy={isSubmitting || undefined}
-                    className="mt-5 flex w-full items-center justify-center gap-2 bg-ink px-5 py-3.5 text-center text-xs uppercase tracking-wide-luxe text-cream transition hover:bg-gold-dark disabled:cursor-not-allowed disabled:opacity-60"
+                    className="mt-5 flex w-full items-center justify-center gap-2 bg-brick px-5 py-3.5 text-center text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)] transition active:bg-espresso disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {isSubmitting ? <><LoadingIndicator size="sm" label="Ödeme hazırlanıyor" /> Ödeme hazırlanıyor...</> : <><CreditCard size={15} /> Ödeme Yap</>}
                   </button>
@@ -994,12 +994,12 @@ export function PaytrIframeCheckoutClient() {
                       { icon: Shield, title: "Güvenli", lines: ["PAYTR ile Güvenli Ödeme"] },
                       { icon: RefreshCw, title: "Değişim", lines: ["Destek ile hızlı süreç", "14 Gün içerisinde iade ve değişim"] },
                     ].map((item) => (
-                      <div key={item.title} className="rounded-lg border border-gold/15 bg-cream px-2 py-4">
-                        <item.icon className="mx-auto mb-2 text-gold-dark" size={18} />
-                        <p className="text-[10px] uppercase tracking-wide-luxe text-muted-ruth">{item.title}</p>
+                      <div key={item.title} className="rounded-lg border border-kraft/35 bg-carbon-soft px-2 py-4">
+                        <item.icon className="mx-auto mb-2 text-brick" size={18} />
+                        <p className="text-[10px] uppercase tracking-wide-luxe text-cream/70">{item.title}</p>
                         <div className="mt-2 space-y-1">
                           {item.lines.map((line) => (
-                            <p key={line} className="mx-auto max-w-[7.2rem] text-[10px] leading-4 text-muted-ruth">{line}</p>
+                            <p key={line} className="mx-auto max-w-[7.2rem] text-[10px] leading-4 text-cream/70">{line}</p>
                           ))}
                         </div>
                       </div>

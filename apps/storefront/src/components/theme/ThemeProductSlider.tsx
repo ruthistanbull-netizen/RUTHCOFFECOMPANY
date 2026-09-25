@@ -69,8 +69,8 @@ export function ThemeProductSlider({ products, desktopItems, mobileItems, gap, s
   return (
     <div className="relative w-full min-w-0 overflow-hidden px-4 md:px-6 lg:px-8">
       {showArrows ? <>
-        <button type="button" onClick={() => move(-1)} aria-label="Önceki ürünler" className="absolute left-6 top-[38%] z-20 hidden h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-black/10 bg-white/90 shadow-sm backdrop-blur md:grid lg:left-10"><ChevronLeft className="h-4 w-4" /></button>
-        <button type="button" onClick={() => move(1)} aria-label="Sonraki ürünler" className="absolute right-6 top-[38%] z-20 hidden h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-black/10 bg-white/90 shadow-sm backdrop-blur md:grid lg:right-10"><ChevronRight className="h-4 w-4" /></button>
+        <button type="button" onClick={() => move(-1)} aria-label="Önceki ürünler" className="absolute left-6 top-[38%] z-20 hidden h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-kraft/40 bg-carbon-soft text-cream shadow-sm active:bg-espresso focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick md:grid lg:left-10"><ChevronLeft className="h-4 w-4" /></button>
+        <button type="button" onClick={() => move(1)} aria-label="Sonraki ürünler" className="absolute right-6 top-[38%] z-20 hidden h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-kraft/40 bg-carbon-soft text-cream shadow-sm active:bg-espresso focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick md:grid lg:right-10"><ChevronRight className="h-4 w-4" /></button>
       </> : null}
 
       <div

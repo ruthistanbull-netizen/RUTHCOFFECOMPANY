@@ -40,12 +40,12 @@ function drawIntegratedRibbons(env: V83Environment, cx: number, cy: number, radi
         if (index === 0) context.moveTo(x, y);
         else context.lineTo(x, y);
       }
-      context.strokeStyle = `rgba(255,207,112,${alpha})`;
+      context.strokeStyle = `rgba(200, 167, 125,${alpha})`;
       context.lineWidth = width;
       context.lineCap = "round";
       context.lineJoin = "round";
       context.shadowBlur = blur;
-      context.shadowColor = "rgba(255,177,58,.58)";
+      context.shadowColor = "rgba(201, 74, 64,.58)";
       context.stroke();
     };
 
@@ -129,9 +129,9 @@ export function renderWholeOrb(env: V83Environment, time: number, mode: V83Mode,
     const distance = radius * (.18 + ((index * 37) % 100) / 100 * .73);
     const x = center + Math.cos(angle) * distance;
     const y = center + Math.sin(angle) * distance * .78;
-    context.fillStyle = `rgba(255,195,82,${.025 + level * .035})`;
+    context.fillStyle = `rgba(200, 167, 125,${.025 + level * .035})`;
     context.shadowBlur = 7;
-    context.shadowColor = "rgba(255,170,50,.7)";
+    context.shadowColor = "rgba(201, 74, 64,.7)";
     context.beginPath();
     context.arc(x, y, .45 + (index % 4) * .22, 0, Math.PI * 2);
     context.fill();

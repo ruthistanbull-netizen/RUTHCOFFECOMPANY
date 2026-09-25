@@ -84,7 +84,12 @@
     transition-duration: 1ms !important;
   }
 
-  .ruth-pressable[data-ruth-pressed="true"]:not(:disabled):not([aria-disabled="true"]),
+  .ruth-pressable[data-ruth-pressed="true"]:not(:disabled):not([aria-disabled="true"]) {
+    transform: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) and (hover: hover) and (pointer: fine) {
   .ruth-pressable[data-ruth-hover-lift="true"]:not(:disabled):not([aria-disabled="true"]):hover {
     transform: none !important;
   }

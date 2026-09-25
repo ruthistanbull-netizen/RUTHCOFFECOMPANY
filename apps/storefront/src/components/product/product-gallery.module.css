@@ -4,17 +4,24 @@
 .media, .media > img, .lightboxMedia, .lightboxMedia > img, .thumbnailMedia, .thumbnailMedia > img { width: 100%; height: 100%; }
 .media > img, .thumbnailMedia > img, .lightboxMedia > img { object-fit: contain; }
 .media > img { transition: transform var(--ruth-motion-slow) var(--ruth-easing); }
-.frame:hover .media > img { transform: scale(var(--ruth-motion-media-scale, 1.018)); }
+@media (hover: hover) and (pointer: fine) {
+  .frame:hover .media > img { transform: scale(var(--ruth-motion-media-scale, 1.018)); }
+}
 .detailsSlot { position: relative; z-index: 1; width: 100%; background: var(--ruth-color-canvas); }
 .zoomIcon { position: absolute; top: 1rem; right: 1rem; display: grid; width: 2.5rem; height: 2.5rem; place-items: center; border: 1px solid color-mix(in srgb, var(--ruth-color-border-subtle) 80%, transparent); background: color-mix(in srgb, var(--ruth-color-surface) 90%, transparent); opacity: 0; backdrop-filter: blur(12px); transform: translateY(var(--ruth-motion-distance-subtle, 6px)); transition: opacity var(--ruth-motion-fast) ease, transform var(--ruth-motion-fast) var(--ruth-easing); }
 .zoomIcon svg { width: 1rem; height: 1rem; stroke-width: 1.2; }
-.frame:hover .zoomIcon, .frame:focus-visible .zoomIcon { opacity: 1; transform: translateY(0); }
+.frame:focus-visible .zoomIcon { opacity: 1; transform: translateY(0); }
+@media (hover: hover) and (pointer: fine) {
+  .frame:hover .zoomIcon { opacity: 1; transform: translateY(0); }
+}
 .counter { position: absolute; right: 1rem; bottom: 1rem; padding: 0.35rem 0.5rem; background: color-mix(in srgb, var(--ruth-color-surface) 88%, transparent); font-size: 0.5625rem; letter-spacing: 0.1em; backdrop-filter: blur(10px); }
 .thumbnails { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; padding: 1px 0 0; background: var(--ruth-color-border-subtle); }
 .thumbnail { position: relative; display: block; aspect-ratio: 3 / 4; min-width: 0; padding: 0; overflow: hidden; border: 0; background: var(--ruth-color-surface-muted); cursor: zoom-in; }
 .thumbnail:focus-visible { z-index: 1; outline: 2px solid var(--ruth-color-focus); outline-offset: -2px; }
 .thumbnailMedia > img { transition: transform var(--ruth-motion-slow) var(--ruth-easing); }
-.thumbnail:hover .thumbnailMedia > img { transform: scale(var(--ruth-motion-media-scale, 1.018)); }
+@media (hover: hover) and (pointer: fine) {
+  .thumbnail:hover .thumbnailMedia > img { transform: scale(var(--ruth-motion-media-scale, 1.018)); }
+}
 .thumbnail > span { position: absolute; right: 0.5rem; bottom: 0.5rem; padding: 0.2rem 0.35rem; background: color-mix(in srgb, var(--ruth-color-surface) 86%, transparent); color: var(--ruth-color-text-primary); font-size: 0.5rem; letter-spacing: 0.08em; }
 .empty { display: grid; min-height: 70svh; place-items: center; background: var(--ruth-color-surface-muted); color: var(--ruth-color-text-muted); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; }
 .lightboxPanel { overflow-y: auto; overscroll-behavior: contain; background: var(--ruth-color-canvas); scroll-snap-type: y proximity; }
@@ -35,6 +42,8 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .media > img, .thumbnailMedia > img, .zoomIcon { transition: none; }
-  .frame:hover .media > img, .thumbnail:hover .thumbnailMedia > img { transform: none; }
+  @media (hover: hover) and (pointer: fine) {
+    .frame:hover .media > img, .thumbnail:hover .thumbnailMedia > img { transform: none; }
+  }
   .lightboxPanel { scroll-behavior: auto; }
 }

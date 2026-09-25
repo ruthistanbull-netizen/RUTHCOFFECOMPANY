@@ -9,13 +9,13 @@
     overflow: visible !important;
     border-color: rgba(255, 255, 255, 0.76) !important;
     background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.17), rgba(228, 233, 237, 0.055)),
-      rgba(239, 243, 246, 0.115) !important;
+      linear-gradient(180deg, rgba(255, 255, 255, 0.17), color-mix(in srgb, var(--rosta-cream, #FBF3E6) 5.5%, transparent)),
+      color-mix(in srgb, var(--rosta-cream, #FBF3E6) 11.5%, transparent) !important;
     box-shadow:
-      0 13px 31px rgba(28, 31, 36, 0.15),
-      0 2px 8px rgba(28, 31, 36, 0.055),
+      0 13px 31px color-mix(in srgb, var(--rosta-carbon, #111111) 15%, transparent),
+      0 2px 8px color-mix(in srgb, var(--rosta-carbon, #111111) 5.5%, transparent),
       inset 0 1px 0 rgba(255, 255, 255, 0.92),
-      inset 0 -1px 0 rgba(54, 61, 68, 0.07),
+      inset 0 -1px 0 color-mix(in srgb, var(--rosta-carbon-soft, #242424) 7%, transparent),
       inset 22px 0 24px rgba(255, 255, 255, 0.09),
       inset -22px 0 24px rgba(255, 255, 255, 0.09) !important;
     -webkit-backdrop-filter: blur(23px) saturate(1.38) contrast(1.055) brightness(1.025) !important;
@@ -46,14 +46,14 @@
     border-color: rgba(255, 255, 255, 0.82) !important;
     background:
       radial-gradient(ellipse 62% 70% at 36% -8%, rgba(255, 255, 255, 0.47), transparent 52%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.29), rgba(226, 232, 236, 0.13)),
-      rgba(239, 244, 247, 0.17) !important;
+      linear-gradient(180deg, rgba(255, 255, 255, 0.29), color-mix(in srgb, var(--rosta-cream, #FBF3E6) 13%, transparent)),
+      color-mix(in srgb, var(--rosta-cream, #FBF3E6) 17%, transparent) !important;
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.94),
-      inset 0 -1px 0 rgba(66, 73, 80, 0.09),
+      inset 0 -1px 0 color-mix(in srgb, var(--rosta-carbon-soft, #242424) 9%, transparent),
       inset 5px 0 10px rgba(255, 255, 255, 0.08),
       inset -5px 0 10px rgba(255, 255, 255, 0.08),
-      0 3px 9px rgba(30, 34, 39, 0.075) !important;
+      0 3px 9px color-mix(in srgb, var(--rosta-carbon, #111111) 7.5%, transparent) !important;
     -webkit-backdrop-filter: blur(7px) saturate(1.22) contrast(1.075) brightness(1.025) !important;
     backdrop-filter: blur(7px) saturate(1.22) contrast(1.075) brightness(1.025) !important;
   }
@@ -64,8 +64,8 @@
     transform: translate3d(0, -2px, 0) scaleX(1.025) scaleY(1.13) !important;
     filter:
       brightness(1.035)
-      drop-shadow(0 8px 16px rgba(31, 35, 41, 0.15))
-      drop-shadow(0 1px 2px rgba(31, 35, 41, 0.08)) !important;
+      drop-shadow(0 8px 16px color-mix(in srgb, var(--rosta-carbon, #111111) 15%, transparent))
+      drop-shadow(0 1px 2px color-mix(in srgb, var(--rosta-carbon, #111111) 8%, transparent)) !important;
   }
 
   /* The moving selection becomes a round optical lens and is promoted above
@@ -81,8 +81,8 @@
     animation: ruth-reference-liquid-lens-travel var(--dock-duration) var(--ruth-easing) both !important;
     filter:
       brightness(1.045)
-      drop-shadow(0 11px 20px rgba(25, 30, 36, 0.17))
-      drop-shadow(0 2px 5px rgba(25, 30, 36, 0.09)) !important;
+      drop-shadow(0 11px 20px color-mix(in srgb, var(--rosta-carbon, #111111) 17%, transparent))
+      drop-shadow(0 2px 5px color-mix(in srgb, var(--rosta-carbon, #111111) 9%, transparent)) !important;
   }
 
   nav[aria-label="ROSTA Coffee Co. mobil menü"] > div > span:first-child[class*="dragging"] > span {
@@ -90,8 +90,8 @@
     transform: translate3d(0, -5px, 0) scaleX(clamp(1.04, var(--dock-mid-stretch), 1.18)) scaleY(1.36) !important;
     filter:
       brightness(1.05)
-      drop-shadow(0 12px 22px rgba(25, 30, 36, 0.18))
-      drop-shadow(0 2px 5px rgba(25, 30, 36, 0.09)) !important;
+      drop-shadow(0 12px 22px color-mix(in srgb, var(--rosta-carbon, #111111) 18%, transparent))
+      drop-shadow(0 2px 5px color-mix(in srgb, var(--rosta-carbon, #111111) 9%, transparent)) !important;
   }
 
   nav[aria-label="ROSTA Coffee Co. mobil menü"] > div > span:first-child[class*="right"] > span {
@@ -108,14 +108,14 @@
     border: 1px solid rgba(255, 255, 255, 0.89) !important;
     background:
       radial-gradient(ellipse 68% 54% at 38% -2%, rgba(255, 255, 255, 0.55), transparent 57%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.20), rgba(218, 228, 234, 0.055)),
-      rgba(238, 245, 248, 0.095) !important;
+      linear-gradient(180deg, rgba(255, 255, 255, 0.20), color-mix(in srgb, var(--rosta-cream, #FBF3E6) 5.5%, transparent)),
+      color-mix(in srgb, var(--rosta-cream, #FBF3E6) 9.5%, transparent) !important;
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.97),
-      inset 0 -1px 0 rgba(47, 57, 65, 0.10),
-      inset 8px 0 13px rgba(255, 244, 211, 0.07),
-      inset -8px 0 13px rgba(204, 244, 255, 0.08),
-      0 4px 12px rgba(29, 34, 40, 0.07) !important;
+      inset 0 -1px 0 color-mix(in srgb, var(--rosta-carbon-soft, #242424) 10%, transparent),
+      inset 8px 0 13px color-mix(in srgb, var(--rosta-cream, #FBF3E6) 7%, transparent),
+      inset -8px 0 13px color-mix(in srgb, var(--rosta-cream, #FBF3E6) 8%, transparent),
+      0 4px 12px color-mix(in srgb, var(--rosta-carbon, #111111) 7%, transparent) !important;
     -webkit-backdrop-filter: blur(3px) saturate(1.58) contrast(1.13) brightness(1.045) !important;
     backdrop-filter: blur(3px) saturate(1.58) contrast(1.13) brightness(1.045) !important;
     filter: none !important;
@@ -127,9 +127,9 @@
     background: conic-gradient(
       from 18deg,
       rgba(255, 255, 255, 0.98),
-      rgba(155, 227, 255, 0.46),
+      color-mix(in srgb, var(--rosta-brick-b, #C94A40) 46%, transparent),
       rgba(255, 255, 255, 0.82),
-      rgba(255, 219, 151, 0.40),
+      color-mix(in srgb, var(--rosta-kraft, #C8A77D) 40%, transparent),
       rgba(255, 255, 255, 0.98)
     ) !important;
     opacity: 0.92 !important;
@@ -138,10 +138,10 @@
   nav[aria-label="ROSTA Coffee Co. mobil menü"] > div > span:first-child:is([class*="moving"], [class*="dragging"]) > span > span:nth-child(3) {
     inset: 1px !important;
     box-shadow:
-      inset 1.3px 0 0 rgba(118, 226, 255, 0.26),
-      inset -1.3px 0 0 rgba(255, 210, 123, 0.24),
+      inset 1.3px 0 0 color-mix(in srgb, var(--rosta-brick-b, #C94A40) 26%, transparent),
+      inset -1.3px 0 0 color-mix(in srgb, var(--rosta-kraft, #C8A77D) 24%, transparent),
       inset 0 1px 0 rgba(255, 255, 255, 0.40),
-      inset 0 -1px 0 rgba(64, 74, 83, 0.08) !important;
+      inset 0 -1px 0 color-mix(in srgb, var(--rosta-brick-b, #C94A40) 8%, transparent) !important;
     filter: blur(0.1px) !important;
     opacity: 0.88 !important;
   }
@@ -166,8 +166,8 @@
     z-index: 7;
     box-shadow:
       inset 0 0 0 0.55px rgba(255, 255, 255, 0.62),
-      inset 7px 0 12px rgba(154, 231, 255, 0.055),
-      inset -7px 0 12px rgba(255, 217, 145, 0.055);
+      inset 7px 0 12px color-mix(in srgb, var(--rosta-brick-b, #C94A40) 5.5%, transparent),
+      inset -7px 0 12px color-mix(in srgb, var(--rosta-kraft, #C8A77D) 5.5%, transparent);
     mix-blend-mode: screen;
   }
 
@@ -201,7 +201,7 @@
       brightness(1.035)
       contrast(1.11)
       drop-shadow(0 1px 0 rgba(255, 255, 255, 0.52))
-      drop-shadow(0 2px 5px rgba(24, 28, 33, 0.10)) !important;
+      drop-shadow(0 2px 5px color-mix(in srgb, var(--rosta-carbon, #111111) 10%, transparent)) !important;
   }
 
   nav[aria-label="ROSTA Coffee Co. mobil menü"]:has(> div > span:first-child:is([class*="moving"], [class*="dragging"])) button[data-dock-index][aria-current="page"] img {
@@ -214,7 +214,7 @@
     border-color: rgba(255, 255, 255, 0.23) !important;
     background:
       linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.018)),
-      rgba(16, 18, 22, 0.36) !important;
+      color-mix(in srgb, var(--rosta-carbon, #111111) 36%, transparent) !important;
     -webkit-backdrop-filter: blur(23px) saturate(1.30) contrast(1.08) brightness(0.96) !important;
     backdrop-filter: blur(23px) saturate(1.30) contrast(1.08) brightness(0.96) !important;
   }
@@ -224,12 +224,12 @@
     background:
       radial-gradient(ellipse 66% 54% at 38% -2%, rgba(255, 255, 255, 0.25), transparent 58%),
       linear-gradient(180deg, rgba(255, 255, 255, 0.11), rgba(0, 0, 0, 0.035)),
-      rgba(30, 35, 42, 0.30) !important;
+      color-mix(in srgb, var(--rosta-carbon, #111111) 30%, transparent) !important;
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.38),
       inset 0 -1px 0 rgba(0, 0, 0, 0.28),
-      inset 8px 0 13px rgba(118, 226, 255, 0.045),
-      inset -8px 0 13px rgba(255, 210, 123, 0.04),
+      inset 8px 0 13px color-mix(in srgb, var(--rosta-brick-b, #C94A40) 4.5%, transparent),
+      inset -8px 0 13px color-mix(in srgb, var(--rosta-kraft, #C8A77D) 4%, transparent),
       0 6px 16px rgba(0, 0, 0, 0.20) !important;
     -webkit-backdrop-filter: blur(3px) saturate(1.48) contrast(1.13) brightness(1.02) !important;
     backdrop-filter: blur(3px) saturate(1.48) contrast(1.13) brightness(1.02) !important;

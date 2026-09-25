@@ -71,9 +71,14 @@
   transition: opacity var(--ruth-motion-fast) var(--ruth-easing);
 }
 
-.mediaFrame:hover .arrow,
 .arrow:focus-visible {
   opacity: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .mediaFrame:hover .arrow {
+    opacity: 1;
+  }
 }
 
 .arrow:disabled {
@@ -191,9 +196,16 @@
   opacity: 0.72;
 }
 
-.addButton:hover,
 .addButton:focus-visible {
   opacity: 1;
+  outline: 2px solid var(--ruth-color-focus);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .addButton:hover {
+    opacity: 1;
+  }
 }
 
 .addButton svg {

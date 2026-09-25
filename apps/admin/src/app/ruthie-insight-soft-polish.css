@@ -1,72 +1,64 @@
-/* Ruthie insight popup — soft premium visual layer.
-   Interaction/data owners stay in ExactRuthieInsightPopup.tsx; this file only
-   changes presentation so the assistant remains functionally identical. */
+/* Ruthie Insight — ROSTA Global Color System v2.3.
+ * Presentation-only migration; interaction/data behavior remains unchanged.
+ */
 
 [data-ruthie-insight-popup="true"] {
-  --ri-gold: #c9a23a;
-  --ri-gold-strong: #a88326;
-  --ri-gold-light: #e6d28b;
-  --ri-cream: #fffaf0;
-  --ri-cream-2: #fbf6ea;
-  --ri-cream-3: #f5edda;
-  --ri-ink: #211d16;
-  --ri-muted: #77736d;
-  --ri-line: rgba(153, 126, 60, 0.16);
+  --ri-gold: var(--rosta-brick-b);
+  --ri-gold-strong: var(--rosta-brick-b);
+  --ri-gold-light: var(--rosta-kraft);
+  --ri-cream: var(--rosta-carbon-soft);
+  --ri-cream-2: var(--rosta-carbon-soft);
+  --ri-cream-3: var(--rosta-espresso);
+  --ri-ink: var(--rosta-cream);
+  --ri-muted: color-mix(in srgb, var(--rosta-cream) 70%, transparent);
+  --ri-line: color-mix(in srgb, var(--rosta-kraft) 42%, transparent);
 
-  border: 1px solid rgba(160, 132, 67, 0.14) !important;
-  background:
-    radial-gradient(circle at 50% -8%, rgba(230, 210, 139, 0.14), transparent 34%),
-    linear-gradient(180deg, rgba(255, 253, 248, 0.99), rgba(255, 250, 241, 0.985)) !important;
+  border: 1px solid var(--ri-line) !important;
+  background: var(--rosta-carbon-soft) !important;
+  color: var(--rosta-cream) !important;
   box-shadow:
-    0 -2px 0 rgba(255, 255, 255, 0.92) inset,
-    0 28px 80px rgba(63, 49, 22, 0.16),
-    0 6px 22px rgba(63, 49, 22, 0.08) !important;
-  backdrop-filter: blur(26px) saturate(118%);
-  -webkit-backdrop-filter: blur(26px) saturate(118%);
+    0 28px 80px color-mix(in srgb, var(--rosta-carbon) 58%, transparent),
+    0 6px 22px color-mix(in srgb, var(--rosta-carbon) 34%, transparent) !important;
 }
 
 [data-ruthie-insight-popup="true"] > header {
   min-height: 76px;
   padding: 15px 18px !important;
   border-bottom: 1px solid var(--ri-line) !important;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(255, 250, 240, 0.62));
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.82) inset;
+  background: var(--rosta-carbon-soft) !important;
 }
 
 [data-ruthie-insight-popup="true"] > header > div:first-of-type {
   width: 46px !important;
   height: 46px !important;
-  background: linear-gradient(145deg, #e3bf57 0%, #c9a23a 46%, #a88326 100%) !important;
-  box-shadow:
-    0 8px 22px rgba(201, 162, 58, 0.22),
-    0 0 0 5px rgba(201, 162, 58, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.58) !important;
+  border: 1px solid color-mix(in srgb, var(--rosta-kraft) 42%, transparent);
+  background: var(--rosta-brick-b) !important;
+  color: var(--rosta-action-text) !important;
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--rosta-brick-b) 22%, transparent) !important;
 }
 
 [data-ruthie-insight-popup="true"] > header h2 {
+  color: var(--rosta-cream) !important;
   letter-spacing: -0.025em;
 }
 
 [data-ruthie-insight-popup="true"] > header p {
-  color: #827c72 !important;
+  color: var(--ri-muted) !important;
   line-height: 1.45;
 }
 
 [data-ruthie-insight-popup="true"] > header button:last-child {
   width: 38px;
   height: 38px;
-  border: 1px solid rgba(123, 108, 77, 0.10);
+  border: 1px solid var(--ri-line);
   border-radius: 999px !important;
-  background: rgba(255, 255, 255, 0.66) !important;
-  box-shadow: 0 6px 18px rgba(65, 51, 24, 0.08);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: var(--rosta-carbon-soft) !important;
+  color: var(--rosta-cream) !important;
+  box-shadow: none;
 }
 
 [data-ruthie-insight-popup="true"] > div[class*="min-h-0"][class*="flex-1"] {
-  background:
-    radial-gradient(circle at 50% 10%, rgba(230, 210, 139, 0.10), transparent 26%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(255, 250, 240, 0.20));
+  background: var(--rosta-carbon-soft) !important;
 }
 
 [data-ruthie-insight-popup="true"] [class*="min-h-52"] {
@@ -78,18 +70,14 @@
   width: 60px !important;
   height: 60px !important;
   margin-bottom: 17px !important;
-  border: 1px solid rgba(201, 162, 58, 0.15);
-  background:
-    radial-gradient(circle at 36% 28%, rgba(255, 255, 255, 0.92), transparent 30%),
-    linear-gradient(145deg, rgba(255, 253, 247, 0.98), rgba(246, 237, 207, 0.96)) !important;
-  color: var(--ri-gold) !important;
-  box-shadow:
-    0 10px 30px rgba(201, 162, 58, 0.12),
-    0 0 0 7px rgba(201, 162, 58, 0.045),
-    inset 0 1px 0 rgba(255, 255, 255, 0.96);
+  border: 1px solid var(--rosta-brick-b);
+  background: color-mix(in srgb, var(--rosta-brick-b) 15%, var(--rosta-carbon-soft)) !important;
+  color: var(--rosta-brick-b) !important;
+  box-shadow: 0 0 0 7px color-mix(in srgb, var(--rosta-brick-b) 8%, transparent) !important;
 }
 
 [data-ruthie-insight-popup="true"] [class*="min-h-52"] > p:first-of-type {
+  color: var(--rosta-cream) !important;
   font-size: clamp(18px, 4.6vw, 23px) !important;
   line-height: 1.2 !important;
   letter-spacing: -0.035em;
@@ -98,7 +86,7 @@
 [data-ruthie-insight-popup="true"] [class*="min-h-52"] > p:nth-of-type(2) {
   margin-top: 8px !important;
   max-width: 470px;
-  color: #817c74 !important;
+  color: var(--ri-muted) !important;
   line-height: 1.6;
 }
 
@@ -110,48 +98,33 @@
 [data-ruthie-insight-popup="true"] [class*="max-w-md"][class*="grid"] > button {
   min-height: 47px !important;
   padding: 10px 14px !important;
-  border: 1px solid rgba(154, 130, 75, 0.13) !important;
+  border: 1px solid var(--ri-line) !important;
   border-radius: 16px !important;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(250, 247, 240, 0.92)) !important;
-  box-shadow:
-    0 8px 20px rgba(59, 49, 29, 0.055),
-    inset 0 1px 0 rgba(255, 255, 255, 0.94);
+  background: var(--rosta-carbon-soft) !important;
+  color: var(--rosta-cream) !important;
+  box-shadow: none !important;
   font-size: 10.5px !important;
   letter-spacing: -0.012em;
-  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease, background 160ms ease !important;
+  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease !important;
 }
 
-[data-ruthie-insight-popup="true"] [class*="max-w-md"][class*="grid"] > button:hover {
-  border-color: rgba(201, 162, 58, 0.30) !important;
-  background: linear-gradient(180deg, #fffdf8, #fbf4e2) !important;
-  box-shadow: 0 10px 24px rgba(114, 87, 26, 0.09);
-}
-
-/* Image-generation settings card */
 [data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] {
   padding: 14px !important;
-  border: 1px solid rgba(201, 162, 58, 0.25) !important;
+  border: 1px solid var(--rosta-brick-b) !important;
   border-radius: 24px !important;
-  background:
-    radial-gradient(circle at 6% 0%, rgba(255, 255, 255, 0.82), transparent 30%),
-    linear-gradient(145deg, rgba(255, 251, 241, 0.98), rgba(248, 240, 219, 0.94)) !important;
-  box-shadow:
-    0 14px 34px rgba(143, 110, 31, 0.10),
-    inset 0 1px 0 rgba(255, 255, 255, 0.94) !important;
+  background: color-mix(in srgb, var(--rosta-brick-b) 10%, var(--rosta-carbon-soft)) !important;
+  box-shadow: none !important;
 }
 
 [data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] > div:first-child > span:first-child {
   height: 34px !important;
   padding-inline: 12px !important;
-  border-color: rgba(201, 162, 58, 0.18) !important;
-  background: rgba(255, 255, 255, 0.76) !important;
-  box-shadow: 0 5px 16px rgba(100, 77, 21, 0.07);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  border-color: var(--ri-line) !important;
+  background: var(--rosta-carbon-soft) !important;
 }
 
 [data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] span[class*="font-semibold"][class*="text-muted"] {
-  color: #746f67 !important;
+  color: var(--ri-muted) !important;
   letter-spacing: 0.01em;
 }
 
@@ -162,141 +135,115 @@
   padding-inline: 14px !important;
   border-radius: 999px !important;
   font-size: 9px !important;
-  box-shadow: 0 4px 13px rgba(52, 44, 27, 0.05);
-  transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease, border-color 150ms ease;
 }
 
-[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-7"][class*="bg-accent"] {
-  border-color: rgba(168, 131, 38, 0.38) !important;
-  background: linear-gradient(145deg, #dfbd58 0%, #c9a23a 56%, #b88d27 100%) !important;
-  color: #2c220c !important;
-  box-shadow:
-    0 8px 17px rgba(168, 131, 38, 0.20),
-    inset 0 1px 0 rgba(255, 255, 255, 0.42),
-    inset 0 -1px 0 rgba(112, 80, 11, 0.14) !important;
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-7"][class*="bg-accent"],
+[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-8"][class*="bg-accent"] {
+  border-color: var(--rosta-brick-b) !important;
+  background: var(--rosta-brick-b) !important;
+  color: var(--rosta-action-text) !important;
+  box-shadow: none !important;
 }
 
 [data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-7"][class*="bg-surface-primary"] {
-  border-color: rgba(126, 114, 88, 0.13) !important;
-  background: rgba(255, 255, 255, 0.74) !important;
-  color: #78736c !important;
-  box-shadow:
-    0 5px 13px rgba(52, 44, 27, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.88);
+  border-color: var(--ri-line) !important;
+  background: var(--rosta-carbon-soft) !important;
+  color: var(--rosta-cream) !important;
+  box-shadow: none !important;
 }
 
 [data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-8"] {
   height: 40px !important;
   border-radius: 14px !important;
   padding-inline: 15px !important;
-  border: 1px solid rgba(147, 122, 68, 0.14);
-  box-shadow:
-    0 8px 18px rgba(70, 54, 22, 0.07),
-    inset 0 1px 0 rgba(255, 255, 255, 0.86);
+  border: 1px solid var(--ri-line);
 }
 
-[data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="h-8"][class*="bg-accent"] {
-  background: linear-gradient(145deg, #dfbd58, #c9a23a 58%, #ad8122) !important;
-  color: #251c08 !important;
-}
-
-/* Composer */
 [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] {
   padding: 12px 13px max(14px, env(safe-area-inset-bottom)) !important;
-  border-top: 1px solid rgba(148, 128, 85, 0.12) !important;
-  background: linear-gradient(180deg, rgba(255, 252, 246, 0.86), rgba(255, 250, 242, 0.98)) !important;
-  box-shadow: 0 -10px 28px rgba(80, 61, 24, 0.04);
+  border-top: 1px solid var(--ri-line) !important;
+  background: var(--rosta-carbon-soft) !important;
 }
 
 [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] > div[class*="rounded-[18px]"] {
   padding: 10px !important;
-  border: 1px solid rgba(146, 125, 80, 0.18) !important;
+  border: 1px solid var(--ri-line) !important;
   border-radius: 22px !important;
-  background:
-    radial-gradient(circle at 100% 100%, rgba(230, 210, 139, 0.12), transparent 32%),
-    rgba(255, 255, 255, 0.73) !important;
-  box-shadow:
-    0 12px 26px rgba(68, 54, 27, 0.075),
-    inset 0 1px 0 rgba(255, 255, 255, 0.94) !important;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: var(--rosta-carbon-soft) !important;
+  box-shadow: none !important;
 }
 
 [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] > div[class*="rounded-[18px]"]:focus-within {
-  border-color: rgba(201, 162, 58, 0.34) !important;
-  box-shadow:
-    0 14px 30px rgba(96, 70, 17, 0.09),
-    0 0 0 4px rgba(201, 162, 58, 0.07),
-    inset 0 1px 0 rgba(255, 255, 255, 0.96) !important;
+  border-color: var(--rosta-brick-b) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--rosta-brick-b) 24%, transparent) !important;
 }
 
 [data-ruthie-insight-popup="true"] textarea {
   min-height: 44px !important;
   padding: 9px 10px !important;
-  line-height: 1.45;
+  color: var(--rosta-cream) !important;
 }
 
 [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ekle ve oluştur"] {
   width: 38px !important;
   height: 38px !important;
-  border: 1px solid rgba(119, 107, 83, 0.11);
-  background: rgba(255, 255, 255, 0.60) !important;
-  box-shadow: 0 5px 14px rgba(61, 50, 30, 0.05);
+  border: 1px solid var(--ri-line);
+  background: var(--rosta-carbon-soft) !important;
+  color: var(--rosta-cream) !important;
 }
 
 [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Görsel fiyatını göster"],
 [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] button[aria-label="Ruthie’ye gönder"] {
   width: 42px !important;
   height: 42px !important;
-  border: 1px solid rgba(161, 123, 28, 0.28);
-  background: linear-gradient(145deg, #dfbd58 0%, #c9a23a 55%, #ae8121 100%) !important;
-  color: #2b210b !important;
-  box-shadow:
-    0 9px 21px rgba(168, 131, 38, 0.23),
-    inset 0 1px 0 rgba(255, 255, 255, 0.48) !important;
+  border: 1px solid var(--rosta-brick-b);
+  background: var(--rosta-brick-b) !important;
+  color: var(--rosta-action-text) !important;
+  box-shadow: none !important;
 }
 
 [data-ruthie-insight-popup="true"] a[href="/ruthie/chat"] {
   padding: 5px 4px 2px;
-  color: #7c766d !important;
+  color: var(--ri-muted) !important;
   letter-spacing: 0.01em;
+}
+
+[data-ruthie-insight-popup="true"] :where(button, textarea):focus-visible {
+  outline: 2px solid var(--rosta-brick-b) !important;
+  outline-offset: 2px;
+}
+
+[data-ruthie-insight-popup="true"] :where(
+  div[class*="border-accent/20"][class*="bg-accent-soft/50"] button[class*="bg-accent"],
+  button[aria-label="Görsel fiyatını göster"],
+  button[aria-label="Ruthie’ye gönder"]
+):active {
+  border-color: var(--rosta-espresso) !important;
+  background: var(--rosta-espresso) !important;
+  color: var(--rosta-cream) !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-ruthie-insight-popup="true"] [class*="max-w-md"][class*="grid"] > button:hover,
+  [data-ruthie-insight-popup="true"] > header button:last-child:hover {
+    border-color: var(--rosta-brick-b) !important;
+  }
 }
 
 @media (max-width: 767px) {
   [data-ruthie-insight-popup="true"] {
     border-radius: 30px 30px 0 0 !important;
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
-  [data-ruthie-insight-popup="true"] > header {
-    padding-inline: 16px !important;
-  }
-
-  [data-ruthie-insight-popup="true"] > div[class*="min-h-0"][class*="flex-1"] {
-    padding: 18px 16px !important;
-  }
-
-  [data-ruthie-insight-popup="true"] [class*="max-w-md"][class*="grid"] {
-    width: 100% !important;
-  }
-
-  [data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] {
-    padding: 13px !important;
-  }
+  [data-ruthie-insight-popup="true"] > header { padding-inline: 16px !important; }
+  [data-ruthie-insight-popup="true"] > div[class*="min-h-0"][class*="flex-1"] { padding: 18px 16px !important; }
+  [data-ruthie-insight-popup="true"] [class*="max-w-md"][class*="grid"] { width: 100% !important; }
+  [data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] { padding: 13px !important; }
 }
 
-.dark [data-ruthie-insight-popup="true"] {
-  --ri-line: rgba(230, 210, 139, 0.12);
-  background:
-    radial-gradient(circle at 50% -8%, rgba(201, 162, 58, 0.13), transparent 34%),
-    linear-gradient(180deg, rgba(29, 27, 23, 0.99), rgba(24, 23, 20, 0.99)) !important;
-  border-color: rgba(230, 210, 139, 0.11) !important;
-}
-
-.dark [data-ruthie-insight-popup="true"] > header,
-.dark [data-ruthie-insight-popup="true"] > div[class*="relative"][class*="shrink-0"] {
-  background: rgba(29, 27, 23, 0.88) !important;
-}
-
-.dark [data-ruthie-insight-popup="true"] div[class*="border-accent/20"][class*="bg-accent-soft/50"] {
-  background: linear-gradient(145deg, rgba(50, 44, 30, 0.96), rgba(40, 36, 27, 0.97)) !important;
+@media (forced-colors: active) {
+  [data-ruthie-insight-popup="true"] :where(button, textarea):focus-visible {
+    outline: 2px solid Highlight !important;
+  }
 }

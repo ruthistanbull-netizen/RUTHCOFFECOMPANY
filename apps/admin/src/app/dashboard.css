@@ -60,8 +60,10 @@
   gap: 12px;
 }
 
-.cr-action-row:hover {
-  background: #fafbfc;
+@media (hover: hover) and (pointer: fine) {
+  .cr-action-row:hover {
+    background: var(--ruth-color-accent-soft);
+  }
 }
 
 .cr-action-row__symbol {
@@ -91,7 +93,7 @@
   padding: 0 10px;
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: #fff;
+  background: var(--ruth-color-surface);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -100,6 +102,18 @@
   font-size: 11px;
   font-weight: 800;
   justify-self: end;
+}
+
+ .cr-action-row__cta:focus-visible,
+.cr-dashboard-orders > a:focus-visible {
+  outline: 2px solid var(--ruth-color-focus);
+  outline-offset: 2px;
+}
+
+.cr-action-row__cta:active {
+  border-color: var(--rosta-espresso);
+  background: var(--rosta-espresso);
+  color: var(--rosta-cream);
 }
 
 .cr-action-row__cta svg {
@@ -126,8 +140,10 @@
   border-bottom: 0;
 }
 
-.cr-dashboard-orders > a:hover {
-  background: #fafbfc;
+@media (hover: hover) and (pointer: fine) {
+  .cr-dashboard-orders > a:hover {
+    background: var(--ruth-color-accent-soft);
+  }
 }
 
 .cr-dashboard-orders > a > div {

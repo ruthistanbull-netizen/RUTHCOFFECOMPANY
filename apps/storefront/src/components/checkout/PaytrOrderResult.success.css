@@ -63,13 +63,13 @@
   margin-top: 1.75rem;
   overflow: hidden;
   border-radius: 1.5rem;
-  border: 1px solid rgba(184, 151, 106, 0.18);
+  border: 1px solid var(--ruth-color-border-subtle);
   background:
-    radial-gradient(circle at 18% 10%, rgba(212, 184, 150, 0.12), transparent 28%),
-    linear-gradient(135deg, rgba(250, 247, 242, 0.98), rgba(255, 255, 255, 0.95));
+    radial-gradient(circle at 18% 10%, color-mix(in srgb, var(--rosta-brick-b) 18%, transparent), transparent 28%),
+    linear-gradient(135deg, var(--rosta-carbon-soft), var(--rosta-carbon));
   padding: 2.4rem 1.35rem 1.5rem;
   text-align: center;
-  box-shadow: 0 20px 55px rgba(43, 38, 32, 0.08);
+  box-shadow: 0 20px 55px color-mix(in srgb, var(--rosta-carbon) 58%, transparent);
 }
 
 .ruthie-success-title,
@@ -105,14 +105,14 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border: 2px solid #f3ba28;
+  border: 2px solid var(--rosta-kraft);
   border-radius: 999px;
   background:
-    radial-gradient(circle at 34% 28%, #fff4af 0 15%, #ffd54b 16% 43%, #f7b51c 44% 72%, #e39a03 73% 100%);
+    radial-gradient(circle at 34% 28%, var(--rosta-cream) 0 15%, var(--rosta-kraft) 16% 43%, var(--rosta-cocoa) 44% 72%, var(--rosta-espresso) 73% 100%);
   box-shadow:
-    inset 0 0 0 3px rgba(255, 241, 168, 0.92),
-    inset 0 0 0 6px rgba(226, 155, 15, 0.45),
-    0 10px 22px rgba(190, 129, 18, 0.16);
+    inset 0 0 0 3px color-mix(in srgb, var(--rosta-cream) 88%, transparent),
+    inset 0 0 0 6px color-mix(in srgb, var(--rosta-kraft) 48%, transparent),
+    0 10px 22px color-mix(in srgb, var(--rosta-carbon) 28%, transparent);
   transform-origin: 50% 50%;
 }
 
@@ -120,19 +120,19 @@
   content: "";
   position: absolute;
   inset: 13%;
-  border: 2px solid rgba(243, 194, 55, 0.92);
+  border: 2px solid color-mix(in srgb, var(--rosta-kraft) 92%, transparent);
   border-radius: inherit;
-  background: radial-gradient(circle at 38% 30%, rgba(255, 249, 205, 0.85), rgba(255, 249, 205, 0) 56%);
+  background: radial-gradient(circle at 38% 30%, color-mix(in srgb, var(--rosta-cream) 85%, transparent), transparent 56%);
 }
 
 .ruthie-illustrated-coin span {
   position: relative;
   z-index: 2;
-  color: #cb8600;
+  color: var(--rosta-espresso);
   font-family: var(--font-heading), Georgia, serif;
   font-size: 0.82rem;
   font-weight: 700;
-  text-shadow: 0 1px 0 rgba(255, 244, 172, 0.96);
+  text-shadow: 0 1px 0 color-mix(in srgb, var(--rosta-cream) 78%, transparent);
 }
 
 .ruthie-success-shine {
@@ -143,7 +143,7 @@
   width: 52%;
   height: 120%;
   transform: rotate(18deg);
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--rosta-cream) 35%, transparent), transparent);
   animation: ruthie-success-shine 4.6s ease-in-out infinite;
 }
 
@@ -151,15 +151,15 @@
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  border: 1px solid rgba(184, 151, 106, 0.24);
+  border: 1px solid var(--ruth-color-border-subtle);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.78);
+  background: var(--ruth-color-accent-soft);
   padding: 0.55rem 0.9rem;
-  color: var(--gold-dark);
+  color: var(--ruth-color-text-primary);
   font-size: 0.7rem;
   letter-spacing: 0.23em;
   text-transform: uppercase;
-  backdrop-filter: blur(10px);
+  backdrop-filter: none;
 }
 
 @keyframes ruthie-success-shine {
@@ -209,7 +209,7 @@
     margin-top: 1.05rem !important;
     padding: 1.65rem 0.95rem 1rem !important;
     border-radius: 1.2rem !important;
-    box-shadow: 0 14px 34px rgba(43, 38, 32, 0.07) !important;
+    box-shadow: 0 14px 34px color-mix(in srgb, var(--rosta-carbon) 46%, transparent) !important;
   }
 
   .ruthie-success-badge {

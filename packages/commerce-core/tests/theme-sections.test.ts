@@ -7,7 +7,7 @@ import {
   themeSectionRenderSignature,
 } from "../src/theme-sections.ts";
 
-test("all editable section fields survive normalization", () => {
+test("editable section fields survive normalization while colors stay in the ROSTA palette", () => {
   const settings = normalizeThemeSectionSettings({ pages: { "/": {
     path: "/",
     label: "Ana Sayfa",
@@ -31,7 +31,7 @@ test("all editable section fields survive normalization", () => {
       gap: 18,
       paddingY: 72,
       borderRadius: 24,
-      backgroundColor: "#fafafa",
+      backgroundColor: "#F4F0E8",
       textColor: "#111111",
       autoplay: true,
       showArrows: false,
@@ -46,8 +46,23 @@ test("all editable section fields survive normalization", () => {
     productSource: "collection", productSourceId: "collection-id", productLimit: 17,
     desktopItems: 6, mobileItems: 2, desktopHeight: 640, mobileHeight: 420,
     gap: 18, paddingY: 72, borderRadius: 24,
-    backgroundColor: "#fafafa", textColor: "#111111", autoplay: true, showArrows: false,
+    backgroundColor: "#FBF3E6", textColor: "#111111", autoplay: true, showArrows: false,
   });
+});
+
+test("section color normalizer migrates legacy colors and rejects arbitrary hex", () => {
+  const settings = normalizeThemeSectionSettings({ pages: { "/": {
+    path: "/", label: "Ana Sayfa", sections: [
+      { id: "legacy", type: "rich-text", enabled: true, backgroundColor: "#F4F0E8", textColor: "#B9563D" },
+      { id: "invalid", type: "rich-text", enabled: true, backgroundColor: "#123456", textColor: "#abcdef" },
+    ],
+  } } });
+
+  const [legacy, invalid] = themeSectionPage(settings, "/").sections;
+  assert.equal(legacy.backgroundColor, "#FBF3E6");
+  assert.equal(legacy.textColor, "#C94A40");
+  assert.equal(invalid.backgroundColor, undefined);
+  assert.equal(invalid.textColor, undefined);
 });
 
 test("editable text and links can be explicitly cleared", () => {
@@ -70,12 +85,12 @@ test("render signature reloads only for structural and product-data changes", ()
   const base = normalizeThemeSectionSettings({ pages: { "/": {
     path: "/", label: "Ana Sayfa", sections: [{
       id: "slider", type: "product-slider", enabled: true,
-      title: "Ürünler", backgroundColor: "#ffffff", desktopItems: 4,
+      title: "Ürünler", backgroundColor: "#FBF3E6", desktopItems: 4,
       productSource: "featured", productLimit: 12, showArrows: true,
     }],
   } } });
   const visualEdit = normalizeThemeSectionSettings({ pages: { "/": {
-    ...base.pages["/"], sections: [{ ...base.pages["/"].sections[0], title: "Yeni Ürünler", backgroundColor: "#eeeeee", desktopItems: 6 }],
+    ...base.pages["/"], sections: [{ ...base.pages["/"].sections[0], title: "Yeni Ürünler", backgroundColor: "#242424", desktopItems: 6 }],
   } } });
   const productEdit = normalizeThemeSectionSettings({ pages: { "/": {
     ...visualEdit.pages["/"], sections: [{ ...visualEdit.pages["/"].sections[0], productLimit: 20 }],

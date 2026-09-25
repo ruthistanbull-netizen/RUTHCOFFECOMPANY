@@ -630,7 +630,7 @@ export function mountRuthieJarvisNeuralCore(
 
     if (phase === "error") {
       context.globalCompositeOperation = "screen";
-      context.fillStyle = `rgba(255, 69, 52, ${0.025 + Math.sin(time * 18) * 0.012})`;
+      context.fillStyle = `rgba(225, 96, 107, ${0.025 + Math.sin(time * 18) * 0.012})`;
       for (let line = 0; line < 4; line += 1) {
         const y = centerY - radius * 0.7 + ((time * 97 + line * 71) % (radius * 1.4));
         roundedRect(context, centerX - radius * 0.83, y, radius * 1.66, 1 + (line % 2), 1);

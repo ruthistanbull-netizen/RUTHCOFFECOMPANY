@@ -6,7 +6,7 @@ import {
   normalizeThemeSectionSettings,
   type ThemeSectionSettings,
 } from "@ruth-commerce/commerce-core/theme-sections";
-import { mapRostaLegacyColor } from "@/lib/rostaDesignSystem";
+import { ROSTA_PALETTE, sanitizeRostaPaletteColor } from "@/lib/rostaDesignSystem";
 
 const THEME_SECTION_REVALIDATE_SECONDS = 10;
 
@@ -16,8 +16,12 @@ function applyRostaSectionPalette(settings: ThemeSectionSettings): ThemeSectionS
       ...page,
       sections: page.sections.map((section) => ({
         ...section,
-        backgroundColor: mapRostaLegacyColor(section.backgroundColor) || section.backgroundColor,
-        textColor: mapRostaLegacyColor(section.textColor) || section.textColor,
+        backgroundColor: section.backgroundColor
+          ? sanitizeRostaPaletteColor(section.backgroundColor, ROSTA_PALETTE.carbon)
+          : section.backgroundColor,
+        textColor: section.textColor
+          ? sanitizeRostaPaletteColor(section.textColor, ROSTA_PALETTE.cream)
+          : section.textColor,
       })),
     }])),
   };

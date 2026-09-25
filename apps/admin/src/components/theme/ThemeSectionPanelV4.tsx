@@ -58,6 +58,59 @@ const LIBRARY: Array<{ type: ThemeSectionType; title: string; detail: string }> 
   { type: "rich-text", title: "Yazı Bölümü", detail: "Başlık, açıklama ve bağlantı içeren sade alan." },
 ];
 
+const SECTION_COLOR_OPTIONS = [
+  { label: "Carbon", value: "#111111" },
+  { label: "Carbon Soft", value: "#242424" },
+  { label: "Cream", value: "#FBF3E6" },
+  { label: "Brick B", value: "#C94A40" },
+  { label: "Espresso", value: "#38251C" },
+  { label: "Cocoa", value: "#6B4638" },
+  { label: "Kraft", value: "#C8A77D" },
+  { label: "Action White", value: "#FFFFFF" },
+] as const;
+
+const LEGACY_SECTION_COLORS: Record<string, string> = {
+  "#f4f0e8": "#FBF3E6",
+  "#b9563d": "#C94A40",
+  "#aaa8a1": "#C8A77D",
+  "#6f725b": "#6B4638",
+  "#2b1b16": "#38251C",
+};
+
+function lockedSectionColor(value: string | undefined, fallback: string) {
+  const normalized = String(value || "").trim().toLowerCase();
+  if (!normalized) return fallback;
+  return SECTION_COLOR_OPTIONS.find((item) => item.value.toLowerCase() === normalized)?.value
+    || LEGACY_SECTION_COLORS[normalized]
+    || fallback;
+}
+
+function SectionColorSelect({
+  label,
+  value,
+  fallback,
+  onChange,
+}: {
+  label: string;
+  value?: string;
+  fallback: string;
+  onChange: (value: string) => void;
+}) {
+  const locked = lockedSectionColor(value, fallback);
+  return (
+    <label className="block">
+      <span className="ruth-type-label mb-1.5 block">{label}</span>
+      <select
+        value={locked}
+        onChange={(event) => onChange(event.target.value)}
+        className="ruth-type-control h-10 w-full rounded-md border border-border-subtle bg-surface-secondary px-3 text-main outline-none focus:border-accent"
+      >
+        {SECTION_COLOR_OPTIONS.map((item) => <option key={item.value} value={item.value}>{item.label} · {item.value}</option>)}
+      </select>
+    </label>
+  );
+}
+
 function previewFrame() {
   return document.querySelector("[data-theme-customizer-v4] iframe") as HTMLIFrameElement | null;
 }
@@ -90,10 +143,10 @@ function Range({ label, value, min, max, step = 1, suffix = "", onChange }: { la
   return (
     <div className="py-1">
       <div className="mb-2 flex items-center justify-between gap-3">
-        <span className="ruth-type-label text-black/75">{label}</span>
-        <span className="ruth-type-code tabular-nums text-black/42">{Math.round(value * 10) / 10}{suffix}</span>
+        <span className="ruth-type-label text-main">{label}</span>
+        <span className="ruth-type-code tabular-nums text-muted">{Math.round(value * 10) / 10}{suffix}</span>
       </div>
-      <input type="range" min={min} max={max} step={step} value={Math.min(max, Math.max(min, value))} onChange={(event) => onChange(Number(event.target.value))} className="h-5 w-full cursor-ew-resize accent-[#C9A23A]" />
+      <input type="range" min={min} max={max} step={step} value={Math.min(max, Math.max(min, value))} onChange={(event) => onChange(Number(event.target.value))} className="h-5 w-full cursor-ew-resize accent-[#C94A40]" />
     </div>
   );
 }
@@ -103,9 +156,9 @@ function Field({ label, value, onChange, multiline = false }: { label: string; v
     <label className="block">
       <span className="ruth-type-label mb-1.5 block">{label}</span>
       {multiline ? (
-        <textarea rows={4} value={value} onChange={(event) => onChange(event.target.value)} className="ruth-type-control w-full resize-y rounded-md border border-black/10 bg-[#fafafa] p-3 outline-none focus:border-[#C9A23A]/45" />
+        <textarea rows={4} value={value} onChange={(event) => onChange(event.target.value)} className="ruth-type-control w-full resize-y rounded-md border border-border-subtle bg-surface-secondary p-3 outline-none focus:border-accent" />
       ) : (
-        <input value={value} onChange={(event) => onChange(event.target.value)} className="ruth-type-control h-10 w-full rounded-md border border-black/10 bg-[#fafafa] px-3 outline-none focus:border-[#C9A23A]/45" />
+        <input value={value} onChange={(event) => onChange(event.target.value)} className="ruth-type-control h-10 w-full rounded-md border border-border-subtle bg-surface-secondary px-3 outline-none focus:border-accent" />
       )}
     </label>
   );
@@ -113,17 +166,17 @@ function Field({ label, value, onChange, multiline = false }: { label: string; v
 
 function Toggle({ label, value, onChange }: { label: string; value: boolean; onChange: (value: boolean) => void }) {
   return (
-    <button type="button" onClick={() => onChange(!value)} className="flex h-11 w-full items-center justify-between rounded-md border border-black/10 bg-white px-3.5 text-left">
+    <button type="button" onClick={() => onChange(!value)} className="flex h-11 w-full items-center justify-between rounded-md border border-border-subtle bg-surface-primary px-3.5 text-left">
       <span className="ruth-type-control">{label}</span>
-      <span className={`relative block h-6 w-11 shrink-0 rounded-full transition ${value ? "bg-[#C9A23A]" : "bg-black/15"}`}>
-        <span className={`absolute left-1 top-1 block h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${value ? "translate-x-5" : "translate-x-0"}`} />
+      <span className={`relative block h-6 w-11 shrink-0 rounded-full transition ${value ? "bg-accent" : "bg-surface-tertiary"}`}>
+        <span className={`absolute left-1 top-1 block h-4 w-4 rounded-full bg-surface-primary shadow-sm transition-transform ${value ? "translate-x-5" : "translate-x-0"}`} />
       </span>
     </button>
   );
 }
 
 function Group({ title, children }: { title: string; children: React.ReactNode }) {
-  return <section className="border-b border-black/[0.07] bg-white px-4 py-4"><h3 className="ruth-type-card-title mb-3">{title}</h3><div className="space-y-3">{children}</div></section>;
+  return <section className="border-b border-border-subtle bg-surface-primary px-4 py-4"><h3 className="ruth-type-card-title mb-3">{title}</h3><div className="space-y-3">{children}</div></section>;
 }
 
 function ImageUpload({ onChange }: { onChange: (url: string) => void }) {
@@ -149,7 +202,7 @@ function ImageUpload({ onChange }: { onChange: (url: string) => void }) {
   };
 
   return (
-    <label className="ruth-type-control flex h-11 cursor-pointer items-center justify-center gap-2 rounded-md border border-dashed border-black/20 bg-[#fafafa] hover:border-[#C9A23A]/45">
+    <label className="ruth-type-control flex h-11 cursor-pointer items-center justify-center gap-2 rounded-md border border-dashed border-border-strong bg-surface-secondary focus-within:border-accent">
       <ImagePlus className="h-4 w-4" />
       {busy ? "Yükleniyor…" : "Görseli değiştir"}
       <input hidden type="file" accept="image/*" disabled={busy} onChange={(event) => { const file = event.target.files?.[0]; if (file) void upload(file); }} />
@@ -161,7 +214,7 @@ function CatalogSelect({ label, value, options, onChange }: { label: string; val
   return (
     <label className="block">
       <span className="ruth-type-label mb-1.5 block">{label}</span>
-      <select value={value} onChange={(event) => onChange(event.target.value)} disabled={!options.length} className="ruth-type-control h-10 w-full rounded-md border border-black/10 bg-[#fafafa] px-3 disabled:opacity-50">
+      <select value={value} onChange={(event) => onChange(event.target.value)} disabled={!options.length} className="ruth-type-control h-10 w-full rounded-md border border-border-subtle bg-surface-secondary px-3 disabled:opacity-50">
         {!options.length ? <option value="">Kayıt bulunamadı</option> : null}
         {options.map((item) => <option key={item.id} value={item.id}>{item.name}{typeof item.product_count === "number" ? ` (${item.product_count})` : ""}</option>)}
       </select>
@@ -204,15 +257,15 @@ function SectionSettings({
           {inner.length ? (
             <div className="space-y-1.5">
               {inner.map((item) => (
-                <button key={item.id} type="button" onClick={() => onEditInner(item.id)} className="flex w-full items-center gap-3 rounded-md border border-black/[0.07] bg-[#fafafa] px-3 py-2.5 text-left hover:border-[#C9A23A]/30">
+                <button key={item.id} type="button" onClick={() => onEditInner(item.id)} className="flex w-full items-center gap-3 rounded-md border border-border-subtle bg-surface-secondary px-3 py-2.5 text-left focus-visible:border-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
                   <span className="ruth-type-caption grid h-7 w-7 place-items-center">{item.kind === "image" ? "▧" : item.kind === "button" ? "●" : item.kind === "link" ? "↗" : "T"}</span>
                   <span className="ruth-type-control min-w-0 flex-1 truncate">{item.label}</span>
-                  <ChevronRight className="h-4 w-4 text-black/30" />
+                  <ChevronRight className="h-4 w-4 text-subtle" />
                 </button>
               ))}
             </div>
           ) : (
-            <div className="ruth-type-caption rounded-md bg-[#f6f6f4] p-3 text-black/50">Önizleme yüklenince bu bölümdeki yazı, görsel ve butonlar burada görünür.</div>
+            <div className="ruth-type-caption rounded-md bg-surface-tertiary p-3 text-muted">Önizleme yüklenince bu bölümdeki yazı, görsel ve butonlar burada görünür.</div>
           )}
         </Group>
       ) : null}
@@ -223,7 +276,7 @@ function SectionSettings({
             <Group title="Ürün kaynağı">
               <label className="block">
                 <span className="ruth-type-label mb-1.5 block">Gösterilecek ürünler</span>
-                <select value={productSource} onChange={(event) => changeProductSource(event.target.value as ThemeProductSource)} className="ruth-type-control h-10 w-full rounded-md border border-black/10 bg-[#fafafa] px-3">
+                <select value={productSource} onChange={(event) => changeProductSource(event.target.value as ThemeProductSource)} className="ruth-type-control h-10 w-full rounded-md border border-border-subtle bg-surface-secondary px-3">
                   <option value="featured">Öne Çıkanlar</option>
                   <option value="all">Tüm Ürünler</option>
                   <option value="collection">Koleksiyon</option>
@@ -232,7 +285,7 @@ function SectionSettings({
               </label>
               {productSource === "collection" ? <CatalogSelect label="Koleksiyon" value={section.productSourceId || collections[0]?.id || ""} options={collections} onChange={(productSourceId) => patch({ productSourceId })} /> : null}
               {productSource === "category" ? <CatalogSelect label="Kategori" value={section.productSourceId || categories[0]?.id || ""} options={categories} onChange={(productSourceId) => patch({ productSourceId })} /> : null}
-              <div className="ruth-type-caption rounded-md bg-[#f6f6f4] p-3 text-black/50">Ürün kartları burada alt alta listelenmez. Önizlemede tek yatay slider satırı olarak kalır.</div>
+              <div className="ruth-type-caption rounded-md bg-surface-tertiary p-3 text-muted">Ürün kartları burada alt alta listelenmez. Önizlemede tek yatay slider satırı olarak kalır.</div>
             </Group>
           ) : null}
 
@@ -274,19 +327,14 @@ function SectionSettings({
 
           <Group title="Görünüm">
             <div className="grid grid-cols-2 gap-2">
-              <label className="flex h-11 items-center gap-2 rounded-md border border-black/10 bg-[#fafafa] px-3">
-                <input type="color" value={section.backgroundColor || "#ffffff"} onChange={(event) => patch({ backgroundColor: event.target.value })} className="h-6 w-7 border-0 bg-transparent p-0" />
-                <span className="ruth-type-caption">Arka plan</span>
-              </label>
-              <label className="flex h-11 items-center gap-2 rounded-md border border-black/10 bg-[#fafafa] px-3">
-                <input type="color" value={section.textColor || "#111111"} onChange={(event) => patch({ textColor: event.target.value })} className="h-6 w-7 border-0 bg-transparent p-0" />
-                <span className="ruth-type-caption">Yazı rengi</span>
-              </label>
+              <SectionColorSelect label="Arka plan" value={section.backgroundColor} fallback="#111111" onChange={(backgroundColor) => patch({ backgroundColor })} />
+              <SectionColorSelect label="Yazı rengi" value={section.textColor} fallback="#FBF3E6" onChange={(textColor) => patch({ textColor })} />
             </div>
+            <p className="ruth-type-caption mt-2 text-subtle">Bölüm renkleri ROSTA marka paletiyle sınırlıdır.</p>
           </Group>
         </>
       ) : (
-        <div className="ruth-type-caption border-b border-black/[0.07] bg-white p-4 text-black/50">Bu hazır bölümün ana tasarımı korunuyor. İçindeki öğelere tıklayarak yazı, görsel ve butonları tek tek düzenleyebilirsin.</div>
+        <div className="ruth-type-caption border-b border-border-subtle bg-surface-primary p-4 text-muted">Bu hazır bölümün ana tasarımı korunuyor. İçindeki öğelere tıklayarak yazı, görsel ve butonları tek tek düzenleyebilirsin.</div>
       )}
     </div>
   );
@@ -557,12 +605,12 @@ export function ThemeSectionPanelV4() {
   };
 
   const panelClass = contextPanel
-    ? "fixed z-[2147483645] flex max-h-[72dvh] w-[390px] max-w-[calc(100vw-24px)] flex-col overflow-hidden rounded-xl border border-black/10 bg-white shadow-[0_24px_80px_rgba(15,23,42,.28)]"
-    : "fixed bottom-0 left-0 top-[70px] z-[2147483550] flex w-[390px] flex-col border-r border-black/10 bg-white max-md:top-auto max-md:h-[52dvh] max-md:w-full max-md:border-r-0 max-md:border-t";
+    ? "fixed z-[2147483645] flex max-h-[72dvh] w-[390px] max-w-[calc(100vw-24px)] flex-col overflow-hidden rounded-xl border border-border-subtle bg-surface-primary shadow-[0_24px_80px_rgba(17,17,17,.28)]"
+    : "fixed bottom-0 left-0 top-[70px] z-[2147483550] flex w-[390px] flex-col border-r border-border-subtle bg-surface-primary max-md:top-auto max-md:h-[52dvh] max-md:w-full max-md:border-r-0 max-md:border-t";
 
   return (
     <>
-      {!open ? <button type="button" onClick={openSectionsList} data-theme-sections-launcher className="ruth-type-control fixed bottom-4 left-4 z-[2147483600] flex h-9 items-center gap-2 rounded-md border border-black/10 bg-white px-3 shadow-sm"><Layers3 className="h-4 w-4" />Bölümler</button> : null}
+      {!open ? <button type="button" onClick={openSectionsList} data-theme-sections-launcher className="ruth-type-control fixed bottom-4 left-4 z-[2147483600] flex h-9 items-center gap-2 rounded-md border border-border-subtle bg-surface-primary px-3 shadow-sm"><Layers3 className="h-4 w-4" />Bölümler</button> : null}
 
       {open ? (
         <aside
@@ -571,16 +619,16 @@ export function ThemeSectionPanelV4() {
           className={panelClass}
           style={contextPanel ? { left: contextPanel.x, top: contextPanel.y } : undefined}
         >
-          <header className="flex h-[54px] shrink-0 items-center gap-2 border-b border-black/[0.08] px-3">
-            {selected && !contextPanel ? <button type="button" onClick={() => setSelectedId(null)} className="grid h-8 w-8 place-items-center rounded-md hover:bg-black/[0.04]" aria-label="Bölümlere dön"><ArrowLeft className="h-4 w-4" /></button> : <Layers3 className="ml-1 h-4 w-4 text-black/55" />}
+          <header className="flex h-[54px] shrink-0 items-center gap-2 border-b border-border-subtle px-3">
+            {selected && !contextPanel ? <button type="button" onClick={() => setSelectedId(null)} className="grid h-8 w-8 place-items-center rounded-md focus-visible:bg-accent-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" aria-label="Bölümlere dön"><ArrowLeft className="h-4 w-4" /></button> : <Layers3 className="ml-1 h-4 w-4 text-muted" />}
             <div className="min-w-0 flex-1">
               <p className="ruth-type-card-title truncate">{selected ? selected.title || LABELS[selected.type] : "Bölümler"}</p>
-              <p className="ruth-type-caption mt-0.5 text-black/38">{contextPanel ? `Bu alan · ${selected ? LABELS[selected.type] : "Bölüm"}` : selected ? "İçerik ve görünüm" : "Sürükle, sırala ve düzenle"}</p>
+              <p className="ruth-type-caption mt-0.5 text-subtle">{contextPanel ? `Bu alan · ${selected ? LABELS[selected.type] : "Bölüm"}` : selected ? "İçerik ve görünüm" : "Sürükle, sırala ve düzenle"}</p>
             </div>
-            <button type="button" onClick={closePanel} className="grid h-8 w-8 place-items-center rounded-md hover:bg-black/[0.04]" aria-label="Paneli kapat"><X className="h-4 w-4" /></button>
+            <button type="button" onClick={closePanel} className="grid h-8 w-8 place-items-center rounded-md focus-visible:bg-accent-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" aria-label="Paneli kapat"><X className="h-4 w-4" /></button>
           </header>
 
-          {!selected ? <div className="flex shrink-0 items-center gap-2 border-b border-black/[0.07] p-3"><select value={path} onChange={(event) => { setPath(event.target.value); setSelectedId(null); navigatePreview(event.target.value, dirty ? previewToken : undefined); }} className="ruth-type-control h-10 min-w-0 flex-1 rounded-md border border-black/10 bg-[#fafafa] px-3">{pages.map((item) => <option key={item.path} value={item.path}>{item.label}</option>)}</select><button type="button" onClick={() => setPageOpen(true)} className="ruth-type-control flex h-10 items-center gap-1 rounded-md border border-black/10 px-3"><Plus className="h-3.5 w-3.5" />Sayfa</button></div> : null}
+          {!selected ? <div className="flex shrink-0 items-center gap-2 border-b border-border-subtle p-3"><select value={path} onChange={(event) => { setPath(event.target.value); setSelectedId(null); navigatePreview(event.target.value, dirty ? previewToken : undefined); }} className="ruth-type-control h-10 min-w-0 flex-1 rounded-md border border-border-subtle bg-surface-secondary px-3">{pages.map((item) => <option key={item.path} value={item.path}>{item.label}</option>)}</select><button type="button" onClick={() => setPageOpen(true)} className="ruth-type-control flex h-10 items-center gap-1 rounded-md border border-border-subtle px-3"><Plus className="h-3.5 w-3.5" />Sayfa</button></div> : null}
 
           <div className="min-h-0 flex-1 overflow-y-auto">
             {selected ? (
@@ -588,31 +636,31 @@ export function ThemeSectionPanelV4() {
             ) : (
               <div className="space-y-2 p-3 pb-24">
                 {page.sections.map((section, index) => (
-                  <div key={section.id} draggable onDragStart={() => setDragId(section.id)} onDragEnd={() => setDragId(null)} onDragOver={(event) => event.preventDefault()} onDrop={() => drop(section.id)} className={`group flex min-h-[46px] items-center gap-1 rounded-md border bg-white px-2 ${dragId === section.id ? "border-[#C9A23A]/40 opacity-60" : "border-black/[0.08] hover:border-black/16"}`}>
-                    <span className="grid h-8 w-6 cursor-grab place-items-center text-black/22"><GripVertical className="h-4 w-4" /></span>
+                  <div key={section.id} draggable onDragStart={() => setDragId(section.id)} onDragEnd={() => setDragId(null)} onDragOver={(event) => event.preventDefault()} onDrop={() => drop(section.id)} className={`group flex min-h-[46px] items-center gap-1 rounded-md border bg-surface-primary px-2 ${dragId === section.id ? "border-accent/40 opacity-60" : "border-border-subtle focus-within:border-border-strong"}`}>
+                    <span className="grid h-8 w-6 cursor-grab place-items-center text-subtle"><GripVertical className="h-4 w-4" /></span>
                     <button type="button" onClick={() => setSelectedId(section.id)} className="min-w-0 flex-1 px-1 text-left"><b className="ruth-type-control block truncate">{section.title || LABELS[section.type]}</b></button>
-                    <button type="button" onClick={() => setPage({ ...page, sections: page.sections.map((item) => item.id === section.id ? { ...item, enabled: !item.enabled } : item) })} className="grid h-8 w-8 place-items-center rounded-md text-black/45 hover:bg-black/[0.04]" aria-label={section.enabled ? "Gizle" : "Göster"}>{section.enabled ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}</button>
-                    <button type="button" onClick={() => duplicateSection(section, index)} className="grid h-8 w-7 place-items-center rounded-md text-black/35 hover:bg-black/[0.04]" aria-label="Kopyala"><Copy className="h-3.5 w-3.5" /></button>
-                    <button type="button" disabled={index === 0} onClick={() => move(index, -1)} className="grid h-8 w-7 place-items-center text-black/25 disabled:opacity-10"><ArrowUp className="h-3 w-3" /></button>
-                    <button type="button" disabled={index === page.sections.length - 1} onClick={() => move(index, 1)} className="grid h-8 w-7 place-items-center text-black/25 disabled:opacity-10"><ArrowDown className="h-3 w-3" /></button>
-                    {!section.id.startsWith("home-") ? <button type="button" onClick={() => setPage({ ...page, sections: page.sections.filter((item) => item.id !== section.id) })} className="grid h-8 w-7 place-items-center rounded-md text-red-500/80 hover:bg-red-50" aria-label="Sil"><Trash2 className="h-3.5 w-3.5" /></button> : null}
-                    <button type="button" onClick={() => setSelectedId(section.id)} className="grid h-8 w-7 place-items-center"><ChevronRight className="h-4 w-4 text-black/25" /></button>
+                    <button type="button" onClick={() => setPage({ ...page, sections: page.sections.map((item) => item.id === section.id ? { ...item, enabled: !item.enabled } : item) })} className="grid h-8 w-8 place-items-center rounded-md text-muted focus-visible:bg-accent-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" aria-label={section.enabled ? "Gizle" : "Göster"}>{section.enabled ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}</button>
+                    <button type="button" onClick={() => duplicateSection(section, index)} className="grid h-8 w-7 place-items-center rounded-md text-subtle focus-visible:bg-accent-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" aria-label="Kopyala"><Copy className="h-3.5 w-3.5" /></button>
+                    <button type="button" disabled={index === 0} onClick={() => move(index, -1)} className="grid h-8 w-7 place-items-center text-subtle disabled:opacity-10"><ArrowUp className="h-3 w-3" /></button>
+                    <button type="button" disabled={index === page.sections.length - 1} onClick={() => move(index, 1)} className="grid h-8 w-7 place-items-center text-subtle disabled:opacity-10"><ArrowDown className="h-3 w-3" /></button>
+                    {!section.id.startsWith("home-") ? <button type="button" onClick={() => setPage({ ...page, sections: page.sections.filter((item) => item.id !== section.id) })} className="grid h-8 w-7 place-items-center rounded-md text-danger active:bg-danger-soft focus-visible:bg-danger-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" aria-label="Sil"><Trash2 className="h-3.5 w-3.5" /></button> : null}
+                    <button type="button" onClick={() => setSelectedId(section.id)} className="grid h-8 w-7 place-items-center"><ChevronRight className="h-4 w-4 text-subtle" /></button>
                   </div>
                 ))}
               </div>
             )}
           </div>
 
-          <footer className="shrink-0 border-t border-black/[0.08] bg-white">
-            {!selected ? <div className="flex h-[58px] items-center justify-center"><button type="button" onClick={() => setLibraryOpen(true)} className="ruth-type-control flex h-10 items-center gap-1.5 rounded-md bg-[#C9A23A] px-5 text-[#211a08]"><Plus className="h-4 w-4" />Yeni Bölüm</button></div> : null}
-            <button type="button" onClick={openGeneral} className="flex h-[48px] w-full items-center justify-between border-t border-black/[0.07] px-4 text-left hover:bg-black/[0.018]"><span className="ruth-type-control flex items-center gap-2"><Palette className="h-4 w-4" />Tema Ayarları</span><ChevronRight className="h-4 w-4 text-black/35" /></button>
+          <footer className="shrink-0 border-t border-border-subtle bg-surface-primary">
+            {!selected ? <div className="flex h-[58px] items-center justify-center"><button type="button" onClick={() => setLibraryOpen(true)} className="ruth-type-control flex h-10 items-center gap-1.5 rounded-md bg-accent px-5 text-[var(--rosta-action-text)]"><Plus className="h-4 w-4" />Yeni Bölüm</button></div> : null}
+            <button type="button" onClick={openGeneral} className="flex h-[48px] w-full items-center justify-between border-t border-border-subtle px-4 text-left focus-visible:bg-accent-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><span className="ruth-type-control flex items-center gap-2"><Palette className="h-4 w-4" />Tema Ayarları</span><ChevronRight className="h-4 w-4 text-subtle" /></button>
           </footer>
         </aside>
       ) : null}
 
-      {libraryOpen ? <div className="fixed inset-0 z-[2147483600] grid place-items-center bg-black/25 p-4 backdrop-blur-sm"><div className="w-full max-w-sm rounded-xl bg-white p-4 shadow-2xl"><div className="mb-4 flex items-center justify-between"><div><p className="ruth-type-card-title">Yeni Bölüm</p><p className="ruth-type-caption mt-1 text-black/40">Eklemek istediğin alanı seç.</p></div><button onClick={() => setLibraryOpen(false)} className="grid h-8 w-8 place-items-center rounded-md bg-black/[0.04]"><X className="h-4 w-4" /></button></div><div className="space-y-2">{LIBRARY.map((item) => <button key={item.type} type="button" onClick={() => addSection(item.type)} className="w-full rounded-md border border-black/[0.08] p-4 text-left hover:border-[#C9A23A]/35"><b className="ruth-type-card-title block">{item.title}</b><span className="ruth-type-caption mt-1 block text-black/45">{item.detail}</span></button>)}</div></div></div> : null}
+      {libraryOpen ? <div className="fixed inset-0 z-[2147483600] grid place-items-center bg-[var(--ruth-color-overlay)] p-4 backdrop-blur-sm"><div className="w-full max-w-sm rounded-xl bg-surface-primary p-4 shadow-2xl"><div className="mb-4 flex items-center justify-between"><div><p className="ruth-type-card-title">Yeni Bölüm</p><p className="ruth-type-caption mt-1 text-muted">Eklemek istediğin alanı seç.</p></div><button onClick={() => setLibraryOpen(false)} className="grid h-8 w-8 place-items-center rounded-md bg-surface-secondary active:bg-accent-soft focus-visible:bg-accent-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><X className="h-4 w-4" /></button></div><div className="space-y-2">{LIBRARY.map((item) => <button key={item.type} type="button" onClick={() => addSection(item.type)} className="w-full rounded-md border border-border-subtle p-4 text-left focus-visible:border-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><b className="ruth-type-card-title block">{item.title}</b><span className="ruth-type-caption mt-1 block text-muted">{item.detail}</span></button>)}</div></div></div> : null}
 
-      {pageOpen ? <div className="fixed inset-0 z-[2147483600] grid place-items-center bg-black/25 p-4 backdrop-blur-sm"><div className="w-full max-w-sm rounded-xl bg-white p-4 shadow-2xl"><div className="mb-4 flex items-center justify-between"><div><p className="ruth-type-card-title">Yeni Sayfa</p><p className="ruth-type-caption mt-1 text-black/40">Boş sayfa oluştur, sonra bölümleri ekle.</p></div><button onClick={() => setPageOpen(false)} className="grid h-8 w-8 place-items-center rounded-md bg-black/[0.04]"><X className="h-4 w-4" /></button></div><div className="space-y-3"><Field label="Sayfa adı" value={pageName} onChange={setPageName} /><Field label="Adres" value={pageSlug} onChange={setPageSlug} /></div><button type="button" onClick={createPage} className="ruth-type-control mt-4 h-10 w-full rounded-md bg-[#C9A23A] text-[#211a08]">Sayfayı Oluştur</button></div></div> : null}
+      {pageOpen ? <div className="fixed inset-0 z-[2147483600] grid place-items-center bg-[var(--ruth-color-overlay)] p-4 backdrop-blur-sm"><div className="w-full max-w-sm rounded-xl bg-surface-primary p-4 shadow-2xl"><div className="mb-4 flex items-center justify-between"><div><p className="ruth-type-card-title">Yeni Sayfa</p><p className="ruth-type-caption mt-1 text-muted">Boş sayfa oluştur, sonra bölümleri ekle.</p></div><button onClick={() => setPageOpen(false)} className="grid h-8 w-8 place-items-center rounded-md bg-surface-secondary active:bg-accent-soft focus-visible:bg-accent-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><X className="h-4 w-4" /></button></div><div className="space-y-3"><Field label="Sayfa adı" value={pageName} onChange={setPageName} /><Field label="Adres" value={pageSlug} onChange={setPageSlug} /></div><button type="button" onClick={createPage} className="ruth-type-control mt-4 h-10 w-full rounded-md bg-accent text-[var(--rosta-action-text)]">Sayfayı Oluştur</button></div></div> : null}
     </>
   );
 }

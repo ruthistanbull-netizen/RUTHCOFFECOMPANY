@@ -1,5 +1,5 @@
 .page {
-  --accent: 84, 186, 238;
+  --accent: 201, 74, 64;
   position: fixed;
   inset: 0;
   z-index: 120;
@@ -13,25 +13,25 @@
     radial-gradient(circle at 42% 46%, rgba(var(--accent), .09), transparent 30%),
     radial-gradient(
       circle at 40% 50%,
-      color-mix(in srgb, var(--ruth-color-text-primary) 82%, var(--ruth-color-info) 18%) 0%,
-      var(--ruth-color-text-primary) 38%,
-      color-mix(in srgb, var(--ruth-color-text-primary) 94%, var(--ruth-color-info) 6%) 75%
+      color-mix(in srgb, var(--rosta-carbon, #111111) 82%, var(--rosta-espresso, #38251C) 18%) 0%,
+      var(--rosta-carbon, #111111) 38%,
+      color-mix(in srgb, var(--rosta-carbon, #111111) 94%, var(--rosta-espresso, #38251C) 6%) 75%
     );
-  color: var(--ruth-color-text-inverse);
+  color: var(--rosta-cream, #FBF3E6);
   transition: background var(--ruth-motion-slow) ease;
 }
 
-.page[data-phase="acting"] { --accent: 235, 174, 75; }
-.page[data-phase="error"] { --accent: 238, 87, 74; }
-.page[data-phase="speaking"] { --accent: 125, 198, 255; }
+.page[data-phase="acting"] { --accent: 200, 167, 125; }
+.page[data-phase="error"] { --accent: 225, 96, 107; }
+.page[data-phase="speaking"] { --accent: 200, 167, 125; }
 
 .grid {
   position: absolute;
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(rgba(125, 198, 255, .018) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(125, 198, 255, .018) 1px, transparent 1px);
+    linear-gradient(color-mix(in srgb, var(--rosta-kraft, #C8A77D) 2%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--rosta-kraft, #C8A77D) 2%, transparent) 1px, transparent 1px);
   background-size: 52px 52px;
   mask-image: radial-gradient(
     circle at 42% 48%,
@@ -51,7 +51,7 @@
   min-width: 0;
   padding: max(16px, env(safe-area-inset-top)) 26px 12px;
   border-bottom: 1px solid rgba(var(--accent), .1);
-  background: linear-gradient(180deg, rgba(2, 5, 8, .94), rgba(2, 5, 8, .42));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--rosta-carbon, #111111) 94%, transparent), color-mix(in srgb, var(--rosta-carbon, #111111) 42%, transparent));
   backdrop-filter: blur(18px);
 }
 
@@ -106,7 +106,7 @@
 
 .brand div { display: grid; gap: 3px; }
 .brand strong { font-size: 17px; font-weight: 640; letter-spacing: .24em; }
-.brand small { color: rgba(185, 221, 238, .46); font-size: 7px; letter-spacing: .2em; }
+.brand small { color: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 46%, transparent); font-size: 7px; letter-spacing: .2em; }
 
 .online {
   gap: 9px;
@@ -114,8 +114,8 @@
   padding: 0 13px;
   border: 1px solid rgba(var(--accent), .15);
   border-radius: 999px;
-  background: rgba(3, 10, 15, .55);
-  color: rgba(211, 239, 251, .5);
+  background: color-mix(in srgb, var(--rosta-carbon, #111111) 55%, transparent);
+  color: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 50%, transparent);
   font-size: 8px;
   letter-spacing: .16em;
 }
@@ -193,7 +193,7 @@
 
 .statusCopy h1 {
   margin: 8px 0 7px;
-  color: var(--ruth-color-text-inverse);
+  color: var(--rosta-cream, #FBF3E6);
   font-size: clamp(23px, 3vw, 38px);
   font-weight: 430;
   letter-spacing: -.035em;
@@ -203,7 +203,7 @@
 
 .statusCopy p {
   margin: 0;
-  color: rgba(190, 222, 236, .36);
+  color: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 36%, transparent);
   font-size: 9px;
   letter-spacing: .04em;
   line-height: 1.5;
@@ -217,7 +217,7 @@
   overflow: auto;
   padding: 26px 22px max(24px, env(safe-area-inset-bottom));
   border-left: 1px solid rgba(var(--accent), .11);
-  background: linear-gradient(180deg, rgba(7, 13, 18, .84), rgba(3, 7, 11, .94));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--rosta-carbon-soft, #242424) 84%, transparent), color-mix(in srgb, var(--rosta-carbon, #111111) 94%, transparent));
   backdrop-filter: blur(24px);
 }
 
@@ -238,7 +238,7 @@
   border: 1px solid rgba(var(--accent), .16);
   border-radius: 10px;
   background: rgba(var(--accent), .04);
-  color: rgba(215, 242, 253, .52);
+  color: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 52%, transparent);
   font: inherit;
   font-size: 9px;
 }
@@ -246,7 +246,7 @@
 .panelHeading > button.activeToggle {
   border-color: rgba(var(--accent), .42);
   background: rgba(var(--accent), .11);
-  color: var(--ruth-color-text-inverse);
+  color: var(--rosta-cream, #FBF3E6);
 }
 
 .phaseList { display: grid; gap: 7px; }
@@ -261,7 +261,7 @@
   border: 1px solid rgba(var(--accent), .09);
   border-radius: 13px;
   background: rgba(255, 255, 255, .012);
-  color: rgba(211, 235, 245, .48);
+  color: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 48%, transparent);
   text-align: left;
   font: inherit;
   transition:
@@ -271,17 +271,16 @@
     transform var(--ruth-motion-normal) ease;
 }
 
-.phaseList button:hover { transform: translateX(-2px); border-color: rgba(var(--accent), .24); }
 .phaseList button > span { flex: none; width: 23px; color: rgba(var(--accent), .34); font-size: 8px; letter-spacing: .1em; }
 .phaseList button > div { display: grid; gap: 3px; min-width: 0; }
 .phaseList button strong { color: inherit; font-size: 11px; font-weight: 650; }
-.phaseList button small { overflow: hidden; color: rgba(183, 213, 226, .34); font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }
+.phaseList button small { overflow: hidden; color: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 34%, transparent); font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }
 .phaseList button > i { flex: none; width: 5px; height: 5px; margin-left: auto; border-radius: 50%; background: rgba(var(--accent), .22); }
 
 .phaseList button.activePhase {
   border-color: rgba(var(--accent), .34);
   background: linear-gradient(90deg, rgba(var(--accent), .12), rgba(var(--accent), .025));
-  color: var(--ruth-color-text-inverse);
+  color: var(--rosta-cream, #FBF3E6);
   box-shadow: inset 2px 0 rgba(var(--accent), .72), 0 0 24px rgba(var(--accent), .035);
 }
 
@@ -295,7 +294,7 @@
   border: 1px solid rgba(var(--accent), .18);
   border-radius: 15px;
   background: rgba(var(--accent), .045);
-  color: var(--ruth-color-text-inverse);
+  color: var(--rosta-cream, #FBF3E6);
   text-align: left;
   font: inherit;
 }
@@ -336,9 +335,16 @@
 
 .microphone > div { display: grid; gap: 3px; }
 .microphone strong { font-size: 10px; }
-.microphone small { color: rgba(185, 215, 229, .38); font-size: 8px; }
+.microphone small { color: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 38%, transparent); font-size: 8px; }
 .microphoneActive { border-color: rgba(var(--accent), .5); background: rgba(var(--accent), .12); box-shadow: 0 0 28px rgba(var(--accent), .07); }
 .error { margin: 9px 2px 0; color: var(--ruth-color-danger); font-size: 9px; line-height: 1.45; }
+
+@media (hover: hover) and (pointer: fine) {
+  .phaseList button:hover {
+    transform: translateX(-2px);
+    border-color: rgba(var(--accent), .24);
+  }
+}
 
 @media (max-width: 840px) {
   .page {

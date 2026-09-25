@@ -226,6 +226,29 @@ function objectPosition(value: string) {
   return { x: keyword(parts[0], "x"), y: keyword(parts[1] || parts[0], "y") };
 }
 
+const ROSTA_THEME_COLOR_MAP: Record<string, string> = {
+  "#111111": "#111111",
+  "#242424": "#242424",
+  "#fbf3e6": "#FBF3E6",
+  "#38251c": "#38251C",
+  "#c94a40": "#C94A40",
+  "#6b4638": "#6B4638",
+  "#c8a77d": "#C8A77D",
+  "#ffffff": "#FFFFFF",
+  "#b9563d": "#C94A40",
+  "#f4f0e8": "#FBF3E6",
+  "#aaa8a1": "#C8A77D",
+  "#6f725b": "#6B4638",
+  "#2b1b16": "#38251C",
+};
+
+function themeBrandColor(value: string | null | undefined) {
+  if (!value) return null;
+  const normalized = value.trim().toLowerCase();
+  if (normalized === "transparent") return "transparent";
+  return ROSTA_THEME_COLOR_MAP[normalized] || null;
+}
+
 function applyDeviceStyle(element: HTMLElement, style: ThemeDeviceStyle) {
   const computedDisplay = window.getComputedStyle(element).display;
   const needsBox = style.width != null || style.height != null || style.paddingX != null || style.paddingY != null || style.marginTop != null || style.marginBottom != null;
@@ -248,8 +271,10 @@ function applyDeviceStyle(element: HTMLElement, style: ThemeDeviceStyle) {
   if (style.textAlign) element.style.textAlign = style.textAlign;
   if (style.objectFit) element.style.objectFit = style.objectFit;
   if (style.objectPositionX != null || style.objectPositionY != null) element.style.objectPosition = `${style.objectPositionX ?? 50}% ${style.objectPositionY ?? 50}%`;
-  if (style.color) element.style.color = style.color;
-  if (style.backgroundColor) element.style.backgroundColor = style.backgroundColor;
+  const lockedColor = themeBrandColor(style.color);
+  const lockedBackground = themeBrandColor(style.backgroundColor);
+  if (lockedColor) element.style.color = lockedColor;
+  if (lockedBackground) element.style.backgroundColor = lockedBackground;
 }
 
 function applyOverride(element: Element, override: ThemeElementOverride, mobile: boolean, preserveMedia = false) {
@@ -270,27 +295,42 @@ function applyOverride(element: Element, override: ThemeElementOverride, mobile:
 
 function applyGlobal(settings: ThemeCustomizerSettings) {
   const vars: Record<string, string> = {
-    "--ivory": settings.colors.ivory,
-    "--cream": settings.colors.cream,
-    "--ink": settings.colors.ink,
-    "--gold": settings.colors.gold,
-    "--gold-dark": settings.colors.goldDark,
-    "--muted-foreground": settings.colors.muted,
-    "--background": settings.colors.ivory,
-    "--foreground": settings.colors.ink,
-    "--ruth-color-canvas": settings.colors.ivory,
-    "--ruth-color-surface": settings.colors.cream,
-    "--ruth-color-surface-muted": settings.colors.cream,
-    "--ruth-color-text-primary": settings.colors.ink,
-    "--ruth-color-text-muted": settings.colors.muted,
-    "--ruth-color-accent": settings.colors.gold,
-    "--ruth-color-accent-soft": "color-mix(in srgb, #B9563D 28%, #F4F0E8)",
-    "--ruth-color-accent-strong": settings.colors.goldDark,
-    "--ruth-color-border-subtle": "color-mix(in srgb, #AAA8A1 52%, transparent)",
-    "--ruth-color-border-strong": "#AAA8A1",
-    "--ruth-color-focus": "#B9563D",
-    "--ruth-color-overlay": "rgba(17, 17, 17, 0.46)",
-    "--ruth-color-text-inverse": "#F4F0E8",
+    "--rosta-carbon": "#111111",
+    "--rosta-carbon-soft": "#242424",
+    "--rosta-cream": "#FBF3E6",
+    "--rosta-espresso": "#38251C",
+    "--rosta-brick-b": "#C94A40",
+    "--rosta-cocoa": "#6B4638",
+    "--rosta-kraft": "#C8A77D",
+    "--rosta-action-text": "#FFFFFF",
+    "--ivory": "#FBF3E6",
+    "--cream": "#FBF3E6",
+    "--ink": "#111111",
+    "--gold": "#C94A40",
+    "--gold-dark": "#38251C",
+    "--bronze": "#6B4638",
+    "--muted-foreground": "#6B4638",
+    "--background": "#111111",
+    "--foreground": "#FBF3E6",
+    "--ruth-color-canvas": "#111111",
+    "--ruth-color-surface": "#242424",
+    "--ruth-color-surface-muted": "#242424",
+    "--ruth-color-surface-elevated": "#242424",
+    "--ruth-color-surface-inverse": "#FBF3E6",
+    "--ruth-color-text-primary": "#FBF3E6",
+    "--ruth-color-text-muted": "color-mix(in srgb, #FBF3E6 72%, transparent)",
+    "--ruth-color-text-inverse": "#FBF3E6",
+    "--ruth-color-text-on-light": "#111111",
+    "--ruth-color-text-on-action": "#FFFFFF",
+    "--ruth-color-accent": "#C94A40",
+    "--ruth-color-accent-soft": "color-mix(in srgb, #C94A40 15%, transparent)",
+    "--ruth-color-accent-strong": "#38251C",
+    "--ruth-color-accent-wash": "color-mix(in srgb, #C94A40 15%, transparent)",
+    "--ruth-color-border-subtle": "color-mix(in srgb, #C8A77D 42%, transparent)",
+    "--ruth-color-border-strong": "#C8A77D",
+    "--ruth-color-focus": "#C94A40",
+    "--ruth-color-selected": "#C94A40",
+    "--ruth-color-overlay": "color-mix(in srgb, #111111 72%, transparent)",
   };
   for (const [key, value] of Object.entries(vars)) {
     document.documentElement.style.setProperty(key, value);
@@ -306,7 +346,6 @@ function applyGlobal(settings: ThemeCustomizerSettings) {
     if (label) label.textContent = settings.whatsapp.label || "WhatsApp";
   }
 }
-
 function metadata(element: Element): EditorElement {
   const id = ensureThemeId(element);
   const rect = element.getBoundingClientRect();
@@ -343,8 +382,8 @@ function metadata(element: Element): EditorElement {
       objectPositionX: position.x,
       objectPositionY: position.y,
       textAlign: computed.textAlign || "left",
-      color: cssColorToHex(computed.color, "#111111"),
-      backgroundColor: cssColorToHex(computed.backgroundColor, "#ffffff"),
+      color: cssColorToHex(computed.color, "#FBF3E6"),
+      backgroundColor: cssColorToHex(computed.backgroundColor, "#242424"),
       display: computed.display,
     },
   };
@@ -423,7 +462,7 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
     const mediaOrigins = new Map<string, Element>();
     const overlay = document.createElement("div");
     overlay.dataset.ruthThemeEditorUi = "true";
-    overlay.style.cssText = "position:fixed;pointer-events:none;z-index:2147483646;border:2px solid #4f7cff;background:rgba(79,124,255,.06);display:none;box-sizing:border-box;border-radius:6px";
+    overlay.style.cssText = "position:fixed;pointer-events:none;z-index:2147483646;border:2px solid #C94A40;background:color-mix(in srgb,#C94A40 10%,transparent);display:none;box-sizing:border-box;border-radius:6px";
 
     const resizeDirections = ["nw", "n", "ne", "e", "se", "s", "sw", "w"] as const;
     const handlePosition: Record<(typeof resizeDirections)[number], string> = {
@@ -441,7 +480,7 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
       const handle = document.createElement("span");
       handle.dataset.ruthThemeResizeHandle = direction;
       handle.dataset.ruthThemeEditorUi = "true";
-      handle.style.cssText = `position:absolute;width:12px;height:12px;border-radius:999px;background:#fff;border:2px solid #4f7cff;box-shadow:0 1px 4px rgba(15,23,42,.22);pointer-events:auto;touch-action:none;display:none;${handlePosition[direction]}`;
+      handle.style.cssText = `position:absolute;width:12px;height:12px;border-radius:999px;background:#FBF3E6;border:2px solid #C94A40;box-shadow:0 1px 4px rgba(17,17,17,.28);pointer-events:auto;touch-action:none;display:none;${handlePosition[direction]}`;
       overlay.appendChild(handle);
       return handle;
     });

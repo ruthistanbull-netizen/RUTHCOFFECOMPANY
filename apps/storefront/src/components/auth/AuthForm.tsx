@@ -175,15 +175,15 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
   };
 
   return (
-    <div className="min-h-screen bg-ivory px-4 pb-24 pt-28 md:px-8 md:pt-32">
-      <div className="mx-auto max-w-md rounded-2xl border border-gold/15 bg-cream p-6 shadow-sm md:p-8">
-        <p className="mb-3 text-xs uppercase tracking-wide-luxe text-gold-dark">
+    <div className="min-h-screen bg-carbon px-4 pb-24 pt-28 md:px-8 md:pt-32">
+      <div className="mx-auto max-w-md rounded-2xl border border-kraft/35 bg-carbon-soft p-6 shadow-sm md:p-8">
+        <p className="mb-3 text-xs uppercase tracking-wide-luxe text-brick">
           ROSTA Coffee
         </p>
         <h1 className="font-heading text-4xl">
           {isMigratedActivation ? "Yeni Şifreni Oluştur" : isRegister ? "Kayıt Ol" : "Giriş Yap"}
         </h1>
-        <p className="mt-3 text-sm leading-7 text-muted-ruth">
+        <p className="mt-3 text-sm leading-7 text-cream/70">
           {isMigratedActivation
             ? "Önceki üyeliğinde kullandığın e-posta adresiyle yeni şifreni belirle. Mevcut müşteri kaydın ve geçmiş siparişlerin korunur."
             : isRegister
@@ -194,18 +194,18 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
         <form onSubmit={submit} className="mt-7 space-y-4">
           {isRegister && (
             <>
-              <label className="block text-xs uppercase tracking-wide-luxe text-muted-ruth">
+              <label className="block text-xs uppercase tracking-wide-luxe text-cream/70">
                 Ad Soyad
                 <input
                   required
                   autoComplete="name"
                   value={form.fullName}
                   onChange={(event) => updateField("fullName", event.target.value)}
-                  className="mt-2 w-full rounded-lg border border-gold/20 bg-ivory px-4 py-3 text-sm normal-case tracking-normal text-ink outline-none transition focus:border-gold-dark"
+                  className="mt-2 w-full rounded-lg border border-kraft/40 bg-carbon px-4 py-3 text-sm normal-case tracking-normal text-cream outline-none transition focus:border-brick"
                 />
               </label>
 
-              <label className="block text-xs uppercase tracking-wide-luxe text-muted-ruth">
+              <label className="block text-xs uppercase tracking-wide-luxe text-cream/70">
                 Telefon
                 <input
                   required
@@ -213,13 +213,13 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
                   autoComplete="tel"
                   value={form.phone}
                   onChange={(event) => updateField("phone", event.target.value)}
-                  className="mt-2 w-full rounded-lg border border-gold/20 bg-ivory px-4 py-3 text-sm normal-case tracking-normal text-ink outline-none transition focus:border-gold-dark"
+                  className="mt-2 w-full rounded-lg border border-kraft/40 bg-carbon px-4 py-3 text-sm normal-case tracking-normal text-cream outline-none transition focus:border-brick"
                 />
               </label>
             </>
           )}
 
-          <label className="block text-xs uppercase tracking-wide-luxe text-muted-ruth">
+          <label className="block text-xs uppercase tracking-wide-luxe text-cream/70">
             E-posta
             <input
               required
@@ -227,11 +227,11 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
               autoComplete="email"
               value={form.email}
               onChange={(event) => updateField("email", event.target.value)}
-              className="mt-2 w-full rounded-lg border border-gold/20 bg-ivory px-4 py-3 text-sm normal-case tracking-normal text-ink outline-none transition focus:border-gold-dark"
+              className="mt-2 w-full rounded-lg border border-kraft/40 bg-carbon px-4 py-3 text-sm normal-case tracking-normal text-cream outline-none transition focus:border-brick"
             />
           </label>
 
-          <label className="block text-xs uppercase tracking-wide-luxe text-muted-ruth">
+          <label className="block text-xs uppercase tracking-wide-luxe text-cream/70">
             Şifre
             <input
               required
@@ -240,7 +240,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
               autoComplete={isRegister ? "new-password" : "current-password"}
               value={form.password}
               onChange={(event) => updateField("password", event.target.value)}
-              className="mt-2 w-full rounded-lg border border-gold/20 bg-ivory px-4 py-3 text-sm normal-case tracking-normal text-ink outline-none transition focus:border-gold-dark"
+              className="mt-2 w-full rounded-lg border border-kraft/40 bg-carbon px-4 py-3 text-sm normal-case tracking-normal text-cream outline-none transition focus:border-brick"
             />
           </label>
 
@@ -249,14 +249,14 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
               type="button"
               onClick={() => void requestPasswordReset()}
               disabled={isRecovering}
-              className="text-sm text-ink underline underline-offset-4 disabled:opacity-60"
+              className="text-sm text-cream underline underline-offset-4 disabled:opacity-60"
             >
               {isRecovering ? "Bağlantı gönderiliyor…" : "Şifremi unuttum"}
             </button>
           ) : null}
 
           {isRegister && (
-            <div className="space-y-3 rounded-xl border border-gold/15 bg-ivory p-4 text-xs normal-case tracking-normal text-muted-ruth">
+            <div className="space-y-3 rounded-xl border border-kraft/35 bg-carbon p-4 text-xs normal-case tracking-normal text-cream/70">
               <label className="flex items-start gap-3">
                 <input required type="checkbox" checked={form.termsAccepted} onChange={(event) => updateField("termsAccepted", event.target.checked)} className="mt-1" />
                 <span><Link className="underline" href="/terms" target="_blank">Kullanım Şartları</Link>, <Link className="underline" href="/kvkk" target="_blank">KVKK Aydınlatma Metni</Link> ve <Link className="underline" href="/privacy-policy" target="_blank">Gizlilik Politikası</Link>’nı okudum ve kabul ediyorum.</span>
@@ -269,13 +269,13 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
           )}
 
           {error && (
-            <div role="alert" className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <div role="alert" className="rounded-lg border border-[var(--ruth-color-danger)]/40 bg-[var(--ruth-color-danger-soft)] px-4 py-3 text-sm text-[var(--ruth-color-danger-text)]">
               {error}
             </div>
           )}
 
           {message && (
-            <div aria-live="polite" className="rounded-lg border border-gold/20 bg-ivory px-4 py-3 text-sm leading-6 text-muted-ruth">
+            <div aria-live="polite" className="rounded-lg border border-kraft/40 bg-carbon px-4 py-3 text-sm leading-6 text-cream/70">
               {message}
             </div>
           )}
@@ -284,7 +284,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
             type="submit"
             disabled={isSubmitting}
             aria-busy={isSubmitting || undefined}
-            className="flex w-full items-center justify-center gap-2 bg-ink px-8 py-4 text-xs uppercase tracking-wide-luxe text-cream transition hover:bg-gold-dark disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-2 bg-brick px-8 py-4 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)] transition active:bg-espresso disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isSubmitting ? <LoadingIndicator size="sm" /> : null}
             {isMigratedActivation ? "Hesabımı Aktifleştir" : isRegister ? "Hesap Oluştur" : "Giriş Yap"}
@@ -292,18 +292,18 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
           </button>
         </form>
 
-        <div className="mt-6 text-center text-sm text-muted-ruth">
+        <div className="mt-6 text-center text-sm text-cream/70">
           {isRegister ? (
             <>
               Zaten hesabın var mı?{" "}
-              <Link href={`/login?redirect=${encodeURIComponent(redirectTo)}`} className="text-ink underline underline-offset-4">
+              <Link href={`/login?redirect=${encodeURIComponent(redirectTo)}`} className="text-cream underline underline-offset-4">
                 Giriş yap
               </Link>
             </>
           ) : (
             <>
               Hesabın yok mu?{" "}
-              <Link href={`/register?redirect=${encodeURIComponent(redirectTo)}`} className="text-ink underline underline-offset-4">
+              <Link href={`/register?redirect=${encodeURIComponent(redirectTo)}`} className="text-cream underline underline-offset-4">
                 Kayıt ol
               </Link>
             </>

@@ -7,7 +7,7 @@ export default function BrandStory() {
   const [storyOpen, setStoryOpen] = useState(false);
 
   return (
-    <section className="bg-ivory px-4 py-24 md:px-8 md:py-36">
+    <section className="bg-carbon-soft px-4 py-24 text-cream md:px-8 md:py-36">
       <div className="mx-auto grid max-w-7xl items-center gap-12 md:grid-cols-2 md:gap-20">
         <motion.div
           initial={{ opacity: 0, x: -35 }}
@@ -30,11 +30,11 @@ export default function BrandStory() {
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.8 }}
         >
-          <p className="mb-4 text-xs uppercase tracking-wide-luxe text-gold-dark">ROSTA’nın Hikayesi</p>
-          <h2 className="font-heading font-editorial text-balance" style={{ fontSize: "clamp(2rem, 5vw, 4rem)", color: "var(--ink)" }}>
+          <p className="mb-4 text-xs uppercase tracking-wide-luxe text-brick">ROSTA’nın Hikayesi</p>
+          <h2 className="font-heading font-editorial text-balance" style={{ fontSize: "clamp(2rem, 5vw, 4rem)", color: "var(--rosta-cream)" }}>
             Kahveyi sadeleştir, karakterini koru.
           </h2>
-          <p className="mt-6 max-w-xl leading-8 text-muted-ruth">
+          <p className="mt-6 max-w-xl leading-8 text-cream/70">
             ROSTA Coffee Co.; günlük kahve deneyimi, doğru ürün seçimi ve tutarlı lezzet üzerine kurulu.
             Amacımız kahveyi gereksiz karmaşadan uzaklaştırıp çekirdeğin karakterini öne çıkarmak.
           </p>
@@ -42,7 +42,7 @@ export default function BrandStory() {
           <button
             type="button"
             onClick={() => setStoryOpen((current) => !current)}
-            className="mt-9 inline-flex rounded-full border border-gold/30 px-8 py-4 text-xs uppercase tracking-wide-luxe transition hover:border-gold active:scale-[0.98]"
+            className="brand-story-toggle mt-9 inline-flex rounded-full border border-kraft/45 px-8 py-4 text-xs uppercase tracking-wide-luxe text-cream transition active:border-espresso active:bg-espresso active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
             aria-expanded={storyOpen}
           >
             {storyOpen ? "Hikayeyi Kapat" : "Hikayeyi Oku"}
@@ -57,7 +57,7 @@ export default function BrandStory() {
                 transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
                 className="overflow-hidden"
               >
-                <div className="mt-6 rounded-2xl border border-gold/15 bg-cream/70 p-6 leading-8 text-muted-ruth">
+                <div className="mt-6 rounded-2xl border border-kraft/35 bg-carbon p-6 leading-8 text-cream/70">
                   <p>ROSTA, kahveyi ürünün kendisinden başlayarak ele alır: doğru çekirdek, doğru kavrum ve doğru kullanım.</p>
                   <p className="mt-4">Perakende tarafta evde iyi kahve hazırlamayı kolaylaştıran ürünler sunarken; profesyonel tarafta işletmelerin kahve standardını geliştirecek çözümler üretmeyi hedefler.</p>
                   <p className="mt-4">Her ürünün arkasında anlaşılır bilgi, izlenebilir operasyon ve sürdürülebilir bir alışveriş deneyimi bulunması ROSTA’nın temel yaklaşımıdır.</p>
@@ -67,6 +67,14 @@ export default function BrandStory() {
           </AnimatePresence>
         </motion.div>
       </div>
+      <style>{`
+        @media (hover: hover) and (pointer: fine) {
+          .brand-story-toggle:hover {
+            border-color: var(--rosta-brick-b);
+            background: color-mix(in srgb, var(--rosta-brick-b) 10%, transparent);
+          }
+        }
+      `}</style>
     </section>
   );
 }

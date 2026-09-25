@@ -92,11 +92,18 @@
   stroke-width: 1.4;
 }
 
-.control:hover,
 .control:focus-visible {
   background: transparent !important;
   opacity: 0.62;
   transform: none !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .control:hover {
+    background: transparent !important;
+    opacity: 0.62;
+    transform: none !important;
+  }
 }
 
 .menuControl {
@@ -152,10 +159,16 @@
   border-bottom: 0;
 }
 
-.accountLink:hover,
 .accountLink:focus-visible {
   background: var(--ruth-color-surface-muted);
-  outline: none;
+  outline: 2px solid var(--ruth-color-focus);
+  outline-offset: -2px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .accountLink:hover {
+    background: var(--ruth-color-surface-muted);
+  }
 }
 
 .menuPanel,
@@ -305,12 +318,18 @@
   text-transform: uppercase;
 }
 
-.mainNavLink:hover,
 .mainNavLink:focus-visible,
-.listNavLink:hover,
 .listNavLink:focus-visible {
   opacity: 0.55;
-  outline: none;
+  outline: 2px solid var(--ruth-color-focus);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .mainNavLink:hover,
+  .listNavLink:hover {
+    opacity: 0.55;
+  }
 }
 
 .menuFooter {
@@ -401,10 +420,16 @@
   text-transform: uppercase;
 }
 
-.searchSuggestion:hover,
 .searchSuggestion:focus-visible {
   background: var(--ruth-color-surface-muted);
-  outline: none;
+  outline: 2px solid var(--ruth-color-focus);
+  outline-offset: -2px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .searchSuggestion:hover {
+    background: var(--ruth-color-surface-muted);
+  }
 }
 
 @media (min-width: 901px) {

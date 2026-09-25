@@ -1,14 +1,14 @@
 .v11Frame [data-ruthie-voice-app] {
   background:
-    radial-gradient(ellipse 42% 46% at 50% 41%, rgba(117, 65, 16, .026), transparent 70%),
-    linear-gradient(180deg, #020202 0%, #050403 56%, #010101 100%) !important;
+    radial-gradient(ellipse 42% 46% at 50% 41%, color-mix(in srgb, var(--rosta-espresso, #38251C) 3%, transparent), transparent 70%),
+    linear-gradient(180deg, var(--rosta-carbon, #111111) 0%, var(--rosta-carbon-soft, #242424) 56%, var(--rosta-carbon, #111111) 100%) !important;
 }
 
 .v11Frame [data-ruthie-voice-stage]::before {
   width: min(66vw, 720px) !important;
   opacity: .35 !important;
   filter: blur(54px) !important;
-  background: radial-gradient(circle, rgba(190, 119, 35, .028), transparent 70%) !important;
+  background: radial-gradient(circle, color-mix(in srgb, var(--rosta-brick-b, #C94A40) 3%, transparent), transparent 70%) !important;
 }
 
 .v11Frame [data-ruthie-orb-shell] {
@@ -20,22 +20,22 @@
     saturate(.96)
     contrast(1.08)
     drop-shadow(0 26px 54px rgba(0, 0, 0, .58))
-    drop-shadow(0 0 12px rgba(207, 133, 39, .08)) !important;
+    drop-shadow(0 0 12px color-mix(in srgb, var(--rosta-brick-b, #C94A40) 8%, transparent)) !important;
 }
 
 .v11Frame [data-ruthie-orb-shell]::after {
   width: 46% !important;
   height: 6% !important;
   bottom: 8% !important;
-  background: radial-gradient(ellipse, rgba(221, 154, 58, .1), rgba(82, 43, 10, .025) 43%, transparent 76%) !important;
+  background: radial-gradient(ellipse, color-mix(in srgb, var(--rosta-kraft, #C8A77D) 10%, transparent), color-mix(in srgb, var(--rosta-espresso, #38251C) 3%, transparent) 43%, transparent 76%) !important;
   filter: blur(24px) !important;
 }
 
 @media (max-width: 760px) {
   .v11Frame [data-ruthie-voice-app] {
     background:
-      radial-gradient(ellipse 66% 42% at 50% 38%, rgba(116, 62, 15, .025), transparent 72%),
-      linear-gradient(180deg, #020202 0%, #050403 58%, #010101 100%) !important;
+      radial-gradient(ellipse 66% 42% at 50% 38%, color-mix(in srgb, var(--rosta-espresso, #38251C) 3%, transparent), transparent 72%),
+      linear-gradient(180deg, var(--rosta-carbon, #111111) 0%, var(--rosta-carbon-soft, #242424) 58%, var(--rosta-carbon, #111111) 100%) !important;
   }
 
   .v11Frame [data-ruthie-voice-stage] {
@@ -53,14 +53,14 @@
       saturate(.94)
       contrast(1.1)
       drop-shadow(0 22px 48px rgba(0, 0, 0, .64))
-      drop-shadow(0 0 10px rgba(202, 126, 34, .07)) !important;
+      drop-shadow(0 0 10px color-mix(in srgb, var(--rosta-brick-b, #C94A40) 7%, transparent)) !important;
   }
 
   .v11Frame [data-ruthie-voice-copy] {
     background:
       linear-gradient(180deg, rgba(255, 255, 255, .024), rgba(255, 255, 255, .007)),
-      rgba(5, 5, 5, .9) !important;
-    border-color: rgba(223, 181, 111, .14) !important;
+      color-mix(in srgb, var(--rosta-carbon, #111111) 90%, transparent) !important;
+    border-color: color-mix(in srgb, var(--rosta-kraft, #C8A77D) 14%, transparent) !important;
     box-shadow: 0 22px 62px rgba(0, 0, 0, .56), inset 0 1px rgba(255, 255, 255, .022) !important;
   }
 }

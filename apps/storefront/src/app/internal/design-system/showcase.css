@@ -2,9 +2,9 @@
   min-height: 100vh;
   padding: 48px 16px 88px;
   background:
-    radial-gradient(circle at top right, rgba(185, 86, 61, 0.14), transparent 34%),
-    linear-gradient(180deg, #F4F0E8 0%, #F4F0E8 100%);
-  color: #111111;
+    radial-gradient(circle at top right, color-mix(in srgb, var(--rosta-brick-b, #C94A40) 14%, transparent), transparent 34%),
+    linear-gradient(180deg, var(--rosta-carbon, #111111) 0%, var(--rosta-carbon, #111111) 100%);
+  color: var(--rosta-cream, #FBF3E6);
   font-size: 15px;
   line-height: 1.65;
 }
@@ -16,8 +16,8 @@
 
 .ds-hero {
   padding: 40px 24px;
-  border: 1px solid rgba(17, 17, 17, 0.1);
-  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid color-mix(in srgb, var(--rosta-kraft, #C8A77D) 30%, transparent);
+  background: color-mix(in srgb, var(--rosta-carbon-soft, #242424) 94%, transparent);
   backdrop-filter: blur(18px);
 }
 
@@ -27,7 +27,7 @@
   line-height: 1.4;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #B9563D;
+  color: var(--rosta-brick-b, #C94A40);
 }
 
 .ds-hero h1 {
@@ -44,14 +44,14 @@
   margin: 20px 0 0;
   font-size: 15px;
   line-height: 1.65;
-  color: #6F725B;
+  color: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 70%, transparent);
 }
 
 .ds-section {
   margin-top: 20px;
   padding: 28px 20px;
-  border: 1px solid rgba(17, 17, 17, 0.1);
-  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid color-mix(in srgb, var(--rosta-kraft, #C8A77D) 30%, transparent);
+  background: var(--rosta-carbon-soft, #242424);
 }
 
 .ds-section__heading {
@@ -65,7 +65,7 @@
   padding-top: 2px;
   font-family: Georgia, "Times New Roman", serif;
   font-size: 14px;
-  color: #B9563D;
+  color: var(--rosta-brick-b, #C94A40);
 }
 
 .ds-section__heading h2 {
@@ -80,7 +80,7 @@
 .ds-section__heading p {
   margin: 7px 0 0;
   max-width: 680px;
-  color: #6F725B;
+  color: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 70%, transparent);
   font-size: 14px;
   line-height: 1.6;
 }
@@ -121,11 +121,11 @@
   justify-content: space-between;
   gap: 18px;
   padding-bottom: 16px;
-  border-bottom: 1px solid rgba(17, 17, 17, 0.1);
+  border-bottom: 1px solid color-mix(in srgb, var(--rosta-kraft, #C8A77D) 30%, transparent);
 }
 
 .ds-summary span {
-  color: #6F725B;
+  color: color-mix(in srgb, var(--rosta-cream, #FBF3E6) 70%, transparent);
   font-size: 14px;
 }
 

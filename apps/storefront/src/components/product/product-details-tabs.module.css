@@ -38,9 +38,14 @@
   border-right: 0;
 }
 
-.tab:hover,
 .tab[aria-expanded="true"] {
   background: var(--ruth-color-surface-muted);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tab:hover {
+    background: var(--ruth-color-surface-muted);
+  }
 }
 
 .tab:focus-visible {
@@ -149,12 +154,21 @@
   justify-content: space-between;
   gap: 14px;
   padding: 0 16px;
-  background: var(--ruth-color-text-primary);
-  color: var(--ruth-color-text-inverse);
+  background: var(--rosta-brick-b);
+  color: var(--rosta-action-text);
   font-size: 0.6875rem;
   letter-spacing: 0.09em;
   text-decoration: none;
   text-transform: uppercase;
+}
+
+.drawerLink:active {
+  background: var(--rosta-espresso);
+}
+
+.drawerLink:focus-visible {
+  outline: 2px solid var(--ruth-color-focus);
+  outline-offset: 2px;
 }
 
 .drawerLink svg {

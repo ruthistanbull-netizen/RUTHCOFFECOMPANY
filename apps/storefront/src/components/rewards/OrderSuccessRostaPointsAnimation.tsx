@@ -111,15 +111,15 @@ export function OrderSuccessRostaPointsAnimation({ orderNo }: Props) {
 
   if (!user) {
     return (
-      <div className="order-success-guest mt-6 rounded-2xl border border-gold/15 bg-ivory p-5">
+      <div className="order-success-guest mt-6 rounded-2xl border border-kraft/35 bg-carbon-soft text-cream p-5">
         <div className="order-success-guest-row">
-          <Gift className="text-gold-dark" size={22} />
+          <Gift className="text-brick" size={22} />
           <div className="order-success-guest-copy">
             <p className="font-heading text-lg">ROSTA Points kazanmak için üye ol</p>
-            <p className="mt-2 text-sm leading-6 text-muted-ruth">
+            <p className="mt-2 text-sm leading-6 text-cream/70">
               Hesap oluşturduğunda alışverişlerinden ROSTA Points kazanabilir, ödeme adımında indirim olarak kullanabilirsin.
             </p>
-            <Link href="/register?redirect=/account" className="mt-4 inline-flex bg-ink px-5 py-3 text-xs uppercase tracking-wide-luxe text-cream">
+            <Link href="/register?redirect=/account" className="mt-4 inline-flex bg-brick px-5 py-3 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)] active:bg-espresso focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick">
               Üye Ol
             </Link>
           </div>
@@ -148,7 +148,7 @@ export function OrderSuccessRostaPointsAnimation({ orderNo }: Props) {
         ROSTA Points kazandınız
       </motion.h2>
       <motion.p
-        className="rosta-points-success-copy relative z-10 mt-2 text-xs leading-6 text-muted-ruth sm:text-sm sm:leading-7"
+        className="rosta-points-success-copy relative z-10 mt-2 text-xs leading-6 text-cream/70 sm:text-sm sm:leading-7"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.35, duration: 0.35 }}
@@ -158,7 +158,7 @@ export function OrderSuccessRostaPointsAnimation({ orderNo }: Props) {
           : "Alışverişlerin hesabında ROSTA Points olarak birikir ve ödeme adımında indirime dönüşür."}
       </motion.p>
       <div className="rosta-points-success-actions relative z-10 mt-4 flex justify-center sm:mt-6">
-        <Link href="/account" className="rosta-points-success-action inline-flex items-center justify-center gap-2 bg-ink px-5 py-3 text-[0.65rem] uppercase sm:px-6 sm:py-4 sm:text-xs tracking-wide-luxe text-cream">
+        <Link href="/account" className="rosta-points-success-action inline-flex items-center justify-center gap-2 bg-brick px-5 py-3 text-[0.65rem] uppercase tracking-wide-luxe text-[var(--rosta-action-text)] active:bg-espresso focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick sm:px-6 sm:py-4 sm:text-xs">
           <Gift size={15} /> Puanlarımı Gör
         </Link>
       </div>

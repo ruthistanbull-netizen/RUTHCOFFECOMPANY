@@ -19,24 +19,27 @@ export function StorefrontRevisionStyles() {
 
         html.ruth-product-page-active .product-gallery-frame.is-lightbox .product-gallery-image,
         html.ruth-product-page-active .product-gallery-frame.is-lightbox .product-gallery-image img { object-fit: contain !important; }
-        html.ruth-product-page-active .ruth-zara-header.product-header-transparent .ruth-zara-header-inner { color: var(--ruth-product-header-ink, #111111) !important; mix-blend-mode: normal !important; }
+        html.ruth-product-page-active .ruth-zara-header.product-header-transparent .ruth-zara-header-inner { color: var(--ruth-product-header-ink, var(--rosta-carbon)) !important; mix-blend-mode: normal !important; }
         html.ruth-product-page-active .ruth-zara-header.product-header-transparent .header-wordmark { filter: brightness(0) invert(var(--ruth-product-header-invert, 0)) !important; }
         html.ruth-product-page-active .ruth-zara-header.product-header-transparent button,
         html.ruth-product-page-active .ruth-zara-header.product-header-transparent a,
         html.ruth-product-page-active .ruth-zara-header.product-header-transparent svg { color: inherit !important; stroke: currentColor !important; }
-        html.ruth-product-page-active:has(.ruth-zara-header.product-header-transparent[data-menu-open="false"]) .ruth-zara-menu-button { color: var(--ruth-product-header-ink, #111111) !important; mix-blend-mode: normal !important; }
+        html.ruth-product-page-active:has(.ruth-zara-header.product-header-transparent[data-menu-open="false"]) .ruth-zara-menu-button { color: var(--ruth-product-header-ink, var(--rosta-carbon)) !important; mix-blend-mode: normal !important; }
         html.ruth-product-page-active:has(.ruth-zara-header.product-header-transparent[data-menu-open="false"]) .ruth-zara-menu-button .ruth-zara-hamburger__line { background: currentColor !important; }
 
         /* Mobile product header: search/account/cart follow the same adaptive contrast as the menu. */
         @media (max-width: 767px) {
-          html.ruth-product-page-active .ruth-zara-header.product-header-transparent .ruth-zara-header-inner > div:last-child { color: #fff !important; mix-blend-mode: difference !important; }
+          html.ruth-product-page-active .ruth-zara-header.product-header-transparent .ruth-zara-header-inner > div:last-child { color: var(--rosta-cream) !important; mix-blend-mode: difference !important; }
           html.ruth-product-page-active .ruth-zara-header.product-header-transparent .ruth-zara-header-inner > div:last-child button,
           html.ruth-product-page-active .ruth-zara-header.product-header-transparent .ruth-zara-header-inner > div:last-child a,
           html.ruth-product-page-active .ruth-zara-header.product-header-transparent .ruth-zara-header-inner > div:last-child svg { color: inherit !important; stroke: currentColor !important; }
         }
 
         .site-app-shell button:has(svg.lucide-x):not(.ruth-zara-menu-button) { display:flex !important; width:40px !important; min-width:40px !important; height:40px !important; min-height:40px !important; flex:0 0 40px !important; align-items:center !important; justify-content:center !important; padding:0 !important; border:0 !important; border-radius:9999px !important; background:transparent !important; color:inherit !important; box-shadow:none !important; transition:background-color 180ms ease,transform 180ms ease !important; -webkit-tap-highlight-color:transparent; }
-        .site-app-shell button:has(svg.lucide-x):not(.ruth-zara-menu-button):hover { background:rgba(0,0,0,.05) !important; }
+        .site-app-shell button:has(svg.lucide-x):not(.ruth-zara-menu-button):focus-visible { outline:2px solid var(--rosta-brick-b) !important; outline-offset:2px !important; }
+        @media (hover:hover) and (pointer:fine) {
+          .site-app-shell button:has(svg.lucide-x):not(.ruth-zara-menu-button):hover { background:color-mix(in srgb,currentColor 8%,transparent) !important; }
+        }
         .site-app-shell button:has(svg.lucide-x):not(.ruth-zara-menu-button):active { transform:scale(.96) !important; }
         .site-app-shell button:has(svg.lucide-x):not(.ruth-zara-menu-button) svg { width:20px !important; height:20px !important; stroke-width:1.5 !important; }
         html:has(.product-variant-overlay) .ruth-zara-header-inner > div:last-child { opacity:0 !important; visibility:hidden !important; pointer-events:none !important; }
@@ -50,7 +53,7 @@ export function StorefrontRevisionStyles() {
 
         /* Sold-out cards: subtly fade the image and show a red TÜKENDİ pill on the top-right. */
         .product-card-root:has(.product-card-add:disabled) .product-card-image-frame::after {
-          content:"TÜKENDİ"; position:absolute; top:10px; right:10px; z-index:6; display:inline-flex; min-height:29px; align-items:center; justify-content:center; padding:0 11px; border:1px solid rgba(180,0,22,.18); border-radius:999px; background:rgba(180,0,22,.96); color:#fff; font-size:8.5px; font-weight:500; letter-spacing:.14em; line-height:1; text-transform:uppercase; box-shadow:0 5px 16px rgba(40,0,0,.12);
+          content:"TÜKENDİ"; position:absolute; top:10px; right:10px; z-index:6; display:inline-flex; min-height:29px; align-items:center; justify-content:center; padding:0 11px; border:1px solid color-mix(in srgb,var(--ruth-color-danger) 28%,transparent); border-radius:999px; background:var(--ruth-color-danger); color:var(--rosta-action-text); font-size:8.5px; font-weight:500; letter-spacing:.14em; line-height:1; text-transform:uppercase; box-shadow:0 5px 16px color-mix(in srgb,var(--ruth-color-danger) 20%,transparent);
         }
         .product-card-root:has(.product-card-add:disabled) .product-card-image-frame img { opacity:.72 !important; filter:saturate(.82) !important; transition:opacity 220ms ease,filter 220ms ease !important; }
 

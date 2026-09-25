@@ -2,9 +2,9 @@ body.ruth-admin-liquid-v3 [class~="z-command"] > div[class~="relative"] {
   border: 1px solid var(--liquid-border) !important;
   background:
     radial-gradient(circle at 18% -14%, rgba(255,255,255,0.96), transparent 34%),
-    linear-gradient(145deg, rgba(255,255,255,0.66), rgba(225,233,248,0.3)),
+    linear-gradient(145deg, rgba(255,255,255,0.66), color-mix(in srgb, var(--rosta-cream, #FBF3E6) 30%, transparent)),
     var(--liquid-surface) !important;
-  box-shadow: 0 26px 76px rgba(35,43,61,0.28), inset 0 1px 0 rgba(255,255,255,0.98) !important;
+  box-shadow: 0 26px 76px color-mix(in srgb, var(--rosta-carbon-soft, #242424) 28%, transparent), inset 0 1px 0 rgba(255,255,255,0.98) !important;
   backdrop-filter: blur(38px) saturate(1.65) brightness(1.04) !important;
   -webkit-backdrop-filter: blur(38px) saturate(1.65) brightness(1.04) !important;
 }
@@ -14,8 +14,8 @@ body.ruth-admin-liquid-v3 [class~="z-command"] button[class~="bg-accent-soft"] {
   border-radius: 14px !important;
   background:
     radial-gradient(circle at 65% -20%, rgba(255,255,255,0.98), transparent 42%),
-    linear-gradient(135deg, rgba(255,255,255,0.58), rgba(222,228,249,0.3)) !important;
-  box-shadow: 0 7px 18px rgba(69,63,150,0.12), inset 0 1px 0 rgba(255,255,255,1) !important;
+    linear-gradient(135deg, rgba(255,255,255,0.58), color-mix(in srgb, var(--rosta-cream, #FBF3E6) 30%, transparent)) !important;
+  box-shadow: 0 7px 18px color-mix(in srgb, var(--rosta-brick-b, #C94A40) 12%, transparent), inset 0 1px 0 rgba(255,255,255,1) !important;
   backdrop-filter: blur(16px) saturate(1.45) !important;
   -webkit-backdrop-filter: blur(16px) saturate(1.45) !important;
 }
@@ -24,7 +24,7 @@ body.ruth-admin-liquid-v3 [data-radix-popper-content-wrapper] > *,
 body.ruth-admin-liquid-v3 [data-radix-menu-content],
 body.ruth-admin-liquid-v3 [data-radix-select-content] {
   border: 1px solid var(--liquid-border) !important;
-  background: linear-gradient(145deg, rgba(255,255,255,0.68), rgba(226,234,247,0.32)), var(--liquid-surface) !important;
+  background: linear-gradient(145deg, rgba(255,255,255,0.68), color-mix(in srgb, var(--rosta-cream, #FBF3E6) 32%, transparent)), var(--liquid-surface) !important;
   box-shadow: var(--liquid-shadow), inset 0 1px 0 rgba(255,255,255,0.96) !important;
   backdrop-filter: blur(28px) saturate(1.55) !important;
   -webkit-backdrop-filter: blur(28px) saturate(1.55) !important;
@@ -34,16 +34,16 @@ body.ruth-admin-liquid-v3 [data-exact-base44-page] button[class~="bg-accent-soft
   border: 1px solid rgba(255,255,255,0.8) !important;
   background:
     radial-gradient(circle at 68% -22%, rgba(255,255,255,0.96), transparent 42%),
-    linear-gradient(135deg, rgba(245,243,255,0.76), rgba(225,220,255,0.56)) !important;
-  box-shadow: 0 7px 18px rgba(88,72,188,0.1), inset 0 1px 0 rgba(255,255,255,0.98) !important;
+    linear-gradient(135deg, color-mix(in srgb, var(--rosta-cream, #FBF3E6) 76%, transparent), color-mix(in srgb, var(--rosta-cream, #FBF3E6) 56%, transparent)) !important;
+  box-shadow: 0 7px 18px color-mix(in srgb, var(--rosta-brick-b, #C94A40) 10%, transparent), inset 0 1px 0 rgba(255,255,255,0.98) !important;
   backdrop-filter: blur(16px) saturate(1.38) !important;
   -webkit-backdrop-filter: blur(16px) saturate(1.38) !important;
 }
 
 body.ruth-admin-liquid-v3 [data-exact-base44-page] a[class~="bg-accent-soft"] {
   border: 1px solid rgba(255,255,255,0.72) !important;
-  background: linear-gradient(145deg, rgba(248,246,255,0.72), rgba(229,224,255,0.48)) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.92), 0 4px 12px rgba(84,70,176,0.07) !important;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--rosta-cream, #FBF3E6) 72%, transparent), color-mix(in srgb, var(--rosta-cream, #FBF3E6) 48%, transparent)) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.92), 0 4px 12px color-mix(in srgb, var(--rosta-brick-b, #C94A40) 7%, transparent) !important;
   backdrop-filter: blur(14px) saturate(1.32) !important;
   -webkit-backdrop-filter: blur(14px) saturate(1.32) !important;
   transition: transform 220ms var(--liquid-spring), box-shadow 220ms ease !important;
@@ -56,7 +56,7 @@ body.ruth-admin-liquid-v3 [data-exact-base44-page] a[class~="bg-accent-soft"]:ac
 body.ruth-admin-liquid-v3 [data-exact-base44-page] [class~="bg-surface-tertiary"][class~="radius-small"],
 body.ruth-admin-liquid-v3 [data-exact-base44-page] [class~="bg-surface-tertiary"][class~="rounded-full"] {
   border: 1px solid rgba(255,255,255,0.46);
-  background: linear-gradient(145deg, rgba(255,255,255,0.34), rgba(215,224,239,0.18)), rgba(230,236,246,0.32) !important;
+  background: linear-gradient(145deg, rgba(255,255,255,0.34), color-mix(in srgb, var(--rosta-cream, #FBF3E6) 18%, transparent)), color-mix(in srgb, var(--rosta-cream, #FBF3E6) 32%, transparent) !important;
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
   backdrop-filter: blur(12px) saturate(1.25);
   -webkit-backdrop-filter: blur(12px) saturate(1.25);
@@ -71,18 +71,14 @@ body.ruth-admin-liquid-v3 [data-exact-base44-page] tbody tr {
   transition: background-color 180ms ease, transform 220ms var(--liquid-spring) !important;
 }
 
-body.ruth-admin-liquid-v3 [data-exact-base44-page] tbody tr:hover {
-  background: rgba(255,255,255,0.32) !important;
-}
-
 body.ruth-admin-liquid-v3 [data-exact-base44-page] tbody tr:active {
   transform: scale(0.996);
 }
 
 body.ruth-admin-liquid-v3 [data-exact-base44-page] [class~="sticky"][class~="bg-surface-primary\/95"] {
   border: 1px solid var(--liquid-border) !important;
-  background: linear-gradient(145deg, rgba(255,255,255,0.68), rgba(225,233,247,0.34)), var(--liquid-surface) !important;
-  box-shadow: 0 16px 42px rgba(42,51,70,0.16), inset 0 1px 0 rgba(255,255,255,0.96) !important;
+  background: linear-gradient(145deg, rgba(255,255,255,0.68), color-mix(in srgb, var(--rosta-cream, #FBF3E6) 34%, transparent)), var(--liquid-surface) !important;
+  box-shadow: 0 16px 42px color-mix(in srgb, var(--rosta-carbon-soft, #242424) 16%, transparent), inset 0 1px 0 rgba(255,255,255,0.96) !important;
   backdrop-filter: blur(28px) saturate(1.55) !important;
   -webkit-backdrop-filter: blur(28px) saturate(1.55) !important;
 }
@@ -90,8 +86,8 @@ body.ruth-admin-liquid-v3 [data-exact-base44-page] [class~="sticky"][class~="bg-
 body.ruth-admin-liquid-v3 [data-exact-base44-page] label[class~="bg-surface-primary"],
 body.ruth-admin-liquid-v3 [data-exact-base44-page] label[class~="bg-surface-secondary"] {
   border-color: rgba(255,255,255,0.66) !important;
-  background: linear-gradient(145deg, rgba(255,255,255,0.5), rgba(225,232,246,0.22)), var(--liquid-surface-soft) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.86), 0 5px 16px rgba(52,62,84,0.05) !important;
+  background: linear-gradient(145deg, rgba(255,255,255,0.5), color-mix(in srgb, var(--rosta-cream, #FBF3E6) 22%, transparent)), var(--liquid-surface-soft) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.86), 0 5px 16px color-mix(in srgb, var(--rosta-carbon-soft, #242424) 5%, transparent) !important;
   backdrop-filter: blur(16px) saturate(1.34) !important;
   -webkit-backdrop-filter: blur(16px) saturate(1.34) !important;
   transition: transform 230ms var(--liquid-spring), border-color 190ms ease, box-shadow 220ms ease !important;
@@ -137,18 +133,13 @@ body.ruth-admin-liquid-v3 [data-exact-workspace-modal] [data-exact-base44-page] 
   body.ruth-admin-liquid-v3 [data-exact-base44-page] article[class~="radius-card"] {
     transition: transform 320ms var(--liquid-spring), box-shadow 280ms ease !important;
   }
-
-  body.ruth-admin-liquid-v3 [data-exact-base44-page] section[class~="radius-card"]:hover,
-  body.ruth-admin-liquid-v3 [data-exact-base44-page] article[class~="radius-card"]:hover {
-    transform: translate3d(0,-2px,0) scale(1.003);
-  }
 }
 
 html.dark body.ruth-admin-liquid-v3 [class~="z-command"] > div[class~="relative"],
 html.dark body.ruth-admin-liquid-v3 [data-radix-popper-content-wrapper] > *,
 html.dark body.ruth-admin-liquid-v3 [data-radix-menu-content],
 html.dark body.ruth-admin-liquid-v3 [data-radix-select-content] {
-  background: linear-gradient(145deg, rgba(72,76,91,0.56), rgba(25,28,35,0.38)), var(--liquid-surface) !important;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--rosta-brick-b, #C94A40) 56%, transparent), color-mix(in srgb, var(--rosta-carbon, #111111) 38%, transparent)), var(--liquid-surface) !important;
 }
 
 /* Apple-style interaction layer */
@@ -187,11 +178,6 @@ body.ruth-admin-liquid-v3 [data-ruth-header-action="true"]::after {
   transition: opacity 220ms ease, transform 440ms cubic-bezier(0.22,1,0.36,1);
 }
 
-body.ruth-admin-liquid-v3 [data-ruth-header-action="true"]:hover::after {
-  opacity: 0.85;
-  transform: translateX(24%);
-}
-
 body.ruth-admin-liquid-v3 [data-ruth-header-action="true"][data-ruth-pressed="true"] {
   transform: translate3d(0,1px,0) scale(0.925) !important;
   transition-duration: 72ms !important;
@@ -204,22 +190,14 @@ body.ruth-admin-liquid-v3 [data-ruth-command-trigger="true"] {
   border: 1px solid rgba(255,255,255,0.78) !important;
   background:
     radial-gradient(circle at var(--ruth-pointer-x) var(--ruth-pointer-y), rgba(255,255,255,0.94), transparent 31%),
-    linear-gradient(145deg, rgba(255,255,255,0.58), rgba(222,231,247,0.24)),
+    linear-gradient(145deg, rgba(255,255,255,0.58), color-mix(in srgb, var(--rosta-cream, #FBF3E6) 24%, transparent)),
     var(--liquid-surface-soft) !important;
   box-shadow:
-    0 9px 26px rgba(46,56,78,0.1),
+    0 9px 26px color-mix(in srgb, var(--rosta-carbon-soft, #242424) 10%, transparent),
     inset 0 1px 0 rgba(255,255,255,0.96),
-    inset 0 -1px 0 rgba(88,102,134,0.09) !important;
+    inset 0 -1px 0 color-mix(in srgb, var(--rosta-brick-b, #C94A40) 9%, transparent) !important;
   backdrop-filter: blur(21px) saturate(1.48) brightness(1.04) !important;
   -webkit-backdrop-filter: blur(21px) saturate(1.48) brightness(1.04) !important;
-}
-
-body.ruth-admin-liquid-v3 [data-ruth-command-trigger="true"]:hover {
-  transform: translate3d(0,-1px,0) scale(1.012);
-  box-shadow:
-    0 14px 34px rgba(46,56,78,0.14),
-    inset 0 1px 0 rgba(255,255,255,1),
-    inset 0 -1px 0 rgba(88,102,134,0.1) !important;
 }
 
 body.ruth-admin-liquid-v3 [data-ruth-liquid-primary="true"] {
@@ -232,9 +210,9 @@ body.ruth-admin-liquid-v3 [data-ruth-liquid-primary="true"] {
     radial-gradient(circle at var(--ruth-pointer-x) var(--ruth-pointer-y), rgba(255,255,255,0.42), transparent 34%),
     linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-hover))) !important;
   box-shadow:
-    0 13px 30px rgba(91,73,222,0.24),
+    0 13px 30px color-mix(in srgb, var(--rosta-brick-b, #C94A40) 24%, transparent),
     inset 0 1px 0 rgba(255,255,255,0.38),
-    inset 0 -1px 0 rgba(43,29,159,0.24) !important;
+    inset 0 -1px 0 color-mix(in srgb, var(--rosta-brick-b, #C94A40) 24%, transparent) !important;
   transition:
     transform 360ms cubic-bezier(0.22,1,0.36,1),
     box-shadow 260ms ease,
@@ -254,18 +232,6 @@ body.ruth-admin-liquid-v3 [data-ruth-liquid-primary="true"]::after {
   opacity: 0;
 }
 
-body.ruth-admin-liquid-v3 [data-ruth-liquid-primary="true"]:hover::after {
-  animation: ruthAppleButtonSheen 720ms cubic-bezier(0.22,1,0.36,1);
-}
-
-body.ruth-admin-liquid-v3 [data-ruth-liquid-primary="true"]:hover {
-  transform: translate3d(0,-2px,0) scale(1.015);
-  box-shadow:
-    0 18px 38px rgba(91,73,222,0.31),
-    inset 0 1px 0 rgba(255,255,255,0.46),
-    inset 0 -1px 0 rgba(43,29,159,0.2) !important;
-}
-
 body.ruth-admin-liquid-v3 [data-ruth-liquid-primary="true"][data-ruth-pressed="true"] {
   transform: translate3d(0,1px,0) scale(0.955) !important;
   filter: saturate(0.96) brightness(0.98);
@@ -275,27 +241,19 @@ body.ruth-admin-liquid-v3 [data-ruth-liquid-primary="true"][data-ruth-pressed="t
 body.ruth-admin-liquid-v3 [data-ruth-glass-control="true"] {
   background:
     radial-gradient(circle at 70% -20%, rgba(255,255,255,0.78), transparent 34%),
-    linear-gradient(180deg, rgba(255,255,255,0.58), rgba(226,234,247,0.28)),
+    linear-gradient(180deg, rgba(255,255,255,0.58), color-mix(in srgb, var(--rosta-cream, #FBF3E6) 28%, transparent)),
     var(--liquid-surface-soft) !important;
   border-color: rgba(255,255,255,0.72) !important;
   box-shadow:
-    0 5px 16px rgba(52,62,84,0.055),
+    0 5px 16px color-mix(in srgb, var(--rosta-carbon-soft, #242424) 5.5%, transparent),
     inset 0 1px 0 rgba(255,255,255,0.92),
-    inset 0 -1px 0 rgba(92,104,132,0.08) !important;
+    inset 0 -1px 0 color-mix(in srgb, var(--rosta-brick-b, #C94A40) 8%, transparent) !important;
   backdrop-filter: blur(18px) saturate(1.36) !important;
   -webkit-backdrop-filter: blur(18px) saturate(1.36) !important;
   transition:
     transform 300ms cubic-bezier(0.22,1,0.36,1),
     box-shadow 240ms ease,
     border-color 200ms ease !important;
-}
-
-body.ruth-admin-liquid-v3 [data-ruth-glass-control="true"]:hover {
-  transform: translate3d(0,-1px,0);
-  border-color: rgba(255,255,255,0.9) !important;
-  box-shadow:
-    0 9px 24px rgba(52,62,84,0.09),
-    inset 0 1px 0 rgba(255,255,255,0.98) !important;
 }
 
 body.ruth-admin-liquid-v3 [data-ruth-glass-control="true"]:focus {
@@ -308,8 +266,8 @@ body.ruth-admin-liquid-v3 [data-ruth-filter-strip="true"] {
   padding: 4px;
   background:
     radial-gradient(circle at 18% -40%, rgba(255,255,255,0.72), transparent 42%),
-    rgba(230,237,249,0.34);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.82), 0 7px 20px rgba(52,62,84,0.06);
+    color-mix(in srgb, var(--rosta-cream, #FBF3E6) 34%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.82), 0 7px 20px color-mix(in srgb, var(--rosta-carbon-soft, #242424) 6%, transparent);
   backdrop-filter: blur(18px) saturate(1.34);
   -webkit-backdrop-filter: blur(18px) saturate(1.34);
 }
@@ -337,15 +295,6 @@ body.ruth-admin-liquid-v3 [data-ruth-apple-card="true"]::after {
   transition: opacity 260ms ease;
 }
 
-body.ruth-admin-liquid-v3 [data-ruth-apple-card="true"]:hover::after {
-  opacity: 0.8;
-}
-
-body.ruth-admin-liquid-v3 [data-ruth-apple-card="true"]:hover {
-  transform: translate3d(0,-3px,0) scale(1.006);
-  box-shadow: 0 20px 46px rgba(42,51,70,0.16), inset 0 1px 0 rgba(255,255,255,0.98) !important;
-}
-
 body.ruth-admin-liquid-v3 [data-ruth-apple-card="true"][data-ruth-pressed="true"] {
   transform: translate3d(0,1px,0) scale(0.982) !important;
   transition-duration: 82ms !important;
@@ -359,12 +308,12 @@ body.ruth-admin-liquid-v3 [data-ruth-glass-panel="true"] {
   border: 1px solid rgba(255,255,255,0.84) !important;
   background:
     radial-gradient(circle at var(--ruth-pointer-x) var(--ruth-pointer-y), rgba(255,255,255,0.9), transparent 27%),
-    linear-gradient(145deg, rgba(255,255,255,0.66), rgba(224,233,248,0.31)),
+    linear-gradient(145deg, rgba(255,255,255,0.66), color-mix(in srgb, var(--rosta-cream, #FBF3E6) 31%, transparent)),
     var(--liquid-surface) !important;
   box-shadow:
-    0 30px 86px rgba(34,42,59,0.29),
+    0 30px 86px color-mix(in srgb, var(--rosta-carbon-soft, #242424) 29%, transparent),
     inset 0 1px 0 rgba(255,255,255,0.98),
-    inset 0 -1px 0 rgba(91,103,131,0.11) !important;
+    inset 0 -1px 0 color-mix(in srgb, var(--rosta-brick-b, #C94A40) 11%, transparent) !important;
   backdrop-filter: blur(42px) saturate(1.68) brightness(1.04) !important;
   -webkit-backdrop-filter: blur(42px) saturate(1.68) brightness(1.04) !important;
   animation: ruthAppleGlassPanelIn 470ms cubic-bezier(0.22,1,0.36,1) both;
@@ -378,15 +327,10 @@ body.ruth-admin-liquid-v3 [data-ruth-profile-card="true"] {
   border-color: rgba(255,255,255,0.74) !important;
   background:
     radial-gradient(circle at var(--ruth-pointer-x) var(--ruth-pointer-y), rgba(255,255,255,0.82), transparent 36%),
-    linear-gradient(145deg, rgba(255,255,255,0.54), rgba(224,232,247,0.25)),
+    linear-gradient(145deg, rgba(255,255,255,0.54), color-mix(in srgb, var(--rosta-cream, #FBF3E6) 25%, transparent)),
     var(--liquid-surface-soft) !important;
-  box-shadow: 0 9px 24px rgba(49,59,80,0.09), inset 0 1px 0 rgba(255,255,255,0.92) !important;
+  box-shadow: 0 9px 24px color-mix(in srgb, var(--rosta-carbon-soft, #242424) 9%, transparent), inset 0 1px 0 rgba(255,255,255,0.92) !important;
   transition: transform 360ms cubic-bezier(0.22,1,0.36,1), box-shadow 260ms ease !important;
-}
-
-body.ruth-admin-liquid-v3 [data-ruth-profile-card="true"]:hover {
-  transform: translate3d(0,-2px,0) scale(1.01);
-  box-shadow: 0 14px 32px rgba(49,59,80,0.13), inset 0 1px 0 rgba(255,255,255,0.98) !important;
 }
 
 body.ruth-admin-liquid-v3 [data-ruth-profile-card="true"][data-ruth-pressed="true"] {
@@ -406,7 +350,7 @@ html.dark body.ruth-admin-liquid-v3 [data-ruth-profile-card="true"] {
   border-color: rgba(255,255,255,0.16) !important;
   background:
     radial-gradient(circle at var(--ruth-pointer-x, 60%) var(--ruth-pointer-y, 0%), rgba(255,255,255,0.16), transparent 33%),
-    linear-gradient(145deg, rgba(72,76,91,0.5), rgba(25,28,35,0.36)),
+    linear-gradient(145deg, color-mix(in srgb, var(--rosta-brick-b, #C94A40) 50%, transparent), color-mix(in srgb, var(--rosta-carbon, #111111) 36%, transparent)),
     var(--liquid-surface-soft) !important;
 }
 
@@ -414,7 +358,7 @@ html.dark body.ruth-admin-liquid-v3 [data-ruth-glass-panel="true"] {
   border-color: rgba(255,255,255,0.2) !important;
   background:
     radial-gradient(circle at var(--ruth-pointer-x) var(--ruth-pointer-y), rgba(255,255,255,0.16), transparent 28%),
-    linear-gradient(145deg, rgba(72,76,91,0.58), rgba(25,28,35,0.4)),
+    linear-gradient(145deg, color-mix(in srgb, var(--rosta-brick-b, #C94A40) 58%, transparent), color-mix(in srgb, var(--rosta-carbon, #111111) 40%, transparent)),
     var(--liquid-surface) !important;
 }
 
@@ -442,11 +386,69 @@ html.dark body.ruth-admin-liquid-v3 [data-ruth-glass-panel="true"] {
   }
 }
 
+@media (hover: hover) and (pointer: fine) {
+  body.ruth-admin-liquid-v3 [data-exact-base44-page] tbody tr:hover {
+    background: rgba(255,255,255,0.32) !important;
+  }
+
+  body.ruth-admin-liquid-v3 [data-exact-base44-page] section[class~="radius-card"]:hover,
+    body.ruth-admin-liquid-v3 [data-exact-base44-page] article[class~="radius-card"]:hover {
+      transform: translate3d(0,-2px,0) scale(1.003);
+    }
+
+  body.ruth-admin-liquid-v3 [data-ruth-header-action="true"]:hover::after {
+    opacity: 0.85;
+    transform: translateX(24%);
+  }
+
+  body.ruth-admin-liquid-v3 [data-ruth-command-trigger="true"]:hover {
+    transform: translate3d(0,-1px,0) scale(1.012);
+    box-shadow:
+      0 14px 34px color-mix(in srgb, var(--rosta-carbon-soft, #242424) 14%, transparent),
+      inset 0 1px 0 rgba(255,255,255,1),
+      inset 0 -1px 0 color-mix(in srgb, var(--rosta-brick-b, #C94A40) 10%, transparent) !important;
+  }
+
+  body.ruth-admin-liquid-v3 [data-ruth-liquid-primary="true"]:hover::after {
+    animation: ruthAppleButtonSheen 720ms cubic-bezier(0.22,1,0.36,1);
+  }
+
+  body.ruth-admin-liquid-v3 [data-ruth-liquid-primary="true"]:hover {
+    transform: translate3d(0,-2px,0) scale(1.015);
+    box-shadow:
+      0 18px 38px color-mix(in srgb, var(--rosta-brick-b, #C94A40) 31%, transparent),
+      inset 0 1px 0 rgba(255,255,255,0.46),
+      inset 0 -1px 0 color-mix(in srgb, var(--rosta-brick-b, #C94A40) 20%, transparent) !important;
+  }
+
+  body.ruth-admin-liquid-v3 [data-ruth-glass-control="true"]:hover {
+    transform: translate3d(0,-1px,0);
+    border-color: rgba(255,255,255,0.9) !important;
+    box-shadow:
+      0 9px 24px color-mix(in srgb, var(--rosta-carbon-soft, #242424) 9%, transparent),
+      inset 0 1px 0 rgba(255,255,255,0.98) !important;
+  }
+
+  body.ruth-admin-liquid-v3 [data-ruth-apple-card="true"]:hover::after {
+    opacity: 0.8;
+  }
+
+  body.ruth-admin-liquid-v3 [data-ruth-apple-card="true"]:hover {
+    transform: translate3d(0,-3px,0) scale(1.006);
+    box-shadow: 0 20px 46px color-mix(in srgb, var(--rosta-carbon-soft, #242424) 16%, transparent), inset 0 1px 0 rgba(255,255,255,0.98) !important;
+  }
+
+  body.ruth-admin-liquid-v3 [data-ruth-profile-card="true"]:hover {
+    transform: translate3d(0,-2px,0) scale(1.01);
+    box-shadow: 0 14px 32px color-mix(in srgb, var(--rosta-carbon-soft, #242424) 13%, transparent), inset 0 1px 0 rgba(255,255,255,0.98) !important;
+  }
+}
+
 @media (max-width: 767px) {
   body.ruth-admin-liquid-v3 [data-ruth-glass-panel="true"][role="dialog"],
   body.ruth-admin-liquid-v3 aside[data-ruth-glass-panel="true"] {
     border-radius: 28px 28px 0 0 !important;
-    box-shadow: 0 -18px 62px rgba(34,42,59,0.24), inset 0 1px 0 rgba(255,255,255,0.9) !important;
+    box-shadow: 0 -18px 62px color-mix(in srgb, var(--rosta-carbon-soft, #242424) 24%, transparent), inset 0 1px 0 rgba(255,255,255,0.9) !important;
   }
 
   body.ruth-admin-liquid-v3 [data-ruth-filter-strip="true"] {

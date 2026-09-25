@@ -12,9 +12,9 @@ export function drawOuterParticles(env: V83Environment, cx: number, cy: number, 
     const y = cy + Math.sin(angle) * distance * (mode === "processing" ? .34 : .84);
     const alpha = (mode === "processing" ? .13 : .035) + level * .18;
     const size = particle.size * (.65 + level * .8);
-    context.fillStyle = `rgba(255,197,84,${alpha})`;
+    context.fillStyle = `rgba(200, 167, 125,${alpha})`;
     context.shadowBlur = 8;
-    context.shadowColor = "rgba(255,168,45,.72)";
+    context.shadowColor = "rgba(201, 74, 64,.72)";
     context.beginPath();
     context.arc(x, y, size, 0, Math.PI * 2);
     context.fill();
@@ -32,15 +32,15 @@ export function drawBackgroundStars(env: V83Environment, time: number, width: nu
     const twinkle = .55 + .45 * Math.sin(time * star.twinkleSpeed + star.twinklePhase);
     const alpha = (.08 + twinkle * .18) * star.brightness;
     const size = star.size * (.8 + twinkle * .45);
-    context.fillStyle = `rgba(255,222,165,${alpha})`;
+    context.fillStyle = `rgba(251, 243, 230,${alpha})`;
     context.shadowBlur = 3 + star.brightness * 4;
-    context.shadowColor = "rgba(255,214,150,.58)";
+    context.shadowColor = "rgba(200, 167, 125,.58)";
     context.beginPath();
     context.arc(x, y, size, 0, Math.PI * 2);
     context.fill();
     if (star.sparkle && twinkle > .82) {
       const cross = size * 1.8;
-      context.strokeStyle = `rgba(255,245,220,${alpha * .62})`;
+      context.strokeStyle = `rgba(251, 243, 230,${alpha * .62})`;
       context.lineWidth = .35;
       context.beginPath(); context.moveTo(x - cross, y); context.lineTo(x + cross, y); context.stroke();
       context.beginPath(); context.moveTo(x, y - cross); context.lineTo(x, y + cross); context.stroke();
@@ -70,13 +70,13 @@ export function drawOrbitingStars(env: V83Environment, cx: number, cy: number, r
     const y = x0 * Math.sin(orbit.tilt) + y0 * Math.cos(orbit.tilt);
     const alpha = (.12 + twinkle * .28) * star.brightness * (.72 + level * .25);
     const size = star.size * (.75 + twinkle * .55);
-    context.fillStyle = `rgba(255,232,182,${alpha})`;
+    context.fillStyle = `rgba(251, 243, 230,${alpha})`;
     context.shadowBlur = 6 + star.brightness * 6;
-    context.shadowColor = "rgba(255,222,166,.92)";
+    context.shadowColor = "rgba(251, 243, 230,.92)";
     context.beginPath(); context.arc(x, y, size, 0, Math.PI * 2); context.fill();
     if (twinkle > .86) {
       const cross = size * 1.7;
-      context.strokeStyle = `rgba(255,247,226,${alpha * .72})`;
+      context.strokeStyle = `rgba(251, 243, 230,${alpha * .72})`;
       context.lineWidth = .34;
       context.beginPath(); context.moveTo(x - cross, y); context.lineTo(x + cross, y); context.stroke();
       context.beginPath(); context.moveTo(x, y - cross); context.lineTo(x, y + cross); context.stroke();
@@ -115,14 +115,14 @@ export function drawOuterField(env: V83Environment, cx: number, cy: number, radi
         if (index === 0) context.moveTo(x, y); else context.lineTo(x, y);
       }
       if (pass === 0) {
-        context.strokeStyle = `rgba(255,194,90,${.020 + level * .028})`;
-        context.lineWidth = glowWidth; context.shadowBlur = 14; context.shadowColor = "rgba(255,177,64,.34)";
+        context.strokeStyle = `rgba(200, 167, 125,${.020 + level * .028})`;
+        context.lineWidth = glowWidth; context.shadowBlur = 14; context.shadowColor = "rgba(201, 74, 64,.34)";
       } else if (pass === 1) {
-        context.strokeStyle = `rgba(255,214,130,${.10 + level * .075})`;
-        context.lineWidth = coreWidth; context.shadowBlur = 9; context.shadowColor = "rgba(255,190,84,.62)";
+        context.strokeStyle = `rgba(200, 167, 125,${.10 + level * .075})`;
+        context.lineWidth = coreWidth; context.shadowBlur = 9; context.shadowColor = "rgba(200, 167, 125,.62)";
       } else {
-        context.strokeStyle = `rgba(255,244,208,${.05 + level * .028})`;
-        context.lineWidth = Math.max(.35, coreWidth * .34); context.shadowBlur = 3; context.shadowColor = "rgba(255,241,210,.42)";
+        context.strokeStyle = `rgba(251, 243, 230,${.05 + level * .028})`;
+        context.lineWidth = Math.max(.35, coreWidth * .34); context.shadowBlur = 3; context.shadowColor = "rgba(251, 243, 230,.42)";
       }
       context.lineCap = "round"; context.lineJoin = "round"; context.stroke();
     }
@@ -135,8 +135,8 @@ export function drawOuterField(env: V83Environment, cx: number, cy: number, radi
         + Math.sin(currentAngle * 3 + time * .62) * radius * .006;
       const x = Math.cos(currentAngle) * currentRadius;
       const y = Math.sin(currentAngle) * currentRadius * (.97 + .03 * Math.sin(time * .35 + strand));
-      context.fillStyle = `rgba(255,224,150,${.16 + (1 - unit) * .16})`;
-      context.shadowBlur = 10; context.shadowColor = "rgba(255,194,84,.8)";
+      context.fillStyle = `rgba(251, 243, 230,${.16 + (1 - unit) * .16})`;
+      context.shadowBlur = 10; context.shadowColor = "rgba(200, 167, 125,.8)";
       context.beginPath(); context.arc(x, y, .7 + (1 - unit) * 1.15, 0, Math.PI * 2); context.fill();
     }
   }
@@ -147,7 +147,7 @@ export function drawThinkingVortex(env: V83Environment, cx: number, cy: number, 
   const context = env.ctx;
   context.save(); context.translate(cx, cy); context.globalCompositeOperation = "screen";
   for (let strand = 0; strand < 9; strand += 1) {
-    context.strokeStyle = `rgba(255,192,83,${.04 + strand * .006 + level * .03})`;
+    context.strokeStyle = `rgba(200, 167, 125,${.04 + strand * .006 + level * .03})`;
     context.lineWidth = .68; context.beginPath();
     for (let index = 0; index < 86; index += 1) {
       const unit = index / 85;
@@ -181,9 +181,9 @@ export function drawOrbitLayer(env: V83Environment, cx: number, cy: number, radi
         if (visible) { if (!drawing) { context.moveTo(point.x, point.y); drawing = true; } else context.lineTo(point.x, point.y); }
         else drawing = false;
       }
-      context.strokeStyle = `rgba(255,204,112,${alpha * orbit.alpha * (front ? 1 : .44)})`;
+      context.strokeStyle = `rgba(200, 167, 125,${alpha * orbit.alpha * (front ? 1 : .44)})`;
       context.lineWidth = width; context.lineCap = "round"; context.lineJoin = "round";
-      context.shadowBlur = blur; context.shadowColor = "rgba(255,178,61,.78)"; context.stroke();
+      context.shadowBlur = blur; context.shadowColor = "rgba(201, 74, 64,.78)"; context.stroke();
     };
     drawPass(9, .024, 18, 0); drawPass(2.9, .11, 11, 0); drawPass(.76, .30, 4, 0);
     drawPass(.48, .14, 2, 1.8); drawPass(.40, .11, 2, -1.7);
@@ -194,8 +194,8 @@ export function drawOrbitLayer(env: V83Environment, cx: number, cy: number, radi
       const visible = front ? point.depth >= -.04 : point.depth < -.04;
       if (!visible) continue;
       const fade = 1 - index / 12;
-      context.fillStyle = `rgba(255,226,153,${fade * .46 * orbit.alpha * (front ? 1 : .46)})`;
-      context.shadowBlur = 12; context.shadowColor = "rgba(255,190,82,.92)";
+      context.fillStyle = `rgba(251, 243, 230,${fade * .46 * orbit.alpha * (front ? 1 : .46)})`;
+      context.shadowBlur = 12; context.shadowColor = "rgba(200, 167, 125,.92)";
       context.beginPath(); context.arc(point.x, point.y, .75 + fade * 1.6, 0, Math.PI * 2); context.fill();
     }
     context.restore();

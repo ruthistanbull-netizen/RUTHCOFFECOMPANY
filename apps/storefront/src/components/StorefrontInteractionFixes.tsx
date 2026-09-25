@@ -27,12 +27,12 @@ export function StorefrontInteractionFixes() {
 
       html:not(.ruth-home-page-active):not(.ruth-product-page-active)
         .ruth-zara-menu-button:not(.ruth-zara-menu-button--menu-open) {
-        color: #111111 !important;
+        color: var(--rosta-carbon) !important;
       }
 
       html.ruth-product-page-active
         .ruth-zara-menu-button:not(.ruth-zara-menu-button--menu-open) {
-        color: var(--ruth-product-header-ink, #111111) !important;
+        color: var(--ruth-product-header-ink, var(--rosta-carbon)) !important;
       }
 
       html.ruth-home-page-active[data-home-header-tone="dark"]
@@ -43,7 +43,7 @@ export function StorefrontInteractionFixes() {
         .ruth-zara-header-inner,
       html.ruth-home-page-active:not([data-home-header-tone])
         .ruth-zara-menu-button:not(.ruth-zara-menu-button--menu-open) {
-        color: #ffffff !important;
+        color: var(--rosta-cream) !important;
         mix-blend-mode: normal !important;
       }
 
@@ -51,7 +51,7 @@ export function StorefrontInteractionFixes() {
         .ruth-zara-header-inner,
       html.ruth-home-page-active[data-home-header-tone="light"]
         .ruth-zara-menu-button:not(.ruth-zara-menu-button--menu-open) {
-        color: #111111 !important;
+        color: var(--rosta-carbon) !important;
         mix-blend-mode: normal !important;
       }
 
@@ -72,10 +72,10 @@ export function StorefrontInteractionFixes() {
       }
 
       .ruth-product-lightbox__close {
-        color: var(--ruth-lightbox-close-ink, var(--ruth-product-header-ink, #111111)) !important;
-        border-color: color-mix(in srgb, var(--ruth-lightbox-close-ink, var(--ruth-product-header-ink, #111111)) 26%, transparent) !important;
-        background: color-mix(in srgb, var(--ruth-lightbox-close-ink, var(--ruth-product-header-ink, #111111)) 8%, transparent) !important;
-        box-shadow: 0 8px 28px color-mix(in srgb, var(--ruth-lightbox-close-ink, var(--ruth-product-header-ink, #111111)) 10%, transparent) !important;
+        color: var(--ruth-lightbox-close-ink, var(--ruth-product-header-ink, var(--rosta-carbon))) !important;
+        border-color: color-mix(in srgb, var(--ruth-lightbox-close-ink, var(--ruth-product-header-ink, var(--rosta-carbon))) 26%, transparent) !important;
+        background: color-mix(in srgb, var(--ruth-lightbox-close-ink, var(--ruth-product-header-ink, var(--rosta-carbon))) 8%, transparent) !important;
+        box-shadow: 0 8px 28px color-mix(in srgb, var(--ruth-lightbox-close-ink, var(--ruth-product-header-ink, var(--rosta-carbon))) 10%, transparent) !important;
       }
 
       .ruth-product-lightbox__close svg {
@@ -90,7 +90,7 @@ export function StorefrontInteractionFixes() {
 
       @media (min-width: 768px) {
         .ruth-product-lightbox {
-          background: rgba(246, 240, 231, .10) !important;
+          background: var(--ruth-color-surface) !important;
           backdrop-filter: blur(30px) saturate(.9) brightness(.98) !important;
           -webkit-backdrop-filter: blur(30px) saturate(.9) brightness(.98) !important;
         }
@@ -121,8 +121,8 @@ export function StorefrontInteractionFixes() {
           aspect-ratio: 3 / 4 !important;
           overflow: hidden !important;
           border-radius: 18px !important;
-          background: var(--ruth-product-media-top, #faf7f2) !important;
-          box-shadow: 0 26px 90px rgba(0, 0, 0, .3) !important;
+          background: var(--ruth-product-media-top, var(--rosta-cream)) !important;
+          box-shadow: 0 26px 90px color-mix(in srgb, var(--rosta-carbon) 62%, transparent) !important;
         }
 
         .ruth-product-lightbox__zoom-viewport,
@@ -146,12 +146,12 @@ export function StorefrontInteractionFixes() {
         }
 
         .ruth-product-lightbox__meta {
-          color: #111111 !important;
+          color: var(--rosta-carbon) !important;
           text-shadow: none !important;
         }
 
         .ruth-product-lightbox__meta span {
-          color: rgba(17, 17, 17, .62) !important;
+          color: color-mix(in srgb, var(--rosta-carbon) 62%, transparent) !important;
         }
 
         .ruth-product-lightbox__zoom-controls {
@@ -163,7 +163,7 @@ export function StorefrontInteractionFixes() {
       @media (max-width: 767px) {
         html.ruth-home-page-active,
         html.ruth-home-page-active body {
-          background-color: var(--ruth-home-media-top, rgb(126 126 108)) !important;
+          background-color: var(--ruth-home-media-top, var(--rosta-carbon)) !important;
         }
 
         html.ruth-home-page-active .ruth-zara-header,
@@ -184,7 +184,7 @@ export function StorefrontInteractionFixes() {
           bottom: 100%;
           left: 0;
           height: max(env(safe-area-inset-top), 1px);
-          background: var(--ruth-home-media-top, rgb(126 126 108));
+          background: var(--ruth-home-media-top, var(--rosta-carbon));
           pointer-events: none;
         }
 

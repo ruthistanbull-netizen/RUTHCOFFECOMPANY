@@ -21,7 +21,7 @@ export default async function ProductsPage() {
   const products = await getProducts();
 
   return (
-    <div className="min-h-screen bg-ivory px-4 pb-24 pt-[calc(var(--announcement-height,0px)+128px)] md:px-8">
+    <div className="min-h-screen bg-carbon px-4 pb-24 pt-[calc(var(--announcement-height,0px)+128px)] text-cream md:px-8">
       <div className="mx-auto max-w-7xl">
         <PageIntro
           eyebrow="Alışveriş"

@@ -477,9 +477,9 @@ const buttonStyle: React.CSSProperties = {
   minHeight: "42px",
   padding: "8px 14px",
   borderRadius: "999px",
-  border: "1px solid rgba(205, 170, 105, .26)",
-  background: "rgba(6, 6, 6, .78)",
-  color: "rgba(248, 240, 225, .92)",
+  border: "1px solid rgba(200, 167, 125, .26)",
+  background: "rgba(17, 17, 17, .78)",
+  color: "rgba(251, 243, 230, .92)",
   boxShadow: "0 12px 38px rgba(0, 0, 0, .34)",
   backdropFilter: "blur(16px)",
   cursor: "pointer",
@@ -490,8 +490,8 @@ const dotStyle: React.CSSProperties = {
   height: "8px",
   flex: "0 0 auto",
   borderRadius: "999px",
-  background: "#d6b06b",
-  boxShadow: "0 0 14px rgba(214, 176, 107, .75)",
+  background: "#C8A77D",
+  boxShadow: "0 0 14px rgba(200, 167, 125, .75)",
 };
 
 const copyStyle: React.CSSProperties = {
@@ -514,6 +514,6 @@ const detailStyle: React.CSSProperties = {
   overflow: "hidden",
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
-  color: "rgba(248, 240, 225, .58)",
+  color: "rgba(251, 243, 230, .58)",
   fontSize: "10px",
 };

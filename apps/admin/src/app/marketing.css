@@ -29,9 +29,9 @@
 }
 
 .cr-marketing-tabs button.is-active {
-  background: #fff;
-  color: var(--ink);
-  box-shadow: var(--shadow-sm);
+  background: color-mix(in srgb, var(--rosta-brick-b, #C94A40) 15%, var(--ruth-color-surface-muted, #242424));
+  color: var(--rosta-cream, #FBF3E6);
+  box-shadow: inset 0 -2px 0 var(--rosta-brick-b, #C94A40);
 }
 
 .cr-marketing-layout {
@@ -61,7 +61,7 @@
   padding: 13px;
   border: 1px solid var(--line);
   border-radius: 14px;
-  background: #fff;
+  background: var(--ruth-color-surface-muted, #242424);
   box-shadow: var(--shadow-sm);
   display: grid;
   gap: 12px;
@@ -138,8 +138,8 @@
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 1px 3px rgba(16,24,40,.16);
+  background: var(--ruth-color-surface-muted, #242424);
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--rosta-carbon, #111111) 36%, transparent);
 }
 
 .cr-switch strong {
@@ -147,14 +147,14 @@
 }
 
 .cr-switch.is-on {
-  border-color: #abefc6;
+  border-color: var(--ruth-color-success, #1BA786);
   background: var(--success-soft);
   color: var(--success);
 }
 
 .cr-switch.is-on > span {
   background: var(--success);
-  box-shadow: inset 0 0 0 6px #fff;
+  box-shadow: inset 0 0 0 6px var(--rosta-cream, #FBF3E6);
 }
 
 .cr-rule-form {
@@ -203,7 +203,7 @@
   padding: 8px 10px;
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: #fff;
+  background: var(--ruth-color-surface-muted, #242424);
   display: grid;
   gap: 3px;
 }
@@ -225,7 +225,7 @@
   padding: 8px;
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: #fff;
+  background: var(--ruth-color-surface-muted, #242424);
   display: flex;
   flex-wrap: wrap;
   gap: 6px;

@@ -24,15 +24,24 @@
   transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
 }
 
-.cr-analytics-card--conversion:hover,
 .cr-analytics-card--conversion:focus-visible {
-  border-color: var(--accent);
-  box-shadow: 0 10px 28px rgba(46, 91, 255, .09);
+  border-color: var(--rosta-brick-b, #C94A40);
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--rosta-brick-b, #C94A40) 12%, transparent);
+  outline: 3px solid color-mix(in srgb, var(--rosta-brick-b, #C94A40) 28%, transparent);
+  outline-offset: 2px;
 }
 
-.cr-analytics-card--conversion:focus-visible {
-  outline: 3px solid rgba(46, 91, 255, .18);
-  outline-offset: 2px;
+@media (hover: hover) and (pointer: fine) {
+  .cr-analytics-card--conversion:hover {
+    border-color: var(--rosta-brick-b, #C94A40);
+    box-shadow: 0 10px 28px color-mix(in srgb, var(--rosta-brick-b, #C94A40) 12%, transparent);
+  }
+}
+
+@media (forced-colors: active) {
+  .cr-analytics-card--conversion:focus-visible {
+    outline-color: Highlight;
+  }
 }
 
 .cr-conversion-card__summary {

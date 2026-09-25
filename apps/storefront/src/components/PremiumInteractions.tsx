@@ -144,11 +144,11 @@ export function PremiumInteractions() {
   return (
     <style>{`
       .site-app-shell .text-gold-dark {
-        color: color-mix(in srgb, var(--ink) 90%, var(--gold)) !important;
+        color: var(--rosta-brick-b) !important;
       }
 
       .site-app-shell .text-muted-ruth {
-        color: color-mix(in srgb, var(--ink) 88%, var(--ivory)) !important;
+        color: var(--ruth-color-text-muted) !important;
       }
 
       @media (hover: hover) and (pointer: fine) {

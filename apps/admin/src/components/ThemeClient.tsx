@@ -8,11 +8,13 @@ import { ROSTA_STORE_URL } from "@/lib/platform";
 
 const palette = [
   ["Carbon", "#111111"],
-  ["Bone", "#F4F0E8"],
-  ["Espresso", "#2B1B16"],
-  ["Oxide", "#B9563D"],
-  ["Dusty Olive", "#6F725B"],
-  ["Steel", "#AAA8A1"],
+  ["Carbon Soft", "#242424"],
+  ["Cream", "#FBF3E6"],
+  ["Brick B", "#C94A40"],
+  ["Espresso", "#38251C"],
+  ["Cocoa", "#6B4638"],
+  ["Kraft", "#C8A77D"],
+  ["Action White", "#FFFFFF"],
 ];
 
 function cleanCustomizer(value: any) {

@@ -50,8 +50,8 @@ export function CoffeeBeanRain() {
             width: bean.width,
             height: bean.height,
             borderRadius: "58% 42% 56% 44% / 52% 48% 52% 48%",
-            background: "linear-gradient(145deg,#7b4b31 0%,#4a2b1d 58%,#2b1811 100%)",
-            boxShadow: "0 5px 10px rgba(24,12,7,.18), inset 2px 2px 3px rgba(255,255,255,.12)",
+            background: "linear-gradient(145deg,var(--rosta-cocoa) 0%,var(--rosta-espresso) 58%,var(--rosta-carbon) 100%)",
+            boxShadow: "0 5px 10px color-mix(in srgb,var(--rosta-carbon) 46%,transparent), inset 2px 2px 3px color-mix(in srgb,var(--rosta-cream) 12%,transparent)",
           }}
           initial={{ y: -90, x: 0, rotate: bean.rotate, opacity: 0 }}
           animate={{
@@ -76,9 +76,9 @@ export function CoffeeBeanRain() {
               width: 2,
               height: "74%",
               borderRadius: 999,
-              background: "rgba(232,194,155,.54)",
+              background: "color-mix(in srgb,var(--rosta-kraft) 54%,transparent)",
               transform: "rotate(8deg)",
-              boxShadow: "1px 0 0 rgba(30,13,7,.38)",
+              boxShadow: "1px 0 0 color-mix(in srgb,var(--rosta-carbon) 58%,transparent)",
             }}
           />
         </motion.div>

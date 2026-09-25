@@ -94,8 +94,10 @@
   white-space: nowrap;
 }
 
-.edgeButton:hover {
-  background: var(--ruth-color-canvas);
+@media (hover: hover) and (pointer: fine) {
+  .edgeButton:hover {
+    background: var(--ruth-color-canvas);
+  }
 }
 
 .edgeButton:focus-visible {

@@ -1082,10 +1082,10 @@ export function CheckoutClient() {
 
   if (!isReady || (draftToken && !draftLoaded && !error)) {
     return (
-      <div className="min-h-screen bg-ivory px-4 pb-24 pt-32">
+      <div className="min-h-screen bg-carbon px-4 pb-24 pt-32">
         <div className="mx-auto max-w-4xl">
-          <div className="h-8 w-44 animate-pulse rounded bg-cream" />
-          <div className="mt-5 h-64 animate-pulse rounded-xl bg-cream" />
+          <div className="h-8 w-44 animate-pulse rounded bg-carbon-soft" />
+          <div className="mt-5 h-64 animate-pulse rounded-xl bg-carbon-soft" />
         </div>
       </div>
     );
@@ -1093,16 +1093,16 @@ export function CheckoutClient() {
 
   if (items.length === 0) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-ivory px-4 pt-20 text-center">
+      <div className="flex min-h-screen items-center justify-center bg-carbon px-4 pt-20 text-center">
         <div>
-          <ShoppingBag className="mx-auto mb-5 text-gold-dark" size={32} />
+          <ShoppingBag className="mx-auto mb-5 text-brick" size={32} />
           <h1 className="font-heading text-3xl">{error ? "Ödeme bağlantısı açılamadı" : "Sepetin boş"}</h1>
-          <p className="mt-3 max-w-md text-sm leading-6 text-muted-ruth">
+          <p className="mt-3 max-w-md text-sm leading-6 text-cream/70">
             {error || "Ödeme adımına geçmek için önce sepetine bir parça ekle."}
           </p>
           <Link
             href="/products"
-            className="mt-7 inline-block bg-ink px-8 py-4 text-xs uppercase tracking-wide-luxe text-cream"
+            className="mt-7 inline-block bg-brick px-8 py-4 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)]"
           >
             Ürünleri Keşfet
           </Link>
@@ -1112,16 +1112,16 @@ export function CheckoutClient() {
   }
 
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-ivory px-4 pb-24 pt-24 md:px-8 md:pt-32">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-carbon px-4 pb-24 pt-24 md:px-8 md:pt-32">
       <div className="mx-auto w-full max-w-7xl min-w-0">
         <div className="mb-6 text-center md:mb-10">
-          <p className="mb-3 text-xs uppercase tracking-wide-luxe text-gold-dark">
+          <p className="mb-3 text-xs uppercase tracking-wide-luxe text-brick">
             Ödeme
           </p>
           <h1 className="font-heading text-4xl md:text-5xl">
             {openPaymentDirectly ? "Siparişini Kontrol Et" : "Sipariş Bilgileri"}
           </h1>
-          <p className="mx-auto mt-3 hidden max-w-xl text-sm leading-7 text-muted-ruth md:block">
+          <p className="mx-auto mt-3 hidden max-w-xl text-sm leading-7 text-cream/70 md:block">
             {openPaymentDirectly
               ? "Ürünlerini ve teslimat bilgilerini kontrol et, ardından kart bilgilerini girerek ödemeyi tamamla."
               : (
@@ -1149,7 +1149,7 @@ export function CheckoutClient() {
           className="grid w-full min-w-0 max-w-full gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(320px,380px)] xl:gap-6"
         >
           <section className="min-w-0 space-y-6">
-            {!openPaymentDirectly && <div ref={checkoutStepsRef} className="scroll-mt-24 rounded-2xl border border-gold/15 bg-cream p-3 shadow-sm md:scroll-mt-32">
+            {!openPaymentDirectly && <div ref={checkoutStepsRef} className="scroll-mt-24 rounded-2xl border border-kraft/35 bg-carbon-soft p-3 shadow-sm md:scroll-mt-32">
               <div className="grid grid-cols-3 gap-2">
                 {checkoutSteps.map((step, stepIndex) => {
                   const isActive = checkoutStep === step.id;
@@ -1165,10 +1165,10 @@ export function CheckoutClient() {
                       }}
                       className={`rounded-xl px-2 py-3 text-center transition ${
                         isActive
-                          ? "bg-ink text-cream shadow-md"
+                          ? "bg-brick text-[var(--rosta-action-text)] shadow-md"
                           : isDone
-                            ? "bg-gold/15 text-ink"
-                            : "bg-ivory text-muted-ruth"
+                            ? "bg-brick/15 text-[var(--rosta-action-text)]"
+                            : "bg-carbon text-cream/70"
                       }`}
                     >
                       <span className="mx-auto mb-1 flex h-6 w-6 items-center justify-center rounded-full border border-current text-[11px] font-medium">
@@ -1187,20 +1187,20 @@ export function CheckoutClient() {
             </div>}
 
             {checkoutStep === 1 && (
-              <div className="min-w-0 overflow-hidden rounded-xl border border-gold/15 bg-cream p-4 md:p-5">
+              <div className="min-w-0 overflow-hidden rounded-xl border border-kraft/35 bg-carbon-soft p-4 md:p-5">
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <label className="block text-xs uppercase tracking-wide-luxe text-muted-ruth">
+                  <label className="block text-xs uppercase tracking-wide-luxe text-cream/70">
                     Ad Soyad <RequiredMark />
                     <input
                       required
                       autoComplete="name"
                       value={form.fullName}
                       onChange={(event) => updateField("fullName", event.target.value)}
-                      className="mt-2 w-full rounded-lg border border-gold/20 bg-ivory px-4 py-3 text-sm normal-case tracking-normal text-ink outline-none transition focus:border-gold-dark"
+                      className="mt-2 w-full rounded-lg border border-kraft/40 bg-carbon px-4 py-3 text-sm normal-case tracking-normal text-cream outline-none transition focus:border-brick"
                     />
                   </label>
 
-                  <label className="block text-xs uppercase tracking-wide-luxe text-muted-ruth">
+                  <label className="block text-xs uppercase tracking-wide-luxe text-cream/70">
                     Telefon <RequiredMark />
                     <input
                       required
@@ -1209,11 +1209,11 @@ export function CheckoutClient() {
                       autoComplete="tel"
                       value={form.phone}
                       onChange={(event) => updateField("phone", event.target.value)}
-                      className="mt-2 w-full rounded-lg border border-gold/20 bg-ivory px-4 py-3 text-sm normal-case tracking-normal text-ink outline-none transition focus:border-gold-dark"
+                      className="mt-2 w-full rounded-lg border border-kraft/40 bg-carbon px-4 py-3 text-sm normal-case tracking-normal text-cream outline-none transition focus:border-brick"
                     />
                   </label>
 
-                  <label className="block text-xs uppercase tracking-wide-luxe text-muted-ruth sm:col-span-2">
+                  <label className="block text-xs uppercase tracking-wide-luxe text-cream/70 sm:col-span-2">
                     E-posta <RequiredMark />
                     <input
                       required
@@ -1222,7 +1222,7 @@ export function CheckoutClient() {
                       autoComplete="email"
                       value={form.email}
                       onChange={(event) => updateField("email", event.target.value)}
-                      className="mt-2 w-full rounded-lg border border-gold/20 bg-ivory px-4 py-3 text-sm normal-case tracking-normal text-ink outline-none transition focus:border-gold-dark"
+                      className="mt-2 w-full rounded-lg border border-kraft/40 bg-carbon px-4 py-3 text-sm normal-case tracking-normal text-cream outline-none transition focus:border-brick"
                     />
                   </label>
                 </div>
@@ -1230,7 +1230,7 @@ export function CheckoutClient() {
                 <button
                   type="button"
                   onClick={goNextStep}
-                  className="mt-6 w-full rounded-full bg-ink px-6 py-4 text-xs uppercase tracking-wide-luxe text-cream transition hover:bg-gold-dark sm:w-auto sm:min-w-52"
+                  className="mt-6 w-full rounded-full bg-brick px-6 py-4 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)] transition active:bg-espresso sm:w-auto sm:min-w-52"
                 >
                   Adrese Devam Et
                 </button>
@@ -1238,32 +1238,32 @@ export function CheckoutClient() {
             )}
 
             {checkoutStep === 2 && (
-              <div className="rounded-xl border border-gold/15 bg-cream p-4 md:p-6">
+              <div className="rounded-xl border border-kraft/35 bg-carbon-soft p-4 md:p-6">
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <label className="block text-xs uppercase tracking-wide-luxe text-muted-ruth">
+                  <label className="block text-xs uppercase tracking-wide-luxe text-cream/70">
                     İl <RequiredMark />
                     <input
                       required
                       autoComplete="address-level1"
                       value={form.city}
                       onChange={(event) => updateField("city", event.target.value)}
-                      className="mt-2 w-full rounded-lg border border-gold/20 bg-ivory px-4 py-3 text-sm normal-case tracking-normal text-ink outline-none transition focus:border-gold-dark"
+                      className="mt-2 w-full rounded-lg border border-kraft/40 bg-carbon px-4 py-3 text-sm normal-case tracking-normal text-cream outline-none transition focus:border-brick"
                     />
                   </label>
 
-                  <label className="block text-xs uppercase tracking-wide-luxe text-muted-ruth">
+                  <label className="block text-xs uppercase tracking-wide-luxe text-cream/70">
                     İlçe <RequiredMark />
                     <input
                       required
                       autoComplete="address-level2"
                       value={form.district}
                       onChange={(event) => updateField("district", event.target.value)}
-                      className="mt-2 w-full rounded-lg border border-gold/20 bg-ivory px-4 py-3 text-sm normal-case tracking-normal text-ink outline-none transition focus:border-gold-dark"
+                      className="mt-2 w-full rounded-lg border border-kraft/40 bg-carbon px-4 py-3 text-sm normal-case tracking-normal text-cream outline-none transition focus:border-brick"
                     />
                   </label>
 
 
-                  <label className="block text-xs uppercase tracking-wide-luxe text-muted-ruth sm:col-span-2">
+                  <label className="block text-xs uppercase tracking-wide-luxe text-cream/70 sm:col-span-2">
                     Posta Kodu <span className="normal-case tracking-normal opacity-70">(isteğe bağlı)</span>
                     <input
                       inputMode="numeric"
@@ -1271,11 +1271,11 @@ export function CheckoutClient() {
                       maxLength={10}
                       value={form.postalCode}
                       onChange={(event) => updateField("postalCode", event.target.value.replace(/[^0-9A-Za-z -]/g, ""))}
-                      className="mt-2 w-full rounded-lg border border-gold/20 bg-ivory px-4 py-3 text-sm normal-case tracking-normal text-ink outline-none transition focus:border-gold-dark"
+                      className="mt-2 w-full rounded-lg border border-kraft/40 bg-carbon px-4 py-3 text-sm normal-case tracking-normal text-cream outline-none transition focus:border-brick"
                     />
                   </label>
 
-                  <label className="block text-xs uppercase tracking-wide-luxe text-muted-ruth sm:col-span-2">
+                  <label className="block text-xs uppercase tracking-wide-luxe text-cream/70 sm:col-span-2">
                     Açık Adres <RequiredMark />
                     <textarea
                       required
@@ -1283,17 +1283,17 @@ export function CheckoutClient() {
                       rows={4}
                       value={form.addressLine}
                       onChange={(event) => updateField("addressLine", event.target.value)}
-                      className="mt-2 w-full resize-none rounded-lg border border-gold/20 bg-ivory px-4 py-3 text-sm normal-case tracking-normal text-ink outline-none transition focus:border-gold-dark"
+                      className="mt-2 w-full resize-none rounded-lg border border-kraft/40 bg-carbon px-4 py-3 text-sm normal-case tracking-normal text-cream outline-none transition focus:border-brick"
                     />
                   </label>
 
-                  <label className="block text-xs uppercase tracking-wide-luxe text-muted-ruth sm:col-span-2">
+                  <label className="block text-xs uppercase tracking-wide-luxe text-cream/70 sm:col-span-2">
                     Sipariş Notu
                     <textarea
                       rows={3}
                       value={form.note}
                       onChange={(event) => updateField("note", event.target.value)}
-                      className="mt-2 w-full resize-none rounded-lg border border-gold/20 bg-ivory px-4 py-3 text-sm normal-case tracking-normal text-ink outline-none transition focus:border-gold-dark"
+                      className="mt-2 w-full resize-none rounded-lg border border-kraft/40 bg-carbon px-4 py-3 text-sm normal-case tracking-normal text-cream outline-none transition focus:border-brick"
                     />
                   </label>
                 </div>
@@ -1302,14 +1302,14 @@ export function CheckoutClient() {
                   <button
                     type="button"
                     onClick={goPreviousStep}
-                    className="rounded-full border border-gold/25 px-6 py-4 text-xs uppercase tracking-wide-luxe text-ink transition hover:border-gold-dark"
+                    className="rounded-full border border-kraft/45 px-6 py-4 text-xs uppercase tracking-wide-luxe text-cream transition active:border-brick focus-visible:border-brick focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
                   >
                     Geri
                   </button>
                   <button
                     type="button"
                     onClick={goNextStep}
-                    className="rounded-full bg-ink px-6 py-4 text-xs uppercase tracking-wide-luxe text-cream transition hover:bg-gold-dark sm:min-w-52"
+                    className="rounded-full bg-brick px-6 py-4 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)] transition active:bg-espresso focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick sm:min-w-52"
                   >
                     Ödemeye Devam Et
                   </button>
@@ -1322,17 +1322,17 @@ export function CheckoutClient() {
                 ref={paymentSectionRef}
                 onFocusCapture={() => setPaymentReached(true)}
                 onMouseEnter={() => setPaymentReached(true)}
-                className="w-full min-w-0 max-w-full overflow-hidden rounded-xl border border-gold/15 bg-cream p-4 md:p-5"
+                className="w-full min-w-0 max-w-full overflow-hidden rounded-xl border border-kraft/35 bg-carbon-soft p-4 md:p-5"
               >
-                <div className="mb-5 overflow-hidden rounded-xl border border-gold/15 bg-white">
-                    <div className="border-b border-gold/10 bg-ivory/70 px-4 py-4 md:px-5">
+                <div className="mb-5 overflow-hidden rounded-xl border border-kraft/35 bg-carbon-soft">
+                    <div className="border-b border-kraft/25 bg-carbon/70 px-4 py-4 md:px-5">
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div>
-                          <p className="text-[10px] uppercase tracking-wide-luxe text-gold-dark">Sipariş Önizlemesi</p>
-                          <h2 className="mt-1 font-heading text-lg text-ink">Aldığın Ürünler</h2>
+                          <p className="text-[10px] uppercase tracking-wide-luxe text-brick">Sipariş Önizlemesi</p>
+                          <h2 className="mt-1 font-heading text-lg text-cream">Aldığın Ürünler</h2>
                         </div>
                         {loadedCheckoutDraft?.orderNo ? (
-                          <span className="rounded-full border border-gold/20 bg-cream px-3 py-1.5 text-[10px] uppercase tracking-[0.14em] text-muted-ruth">
+                          <span className="rounded-full border border-kraft/40 bg-carbon-soft px-3 py-1.5 text-[10px] uppercase tracking-[0.14em] text-cream/70">
                             {loadedCheckoutDraft.orderNo}
                           </span>
                         ) : null}
@@ -1348,23 +1348,23 @@ export function CheckoutClient() {
                         ));
                         return (
                           <div key={item.key} className="grid min-w-0 grid-cols-[64px_minmax(0,1fr)] gap-3 px-4 py-4 sm:grid-cols-[72px_minmax(0,1fr)_auto] md:grid-cols-[82px_minmax(0,1fr)_auto] md:px-5">
-                            <div className="h-24 overflow-hidden rounded-lg border border-gold/15 bg-ivory md:h-28">
+                            <div className="h-24 overflow-hidden rounded-lg border border-kraft/35 bg-carbon md:h-28">
                               {item.image ? (
                                 <img src={item.image} alt={item.name} className="h-full w-full object-cover" />
                               ) : (
-                                <div className="grid h-full place-items-center font-heading text-xl text-gold-dark">R</div>
+                                <div className="grid h-full place-items-center font-heading text-xl text-brick">R</div>
                               )}
                             </div>
                             <div className="min-w-0 self-center">
-                              <h3 className="font-heading text-sm leading-5 text-ink md:text-base">{item.name}</h3>
+                              <h3 className="font-heading text-sm leading-5 text-cream md:text-base">{item.name}</h3>
                               {variantLabels.length > 0 ? (
-                                <p className="mt-1 text-xs leading-5 text-muted-ruth">{variantLabels.join(" · ")}</p>
+                                <p className="mt-1 text-xs leading-5 text-cream/70">{variantLabels.join(" · ")}</p>
                               ) : (
-                                <p className="mt-1 text-xs text-muted-ruth">Standart ürün</p>
+                                <p className="mt-1 text-xs text-cream/70">Standart ürün</p>
                               )}
-                              <p className="mt-2 text-xs text-muted-ruth">Adet: {item.quantity}</p>
+                              <p className="mt-2 text-xs text-cream/70">Adet: {item.quantity}</p>
                             </div>
-                            <strong className="col-span-2 self-center text-right text-sm text-ink sm:col-span-1 sm:whitespace-nowrap">
+                            <strong className="col-span-2 self-center text-right text-sm text-cream sm:col-span-1 sm:whitespace-nowrap">
                               {formatPrice(Number(item.price || 0) * Number(item.quantity || 1), "TRY")}
                             </strong>
                           </div>
@@ -1372,16 +1372,16 @@ export function CheckoutClient() {
                       })}
                     </div>
 
-                    <div className="grid gap-4 border-t border-gold/10 bg-ivory/55 px-4 py-4 md:grid-cols-2 md:px-5">
+                    <div className="grid gap-4 border-t border-kraft/25 bg-carbon/55 px-4 py-4 md:grid-cols-2 md:px-5">
                       <div>
-                        <p className="text-[10px] uppercase tracking-wide-luxe text-muted-ruth">Teslim Alacak Kişi</p>
-                        <p className="mt-2 font-heading text-sm text-ink">{form.fullName || "—"}</p>
-                        <p className="mt-1 text-xs leading-5 text-muted-ruth">{form.phone || "—"}</p>
-                        <p className="text-xs leading-5 text-muted-ruth">{form.email || "—"}</p>
+                        <p className="text-[10px] uppercase tracking-wide-luxe text-cream/70">Teslim Alacak Kişi</p>
+                        <p className="mt-2 font-heading text-sm text-cream">{form.fullName || "—"}</p>
+                        <p className="mt-1 text-xs leading-5 text-cream/70">{form.phone || "—"}</p>
+                        <p className="text-xs leading-5 text-cream/70">{form.email || "—"}</p>
                       </div>
                       <div>
-                        <p className="text-[10px] uppercase tracking-wide-luxe text-muted-ruth">Teslimat Adresi</p>
-                        <p className="mt-2 text-sm leading-6 text-ink">
+                        <p className="text-[10px] uppercase tracking-wide-luxe text-cream/70">Teslimat Adresi</p>
+                        <p className="mt-2 text-sm leading-6 text-cream">
                           {[
                             form.addressLine,
                             [form.district, form.city].filter(Boolean).join(" / "),
@@ -1392,22 +1392,22 @@ export function CheckoutClient() {
                   </div>
 
                 {paytrTestMode && (
-                  <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-xs leading-5 text-amber-800">
+                  <div className="mt-4 rounded-lg border border-[var(--ruth-color-warning)]/40 bg-[var(--ruth-color-warning-soft)] px-4 py-3 text-xs leading-5 text-[var(--ruth-color-warning-text)]">
                     PayTR test modu açık. Direct API yetkisi açıldığında PayTR test kartlarıyla işlemi deneyebilirsin.
                   </div>
                 )}
 
-                <div className="mt-4 rounded-xl border border-gold/15 bg-white p-4 md:p-5">
+                <div className="mt-4 rounded-xl border border-kraft/35 bg-carbon-soft p-4 md:p-5">
                   <div className="mb-5 flex items-center justify-between gap-3">
                     <div>
-                      <p className="font-heading text-base text-ink">Kart Bilgileri</p>
-                      <p className="mt-1 text-[11px] leading-5 text-muted-ruth">Kart bilgilerini girerek siparişini tamamla.</p>
+                      <p className="font-heading text-base text-cream">Kart Bilgileri</p>
+                      <p className="mt-1 text-[11px] leading-5 text-cream/70">Kart bilgilerini girerek siparişini tamamla.</p>
                     </div>
-                    <CreditCard className="text-gold-dark" size={26} />
+                    <CreditCard className="text-brick" size={26} />
                   </div>
 
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <label className="block text-[11px] uppercase tracking-wide-luxe text-muted-ruth sm:col-span-2">
+                    <label className="block text-[11px] uppercase tracking-wide-luxe text-cream/70 sm:col-span-2">
                       Kart Üzerindeki İsim <RequiredMark />
                       <input
                         name="cc_owner"
@@ -1419,11 +1419,11 @@ export function CheckoutClient() {
                           setCardForm((current) => ({ ...current, ccOwner: event.target.value.slice(0, 50) }));
                         }}
                         placeholder="AD SOYAD"
-                        className="mt-2 w-full rounded-lg border border-gold/20 bg-ivory px-4 py-3 text-sm normal-case tracking-normal text-ink outline-none transition focus:border-gold-dark"
+                        className="mt-2 w-full rounded-lg border border-kraft/40 bg-carbon px-4 py-3 text-sm normal-case tracking-normal text-cream outline-none transition focus:border-brick"
                       />
                     </label>
 
-                    <label className="block text-[11px] uppercase tracking-wide-luxe text-muted-ruth sm:col-span-2">
+                    <label className="block text-[11px] uppercase tracking-wide-luxe text-cream/70 sm:col-span-2">
                       Kart Numarası <RequiredMark />
                       <input
                         autoComplete="cc-number"
@@ -1436,12 +1436,12 @@ export function CheckoutClient() {
                           setCardForm((current) => ({ ...current, cardNumber: formatCardNumber(event.target.value) }));
                         }}
                         placeholder="0000 0000 0000 0000"
-                        className="mt-2 w-full rounded-lg border border-gold/20 bg-ivory px-4 py-3 text-base tracking-[0.12em] text-ink outline-none transition focus:border-gold-dark"
+                        className="mt-2 w-full rounded-lg border border-kraft/40 bg-carbon px-4 py-3 text-base tracking-[0.12em] text-cream outline-none transition focus:border-brick"
                       />
                       <input type="hidden" name="card_number" value={cardForm.cardNumber.replace(/\D/g, "")} />
                     </label>
 
-                    <label className="block text-[11px] uppercase tracking-wide-luxe text-muted-ruth">
+                    <label className="block text-[11px] uppercase tracking-wide-luxe text-cream/70">
                       Son Kullanma Tarihi <RequiredMark />
                       <input
                         autoComplete="cc-exp"
@@ -1454,13 +1454,13 @@ export function CheckoutClient() {
                         }}
                         placeholder="AA/YY"
                         maxLength={5}
-                        className="mt-2 w-full rounded-lg border border-gold/20 bg-ivory px-4 py-3 text-sm normal-case tracking-[0.12em] text-ink outline-none transition focus:border-gold-dark"
+                        className="mt-2 w-full rounded-lg border border-kraft/40 bg-carbon px-4 py-3 text-sm normal-case tracking-[0.12em] text-cream outline-none transition focus:border-brick"
                       />
                       <input type="hidden" name="expiry_month" value={parseExpiryDate(cardForm.expiryDate).month} />
                       <input type="hidden" name="expiry_year" value={parseExpiryDate(cardForm.expiryDate).year} />
                     </label>
 
-                    <label className="block text-[11px] uppercase tracking-wide-luxe text-muted-ruth sm:max-w-[220px]">
+                    <label className="block text-[11px] uppercase tracking-wide-luxe text-cream/70 sm:max-w-[220px]">
                       CVV <RequiredMark />
                       <input
                         name="cvv"
@@ -1475,17 +1475,17 @@ export function CheckoutClient() {
                           setCardForm((current) => ({ ...current, cvv: event.target.value.replace(/\D/g, "").slice(0, 3) }));
                         }}
                         placeholder="000"
-                        className="mt-2 w-full rounded-lg border border-gold/20 bg-ivory px-4 py-3 text-sm normal-case tracking-normal text-ink outline-none transition focus:border-gold-dark"
+                        className="mt-2 w-full rounded-lg border border-kraft/40 bg-carbon px-4 py-3 text-sm normal-case tracking-normal text-cream outline-none transition focus:border-brick"
                       />
                     </label>
                   </div>
 
                   {(cardInfo || isCardOptionsLoading || cardOptionsMessage) && (
-                    <div className="mt-4 rounded-lg border border-gold/15 bg-ivory/70 px-4 py-3 text-xs leading-5">
+                    <div className="mt-4 rounded-lg border border-kraft/35 bg-carbon/70 px-4 py-3 text-xs leading-5">
                       {isCardOptionsLoading ? (
-                        <span className="text-muted-ruth">Kart ve taksit seçenekleri kontrol ediliyor…</span>
+                        <span className="text-cream/70">Kart ve taksit seçenekleri kontrol ediliyor…</span>
                       ) : cardInfo ? (
-                        <span className="text-ink">
+                        <span className="text-cream">
                           {[
                             cardInfo.cardType === "credit" ? "Kredi kartı" : cardInfo.cardType === "debit" ? "Banka kartı" : null,
                             cardInfo.bank,
@@ -1494,15 +1494,15 @@ export function CheckoutClient() {
                           ].filter(Boolean).join(" • ")}
                         </span>
                       ) : null}
-                      {cardOptionsMessage && <p className="mt-1 text-amber-700">{cardOptionsMessage}</p>}
+                      {cardOptionsMessage && <p className="mt-1 text-[var(--ruth-color-warning-text)]">{cardOptionsMessage}</p>}
                     </div>
                   )}
 
                   {cardInfo?.isCreditCard && installmentOptions.length > 0 ? (
                     <div className="mt-5">
                       <div className="mb-3 flex items-center justify-between gap-3">
-                        <p className="text-[11px] uppercase tracking-wide-luxe text-muted-ruth">Taksit Seçenekleri</p>
-                        {isCardOptionsLoading && <RefreshCw className="animate-spin text-gold-dark" size={15} />}
+                        <p className="text-[11px] uppercase tracking-wide-luxe text-cream/70">Taksit Seçenekleri</p>
+                        {isCardOptionsLoading && <RefreshCw className="animate-spin text-brick" size={15} />}
                       </div>
                       <div className="grid gap-2">
                         {[{ count: 0, rate: 0 }, ...installmentOptions].map((option) => {
@@ -1511,7 +1511,7 @@ export function CheckoutClient() {
                             <label
                               key={option.count}
                               className={`flex cursor-pointer items-center justify-between gap-3 rounded-lg border px-4 py-3 transition ${
-                                checked ? "border-gold-dark bg-gold/10" : "border-gold/15 bg-ivory hover:border-gold/35"
+                                checked ? "border-brick bg-brick/10" : "border-kraft/35 bg-carbon focus-within:border-brick"
                               }`}
                             >
                               <span className="flex items-center gap-3">
@@ -1523,18 +1523,18 @@ export function CheckoutClient() {
                                     setDirectPayment(null);
                                     setSelectedInstallment(option.count);
                                   }}
-                                  className="accent-[#9A7B52]"
+                                  className="accent-[#C94A40]"
                                 />
-                                <span className="text-sm font-medium text-ink">
+                                <span className="text-sm font-medium text-cream">
                                   {option.count === 0 ? "Tek çekim" : `${option.count} taksit`}
                                 </span>
                               </span>
-                              <span className="text-right text-[11px] leading-5 text-muted-ruth">
+                              <span className="text-right text-[11px] leading-5 text-cream/70">
                                 {option.count === 0 ? (
                                   formatPrice(checkoutTotal, "TRY")
                                 ) : (
                                   <>
-                                    <strong className="block text-ink">{formatPrice(checkoutTotal / ((100 - option.rate) / 100), "TRY")}</strong>
+                                    <strong className="block text-cream">{formatPrice(checkoutTotal / ((100 - option.rate) / 100), "TRY")}</strong>
                                     <span>{formatPrice((checkoutTotal / ((100 - option.rate) / 100)) / option.count, "TRY")} × {option.count}</span>
                                   </>
                                 )}
@@ -1552,7 +1552,7 @@ export function CheckoutClient() {
                     <button
                       type="button"
                       onClick={goPreviousStep}
-                      className="rounded-full border border-gold/25 px-5 py-3 text-[11px] uppercase tracking-wide-luxe text-ink transition hover:border-gold-dark"
+                      className="rounded-full border border-kraft/45 px-5 py-3 text-[11px] uppercase tracking-wide-luxe text-cream transition active:border-brick focus-visible:border-brick focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
                     >
                       Adrese Dön
                     </button>
@@ -1564,57 +1564,57 @@ export function CheckoutClient() {
           </section>
 
           <aside className={`${checkoutStep === 3 ? "block" : "hidden"} w-full min-w-0 max-w-full xl:sticky xl:top-28 xl:self-start`}>
-            <div className="rounded-xl border border-gold/15 bg-cream p-4 md:p-6">
+            <div className="rounded-xl border border-kraft/35 bg-carbon-soft p-4 md:p-6">
               <h2 className="font-heading text-lg">Ödeme Özeti</h2>
               <div className="mt-5 space-y-3 text-sm">
-                <div className="flex justify-between text-muted-ruth">
+                <div className="flex justify-between text-cream/70">
                   <span>Ara toplam</span>
                   <span>{formatPrice(quoteSubtotal, "TRY")}</span>
                 </div>
-                <div className="flex justify-between text-muted-ruth">
+                <div className="flex justify-between text-cream/70">
                   <span>Kargo</span>
                   <span>{shippingFee > 0 ? formatPrice(shippingFee, "TRY") : "Ücretsiz"}</span>
                 </div>
 
                 <>
-                <div className="rounded-xl border border-gold/15 bg-ivory text-sm">
+                <div className="rounded-xl border border-kraft/35 bg-carbon text-sm">
                   {user ? (
                     <>
                       <button
                         type="button"
                         onClick={() => setIsRostaPointsOpen((current) => !current)}
-                        className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left transition hover:bg-cream/70"
+                        className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left transition active:bg-brick/10 focus-visible:bg-brick/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
                         aria-expanded={isRostaPointsOpen}
                       >
                         <span>
-                          <span className="block font-heading text-sm text-ink">ROSTA Points Kullan</span>
-                          <span className="mt-1 block text-xs leading-5 text-muted-ruth">
+                          <span className="block font-heading text-sm text-cream">ROSTA Points Kullan</span>
+                          <span className="mt-1 block text-xs leading-5 text-cream/70">
                             Hesabında {maxRostaPointsForCheckout.toLocaleString("tr-TR")} ROSTA Points var.
                           </span>
                           {selectedRostaPoints > 0 && (
-                            <span className="mt-1 block text-xs font-medium text-gold-dark">
+                            <span className="mt-1 block text-xs font-medium text-brick">
                               Seçilen: {selectedRostaPoints.toLocaleString("tr-TR")} Points · -{formatPrice(rostaPointDiscount, "TRY")}
                             </span>
                           )}
                         </span>
                         <ChevronDown
                           size={18}
-                          className={`shrink-0 text-gold-dark transition-transform duration-300 ${isRostaPointsOpen ? "rotate-180" : ""}`}
+                          className={`shrink-0 text-brick transition-transform duration-300 ${isRostaPointsOpen ? "rotate-180" : ""}`}
                         />
                       </button>
 
                       {isRostaPointsOpen && (
-                        <div className="border-t border-gold/10 px-4 pb-4 pt-3">
+                        <div className="border-t border-kraft/25 px-4 pb-4 pt-3">
                           {maxRostaPointsForCheckout > 0 ? (
                             <div>
-                              <p className="text-xs leading-5 text-muted-ruth">
+                              <p className="text-xs leading-5 text-cream/70">
                                 Kullanmak istediğin puanı seç. Hepsini kullan dediğinde hesabındaki kullanılabilir puanın tamamı uygulanır.
                               </p>
                               <div className="mt-3 grid gap-2">
                                 <button
                                   type="button"
                                   onClick={() => selectRostaPointAmount(0)}
-                                  className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs transition ${selectedRostaPoints === 0 ? "border-gold-dark bg-cream text-ink" : "border-gold/15 bg-white text-ink hover:border-gold-dark"}`}
+                                  className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs transition ${selectedRostaPoints === 0 ? "border-brick bg-carbon-soft text-cream" : "border-kraft/35 bg-carbon-soft text-cream active:border-brick focus-visible:border-brick focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"}`}
                                 >
                                   <span>Puan kullanma</span>
                                   <span>0 TL</span>
@@ -1626,7 +1626,7 @@ export function CheckoutClient() {
                                       key={amount}
                                       type="button"
                                       onClick={() => selectRostaPointAmount(amount)}
-                                      className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs transition ${selected ? "border-gold-dark bg-ink text-cream" : "border-gold/15 bg-white text-ink hover:border-gold-dark"}`}
+                                      className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs transition ${selected ? "border-brick bg-brick text-[var(--rosta-action-text)]" : "border-kraft/35 bg-carbon-soft text-cream active:border-brick focus-visible:border-brick focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"}`}
                                     >
                                       <span>{amount.toLocaleString("tr-TR")} Points</span>
                                       <span>-{formatPrice(pointsToLira(amount), "TRY")}</span>
@@ -1636,7 +1636,7 @@ export function CheckoutClient() {
                                 <button
                                   type="button"
                                   onClick={useAllRostaPoints}
-                                  className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs font-medium uppercase tracking-wide-luxe transition ${useRostaPoints && selectedRostaPoints === maxRostaPointsForCheckout ? "border-gold-dark bg-ink text-cream" : "border-gold/15 bg-white text-ink hover:border-gold-dark"}`}
+                                  className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-xs font-medium uppercase tracking-wide-luxe transition ${useRostaPoints && selectedRostaPoints === maxRostaPointsForCheckout ? "border-brick bg-brick text-[var(--rosta-action-text)]" : "border-kraft/35 bg-carbon-soft text-cream active:border-brick focus-visible:border-brick focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"}`}
                                 >
                                   <span>Hepsini Kullan</span>
                                   <span>{maxRostaPointsForCheckout.toLocaleString("tr-TR")} Points</span>
@@ -1644,7 +1644,7 @@ export function CheckoutClient() {
                               </div>
                             </div>
                           ) : (
-                            <p className="rounded-lg border border-gold/10 bg-cream/70 px-3 py-2 text-xs leading-5 text-muted-ruth">
+                            <p className="rounded-lg border border-kraft/25 bg-carbon-soft/70 px-3 py-2 text-xs leading-5 text-cream/70">
                               Kullanılabilir ROSTA Points bulunmuyor. Alışveriş tamamladıkça puanın burada görünecek.
                             </p>
                           )}
@@ -1653,40 +1653,40 @@ export function CheckoutClient() {
                     </>
                   ) : (
                     <div className="px-4 py-4 text-sm">
-                      <p className="font-heading text-ink">ROSTA Points</p>
-                      <p className="mt-1 text-xs leading-5 text-muted-ruth">
+                      <p className="font-heading text-cream">ROSTA Points</p>
+                      <p className="mt-1 text-xs leading-5 text-cream/70">
                         Üye ol, {ROSTA_WELCOME_POINTS.toLocaleString("tr-TR")} ROSTA Points kazan ve ödeme adımında {formatPrice(200, "TRY")} indirim kullan.
                       </p>
-                      <Link href="/login?redirect=/checkout" className="mt-3 inline-block text-xs uppercase tracking-wide-luxe text-gold-dark underline underline-offset-4">
+                      <Link href="/login?redirect=/checkout" className="mt-3 inline-block text-xs uppercase tracking-wide-luxe text-brick underline underline-offset-4">
                         Giriş Yap / Üye Ol
                       </Link>
                     </div>
                   )}
                 </div>
 
-                <div className="rounded-xl border border-gold/10 bg-ivory p-4 text-sm">
-                  <p className="font-heading text-ink">İndirim Kullan</p>
-                  <p className="mt-1 text-xs leading-5 text-muted-ruth">Kupon kodunu veya hesabındaki yorum indirimini kullan.</p>
+                <div className="rounded-xl border border-kraft/25 bg-carbon p-4 text-sm">
+                  <p className="font-heading text-cream">İndirim Kullan</p>
+                  <p className="mt-1 text-xs leading-5 text-cream/70">Kupon kodunu veya hesabındaki yorum indirimini kullan.</p>
                   <div className="mt-3 flex gap-2">
                     <input
-                      className="min-w-0 flex-1 rounded-lg border border-gold/15 bg-white px-3 py-2.5 text-sm uppercase outline-none transition focus:border-gold-dark"
+                      className="min-w-0 flex-1 rounded-lg border border-kraft/35 bg-carbon-soft px-3 py-2.5 text-sm uppercase outline-none transition focus:border-brick"
                       value={couponInput}
                       onChange={(event) => setCouponInput(event.target.value.toLocaleUpperCase("tr-TR").replace(/\s+/g, ""))}
                       placeholder="KUPON KODU"
                     />
-                    <button type="button" onClick={applyCouponCode} disabled={quoteLoading} className="rounded-lg border border-gold-dark bg-ink px-4 py-2 text-xs uppercase tracking-wide-luxe text-cream disabled:opacity-50">
+                    <button type="button" onClick={applyCouponCode} disabled={quoteLoading} className="rounded-lg border border-brick bg-brick px-4 py-2 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)] disabled:opacity-50">
                       {quoteLoading ? "..." : "Uygula"}
                     </button>
                   </div>
                   {appliedCoupon && (
-                    <button type="button" onClick={clearAccountDiscount} className="mt-2 text-xs text-gold-dark underline underline-offset-4">
+                    <button type="button" onClick={clearAccountDiscount} className="mt-2 text-xs text-brick underline underline-offset-4">
                       {appliedCoupon.code} kodunu kaldır
                     </button>
                   )}
                   {user ? (
                     <div className="mt-3 space-y-2">
                       {couponLoading ? (
-                        <div className="h-12 animate-pulse rounded-lg bg-cream" />
+                        <div className="h-12 animate-pulse rounded-lg bg-carbon-soft" />
                       ) : availableDiscounts.length ? (
                         availableDiscounts.map((discount) => {
                           const selected = appliedCoupon?.code === discount.code;
@@ -1695,46 +1695,46 @@ export function CheckoutClient() {
                               key={discount.code}
                               type="button"
                               onClick={() => selected ? clearAccountDiscount() : selectAccountDiscount(discount)}
-                              className={`w-full rounded-lg border px-3 py-3 text-left transition ${selected ? "border-gold-dark bg-ink text-cream" : "border-gold/15 bg-cream text-ink hover:border-gold-dark"}`}
+                              className={`w-full rounded-lg border px-3 py-3 text-left transition ${selected ? "border-brick bg-brick text-[var(--rosta-action-text)]" : "border-kraft/35 bg-carbon-soft text-cream active:border-brick focus-visible:border-brick focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"}`}
                             >
                               <span className="block font-heading text-sm">{discount.title || "Yorum indirimi"}</span>
-                              <span className={`mt-1 block text-xs ${selected ? "text-cream/75" : "text-muted-ruth"}`}>%{discount.discountPercent} indirim · Ödemede kullan</span>
+                              <span className={`mt-1 block text-xs ${selected ? "text-cream/75" : "text-cream/70"}`}>%{discount.discountPercent} indirim · Ödemede kullan</span>
                             </button>
                           );
                         })
                       ) : (
-                        <p className="rounded-lg border border-gold/10 bg-cream px-3 py-3 text-xs leading-5 text-muted-ruth">
+                        <p className="rounded-lg border border-kraft/25 bg-carbon-soft px-3 py-3 text-xs leading-5 text-cream/70">
                           Hesabında kullanılabilir indirim yok.
                         </p>
                       )}
                     </div>
                   ) : (
-                    <Link href="/login?redirect=/checkout" className="mt-3 inline-block text-xs uppercase tracking-wide-luxe text-gold-dark underline underline-offset-4">
+                    <Link href="/login?redirect=/checkout" className="mt-3 inline-block text-xs uppercase tracking-wide-luxe text-brick underline underline-offset-4">
                       İndirimlerini görmek için giriş yap
                     </Link>
                   )}
-                  {couponMessage && <p className="mt-2 text-xs leading-5 text-muted-ruth">{couponMessage}</p>}
+                  {couponMessage && <p className="mt-2 text-xs leading-5 text-cream/70">{couponMessage}</p>}
                 </div>
 
                 </>
 
                 {(automaticDiscount > 0 || rostaPointDiscount > 0 || couponDiscount > 0) && (
-                  <div className="rounded-lg border border-gold/10 bg-ivory/75 p-3 text-sm">
-                    <p className="mb-2 text-[10px] uppercase tracking-wide-luxe text-muted-ruth">Kullanılan indirim ve puanlar</p>
+                  <div className="rounded-lg border border-kraft/25 bg-carbon/75 p-3 text-sm">
+                    <p className="mb-2 text-[10px] uppercase tracking-wide-luxe text-cream/70">Kullanılan indirim ve puanlar</p>
                     {automaticDiscount > 0 && (
-                      <div className="flex justify-between text-gold-dark">
+                      <div className="flex justify-between text-brick">
                         <span>Otomatik ürün/kampanya indirimi</span>
                         <span>-{formatPrice(automaticDiscount, "TRY")}</span>
                       </div>
                     )}
                     {rostaPointDiscount > 0 && (
-                      <div className="flex justify-between text-gold-dark">
+                      <div className="flex justify-between text-brick">
                         <span>{rostaPointsToUse.toLocaleString("tr-TR")} ROSTA Points</span>
                         <span>-{formatPrice(rostaPointDiscount, "TRY")}</span>
                       </div>
                     )}
                     {couponDiscount > 0 && (
-                      <div className="mt-1 flex justify-between text-gold-dark">
+                      <div className="mt-1 flex justify-between text-brick">
                         <span>{appliedCoupon?.title || "Kupon indirimi"}</span>
                         <span>-{formatPrice(couponDiscount, "TRY")}</span>
                       </div>
@@ -1743,59 +1743,59 @@ export function CheckoutClient() {
                 )}
 
                 {selectedInstallment > 0 && selectedInstallmentOption ? (
-                  <div className="rounded-lg border border-gold/15 bg-ivory/75 p-3 text-sm">
-                    <div className="flex justify-between text-muted-ruth">
+                  <div className="rounded-lg border border-kraft/35 bg-carbon/75 p-3 text-sm">
+                    <div className="flex justify-between text-cream/70">
                       <span>Peşin fiyat</span>
                       <span>{formatPrice(checkoutTotal, "TRY")}</span>
                     </div>
-                    <div className="mt-1 flex justify-between text-gold-dark">
+                    <div className="mt-1 flex justify-between text-brick">
                       <span>{selectedInstallment} taksit vade farkı (%{installmentRate.toLocaleString("tr-TR", { maximumFractionDigits: 4 })})</span>
                       <span>+{formatPrice(installmentFee, "TRY")}</span>
                     </div>
-                    <div className="mt-2 flex justify-between font-medium text-ink">
+                    <div className="mt-2 flex justify-between font-medium text-cream">
                       <span>Aylık ödeme</span>
                       <span>{formatPrice(installmentMonthly, "TRY")} × {selectedInstallment}</span>
                     </div>
                   </div>
                 ) : null}
 
-                <div className="border-t border-gold/15 pt-4">
+                <div className="border-t border-kraft/35 pt-4">
                   {selectedInstallment > 0 ? (
                     <div className="flex items-end justify-between gap-4 font-heading">
                       <span className="text-base">Taksitli toplam</span>
-                      <span className="text-2xl text-ink">{formatPrice(installmentTotal, "TRY")}</span>
+                      <span className="text-2xl text-cream">{formatPrice(installmentTotal, "TRY")}</span>
                     </div>
                   ) : checkoutTotal < normalCheckoutTotal ? (
                     <>
-                      <div className="flex items-center justify-between text-sm text-muted-ruth">
+                      <div className="flex items-center justify-between text-sm text-cream/70">
                         <span>Siparişin normal fiyatı</span>
                         <span className="line-through opacity-70">{formatPrice(normalCheckoutTotal, "TRY")}</span>
                       </div>
                       <div className="mt-2 flex items-end justify-between gap-4 font-heading">
                         <span className="text-base">İndirimli toplam</span>
-                        <span className="text-2xl text-ink">{formatPrice(checkoutTotal, "TRY")}</span>
+                        <span className="text-2xl text-cream">{formatPrice(checkoutTotal, "TRY")}</span>
                       </div>
-                      <p className="mt-2 text-right text-xs font-medium text-gold-dark">
+                      <p className="mt-2 text-right text-xs font-medium text-brick">
                         Toplam {formatPrice(Math.max(0, normalCheckoutTotal - checkoutTotal), "TRY")} avantaj sağladın.
                       </p>
                     </>
                   ) : (
                     <div className="flex items-end justify-between gap-4 font-heading">
                       <span className="text-base">Toplam</span>
-                      <span className="text-2xl text-ink">{formatPrice(checkoutTotal, "TRY")}</span>
+                      <span className="text-2xl text-cream">{formatPrice(checkoutTotal, "TRY")}</span>
                     </div>
                   )}
                 </div>
               </div>
 
               {draftNotice && (
-                <p className="mt-5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-xs leading-5 text-green-700">
+                <p className="mt-5 rounded-lg border border-[var(--ruth-color-success)]/40 bg-[var(--ruth-color-success-soft)] px-4 py-3 text-xs leading-5 text-[var(--ruth-color-success-text)]">
                   {draftNotice}
                 </p>
               )}
 
               {error && (
-                <p className="mt-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-xs leading-5 text-red-700">
+                <p className="mt-5 rounded-lg border border-[var(--ruth-color-danger)]/40 bg-[var(--ruth-color-danger-soft)] px-4 py-3 text-xs leading-5 text-[var(--ruth-color-danger-text)]">
                   {error}
                 </p>
               )}
@@ -1803,7 +1803,7 @@ export function CheckoutClient() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="mt-5 flex w-full items-center justify-center gap-2 bg-ink px-5 py-3.5 text-center text-xs uppercase tracking-wide-luxe text-cream transition hover:bg-gold-dark disabled:cursor-not-allowed disabled:opacity-60"
+                className="mt-5 flex w-full items-center justify-center gap-2 bg-brick px-5 py-3.5 text-center text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)] transition active:bg-espresso focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <CreditCard size={15} />
                 {isSubmitting ? "Ödeme hazırlanıyor..." : "Ödeme Yap"}
@@ -1815,12 +1815,12 @@ export function CheckoutClient() {
                   { icon: Shield, title: "Güvenli", lines: ["PAYTR ile Güvenli Ödeme"] },
                   { icon: RefreshCw, title: "Değişim", lines: ["Destek ile hızlı süreç", "14 Gün içerisinde iade ve değişim"] },
                 ].map((item) => (
-                  <div key={item.title} className="rounded-lg border border-gold/15 bg-cream px-2 py-4">
-                    <item.icon className="mx-auto mb-2 text-gold-dark" size={18} />
-                    <p className="text-[10px] uppercase tracking-wide-luxe text-muted-ruth">{item.title}</p>
+                  <div key={item.title} className="rounded-lg border border-kraft/35 bg-carbon-soft px-2 py-4">
+                    <item.icon className="mx-auto mb-2 text-brick" size={18} />
+                    <p className="text-[10px] uppercase tracking-wide-luxe text-cream/70">{item.title}</p>
                     <div className="mt-2 space-y-1">
                       {item.lines.map((line) => (
-                        <p key={line} className="mx-auto max-w-[7.2rem] text-[10px] leading-4 text-muted-ruth">{line}</p>
+                        <p key={line} className="mx-auto max-w-[7.2rem] text-[10px] leading-4 text-cream/70">{line}</p>
                       ))}
                     </div>
                   </div>

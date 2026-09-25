@@ -12,6 +12,8 @@ import "@ruth-commerce/ui/operations.css";
 import "@ruth-commerce/ui/order-card.css";
 import "@ruth-commerce/ui/search-shell.css";
 import "./globals.css";
+import "./theme.css";
+import "./storefront-backgrounds.css";
 import "./rosta-points-motion.css";
 import "./product-image-standard.css";
 import "./product-header-contrast.css";
@@ -52,7 +54,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#F4F0E8",
+  themeColor: "#111111",
 };
 
 export const metadata: Metadata = {
@@ -115,34 +117,48 @@ export default async function RootLayout({
     getCachedCollections(),
   ]);
 
-  const colors = themeSettings.colors;
   const themeStyle = {
-    "--ivory": colors.ivory || "#F4F0E8",
-    "--cream": colors.cream || "#F4F0E8",
-    "--ink": colors.ink || "#111111",
-    "--gold": colors.gold || "#B9563D",
-    "--gold-dark": colors.goldDark || "#2B1B16",
-    "--muted-foreground": colors.muted || "#6F725B",
-    "--background": colors.ivory || "#F4F0E8",
-    "--foreground": colors.ink || "#111111",
+    "--rosta-carbon": "#111111",
+    "--rosta-carbon-soft": "#242424",
+    "--rosta-cream": "#FBF3E6",
+    "--rosta-espresso": "#38251C",
+    "--rosta-brick-b": "#C94A40",
+    "--rosta-cocoa": "#6B4638",
+    "--rosta-kraft": "#C8A77D",
+    "--rosta-action-text": "#FFFFFF",
+    "--background": "#111111",
+    "--foreground": "#FBF3E6",
+    "--ivory": "#FBF3E6",
+    "--cream": "#FBF3E6",
+    "--ink": "#111111",
+    "--gold": "#C94A40",
+    "--gold-dark": "#38251C",
+    "--bronze": "#6B4638",
+    "--muted-foreground": "#6B4638",
     "--font-heading": 'var(--font-archivo), "Arial Black", "Helvetica Neue", Arial, sans-serif',
     "--font-body": 'var(--font-inter), "Helvetica Neue", Arial, sans-serif',
     "--font-editorial": 'var(--font-archivo), "Arial Black", "Helvetica Neue", Arial, sans-serif',
     "--ruth-font-display": 'var(--font-archivo), "Arial Black", "Helvetica Neue", Arial, sans-serif',
     "--ruth-font-body": 'var(--font-inter), "Helvetica Neue", Arial, sans-serif',
-    "--ruth-color-canvas": colors.ivory || "#F4F0E8",
-    "--ruth-color-surface": colors.cream || "#F4F0E8",
-    "--ruth-color-surface-muted": colors.cream || "#F4F0E8",
-    "--ruth-color-text-primary": colors.ink || "#111111",
-    "--ruth-color-text-muted": colors.muted || "#6F725B",
-    "--ruth-color-accent": colors.gold || "#B9563D",
-    "--ruth-color-accent-soft": "color-mix(in srgb, #B9563D 28%, #F4F0E8)",
-    "--ruth-color-accent-strong": colors.goldDark || "#2B1B16",
-    "--ruth-color-border-subtle": "rgba(170, 168, 161, 0.48)",
-    "--ruth-color-border-strong": "#AAA8A1",
-    "--ruth-color-focus": "#B9563D",
-    "--ruth-color-overlay": "rgba(17, 17, 17, 0.44)",
-    "--ruth-color-text-inverse": "#F4F0E8",
+    "--ruth-color-canvas": "#111111",
+    "--ruth-color-surface": "#242424",
+    "--ruth-color-surface-muted": "#242424",
+    "--ruth-color-surface-elevated": "#242424",
+    "--ruth-color-surface-inverse": "#FBF3E6",
+    "--ruth-color-text-primary": "#FBF3E6",
+    "--ruth-color-text-muted": "color-mix(in srgb, #FBF3E6 72%, transparent)",
+    "--ruth-color-text-inverse": "#FBF3E6",
+    "--ruth-color-text-on-light": "#111111",
+    "--ruth-color-text-on-action": "#FFFFFF",
+    "--ruth-color-accent": "#C94A40",
+    "--ruth-color-accent-soft": "color-mix(in srgb, #C94A40 15%, transparent)",
+    "--ruth-color-accent-strong": "#38251C",
+    "--ruth-color-accent-wash": "color-mix(in srgb, #C94A40 15%, transparent)",
+    "--ruth-color-border-subtle": "color-mix(in srgb, #C8A77D 42%, transparent)",
+    "--ruth-color-border-strong": "#C8A77D",
+    "--ruth-color-focus": "#C94A40",
+    "--ruth-color-selected": "#C94A40",
+    "--ruth-color-overlay": "color-mix(in srgb, #111111 72%, transparent)",
     "--announcement-height": themeSettings.announcement.enabled ? "34px" : "0px",
   } as React.CSSProperties;
 

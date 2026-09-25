@@ -90,7 +90,7 @@ export default function ProductImage({
   };
 
   const loadEagerly = priority || eager;
-  const mediaClassName = `h-full w-full ${hoverScale ? "ruth-motion-media group-hover:scale-[1.018]" : ""}`;
+  const mediaClassName = `h-full w-full ${hoverScale ? "ruth-motion-media ruth-product-image-hover-scale" : ""}`;
   const mediaFit: "cover" | "contain" = video && !className.includes("ruth-product-lightbox__zoom-image")
     ? "cover"
     : fit;
@@ -129,7 +129,7 @@ export default function ProductImage({
         )
       ) : (
         <div className="ruth-card-gradient flex h-full w-full items-center justify-center p-8 text-center">
-          <span className="font-heading text-3xl text-white/85">{product.name}</span>
+          <span className="font-heading text-3xl text-cream/85">{product.name}</span>
         </div>
       )}
     </div>

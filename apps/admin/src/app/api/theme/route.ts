@@ -9,12 +9,12 @@ export const runtime = "nodejs";
 const THEME_KEY = "theme_customizer";
 
 const ROSTA_COLORS = {
-  ivory: "#F4F0E8",
-  cream: "#F4F0E8",
-  ink: "#111111",
-  gold: "#B9563D",
-  goldDark: "#2B1B16",
-  muted: "#6F725B",
+  ivory: "#111111",
+  cream: "#242424",
+  ink: "#FBF3E6",
+  gold: "#C94A40",
+  goldDark: "#38251C",
+  muted: "#6B4638",
 };
 
 function preserveHeaderChildren(settings: any) {

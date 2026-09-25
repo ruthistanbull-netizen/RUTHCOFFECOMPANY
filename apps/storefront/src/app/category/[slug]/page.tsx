@@ -54,7 +54,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   const description = isNewArrivals ? "ROSTA Coffee Co.’nun en yeni ürünleri." : category?.description || categoryDescription(category?.slug);
 
   return (
-    <div className="min-h-screen bg-ivory px-4 pb-24 pt-[calc(var(--announcement-height,0px)+128px)] md:px-8">
+    <div className="min-h-screen bg-carbon px-4 pb-24 pt-[calc(var(--announcement-height,0px)+128px)] text-cream md:px-8">
       <div className="mx-auto max-w-7xl">
         <PageIntro eyebrow="Kategori" title={name} description={description} className="mb-12 md:mb-20" />
         <ProductCatalog

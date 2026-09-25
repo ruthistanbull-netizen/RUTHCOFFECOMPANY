@@ -1,60 +1,58 @@
-/* ROSTA Coffee Co. admin — Desert Rose warm surface system.
-   This file is imported last on purpose so legacy/page-specific cold whites are
-   normalized without touching the existing gold accent system or dark mode. */
+/* ROSTA Global Color System v2.3
+ * Legacy admin surface compatibility layer.
+ * This file previously forced a light "Desert Rose" theme; it now keeps the
+ * same selectors inside the Carbon-dominant semantic palette.
+ */
 
-html:not(.dark) {
-  /* Reference palette: canvas #FBF1EA, surface #FFF9F5. */
-  --app-background: 25 68% 95.1%;
-  --surface-primary: 24 100% 98%;
-  --surface-secondary: 24 68% 96.4%;
-  --surface-tertiary: 24 57% 91.5%;
-
-  /* Warm separators and neutral fills; no steel/blue cast. */
-  --border-subtle: 21 38% 88.5%;
-  --border-strong: 21 41% 80.8%;
-  --neutral-soft: 24 34% 93%;
-
-  /* Existing gold accent tokens intentionally remain untouched. */
-  --shadow-card:
-    0 2px 8px -2px rgba(113, 67, 45, 0.045),
-    0 8px 24px -8px rgba(113, 67, 45, 0.055);
-  --shadow-floating:
-    0 14px 42px -10px rgba(104, 61, 40, 0.14),
-    0 6px 18px -5px rgba(104, 61, 40, 0.07);
-  --shadow-sticky:
-    0 1px 3px rgba(104, 61, 40, 0.045),
-    0 1px 2px rgba(104, 61, 40, 0.03);
-  --shadow-overlay: 0 24px 64px -12px rgba(78, 45, 31, 0.24);
-}
-
+html,
 html:not(.dark),
-html:not(.dark) body {
-  background-color: #fbf1ea;
+html.dark {
+  --app-background: 0 0% 6.7%;
+  --surface-primary: 0 0% 14.1%;
+  --surface-secondary: 0 0% 14.1%;
+  --surface-tertiary: 19.3 33.3% 16.5%;
+  --border-subtle: 33.6 40.5% 63.7% / .42;
+  --border-strong: 33.6 40.5% 63.7%;
+  --neutral-soft: 228 14.3% 93.1%;
+  --shadow-card:
+    0 2px 8px -2px color-mix(in srgb, var(--rosta-carbon) 30%, transparent),
+    0 8px 24px -8px color-mix(in srgb, var(--rosta-carbon) 24%, transparent);
+  --shadow-floating:
+    0 14px 42px -10px color-mix(in srgb, var(--rosta-carbon) 54%, transparent),
+    0 6px 18px -5px color-mix(in srgb, var(--rosta-carbon) 34%, transparent);
+  --shadow-sticky: 0 1px 3px color-mix(in srgb, var(--rosta-carbon) 32%, transparent);
+  --shadow-overlay: 0 24px 64px -12px color-mix(in srgb, var(--rosta-carbon) 64%, transparent);
 }
 
-/* Tailwind/legacy components that still ask for literal white should inherit the
-   warm panel surface instead of reintroducing a cold white patch. */
-html:not(.dark) [class~="bg-white"] {
-  background-color: #fff9f5 !important;
+html,
+html body,
+html:not(.dark),
+html:not(.dark) body,
+html.dark,
+html.dark body {
+  background-color: var(--rosta-carbon);
+  color: var(--rosta-cream);
 }
 
-/* Common native controls may be rendered outside a card token in older pages. */
-html:not(.dark) :where(
+html :where([class~="bg-white"]) {
+  background-color: var(--rosta-carbon-soft) !important;
+}
+
+html :where(
   [data-exact-base44-page],
   [data-ruth-admin-page]
 ) :where(input, textarea, select)[class~="bg-white"] {
-  background-color: #fff9f5 !important;
+  background-color: var(--rosta-carbon-soft) !important;
+  color: var(--rosta-cream) !important;
 }
 
-/* RR HUB authentication screens intentionally stay on the same black surface
-   as the brand-selection screen. Their colors are owned by ExactAuth.tsx. */
+/* RR HUB auth screens own their visual system in ExactAuth.tsx.
+   Keep the legacy surface compatibility layer out of login/reset routes. */
 
-/* Net Sales should lift evenly from the Desert Rose canvas. Keep this ambient
-   and symmetric: no strong bottom cast, no inner glow, no change to the gold. */
-html:not(.dark) [aria-label="Net satışı oluşturan siparişleri aç"] > article {
+[aria-label="Net satışı oluşturan siparişleri aç"] > article {
   box-shadow:
-    0 0 0 1px rgba(91, 55, 38, 0.025),
-    0 0 16px rgba(91, 55, 38, 0.105),
-    0 0 32px rgba(91, 55, 38, 0.055) !important;
+    0 0 0 1px color-mix(in srgb, var(--rosta-kraft) 22%, transparent),
+    0 0 16px color-mix(in srgb, var(--rosta-carbon) 40%, transparent),
+    0 0 32px color-mix(in srgb, var(--rosta-carbon) 24%, transparent) !important;
 }
 

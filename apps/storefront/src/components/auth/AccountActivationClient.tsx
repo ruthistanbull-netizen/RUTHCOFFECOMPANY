@@ -157,31 +157,31 @@ export function AccountActivationClient() {
   };
 
   return (
-    <div className="min-h-screen bg-ivory px-4 pb-24 pt-28 md:px-8 md:pt-32">
-      <div className="mx-auto max-w-md rounded-2xl border border-gold/15 bg-cream p-6 shadow-sm md:p-8">
-        <p className="mb-3 text-xs uppercase tracking-wide-luxe text-gold-dark">ROSTA Coffee</p>
+    <div className="min-h-screen bg-carbon px-4 pb-24 pt-28 md:px-8 md:pt-32 text-cream">
+      <div className="mx-auto max-w-md rounded-2xl border border-kraft/35 bg-carbon-soft p-6 shadow-sm md:p-8">
+        <p className="mb-3 text-xs uppercase tracking-wide-luxe text-brick">ROSTA Coffee</p>
         <h1 className="font-heading text-4xl">Hesabını Aktifleştir</h1>
-        <p className="mt-3 text-sm leading-7 text-muted-ruth">
+        <p className="mt-3 text-sm leading-7 text-cream/70">
           ROSTA hesabını etkinleştirmek için yeni şifreni belirle. Hesabına bağlı sipariş ve ROSTA Points bilgilerin erişilebilir kalır.
         </p>
 
         {checking ? (
-          <div className="mt-8 flex items-center gap-3 rounded-xl border border-gold/15 bg-ivory p-4 text-sm text-muted-ruth" role="status" aria-busy="true">
+          <div className="mt-8 flex items-center gap-3 rounded-xl border border-kraft/35 bg-carbon p-4 text-sm text-cream/70" role="status" aria-busy="true">
             <LoadingIndicator size="sm" /> Bağlantı doğrulanıyor…
           </div>
         ) : !ready ? (
-          <div className="mt-8 rounded-xl border border-red-200 bg-red-50 p-4 text-sm leading-6 text-red-700">
+          <div className="mt-8 rounded-xl border border-[var(--ruth-color-danger)]/40 bg-[var(--ruth-color-danger-soft)] p-4 text-sm leading-6 text-[var(--ruth-color-danger-text)]">
             {error || "Bu hesap aktivasyon bağlantısının süresi dolmuş veya bağlantı daha önce kullanılmış."}
           </div>
         ) : (
           <form onSubmit={submit} className="mt-7 space-y-4">
             <div>
               <div className="mb-2 flex items-center justify-between gap-4">
-                <span className="text-xs uppercase tracking-wide-luxe text-muted-ruth">E-posta</span>
+                <span className="text-xs uppercase tracking-wide-luxe text-cream/70">E-posta</span>
                 <button
                   type="button"
                   onClick={toggleEmailEditing}
-                  className="text-[11px] font-medium uppercase tracking-wide-luxe text-gold-dark underline-offset-4 hover:underline"
+                  className="text-[11px] font-medium uppercase tracking-wide-luxe text-brick underline-offset-4 focus-visible:underline"
                 >
                   {editingEmail ? "Vazgeç" : "Değiştir"}
                 </button>
@@ -195,17 +195,17 @@ export function AccountActivationClient() {
                 value={emailDraft}
                 onChange={(event) => setEmailDraft(event.target.value)}
                 className={editingEmail
-                  ? "w-full rounded-lg border border-gold/30 bg-ivory px-4 py-3 text-sm text-ink outline-none transition focus:border-gold-dark"
-                  : "w-full cursor-not-allowed rounded-lg border border-transparent bg-black/[0.035] px-4 py-3 text-sm text-muted-ruth outline-none"}
+                  ? "w-full rounded-lg border border-kraft/50 bg-carbon px-4 py-3 text-sm text-cream outline-none transition focus:border-brick-dark"
+                  : "w-full cursor-not-allowed rounded-lg border border-transparent bg-carbon-soft px-4 py-3 text-sm text-cream/70 outline-none"}
               />
               {editingEmail ? (
-                <p className="mt-2 text-xs leading-5 text-muted-ruth">
+                <p className="mt-2 text-xs leading-5 text-cream/70">
                   Yeni e-posta adresi aynı hesabına bağlanır. Güvenlik ayarına göre yeni adrese doğrulama e-postası gönderilebilir.
                 </p>
               ) : null}
             </div>
 
-            <label className="block text-xs uppercase tracking-wide-luxe text-muted-ruth">
+            <label className="block text-xs uppercase tracking-wide-luxe text-cream/70">
               Yeni Şifre
               <input
                 required
@@ -214,10 +214,10 @@ export function AccountActivationClient() {
                 autoComplete="new-password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                className="mt-2 w-full rounded-lg border border-gold/20 bg-ivory px-4 py-3 text-sm normal-case tracking-normal text-ink outline-none transition focus:border-gold-dark"
+                className="mt-2 w-full rounded-lg border border-kraft/40 bg-carbon px-4 py-3 text-sm normal-case tracking-normal text-cream outline-none transition focus:border-brick-dark"
               />
             </label>
-            <label className="block text-xs uppercase tracking-wide-luxe text-muted-ruth">
+            <label className="block text-xs uppercase tracking-wide-luxe text-cream/70">
               Şifreyi Tekrarla
               <input
                 required
@@ -226,17 +226,17 @@ export function AccountActivationClient() {
                 autoComplete="new-password"
                 value={confirmPassword}
                 onChange={(event) => setConfirmPassword(event.target.value)}
-                className="mt-2 w-full rounded-lg border border-gold/20 bg-ivory px-4 py-3 text-sm normal-case tracking-normal text-ink outline-none transition focus:border-gold-dark"
+                className="mt-2 w-full rounded-lg border border-kraft/40 bg-carbon px-4 py-3 text-sm normal-case tracking-normal text-cream outline-none transition focus:border-brick-dark"
               />
             </label>
 
-            {error ? <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div> : null}
+            {error ? <div className="rounded-lg border border-[var(--ruth-color-danger)]/40 bg-[var(--ruth-color-danger-soft)] px-4 py-3 text-sm text-[var(--ruth-color-danger-text)]">{error}</div> : null}
 
             <button
               type="submit"
               disabled={saving}
               aria-busy={saving || undefined}
-              className="flex w-full items-center justify-center gap-2 bg-ink px-8 py-4 text-xs uppercase tracking-wide-luxe text-cream transition hover:bg-gold-dark disabled:cursor-not-allowed disabled:opacity-60"
+              className="flex w-full items-center justify-center gap-2 bg-brick px-8 py-4 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)] transition active:bg-espresso disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
             >
               {saving ? <LoadingIndicator size="sm" /> : null}
               {saving ? "Kaydediliyor" : "Hesabımı Aktifleştir"}

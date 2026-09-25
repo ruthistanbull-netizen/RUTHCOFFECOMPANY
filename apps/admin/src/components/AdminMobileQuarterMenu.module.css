@@ -3,7 +3,7 @@
   inset: 0;
   z-index: 2147483300;
   border: 0;
-  background: rgba(10, 10, 12, 0.18);
+  background: var(--ruth-color-overlay);
   cursor: default;
   touch-action: none;
   overscroll-behavior: none;
@@ -11,14 +11,14 @@
 }
 
 .root {
-  --quarter-menu-surface: #1d1e20;
-  --quarter-menu-surface-raised: #252629;
-  --quarter-menu-accent: #c9a23a;
-  --quarter-menu-accent-strong: #e2c76b;
-  --quarter-menu-accent-soft: rgba(201, 162, 58, 0.18);
-  --quarter-menu-muted: #b8bbc0;
-  --quarter-menu-muted-soft: #9da0a6;
-  --quarter-menu-white: #fffaf0;
+  --quarter-menu-surface: var(--rosta-carbon);
+  --quarter-menu-surface-raised: var(--rosta-carbon-soft);
+  --quarter-menu-accent: var(--rosta-brick-b);
+  --quarter-menu-accent-strong: var(--rosta-espresso);
+  --quarter-menu-accent-soft: color-mix(in srgb, var(--rosta-brick-b) 18%, transparent);
+  --quarter-menu-muted: color-mix(in srgb, var(--rosta-cream) 72%, transparent);
+  --quarter-menu-muted-soft: color-mix(in srgb, var(--rosta-cream) 56%, transparent);
+  --quarter-menu-white: var(--rosta-cream);
 
   position: fixed;
   right: 0;
@@ -78,7 +78,7 @@
   fill: var(--quarter-menu-surface);
   stroke: none;
   vector-effect: non-scaling-stroke;
-  filter: drop-shadow(-6px -6px 15px rgba(0, 0, 0, 0.23));
+  filter: drop-shadow(-6px -6px 15px color-mix(in srgb, var(--rosta-carbon) 58%, transparent));
 }
 
 .accentWedge {
@@ -111,7 +111,7 @@
 }
 
 .activeSegment {
-  fill: rgba(255, 255, 255, 0.055);
+  fill: color-mix(in srgb, var(--rosta-cream) 6%, transparent);
 }
 
 .selectedSegment {
@@ -128,7 +128,7 @@
    gap cleanly without rounded caps or side overhang. */
 .selectedOuterArc {
   fill: none;
-  stroke: rgba(255, 250, 240, 0.98);
+  stroke: color-mix(in srgb, var(--rosta-cream) 98%, transparent);
   stroke-width: 5.2px;
   stroke-linecap: butt;
   stroke-linejoin: miter;
@@ -138,7 +138,7 @@
   transform-box: view-box;
   transform-origin: 360px 360px;
   transform: scale(1.0031);
-  filter: drop-shadow(0 0 2px rgba(255, 250, 240, 0.22));
+  filter: drop-shadow(0 0 2px color-mix(in srgb, var(--rosta-cream) 22%, transparent));
 }
 
 .segmentIcon,
@@ -154,7 +154,7 @@
   color: var(--quarter-menu-white);
 }
 
-/* Gold submenu slices use the same icon treatment as a gold/selected main
+/* Accent submenu slices use the same icon treatment as a selected main
    heading; dark submenu slices keep the same muted tone as dark main headings. */
 .subHitSegment ~ .subIcon {
   color: var(--quarter-menu-white);
@@ -184,7 +184,7 @@
   fill: var(--quarter-menu-surface);
   stroke: none;
   vector-effect: non-scaling-stroke;
-  filter: drop-shadow(-6px -6px 16px rgba(0, 0, 0, 0.24));
+  filter: drop-shadow(-6px -6px 16px color-mix(in srgb, var(--rosta-carbon) 62%, transparent));
   pointer-events: none;
 }
 
@@ -258,15 +258,15 @@
   pointer-events: none;
 }
 
-/* Closed control now uses the same Ruth gold as the Net Satış card. CSS owns
+/* Closed control uses ROSTA Brick as the primary interaction accent. CSS owns
    only the colour transition; Framer still owns the existing scale/open motion,
    so changing the colour cannot break the menu opening animation. */
 .core {
   fill: var(--quarter-menu-accent) !important;
-  stroke: rgba(151, 111, 20, .48);
+  stroke: color-mix(in srgb, var(--rosta-cocoa) 48%, transparent);
   stroke-width: 1.15px;
   vector-effect: non-scaling-stroke;
-  filter: drop-shadow(-9px -9px 20px rgba(0, 0, 0, 0.24));
+  filter: drop-shadow(-9px -9px 20px color-mix(in srgb, var(--rosta-carbon) 62%, transparent));
   transition: fill 420ms cubic-bezier(.22,1,.36,1), stroke 320ms ease;
 }
 
@@ -276,18 +276,18 @@
 }
 
 .burgerLine {
-  stroke: #1d1e20 !important;
+  stroke: var(--rosta-carbon) !important;
   stroke-width: 5.5;
   stroke-linecap: round;
   transition: stroke 260ms ease;
 }
 
 .root[data-open="true"] .burgerLine {
-  stroke: #fff !important;
+  stroke: var(--rosta-cream) !important;
 }
 
 .root[data-open="true"] .burgerLine:nth-of-type(2) {
-  stroke: rgba(255, 255, 255, 0) !important;
+  stroke: transparent !important;
 }
 
 .coreHit {

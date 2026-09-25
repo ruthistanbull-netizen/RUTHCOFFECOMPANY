@@ -178,7 +178,7 @@ export function AdminBackupProgress() {
               <button
                 type="button"
                 onClick={close}
-                className="flex h-10 w-10 shrink-0 touch-manipulation items-center justify-center rounded-full text-muted transition-colors hover:bg-surface-secondary hover:text-main active:bg-surface-secondary"
+                className="flex h-10 w-10 shrink-0 touch-manipulation items-center justify-center rounded-full text-muted transition-colors active:bg-surface-secondary focus-visible:bg-surface-secondary focus-visible:text-main focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                 aria-label="Yedek bildirimini kapat"
               >
                 <X className="h-4 w-4" />

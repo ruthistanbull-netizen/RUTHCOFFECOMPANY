@@ -252,7 +252,7 @@ function drawRibbon(
   context.fill(path);
 
   context.globalAlpha = 0.16 + energy * 0.12;
-  context.fillStyle = "rgba(210,238,255,.36)";
+  context.fillStyle = "rgba(251,243,230,.36)";
   context.shadowBlur = 10;
   context.fill(path);
 
@@ -281,7 +281,7 @@ function drawRibbon(
     const radius = 0.8 + (Math.sin(amount * 20 + time * 2 + config.phase) * 0.5 + 0.5) * 1.25;
     context.beginPath();
     context.arc(point.x, point.y, radius, 0, Math.PI * 2);
-    context.fillStyle = amount < 0.55 ? "rgba(140,232,255,.9)" : "rgba(222,126,255,.82)";
+    context.fillStyle = amount < 0.55 ? "rgba(200,167,125,.9)" : "rgba(201,74,64,.82)";
     context.fill();
   }
   context.restore();
@@ -338,9 +338,9 @@ export function mountRuthieRibbonFallback(
     context.translate(width / 2, height * 0.5);
 
     const glow = context.createRadialGradient(0, 0, 0, 0, 0, Math.min(width, height) * 0.42);
-    glow.addColorStop(0, `rgba(42,155,255,${0.12 + audio.level * 0.08})`);
-    glow.addColorStop(0.5, "rgba(91,70,255,.055)");
-    glow.addColorStop(0.78, "rgba(221,54,255,.028)");
+    glow.addColorStop(0, `rgba(201,74,64,${0.12 + audio.level * 0.08})`);
+    glow.addColorStop(0.5, "rgba(56,37,28,.055)");
+    glow.addColorStop(0.78, "rgba(200,167,125,.028)");
     glow.addColorStop(1, "rgba(0,0,0,0)");
     context.fillStyle = glow;
     context.beginPath();
@@ -354,7 +354,7 @@ export function mountRuthieRibbonFallback(
       context.save();
       context.rotate(elapsed * (orbit % 2 ? -0.018 : 0.022) * profile.speed + orbit * 0.4);
       context.setLineDash([width * 0.18, width * 0.08, width * 0.035, width * 0.12]);
-      context.strokeStyle = orbit < 2 ? "rgba(70,201,255,.22)" : "rgba(195,71,255,.18)";
+      context.strokeStyle = orbit < 2 ? "rgba(200,167,125,.22)" : "rgba(201,74,64,.18)";
       context.beginPath();
       context.ellipse(0, 0, width * (0.31 + orbit * 0.022), height * (0.23 - orbit * 0.01), orbit * 0.16, -2.4, 2.7);
       context.stroke();

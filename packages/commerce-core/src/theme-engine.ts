@@ -68,7 +68,7 @@ export type ThemeCustomizerSettings = {
 export const defaultThemeCustomizerSettings: ThemeCustomizerSettings = {
   announcement: { enabled: false, text: "2000 TL ve üzeri alışverişlerde ücretsiz kargo ✦", text2: "", href: "/products", intervalSeconds: 5 },
   logo: { src: "/rosta-coffee-co.svg", desktopWidth: 180, mobileWidth: 120 },
-  colors: { ivory: "#F4F0E8", cream: "#F4F0E8", ink: "#111111", gold: "#B9563D", goldDark: "#2B1B16", muted: "#6F725B" },
+  colors: { ivory: "#111111", cream: "#242424", ink: "#FBF3E6", gold: "#C94A40", goldDark: "#38251C", muted: "#6B4638" },
   header: { links: [
     { id: "home", label: "Anasayfa", path: "/", side: "left", children: [] },
     { id: "products", label: "Tüm Ürünler", path: "/products", side: "left", children: [] },
@@ -97,10 +97,26 @@ function nullableNumber(value: unknown, min: number, max: number) {
   return Number.isFinite(next) ? Math.min(max, Math.max(min, next)) : null;
 }
 
+const ROSTA_THEME_COLOR_ALIASES: Record<string, string> = {
+  "#111111": "#111111",
+  "#242424": "#242424",
+  "#fbf3e6": "#FBF3E6",
+  "#38251c": "#38251C",
+  "#c94a40": "#C94A40",
+  "#6b4638": "#6B4638",
+  "#c8a77d": "#C8A77D",
+  "#ffffff": "#FFFFFF",
+  "#b9563d": "#C94A40",
+  "#f4f0e8": "#FBF3E6",
+  "#aaa8a1": "#C8A77D",
+  "#6f725b": "#6B4638",
+  "#2b1b16": "#38251C",
+};
+
 function colorValue(value: unknown, fallback: string | null) {
-  const raw = stringValue(value, fallback || "");
+  const raw = stringValue(value, fallback || "").toLowerCase();
   if (!raw) return fallback;
-  return /^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i.test(raw) ? raw.slice(0, 7) : fallback;
+  return ROSTA_THEME_COLOR_ALIASES[raw] || fallback;
 }
 
 function safeUrl(value: unknown, fallback: string, kind: "link" | "image") {
@@ -230,12 +246,12 @@ export function normalizeThemeCustomizerSettings(input: unknown): ThemeCustomize
       mobileWidth: Math.round(numeric(logo.mobileWidth, 170, 40, 500)),
     },
     colors: {
-      ivory: colorValue(colors.ivory, defaultThemeCustomizerSettings.colors.ivory) || defaultThemeCustomizerSettings.colors.ivory,
-      cream: colorValue(colors.cream, defaultThemeCustomizerSettings.colors.cream) || defaultThemeCustomizerSettings.colors.cream,
-      ink: colorValue(colors.ink, defaultThemeCustomizerSettings.colors.ink) || defaultThemeCustomizerSettings.colors.ink,
-      gold: colorValue(colors.gold, defaultThemeCustomizerSettings.colors.gold) || defaultThemeCustomizerSettings.colors.gold,
-      goldDark: colorValue(colors.goldDark, defaultThemeCustomizerSettings.colors.goldDark) || defaultThemeCustomizerSettings.colors.goldDark,
-      muted: colorValue(colors.muted, defaultThemeCustomizerSettings.colors.muted) || defaultThemeCustomizerSettings.colors.muted,
+      ivory: defaultThemeCustomizerSettings.colors.ivory,
+      cream: defaultThemeCustomizerSettings.colors.cream,
+      ink: defaultThemeCustomizerSettings.colors.ink,
+      gold: defaultThemeCustomizerSettings.colors.gold,
+      goldDark: defaultThemeCustomizerSettings.colors.goldDark,
+      muted: defaultThemeCustomizerSettings.colors.muted,
     },
     header: { links: links.length ? links : defaultThemeCustomizerSettings.header.links },
     whatsapp: {

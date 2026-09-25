@@ -7,22 +7,17 @@
   gap: 10px;
   margin: 0;
   padding: 8px 12px;
-  border: 1px solid var(--border-subtle, rgba(15, 23, 42, 0.09));
+  border: 1px solid var(--ruth-color-border-subtle);
   border-radius: var(--radius-control, 14px);
-  background: var(--surface-primary, #fff);
-  color: var(--text-main, #17191d);
+  background: var(--rosta-carbon-soft);
+  color: var(--rosta-cream);
   text-align: left;
   cursor: pointer;
   transition: border-color 150ms ease, background 150ms ease, box-shadow 150ms ease;
 }
 
-.trigger:hover {
-  border-color: var(--border-strong, rgba(15, 23, 42, 0.16));
-  background: var(--surface-secondary, #f7f7f8);
-}
-
 .trigger:focus-visible {
-  outline: 2px solid var(--accent, #685bff);
+  outline: 2px solid var(--rosta-brick-b);
   outline-offset: 2px;
 }
 
@@ -31,8 +26,8 @@
   display: grid;
   place-items: center;
   overflow: hidden;
-  border: 1px solid var(--border-subtle, rgba(15, 23, 42, 0.08));
-  background: #fff;
+  border: 1px solid var(--border-subtle, color-mix(in srgb,var(--rosta-kraft) 32%,transparent));
+  background: var(--rosta-cream);
 }
 
 .triggerLogo {
@@ -57,7 +52,7 @@
 .optionLogo svg {
   width: 16px;
   height: 16px;
-  color: var(--accent, #685bff);
+  color: var(--rosta-brick-b);
 }
 
 .triggerCopy,
@@ -68,7 +63,7 @@
 .triggerCopy small {
   display: block;
   margin-bottom: 2px;
-  color: var(--text-subtle, #8a909a);
+  color: var(--ruth-color-text-muted);
   font-size: 9px;
   font-weight: 600;
   letter-spacing: .04em;
@@ -78,7 +73,7 @@
 .triggerCopy strong {
   display: block;
   overflow: hidden;
-  color: var(--text-main, #17191d);
+  color: var(--rosta-cream);
   font-size: 12.5px;
   font-weight: 650;
   text-overflow: ellipsis;
@@ -95,7 +90,7 @@
 
 .triggerMeta em,
 .optionMeta em {
-  color: var(--accent, #685bff);
+  color: var(--rosta-brick-b);
   font-size: 8px;
   font-style: normal;
   font-weight: 750;
@@ -105,7 +100,7 @@
 
 .triggerMeta b,
 .optionMeta b {
-  color: var(--text-main, #17191d);
+  color: var(--rosta-cream);
   font-size: 11px;
   font-weight: 700;
 }
@@ -113,7 +108,7 @@
 .chevron {
   width: 16px;
   height: 16px;
-  color: var(--text-subtle, #8a909a);
+  color: var(--ruth-color-text-muted);
 }
 
 .options {
@@ -131,10 +126,10 @@
   gap: 10px;
   padding: 8px 4px;
   border: 0;
-  border-bottom: 1px solid rgba(15, 23, 42, 0.07);
+  border-bottom: 1px solid color-mix(in srgb,var(--rosta-kraft) 28%,transparent);
   border-radius: 0;
   background: transparent;
-  color: #343840;
+  color: var(--rosta-cream);
   text-align: left;
   cursor: pointer;
   transition: background 140ms ease;
@@ -144,9 +139,8 @@
   border-bottom: 0;
 }
 
-.option:hover,
 .optionSelected {
-  background: rgba(104, 91, 255, 0.055);
+  background: color-mix(in srgb,var(--rosta-brick-b) 12%,transparent);
 }
 
 .optionLogo {
@@ -162,7 +156,7 @@
 .optionCopy strong {
   display: block;
   overflow: hidden;
-  color: #202328;
+  color: var(--rosta-cream);
   font-size: 12.5px;
   font-weight: 650;
   text-overflow: ellipsis;
@@ -173,7 +167,7 @@
   display: block;
   margin-top: 2px;
   overflow: hidden;
-  color: #9298a1;
+  color: var(--ruth-color-text-muted);
   font-size: 9px;
   font-weight: 500;
   text-overflow: ellipsis;
@@ -186,7 +180,7 @@
   display: grid;
   place-items: center;
   border-radius: 50%;
-  color: #685bff;
+  color: var(--rosta-brick-b);
 }
 
 .check svg {
@@ -196,20 +190,19 @@
 }
 
 :global(html.dark) .option {
-  border-bottom-color: rgba(255, 255, 255, 0.08);
-  color: #e4e6ea;
+  border-bottom-color: color-mix(in srgb,var(--rosta-kraft) 28%,transparent);
+  color: var(--rosta-cream);
 }
 
 :global(html.dark) .optionCopy strong,
 :global(html.dark) .triggerCopy strong,
 :global(html.dark) .triggerMeta b,
 :global(html.dark) .optionMeta b {
-  color: #f1f2f4;
+  color: var(--rosta-cream);
 }
 
-:global(html.dark) .option:hover,
 :global(html.dark) .optionSelected {
-  background: rgba(112, 96, 255, 0.14);
+  background: color-mix(in srgb,var(--rosta-brick-b) 18%,transparent);
 }
 
 @media (max-width: 560px) {
@@ -231,4 +224,29 @@
     min-height: 50px;
     gap: 8px;
   }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .trigger:hover {
+    border-color: var(--ruth-color-border-strong);
+    background: var(--rosta-carbon);
+  }
+
+  .option:hover {
+    background: color-mix(in srgb,var(--rosta-brick-b) 12%,transparent);
+  }
+
+  :global(html.dark) .option:hover {
+    background: color-mix(in srgb,var(--rosta-brick-b) 18%,transparent);
+  }
+}
+
+.option:focus-visible {
+  outline: 2px solid var(--rosta-brick-b);
+  outline-offset: -2px;
+}
+
+@media (forced-colors: active) {
+  .trigger:focus-visible,
+  .option:focus-visible { outline-color: Highlight; }
 }

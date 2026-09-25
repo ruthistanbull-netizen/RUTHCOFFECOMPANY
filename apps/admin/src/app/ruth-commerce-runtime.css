@@ -44,31 +44,32 @@
 @layer base {
   :root {
     /* ROSTA Coffee panel geometry + motion, ROSTA palette only. */
-    --app-background: 40 35% 93%;
-    --surface-primary: 40 35% 93%;
-    --surface-secondary: 40 35% 93%;
-    --surface-tertiary: 47 5% 65%;
-    --text-main: 0 0% 6.7%;
-    --text-muted: 64 11% 40%;
-    --text-subtle: 47 5% 65%;
-    --border-subtle: 47 5% 65%;
-    --border-strong: 47 5% 65%;
-    --accent: 12 50% 48%;
-    --accent-hover: 16 32% 13%;
-    --accent-soft: 40 35% 93%;
-    --accent-foreground: 40 35% 93%;
-    --success: 64 11% 40%;
-    --success-soft: 40 35% 93%;
-    --success-foreground: 16 32% 13%;
-    --warning: 12 50% 48%;
-    --warning-soft: 40 35% 93%;
-    --warning-foreground: 16 32% 13%;
-    --danger: 16 32% 13%;
-    --danger-soft: 40 35% 93%;
-    --danger-foreground: 16 32% 13%;
-    --info: 47 5% 65%;
-    --info-soft: 40 35% 93%;
-    --info-foreground: 0 0% 6.7%;
+    --app-background: 0 0% 6.7%;
+    --surface-primary: 0 0% 14.1%;
+    --surface-secondary: 0 0% 14.1%;
+    --surface-tertiary: 19.3 33.3% 16.5%;
+    --text-main: 37.1 72.4% 94.3%;
+    --text-muted: 37.1 72.4% 94.3% / .72;
+    --text-subtle: 37.1 72.4% 94.3% / .65;
+    --border-subtle: 33.6 40.5% 63.7% / .38;
+    --border-strong: 33.6 40.5% 63.7%;
+    --accent: 4.4 55.9% 52%;
+    --accent-hover: 4.4 55.9% 52%;
+    --accent-active: 19.3 33.3% 16.5%;
+    --accent-soft: 4.4 55.9% 52% / .15;
+    --accent-foreground: 0 0% 100%;
+    --success: 165.9 72.2% 38%;
+    --success-soft: 148.6 60% 93.1%;
+    --success-foreground: 166 72% 28%;
+    --warning: 38.3 74.3% 48.8%;
+    --warning-soft: 43.9 100% 92%;
+    --warning-foreground: 38.2 74.2% 34.9%;
+    --danger: 354.9 68.3% 62.9%;
+    --danger-soft: 353.1 100% 94.9%;
+    --danger-foreground: 355.1 67.8% 50%;
+    --info: 212.9 76.9% 61%;
+    --info-soft: 216 100% 96.1%;
+    --info-foreground: 213 77.1% 48%;
     --radius-container: 28px;
     --radius-card: 22px;
     --radius-control: 16px;
@@ -90,7 +91,7 @@
   }
 
   * { border-color: hsl(var(--border-subtle)); }
-  html { background: hsl(var(--app-background)); color-scheme: light; }
+  html { background: hsl(var(--app-background)); color-scheme: dark; }
   body {
     background: hsl(var(--app-background));
     color: hsl(var(--text-main));

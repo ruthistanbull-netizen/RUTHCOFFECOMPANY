@@ -314,7 +314,7 @@ export function mountRuthieV83ExactLayers(canvas: HTMLCanvasElement, options: V8
     if (mode === "listening") {
       for (let index = 0; index < 2; index += 1) {
         const unit = (time * .40 + index / 2) % 1;
-        context.strokeStyle = `rgba(232,166,65,${(1 - unit) * (.065 + .09 * modeLevel)})`;
+        context.strokeStyle = `rgba(201, 74, 64,${(1 - unit) * (.065 + .09 * modeLevel)})`;
         context.lineWidth = .9;
         context.beginPath();
         context.arc(centerX, centerY, baseRadius * (1.02 + unit * .21), 0, Math.PI * 2);
@@ -325,10 +325,10 @@ export function mountRuthieV83ExactLayers(canvas: HTMLCanvasElement, options: V8
     if (mode === "speaking") {
       for (let index = 0; index < 3; index += 1) {
         const unit = (time * .70 + index / 3) % 1;
-        context.strokeStyle = `rgba(255,190,83,${(1 - unit) * (.11 + .12 * modeLevel)})`;
+        context.strokeStyle = `rgba(200, 167, 125,${(1 - unit) * (.11 + .12 * modeLevel)})`;
         context.lineWidth = 1 * (1 - unit) + .28;
         context.shadowBlur = 7;
-        context.shadowColor = "rgba(255,174,56,.48)";
+        context.shadowColor = "rgba(201, 74, 64,.48)";
         context.beginPath();
         context.arc(centerX, centerY, baseRadius * (1.02 + unit * .27), 0, Math.PI * 2);
         context.stroke();

@@ -25,7 +25,7 @@
       brightness(1.01)
       contrast(1.08)
       drop-shadow(0 1px 0 rgba(255, 255, 255, 0.62))
-      drop-shadow(0 2px 5px rgba(26, 29, 34, 0.09)) !important;
+      drop-shadow(0 2px 5px color-mix(in srgb, var(--rosta-carbon, #111111) 24%, transparent)) !important;
     transform: translate3d(0, -0.35px, 0) scale(1.025) !important;
   }
 

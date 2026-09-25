@@ -8,40 +8,43 @@
  */
 
 html[data-ruth-theme="admin"] {
-  color-scheme: light;
+  color-scheme: dark;
 
-  --base44-app-background: 220 20% 96.5%;
-  --base44-surface-primary: 0 0% 100%;
-  --base44-surface-secondary: 240 20% 98%;
-  --base44-surface-tertiary: 220 16% 94%;
+  --base44-app-background: 0 0% 6.7%;
+  --base44-surface-primary: 0 0% 14.1%;
+  --base44-surface-secondary: 0 0% 14.1%;
+  --base44-surface-tertiary: 19.3 33.3% 16.5%;
 
-  --base44-text-main: 220 6% 10.5%;
-  --base44-text-muted: 232 6% 49%;
-  --base44-text-subtle: 225 5% 62%;
+  --base44-text-main: 37.1 72.4% 94.3%;
+  --base44-text-muted: 37.1 72.4% 94.3% / .70;
+  --base44-text-subtle: 37.1 72.4% 94.3% / .62;
 
-  --base44-border-subtle: 220 16% 90%;
-  --base44-border-strong: 220 12% 82%;
+  --base44-border-subtle: 33.6 40.5% 63.7% / .42;
+  --base44-border-strong: 33.6 40.5% 63.7%;
 
-  --base44-accent: 244 89% 67%;
-  --base44-accent-hover: 245 78% 62%;
-  --base44-accent-soft: 243 100% 96%;
+  --base44-accent: 4.4 55.9% 52%;
+  --base44-accent-hover: 4.4 55.9% 52%;
+  --base44-accent-soft: 4.4 55.9% 52% / .15;
   --base44-accent-foreground: 0 0% 100%;
 
-  --base44-success: 166 72% 38%;
-  --base44-success-soft: 151 58% 93%;
+  --base44-success: 165.9 72.2% 38%;
+  --base44-success-soft: 148.6 60% 93.1%;
   --base44-success-foreground: 166 72% 28%;
-  --base44-warning: 38 74% 49%;
-  --base44-warning-soft: 44 100% 92%;
-  --base44-warning-foreground: 38 74% 35%;
-  --base44-danger: 355 68% 63%;
-  --base44-danger-soft: 354 100% 95%;
-  --base44-danger-foreground: 355 68% 50%;
-  --base44-info: 213 77% 61%;
-  --base44-info-soft: 214 100% 96%;
-  --base44-info-foreground: 213 77% 48%;
-  --base44-neutral: 225 6% 55%;
-  --base44-neutral-soft: 220 14% 93%;
-  --base44-neutral-foreground: 225 6% 40%;
+  --base44-warning: 38.3 74.3% 48.8%;
+  --base44-warning-soft: 43.9 100% 92%;
+  --base44-warning-foreground: 38.2 74.2% 34.9%;
+  --base44-danger: 354.9 68.3% 62.9%;
+  --base44-danger-soft: 353.1 100% 94.9%;
+  --base44-danger-foreground: 355.1 67.8% 50%;
+  --base44-info: 212.9 76.9% 61%;
+  --base44-info-soft: 216 100% 96.1%;
+  --base44-info-foreground: 213 77.1% 48%;
+  --base44-neutral: 222.9 6.1% 54.9%;
+  --base44-neutral-soft: 228 14.3% 93.1%;
+  --base44-neutral-foreground: 225 5.9% 40%;
+  --base44-status-accent: 43.9 56.8% 51%;
+  --base44-status-accent-soft: 46.2 72.7% 87.1%;
+  --base44-status-accent-foreground: 41.7 63.9% 14.1%;
 
   --base44-radius-container: 28px;
   --base44-radius-card: 22px;
@@ -49,11 +52,11 @@ html[data-ruth-theme="admin"] {
   --base44-radius-small: 12px;
   --base44-radius-pill: 9999px;
 
-  --base44-shadow-card: 0 2px 8px -2px rgba(28, 31, 38, .05), 0 6px 20px -6px rgba(28, 31, 38, .04);
-  --base44-shadow-card-hover: 0 12px 34px -14px rgba(28, 31, 38, .18), 0 8px 20px -14px rgba(96, 76, 255, .18);
-  --base44-shadow-floating: 0 12px 40px -8px rgba(28, 31, 38, .16), 0 6px 16px -4px rgba(28, 31, 38, .08);
-  --base44-shadow-sticky: 0 1px 3px rgba(28, 31, 38, .04), 0 1px 2px rgba(28, 31, 38, .03);
-  --base44-shadow-overlay: 0 24px 64px -12px rgba(28, 31, 38, .28);
+  --base44-shadow-card: 0 2px 8px -2px color-mix(in srgb, #111111 30%, transparent), 0 6px 20px -6px color-mix(in srgb, #111111 22%, transparent);
+  --base44-shadow-card-hover: 0 12px 34px -14px color-mix(in srgb, #111111 52%, transparent), 0 8px 20px -14px color-mix(in srgb, #C94A40 18%, transparent);
+  --base44-shadow-floating: 0 12px 40px -8px color-mix(in srgb, #111111 52%, transparent), 0 6px 16px -4px color-mix(in srgb, #111111 34%, transparent);
+  --base44-shadow-sticky: 0 1px 3px color-mix(in srgb, #111111 32%, transparent);
+  --base44-shadow-overlay: 0 24px 64px -12px color-mix(in srgb, #111111 64%, transparent);
 
   --base44-ease: cubic-bezier(.32, .72, 0, 1);
   --base44-fast: 140ms;
@@ -66,7 +69,7 @@ html[data-ruth-theme="admin"] {
   --admin-ink: hsl(var(--base44-text-main));
   --admin-muted: hsl(var(--base44-text-muted));
   --admin-accent: hsl(var(--base44-accent));
-  --admin-accent-strong: hsl(var(--base44-accent-hover));
+  --admin-accent-strong: #38251C;
   --admin-border: hsl(var(--base44-border-subtle));
   --admin-border-strong: hsl(var(--base44-border-strong));
   --admin-success: hsl(var(--base44-success));
@@ -90,7 +93,7 @@ html[data-ruth-theme="admin"] {
   --line: hsl(var(--base44-border-subtle));
   --line-strong: hsl(var(--base44-border-strong));
   --accent: hsl(var(--base44-accent));
-  --accent-strong: hsl(var(--base44-accent-hover));
+  --accent-strong: #38251C;
   --accent-soft: hsl(var(--base44-accent-soft));
   --success: hsl(var(--base44-success));
   --success-soft: hsl(var(--base44-success-soft));
@@ -113,36 +116,36 @@ html[data-ruth-theme="admin"] {
 
 html[data-ruth-theme="admin"][data-admin-color-scheme="dark"] {
   color-scheme: dark;
-  --base44-app-background: 225 14% 7%;
-  --base44-surface-primary: 232 12% 12%;
-  --base44-surface-secondary: 228 12% 15%;
-  --base44-surface-tertiary: 225 12% 18%;
-  --base44-text-main: 228 12% 92%;
-  --base44-text-muted: 226 6% 60%;
-  --base44-text-subtle: 225 6% 48%;
-  --base44-border-subtle: 225 12% 20%;
-  --base44-border-strong: 225 12% 28%;
-  --base44-accent: 244 89% 71%;
-  --base44-accent-hover: 244 89% 67%;
-  --base44-accent-soft: 245 40% 20%;
-  --base44-success: 166 72% 45%;
-  --base44-success-soft: 166 40% 14%;
-  --base44-success-foreground: 151 58% 75%;
-  --base44-warning: 38 74% 55%;
-  --base44-warning-soft: 38 40% 14%;
-  --base44-warning-foreground: 44 100% 75%;
-  --base44-danger: 355 68% 65%;
-  --base44-danger-soft: 355 40% 15%;
-  --base44-danger-foreground: 354 100% 80%;
-  --base44-info: 213 77% 65%;
-  --base44-info-soft: 213 40% 15%;
-  --base44-info-foreground: 214 100% 80%;
-  --base44-neutral-soft: 225 12% 18%;
-  --base44-shadow-card: 0 2px 8px -2px rgba(0, 0, 0, .3), 0 6px 20px -6px rgba(0, 0, 0, .2);
-  --base44-shadow-card-hover: 0 18px 42px -16px rgba(0, 0, 0, .68), 0 8px 24px -16px rgba(118, 103, 255, .22);
-  --base44-shadow-floating: 0 12px 40px -8px rgba(0, 0, 0, .5), 0 6px 16px -4px rgba(0, 0, 0, .3);
-  --base44-shadow-sticky: 0 1px 3px rgba(0, 0, 0, .3);
-  --base44-shadow-overlay: 0 24px 64px -12px rgba(0, 0, 0, .6);
+  --base44-app-background: 0 0% 6.7%;
+  --base44-surface-primary: 0 0% 14.1%;
+  --base44-surface-secondary: 0 0% 14.1%;
+  --base44-surface-tertiary: 19.3 33.3% 16.5%;
+  --base44-text-main: 37.1 72.4% 94.3%;
+  --base44-text-muted: 37.1 72.4% 94.3% / .70;
+  --base44-text-subtle: 37.1 72.4% 94.3% / .62;
+  --base44-border-subtle: 33.6 40.5% 63.7% / .42;
+  --base44-border-strong: 33.6 40.5% 63.7%;
+  --base44-accent: 4.4 55.9% 52%;
+  --base44-accent-hover: 4.4 55.9% 52%;
+  --base44-accent-soft: 4.4 55.9% 52% / .15;
+  --base44-success: 165.9 72.2% 38%;
+  --base44-success-soft: 148.6 60% 93.1%;
+  --base44-success-foreground: 166 72% 28%;
+  --base44-warning: 38.3 74.3% 48.8%;
+  --base44-warning-soft: 43.9 100% 92%;
+  --base44-warning-foreground: 38.2 74.2% 34.9%;
+  --base44-danger: 354.9 68.3% 62.9%;
+  --base44-danger-soft: 353.1 100% 94.9%;
+  --base44-danger-foreground: 355.1 67.8% 50%;
+  --base44-info: 212.9 76.9% 61%;
+  --base44-info-soft: 216 100% 96.1%;
+  --base44-info-foreground: 213 77.1% 48%;
+  --base44-neutral: 222.9 6.1% 54.9%;
+  --base44-neutral-soft: 228 14.3% 93.1%;
+  --base44-neutral-foreground: 225 5.9% 40%;
+  --base44-status-accent: 43.9 56.8% 51%;
+  --base44-status-accent-soft: 46.2 72.7% 87.1%;
+  --base44-status-accent-foreground: 41.7 63.9% 14.1%;
 }
 
 html[data-ruth-theme="admin"] body {
@@ -160,7 +163,7 @@ html[data-ruth-theme="admin"] body {
 html[data-ruth-theme="admin"] :where(button, input, select, textarea) { font: inherit; }
 html[data-ruth-theme="admin"] :where(button, a) { -webkit-tap-highlight-color: transparent; }
 html[data-ruth-theme="admin"] :where(button, a, input, select, textarea, [tabindex]):focus-visible {
-  outline: 3px solid hsl(var(--base44-accent) / .22) !important;
+  outline: 2px solid hsl(var(--base44-accent)) !important;
   outline-offset: 2px;
 }
 html[data-ruth-theme="admin"] ::selection { background: hsl(var(--base44-accent) / .2); }
@@ -170,10 +173,6 @@ html[data-ruth-theme="admin"] ::-webkit-scrollbar-thumb {
   border: 2px solid transparent;
   border-radius: var(--base44-radius-pill);
   background: hsl(var(--base44-border-strong));
-  background-clip: padding-box;
-}
-html[data-ruth-theme="admin"] ::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--base44-text-subtle));
   background-clip: padding-box;
 }
 
@@ -232,13 +231,6 @@ html[data-ruth-theme="admin"] :where(
   transition: border-color var(--base44-fast) ease, background-color var(--base44-normal) ease,
     box-shadow var(--base44-normal) var(--base44-ease), transform var(--base44-normal) var(--base44-ease) !important;
 }
-html[data-ruth-theme="admin"] :where(.cr-card, .cr-analytics-card, .cr-finance-card, .cr-product-card, .cr-order-card, .cr-return-card):hover {
-  border-color: hsl(var(--base44-border-strong)) !important;
-  box-shadow: var(--base44-shadow-card-hover) !important;
-}
-html[data-ruth-theme="admin"] :where(.cr-metric-button, .cr-finance-card, .cr-product-card, .cr-order-card, .cr-return-card, .cr-row[href], a.cr-card):hover {
-  transform: translateY(-2px) !important;
-}
 html[data-ruth-theme="admin"] :where(.cr-metric-button, .cr-finance-card, .cr-product-card, .cr-order-card, .cr-return-card, .cr-row[href], a.cr-card):active {
   transform: scale(.992) !important;
 }
@@ -277,7 +269,7 @@ html[data-ruth-theme="admin"] .cr-analytics-card::after {
 }
 html[data-ruth-theme="admin"] .cr-analytics-card.is-primary {
   border-color: hsl(var(--base44-accent) / .24) !important;
-  background: linear-gradient(145deg, hsl(var(--base44-surface-primary)), hsl(var(--base44-accent-soft) / .72)) !important;
+  background: linear-gradient(145deg, hsl(var(--base44-surface-primary)), hsl(var(--base44-accent) / .15)) !important;
 }
 html[data-ruth-theme="admin"] :where(.cr-analytics-card, .cr-metric) small {
   color: hsl(var(--base44-text-muted)) !important;
@@ -318,10 +310,6 @@ html[data-ruth-theme="admin"] :where(.cr-row, .cr-dashboard-orders > a) {
   color: hsl(var(--base44-text-main)) !important;
   transition: background-color var(--base44-fast) ease, border-color var(--base44-fast) ease, transform var(--base44-fast) ease !important;
 }
-html[data-ruth-theme="admin"] :where(.cr-row, .cr-dashboard-orders > a):hover {
-  border-color: hsl(var(--base44-border-subtle)) !important;
-  background: hsl(var(--base44-surface-secondary)) !important;
-}
 html[data-ruth-theme="admin"] :where(.cr-row-title span, .cr-row small, .cr-dashboard-orders span) { color: hsl(var(--base44-text-muted)) !important; }
 html[data-ruth-theme="admin"] :where(table, .cr-table, .ruth-table) {
   width: 100%;
@@ -348,12 +336,10 @@ html[data-ruth-theme="admin"] :where(table, .cr-table, .ruth-table) td {
   font-size: 12px;
   transition: background-color var(--base44-fast) ease;
 }
-html[data-ruth-theme="admin"] :where(table, .cr-table, .ruth-table) tbody tr:hover td { background: hsl(var(--base44-surface-secondary)) !important; }
 html[data-ruth-theme="admin"] :where(table, .cr-table, .ruth-table) tbody tr:last-child td { border-bottom: 0 !important; }
 
 html[data-ruth-theme="admin"] :where(.cr-product-card, [data-product-card]) { overflow: hidden; }
 html[data-ruth-theme="admin"] :where(.cr-product-card img, [data-product-card] img) { transition: transform .42s var(--base44-ease), filter .3s ease; }
-html[data-ruth-theme="admin"] :where(.cr-product-card, [data-product-card]):hover img { transform: scale(1.025); }
 html[data-ruth-theme="admin"] :where(.cr-product-card h2, .cr-product-card h3, [data-product-card] h2, [data-product-card] h3) {
   color: hsl(var(--base44-text-main)) !important;
   font-family: Inter, ui-sans-serif, system-ui, sans-serif !important;
@@ -374,7 +360,6 @@ html[data-ruth-theme="admin"] :where(.cr-button, .ruth-button, button[data-ruth-
     color var(--base44-fast) ease, box-shadow var(--base44-fast) ease,
     transform var(--base44-fast) var(--base44-ease), opacity var(--base44-fast) ease !important;
 }
-html[data-ruth-theme="admin"] :where(.cr-button, .ruth-button, button[data-ruth-action]):hover:not(:disabled) { transform: translateY(-1px); }
 html[data-ruth-theme="admin"] :where(.cr-button, .ruth-button, button[data-ruth-action]):active:not(:disabled) { transform: scale(.98); }
 html[data-ruth-theme="admin"] :where(.cr-button--primary, .ruth-button--primary, [data-ruth-action="primary"]) {
   border-color: hsl(var(--base44-accent)) !important;
@@ -382,19 +367,11 @@ html[data-ruth-theme="admin"] :where(.cr-button--primary, .ruth-button--primary,
   color: hsl(var(--base44-accent-foreground)) !important;
   box-shadow: 0 8px 22px -9px hsl(var(--base44-accent) / .65) !important;
 }
-html[data-ruth-theme="admin"] :where(.cr-button--primary, .ruth-button--primary, [data-ruth-action="primary"]):hover:not(:disabled) {
-  border-color: hsl(var(--base44-accent-hover)) !important;
-  background: hsl(var(--base44-accent-hover)) !important;
-}
 html[data-ruth-theme="admin"] :where(.cr-button--secondary, .ruth-button--secondary) {
   border-color: hsl(var(--base44-border-subtle)) !important;
   background: hsl(var(--base44-surface-primary)) !important;
   color: hsl(var(--base44-text-main)) !important;
   box-shadow: var(--base44-shadow-card) !important;
-}
-html[data-ruth-theme="admin"] :where(.cr-button--secondary, .ruth-button--secondary):hover:not(:disabled) {
-  border-color: hsl(var(--base44-border-strong)) !important;
-  background: hsl(var(--base44-surface-secondary)) !important;
 }
 html[data-ruth-theme="admin"] :where(.cr-button--danger, .ruth-button--danger) {
   border-color: hsl(var(--base44-danger) / .22) !important;
@@ -414,12 +391,6 @@ html[data-ruth-theme="admin"] :where(.cr-icon-button, .ruth-icon-button) {
   box-shadow: var(--base44-shadow-card) !important;
   transition: background-color var(--base44-fast) ease, color var(--base44-fast) ease,
     border-color var(--base44-fast) ease, transform var(--base44-fast) ease !important;
-}
-html[data-ruth-theme="admin"] :where(.cr-icon-button, .ruth-icon-button):hover:not(:disabled) {
-  border-color: hsl(var(--base44-border-strong)) !important;
-  background: hsl(var(--base44-surface-secondary)) !important;
-  color: hsl(var(--base44-text-main)) !important;
-  transform: translateY(-1px);
 }
 
 html[data-ruth-theme="admin"] :where(.cr-field, .ruth-field) {
@@ -495,9 +466,9 @@ html[data-ruth-theme="admin"] :where(.cr-filter-row button, .cr-tabs button, [ro
     box-shadow var(--base44-fast) ease, transform var(--base44-fast) ease !important;
 }
 html[data-ruth-theme="admin"] :where(.cr-filter-row button.is-active, .cr-tabs button.is-active, [role="tablist"] [role="tab"][aria-selected="true"], [role="tablist"] [data-state="active"]) {
-  background: hsl(var(--base44-surface-primary)) !important;
+  background: hsl(var(--base44-accent-soft)) !important;
   color: hsl(var(--base44-text-main)) !important;
-  box-shadow: 0 2px 8px rgba(28, 31, 38, .08) !important;
+  box-shadow: inset 0 -3px 0 hsl(var(--base44-accent)) !important;
 }
 
 html[data-ruth-theme="admin"] :where(.cr-status, .cr-payment-pill, .ruth-status, [data-status]) {
@@ -525,15 +496,19 @@ html[data-ruth-theme="admin"] :where(.cr-status--preparing, .cr-status--warning,
   background: hsl(var(--base44-warning-soft)) !important;
   color: hsl(var(--base44-warning-foreground)) !important;
 }
-html[data-ruth-theme="admin"] :where(.cr-status--ready, .cr-status--success, .cr-status--active, .cr-payment-pill--paid, [data-tone="success"]) {
+html[data-ruth-theme="admin"] :where(.cr-status--success, .cr-status--active, .cr-payment-pill--paid, [data-tone="success"]) {
   background: hsl(var(--base44-success-soft)) !important;
   color: hsl(var(--base44-success-foreground)) !important;
 }
-html[data-ruth-theme="admin"] :where(.cr-status--danger, .cr-status--failed, .cr-status--cancelled, .cr-payment-pill--failed, .cr-payment-pill--refunded, [data-tone="danger"]) {
+html[data-ruth-theme="admin"] :where(.cr-status--ready, .cr-status--ready-packing, .cr-status--ready-to-ship, .cr-status--shipped, [data-tone="accent"]) {
+  background: hsl(var(--base44-status-accent-soft)) !important;
+  color: hsl(var(--base44-status-accent-foreground)) !important;
+}
+html[data-ruth-theme="admin"] :where(.cr-status--danger, .cr-status--failed, .cr-payment-pill--failed, .cr-payment-pill--refunded, [data-tone="danger"]) {
   background: hsl(var(--base44-danger-soft)) !important;
   color: hsl(var(--base44-danger-foreground)) !important;
 }
-html[data-ruth-theme="admin"] :where(.cr-status--neutral, .cr-status--draft, [data-tone="neutral"]) {
+html[data-ruth-theme="admin"] :where(.cr-status--neutral, .cr-status--draft, .cr-status--cancelled, .cr-status--canceled, .cr-status--archived, [data-tone="neutral"]) {
   background: hsl(var(--base44-neutral-soft)) !important;
   color: hsl(var(--base44-neutral-foreground)) !important;
 }
@@ -612,7 +587,7 @@ html[data-ruth-theme="admin"] :where(.ruth-overlay__header, .cr-drawer__header, 
   min-height: 64px;
   padding: 15px 18px !important;
   border-bottom: 1px solid hsl(var(--base44-border-subtle)) !important;
-  background: hsl(var(--base44-surface-primary) / .88) !important;
+  background: hsl(var(--base44-surface-primary)) !important;
   -webkit-backdrop-filter: blur(18px);
   backdrop-filter: blur(18px);
 }
@@ -625,12 +600,12 @@ html[data-ruth-theme="admin"] :where(.ruth-overlay__body, .cr-drawer__body, .cr-
   overflow: auto;
   padding: 18px !important;
   overscroll-behavior: contain;
-  background: hsl(var(--base44-app-background) / .54) !important;
+  background: hsl(var(--base44-surface-primary)) !important;
 }
 html[data-ruth-theme="admin"] :where(.ruth-overlay__footer, .cr-drawer__footer, .cr-modal__footer, .cr-manual-form-actions) {
   padding: 10px 14px max(10px, env(safe-area-inset-bottom)) !important;
   border-top: 1px solid hsl(var(--base44-border-subtle)) !important;
-  background: hsl(var(--base44-surface-primary) / .94) !important;
+  background: hsl(var(--base44-surface-primary)) !important;
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
 }
@@ -645,15 +620,10 @@ html[data-ruth-theme="admin"] :where([role="menuitem"], [role="option"], .cr-dro
   border-radius: 10px !important;
   transition: background-color var(--base44-fast) ease, color var(--base44-fast) ease !important;
 }
-html[data-ruth-theme="admin"] :where([role="menuitem"], [role="option"], .cr-dropdown-item, .ruth-popover__item):hover,
-html[data-ruth-theme="admin"] :where([role="option"][aria-selected="true"], [role="menuitem"][data-highlighted]) {
-  background: hsl(var(--base44-accent-soft)) !important;
-  color: hsl(var(--base44-accent)) !important;
-}
 html[data-ruth-theme="admin"] :where(.ruth-toast, .cr-toast, [data-sonner-toast]) {
   border: 1px solid hsl(var(--base44-border-subtle)) !important;
   border-radius: var(--base44-radius-control) !important;
-  background: hsl(var(--base44-surface-primary) / .96) !important;
+  background: hsl(var(--base44-surface-primary)) !important;
   color: hsl(var(--base44-text-main)) !important;
   box-shadow: var(--base44-shadow-floating) !important;
   -webkit-backdrop-filter: blur(18px);
@@ -666,6 +636,52 @@ html[data-ruth-theme="admin"] :where(.ruth-toast, .cr-toast, [data-sonner-toast]
 @keyframes base44-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes base44-shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
 @keyframes base44-spin { to { transform: rotate(360deg); } }
+
+
+@media (hover: hover) and (pointer: fine) {
+  html[data-ruth-theme="admin"] ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--base44-text-subtle));
+    background-clip: padding-box;
+  }
+
+  html[data-ruth-theme="admin"] :where(.cr-card, .cr-analytics-card, .cr-finance-card, .cr-product-card, .cr-order-card, .cr-return-card):hover {
+    border-color: hsl(var(--base44-border-strong)) !important;
+    box-shadow: var(--base44-shadow-card-hover) !important;
+  }
+
+  html[data-ruth-theme="admin"] :where(.cr-metric-button, .cr-finance-card, .cr-product-card, .cr-order-card, .cr-return-card, .cr-row[href], a.cr-card):hover {
+    transform: translateY(-2px) !important;
+  }
+
+  html[data-ruth-theme="admin"] :where(.cr-row, .cr-dashboard-orders > a):hover {
+    border-color: hsl(var(--base44-border-subtle)) !important;
+    background: hsl(var(--base44-surface-secondary)) !important;
+  }
+
+  html[data-ruth-theme="admin"] :where(table, .cr-table, .ruth-table) tbody tr:hover td { background: hsl(var(--base44-surface-secondary)) !important; }
+
+  html[data-ruth-theme="admin"] :where(.cr-product-card, [data-product-card]):hover img { transform: scale(1.025); }
+
+  html[data-ruth-theme="admin"] :where(.cr-button, .ruth-button, button[data-ruth-action]):hover:not(:disabled) { transform: translateY(-1px); }
+
+  html[data-ruth-theme="admin"] :where(.cr-button--secondary, .ruth-button--secondary):hover:not(:disabled) {
+    border-color: hsl(var(--base44-border-strong)) !important;
+    background: hsl(var(--base44-surface-secondary)) !important;
+  }
+
+  html[data-ruth-theme="admin"] :where(.cr-icon-button, .ruth-icon-button):hover:not(:disabled) {
+    border-color: hsl(var(--base44-border-strong)) !important;
+    background: hsl(var(--base44-surface-secondary)) !important;
+    color: hsl(var(--base44-text-main)) !important;
+    transform: translateY(-1px);
+  }
+
+  html[data-ruth-theme="admin"] :where([role="menuitem"], [role="option"], .cr-dropdown-item, .ruth-popover__item):hover,
+  html[data-ruth-theme="admin"] :where([role="option"][aria-selected="true"], [role="menuitem"][data-highlighted]) {
+    background: hsl(var(--base44-accent-soft)) !important;
+    color: hsl(var(--base44-accent)) !important;
+  }
+}
 
 @media (max-width: 820px) {
   html[data-ruth-theme="admin"] :where(.cr-page-header, .ruth-page-header) {
@@ -696,5 +712,17 @@ html[data-ruth-theme="admin"] :where(.ruth-toast, .cr-toast, [data-sonner-toast]
     animation-duration: .01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: .01ms !important;
+  }
+}
+
+html[data-ruth-theme="admin"] :where(.cr-button--primary, .ruth-button--primary, [data-ruth-action="primary"]):active:not(:disabled) {
+  border-color: #38251C !important;
+  background: #38251C !important;
+  color: #FBF3E6 !important;
+}
+
+@media (forced-colors: active) {
+  html[data-ruth-theme="admin"] :where(button, a[href], input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid Highlight !important;
   }
 }
