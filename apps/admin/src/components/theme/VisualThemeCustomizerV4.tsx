@@ -990,7 +990,7 @@ export function VisualThemeCustomizerV4() {
         </aside>
 
         <main className="order-1 flex min-h-0 flex-1 items-center justify-center overflow-hidden bg-background p-3 md:order-2 md:p-5">
-          <div className={cx("relative overflow-hidden bg-surface-primary shadow-[0_10px_40px_rgba(15,23,42,.08)] transition-all duration-300", device === "mobile" ? "h-full max-h-[820px] w-[430px] max-w-full rounded-[24px] border border-border-subtle" : "h-full w-full rounded-xl border border-border-subtle")}>
+          <div className={cx("relative overflow-hidden bg-surface-primary shadow-[0_10px_40px_rgba(17,17,17,.08)] transition-all duration-300", device === "mobile" ? "h-full max-h-[820px] w-[430px] max-w-full rounded-[24px] border border-border-subtle" : "h-full w-full rounded-xl border border-border-subtle")}>
             <iframe
               ref={iframeRef}
               key={`${previewPath}-${nonce}`}
