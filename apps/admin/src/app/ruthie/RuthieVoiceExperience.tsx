@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { adminAuthHeaders } from "@/lib/adminApi";
+import { RuthieBrandIcon } from "@/components/RuthieBrandIcon";
 import { RuthieCameraVision } from "./RuthieCameraVision";
 import { RuthieGradientOrb, type RuthieGradientOrbPhase } from "./RuthieGradientOrb";
 import { dispatchRuthiePresentationRequest } from "./ruthiePresentationEvents";
@@ -184,7 +185,7 @@ export function RuthieVoiceExperience() {
         <main className={styles.voiceMain}>
           <header className={styles.topbar}>
             <Link href="/" className={styles.brand} aria-label="ROSTA Commerce paneline dön">
-              <span className={styles.brandMark} />
+              <span className={styles.brandMark}><RuthieBrandIcon aria-hidden="true" /></span>
               <span className={styles.brandText}><strong>ROSTA Insight Voice</strong><small>{status?.models?.realtime || "Realtime AI"}</small></span>
             </Link>
             <div className={styles.topbarActions}>
