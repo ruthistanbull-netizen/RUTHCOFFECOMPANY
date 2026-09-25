@@ -117,7 +117,17 @@ export function setHomepageHeroDeviceMedia(
   if (!src) return settings;
   const normalized = normalizeThemeMediaSettings(settings);
   const id = deviceId(device);
-  return upsertThemeElementOverride(normalized, "/", {
+  const synced: ThemeCustomizerSettings = {
+    ...normalized,
+    homepageImages: {
+      ...normalized.homepageImages,
+      // Keep the canonical device field in sync with the editor override so an
+      // old hero can never reappear as a legacy fallback after replacement.
+      heroDesktopImage: device === "desktop" ? src : normalized.homepageImages.heroDesktopImage,
+      heroMobileImage: device === "mobile" ? src : normalized.homepageImages.heroMobileImage,
+    },
+  };
+  return upsertThemeElementOverride(synced, "/", {
     id,
     selector: `[data-theme-id="${id}"]`,
     label: device === "desktop" ? "Ana sayfa hero medyası · Masaüstü" : "Ana sayfa hero medyası · Mobil",
