@@ -523,6 +523,37 @@ export function AdminMobileQuarterMenu() {
         ) : null}
       </AnimatePresence>
 
+      <AnimatePresence>
+        {open ? (
+          <motion.button
+            key="rr-hub-mobile-return"
+            type="button"
+            className={styles.hubTopLeft}
+            aria-label="RR HUB'a dön"
+            title="RR HUB"
+            initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 18, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1, filter: "brightness(1)" }}
+            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.96 }}
+            transition={reduceMotion ? { duration: 0.01 } : { type: "spring", stiffness: 360, damping: 30, mass: 0.78 }}
+            whileTap={reduceMotion ? undefined : { scale: 0.925, y: 1, filter: "brightness(.76)" }}
+            onPointerDown={(event) => event.stopPropagation()}
+            onPointerUp={(event) => {
+              event.stopPropagation();
+              event.currentTarget.blur();
+            }}
+            onPointerCancel={(event) => event.currentTarget.blur()}
+            onContextMenu={(event) => event.preventDefault()}
+            onClick={(event) => {
+              event.stopPropagation();
+              returnToHub();
+            }}
+          >
+            <img src="/rr-mark-dark.svg" alt="" draggable={false} className={styles.hubTopLeftDark} />
+            <img src="/rr-mark-cream.svg" alt="" draggable={false} className={styles.hubTopLeftCream} />
+          </motion.button>
+        ) : null}
+      </AnimatePresence>
+
       <div
         className={styles.root}
         style={{ width: menuSize, height: menuSize }}
@@ -814,20 +845,6 @@ export function AdminMobileQuarterMenu() {
             setOpen(true);
           }}
         />
-        <button
-          type="button"
-          className={styles.hubHit}
-          aria-label="RR HUB'a dön"
-          title="RR HUB"
-          onPointerDown={(event) => event.stopPropagation()}
-          onPointerUp={(event) => event.stopPropagation()}
-          onClick={(event) => {
-            event.stopPropagation();
-            returnToHub();
-          }}
-        >
-          <img src="/rr-mark-cream.svg" alt="" draggable={false} />
-        </button>
       </div>
     </>,
     document.body,
