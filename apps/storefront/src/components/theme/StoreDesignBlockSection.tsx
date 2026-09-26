@@ -196,12 +196,12 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
     );
   }
 
-  if (type === "gallery-grid" || type === "logo-cloud" || type === "press-awards" || type === "team") {
+  if (type === "gallery-grid" || type === "masonry-gallery" || type === "collage" || type === "social-grid" || type === "logo-cloud" || type === "press-awards" || type === "team") {
     return (
       <section data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={type} data-editor-label={title || type.replace(/-/g, " ")} className="px-5 md:px-8" style={style}>
         <div className="mx-auto max-w-[1440px]">
           {heading}
-          <div className="v2-media-grid">
+          <div className={type === "masonry-gallery" ? "v2-media-grid v2-masonry-grid" : type === "collage" ? "v2-media-grid v2-collage-grid" : "v2-media-grid"}>
             {blocks.map((block) => {
               const label = text(block.settings.label || block.settings.name || block.settings.alt);
               const content = (
@@ -220,7 +220,43 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
             })}
           </div>
         </div>
-        <style>{`.v2-media-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--v2-gap)}@media(min-width:768px){.v2-media-grid{grid-template-columns:repeat(var(--v2-columns),minmax(0,1fr))}}`}</style>
+        <style>{`.v2-media-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--v2-gap)}.v2-collage-grid>*:first-child{grid-column:span 2}.v2-masonry-grid{display:block;columns:2;column-gap:var(--v2-gap)}.v2-masonry-grid>*{break-inside:avoid;margin-bottom:var(--v2-gap)}@media(min-width:768px){.v2-media-grid{grid-template-columns:repeat(var(--v2-columns),minmax(0,1fr))}.v2-masonry-grid{display:block;columns:var(--v2-columns)}}`}</style>
+      </section>
+    );
+  }
+
+  if (type === "image-text-split" || type === "video-text-split") {
+    const block = blocks[0];
+    const heading = block ? text(block.settings.heading) : title;
+    const body = block ? text(block.settings.body) : text(settings.body);
+    const ctaHref = block?.settings.cta || settings.linkHref;
+    const ctaLabel = text(settings.ctaLabel || settings.linkLabel) || "Keşfet";
+    const side = text(settings.side) === "right" ? "right" : "left";
+    const mediaNode = section.imageSrc
+      ? section.v2MediaType === "video"
+        ? <video src={section.imageSrc} poster={section.v2PosterUrl} className="h-full w-full object-cover" muted playsInline loop autoPlay />
+        : <img src={section.imageSrc} alt={heading} className="h-full w-full object-cover" />
+      : <div className="grid min-h-64 place-items-center bg-black/[0.04] text-[10px] opacity-40">Medya seçilmedi</div>;
+
+    return (
+      <section
+        data-theme-section-id={section.id}
+        data-editor-id={`section:${section.id}`}
+        data-editor-type={type}
+        data-editor-label={heading || type.replace(/-/g, " ")}
+        className="px-5 md:px-8"
+        style={style}
+      >
+        <div className="mx-auto grid max-w-[1440px] overflow-hidden rounded-2xl border border-current/10 md:grid-cols-2">
+          <div className={side === "right" ? "md:order-2" : ""}>{mediaNode}</div>
+          <div className={`flex items-center p-7 md:p-12 ${side === "right" ? "md:order-1" : ""}`}>
+            <div>
+              {heading ? <h2 className="font-heading text-[clamp(1.7rem,3vw,3rem)] leading-tight">{heading}</h2> : null}
+              {body ? <p className="mt-4 whitespace-pre-wrap text-sm leading-7 opacity-70">{body}</p> : null}
+              {href(ctaHref) ? <Link href={href(ctaHref)} className="mt-6 inline-flex rounded-full border border-current px-5 py-3 text-[10px] uppercase tracking-[0.12em]">{ctaLabel}</Link> : null}
+            </div>
+          </div>
+        </div>
       </section>
     );
   }
