@@ -65,6 +65,13 @@ type SelectedTarget = {
     height?: number;
     media?: { src?: string; objectFit?: string; objectPosition?: string } | null;
     grid?: { columns?: number; gapX?: number; gapY?: number; maxWidth?: string } | null;
+    card?: {
+      density?: "s" | "m" | "l";
+      imageRatio?: "1/1" | "4/5" | "3/4";
+      titleLines?: number;
+      showPrice?: boolean;
+      showQuickAdd?: boolean;
+    } | null;
   };
 };
 
@@ -170,6 +177,11 @@ function snapshotValue(target: SelectedTarget, path: string) {
   if (path === "grid.gapX") return target.current.grid?.gapX ?? 16;
   if (path === "grid.gapY") return target.current.grid?.gapY ?? 32;
   if (path === "grid.maxWidth") return target.current.grid?.maxWidth || "none";
+  if (path === "card.density") return target.current.card?.density || "m";
+  if (path === "card.imageRatio") return target.current.card?.imageRatio || "3/4";
+  if (path === "card.titleLines") return target.current.card?.titleLines ?? 2;
+  if (path === "card.showPrice") return target.current.card?.showPrice !== false;
+  if (path === "card.showQuickAdd") return target.current.card?.showQuickAdd !== false;
   if (path === "textAlign") return target.current.textAlign || "left";
   if (path === "borderRadius") return target.current.borderRadius || 0;
   if (path === "opacity") return target.current.opacity ?? 1;
@@ -191,6 +203,21 @@ function updateTargetSnapshot(target: SelectedTarget, path: string, value: unkno
           ...(target.current.grid || {}),
           [key]: key === "maxWidth" ? String(value) : Number(value),
         },
+      },
+    };
+  }
+  if (path.startsWith("card.")) {
+    const key = path.slice("card.".length) as "density" | "imageRatio" | "titleLines" | "showPrice" | "showQuickAdd";
+    const nextValue = key === "titleLines"
+      ? Number(value)
+      : key === "showPrice" || key === "showQuickAdd"
+        ? Boolean(value)
+        : value;
+    return {
+      ...target,
+      current: {
+        ...target.current,
+        card: { ...(target.current.card || {}), [key]: nextValue },
       },
     };
   }
@@ -940,6 +967,67 @@ export function StoreDesignV21() {
                               <option value="1440px">1440px</option>
                               <option value="1600px">1600px</option>
                             </select>
+                          </label>
+                        </div>
+                      </div>
+                    ) : null}
+
+                    {selected.type === "product-card" ? (
+                      <div className="rounded-xl border border-black/[0.08] bg-[#fafafa] p-3">
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="text-[8px] font-semibold text-black/55">Ürün kartı ailesi</p>
+                          <span className="rounded-full bg-white px-2 py-1 text-[7px] font-semibold text-black/40">{device === "mobile" ? "Mobil" : "Masaüstü"}</span>
+                        </div>
+                        <div className="mt-3 grid gap-3">
+                          <label className="grid gap-1.5 text-[8px] text-black/45">
+                            Yoğunluk
+                            <select
+                              value={selected.current.card?.density || "m"}
+                              onChange={(event) => applyInspectorPatch("card.density", event.target.value)}
+                              className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none"
+                            >
+                              <option value="s">S · Kompakt</option>
+                              <option value="m">M · Dengeli</option>
+                              <option value="l">L · Ferah</option>
+                            </select>
+                          </label>
+                          <label className="grid gap-1.5 text-[8px] text-black/45">
+                            Görsel oranı
+                            <select
+                              value={selected.current.card?.imageRatio || "3/4"}
+                              onChange={(event) => applyInspectorPatch("card.imageRatio", event.target.value)}
+                              className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none"
+                            >
+                              <option value="1/1">1:1</option>
+                              <option value="4/5">4:5</option>
+                              <option value="3/4">3:4</option>
+                            </select>
+                          </label>
+                          <label className="grid gap-1.5 text-[8px] text-black/45">
+                            Başlık satırı
+                            <select
+                              value={String(selected.current.card?.titleLines ?? 2)}
+                              onChange={(event) => applyInspectorPatch("card.titleLines", Number(event.target.value))}
+                              className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none"
+                            >
+                              {[1, 2, 3].map((value) => <option key={value} value={value}>{value} satır</option>)}
+                            </select>
+                          </label>
+                          <label className="flex items-center justify-between gap-3 rounded-lg border border-black/[0.08] bg-white p-2.5 text-[8px] font-semibold text-black/50">
+                            Fiyatı göster
+                            <input
+                              type="checkbox"
+                              checked={selected.current.card?.showPrice !== false}
+                              onChange={(event) => applyInspectorPatch("card.showPrice", event.target.checked)}
+                            />
+                          </label>
+                          <label className="flex items-center justify-between gap-3 rounded-lg border border-black/[0.08] bg-white p-2.5 text-[8px] font-semibold text-black/50">
+                            Hızlı sepete ekle
+                            <input
+                              type="checkbox"
+                              checked={selected.current.card?.showQuickAdd !== false}
+                              onChange={(event) => applyInspectorPatch("card.showQuickAdd", event.target.checked)}
+                            />
                           </label>
                         </div>
                       </div>
