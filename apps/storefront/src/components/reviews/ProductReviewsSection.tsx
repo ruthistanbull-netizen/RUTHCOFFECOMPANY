@@ -117,7 +117,11 @@ export function ProductReviewsSection({ productId, productSlug, productName }: {
   };
 
   return (
-    <section id="degerlendirmeler" className="bg-carbon px-4 py-12 md:px-8 md:py-16">
+    <section
+      data-editor-id={`reviews:${productId}`}
+      data-editor-type="reviews"
+      data-editor-label="Yorumlar"
+      id="degerlendirmeler" className="bg-carbon px-4 py-12 md:px-8 md:py-16">
       <div className="mx-auto max-w-4xl space-y-5">
         <div className="rounded-2xl border border-kraft/35 bg-carbon-soft p-4 md:p-7">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
