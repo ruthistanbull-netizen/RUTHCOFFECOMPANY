@@ -264,5 +264,91 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
     );
   }
 
+  if (type === "heading-subtext" || type === "manifesto" || type === "quote" || type === "promo-banner" || type === "shipping-returns-cta") {
+    const body = text(settings.body || settings.copy || settings.quote);
+    const attribution = text(settings.attribution);
+    const icon = text(settings.icon);
+    const ctaLabel = text(settings.linkLabel || settings.ctaLabel);
+    const ctaHref = settings.linkHref || settings.link || settings.cta;
+    const align = ["left", "center", "right"].includes(text(settings.align)) ? text(settings.align) : "center";
+    const maxWidth = text(settings.maxWidth) || (type === "manifesto" ? "900px" : "1100px");
+
+    return (
+      <section
+        data-theme-section-id={section.id}
+        data-editor-id={`section:${section.id}`}
+        data-editor-type={type}
+        data-editor-label={title || type.replace(/-/g, " ")}
+        className="px-5 md:px-8"
+        style={style}
+      >
+        <div className="mx-auto" style={{ maxWidth, textAlign: align as "left" | "center" | "right" }}>
+          {icon ? <div className="mb-4 text-xl" aria-hidden="true">{icon}</div> : null}
+          {eyebrow ? <p className="mb-3 text-[9px] uppercase tracking-[0.16em] opacity-55">{eyebrow}</p> : null}
+          {title ? <h2 className="font-heading text-[clamp(1.7rem,4vw,4rem)] leading-tight">{title}</h2> : null}
+          {body ? (
+            type === "quote"
+              ? <blockquote className="mt-5 font-heading text-[clamp(1.35rem,2.8vw,2.5rem)] leading-snug">“{body}”</blockquote>
+              : <p className="mt-5 whitespace-pre-wrap text-sm leading-7 opacity-72">{body}</p>
+          ) : null}
+          {attribution ? <p className="mt-4 text-[10px] uppercase tracking-[0.12em] opacity-50">{attribution}</p> : null}
+          {ctaLabel && href(ctaHref) ? <Link href={href(ctaHref)} className="mt-6 inline-flex rounded-full border border-current px-5 py-3 text-[10px] uppercase tracking-[0.12em]">{ctaLabel}</Link> : null}
+        </div>
+      </section>
+    );
+  }
+
+  if (type === "spacer") {
+    const desktopHeight = number(settings.desktopHeight, 64, 0, 400);
+    const mobileHeight = number(settings.mobileHeight, 40, 0, 300);
+    return (
+      <div
+        data-theme-section-id={section.id}
+        data-editor-id={`section:${section.id}`}
+        data-editor-type="spacer"
+        data-editor-label="Spacer"
+        className="v2-spacer"
+        style={{ ["--v2-spacer-mobile" as string]: `${mobileHeight}px`, ["--v2-spacer-desktop" as string]: `${desktopHeight}px` }}
+        aria-hidden="true"
+      >
+        <style>{`.v2-spacer{height:var(--v2-spacer-mobile)}@media(min-width:768px){.v2-spacer{height:var(--v2-spacer-desktop)}}`}</style>
+      </div>
+    );
+  }
+
+  if (type === "divider") {
+    const width = text(settings.width) || "100%";
+    const thickness = number(settings.thickness, 1, 1, 12);
+    return (
+      <section
+        data-theme-section-id={section.id}
+        data-editor-id={`section:${section.id}`}
+        data-editor-type="divider"
+        data-editor-label="Divider"
+        className="px-5 md:px-8"
+        style={{ paddingTop: paddingY, paddingBottom: paddingY }}
+      >
+        <div className="mx-auto border-t border-current/20" style={{ width, borderTopWidth: thickness }} />
+      </section>
+    );
+  }
+
+  if (type === "anchor") {
+    const anchorId = text(settings.anchorId).replace(/[^a-zA-Z0-9_-]/g, "-") || `section-${section.id}`;
+    const showLabel = settings.labelVisibility === true;
+    return (
+      <div
+        id={anchorId}
+        data-theme-section-id={section.id}
+        data-editor-id={`section:${section.id}`}
+        data-editor-type="anchor"
+        data-editor-label={title || "Anchor"}
+        className="scroll-mt-24"
+      >
+        {showLabel && title ? <span className="sr-only">{title}</span> : null}
+      </div>
+    );
+  }
+
   return null;
 }
