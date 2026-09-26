@@ -633,7 +633,12 @@ export function PaytrIframeCheckoutClient() {
         )}
       </div>
 
-      <div className="rounded-xl border border-kraft/25 bg-carbon-soft p-4 text-sm">
+      <div
+        data-editor-id="discount-section"
+        data-editor-type="discount-section"
+        data-editor-label="İndirim Kullan"
+        className="rounded-xl border border-kraft/25 bg-carbon-soft p-4 text-sm"
+      >
         <p className="font-heading text-cream">İndirim Kullan</p>
         <p className="mt-1 text-xs leading-5 text-cream/70">Kupon kodunu veya hesabındaki yorum indirimini kullan.</p>
         <div className="mt-3 flex gap-2">
