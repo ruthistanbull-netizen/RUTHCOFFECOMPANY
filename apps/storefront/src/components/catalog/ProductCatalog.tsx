@@ -359,7 +359,7 @@ export function ProductCatalog({
 
   return (
     <>
-      <style>{`.theme-product-grid{display:grid;grid-template-columns:repeat(var(--theme-product-grid-columns,2),minmax(0,1fr));column-gap:var(--theme-product-grid-gap-x,16px);row-gap:var(--theme-product-grid-gap-y,32px)}@media(min-width:640px){.theme-product-grid{column-gap:var(--theme-product-grid-gap-x,20px);row-gap:var(--theme-product-grid-gap-y,48px)}}@media(min-width:1280px){.theme-product-grid{grid-template-columns:repeat(var(--theme-product-grid-columns,3),minmax(0,1fr))}}`}</style>
+      <style>{`.theme-product-grid{display:grid;width:100%;max-width:var(--theme-product-grid-max-width,none);margin-inline:auto;grid-template-columns:repeat(var(--theme-product-grid-columns,2),minmax(0,1fr));column-gap:var(--theme-product-grid-gap-x,16px);row-gap:var(--theme-product-grid-gap-y,32px)}@media(min-width:640px){.theme-product-grid{column-gap:var(--theme-product-grid-gap-x,20px);row-gap:var(--theme-product-grid-gap-y,48px)}}@media(min-width:1280px){.theme-product-grid{grid-template-columns:repeat(var(--theme-product-grid-columns,3),minmax(0,1fr))}}`}</style>
       <div
         data-editor-id="catalog-search"
         data-editor-type="filter-controls"
