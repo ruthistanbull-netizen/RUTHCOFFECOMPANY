@@ -170,8 +170,16 @@ function EditorialMedia({
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const { scrollYProgress: cueScrollYProgress } = useScroll({
     target: ref,
-    offset: ["start 94%", "end 6%"],
+    offset: ["start 94%", "start 18%"],
   });
+  const cueSpringProgress = useSpring(cueScrollYProgress, {
+    stiffness: 260,
+    damping: 38,
+    mass: 0.18,
+    restDelta: 0.0002,
+    restSpeed: 0.0002,
+  });
+  const cueMotionProgress = mobileViewport ? cueScrollYProgress : cueSpringProgress;
   const progress = useSpring(scrollYProgress, { stiffness: 92, damping: 30, mass: 0.42 });
   const scale = useTransform(
     progress,
@@ -183,18 +191,18 @@ function EditorialMedia({
   const cueStartX = index === 2
     ? (mobileViewport ? 420 : 620)
     : (mobileViewport ? -420 : -620);
-  // Same interaction principle as the ROSTA wordmark: the copy stays pinned
-  // in the viewport while this photo is active, and raw scroll position drives
-  // it continuously in both directions. No delayed spring, no Y drift.
+  // Horizontal entrance completes early, while the photo is still rising.
+  // The parent sticky frame supplies the ROSTA-like vertical behavior:
+  // text rises with the photo, pins with it, and follows back down on reverse scroll.
   const cueX = useTransform(
-    cueScrollYProgress,
-    [0.02, 0.2, 0.42, 0.66, 0.84, 0.98],
-    [cueStartX, cueStartX * 0.78, cueStartX * 0.52, cueStartX * 0.29, cueStartX * 0.11, 0],
+    cueMotionProgress,
+    [0, 0.14, 0.34, 0.56, 0.78, 1],
+    [cueStartX, cueStartX * 0.74, cueStartX * 0.46, cueStartX * 0.23, cueStartX * 0.08, 0],
   );
   const cueOpacity = useTransform(
-    cueScrollYProgress,
-    [0.01, 0.08, 0.18, 1],
-    [0, 0.22, 1, 1],
+    cueMotionProgress,
+    [0, 0.05, 0.14, 0.28, 1],
+    [0, 0.18, 0.62, 1, 1],
   );
   const wrapperClass = index === 0
     ? "absolute inset-0 overflow-hidden"
@@ -353,6 +361,7 @@ function EditorialMedia({
               opacity: cueOpacity,
               transformOrigin: "left center",
               willChange: "transform, opacity",
+              translateZ: 0,
             }}
             aria-hidden="true"
           >
@@ -373,6 +382,7 @@ function EditorialMedia({
               transformOrigin: "right center",
               textAlign: "right",
               willChange: "transform, opacity",
+              translateZ: 0,
             }}
             aria-hidden="true"
           >
