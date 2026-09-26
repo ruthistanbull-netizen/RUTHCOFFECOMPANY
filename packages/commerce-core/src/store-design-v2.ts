@@ -111,6 +111,7 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
   component("product-spotlight", "Tek Ürün Spotlight", "Katalog", "section", sectionScopes, ["data", "content", "layout", "responsive"], ["productData", "priceValue", "stockLogic"]),
   component("featured-collection", "Featured Collection", "Katalog", "section", sectionScopes, ["data", "content", "layout", "responsive"], ["catalogMembership", "productData"]),
   component("category-cards", "Kategori Kartları", "Katalog", "section", sectionScopes, ["data", "layout", "responsive"], ["catalogMembership"]),
+  component("product-comparison", "Ürün Karşılaştırma", "Katalog", "section", sectionScopes, ["data", "content", "layout", "responsive"], ["productData", "priceValue", "stockLogic"]),
   component("new-arrivals", "Yeni Gelenler", "Katalog", "section", sectionScopes, ["data", "layout", "responsive"], ["sourceRule", "productData"]),
   component("sale-products", "İndirimdekiler", "Katalog", "section", sectionScopes, ["data", "layout", "card", "responsive"], ["discountLogic", "productData"]),
   component("product-card", "Ürün Kartı", "Katalog", "family", ["family", "section", "template"], ["card", "typography", "layout", "responsive"], ["productData", "individualMediaScale", "individualWidth"]),
@@ -280,7 +281,7 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
   section("recently-viewed", "Son Görüntülenenler", "commerce", ["product", "cart"], ["limit", "layout", "heading"]),
   section("bundle", "Birlikte Alınanlar / Bundle", "commerce", ["product", "cart"], ["source", "layout", "cta"]),
   section("cross-sell", "Cross-sell / Upsell", "commerce", ["cart", "checkout"], ["source", "position", "density"]),
-  section("product-comparison", "Ürün Karşılaştırma", "commerce", ["content", "landing"], ["products", "fields", "layout"]),
+  section("product-comparison", "Ürün Karşılaştırma", "commerce", ["content", "landing"], ["productIds", "fields", "layout", "title", "paddingY"], [], true),
 
   section("hero", "Hero", "media", allContentPages, ["imageAssetId", "posterAssetId", "heightPreset", "fit", "playbackPreset", "title", "body", "linkLabel", "linkHref", "align", "overlayOpacity", "contrastMode"], [], true),
   section("scroll-story", "Scroll Story", "media", allContentPages, ["scrollLengthPreset", "transitionPreset", "cueVisibility"], ["scroll-story-slide"], true, 8),
@@ -1330,6 +1331,17 @@ export function validateThemeDocument(document: ThemeDocument) {
       if (!Number.isFinite(gap) || gap < 0 || gap > 64) errors.push(`${section.id}: Kategori kartı gap 0-64 aralığında olmalı.`);
       if (!["16/10", "4/5", "1/1"].includes(ratio)) errors.push(`${section.id}: Kategori kartı ratio preset geçersiz.`);
       if (!["overlay", "below"].includes(placement)) errors.push(`${section.id}: Kategori kartı titlePlacement geçersiz.`);
+    }
+
+    if (section.type === "product-comparison") {
+      const productIds = Array.isArray(section.settings.productIds) ? section.settings.productIds.filter((item): item is string => typeof item === "string" && Boolean(item.trim())) : [];
+      if (productIds.length < 2 || productIds.length > 4) errors.push(`${section.id}: Ürün Karşılaştırma 2-4 ürün seçimi gerektirir.`);
+      if (new Set(productIds).size !== productIds.length) errors.push(`${section.id}: Ürün Karşılaştırma aynı ürünü birden fazla kez içeremez.`);
+      const fields = Array.isArray(section.settings.fields) ? section.settings.fields : ["price", "stock", "description"];
+      const allowedFields = new Set(["price", "compare-price", "stock", "description", "material"]);
+      if (!fields.length || fields.some((item) => typeof item !== "string" || !allowedFields.has(item))) errors.push(`${section.id}: Ürün Karşılaştırma field seçimi geçersiz.`);
+      const layout = String(section.settings.layout || "table");
+      if (layout !== "table") errors.push(`${section.id}: Ürün Karşılaştırma yalnız güvenli table layout kullanabilir.`);
     }
 
     if (section.type === "scroll-story") {
