@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 import type { ThemeSection } from "@ruth-commerce/commerce-core/theme-sections";
 import { StoreDesignCountdown } from "@/components/theme/StoreDesignCountdown";
+import { StoreDesignBeforeAfter } from "@/components/theme/StoreDesignBeforeAfter";
 
 type V2Block = NonNullable<ThemeSection["v2Blocks"]>[number];
 
@@ -221,6 +222,78 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
           </div>
         </div>
         <style>{`.v2-media-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--v2-gap)}.v2-collage-grid>*:first-child{grid-column:span 2}.v2-masonry-grid{display:block;columns:2;column-gap:var(--v2-gap)}.v2-masonry-grid>*{break-inside:avoid;margin-bottom:var(--v2-gap)}@media(min-width:768px){.v2-media-grid{grid-template-columns:repeat(var(--v2-columns),minmax(0,1fr))}.v2-masonry-grid{display:block;columns:var(--v2-columns)}}`}</style>
+      </section>
+    );
+  }
+
+  if (type === "before-after") {
+    const before = section.v2Assets?.beforeAssetId;
+    const after = section.v2Assets?.afterAssetId;
+    if (!before?.url || !after?.url) return null;
+
+    return (
+      <section
+        data-theme-section-id={section.id}
+        data-editor-id={`section:${section.id}`}
+        data-editor-type="before-after"
+        data-editor-label={title || "Before / After"}
+        className="px-5 md:px-8"
+        style={style}
+      >
+        <div className="mx-auto max-w-[1200px]">
+          {heading}
+          <StoreDesignBeforeAfter
+            beforeUrl={before.url}
+            afterUrl={after.url}
+            beforeLabel={text(settings.beforeLabel) || "Önce"}
+            afterLabel={text(settings.afterLabel) || "Sonra"}
+            initialPosition={number(settings.divider, 50, 10, 90)}
+          />
+        </div>
+      </section>
+    );
+  }
+
+  if (type === "hotspot-lookbook") {
+    if (!section.imageSrc) return null;
+    return (
+      <section
+        data-theme-section-id={section.id}
+        data-editor-id={`section:${section.id}`}
+        data-editor-type="hotspot-lookbook"
+        data-editor-label={title || "Hotspot / Lookbook"}
+        className="px-5 md:px-8"
+        style={style}
+      >
+        <div className="mx-auto max-w-[1200px]">
+          {heading}
+          <div className="relative overflow-hidden rounded-2xl">
+            <img src={section.imageSrc} alt={title || "Lookbook"} className="block h-auto w-full object-cover" />
+            {blocks.map((block, index) => {
+              const x = number(block.settings.x, 50, 0, 100);
+              const y = number(block.settings.y, 50, 0, 100);
+              const target = block.settings.targetId;
+              const targetHref = href(target);
+              const label = text(block.settings.label) || `Hotspot ${index + 1}`;
+              const marker = (
+                <span
+                  data-editor-id={`block:${block.id}`}
+                  data-editor-type="hotspot"
+                  data-editor-label={label}
+                  className="grid h-8 w-8 place-items-center rounded-full border border-white/70 bg-black/65 text-[10px] font-semibold text-white shadow-lg backdrop-blur-sm transition-transform hover:scale-110"
+                  title={label}
+                >
+                  {index + 1}
+                </span>
+              );
+              return (
+                <div key={block.id} className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: `${x}%`, top: `${y}%` }}>
+                  {targetHref ? <Link href={targetHref} aria-label={label}>{marker}</Link> : marker}
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </section>
     );
   }
