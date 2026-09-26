@@ -22,6 +22,8 @@ const SEMANTIC_SECTION_TYPE: Record<ThemeSection["type"], string> = {
   trust: "trust-section",
   "product-slider": "product-slider",
   "product-grid": "product-grid",
+  "new-arrivals": "new-arrivals",
+  "sale-products": "sale-products",
   "image-banner": "image-banner",
   "rich-text": "rich-text",
   faq: "faq-accordion",
@@ -56,8 +58,29 @@ function hasProductSectionCustomization(section: ThemeSection) {
     section.showArrows !== undefined;
 }
 
+function productHasDiscount(product: Product) {
+  const price = Number(product.price || 0);
+  const compareAt = Number(product.compare_at_price || 0);
+  if (Number.isFinite(price) && Number.isFinite(compareAt) && price > 0 && compareAt > price) return true;
+  return (product.variants || []).some((variant) => {
+    const variantPrice = Number(variant.price || 0);
+    const variantCompareAt = Number(variant.compare_at_price || 0);
+    return Number.isFinite(variantPrice) && Number.isFinite(variantCompareAt) && variantPrice > 0 && variantCompareAt > variantPrice;
+  });
+}
+
 function productsForSection(section: ThemeSection, featuredProducts: Product[], allProducts: Product[]) {
   const sourceId = section.productSourceId;
+
+  if (section.type === "new-arrivals") {
+    return allProducts
+      .filter((product) => product.is_new === true)
+      .sort((left, right) => String(right.created_at || "").localeCompare(String(left.created_at || "")));
+  }
+
+  if (section.type === "sale-products") {
+    return allProducts.filter(productHasDiscount);
+  }
 
   if (section.productSource === "all") return allProducts;
 
@@ -72,6 +95,27 @@ function productsForSection(section: ThemeSection, featuredProducts: Product[], 
   }
 
   return featuredProducts;
+}
+
+function saleBadgeVars(section: ThemeSection): Record<string, string> {
+  if (section.type !== "sale-products") return {};
+  if (section.badgeStyle === "outline") {
+    return {
+      "--theme-sale-badge-bg": "transparent",
+      "--theme-sale-badge-border": "1px solid currentColor",
+      "--theme-sale-badge-radius": "999px",
+      "--theme-sale-badge-padding": "3px 7px",
+    };
+  }
+  if (section.badgeStyle === "minimal") {
+    return {
+      "--theme-sale-badge-bg": "transparent",
+      "--theme-sale-badge-border": "0",
+      "--theme-sale-badge-radius": "0",
+      "--theme-sale-badge-padding": "0",
+    };
+  }
+  return {};
 }
 
 export function HomeSectionRenderer({
@@ -106,7 +150,7 @@ export function HomeSectionRenderer({
   if (section.type === "brand-story") return <div data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}><BrandStory /></div>;
   if (section.type === "trust") return <div data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}><TrustSection freeShippingThreshold={freeShippingThreshold} /></div>;
 
-  if (section.type === "product-grid") {
+  if (section.type === "product-grid" || ((section.type === "new-arrivals" || section.type === "sale-products") && section.layout === "grid")) {
     const products = productsForSection(section, featuredProducts, allProducts).slice(0, section.productLimit || 12);
     const desktopItems = Math.max(2, Math.min(6, Math.round(section.desktopItems || 3)));
     const mobileItems = Math.max(1, Math.min(2, Math.round(section.mobileItems || 2)));
@@ -121,6 +165,7 @@ export function HomeSectionRenderer({
         data-editor-label={semanticSectionLabel(section)}
         className="overflow-hidden"
         style={{
+          ...saleBadgeVars(section),
           background: section.backgroundColor || "transparent",
           color: section.textColor || "inherit",
           paddingTop: section.paddingY ?? 64,
@@ -160,7 +205,11 @@ export function HomeSectionRenderer({
     );
   }
 
-  if (section.type === "product-slider" || section.type === "featured-products") {
+  if (
+    section.type === "product-slider"
+    || section.type === "featured-products"
+    || ((section.type === "new-arrivals" || section.type === "sale-products") && section.layout !== "grid")
+  ) {
     const products = productsForSection(section, featuredProducts, allProducts).slice(0, section.productLimit || 12);
     const desktopItems = Math.max(1, Math.round(section.desktopItems || 4));
     const mobileItems = Math.max(1, Math.round(section.mobileItems || 2));
@@ -185,6 +234,7 @@ export function HomeSectionRenderer({
         className="theme-config-product-section overflow-hidden"
         style={{
           ...textVars,
+          ...saleBadgeVars(section),
           background: sectionBackground,
           color: sectionText,
           paddingTop: section.paddingY ?? 64,
