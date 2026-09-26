@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
 import { noStoreHeaders } from "@/lib/websiteRevalidate";
 import {
+  migrateThemeDocument,
   normalizeThemeDocument,
   validateThemeDocument,
   withThemeMediaUsageCounts,
@@ -22,7 +23,7 @@ function cleanSnapshotKey(value: unknown) {
 }
 
 function summary(key: string, value: unknown, updatedAt: string | null) {
-  const document = normalizeThemeDocument(value);
+  const document = migrateThemeDocument(value).document;
   return {
     key,
     revision: document.revision,
@@ -44,7 +45,7 @@ async function readDocument(supabase: any, key: string): Promise<ThemeDocument |
     .eq("setting_key", key)
     .maybeSingle();
   if (error) throw new Error(error.message);
-  return data?.setting_value ? normalizeThemeDocument(data.setting_value) : null;
+  return data?.setting_value ? migrateThemeDocument(data.setting_value).document : null;
 }
 
 export async function GET(request: Request) {
@@ -100,7 +101,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const normalized = withThemeMediaUsageCounts(snapshot);
+    const migration = migrateThemeDocument(snapshot);
+    const normalized = withThemeMediaUsageCounts(migration.document);
     const validation = validateThemeDocument(normalized);
     if (!validation.ok) {
       return NextResponse.json(
@@ -132,6 +134,12 @@ export async function POST(request: Request) {
       document: normalizeThemeDocument(data?.setting_value || restored),
       restoredAt: data?.updated_at || now,
       liveSiteChanged: false,
+      migration: {
+        fromVersion: migration.fromVersion,
+        toVersion: migration.toVersion,
+        changed: migration.changed,
+        notes: migration.notes,
+      },
     }, { headers: noStoreHeaders() });
   } catch (error) {
     return NextResponse.json(
