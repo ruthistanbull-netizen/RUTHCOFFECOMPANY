@@ -170,7 +170,9 @@ function EditorialMedia({
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const { scrollYProgress: cueScrollYProgress } = useScroll({
     target: ref,
-    offset: ["start 100%", "start 58%"],
+    offset: index === 2
+      ? ["start 76%", "start 36%"]
+      : ["start 100%", "start 58%"],
   });
   const { scrollYProgress: cueLifecycleProgress } = useScroll({
     target: ref,
@@ -198,12 +200,16 @@ function EditorialMedia({
   // The photo top edge only triggers its horizontal entrance; once visible,
   // the cue stays exactly at screen center until that photo's lifecycle ends.
   const cueX = useTransform(cueMotionProgress, [0, 1], [cueStartX, 0]);
-  // Each caption is gone before the following photo begins, so fixed captions
-  // can never sit on top of each other.
+  // Keep the fixed captions in separate visibility windows.
+  // The second clears before the third is allowed to appear.
   const cueOpacity = useTransform(
     cueLifecycleProgress,
-    [0, 0.025, 0.78, 0.88, 1],
-    [0, 1, 1, 0, 0],
+    index === 1
+      ? [0, 0.025, 0.4, 0.5, 1]
+      : [0, 0.1, 0.18, 0.82, 1],
+    index === 1
+      ? [0, 1, 1, 0, 0]
+      : [0, 0, 1, 1, 0],
   );
   const wrapperClass = index === 0
     ? "absolute inset-0 overflow-hidden"
