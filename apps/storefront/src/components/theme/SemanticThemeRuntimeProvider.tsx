@@ -38,6 +38,7 @@ function declaration(path: string, value: unknown) {
   if (path === "grid.columns") return `--theme-product-grid-columns:${Math.max(1, Math.min(6, Math.round(Number(value))))};`;
   if (path === "grid.gapX") return `--theme-product-grid-gap-x:${Math.max(0, Math.min(120, Number(value)))}px;`;
   if (path === "grid.gapY") return `--theme-product-grid-gap-y:${Math.max(0, Math.min(120, Number(value)))}px;`;
+  if (path === "grid.maxWidth") return `--theme-product-grid-max-width:${String(value)};`;
   return "";
 }
 
