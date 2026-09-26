@@ -67,7 +67,9 @@ export function storeDesignSectionsForPage(document: ThemeDocument, page: PageRe
       return {
         ...normalized,
         imageSrc: versionedMediaUrl(desktopAsset) || normalized.imageSrc,
+        imageAssetId: desktopAsset?.assetId,
         mobileImageSrc: versionedMediaUrl(mobileAsset),
+        mobileImageAssetId: mobileAsset?.assetId,
         imageObjectPosition: focalPosition(desktopAsset),
         mobileImageObjectPosition: focalPosition(mobileAsset) || focalPosition(desktopAsset),
         faqItems,
