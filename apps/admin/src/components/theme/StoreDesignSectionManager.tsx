@@ -32,6 +32,7 @@ import {
   StoreDesignSectionEditor,
   canEditStoreDesignSection,
 } from "@/components/theme/StoreDesignSectionEditor";
+import { StoreDesignBlockSectionEditor } from "@/components/theme/StoreDesignBlockSectionEditor";
 
 type ActivePage = {
   path: string;
@@ -218,6 +219,15 @@ function sectionLabel(section: SectionInstance) {
 
 function canRenderDefinition(definition: SectionDefinition) {
   return definition.implemented && RENDERABLE_SECTION_TYPES.has(definition.type);
+}
+
+function isBlockDrivenSection(type: string) {
+  const definition = SECTION_LIBRARY_BY_TYPE[type];
+  return Boolean(definition?.implemented && definition.allowedBlocks.length > 0);
+}
+
+function canEditSection(type: string) {
+  return canEditStoreDesignSection(type) || isBlockDrivenSection(type);
 }
 
 function SectionPicker({
@@ -408,15 +418,15 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
               <GripVertical className="h-3.5 w-3.5 shrink-0 cursor-grab text-black/20" />
               <button
                 type="button"
-                disabled={!canEditStoreDesignSection(section.type)}
+                disabled={!canEditSection(section.type)}
                 onClick={() => setEditingSectionId(section.id)}
                 className="min-w-0 flex-1 py-2 text-left disabled:cursor-default"
-                title={canEditStoreDesignSection(section.type) ? "Bölüm ayarlarını aç" : "Bu bölümün V2 ayar şeması henüz bağlanmadı"}
+                title={canEditSection(section.type) ? "Bölüm ayarlarını aç" : "Bu bölümün V2 ayar şeması henüz bağlanmadı"}
               >
                 <p className={`truncate text-[9px] font-semibold ${section.enabled ? "" : "text-black/35"}`}>{sectionLabel(section)}</p>
                 <p className="mt-0.5 truncate text-[7px] text-black/28">{section.id}</p>
               </button>
-              {canEditStoreDesignSection(section.type) ? (
+              {canEditSection(section.type) ? (
                 <button type="button" disabled={busy} onClick={() => setEditingSectionId(section.id)} className="grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04]" aria-label="Bölüm ayarları">
                   <Settings2 className="h-3 w-3" />
                 </button>
@@ -454,12 +464,21 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
 
       {pickerOpen ? <SectionPicker compatibility={compatibility} onAdd={(definition) => void addSection(definition)} onClose={() => setPickerOpen(false)} /> : null}
       {editingSectionId && document.sections[editingSectionId] ? (
-        <StoreDesignSectionEditor
-          document={document}
-          section={document.sections[editingSectionId]!}
-          onApply={onApply}
-          onClose={() => setEditingSectionId(null)}
-        />
+        isBlockDrivenSection(document.sections[editingSectionId]!.type) && document.sections[editingSectionId]!.type !== "faq" ? (
+          <StoreDesignBlockSectionEditor
+            document={document}
+            section={document.sections[editingSectionId]!}
+            onApply={onApply}
+            onClose={() => setEditingSectionId(null)}
+          />
+        ) : (
+          <StoreDesignSectionEditor
+            document={document}
+            section={document.sections[editingSectionId]!}
+            onApply={onApply}
+            onClose={() => setEditingSectionId(null)}
+          />
+        )
       ) : null}
     </>
   );
