@@ -144,7 +144,7 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
   component("team", "Ekip", "İçerik", "section", sectionScopes, ["media", "content", "layout"], []),
   component("member", "Ekip Üyesi", "İçerik", "family", familyScopes, ["media", "content", "card"], ["mediaFile"]),
   component("slide", "Slayt", "İçerik", "family", familyScopes, ["media", "content", "layout"], ["mediaFile"]),
-  component("announcement-bar", "Duyuru Barı", "İçerik", "section", sectionScopes, ["content", "layout"], []),
+  component("announcement-section", "Duyuru Bölümü", "İçerik", "section", sectionScopes, ["content", "layout"], []),
   component("announcement", "Duyuru", "İçerik", "family", familyScopes, ["content", "typography"], []),
   component("marquee", "Marquee", "İçerik", "section", sectionScopes, ["content", "layout", "animation"], []),
   component("ticker-item", "Ticker Öğesi", "İçerik", "family", familyScopes, ["content", "typography"], []),
