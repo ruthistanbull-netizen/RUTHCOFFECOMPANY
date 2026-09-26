@@ -514,14 +514,14 @@ function HorizontalPortfolioStory({
   const motionProgress = reduceMotion ? scrollYProgress : smooth;
   const x = useTransform(
     motionProgress,
-    [0, 0.1, 0.28, 0.36, 0.54, 0.62, 0.8, 0.88, 1],
+    [0, 0.1, 0.28, 0.36, 0.54, 0.62, 0.76, 0.88, 1],
     ["0%", "0%", "-25%", "-25%", "-50%", "-50%", "-75%", "-75%", "-75%"],
   );
 
   return (
     <section
       ref={ref}
-      className="home-horizontal-editorial relative h-[520svh] overflow-visible bg-carbon"
+      className="home-horizontal-editorial relative h-[580svh] overflow-visible bg-carbon"
       aria-label="ROSTA yatay hikaye"
     >
       <style>{`
