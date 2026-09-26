@@ -58,6 +58,8 @@ const RENDERABLE_SECTION_TYPES = new Set([
   "featured-products",
   "product-slider",
   "product-grid",
+  "new-arrivals",
+  "sale-products",
   "image-banner",
   "rich-text",
   "brand-story",
@@ -127,6 +129,12 @@ function defaultSettings(type: string): Record<string, unknown> {
   }
   if (type === "product-grid") {
     return { title: "Ürünler", productSource: "featured", productLimit: 12, desktopItems: 3, mobileItems: 2, gap: 20, maxWidth: "none", paddingY: 64 };
+  }
+  if (type === "new-arrivals") {
+    return { title: "Yeni Gelenler", productLimit: 12, desktopItems: 4, mobileItems: 2, gap: 12, paddingY: 64, layout: "slider", showArrows: true };
+  }
+  if (type === "sale-products") {
+    return { title: "İndirimdekiler", productLimit: 12, desktopItems: 4, mobileItems: 2, gap: 12, paddingY: 64, layout: "slider", showArrows: true, badgeStyle: "pill" };
   }
   if (type === "image-banner") {
     return { title: "Yeni Bölüm", desktopHeight: 520, mobileHeight: 360, paddingY: 0, borderRadius: 0 };
