@@ -6,6 +6,7 @@ import type { Category, Collection } from "@/types/site";
 import type { ThemeCustomizerSettings } from "@/lib/themeCustomizer";
 import { getThemeCustomizerSettings } from "@/data/site";
 import { ThemeEditorBridgeV3 } from "@/components/theme/ThemeEditorBridgeV3";
+import { SemanticThemeEditorBridge } from "@/components/theme/SemanticThemeEditorBridge";
 import { ThemeEditorContextGestureBridge } from "@/components/theme/ThemeEditorContextGestureBridge";
 import { ThemeEditorEnhancements } from "@/components/theme/ThemeEditorEnhancements";
 import { ThemeEditorNativeNavigation } from "@/components/theme/ThemeEditorNativeNavigation";
@@ -82,7 +83,7 @@ export async function Footer({ categories = [], collections = [], themeSettings 
 
   return (
     <>
-      <footer className="bg-carbon px-4 pb-8 pt-14 text-cream md:px-8 md:pt-20" style={{ borderTop: "1px solid color-mix(in srgb, var(--rosta-kraft) 45%, transparent)" }}>
+      <footer data-editor-id="global.footer" data-editor-type="footer-shell" data-editor-label="Footer" className="bg-carbon px-4 pb-8 pt-14 text-cream md:px-8 md:pt-20" style={{ borderTop: "1px solid color-mix(in srgb, var(--rosta-kraft) 45%, transparent)" }}>
         <div className="mx-auto max-w-7xl">
           <div className="mb-10 flex flex-col items-center text-center md:mb-12">
             <Link href="/" aria-label="Rosta Coffee Co anasayfa" className="mb-4 inline-flex"><img src={ROSTA_WORDMARK_SRC} alt="" className="h-auto w-[190px] object-contain brightness-0 invert sm:w-[220px]" /></Link>
@@ -104,6 +105,7 @@ export async function Footer({ categories = [], collections = [], themeSettings 
           <div className="flex flex-col justify-between gap-2 border-t border-kraft/35 pt-6 text-[9px] sm:text-[10px] md:flex-row" style={{ color: "var(--muted-foreground)" }}><p>Copyright © 2026, ROSTA COFFEE CO. Tüm Hakları Saklıdır.</p><p>Kahvenin her adımında.</p></div>
         </div>
       </footer>
+      <SemanticThemeEditorBridge />
       <ThemeEditorNativeNavigation />
       <ThemeEditorEnhancements />
       <ThemeEditorContextGestureBridge />
