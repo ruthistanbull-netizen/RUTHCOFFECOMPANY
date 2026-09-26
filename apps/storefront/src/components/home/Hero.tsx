@@ -146,6 +146,33 @@ function isVideoMediaSource(value: string) {
   return /\.(mp4|m4v|mov|webm)(?:$|[?#])/i.test(value || "");
 }
 
+function Editorial3DText({
+  lines,
+}: {
+  lines: string[];
+}) {
+  const depthLayers = [24, 20, 16, 12, 8, 4];
+
+  return (
+    <div className="home-editorial-cue-3d" aria-hidden="true">
+      {depthLayers.map((depth, layerIndex) => (
+        <p
+          key={depth}
+          className="home-editorial-cue-face home-editorial-cue-face--depth"
+          style={{
+            transform: `translate3d(${layerIndex * 0.7}px, ${layerIndex * 0.42}px, -${depth}px)`,
+          }}
+        >
+          {lines.map((line) => <span key={line}>{line}</span>)}
+        </p>
+      ))}
+      <p className="home-editorial-cue-face home-editorial-cue-face--front">
+        {lines.map((line) => <span key={line}>{line}</span>)}
+      </p>
+    </div>
+  );
+}
+
 function EditorialMedia({
   slide,
   index,
@@ -194,11 +221,10 @@ function EditorialMedia({
   );
   const y = useTransform(progress, [0, 0.5, 1], ["0%", "-0.65%", "-1.35%"]);
   const opacity = useTransform(progress, [0, 0.78, 1], [1, 1, 0.96]);
-  const cueStartX = index === 2 && mobileViewport
-    ? 420
-    : mobileViewport
-      ? -400
-      : -560;
+  const cueComesFromRight = index === 2;
+  const cueStartX = cueComesFromRight
+    ? (mobileViewport ? 470 : 650)
+    : (mobileViewport ? -440 : -650);
 
   // Start exactly at the top edge of the editorial photo and travel down/in
   // with the same scroll that brings the photo into view. This avoids the
@@ -220,25 +246,29 @@ function EditorialMedia({
     [0, 0.07, 0.2, 0.42, 1],
     [0, 0.22, 0.68, 1, 1],
   );
-  const cueComesFromRight = index === 2 && mobileViewport;
   const cueRotateY = useTransform(
     cueMotionProgress,
-    [0, 0.18, 0.48, 0.78, 1],
+    [0, 0.16, 0.42, 0.7, 0.9, 1],
     cueComesFromRight
-      ? [22, 18, 10, 3, 0]
-      : [-22, -18, -10, -3, 0],
+      ? [68, 54, 34, 14, 3, 0]
+      : [-68, -54, -34, -14, -3, 0],
+  );
+  const cueRotateX = useTransform(
+    cueMotionProgress,
+    [0, 0.34, 0.72, 1],
+    [16, 9, 3, 0],
   );
   const cueRotateZ = useTransform(
     cueMotionProgress,
-    [0, 0.2, 0.52, 0.82, 1],
+    [0, 0.18, 0.48, 0.76, 0.92, 1],
     cueComesFromRight
-      ? [4.5, 3.4, 1.8, 0.5, 0]
-      : [-4.5, -3.4, -1.8, -0.5, 0],
+      ? [-11, -8, -4, -1.2, 0.4, 0]
+      : [11, 8, 4, 1.2, -0.4, 0],
   );
   const cueZ = useTransform(
     cueMotionProgress,
-    [0, 0.35, 0.72, 1],
-    [-54, -34, -12, 0],
+    [0, 0.2, 0.5, 0.78, 1],
+    [-190, -145, -82, -28, 0],
   );
   const wrapperClass = index === 0
     ? "absolute inset-0 overflow-hidden"
@@ -396,42 +426,41 @@ function EditorialMedia({
               x: cueX,
               y: cueY,
               opacity: cueOpacity,
+              rotateX: cueRotateX,
               rotateY: cueRotateY,
               rotateZ: cueRotateZ,
               z: cueZ,
-              transformPerspective: mobileViewport ? 900 : 1400,
+              transformPerspective: mobileViewport ? 1050 : 1650,
               transformOrigin: "left top",
               willChange: "transform, opacity",
             }}
             aria-hidden="true"
           >
-            <p>
-              <span>Doğru Çekirdek,</span>
-              <span>Güçlü Deneyim</span>
-            </p>
+            <Editorial3DText lines={["Doğru Çekirdek,", "Güçlü Deneyim"]} />
           </motion.div>
         ) : null}
 
         {index === 2 ? (
           <motion.div
-            className="home-editorial-cue home-editorial-cue--third pointer-events-none absolute top-[1svh] z-50 max-w-[84vw] md:left-[14vw] md:right-auto md:top-[52px] md:max-w-[50vw]"
+            className="home-editorial-cue home-editorial-cue--third pointer-events-none absolute right-[10vw] top-[1svh] z-50 max-w-[84vw] md:left-auto md:right-[14vw] md:top-[52px] md:max-w-[50vw]"
             style={{
-              left: mobileViewport ? "auto" : undefined,
-              right: mobileViewport ? "10vw" : undefined,
+              left: "auto",
+              right: undefined,
               x: cueX,
               y: cueY,
               opacity: cueOpacity,
+              rotateX: cueRotateX,
               rotateY: cueRotateY,
               rotateZ: cueRotateZ,
               z: cueZ,
-              transformPerspective: mobileViewport ? 900 : 1400,
-              transformOrigin: mobileViewport ? "right top" : "left top",
-              textAlign: mobileViewport ? "right" : "left",
+              transformPerspective: mobileViewport ? 1050 : 1650,
+              transformOrigin: "right top",
+              textAlign: "right",
               willChange: "transform, opacity",
             }}
             aria-hidden="true"
           >
-            <p>Kahveyi sadeleştir, karakterini koru.</p>
+            <Editorial3DText lines={["Kahveyi sadeleştir, karakterini koru."]} />
           </motion.div>
         ) : null}
       </div>
@@ -555,14 +584,16 @@ export default function Hero({
     >
       <style>{`
         .home-editorial-wordmark{box-sizing:border-box;pointer-events:none;position:fixed;left:0;top:calc(100svh - clamp(184px,38vw,236px) + 20px);z-index:40;width:min(100vw,1208px);max-width:100vw;height:auto;aspect-ratio:3175/1343;user-select:none;transition:color .24s ease,opacity .28s ease,visibility .28s ease}.home-editorial-wordmark[data-visible="false"]{opacity:0!important;visibility:hidden}.home-editorial-wordmark svg{display:block;width:100%;height:100%;overflow:visible}@media(min-width:1024px){.home-editorial-wordmark{right:1vw!important;left:auto!important;top:calc(47vh + 18px)!important;width:44.8vw!important;max-width:44.8vw!important;height:auto!important;aspect-ratio:3175/1343}}
-        .home-editorial-cue{color:var(--rosta-brick-b);font-family:var(--font-heading)!important;font-weight:900!important;font-variation-settings:"wght" 900!important;font-synthesis:weight!important;letter-spacing:-.045em;line-height:.92;transform-style:preserve-3d;backface-visibility:hidden}
-        .home-editorial-cue p,.home-editorial-cue span{margin:0;font-family:var(--font-heading)!important;font-weight:900!important;font-variation-settings:"wght" 900!important;font-synthesis:weight!important}
-        .home-editorial-cue p{font-size:clamp(3.75rem,15vw,5.4rem);line-height:.9}
-        .home-editorial-cue span{display:block}
-        .home-editorial-cue--third p{font-size:clamp(3.35rem,13.5vw,5rem);line-height:.92}
+        .home-editorial-cue{font-family:var(--font-heading)!important;font-weight:900!important;font-variation-settings:"wght" 900!important;font-synthesis:weight!important;letter-spacing:-.045em;line-height:.92;transform-style:preserve-3d;backface-visibility:hidden;perspective-origin:center}
+        .home-editorial-cue-3d{position:relative;display:inline-block;transform-style:preserve-3d;backface-visibility:hidden;isolation:isolate}
+        .home-editorial-cue-face{margin:0;font-family:var(--font-heading)!important;font-size:clamp(3.75rem,15vw,5.4rem);font-weight:900!important;font-variation-settings:"wght" 900!important;font-synthesis:weight!important;line-height:.9;letter-spacing:-.045em;white-space:normal;transform-style:preserve-3d;backface-visibility:hidden}
+        .home-editorial-cue-face span{display:block;margin:0;font:inherit;font-weight:900!important;font-variation-settings:"wght" 900!important}
+        .home-editorial-cue-face--front{position:relative;z-index:20;color:var(--rosta-brick-b);text-shadow:0 12px 24px color-mix(in srgb,var(--rosta-carbon) 34%,transparent)}
+        .home-editorial-cue-face--depth{position:absolute;inset:0;z-index:1;color:color-mix(in srgb,var(--rosta-brick-b) 50%,var(--rosta-carbon));-webkit-text-stroke:.35px color-mix(in srgb,var(--rosta-brick-b) 64%,var(--rosta-carbon));pointer-events:none}
+        .home-editorial-cue--third .home-editorial-cue-face{font-size:clamp(3.35rem,13.5vw,5rem);line-height:.92}
         @media(min-width:768px){
-          .home-editorial-cue p{font-size:clamp(3.1rem,5.7vw,6.45rem);line-height:.91}
-          .home-editorial-cue--third p{font-size:clamp(2.85rem,5.25vw,5.9rem);line-height:.94}
+          .home-editorial-cue-face{font-size:clamp(3.1rem,5.7vw,6.45rem);line-height:.91}
+          .home-editorial-cue--third .home-editorial-cue-face{font-size:clamp(2.85rem,5.25vw,5.9rem);line-height:.94}
         }
       `}</style>
       <motion.div
