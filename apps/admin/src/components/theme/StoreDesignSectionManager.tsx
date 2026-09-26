@@ -48,6 +48,7 @@ type Props = {
 
 const RENDERABLE_SECTION_TYPES = new Set([
   "hero",
+  "scroll-story",
   "featured-products",
   "product-slider",
   "product-grid",
