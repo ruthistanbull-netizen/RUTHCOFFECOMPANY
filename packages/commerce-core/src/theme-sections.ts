@@ -7,7 +7,8 @@ export type ThemeSectionType =
   | "trust"
   | "product-slider"
   | "image-banner"
-  | "rich-text";
+  | "rich-text"
+  | "faq";
 
 export type ThemeProductSource = "featured" | "all" | "collection" | "category";
 
@@ -24,6 +25,7 @@ export type ThemeSection = {
   mobileImageSrc?: string;
   imageObjectPosition?: string;
   mobileImageObjectPosition?: string;
+  faqItems?: Array<{ id: string; question: string; answer: string }>;
   productSource?: ThemeProductSource;
   productSourceId?: string;
   productLimit?: number;
@@ -138,7 +140,7 @@ function pagePath(value: unknown) {
 
 const sectionTypes = new Set<ThemeSectionType>([
   "hero", "scroll-story", "collections", "featured-products", "brand-story", "trust",
-  "product-slider", "image-banner", "rich-text",
+  "product-slider", "image-banner", "rich-text", "faq",
 ]);
 
 export function normalizeThemeSection(input: unknown, index = 0): ThemeSection | null {
