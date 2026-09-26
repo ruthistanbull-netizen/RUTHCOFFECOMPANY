@@ -263,7 +263,12 @@ export function ProductPurchasePanel({
       `}</style>
 
       <div className="product-purchase-desktop">
-        <div className="product-desktop-details">
+        <div
+          data-editor-id={`product-details:desktop:${product.id}`}
+          data-editor-type="product-details"
+          data-editor-label="Ürün Detay Accordion"
+          className="product-desktop-details"
+        >
           {details.map((item) => {
             const open = desktopDetail === item.id;
             return (
@@ -305,6 +310,9 @@ export function ProductPurchasePanel({
           })}
         </div>
         <button
+          data-editor-id={`add-to-cart:desktop:${product.id}`}
+          data-editor-type="add-to-cart"
+          data-editor-label="Sepete Ekle"
           type="button"
           disabled={unavailable || cartState === "succeeded"}
           onClick={requestAdd}
@@ -316,7 +324,13 @@ export function ProductPurchasePanel({
         </button>
       </div>
 
-      <section className="product-mobile-details-inline" aria-label="Ürün bilgileri">
+      <section
+        data-editor-id={`product-details:mobile:${product.id}`}
+        data-editor-type="product-details"
+        data-editor-label="Mobil Ürün Detayları"
+        className="product-mobile-details-inline"
+        aria-label="Ürün bilgileri"
+      >
         <div className="product-mobile-detail-tabs" role="tablist" aria-label="Ürün bilgileri">
           {details.map((item) => (
             <button
@@ -358,12 +372,21 @@ export function ProductPurchasePanel({
         </AnimatePresence>
       </section>
 
-      <aside className="product-purchase-mobile" data-product-page-swipe-ignore>
+      <aside
+        data-editor-id={`sticky-mobile-cart:${product.id}`}
+        data-editor-type="sticky-mobile-cart"
+        data-editor-label="Mobil Sabit Sepet"
+        className="product-purchase-mobile"
+        data-product-page-swipe-ignore
+      >
         <div className="product-mobile-buy-row">
           <h1>{product.name}</h1>
           <div className="product-mobile-price">{salePrice}</div>
         </div>
         <button
+          data-editor-id={`add-to-cart:mobile:${product.id}`}
+          data-editor-type="add-to-cart"
+          data-editor-label="Mobil Sepete Ekle"
           type="button"
           disabled={unavailable || cartState === "succeeded"}
           onClick={requestAdd}
@@ -385,6 +408,9 @@ export function ProductPurchasePanel({
             data-product-page-swipe-ignore
           >
             <motion.div
+              data-editor-id={`variant-picker:${product.id}`}
+              data-editor-type="variant-picker"
+              data-editor-label="Varyant Seçici"
               className="product-variant-sheet w-full overflow-y-auto px-5 pb-[calc(24px+env(safe-area-inset-bottom))] pt-5 text-cream sm:px-7 sm:pb-8 sm:pt-7"
               initial={desktopPicker ? { x: "100%" } : { y: "100%" }}
               animate={{ x: 0, y: 0 }}
@@ -428,7 +454,11 @@ export function ProductPurchasePanel({
                 ))}
               </div>
 
-              <div className="mt-8 flex items-center justify-between border-t border-kraft/40 pt-5">
+              <div
+                data-editor-id={`quantity-control:${product.id}`}
+                data-editor-type="quantity-control"
+                data-editor-label="Adet Kontrolü"
+                className="mt-8 flex items-center justify-between border-t border-kraft/40 pt-5">
                 <span className="text-[10px] uppercase tracking-[0.18em] text-cream/70">Adet</span>
                 <div className="flex items-center gap-2 border border-kraft/45 px-2 py-1">
                   <button type="button" onClick={() => setQuantity((value) => Math.max(1, value - 1))} className="grid h-8 w-8 place-items-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick" aria-label="Adedi azalt"><Minus size={14} /></button>
@@ -438,6 +468,9 @@ export function ProductPurchasePanel({
               </div>
 
               <button
+                data-editor-id={`add-to-cart:variant:${product.id}`}
+                data-editor-type="add-to-cart"
+                data-editor-label="Varyant Sepete Ekle"
                 type="button"
                 disabled={!allOptionsSelected || !selectedVariant || cartState === "succeeded"}
                 onClick={completeAdd}
