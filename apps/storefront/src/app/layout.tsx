@@ -39,7 +39,7 @@ import { SemanticThemeEditorBridge } from "@/components/theme/SemanticThemeEdito
 import { SemanticThemeRuntimeProvider } from "@/components/theme/SemanticThemeRuntimeProvider";
 import { ThemeEditorEnhancements } from "@/components/theme/ThemeEditorEnhancements";
 import { ThemeEditorNativeNavigation } from "@/components/theme/ThemeEditorNativeNavigation";
-import { getThemeCustomizerSettings } from "@/data/site";
+import { getStoreDesignV2Published, getThemeCustomizerSettings } from "@/data/site";
 import { getCachedCategories, getCachedCollections } from "@/data/catalogCache";
 import {
   absoluteUrl,
@@ -118,8 +118,9 @@ export const metadata: Metadata = {
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const [themeSettings, categories, collections] = await Promise.all([
+  const [themeSettings, storeDesignV2, categories, collections] = await Promise.all([
     getThemeCustomizerSettings(),
+    getStoreDesignV2Published(),
     getCachedCategories(),
     getCachedCollections(),
   ]);
@@ -303,7 +304,7 @@ export default async function RootLayout({
         <ThemeEditorBridgeV3 settings={themeSettings} />
         <ThemeEditorContextGestureBridge />
         <ThemeEditorDirectImageBridge />
-        <SemanticThemeRuntimeProvider>
+        <SemanticThemeRuntimeProvider initialDocument={storeDesignV2}>
           <StorefrontMotionProvider>
           <AuthProvider>
             <AnalyticsConsentGate />
