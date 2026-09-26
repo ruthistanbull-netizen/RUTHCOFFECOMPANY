@@ -8,11 +8,13 @@ import {
   Monitor,
   PanelLeft,
   PanelRight,
+  Plus,
   Redo2,
   RefreshCw,
   Save,
   Send,
   Smartphone,
+  Settings2,
   Undo2,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -29,6 +31,7 @@ import {
 } from "@ruth-commerce/commerce-core/store-design-v2";
 import { adminRequest } from "@/lib/adminApi";
 import { useExactToast } from "@/components/base44-exact/primitives";
+import { StoreDesignPageManager } from "@/components/theme/StoreDesignPageManager";
 
 type Device = "desktop" | "mobile";
 type PageItem = {
@@ -250,6 +253,7 @@ export function StoreDesignV21() {
   const [saving, setSaving] = useState<"draft" | "publish" | null>(null);
   const [leftOpen, setLeftOpen] = useState(true);
   const [rightOpen, setRightOpen] = useState(true);
+  const [pageManagerMode, setPageManagerMode] = useState<"create" | "edit" | null>(null);
   const [history, setHistory] = useState<PatchHistoryEntry[]>([]);
   const [future, setFuture] = useState<PatchHistoryEntry[]>([]);
   const revisionRef = useRef(0);
@@ -257,8 +261,22 @@ export function StoreDesignV21() {
 
   const hasUnsavedChanges = JSON.stringify(document) !== JSON.stringify(savedDraft);
   const hasUnpublishedChanges = JSON.stringify(savedDraft) !== JSON.stringify(published);
-  const groupedPages = useMemo(() => groupPages(pages), [pages]);
-  const activePage = pages.find((item) => item.path === activePath) || pages[0] || null;
+  const editorPages = useMemo(() => {
+    const merged = new Map(pages.map((page) => [page.path, page]));
+    for (const page of Object.values(document.pages)) {
+      if (page.status === "archived") continue;
+      merged.set(page.route, {
+        path: page.route,
+        label: page.name,
+        group: page.kind === "merchant" ? "Özel Sayfalar" : "Yönetilen Sayfalar",
+        previewPath: page.route,
+      });
+    }
+    return [...merged.values()];
+  }, [document.pages, pages]);
+  const groupedPages = useMemo(() => groupPages(editorPages), [editorPages]);
+  const activePage = editorPages.find((item) => item.path === activePath) || editorPages[0] || null;
+  const managedPage = document.pages[activePath] || Object.values(document.pages).find((page) => page.route === activePath) || null;
 
   const postToPreview = useCallback((payload: Record<string, unknown>) => {
     iframeRef.current?.contentWindow?.postMessage(payload, STOREFRONT_ORIGIN);
@@ -397,7 +415,7 @@ export function StoreDesignV21() {
   }, [activePage, lastHeartbeat]);
 
   const changePage = async (path: string) => {
-    const page = pages.find((item) => item.path === path);
+    const page = editorPages.find((item) => item.path === path);
     if (!page) return;
 
     try {
@@ -417,6 +435,21 @@ export function StoreDesignV21() {
       path: cleanPreviewPath(page),
     });
   };
+
+  const applyPageDocument = useCallback(async (next: ThemeDocument, nextPath: string) => {
+    await syncPreviewDocument(next, true);
+    setDocument(next);
+    revisionRef.current = next.revision;
+    setActivePath(nextPath);
+    setSelected(null);
+    setHistory([]);
+    setFuture([]);
+    setLastHeartbeat(Date.now());
+
+    if (iframeRef.current) {
+      iframeRef.current.src = previewUrl(nextPath, previewTokenRef.current);
+    }
+  }, [syncPreviewDocument]);
 
   const applyPatchValue = (
     target: SelectedTarget,
@@ -553,7 +586,19 @@ export function StoreDesignV21() {
         {leftOpen ? (
           <aside className="flex w-[292px] shrink-0 flex-col border-r border-black/10 bg-white max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:top-[58px] max-lg:z-20 max-lg:shadow-2xl">
             <div className="border-b border-black/[0.07] p-3">
-              <label className="block text-[9px] font-semibold text-black/45">SAYFA</label>
+              <div className="flex items-center justify-between gap-2">
+                <label className="block text-[9px] font-semibold text-black/45">SAYFA</label>
+                <div className="flex items-center gap-1">
+                  {managedPage ? (
+                    <button type="button" onClick={() => setPageManagerMode("edit")} className="flex h-7 items-center gap-1 rounded-md border border-black/10 bg-white px-2 text-[8px] font-semibold hover:bg-black/[0.03]">
+                      <Settings2 className="h-3 w-3" />Ayarlar
+                    </button>
+                  ) : null}
+                  <button type="button" onClick={() => setPageManagerMode("create")} className="flex h-7 items-center gap-1 rounded-md bg-[#111] px-2 text-[8px] font-semibold text-white">
+                    <Plus className="h-3 w-3" />Yeni Sayfa
+                  </button>
+                </div>
+              </div>
               <div className="relative mt-1.5">
                 <select value={activePath} onChange={(event) => void changePage(event.target.value)} className="h-10 w-full appearance-none rounded-lg border border-black/10 bg-white px-3 pr-8 text-[11px] font-medium outline-none hover:border-black/20">
                   {groupedPages.map(([group, items]) => (
@@ -720,6 +765,16 @@ export function StoreDesignV21() {
           </aside>
         ) : null}
       </div>
+
+      {pageManagerMode ? (
+        <StoreDesignPageManager
+          document={document}
+          activePath={activePath}
+          mode={pageManagerMode}
+          onClose={() => setPageManagerMode(null)}
+          onApply={applyPageDocument}
+        />
+      ) : null}
     </div>
   );
 }
