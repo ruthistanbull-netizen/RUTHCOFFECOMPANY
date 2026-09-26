@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from "next/server";\nimport type { SupabaseClient } from "@supabase/supabase-js";
 import { requireAdmin } from "@/lib/auth";
 import { noStoreHeaders, revalidateWebsite } from "@/lib/websiteRevalidate";
 import {
