@@ -283,6 +283,24 @@ for (const token of ["HeadingTag", "headingSizeClass", "manifestoTitleClass", "d
   if (!blockRenderer.includes(token)) fail(`Generic zero-block storefront preset runtime eksik: ${token}`);
 }
 
+const productPresetEditor = read("apps/admin/src/components/theme/StoreDesignSectionEditor.tsx");
+for (const token of ["new-arrivals", "sale-products", "Otomatik · yeni ürün işareti", "Otomatik · gerçek indirim verisi", "İndirim rozeti"]) {
+  if (!productPresetEditor.includes(token)) fail(`Product preset editor eksik: ${token}`);
+}
+
+const themeSections = read("packages/commerce-core/src/theme-sections.ts");
+for (const token of ['| "new-arrivals"', '| "sale-products"', 'layout?: "slider" | "grid"', 'badgeStyle?: "pill" | "outline" | "minimal"']) {
+  if (!themeSections.includes(token)) fail(`Product preset render contract eksik: ${token}`);
+}
+
+const homeSectionRenderer = read("apps/storefront/src/components/theme/HomeSectionRenderer.tsx");
+for (const token of ['product.is_new === true', 'section.type === "sale-products"', 'section.layout === "grid"', "saleBadgeVars", "productHasDiscount"]) {
+  if (!homeSectionRenderer.includes(token)) fail(`Product preset storefront runtime eksik: ${token}`);
+}
+
+const productCard = read("apps/storefront/src/components/ProductCard.tsx");
+if (!productCard.includes("--theme-sale-badge-bg")) fail("Sale badge style preset ProductCard'a bağlı değil.");
+
 note(`Section library: ${implementedSectionTypes.length} runtime hazır · ${pendingSectionTypes.length} kapalı/pending`);
 
 const storefrontData = read("apps/storefront/src/data/site.ts");
