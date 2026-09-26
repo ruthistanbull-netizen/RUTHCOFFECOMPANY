@@ -170,16 +170,9 @@ function EditorialMedia({
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const { scrollYProgress: cueScrollYProgress } = useScroll({
     target: ref,
-    offset: ["start 92%", "start 0%"],
+    offset: ["start 94%", "end 6%"],
   });
   const progress = useSpring(scrollYProgress, { stiffness: 92, damping: 30, mass: 0.42 });
-  const cueSmoothProgress = useSpring(cueScrollYProgress, {
-    stiffness: 128,
-    damping: 30,
-    mass: 0.38,
-    restDelta: 0.0002,
-    restSpeed: 0.0002,
-  });
   const scale = useTransform(
     progress,
     [0, 0.16, 0.5, 1],
@@ -187,22 +180,21 @@ function EditorialMedia({
   );
   const y = useTransform(progress, [0, 0.5, 1], ["0%", "-0.65%", "-1.35%"]);
   const opacity = useTransform(progress, [0, 0.78, 1], [1, 1, 0.96]);
-  const cueStartX = index === 2 && mobileViewport
-    ? 380
-    : mobileViewport
-      ? -360
-      : -540;
-  // The copy is viewport-pinned like the ROSTA wordmark for the whole photo.
-  // Scroll only drives horizontal entry/exit; its vertical position never changes.
+  const cueStartX = index === 2
+    ? (mobileViewport ? 420 : 620)
+    : (mobileViewport ? -420 : -620);
+  // Same interaction principle as the ROSTA wordmark: the copy stays pinned
+  // in the viewport while this photo is active, and raw scroll position drives
+  // it continuously in both directions. No delayed spring, no Y drift.
   const cueX = useTransform(
-    cueSmoothProgress,
-    [0, 0.18, 0.38, 0.6, 0.8, 1],
-    [cueStartX, cueStartX * 0.8, cueStartX * 0.56, cueStartX * 0.32, cueStartX * 0.12, 0],
+    cueScrollYProgress,
+    [0.02, 0.2, 0.42, 0.66, 0.84, 0.98],
+    [cueStartX, cueStartX * 0.78, cueStartX * 0.52, cueStartX * 0.29, cueStartX * 0.11, 0],
   );
   const cueOpacity = useTransform(
-    cueSmoothProgress,
-    [0, 0.06, 0.16, 0.3, 1],
-    [0, 0.14, 0.52, 1, 1],
+    cueScrollYProgress,
+    [0.01, 0.08, 0.18, 1],
+    [0, 0.22, 1, 1],
   );
   const wrapperClass = index === 0
     ? "absolute inset-0 overflow-hidden"
@@ -373,14 +365,13 @@ function EditorialMedia({
 
         {index === 2 ? (
           <motion.div
-            className="home-editorial-cue home-editorial-cue--third pointer-events-none absolute top-[1svh] z-30 max-w-[84vw] md:left-[14vw] md:right-auto md:top-[52px] md:max-w-[50vw]"
+            className="home-editorial-cue home-editorial-cue--third pointer-events-none absolute right-[10vw] top-[1svh] z-30 max-w-[84vw] md:right-[14vw] md:top-[52px] md:max-w-[50vw]"
             style={{
-              left: mobileViewport ? "auto" : undefined,
-              right: mobileViewport ? "10vw" : undefined,
+              left: "auto",
               x: cueX,
               opacity: cueOpacity,
-              transformOrigin: mobileViewport ? "right center" : "left center",
-              textAlign: mobileViewport ? "right" : "left",
+              transformOrigin: "right center",
+              textAlign: "right",
               willChange: "transform, opacity",
             }}
             aria-hidden="true"
