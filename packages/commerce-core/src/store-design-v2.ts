@@ -119,7 +119,10 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
   component("trust-section", "Güven / Kargo", "İçerik", "section", sectionScopes, ["content", "layout", "responsive"], ["unverifiedPromises"]),
   component("rich-text", "Rich Text", "İçerik", "instance", instanceScopes, ["content", "typography", "layout", "responsive"], ["rawJs"]),
   component("image-banner", "Görsel Banner", "İçerik", "section", sectionScopes, ["content", "media", "layout", "responsive"], ["freeTransform"]),
-  component("video-banner", "Video Banner", "İçerik", "section", sectionScopes, ["content", "media", "layout", "responsive"], ["freeTransform"]),
+  component("video-hero", "Video Hero", "İçerik", "section", sectionScopes, ["content", "media", "layout", "responsive"], ["autoplayPolicy", "freeTransform"]),
+  component("video-banner", "Video Banner", "İçerik", "section", sectionScopes, ["content", "media", "layout", "responsive"], ["autoplayPolicy", "freeTransform"]),
+  component("background-media", "Background Media", "İçerik", "section", sectionScopes, ["content", "media", "layout", "responsive"], ["freeTransform"]),
+  component("content", "İçerik Bloğu", "İçerik", "instance", instanceScopes, ["content", "typography", "layout"], ["rawHtml", "rawJs"]),
   component("gallery", "Galeri", "İçerik", "section", sectionScopes, ["media", "layout", "responsive"], ["freeCanvas"]),
   component("slideshow", "Slideshow", "İçerik", "section", sectionScopes, ["content", "media", "layout", "animation", "responsive"], ["rawJs"]),
   component("faq-accordion", "SSS Accordion", "İçerik", "family", familyScopes, ["content", "layout", "animation"], ["endpoint"]),
@@ -277,9 +280,9 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
 
   section("hero", "Hero", "media", allContentPages, ["desktopMedia", "mobileMedia", "height", "focalPoint", "overlay", "cta", "contrast"], [], true),
   section("scroll-story", "Scroll Story", "media", allContentPages, ["desktopMedia", "mobileMedia", "layout", "animation"], [], true),
-  section("video-hero", "Video Hero", "media", allContentPages, ["video", "poster", "focalPoint", "loop", "muted", "cta"]),
+  section("video-hero", "Video Hero", "media", allContentPages, ["imageAssetId", "posterAssetId", "heightPreset", "fit", "playbackPreset", "title", "body", "linkLabel", "linkHref", "align", "overlayOpacity", "contrastMode"], [], true),
   section("image-banner", "Image Banner", "media", allCommercePages, ["image", "height", "focalPoint", "overlay", "text", "cta"], [], true),
-  section("video-banner", "Video Banner", "media", allCommercePages, ["video", "poster", "height", "fit", "text", "cta"]),
+  section("video-banner", "Video Banner", "media", allCommercePages, ["imageAssetId", "posterAssetId", "heightPreset", "fit", "playbackPreset", "title", "body", "linkLabel", "linkHref", "align", "overlayOpacity", "contrastMode"], [], true),
   section("image-text-split", "Image + Text Split", "media", allContentPages, ["side", "ratio", "contentWidth", "cta"], ["rich-text"], true, 1),
   section("video-text-split", "Video + Text Split", "media", allContentPages, ["side", "poster", "copy", "cta"], ["rich-text"], true, 1),
   section("slideshow", "Slideshow", "media", allContentPages, ["transition", "autoplay"], ["slide"], true, 12),
@@ -288,7 +291,7 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
   section("collage", "Collage", "media", allContentPages, ["layout", "focalPoint"], ["media"], true, 6),
   section("before-after", "Before / After", "media", allContentPages, ["before", "after", "divider", "labels"], [], true),
   section("hotspot-lookbook", "Hotspot / Lookbook", "media", allContentPages, ["image"], ["hotspot"], true, 12),
-  section("background-media", "Background Media Section", "media", allContentPages, ["media", "overlay", "minHeight"], ["content"]),
+  section("background-media", "Background Media Section", "media", allContentPages, ["imageAssetId", "posterAssetId", "minHeightPreset", "fit", "playbackPreset", "overlayOpacity", "contrastMode"], ["content"], true, 1),
   section("logo-cloud", "Logo / Marka Bulutu", "media", allContentPages, ["size", "monochrome"], ["logo"], true, 30),
   section("social-grid", "Social Media Grid", "media", allContentPages, ["source", "layout"], ["media"], true, 20),
 
@@ -507,7 +510,7 @@ export const BLOCK_LIBRARY: BlockDefinition[] = [
   block("rich-text", "Metin Bloğu", ["image-text-split", "video-text-split"], ["heading", "body", "cta"], true),
   block("hotspot", "Hotspot", ["hotspot-lookbook"], ["x", "y", "targetType", "targetId"], true),
   block("logo", "Logo", ["logo-cloud"], ["assetId", "alt", "link"], true),
-  block("content", "İçerik", ["background-media", "grid-stack-builder"], ["type", "content"], false, "children"),
+  block("content", "İçerik", ["background-media"], ["eyebrow", "heading", "body", "linkLabel", "linkHref", "align", "maxWidth"], true),
   block("text-column", "Metin Kolonu", ["text-columns"], ["heading", "body"], true),
   block("stat", "İstatistik", ["stats"], ["value", "label"], true),
   block("timeline-item", "Timeline Öğesi", ["timeline"], ["date", "heading", "body"], true),
@@ -1286,6 +1289,32 @@ export function validateThemeDocument(document: ThemeDocument) {
     }
     if (asset && section.type === "video-text-split" && asset.type !== "video") {
       errors.push(`${section.id}: Video + Text Split yalnız video asset kabul eder.`);
+    }
+
+    if (section.type === "video-hero" || section.type === "video-banner") {
+      if (!imageAssetId) errors.push(`${section.id}: ${section.type === "video-hero" ? "Video Hero" : "Video Banner"} video asset gerektirir.`);
+      if (asset && asset.type !== "video") errors.push(`${section.id}: ${section.type === "video-hero" ? "Video Hero" : "Video Banner"} yalnız video asset kabul eder.`);
+      const posterId = typeof section.settings.posterAssetId === "string" ? section.settings.posterAssetId : "";
+      const poster = posterId ? document.media[posterId] : undefined;
+      if (posterId && !poster) errors.push(`${section.id}: poster medya referansı bulunamadı (${posterId}).`);
+      if (poster && poster.type !== "image") errors.push(`${section.id}: video poster yalnız image asset olabilir.`);
+      const playbackPreset = String(section.settings.playbackPreset || "ambient");
+      if (!["ambient", "once", "controls"].includes(playbackPreset)) errors.push(`${section.id}: playbackPreset geçersiz.`);
+      const fit = String(section.settings.fit || "cover");
+      if (!["cover", "contain"].includes(fit)) errors.push(`${section.id}: video fit geçersiz.`);
+    }
+
+    if (section.type === "background-media") {
+      if (!imageAssetId) errors.push(`${section.id}: Background Media bir fotoğraf veya video asset gerektirir.`);
+      const posterId = typeof section.settings.posterAssetId === "string" ? section.settings.posterAssetId : "";
+      const poster = posterId ? document.media[posterId] : undefined;
+      if (posterId && !poster) errors.push(`${section.id}: background poster medya referansı bulunamadı (${posterId}).`);
+      if (poster && poster.type !== "image") errors.push(`${section.id}: background video posteri image asset olmalı.`);
+      const fit = String(section.settings.fit || "cover");
+      if (!["cover", "contain"].includes(fit)) errors.push(`${section.id}: background media fit geçersiz.`);
+      const playbackPreset = String(section.settings.playbackPreset || "ambient");
+      if (!["ambient", "once", "controls"].includes(playbackPreset)) errors.push(`${section.id}: background playbackPreset geçersiz.`);
+      if ((section.blockIds || []).length > 1) errors.push(`${section.id}: Background Media yalnız bir content block kabul eder.`);
     }
 
     if (section.type === "before-after") {
