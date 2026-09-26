@@ -88,7 +88,8 @@ export function storeDesignSectionsForPage(document: ThemeDocument, page: PageRe
     .map((section) => {
       const { semantic: _semantic, ...settings } = section.settings || {};
       const v2BlockSection = BLOCK_RENDER_SECTION_TYPES.has(section.type);
-      const semanticV2Section = v2BlockSection || ["hero", "collection-cards", "brand-story"].includes(section.type);
+      const hydrateV2Blocks = v2BlockSection || section.type === "scroll-story";
+      const semanticV2Section = hydrateV2Blocks || ["hero", "collection-cards", "brand-story"].includes(section.type);
       const normalized = normalizeThemeSection({
         id: section.id,
         type: LEGACY_RENDER_ALIASES[section.type] || (v2BlockSection ? "rich-text" : section.type),
@@ -128,7 +129,7 @@ export function storeDesignSectionsForPage(document: ThemeDocument, page: PageRe
           )
         : undefined;
 
-      const v2Blocks = v2BlockSection
+      const v2Blocks = hydrateV2Blocks
         ? (section.blockIds || [])
             .map((blockId) => document.blocks[blockId])
             .filter((block): block is BlockInstance => Boolean(block))
@@ -139,6 +140,7 @@ export function storeDesignSectionsForPage(document: ThemeDocument, page: PageRe
                   ? block.settings.media
                   : "";
               const asset = mediaRef ? document.media[mediaRef] : undefined;
+              const mobileAsset = asset?.mobileAssetId ? document.media[asset.mobileAssetId] : undefined;
               const poster = asset?.posterAssetId ? document.media[asset.posterAssetId] : undefined;
               return {
                 id: block.id,
@@ -146,6 +148,10 @@ export function storeDesignSectionsForPage(document: ThemeDocument, page: PageRe
                 settings: block.settings,
                 assetUrl: versionedMediaUrl(asset),
                 assetType: asset?.type,
+                mobileAssetUrl: versionedMediaUrl(mobileAsset),
+                mobileAssetType: mobileAsset?.type,
+                objectPosition: focalPosition(asset),
+                mobileObjectPosition: focalPosition(mobileAsset) || focalPosition(asset),
                 posterUrl: versionedMediaUrl(poster),
               };
             })
