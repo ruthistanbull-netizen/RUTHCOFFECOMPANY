@@ -143,7 +143,9 @@ export function HomeSectionRenderer({
             style={{
               ["--section-grid-mobile" as string]: mobileItems,
               ["--section-grid-desktop" as string]: desktopItems,
-              ["--section-grid-gap" as string]: `${gap}px`,
+              ["--section-grid-gap-x" as string]: `${gap}px`,
+              ["--section-grid-gap-y" as string]: `${gap}px`,
+              ["--section-grid-max-width" as string]: maxWidth || "none",
             }}
           >
             {products.map((product, index) => (
@@ -151,7 +153,7 @@ export function HomeSectionRenderer({
             ))}
           </div>
         </div>
-        <style>{`.theme-v2-section-product-grid{display:grid;grid-template-columns:repeat(var(--section-grid-mobile),minmax(0,1fr));gap:var(--section-grid-gap)}@media(min-width:768px){.theme-v2-section-product-grid{grid-template-columns:repeat(var(--section-grid-desktop),minmax(0,1fr))}}`}</style>
+        <style>{`.theme-v2-section-product-grid{display:grid;width:100%;max-width:var(--theme-product-grid-max-width,var(--section-grid-max-width));margin-inline:auto;grid-template-columns:repeat(var(--theme-product-grid-columns,var(--section-grid-mobile)),minmax(0,1fr));column-gap:var(--theme-product-grid-gap-x,var(--section-grid-gap-x));row-gap:var(--theme-product-grid-gap-y,var(--section-grid-gap-y))}@media(min-width:768px){.theme-v2-section-product-grid{grid-template-columns:repeat(var(--theme-product-grid-columns,var(--section-grid-desktop)),minmax(0,1fr))}}`}</style>
       </section>
     );
   }
