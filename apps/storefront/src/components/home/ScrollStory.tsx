@@ -18,28 +18,6 @@ function smoothstep(value: number) {
   return t * t * (3 - 2 * t);
 }
 
-function smootherstep(value: number) {
-  const t = clamp(value, 0, 1);
-  return t * t * t * (t * (t * 6 - 15) + 10);
-}
-
-function scrollCueProgress(rawPosition: number, slideIndex: number) {
-  // The media itself starts changing at local progress 0.68. Start the text
-  // there too and spread the entrance across almost a full viewport of scroll,
-  // so it never jumps in on a single wheel gesture.
-  const start = slideIndex - 0.32;
-  const duration = 0.92;
-  return smootherstep((rawPosition - start) / duration);
-}
-
-function scrollCueOpacity(rawPosition: number, slideIndex: number) {
-  const enter = scrollCueProgress(rawPosition, slideIndex);
-  const leaveStart = slideIndex + 0.52;
-  const leaveDuration = 0.22;
-  const leave = 1 - smootherstep((rawPosition - leaveStart) / leaveDuration);
-  return clamp(Math.min(enter, leave), 0, 1);
-}
-
 function cleanImage(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
 }
@@ -164,18 +142,6 @@ export default function ScrollStory({
   const scrollLetters = "KAYDIR".split("");
   const activeLetterIndex = clamp(Math.round(progress * (scrollLetters.length - 1)), 0, scrollLetters.length - 1);
 
-  const secondCueProgress = scrollCueProgress(rawPosition, 1);
-  const secondCueOpacity = scrollCueOpacity(rawPosition, 1);
-  const thirdCueProgress = scrollCueProgress(rawPosition, 2);
-  const thirdCueOpacity = scrollCueOpacity(rawPosition, 2);
-
-  const secondCueX = -Math.round((1 - secondCueProgress) * (mobileViewport ? 150 : 230));
-  const thirdCueX = mobileViewport
-    ? Math.round((1 - thirdCueProgress) * 165)
-    : -Math.round((1 - thirdCueProgress) * 230);
-  const secondCueScale = 0.965 + secondCueProgress * 0.035;
-  const thirdCueScale = 0.965 + thirdCueProgress * 0.035;
-
   return (
     <section
       ref={sectionRef}
@@ -252,69 +218,6 @@ export default function ScrollStory({
             })}
           </motion.div>
         </div>
-
-        {slides.length > 1 ? (
-          <div
-            className="pointer-events-none absolute inset-0 z-30 overflow-hidden"
-            aria-hidden="true"
-          >
-            <div
-              className="absolute left-[8vw] top-[37%] max-w-[80vw] md:left-[8.5vw] md:top-[40%] md:max-w-[43vw]"
-              style={{
-                opacity: secondCueOpacity,
-                transform: `translate3d(${secondCueX}px, 0, 0) scale(${secondCueScale})`,
-                transformOrigin: "left center",
-                willChange: "transform, opacity",
-              }}
-            >
-              <p
-                className="m-0 font-black"
-                style={{
-                  color: "var(--rosta-brick-b)",
-                  fontFamily: "var(--font-heading)",
-                  fontSize: "clamp(2rem, 5.1vw, 5.6rem)",
-                  fontWeight: 900,
-                  fontVariationSettings: '"wght" 900',
-                  lineHeight: 0.94,
-                  letterSpacing: "-0.04em",
-                }}
-              >
-                <span className="block">Doğru Çekirdek,</span>
-                <span className="block">Güçlü Deneyim</span>
-              </p>
-            </div>
-
-            {slides.length > 2 ? (
-              <div
-                className="absolute top-[42%] max-w-[80vw] md:left-[8.5vw] md:right-auto md:top-[42%] md:max-w-[45vw]"
-                style={{
-                  left: mobileViewport ? "auto" : undefined,
-                  right: mobileViewport ? "8vw" : undefined,
-                  opacity: thirdCueOpacity,
-                  transform: `translate3d(${thirdCueX}px, 0, 0) scale(${thirdCueScale})`,
-                  transformOrigin: mobileViewport ? "right center" : "left center",
-                  willChange: "transform, opacity",
-                  textAlign: mobileViewport ? "right" : "left",
-                }}
-              >
-                <p
-                  className="m-0 font-black"
-                  style={{
-                    color: "var(--rosta-brick-b)",
-                    fontFamily: "var(--font-heading)",
-                    fontSize: "clamp(1.8rem, 4.6vw, 5rem)",
-                    fontWeight: 900,
-                    fontVariationSettings: '"wght" 900',
-                    lineHeight: 0.98,
-                    letterSpacing: "-0.04em",
-                  }}
-                >
-                  Kahveyi sadeleştir, karakterini koru.
-                </p>
-              </div>
-            ) : null}
-          </div>
-        ) : null}
 
         <div className="absolute inset-x-0 bottom-[29%] flex justify-center px-6 md:bottom-[25%]">
           {slides.map((slide, index) => {
