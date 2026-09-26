@@ -521,6 +521,20 @@ export type MediaAsset = {
   createdAt: string;
 };
 
+export type SectionPresetRecord = {
+  id: string;
+  label: string;
+  sectionType: string;
+  settings: Record<string, unknown>;
+  blocks: Array<{
+    type: string;
+    settings: Record<string, unknown>;
+  }>;
+  createdAt: string;
+  updatedAt: string;
+  schemaVersion: number;
+};
+
 export type ThemeDocument = {
   schemaVersion: typeof STORE_DESIGN_SCHEMA_VERSION;
   revision: number;
@@ -537,6 +551,7 @@ export type ThemeDocument = {
   sections: Record<string, SectionInstance>;
   blocks: Record<string, BlockInstance>;
   media: Record<string, MediaAsset>;
+  presets: Record<string, SectionPresetRecord>;
   redirects: RedirectRecord[];
   publishedAt: string | null;
 };
@@ -1099,6 +1114,21 @@ export function analyzeThemeDocumentReferences(document: ThemeDocument): ThemeRe
     }
   }
 
+  for (const [presetId, preset] of Object.entries(document.presets)) {
+    const definition = SECTION_LIBRARY_BY_TYPE[preset.sectionType];
+    if (!definition) errors.push(`${presetId}: preset section type registry'de yok (${preset.sectionType}).`);
+    if (definition && !definition.implemented) errors.push(`${presetId}: preset section runtime hazır değil (${preset.sectionType}).`);
+    if (definition?.maxBlocks && preset.blocks.length > definition.maxBlocks) {
+      errors.push(`${presetId}: preset maxBlocks sınırını aşıyor (${definition.maxBlocks}).`);
+    }
+    for (const block of preset.blocks) {
+      if (definition?.allowedBlocks?.length && !definition.allowedBlocks.includes(block.type)) {
+        errors.push(`${presetId}: ${block.type} preset block tipi section için izinli değil.`);
+      }
+      if (!BLOCK_LIBRARY_BY_TYPE[block.type]) errors.push(`${presetId}: preset block registry'de yok (${block.type}).`);
+    }
+  }
+
   for (const [route, templateId] of Object.entries(document.templateBindings)) {
     if (!document.templates[templateId]) {
       issues.push({
@@ -1254,6 +1284,7 @@ export function createEmptyThemeDocument(): ThemeDocument {
     sections: {},
     blocks: {},
     media: {},
+    presets: {},
     redirects: [],
     publishedAt: null,
   };
@@ -1321,6 +1352,34 @@ export function normalizeThemeDocument(input: unknown): ThemeDocument {
     sections: objectRecord(raw.sections) as Record<string, SectionInstance>,
     blocks: objectRecord(raw.blocks) as Record<string, BlockInstance>,
     media: objectRecord(raw.media) as Record<string, MediaAsset>,
+    presets: Object.fromEntries(
+      Object.entries(objectRecord(raw.presets))
+        .slice(0, 200)
+        .map(([presetId, value]) => {
+          const preset = objectRecord(value);
+          const blocks = (Array.isArray(preset.blocks) ? preset.blocks : [])
+            .slice(0, 50)
+            .map((blockValue) => {
+              const block = objectRecord(blockValue);
+              return {
+                type: stringValue(block.type, "", 120),
+                settings: objectRecord(block.settings),
+              };
+            })
+            .filter((block) => Boolean(block.type));
+          return [presetId, {
+            id: stringValue(preset.id, presetId, 180) || presetId,
+            label: stringValue(preset.label, "Saved Section", 180),
+            sectionType: stringValue(preset.sectionType, "", 120),
+            settings: objectRecord(preset.settings),
+            blocks,
+            createdAt: stringValue(preset.createdAt, new Date(0).toISOString(), 80),
+            updatedAt: stringValue(preset.updatedAt, new Date(0).toISOString(), 80),
+            schemaVersion: integerValue(preset.schemaVersion, STORE_DESIGN_SCHEMA_VERSION),
+          } satisfies SectionPresetRecord];
+        })
+        .filter((entry) => Boolean(entry[1].sectionType)),
+    ),
     redirects,
     publishedAt: raw.publishedAt == null ? null : stringValue(raw.publishedAt, "", 80) || null,
   };
@@ -1339,6 +1398,7 @@ export function migrateThemeDocument(input: unknown): ThemeMigrationResult {
 
   const raw = objectRecord(input);
   if (!raw.templateBindings) notes.push("Eksik templateBindings boş registry ile tamamlandı.");
+  if (!raw.presets) notes.push("Eksik presets registry boş kayıtla tamamlandı.");
   const globals = objectRecord(raw.globals);
   if (!globals.componentFamilies) notes.push("Eksik componentFamilies registry tamamlandı.");
 
