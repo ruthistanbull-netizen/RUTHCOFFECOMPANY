@@ -154,7 +154,6 @@ function EditorialMedia({
   editorialVideoType,
   editorialImage,
   editorialImageType,
-  mobileViewport,
 }: {
   slide: EditorialSlide;
   index: number;
@@ -163,54 +162,10 @@ function EditorialMedia({
   editorialVideoType: HomepageMediaType;
   editorialImage: string;
   editorialImageType: HomepageMediaType;
-  mobileViewport: boolean;
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const reduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const { scrollYProgress: cueScrollYProgress } = useScroll({
-    target: ref,
-    offset: index === 2
-      ? ["start 76%", "start 36%"]
-      : ["start 100%", "start 58%"],
-  });
-  const { scrollYProgress: cueLifecycleProgress } = useScroll({
-    target: ref,
-    offset: ["start 100%", "end 0%"],
-  });
-  const cueMotionProgress = useSpring(cueScrollYProgress, {
-    stiffness: 150,
-    damping: 27,
-    mass: 0.28,
-    restDelta: 0.0001,
-    restSpeed: 0.0001,
-  });
-  const progress = useSpring(scrollYProgress, { stiffness: 92, damping: 30, mass: 0.42 });
-  const scale = useTransform(
-    progress,
-    [0, 0.16, 0.5, 1],
-    index === 0 ? [1, 0.975, 0.925, 0.88] : [1, 0.985, 0.955, 0.925],
-  );
-  const y = useTransform(progress, [0, 0.5, 1], ["0%", "-0.65%", "-1.35%"]);
-  const opacity = useTransform(progress, [0, 0.78, 1], [1, 1, 0.96]);
-  const cueStartX = index === 2
-    ? (mobileViewport ? 420 : 620)
-    : (mobileViewport ? -420 : -620);
-  // The cue is fixed to the viewport like the ROSTA wordmark.
-  // The photo top edge only triggers its horizontal entrance; once visible,
-  // the cue stays exactly at screen center until that photo's lifecycle ends.
-  const cueX = useTransform(cueMotionProgress, [0, 1], [cueStartX, 0]);
-  // Keep the fixed captions in separate visibility windows.
-  // The second clears before the third is allowed to appear.
-  const cueOpacity = useTransform(
-    cueLifecycleProgress,
-    index === 1
-      ? [0, 0.025, 0.4, 0.5, 1]
-      : [0, 0.1, 0.18, 0.82, 1],
-    index === 1
-      ? [0, 1, 1, 0, 0]
-      : [0, 0, 1, 1, 0],
-  );
   const wrapperClass = index === 0
     ? "absolute inset-0 overflow-hidden"
     : "absolute inset-x-[2vw] inset-y-[1svh] overflow-hidden lg:bottom-[32px] lg:left-[7vw] lg:right-[7vw] lg:top-[52px]";
@@ -360,47 +315,69 @@ function EditorialMedia({
           )}
         </motion.div>
 
-        {index === 1 ? (
-          <motion.div
-            className="home-editorial-cue home-editorial-cue--second pointer-events-none fixed left-1/2 top-1/2 z-50 w-[94vw] max-w-[760px] md:top-[34%]"
-            style={{
-              x: cueX,
-              opacity: cueOpacity,
-              transformOrigin: "center center",
-              willChange: "transform, opacity",
-            }}
-            aria-hidden="true"
-          >
-            <div className="-translate-x-1/2 -translate-y-1/2 text-center">
-              <p>
-                <span className="whitespace-nowrap">Doğru Çekirdek,</span>
-                <span className="whitespace-nowrap">Güçlü Deneyim</span>
-              </p>
-            </div>
-          </motion.div>
-        ) : null}
-
-        {index === 2 ? (
-          <motion.div
-            className="home-editorial-cue home-editorial-cue--third pointer-events-none fixed left-1/2 top-1/2 z-50 w-[94vw] max-w-[820px] md:top-[34%]"
-            style={{
-              x: cueX,
-              opacity: cueOpacity,
-              transformOrigin: "center center",
-              willChange: "transform, opacity",
-            }}
-            aria-hidden="true"
-          >
-            <div className="-translate-x-1/2 -translate-y-1/2 text-center">
-              <p>
-                <span className="whitespace-nowrap">Kahveyi sadeleştir,</span>
-                <span className="whitespace-nowrap">karakterini koru.</span>
-              </p>
-            </div>
-          </motion.div>
-        ) : null}
       </div>
     </div>
+  );
+}
+
+
+function HorizontalPhotoRail({
+  src,
+  mediaType,
+}: {
+  src: string;
+  mediaType: HomepageMediaType;
+}) {
+  const ref = useRef<HTMLElement | null>(null);
+  const reduceMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end end"],
+  });
+  const smooth = useSpring(scrollYProgress, {
+    stiffness: 140,
+    damping: 30,
+    mass: 0.32,
+    restDelta: 0.0001,
+    restSpeed: 0.0001,
+  });
+  const x = useTransform(reduceMotion ? scrollYProgress : smooth, [0, 1], ["0%", "-66.666667%"]);
+  const positions = ["30% center", "50% center", "70% center"];
+
+  return (
+    <section ref={ref} className="home-horizontal-editorial relative h-[300svh] bg-carbon">
+      <div className="sticky top-0 h-[100svh] overflow-hidden bg-carbon">
+        <motion.div className="flex h-full w-[300vw] flex-nowrap" style={{ x, willChange: "transform" }}>
+          {positions.map((position, index) => (
+            <div key={position} className="h-full w-screen flex-none overflow-hidden">
+              {mediaType === "video" ? (
+                <video
+                  src={src}
+                  className="h-full w-full object-cover"
+                  style={{ objectPosition: position }}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload={index === 0 ? "auto" : "metadata"}
+                  aria-label="Rosta Coffee Co yatay editoryal medya"
+                />
+              ) : (
+                <img
+                  src={src}
+                  alt="Rosta Coffee Co yatay editoryal medya"
+                  className="h-full w-full object-cover"
+                  style={{ objectPosition: position }}
+                  loading="lazy"
+                  decoding="async"
+                  draggable={false}
+                />
+              )}
+            </div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
   );
 }
 
@@ -470,9 +447,11 @@ export default function Hero({
         if (!section || !wordmark) return;
 
         const sectionRect = section.getBoundingClientRect();
+        const horizontalRail = document.querySelector<HTMLElement>(".home-horizontal-editorial");
+        const horizontalRailHasEntered = horizontalRail ? horizontalRail.getBoundingClientRect().top <= window.innerHeight : false;
         const scrollStory = document.querySelector<HTMLElement>(".scroll-story-section");
         const scrollStoryHasEntered = scrollStory ? scrollStory.getBoundingClientRect().top <= window.innerHeight : false;
-        const visible = sectionRect.bottom > 0 && sectionRect.top < window.innerHeight && !scrollStoryHasEntered;
+        const visible = sectionRect.bottom > 0 && sectionRect.top < window.innerHeight && !horizontalRailHasEntered && !scrollStoryHasEntered;
         setWordmarkVisible(visible);
         if (!visible) return;
 
@@ -512,6 +491,7 @@ export default function Hero({
   ];
 
   return (
+    <>
     <section
       ref={sectionRef}
       id="home-editorial"
@@ -520,15 +500,6 @@ export default function Hero({
     >
       <style>{`
         .home-editorial-wordmark{box-sizing:border-box;pointer-events:none;position:fixed;left:0;top:calc(100svh - clamp(184px,38vw,236px) + 20px);z-index:40;width:min(100vw,1208px);max-width:100vw;height:auto;aspect-ratio:3175/1343;user-select:none;transition:color .24s ease,opacity .28s ease,visibility .28s ease}.home-editorial-wordmark[data-visible="false"]{opacity:0!important;visibility:hidden}.home-editorial-wordmark svg{display:block;width:100%;height:100%;overflow:visible}@media(min-width:1024px){.home-editorial-wordmark{right:1vw!important;left:auto!important;top:calc(47vh + 18px)!important;width:44.8vw!important;max-width:44.8vw!important;height:auto!important;aspect-ratio:3175/1343}}
-        .home-editorial-cue{color:var(--rosta-brick-b);font-family:var(--font-heading)!important;font-weight:900!important;font-variation-settings:"wght" 900!important;font-synthesis:weight!important;letter-spacing:-.045em;line-height:.92}
-        .home-editorial-cue p,.home-editorial-cue span{margin:0;font-family:var(--font-heading)!important;font-weight:900!important;font-variation-settings:"wght" 900!important;font-synthesis:weight!important}
-        .home-editorial-cue p{font-size:clamp(2.65rem,11.5vw,4.25rem);line-height:.9}
-        .home-editorial-cue span{display:block}
-        .home-editorial-cue--third p{font-size:clamp(2.15rem,9.4vw,3.7rem);line-height:.94}
-        @media(min-width:768px){
-          .home-editorial-cue p{font-size:clamp(3.1rem,5.7vw,6.45rem);line-height:.91}
-          .home-editorial-cue--third p{font-size:clamp(2.85rem,5.25vw,5.9rem);line-height:.94}
-        }
       `}</style>
       <motion.div
         ref={wordmarkRef}
@@ -559,9 +530,10 @@ export default function Hero({
           editorialVideoType={activeEditorialVideo.mediaType}
           editorialImage={activeEditorialImage.src}
           editorialImageType={activeEditorialImage.mediaType}
-          mobileViewport={mobileViewport}
         />
       ))}
     </section>
+    <HorizontalPhotoRail src={activeEditorialImage.src} mediaType={activeEditorialImage.mediaType} />
+    </>
   );
 }
