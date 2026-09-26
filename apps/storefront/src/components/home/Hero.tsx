@@ -511,17 +511,21 @@ function HorizontalPortfolioStory({
     restDelta: 0.0001,
     restSpeed: 0.0001,
   });
-  const motionProgress = reduceMotion ? scrollYProgress : smooth;
+  // On touch devices, follow the finger directly instead of letting the spring
+  // catch up after a fast swipe. Desktop keeps the soft eased follower.
+  const motionProgress = reduceMotion || mobileViewport ? scrollYProgress : smooth;
   const x = useTransform(
     motionProgress,
-    [0, 0.1, 0.28, 0.36, 0.54, 0.62, 0.76, 0.88, 1],
+    mobileViewport
+      ? [0, 0.11, 0.27, 0.37, 0.53, 0.63, 0.79, 0.9, 1]
+      : [0, 0.1, 0.28, 0.36, 0.54, 0.62, 0.76, 0.88, 1],
     ["0%", "0%", "-25%", "-25%", "-50%", "-50%", "-75%", "-75%", "-75%"],
   );
 
   return (
     <section
       ref={ref}
-      className="home-horizontal-editorial relative h-[580svh] overflow-visible bg-carbon"
+      className="home-horizontal-editorial relative h-[540svh] overflow-visible bg-carbon md:h-[560svh]"
       aria-label="ROSTA yatay hikaye"
     >
       <style>{`
