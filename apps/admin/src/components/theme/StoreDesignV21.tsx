@@ -206,15 +206,6 @@ function recordValue(value: unknown): Record<string, unknown> {
   return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {};
 }
 
-function getNested(target: Record<string, unknown>, path: string) {
-  let value: unknown = target;
-  for (const part of path.split(".").filter(Boolean)) {
-    if (!value || typeof value !== "object" || Array.isArray(value)) return undefined;
-    value = (value as Record<string, unknown>)[part];
-  }
-  return value;
-}
-
 function flattenResponsiveLeaves(value: unknown, prefix = ""): Array<[string, unknown]> {
   if (value == null || typeof value !== "object" || Array.isArray(value)) return prefix ? [[prefix, value]] : [];
   const output: Array<[string, unknown]> = [];
@@ -281,6 +272,7 @@ function snapshotValue(target: SelectedTarget, path: string) {
 }
 
 function updateTargetSnapshot(target: SelectedTarget, path: string, value: unknown): SelectedTarget {
+  if (value === null) return target;
   if (path === "media.objectFit") {
     return { ...target, current: { ...target.current, media: { ...(target.current.media || {}), objectFit: String(value) } } };
   }
