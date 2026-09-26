@@ -34,6 +34,7 @@ type FormState = {
   seoDescription: string;
   ogTitle: string;
   ogDescription: string;
+  ogAssetId: string;
   canonical: string;
   robots: SeoDocument["robots"];
 };
@@ -68,6 +69,7 @@ function initialForm(document: ThemeDocument, page: PageRecord | null): FormStat
     seoDescription: seo?.description || "",
     ogTitle: seo?.openGraphTitle || "",
     ogDescription: seo?.openGraphDescription || "",
+    ogAssetId: seo?.openGraphAssetId || "",
     canonical: seo?.canonical || "",
     robots: seo?.robots || "index,follow",
   };
@@ -150,6 +152,8 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
   const editingPage = mode === "edit" ? pageByRoute(document, activePath) : null;
   const routeLocked = Boolean(editingPage?.reserved || editingPage?.kind === "system" || editingPage?.kind === "catalog" || editingPage?.kind === "protected" || editingPage?.kind === "utility");
   const canDuplicate = Boolean(editingPage && !routeLocked && (editingPage.kind === "merchant" || editingPage.kind === "managed-static"));
+  const fixedCompatibility = editingPage ? compatibilityFor(document, editingPage) : null;
+  const robotsLocked = Boolean(routeLocked && fixedCompatibility && ["checkout", "account", "search"].includes(fixedCompatibility));
   const [form, setForm] = useState<FormState>(() => initialForm(document, editingPage));
   const [busy, setBusy] = useState(false);
 
@@ -244,11 +248,11 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
         description: form.seoDescription.trim(),
         openGraphTitle: form.ogTitle.trim() || undefined,
         openGraphDescription: form.ogDescription.trim() || undefined,
+        openGraphAssetId: form.ogAssetId || undefined,
         canonical: canonical || undefined,
         robots: form.robots,
         robotsPreset: form.robots,
         structuredDataPolicy: next.seo[seoId]?.structuredDataPolicy || "inherit",
-        openGraphAssetId: next.seo[seoId]?.openGraphAssetId,
       };
       next.revision = Math.max(next.revision, document.revision) + 1;
 
@@ -362,7 +366,7 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
             </label>
             <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
               Sayfa tipi
-              <select value={form.compatibility} onChange={(event) => set("compatibility", event.target.value as PageCompatibility)} className="h-10 rounded-lg border border-black/10 bg-white px-3 text-[10px] font-medium text-black outline-none">
+              <select disabled={routeLocked} value={form.compatibility} onChange={(event) => set("compatibility", event.target.value as PageCompatibility)} className="h-10 rounded-lg border border-black/10 bg-white px-3 text-[10px] font-medium text-black outline-none disabled:bg-black/[0.03] disabled:text-black/35">
                 <option value="content">İçerik Sayfası</option>
                 <option value="landing">Landing / Kampanya</option>
                 <option value="legal">Yasal Sayfa</option>
@@ -409,7 +413,7 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
               </label>
               <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
                 Robots
-                <select value={form.robots} onChange={(event) => set("robots", event.target.value as SeoDocument["robots"])} className="h-10 rounded-lg border border-black/10 bg-white px-3 text-[10px] font-medium text-black outline-none">
+                <select disabled={robotsLocked} value={form.robots} onChange={(event) => set("robots", event.target.value as SeoDocument["robots"])} className="h-10 rounded-lg border border-black/10 bg-white px-3 text-[10px] font-medium text-black outline-none disabled:bg-black/[0.03] disabled:text-black/35">
                   <option value="index,follow">index,follow</option>
                   <option value="noindex,follow">noindex,follow</option>
                   <option value="noindex,nofollow">noindex,nofollow</option>
@@ -419,6 +423,18 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
             <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
               Open Graph açıklama
               <textarea value={form.ogDescription} onChange={(event) => set("ogDescription", event.target.value)} className="min-h-16 resize-y rounded-lg border border-black/10 p-3 text-[10px] font-medium text-black outline-none" />
+            </label>
+            <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
+              Open Graph görseli
+              <select value={form.ogAssetId} onChange={(event) => set("ogAssetId", event.target.value)} className="h-10 rounded-lg border border-black/10 bg-white px-3 text-[10px] font-medium text-black outline-none">
+                <option value="">SEO görseli yok / fallback</option>
+                {Object.values(document.media).filter((asset) => asset.type === "image").map((asset) => (
+                  <option key={asset.assetId} value={asset.assetId}>{asset.assetId} · v{asset.version || 1}</option>
+                ))}
+              </select>
+              {form.ogAssetId && document.media[form.ogAssetId]?.url ? (
+                <img src={document.media[form.ogAssetId]!.url} alt="" className="mt-1 h-20 w-32 rounded-lg border border-black/[0.08] object-cover" />
+              ) : null}
             </label>
             <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
               Canonical URL
