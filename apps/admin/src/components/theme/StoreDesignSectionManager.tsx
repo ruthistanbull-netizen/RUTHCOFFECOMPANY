@@ -55,6 +55,7 @@ const RENDERABLE_SECTION_TYPES = new Set([
   "brand-story",
   "collection-cards",
   "trust-badges",
+  "faq",
 ]);
 
 function uid(prefix: string) {
@@ -92,6 +93,9 @@ function defaultSettings(type: string): Record<string, unknown> {
   }
   if (type === "rich-text") {
     return { title: "Başlık", body: "Metninizi buraya ekleyin.", paddingY: 64 };
+  }
+  if (type === "faq") {
+    return { title: "Sık Sorulan Sorular", paddingY: 64 };
   }
   return {};
 }
