@@ -102,6 +102,28 @@ function defaultSettings(type: string): Record<string, unknown> {
 
 function ensurePageContext(document: ThemeDocument, activePage: ActivePage, compatibility: PageCompatibility) {
   const next = structuredClone(document) as ThemeDocument;
+
+  if (activePage.template) {
+    const templateId = next.templateBindings[activePage.path] || activePage.path;
+    if (!next.templates[templateId]) {
+      next.templates[templateId] = {
+        id: templateId,
+        label: activePage.label || "Template",
+        description: `${activePage.label || activePage.path} için storefront template'i`,
+        pageType: compatibility,
+        compatibility: [compatibility],
+        sectionIds: [],
+        componentSettings: {},
+        version: 1,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        schemaVersion: STORE_DESIGN_SCHEMA_VERSION,
+      };
+    }
+    next.templateBindings[activePage.path] = templateId;
+    return { next, page: null, template: next.templates[templateId] };
+  }
+
   let page = pageRecord(next, activePage.path);
 
   if (!page) {
