@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getProducts } from "@/data/catalogReadModel";
-import { getCategories, getCollections } from "@/data/site";
+import { getCategories, getCollections, getStoreDesignV2Published } from "@/data/site";
 import { absoluteUrl, SITE_URL } from "@/lib/seo";
 
 const staticRoutes = [
@@ -25,10 +25,11 @@ function date(value: unknown) {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [products, categories, collections] = await Promise.all([
+  const [products, categories, collections, storeDesignV2] = await Promise.all([
     getProducts(),
     getCategories(),
     getCollections(),
+    getStoreDesignV2Published(),
   ]);
 
   const categoryIds = new Set(products.flatMap((product) => product.category_ids || []).map(String));
@@ -46,6 +47,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const indexableCollections = collections.filter((collection) =>
     collectionIds.has(String(collection.id)) || collectionSlugs.has(String(collection.slug)),
   );
+
+  const staticPathSet = new Set(staticRoutes.map((path) => path || "/"));
+  const publishedMerchantPages = Object.values(storeDesignV2.pages)
+    .filter((page) => page.kind === "merchant" && page.status === "published")
+    .filter((page) => {
+      const seo = storeDesignV2.seo[page.seoId];
+      const robots = seo?.robots || seo?.robotsPreset || "index,follow";
+      if (!robots.startsWith("index")) return false;
+      if (staticPathSet.has(page.route)) return false;
+
+      const canonical = seo?.canonical?.trim();
+      if (!canonical) return true;
+      if (canonical.startsWith("/")) return canonical === page.route;
+      try {
+        const url = new URL(canonical);
+        return url.origin === SITE_URL && url.pathname.replace(/\/$/, "") === page.route.replace(/\/$/, "");
+      } catch {
+        return false;
+      }
+    });
 
   return [
     ...staticRoutes.map((path) => ({
@@ -73,6 +94,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly" as const,
       priority: 0.7,
       images: collection.cover_image_url ? [absoluteUrl(collection.cover_image_url)] : undefined,
+    })),
+    ...publishedMerchantPages.map((page) => ({
+      url: `${SITE_URL}${page.route}`,
+      lastModified: date(page.updatedAt || page.publishedAt || page.createdAt),
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+      images: (() => {
+        const seo = storeDesignV2.seo[page.seoId];
+        const asset = seo?.openGraphAssetId ? storeDesignV2.media[seo.openGraphAssetId] : undefined;
+        return asset?.url ? [absoluteUrl(asset.url)] : undefined;
+      })(),
     })),
   ];
 }
