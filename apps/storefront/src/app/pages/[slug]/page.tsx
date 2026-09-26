@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect, redirect } from "next/navigation";
 import { HomeSectionRenderer } from "@/components/theme/HomeSectionRenderer";
 import { getFeaturedProducts, getProducts } from "@/data/catalogReadModel";
 import {
@@ -61,6 +61,14 @@ export default async function CustomThemePage({ params, searchParams }: { params
   ]);
   const activeV2 = previewV2 || publishedV2;
   const v2Page = storeDesignPageForRoute(activeV2, pathname);
+
+  if (!previewV2 && !v2Page) {
+    const rule = publishedV2.redirects.find((item) => item.active !== false && item.from === pathname);
+    if (rule?.to && rule.to !== pathname) {
+      if (rule.status === 302) redirect(rule.to);
+      permanentRedirect(rule.to);
+    }
+  }
 
   if (v2Page) {
     if (!previewV2 && v2Page.status !== "published") notFound();
