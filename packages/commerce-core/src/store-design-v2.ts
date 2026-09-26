@@ -177,6 +177,7 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
   component("account-profile", "Hesap Profili", "Hesap", "template", templateScopes, ["layout", "card"], ["customerData"]),
   component("address-card", "Adres Kartı", "Hesap", "family", familyScopes, ["card", "layout"], ["customerData"]),
   component("order-card", "Sipariş Kartı", "Hesap", "family", familyScopes, ["card", "layout"], ["orderState"]),
+  component("discount-card", "İndirim Kartı", "Hesap", "family", familyScopes, ["card", "layout", "typography"], ["discountValue", "eligibility"]),
   component("rewards-card", "Puan Kartı", "Hesap", "family", familyScopes, ["card", "layout"], ["rewardMath"]),
   component("search-overlay", "Arama", "Diğer", "template", templateScopes, ["layout", "card"], ["searchAlgorithm"]),
   component("order-tracking", "Sipariş Takip", "Diğer", "template", templateScopes, ["content", "layout", "card"], ["trackingApi"]),
