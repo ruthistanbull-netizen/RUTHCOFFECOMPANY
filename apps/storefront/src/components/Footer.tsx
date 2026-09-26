@@ -5,11 +5,6 @@ import { categoryHref } from "@/lib/catalogCategories";
 import type { Category, Collection } from "@/types/site";
 import type { ThemeCustomizerSettings } from "@/lib/themeCustomizer";
 import { getThemeCustomizerSettings } from "@/data/site";
-import { ThemeEditorBridgeV3 } from "@/components/theme/ThemeEditorBridgeV3";
-import { SemanticThemeEditorBridge } from "@/components/theme/SemanticThemeEditorBridge";
-import { ThemeEditorContextGestureBridge } from "@/components/theme/ThemeEditorContextGestureBridge";
-import { ThemeEditorEnhancements } from "@/components/theme/ThemeEditorEnhancements";
-import { ThemeEditorNativeNavigation } from "@/components/theme/ThemeEditorNativeNavigation";
 import { ROSTA_WORDMARK_SRC } from "@/components/brand/rostaWordmark";
 
 type SocialLink = {
@@ -105,11 +100,6 @@ export async function Footer({ categories = [], collections = [], themeSettings 
           <div className="flex flex-col justify-between gap-2 border-t border-kraft/35 pt-6 text-[9px] sm:text-[10px] md:flex-row" style={{ color: "var(--muted-foreground)" }}><p>Copyright © 2026, ROSTA COFFEE CO. Tüm Hakları Saklıdır.</p><p>Kahvenin her adımında.</p></div>
         </div>
       </footer>
-      <SemanticThemeEditorBridge />
-      <ThemeEditorNativeNavigation />
-      <ThemeEditorEnhancements />
-      <ThemeEditorContextGestureBridge />
-      <ThemeEditorBridgeV3 settings={resolvedThemeSettings} />
     </>
   );
 }
