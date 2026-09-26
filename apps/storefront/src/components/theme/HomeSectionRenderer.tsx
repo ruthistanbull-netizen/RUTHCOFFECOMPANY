@@ -10,6 +10,26 @@ import type { Collection, Product } from "@/types/site";
 import type { HomepageHeroImages } from "@/lib/themeMedia";
 import type { ThemeCustomizerSettings } from "@/lib/themeCustomizer";
 import type { ThemeSection } from "@ruth-commerce/commerce-core/theme-sections";
+const SEMANTIC_SECTION_TYPE: Record<ThemeSection["type"], string> = {
+  hero: "hero-section",
+  "scroll-story": "scroll-story",
+  collections: "collections-section",
+  "featured-products": "featured-products",
+  "brand-story": "brand-story",
+  trust: "trust-section",
+  "product-slider": "product-slider",
+  "image-banner": "image-banner",
+  "rich-text": "rich-text",
+};
+
+function semanticSectionType(section: ThemeSection) {
+  return SEMANTIC_SECTION_TYPE[section.type];
+}
+
+function semanticSectionLabel(section: ThemeSection) {
+  return section.title || section.type.replace(/-/g, " ");
+}
+
 import { ROSTA_PALETTE, sanitizeRostaPaletteColor } from "@/lib/rostaDesignSystem";
 
 function hasProductSectionCustomization(section: ThemeSection) {
@@ -73,12 +93,12 @@ export function HomeSectionRenderer({
   freeShippingThreshold: number;
 }) {
   if (!section.enabled) return null;
-  if (section.type === "hero") return <div data-theme-section-id={section.id}><Hero heroImages={heroImages} editorialVideo={editorialVideo} editorialImage={editorialImage} themeSettings={themeSettings} /></div>;
-  if (section.type === "scroll-story") return <div data-theme-section-id={section.id}><ScrollStory images={scrollImages} themeSettings={themeSettings} /></div>;
-  if (section.type === "collections") return <div data-theme-section-id={section.id}><CollectionCards collections={collections} /></div>;
-  if (section.type === "featured-products" && !hasProductSectionCustomization(section)) return <div data-theme-section-id={section.id}><FeaturedProducts products={featuredProducts} /></div>;
-  if (section.type === "brand-story") return <div data-theme-section-id={section.id}><BrandStory /></div>;
-  if (section.type === "trust") return <div data-theme-section-id={section.id}><TrustSection freeShippingThreshold={freeShippingThreshold} /></div>;
+  if (section.type === "hero") return <div data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}><Hero heroImages={heroImages} editorialVideo={editorialVideo} editorialImage={editorialImage} themeSettings={themeSettings} /></div>;
+  if (section.type === "scroll-story") return <div data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}><ScrollStory images={scrollImages} themeSettings={themeSettings} /></div>;
+  if (section.type === "collections") return <div data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}><CollectionCards collections={collections} /></div>;
+  if (section.type === "featured-products" && !hasProductSectionCustomization(section)) return <div data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}><FeaturedProducts products={featuredProducts} /></div>;
+  if (section.type === "brand-story") return <div data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}><BrandStory /></div>;
+  if (section.type === "trust") return <div data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}><TrustSection freeShippingThreshold={freeShippingThreshold} /></div>;
 
   if (section.type === "product-slider" || section.type === "featured-products") {
     const products = productsForSection(section, featuredProducts, allProducts).slice(0, section.productLimit || 12);
@@ -101,7 +121,7 @@ export function HomeSectionRenderer({
 
     return (
       <section
-        data-theme-section-id={section.id}
+        data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}
         className="theme-config-product-section overflow-hidden"
         style={{
           ...textVars,
@@ -145,7 +165,7 @@ export function HomeSectionRenderer({
     );
     return (
       <section
-        data-theme-section-id={section.id}
+        data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}
         className="theme-config-banner relative overflow-hidden"
         style={{
           background: sectionBackground,
@@ -177,7 +197,7 @@ export function HomeSectionRenderer({
     );
     return (
       <section
-        data-theme-section-id={section.id}
+        data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}
         className="px-5 text-center md:px-8"
         style={{
           background: sectionBackground,
