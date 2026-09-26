@@ -18,6 +18,7 @@ export const dynamic = "force-dynamic";
 const DRAFT_KEY = "store_design_v2_draft";
 const PUBLISHED_KEY = "store_design_v2_published";
 const PREVIEW_PREFIX = "store_design_v2_preview_";
+const SNAPSHOT_PREFIX = "store_design_v2_snapshot_";
 
 function cleanPreviewToken(value: unknown) {
   return typeof value === "string"
@@ -161,25 +162,33 @@ export async function PUT(request: Request) {
       publishedAt: mode === "publish" ? now : incoming.publishedAt,
     };
 
-    const { data, error } = await auth.supabase.from("site_settings").upsert({
-      setting_key: key,
-      setting_value: document,
-      is_public: mode === "publish",
-      updated_at: now,
-    }, { onConflict: "setting_key" })
-      .select("setting_value,updated_at")
-      .single();
-
-    if (error) throw new Error(error.message);
-    const persisted = normalizeThemeDocument(data?.setting_value || document);
-
     if (mode === "publish") {
-      await auth.supabase.from("site_settings").upsert({
-        setting_key: DRAFT_KEY,
-        setting_value: persisted,
-        is_public: false,
-        updated_at: now,
-      }, { onConflict: "setting_key" });
+      const snapshotKey = `${SNAPSHOT_PREFIX}${String(document.revision).padStart(12, "0")}`;
+      const { data, error } = await auth.supabase.from("site_settings").upsert([
+        {
+          setting_key: PUBLISHED_KEY,
+          setting_value: document,
+          is_public: true,
+          updated_at: now,
+        },
+        {
+          setting_key: DRAFT_KEY,
+          setting_value: document,
+          is_public: false,
+          updated_at: now,
+        },
+        {
+          setting_key: snapshotKey,
+          setting_value: document,
+          is_public: false,
+          updated_at: now,
+        },
+      ], { onConflict: "setting_key" })
+        .select("setting_key,setting_value,updated_at");
+
+      if (error) throw new Error(error.message);
+      const publishedRow = data?.find((row) => row.setting_key === PUBLISHED_KEY);
+      const persisted = normalizeThemeDocument(publishedRow?.setting_value || document);
 
       const revalidate = await revalidateWebsite({
         source: "admin-store-design-v2",
@@ -192,10 +201,23 @@ export async function PUT(request: Request) {
         ok: true,
         mode,
         document: persisted,
-        persistedAt: data?.updated_at || now,
+        snapshotKey,
+        persistedAt: publishedRow?.updated_at || now,
         revalidate,
       }, { headers: noStoreHeaders() });
     }
+
+    const { data, error } = await auth.supabase.from("site_settings").upsert({
+      setting_key: key,
+      setting_value: document,
+      is_public: false,
+      updated_at: now,
+    }, { onConflict: "setting_key" })
+      .select("setting_value,updated_at")
+      .single();
+
+    if (error) throw new Error(error.message);
+    const persisted = normalizeThemeDocument(data?.setting_value || document);
 
     return NextResponse.json({
       ok: true,
