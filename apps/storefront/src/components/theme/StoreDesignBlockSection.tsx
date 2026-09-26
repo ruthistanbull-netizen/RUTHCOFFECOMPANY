@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 import type { ThemeSection } from "@ruth-commerce/commerce-core/theme-sections";
+import { StoreDesignCountdown } from "@/components/theme/StoreDesignCountdown";
 
 type V2Block = NonNullable<ThemeSection["v2Blocks"]>[number];
 
@@ -293,6 +294,28 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
           ) : null}
           {attribution ? <p className="mt-4 text-[10px] uppercase tracking-[0.12em] opacity-50">{attribution}</p> : null}
           {ctaLabel && href(ctaHref) ? <Link href={href(ctaHref)} className="mt-6 inline-flex rounded-full border border-current px-5 py-3 text-[10px] uppercase tracking-[0.12em]">{ctaLabel}</Link> : null}
+        </div>
+      </section>
+    );
+  }
+
+  if (type === "countdown") {
+    const targetTime = text(settings.targetTime);
+    const completedState = text(settings.completedState) || "Tamamlandı";
+    const stylePreset = text(settings.style) || "cards";
+    return (
+      <section
+        data-theme-section-id={section.id}
+        data-editor-id={`section:${section.id}`}
+        data-editor-type="countdown"
+        data-editor-label={title || "Countdown"}
+        className="px-5 md:px-8"
+        style={style}
+      >
+        <div className="mx-auto max-w-4xl text-center">
+          {eyebrow ? <p className="mb-3 text-[9px] uppercase tracking-[0.16em] opacity-55">{eyebrow}</p> : null}
+          {title ? <h2 className="mb-7 font-heading text-[clamp(1.7rem,3vw,3rem)]">{title}</h2> : null}
+          <StoreDesignCountdown targetTime={targetTime} completedState={completedState} stylePreset={stylePreset} />
         </div>
       </section>
     );
