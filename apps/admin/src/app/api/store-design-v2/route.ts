@@ -6,6 +6,7 @@ import {
   createEmptyThemeDocument,
   normalizeThemeDocument,
   STORE_DESIGN_SCHEMA_VERSION,
+  validateThemeDocument,
   type ThemeDocument,
 } from "@ruth-commerce/commerce-core/store-design-v2";
 
@@ -81,6 +82,13 @@ export async function POST(request: Request) {
   }
 
   const document = normalizeThemeDocument(body?.document);
+  const validation = validateThemeDocument(document);
+  if (!validation.ok) {
+    return NextResponse.json(
+      { ok: false, error: validation.errors[0] || "Önizleme dokümanı geçersiz.", errors: validation.errors },
+      { status: 422, headers: noStoreHeaders() },
+    );
+  }
   const now = new Date().toISOString();
 
   try {
@@ -117,6 +125,13 @@ export async function PUT(request: Request) {
   const body = await request.json().catch(() => ({}));
   const mode = body?.mode === "publish" ? "publish" : "draft";
   const incoming = normalizeThemeDocument(body?.document);
+  const validation = validateThemeDocument(incoming);
+  if (!validation.ok) {
+    return NextResponse.json(
+      { ok: false, error: validation.errors[0] || "Mağaza tasarımı doğrulanamadı.", errors: validation.errors },
+      { status: 422, headers: noStoreHeaders() },
+    );
+  }
   const key = mode === "publish" ? PUBLISHED_KEY : DRAFT_KEY;
 
   try {
