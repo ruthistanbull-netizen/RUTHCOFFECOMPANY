@@ -817,31 +817,27 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
     const observer = new MutationObserver((mutations) => {
       if (mutating) return;
 
-      let relevant = false;
+      let addedEditableContent = false;
       for (const mutation of mutations) {
-        if (mutation.type === "childList") {
-          if (mutation.addedNodes.length || mutation.removedNodes.length) relevant = true;
-          for (const node of Array.from(mutation.addedNodes)) {
-            if (node instanceof Element) registerElements(node);
-          }
-          continue;
+        if (mutation.type !== "childList" || !mutation.addedNodes.length) continue;
+        for (const node of Array.from(mutation.addedNodes)) {
+          if (!(node instanceof Element)) continue;
+          registerElements(node);
+          if (node.matches(EDITABLE_QUERY) || node.querySelector(EDITABLE_QUERY)) addedEditableContent = true;
         }
-        if (mutation.type === "attributes") relevant = true;
       }
 
-      if (!relevant) return;
+      if (!addedEditableContent) return;
       window.clearTimeout(mutationTimer);
       mutationTimer = window.setTimeout(() => {
         applySettings(settingsRef.current, false);
         sendOutline();
-      }, 90);
+      }, 140);
     });
 
     observer.observe(document.body, {
       childList: true,
       subtree: true,
-      attributes: true,
-      attributeFilter: ["src", "srcset"],
     });
     applySettings(settingsRef.current);
     window.addEventListener("message", onMessage);
