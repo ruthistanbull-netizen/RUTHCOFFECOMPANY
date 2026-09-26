@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowDown, ArrowUp, Plus, Save, Trash2, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   BLOCK_LIBRARY_BY_TYPE,
   SECTION_LIBRARY_BY_TYPE,
@@ -26,6 +26,22 @@ type DraftBlock = {
   id: string;
   type: string;
   settings: Record<string, unknown>;
+};
+
+type CatalogProductOption = {
+  id: string;
+  name: string;
+  slug: string;
+  price?: number | string | null;
+  main_image_url?: string | null;
+  status?: string | null;
+};
+
+type CatalogGroupOption = {
+  id: string;
+  name: string;
+  slug: string;
+  status?: string | null;
 };
 
 function uid(prefix: string) {
@@ -124,6 +140,11 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
     .map((block) => ({ id: block.id, type: block.type, settings: structuredClone(block.settings || {}) })));
   const [blockType, setBlockType] = useState(allowedDefinitions[0]?.type || "");
   const [busy, setBusy] = useState(false);
+  const [catalogProducts, setCatalogProducts] = useState<CatalogProductOption[]>([]);
+  const [catalogCollections, setCatalogCollections] = useState<CatalogGroupOption[]>([]);
+  const [catalogCategories, setCatalogCategories] = useState<CatalogGroupOption[]>([]);
+  const [catalogLoading, setCatalogLoading] = useState(false);
+  const [catalogError, setCatalogError] = useState("");
   const [mediaPicker, setMediaPicker] = useState<
     | { target: "section"; key: "imageAssetId" | "posterAssetId"; mediaType: "image" | "video" | "any" }
     | { target: "block"; blockId: string; key: string; mediaType: "image" | "video" | "any" }
@@ -132,6 +153,61 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
 
   const mediaAssets = useMemo(() => Object.values(document.media), [document.media]);
   const maxBlocks = definition?.allowedBlocks.length ? (definition.maxBlocks || 50) : 0;
+  const needsCommerceCatalog = ["product-spotlight", "featured-collection", "category-cards"].includes(section.type);
+
+  useEffect(() => {
+    if (!needsCommerceCatalog) return;
+    const controller = new AbortController();
+    let active = true;
+
+    setCatalogLoading(true);
+    setCatalogError("");
+
+    void Promise.all([
+      fetch("/api/catalog", { cache: "no-store", signal: controller.signal }).then((response) => response.json()),
+      fetch("/api/products", { cache: "no-store", signal: controller.signal }).then((response) => response.json()),
+    ]).then(([catalog, products]) => {
+      if (!active) return;
+      if (!catalog?.ok) throw new Error(catalog?.error || "Katalog grupları alınamadı.");
+      if (!products?.ok) throw new Error(products?.error || "Ürün kataloğu alınamadı.");
+
+      const productRows = Array.isArray(products.products) ? products.products : [];
+      const collectionRows = Array.isArray(catalog.collections) ? catalog.collections : [];
+      const categoryRows = Array.isArray(catalog.categories) ? catalog.categories : [];
+
+      setCatalogProducts(productRows
+        .filter((item: CatalogProductOption) => !item.status || item.status === "active")
+        .map((item: CatalogProductOption) => ({
+          id: String(item.id || ""),
+          name: String(item.name || ""),
+          slug: String(item.slug || ""),
+          price: item.price,
+          main_image_url: item.main_image_url || null,
+          status: item.status || null,
+        }))
+        .filter((item: CatalogProductOption) => item.id && item.name));
+
+      setCatalogCollections(collectionRows
+        .filter((item: CatalogGroupOption) => !item.status || item.status === "active")
+        .map((item: CatalogGroupOption) => ({ id: String(item.id || ""), name: String(item.name || ""), slug: String(item.slug || ""), status: item.status || null }))
+        .filter((item: CatalogGroupOption) => item.id && item.name));
+
+      setCatalogCategories(categoryRows
+        .filter((item: CatalogGroupOption) => !item.status || item.status === "active")
+        .map((item: CatalogGroupOption) => ({ id: String(item.id || ""), name: String(item.name || ""), slug: String(item.slug || ""), status: item.status || null }))
+        .filter((item: CatalogGroupOption) => item.id && item.name));
+    }).catch((error) => {
+      if (!active || error?.name === "AbortError") return;
+      setCatalogError(error instanceof Error ? error.message : "Katalog seçenekleri alınamadı.");
+    }).finally(() => {
+      if (active) setCatalogLoading(false);
+    });
+
+    return () => {
+      active = false;
+      controller.abort();
+    };
+  }, [needsCommerceCatalog]);
 
   const updateSetting = (key: string, value: unknown) => {
     setSettings((current) => ({ ...current, [key]: value }));
@@ -157,6 +233,13 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   const save = async () => {
     if (busy) return;
     if (blocks.length > maxBlocks) return toast.error(`Block sayısı maxBlocks sınırını aşıyor (${maxBlocks}).`);
+
+    if (section.type === "product-spotlight" && !text(settings.productId)) {
+      return toast.error("Tek Ürün Spotlight için katalogdan bir ürün seç.");
+    }
+    if (section.type === "featured-collection" && !text(settings.collectionId)) {
+      return toast.error("Featured Collection için katalogdan bir koleksiyon seç.");
+    }
 
     if (section.type === "hero") {
       const mediaId = text(settings.imageAssetId);
@@ -231,13 +314,16 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   const hasGap = hasColumns || section.type === "slideshow";
   const mediaNarrative = ["hero", "video-hero", "video-banner", "background-media"].includes(section.type);
   const brandStory = section.type === "brand-story";
-  const collectionCards = section.type === "collection-cards";
+  const productSpotlight = section.type === "product-spotlight";
+  const featuredCollection = section.type === "featured-collection";
+  const collectionCards = section.type === "collection-cards" || section.type === "category-cards";
+  const categoryCards = section.type === "category-cards";
   const genericZeroBlock = ["hero", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta", "spacer", "divider", "anchor"].includes(section.type);
   const hasGenericBody = ["hero", "video-hero", "video-banner", "brand-story", "heading-subtext", "manifesto", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const hasAlign = ["hero", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const hasLink = ["hero", "video-hero", "video-banner", "brand-story", "promo-banner", "shipping-returns-cta"].includes(section.type);
-  const showTitle = !["scroll-story", "background-media", "quote", "spacer", "divider", "anchor"].includes(section.type);
-  const showEyebrow = !genericZeroBlock && !["scroll-story", "background-media"].includes(section.type);
+  const showTitle = !["product-spotlight", "featured-collection", "scroll-story", "background-media", "quote", "spacer", "divider", "anchor"].includes(section.type);
+  const showEyebrow = !genericZeroBlock && !["product-spotlight", "featured-collection", "scroll-story", "background-media"].includes(section.type);
   const showPadding = !["hero", "scroll-story", "video-hero", "video-banner", "background-media", "spacer", "anchor"].includes(section.type);
   const primaryMedia = mediaNarrative && text(settings.imageAssetId) ? document.media[text(settings.imageAssetId)] : undefined;
   const brandStoryMedia = brandStory && text(settings.imageAssetId) ? document.media[text(settings.imageAssetId)] : undefined;
@@ -382,18 +468,114 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   </label>
                 </>
               ) : null}
+
+              {productSpotlight ? (
+                <>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                    Ürün
+                    <select value={text(settings.productId)} onChange={(event) => updateSetting("productId", event.target.value)} disabled={catalogLoading} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none disabled:opacity-50">
+                      <option value="">{catalogLoading ? "Ürünler yükleniyor…" : "Ürün seç"}</option>
+                      {catalogProducts.map((product) => <option key={product.id} value={product.id}>{product.name}</option>)}
+                    </select>
+                    {catalogError ? <span className="text-[7px] font-normal text-red-600">{catalogError}</span> : <span className="text-[7px] font-normal leading-4 text-black/35">Fiyat, stok ve ürün metni katalogdan read-only gelir.</span>}
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Medya konumu
+                    <select value={text(settings.mediaPosition) || "left"} onChange={(event) => updateSetting("mediaPosition", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="left">Sol</option>
+                      <option value="right">Sağ</option>
+                    </select>
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    CTA metni
+                    <input value={text(settings.linkLabel) || "Ürünü İncele"} onChange={(event) => updateSetting("linkLabel", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                  </label>
+                  <div className="grid gap-2 rounded-lg border border-black/10 bg-white p-2.5 md:col-span-2">
+                    <p className="text-[8px] font-semibold text-black/45">Bilgi blokları</p>
+                    {[
+                      ["description", "Açıklama"],
+                      ["stock", "Stok durumu"],
+                      ["compare-price", "Karşılaştırma fiyatı"],
+                    ].map(([value, label]) => {
+                      const current = Array.isArray(settings.infoBlocks) ? settings.infoBlocks.filter((item): item is string => typeof item === "string") : ["description", "stock", "compare-price"];
+                      return (
+                        <label key={value} className="flex items-center justify-between gap-3 text-[8px] text-black/55">
+                          {label}
+                          <input
+                            type="checkbox"
+                            checked={current.includes(value)}
+                            onChange={(event) => updateSetting("infoBlocks", event.target.checked ? [...new Set([...current, value])] : current.filter((item) => item !== value))}
+                          />
+                        </label>
+                      );
+                    })}
+                  </div>
+                </>
+              ) : null}
+
+              {featuredCollection ? (
+                <>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                    Koleksiyon
+                    <select value={text(settings.collectionId)} onChange={(event) => updateSetting("collectionId", event.target.value)} disabled={catalogLoading} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none disabled:opacity-50">
+                      <option value="">{catalogLoading ? "Koleksiyonlar yükleniyor…" : "Koleksiyon seç"}</option>
+                      {catalogCollections.map((collection) => <option key={collection.id} value={collection.id}>{collection.name}</option>)}
+                    </select>
+                    {catalogError ? <span className="text-[7px] font-normal text-red-600">{catalogError}</span> : <span className="text-[7px] font-normal leading-4 text-black/35">Koleksiyon üyeliği ve ürün verileri theme editor tarafından değiştirilmez.</span>}
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Başlık override
+                    <input value={text(settings.heading)} onChange={(event) => updateSetting("heading", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" placeholder="Boşsa koleksiyon adı" />
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    CTA metni
+                    <input value={text(settings.linkLabel) || "Koleksiyonu Gör"} onChange={(event) => updateSetting("linkLabel", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Yerleşim
+                    <select value={text(settings.layout) || "slider"} onChange={(event) => updateSetting("layout", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="slider">Slider</option>
+                      <option value="grid">Grid</option>
+                    </select>
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Ürün limiti
+                    <input type="number" min={1} max={24} value={numberValue(settings.limit, 8)} onChange={(event) => updateSetting("limit", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Masaüstü kolon
+                    <input type="number" min={1} max={6} value={numberValue(settings.desktopColumns, 4)} onChange={(event) => updateSetting("desktopColumns", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Mobil kolon
+                    <input type="number" min={1} max={3} value={numberValue(settings.mobileColumns, 2)} onChange={(event) => updateSetting("mobileColumns", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                    Kart aralığı
+                    <select value={String(numberValue(settings.gap, 12))} onChange={(event) => updateSetting("gap", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="8">Sıkı · 8px</option>
+                      <option value="12">Dar · 12px</option>
+                      <option value="20">Orta · 20px</option>
+                      <option value="32">Geniş · 32px</option>
+                    </select>
+                  </label>
+                </>
+              ) : null}
+
               {collectionCards ? (
                 <>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                     Veri kaynağı
                     <div className="flex h-9 items-center rounded-lg border border-black/10 bg-white px-2.5 text-[8px] font-medium text-black/55">
-                      Katalog · aktif koleksiyonlar
+                      Katalog · {categoryCards ? "aktif kategoriler" : "aktif koleksiyonlar"}
                     </div>
-                    <span className="text-[7px] font-normal leading-4 text-black/35">Koleksiyon üyeliği ve isim/slug verisi catalog servisinden read-only gelir.</span>
+                    <span className="text-[7px] font-normal leading-4 text-black/35">
+                      {categoryCards ? "Kategori adı/slug/görseli" : "Koleksiyon üyeliği ve isim/slug verisi"} catalog servisinden read-only gelir.
+                    </span>
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                    Koleksiyon limiti
-                    <input type="number" min={1} max={12} value={numberValue(settings.limit, 4)} onChange={(event) => updateSetting("limit", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                    {categoryCards ? "Kategori" : "Koleksiyon"} limiti
+                    <input type="number" min={1} max={12} value={numberValue(settings.limit, categoryCards ? 6 : 4)} onChange={(event) => updateSetting("limit", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                     Masaüstü kolon
