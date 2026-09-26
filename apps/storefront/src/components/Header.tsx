@@ -617,9 +617,12 @@ export function Header({
           .ruth-zara-menu-button .ruth-zara-hamburger[data-open=true] .ruth-zara-hamburger__line--bottom{transform:translateY(-8px) rotate(-45deg)!important}
         }
         @media(max-width:1023px){
-          .ruth-zara-menu-button{left:32px!important;top:0!important;width:44px!important;height:64px!important;display:block!important;padding:0!important}
-          .ruth-zara-menu-button .ruth-zara-hamburger{position:absolute!important;left:0!important;top:35px!important;display:block!important;width:44px!important;height:18px!important}
-          .ruth-zara-menu-button .ruth-zara-hamburger__line{position:absolute!important;left:0!important;width:44px!important;height:1px!important;background:currentColor!important}
+          /* Zara mobile reference: visible lines start ~31px from the left,
+             sit at ~35/52px and remain 44px wide. Keep a larger invisible
+             hit target around them so the visual geometry never shifts. */
+          .ruth-zara-menu-button{left:16px!important;top:0!important;width:74px!important;height:64px!important;display:block!important;padding:0!important;margin:0!important;transform:none!important}
+          .ruth-zara-menu-button .ruth-zara-hamburger{position:absolute!important;left:15px!important;top:35px!important;display:block!important;width:44px!important;height:18px!important;margin:0!important;transform:none!important}
+          .ruth-zara-menu-button .ruth-zara-hamburger__line{position:absolute!important;left:0!important;width:44px!important;height:1px!important;background:currentColor!important;border:0!important}
           .ruth-zara-menu-button .ruth-zara-hamburger__line--top{top:0!important}
           .ruth-zara-menu-button .ruth-zara-hamburger__line--bottom{top:17px!important}
           .ruth-zara-menu-button .ruth-zara-hamburger[data-open=true] .ruth-zara-hamburger__line--top{transform:translateY(8.5px) rotate(45deg)!important}
