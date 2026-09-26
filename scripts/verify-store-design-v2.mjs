@@ -310,6 +310,7 @@ for (const token of [
   "product-spotlight",
   "featured-collection",
   "category-cards",
+  "product-comparison",
   "scroll-story",
   "Media Library",
   "Oynatma politikası",
@@ -325,6 +326,9 @@ for (const token of [
   "Featured Collection için katalogdan bir koleksiyon seç",
   "Katalog · ",
   "Bilgi blokları",
+  "Karşılaştırılacak ürünler · 2-4 seçim",
+  "Karşılaştırma alanları",
+  "Tablo · mobilde yatay kaydırma",
   "Scroll uzunluğu",
   "Geçiş preset",
   "KAYDIR cue göster",
@@ -343,6 +347,7 @@ for (const token of [
   'section("product-spotlight"',
   'section("featured-collection"',
   'section("category-cards"',
+  'section("product-comparison"',
   'section("collection-cards"',
   'section("brand-story"',
   'component("scroll-story-slide"',
@@ -357,7 +362,7 @@ for (const token of ["new-arrivals", "sale-products", "Otomatik · yeni ürün i
 }
 
 const themeSections = read("packages/commerce-core/src/theme-sections.ts");
-for (const token of ['| "product-spotlight"', '| "featured-collection"', '| "category-cards"', '| "new-arrivals"', '| "sale-products"', 'layout?: "slider" | "grid"', 'badgeStyle?: "pill" | "outline" | "minimal"', "mobileAssetUrl?: string", "mobileObjectPosition?: string"]) {
+for (const token of ['| "product-spotlight"', '| "featured-collection"', '| "category-cards"', '| "product-comparison"', '| "new-arrivals"', '| "sale-products"', 'layout?: "slider" | "grid"', 'badgeStyle?: "pill" | "outline" | "minimal"', "mobileAssetUrl?: string", "mobileObjectPosition?: string"]) {
   if (!themeSections.includes(token)) fail(`Product preset render contract eksik: ${token}`);
 }
 
@@ -372,6 +377,7 @@ for (const token of [
   'section.type === "product-spotlight"',
   'section.type === "featured-collection"',
   'section.type === "category-cards"',
+  'section.type === "product-comparison"',
   "formatPrice",
   "customCollectionCards",
   "--collection-columns",
@@ -382,7 +388,7 @@ for (const token of [
 }
 
 for (const token of [
-  '["hero", "product-spotlight", "featured-collection", "category-cards", "collection-cards", "brand-story"]',
+  '["hero", "product-spotlight", "featured-collection", "category-cards", "product-comparison", "collection-cards", "brand-story"]',
   'section.type === "scroll-story"',
   "hydrateV2Blocks",
   "mobileAssetUrl",
