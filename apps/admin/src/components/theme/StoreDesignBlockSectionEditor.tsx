@@ -124,10 +124,11 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
     .map((block) => ({ id: block.id, type: block.type, settings: structuredClone(block.settings || {}) })));
   const [blockType, setBlockType] = useState(allowedDefinitions[0]?.type || "");
   const [busy, setBusy] = useState(false);
-  const [mediaPicker, setMediaPicker] = useState<{
-    key: "imageAssetId" | "posterAssetId";
-    mediaType: "image" | "video" | "any";
-  } | null>(null);
+  const [mediaPicker, setMediaPicker] = useState<
+    | { target: "section"; key: "imageAssetId" | "posterAssetId"; mediaType: "image" | "video" | "any" }
+    | { target: "block"; blockId: string; key: string; mediaType: "image" | "video" | "any" }
+    | null
+  >(null);
 
   const mediaAssets = useMemo(() => Object.values(document.media), [document.media]);
   const maxBlocks = definition?.allowedBlocks.length ? (definition.maxBlocks || 50) : 0;
@@ -293,7 +294,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                           .filter((asset) => section.type === "background-media" || section.type === "hero" || asset.type === "video")
                           .map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.type} · {asset.assetId} · v{asset.version || 1}</option>)}
                       </select>
-                      <button type="button" onClick={() => setMediaPicker({ key: "imageAssetId", mediaType: section.type === "background-media" || section.type === "hero" ? "any" : "video" })} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
+                      <button type="button" onClick={() => setMediaPicker({ target: "section", key: "imageAssetId", mediaType: section.type === "background-media" || section.type === "hero" ? "any" : "video" })} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
                         Media Library
                       </button>
                     </div>
@@ -313,7 +314,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                             <option value="">Video asset posterini kullan</option>
                             {mediaAssets.filter((asset) => asset.type === "image").map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.assetId} · v{asset.version || 1}</option>)}
                           </select>
-                          <button type="button" onClick={() => setMediaPicker({ key: "posterAssetId", mediaType: "image" })} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
+                          <button type="button" onClick={() => setMediaPicker({ target: "section", key: "posterAssetId", mediaType: "image" })} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
                             Media Library
                           </button>
                         </div>
@@ -439,7 +440,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                         <option value="">Mevcut marka hikayesi görselini kullan</option>
                         {mediaAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.type} · {asset.assetId} · v{asset.version || 1}</option>)}
                       </select>
-                      <button type="button" onClick={() => setMediaPicker({ key: "imageAssetId", mediaType: "any" })} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
+                      <button type="button" onClick={() => setMediaPicker({ target: "section", key: "imageAssetId", mediaType: "any" })} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
                         Media Library
                       </button>
                     </div>
@@ -824,10 +825,15 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                           return (
                             <label key={key} className="grid gap-1 text-[8px] font-semibold text-black/45 md:col-span-2">
                               {fieldLabel(key)}
-                              <select value={text(value)} onChange={(event) => updateBlock(block.id, key, event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
-                                <option value="">Medya seçilmedi</option>
-                                {mediaAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.type} · {asset.assetId} · v{asset.version || 1}</option>)}
-                              </select>
+                              <div className="flex gap-2">
+                                <select value={text(value)} onChange={(event) => updateBlock(block.id, key, event.target.value)} className="h-9 min-w-0 flex-1 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                                  <option value="">Medya seçilmedi</option>
+                                  {mediaAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.type} · {asset.assetId} · v{asset.version || 1}</option>)}
+                                </select>
+                                <button type="button" onClick={() => setMediaPicker({ target: "block", blockId: block.id, key, mediaType: "any" })} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
+                                  Media Library
+                                </button>
+                              </div>
                             </label>
                           );
                         }
@@ -905,11 +911,17 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
             onApply={onApply}
             onClose={() => setMediaPicker(null)}
             onSelect={(assetId) => {
-              updateSetting(mediaPicker.key, assetId);
-              if (mediaPicker.key === "imageAssetId" && document.media[assetId]?.type !== "video") updateSetting("posterAssetId", "");
+              if (mediaPicker.target === "block") {
+                updateBlock(mediaPicker.blockId, mediaPicker.key, assetId);
+              } else {
+                updateSetting(mediaPicker.key, assetId);
+                if (mediaPicker.key === "imageAssetId" && document.media[assetId]?.type !== "video") updateSetting("posterAssetId", "");
+              }
               setMediaPicker(null);
             }}
-            selectedAssetId={text(settings[mediaPicker.key]) || undefined}
+            selectedAssetId={mediaPicker.target === "block"
+              ? text(blocks.find((block) => block.id === mediaPicker.blockId)?.settings[mediaPicker.key]) || undefined
+              : text(settings[mediaPicker.key]) || undefined}
             mediaType={mediaPicker.mediaType}
           />
         ) : null}
