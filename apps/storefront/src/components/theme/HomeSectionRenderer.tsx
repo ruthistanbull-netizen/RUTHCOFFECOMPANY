@@ -6,6 +6,7 @@ import FeaturedProducts from "@/components/home/FeaturedProducts";
 import BrandStory from "@/components/home/BrandStory";
 import TrustSection from "@/components/home/TrustSection";
 import { ThemeProductSlider } from "@/components/theme/ThemeProductSlider";
+import ProductCard from "@/components/ProductCard";
 import { StoreDesignResponsiveImage } from "@/components/theme/StoreDesignResponsiveImage";
 import type { Collection, Product } from "@/types/site";
 import type { HomepageHeroImages } from "@/lib/themeMedia";
@@ -19,6 +20,7 @@ const SEMANTIC_SECTION_TYPE: Record<ThemeSection["type"], string> = {
   "brand-story": "brand-story",
   trust: "trust-section",
   "product-slider": "product-slider",
+  "product-grid": "product-grid",
   "image-banner": "image-banner",
   "rich-text": "rich-text",
   faq: "faq-accordion",
@@ -101,6 +103,58 @@ export function HomeSectionRenderer({
   if (section.type === "featured-products" && !hasProductSectionCustomization(section)) return <div data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}><FeaturedProducts products={featuredProducts} /></div>;
   if (section.type === "brand-story") return <div data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}><BrandStory /></div>;
   if (section.type === "trust") return <div data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}><TrustSection freeShippingThreshold={freeShippingThreshold} /></div>;
+
+  if (section.type === "product-grid") {
+    const products = productsForSection(section, featuredProducts, allProducts).slice(0, section.productLimit || 12);
+    const desktopItems = Math.max(2, Math.min(6, Math.round(section.desktopItems || 3)));
+    const mobileItems = Math.max(1, Math.min(2, Math.round(section.mobileItems || 2)));
+    const gap = Math.max(0, Math.min(100, Number(section.gap ?? 20)));
+    const maxWidth = section.maxWidth && section.maxWidth !== "none" ? section.maxWidth : undefined;
+
+    return (
+      <section
+        data-theme-section-id={section.id}
+        data-editor-id={`section:${section.id}`}
+        data-editor-type={semanticSectionType(section)}
+        data-editor-label={semanticSectionLabel(section)}
+        className="overflow-hidden"
+        style={{
+          background: section.backgroundColor || "transparent",
+          color: section.textColor || "inherit",
+          paddingTop: section.paddingY ?? 64,
+          paddingBottom: section.paddingY ?? 64,
+        }}
+      >
+        <div className="mx-auto px-4 md:px-8" style={{ maxWidth: maxWidth || "1600px" }}>
+          {(section.eyebrow || section.title || section.linkLabel) ? (
+            <div className="mb-7 flex items-end justify-between gap-4 md:mb-10">
+              <div>
+                {section.eyebrow ? <p className="mb-2 text-[9px] uppercase tracking-[0.16em] opacity-60">{section.eyebrow}</p> : null}
+                {section.title ? <h2 className="font-heading text-[clamp(1.4rem,2.6vw,2.6rem)] leading-tight">{section.title}</h2> : null}
+              </div>
+              {section.linkLabel && section.linkHref ? <Link href={section.linkHref} className="text-[9px] uppercase tracking-[0.12em]">{section.linkLabel}</Link> : null}
+            </div>
+          ) : null}
+          <div
+            data-editor-id={`product-grid:${section.id}`}
+            data-editor-type="product-grid"
+            data-editor-label="Ürün Grid'i"
+            className="theme-v2-section-product-grid"
+            style={{
+              ["--section-grid-mobile" as string]: mobileItems,
+              ["--section-grid-desktop" as string]: desktopItems,
+              ["--section-grid-gap" as string]: `${gap}px`,
+            }}
+          >
+            {products.map((product, index) => (
+              <ProductCard key={product.id} product={product} index={index} showShortDescription={false} />
+            ))}
+          </div>
+        </div>
+        <style>{`.theme-v2-section-product-grid{display:grid;grid-template-columns:repeat(var(--section-grid-mobile),minmax(0,1fr));gap:var(--section-grid-gap)}@media(min-width:768px){.theme-v2-section-product-grid{grid-template-columns:repeat(var(--section-grid-desktop),minmax(0,1fr))}}`}</style>
+      </section>
+    );
+  }
 
   if (section.type === "product-slider" || section.type === "featured-products") {
     const products = productsForSection(section, featuredProducts, allProducts).slice(0, section.productLimit || 12);
