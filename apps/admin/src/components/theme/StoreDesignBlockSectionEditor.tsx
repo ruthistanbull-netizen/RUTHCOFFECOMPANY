@@ -323,9 +323,10 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   const productSpotlight = section.type === "product-spotlight";
   const featuredCollection = section.type === "featured-collection";
   const productComparison = section.type === "product-comparison";
+  const bestSellers = section.type === "best-sellers";
   const collectionCards = section.type === "collection-cards" || section.type === "category-cards";
   const categoryCards = section.type === "category-cards";
-  const genericZeroBlock = ["hero", "product-comparison", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta", "spacer", "divider", "anchor"].includes(section.type);
+  const genericZeroBlock = ["hero", "product-comparison", "best-sellers", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta", "spacer", "divider", "anchor"].includes(section.type);
   const hasGenericBody = ["hero", "video-hero", "video-banner", "brand-story", "heading-subtext", "manifesto", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const hasAlign = ["hero", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const hasLink = ["hero", "video-hero", "video-banner", "brand-story", "promo-banner", "shipping-returns-cta"].includes(section.type);
@@ -517,6 +518,37 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                       );
                     })}
                   </div>
+                </>
+              ) : null}
+
+              {bestSellers ? (
+                <>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                    Veri kaynağı
+                    <div className="flex h-9 items-center rounded-lg border border-black/10 bg-black/[0.025] px-2.5 text-[8px] font-medium text-black/55">
+                      Otomatik · ödenmiş sipariş miktarları
+                    </div>
+                    <span className="text-[7px] font-normal leading-4 text-black/35">Sipariş/analytics verisi read-only hesaplanır; theme editor satış sırasını değiştiremez.</span>
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Tarih penceresi
+                    <select value={text(settings.window) || "30d"} onChange={(event) => updateSetting("window", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="7d">Son 7 gün</option>
+                      <option value="30d">Son 30 gün</option>
+                      <option value="90d">Son 90 gün</option>
+                    </select>
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Ürün limiti
+                    <input type="number" min={1} max={24} value={numberValue(settings.limit, 12)} onChange={(event) => updateSetting("limit", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                    Yerleşim
+                    <select value={text(settings.layout) || "slider"} onChange={(event) => updateSetting("layout", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="slider">Slider</option>
+                      <option value="grid">Grid</option>
+                    </select>
+                  </label>
                 </>
               ) : null}
 
