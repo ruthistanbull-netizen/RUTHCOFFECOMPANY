@@ -25,9 +25,11 @@ import {
   SECTION_LIBRARY,
   STORE_DESIGN_MESSAGES,
   STORE_DESIGN_SCHEMA_VERSION,
+  analyzeThemeDocumentReferences,
   createEmptyThemeDocument,
   normalizeThemeDocument,
   type EditorScope,
+  type ThemeReferenceIssue,
   type PageCompatibility,
   type ThemeDocument,
 } from "@ruth-commerce/commerce-core/store-design-v2";
@@ -40,6 +42,7 @@ import { StoreDesignMediaLibrary } from "@/components/theme/StoreDesignMediaLibr
 import { StoreDesignTemplateManager } from "@/components/theme/StoreDesignTemplateManager";
 import { StoreDesignRedirectManager } from "@/components/theme/StoreDesignRedirectManager";
 import { StoreDesignSnapshotManager } from "@/components/theme/StoreDesignSnapshotManager";
+import { StoreDesignPublishReport } from "@/components/theme/StoreDesignPublishReport";
 
 type Device = "desktop" | "mobile";
 type PageItem = {
@@ -467,6 +470,7 @@ export function StoreDesignV21() {
   const [templateManagerOpen, setTemplateManagerOpen] = useState(false);
   const [redirectManagerOpen, setRedirectManagerOpen] = useState(false);
   const [snapshotManagerOpen, setSnapshotManagerOpen] = useState(false);
+  const [publishIssues, setPublishIssues] = useState<ThemeReferenceIssue[] | null>(null);
   const [history, setHistory] = useState<EditorHistoryEntry[]>([]);
   const [future, setFuture] = useState<EditorHistoryEntry[]>([]);
   const revisionRef = useRef(0);
@@ -889,8 +893,14 @@ export function StoreDesignV21() {
     }
   };
 
-  const save = async (mode: "draft" | "publish") => {
+  const save = async (mode: "draft" | "publish", forcePublish = false) => {
     if (saving) return;
+
+    if (mode === "publish" && !forcePublish) {
+      setPublishIssues(analyzeThemeDocumentReferences(document));
+      return;
+    }
+
     setSaving(mode);
     try {
       const result = await adminRequest<{ document?: unknown; revalidate?: { ok?: boolean; message?: string } }>("/api/store-design-v2", {
@@ -902,7 +912,10 @@ export function StoreDesignV21() {
       setDocument(persisted);
       setSavedDraft(persisted);
       revisionRef.current = persisted.revision;
-      if (mode === "publish") setPublished(persisted);
+      if (mode === "publish") {
+        setPublished(persisted);
+        setPublishIssues(null);
+      }
       toast.success(mode === "publish" ? "Mağaza tasarımı yayınlandı." : "Taslak kaydedildi.");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Mağaza tasarımı kaydedilemedi.");
@@ -1272,6 +1285,15 @@ export function StoreDesignV21() {
           </aside>
         ) : null}
       </div>
+
+      {publishIssues !== null ? (
+        <StoreDesignPublishReport
+          issues={publishIssues}
+          publishing={saving === "publish"}
+          onCancel={() => setPublishIssues(null)}
+          onPublish={() => void save("publish", true)}
+        />
+      ) : null}
 
       {snapshotManagerOpen ? (
         <StoreDesignSnapshotManager
