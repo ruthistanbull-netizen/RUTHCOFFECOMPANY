@@ -192,6 +192,7 @@ function validatePatch(target: SemanticTarget, message: ThemePatchMessage) {
   if (!allowedPatch(target.definition, message.path)) {
     return { ok: false, error: "Bu kontrol bu semantik bileşen için izinli değil." };
   }
+  if (message.value === null) return { ok: true };
 
   switch (message.path) {
     case "visible":
@@ -459,6 +460,9 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
           dispatchRuntimePatch(target, message);
           selectedRef.current = target;
           positionOverlay();
+          window.requestAnimationFrame(() => {
+            if (selectedRef.current?.id === target.id) select(target);
+          });
         }
 
         post({
