@@ -6,6 +6,7 @@ import FeaturedProducts from "@/components/home/FeaturedProducts";
 import BrandStory from "@/components/home/BrandStory";
 import TrustSection from "@/components/home/TrustSection";
 import { ThemeProductSlider } from "@/components/theme/ThemeProductSlider";
+import { StoreDesignResponsiveImage } from "@/components/theme/StoreDesignResponsiveImage";
 import type { Collection, Product } from "@/types/site";
 import type { HomepageHeroImages } from "@/lib/themeMedia";
 import type { ThemeCustomizerSettings } from "@/lib/themeCustomizer";
@@ -173,15 +174,19 @@ export function HomeSectionRenderer({
           borderRadius: section.borderRadius || 0,
           ["--banner-mobile-height" as string]: `${section.mobileHeight || 360}px`,
           ["--banner-desktop-height" as string]: `${section.desktopHeight || 520}px`,
-          ["--banner-object-position-mobile" as string]: section.mobileImageObjectPosition || section.imageObjectPosition || "50% 50%",
-          ["--banner-object-position-desktop" as string]: section.imageObjectPosition || "50% 50%",
         }}
       >
         {section.imageSrc ? (
-          <picture className="absolute inset-0 block h-full w-full">
-            {section.mobileImageSrc ? <source media="(max-width: 767px)" srcSet={section.mobileImageSrc} /> : null}
-            <img src={section.imageSrc} alt={section.title || ""} className="theme-config-banner-media h-full w-full object-cover" />
-          </picture>
+          <StoreDesignResponsiveImage
+            assetId={section.imageAssetId}
+            src={section.imageSrc}
+            mobileAssetId={section.mobileImageAssetId}
+            mobileSrc={section.mobileImageSrc}
+            objectPosition={section.imageObjectPosition}
+            mobileObjectPosition={section.mobileImageObjectPosition}
+            alt={section.title || ""}
+            className="store-design-responsive-media"
+          />
         ) : null}
         <div className="relative z-10 flex h-full items-center justify-center p-8 text-center" style={{ color: sectionText }}>
           <div>
@@ -191,7 +196,7 @@ export function HomeSectionRenderer({
             {section.linkLabel && section.linkHref ? <Link data-theme-section-link href={section.linkHref} className="mt-6 inline-flex whitespace-pre-wrap rounded-full border border-current px-5 py-3 text-[10px] uppercase tracking-[0.12em]">{section.linkLabel}</Link> : null}
           </div>
         </div>
-        <style>{`.theme-config-banner{height:var(--banner-mobile-height)}.theme-config-banner-media{object-position:var(--banner-object-position-mobile)}@media(min-width:768px){.theme-config-banner{height:var(--banner-desktop-height)}.theme-config-banner-media{object-position:var(--banner-object-position-desktop)}}`}</style>
+        <style>{`.theme-config-banner{height:var(--banner-mobile-height)}@media(min-width:768px){.theme-config-banner{height:var(--banner-desktop-height)}}`}</style>
       </section>
     );
   }
