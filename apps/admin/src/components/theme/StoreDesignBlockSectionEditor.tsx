@@ -567,7 +567,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                     Veri kaynağı
                     <div className="flex h-9 items-center rounded-lg border border-black/10 bg-white px-2.5 text-[8px] font-medium text-black/55">
-                      Katalog · {categoryCards ? "aktif kategoriler" : "aktif koleksiyonlar"}
+                      Katalog · {categoryCards ? `${catalogCategories.length} aktif kategori` : "aktif koleksiyonlar"}
                     </div>
                     <span className="text-[7px] font-normal leading-4 text-black/35">
                       {categoryCards ? "Kategori adı/slug/görseli" : "Koleksiyon üyeliği ve isim/slug verisi"} catalog servisinden read-only gelir.
