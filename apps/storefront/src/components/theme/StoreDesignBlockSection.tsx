@@ -57,6 +57,30 @@ function blockSemanticType(type: string) {
   return type;
 }
 
+function playbackPolicy(value: unknown) {
+  const preset = ["ambient", "once", "controls"].includes(text(value)) ? text(value) : "ambient";
+  return {
+    preset,
+    autoPlay: preset !== "controls",
+    muted: preset !== "controls",
+    loop: preset === "ambient",
+    controls: preset === "controls",
+  };
+}
+
+function mediaFit(value: unknown): "cover" | "contain" {
+  return text(value) === "contain" ? "contain" : "cover";
+}
+
+function contentAlign(value: unknown): "left" | "center" | "right" {
+  const align = text(value);
+  return align === "left" || align === "right" ? align : "center";
+}
+
+function contrastMode(value: unknown): "light" | "dark" {
+  return text(value) === "dark" ? "dark" : "light";
+}
+
 export function StoreDesignBlockSection({ section }: { section: ThemeSection }) {
   const type = section.v2Type;
   if (!type) return null;
@@ -83,6 +107,185 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
       {title ? <h2 className="font-heading text-[clamp(1.5rem,3vw,3rem)] leading-tight">{title}</h2> : null}
     </div>
   ) : null;
+
+  if (type === "video-hero" || type === "video-banner") {
+    if (!section.imageSrc || section.v2MediaType !== "video") return null;
+
+    const playback = playbackPolicy(settings.playbackPreset);
+    const fit = mediaFit(settings.fit);
+    const align = contentAlign(settings.align);
+    const contrast = contrastMode(settings.contrastMode);
+    const overlay = number(settings.overlayOpacity, type === "video-hero" ? 32 : 28, 0, 80) / 100;
+    const posterUrl = section.v2Assets?.posterAssetId?.url || section.v2PosterUrl;
+    const body = text(settings.body);
+    const ctaLabel = text(settings.linkLabel);
+    const ctaHref = href(settings.linkHref);
+    const heightPreset = text(settings.heightPreset);
+    const height = type === "video-hero"
+      ? heightPreset === "medium"
+        ? "620px"
+        : heightPreset === "tall"
+          ? "760px"
+          : "100svh"
+      : heightPreset === "compact"
+        ? "360px"
+        : heightPreset === "tall"
+          ? "620px"
+          : "480px";
+    const contentClass = align === "left"
+      ? "items-start text-left"
+      : align === "right"
+        ? "items-end text-right"
+        : "items-center text-center";
+
+    return (
+      <section
+        data-theme-section-id={section.id}
+        data-editor-id={`section:${section.id}`}
+        data-editor-type={type}
+        data-editor-label={title || (type === "video-hero" ? "Video Hero" : "Video Banner")}
+        className="relative isolate overflow-hidden"
+        style={{ minHeight: height, color: contrast === "light" ? "#fff" : "#111" }}
+      >
+        <video
+          className="v2-media-narrative-media absolute inset-0 h-full w-full"
+          poster={posterUrl}
+          autoPlay={playback.autoPlay}
+          muted={playback.muted}
+          loop={playback.loop}
+          controls={playback.controls}
+          playsInline
+          preload="metadata"
+          style={{
+            objectFit: fit,
+            ["--v2-media-pos-desktop" as string]: section.imageObjectPosition || "50% 50%",
+            ["--v2-media-pos-mobile" as string]: section.mobileImageObjectPosition || section.imageObjectPosition || "50% 50%",
+          }}
+        >
+          {section.mobileImageSrc ? <source media="(max-width: 767px)" src={section.mobileImageSrc} /> : null}
+          <source src={section.imageSrc} />
+        </video>
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{ background: contrast === "light" ? `rgba(0,0,0,${overlay})` : `rgba(255,255,255,${overlay})` }}
+        />
+        <div className={`relative z-10 mx-auto flex min-h-[inherit] w-full max-w-[1600px] flex-col justify-center px-6 py-12 md:px-10 ${contentClass}`}>
+          <div className="max-w-3xl">
+            {title ? <h2 className="font-heading text-[clamp(2rem,5vw,5.5rem)] leading-[0.98]">{title}</h2> : null}
+            {body ? <p className="mt-5 whitespace-pre-wrap text-sm leading-7 opacity-90 md:text-base">{body}</p> : null}
+            {ctaLabel && ctaHref ? (
+              <Link href={ctaHref} className="mt-7 inline-flex min-h-11 items-center justify-center border border-current px-5 text-[10px] uppercase tracking-[0.14em]">
+                {ctaLabel}
+              </Link>
+            ) : null}
+          </div>
+        </div>
+        <style>{`.v2-media-narrative-media{object-position:var(--v2-media-pos-mobile)}@media(min-width:768px){.v2-media-narrative-media{object-position:var(--v2-media-pos-desktop)}}`}</style>
+      </section>
+    );
+  }
+
+  if (type === "background-media") {
+    if (!section.imageSrc) return null;
+
+    const block = blocks[0];
+    const playback = playbackPolicy(settings.playbackPreset);
+    const fit = mediaFit(settings.fit);
+    const contrast = contrastMode(settings.contrastMode);
+    const overlay = number(settings.overlayOpacity, 36, 0, 80) / 100;
+    const heightPreset = text(settings.minHeightPreset);
+    const minHeight = heightPreset === "compact"
+      ? "360px"
+      : heightPreset === "tall"
+        ? "680px"
+        : heightPreset === "viewport"
+          ? "100svh"
+          : "520px";
+    const posterUrl = section.v2Assets?.posterAssetId?.url || section.v2PosterUrl;
+    const blockAlign = contentAlign(block?.settings.align);
+    const maxWidthValue = text(block?.settings.maxWidth);
+    const maxWidth = ["640px", "800px", "960px"].includes(maxWidthValue) ? maxWidthValue : "800px";
+    const blockHeading = text(block?.settings.heading);
+    const blockEyebrow = text(block?.settings.eyebrow);
+    const blockBody = text(block?.settings.body);
+    const blockLinkLabel = text(block?.settings.linkLabel);
+    const blockLinkHref = href(block?.settings.linkHref);
+    const contentClass = blockAlign === "left"
+      ? "items-start text-left"
+      : blockAlign === "right"
+        ? "items-end text-right"
+        : "items-center text-center";
+
+    return (
+      <section
+        data-theme-section-id={section.id}
+        data-editor-id={`section:${section.id}`}
+        data-editor-type="background-media"
+        data-editor-label={blockHeading || "Background Media"}
+        className="relative isolate overflow-hidden"
+        style={{ minHeight, color: contrast === "light" ? "#fff" : "#111" }}
+      >
+        {section.v2MediaType === "video" ? (
+          <video
+            className="v2-media-narrative-media absolute inset-0 h-full w-full"
+            poster={posterUrl}
+            autoPlay={playback.autoPlay}
+            muted={playback.muted}
+            loop={playback.loop}
+            controls={playback.controls}
+            playsInline
+            preload="metadata"
+            style={{
+              objectFit: fit,
+              ["--v2-media-pos-desktop" as string]: section.imageObjectPosition || "50% 50%",
+              ["--v2-media-pos-mobile" as string]: section.mobileImageObjectPosition || section.imageObjectPosition || "50% 50%",
+            }}
+          >
+            {section.mobileImageSrc ? <source media="(max-width: 767px)" src={section.mobileImageSrc} /> : null}
+            <source src={section.imageSrc} />
+          </video>
+        ) : (
+          <picture>
+            {section.mobileImageSrc ? <source media="(max-width: 767px)" srcSet={section.mobileImageSrc} /> : null}
+            <img
+              src={section.imageSrc}
+              alt=""
+              className="v2-media-narrative-media absolute inset-0 h-full w-full"
+              style={{
+                objectFit: fit,
+                ["--v2-media-pos-desktop" as string]: section.imageObjectPosition || "50% 50%",
+                ["--v2-media-pos-mobile" as string]: section.mobileImageObjectPosition || section.imageObjectPosition || "50% 50%",
+              }}
+            />
+          </picture>
+        )}
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{ background: contrast === "light" ? `rgba(0,0,0,${overlay})` : `rgba(255,255,255,${overlay})` }}
+        />
+        <div className={`relative z-10 mx-auto flex min-h-[inherit] w-full max-w-[1600px] flex-col justify-center px-6 py-12 md:px-10 ${contentClass}`}>
+          {block ? (
+            <div
+              data-editor-id={`block:${block.id}`}
+              data-editor-type="content"
+              data-editor-label={blockHeading || "İçerik"}
+              style={{ maxWidth }}
+            >
+              {blockEyebrow ? <p className="mb-3 text-[9px] uppercase tracking-[0.16em] opacity-75">{blockEyebrow}</p> : null}
+              {blockHeading ? <h2 className="font-heading text-[clamp(1.9rem,4vw,4.5rem)] leading-tight">{blockHeading}</h2> : null}
+              {blockBody ? <p className="mt-5 whitespace-pre-wrap text-sm leading-7 opacity-90 md:text-base">{blockBody}</p> : null}
+              {blockLinkLabel && blockLinkHref ? (
+                <Link href={blockLinkHref} className="mt-7 inline-flex min-h-11 items-center justify-center border border-current px-5 text-[10px] uppercase tracking-[0.14em]">
+                  {blockLinkLabel}
+                </Link>
+              ) : null}
+            </div>
+          ) : null}
+        </div>
+        <style>{`.v2-media-narrative-media{object-position:var(--v2-media-pos-mobile)}@media(min-width:768px){.v2-media-narrative-media{object-position:var(--v2-media-pos-desktop)}}`}</style>
+      </section>
+    );
+  }
 
   if (type === "text-columns") {
     return (
