@@ -2,8 +2,8 @@
 
 import {
   ChevronDown,
-  ChevronRight,
   CircleDot,
+  Images,
   Monitor,
   PanelLeft,
   PanelRight,
@@ -33,6 +33,7 @@ import { adminRequest } from "@/lib/adminApi";
 import { useExactToast } from "@/components/base44-exact/primitives";
 import { StoreDesignPageManager } from "@/components/theme/StoreDesignPageManager";
 import { StoreDesignSectionManager } from "@/components/theme/StoreDesignSectionManager";
+import { StoreDesignMediaLibrary } from "@/components/theme/StoreDesignMediaLibrary";
 
 type Device = "desktop" | "mobile";
 type PageItem = {
@@ -89,6 +90,7 @@ type StructureHistoryEntry = {
   before: ThemeDocument;
   after: ThemeDocument;
   pagePath: string;
+  reload: boolean;
 };
 
 type EditorHistoryEntry = SemanticHistoryEntry | StructureHistoryEntry;
@@ -329,6 +331,7 @@ export function StoreDesignV21() {
   const [leftOpen, setLeftOpen] = useState(true);
   const [rightOpen, setRightOpen] = useState(true);
   const [pageManagerMode, setPageManagerMode] = useState<"create" | "edit" | null>(null);
+  const [mediaOpen, setMediaOpen] = useState(false);
   const [history, setHistory] = useState<EditorHistoryEntry[]>([]);
   const [future, setFuture] = useState<EditorHistoryEntry[]>([]);
   const revisionRef = useRef(0);
@@ -530,7 +533,7 @@ export function StoreDesignV21() {
     }
   }, [syncPreviewDocument]);
 
-  const applyStructureSnapshot = useCallback(async (snapshot: ThemeDocument, pagePath: string) => {
+  const applyStructureSnapshot = useCallback(async (snapshot: ThemeDocument, pagePath: string, reload = true) => {
     const next = structuredClone(snapshot) as ThemeDocument;
     next.revision = revisionRef.current + 1;
     await syncPreviewDocument(next, true);
@@ -539,8 +542,8 @@ export function StoreDesignV21() {
     setSelected(null);
     setLastHeartbeat(Date.now());
 
-    const page = editorPages.find((item) => item.path === pagePath);
-    if (iframeRef.current) {
+    if (reload && iframeRef.current) {
+      const page = editorPages.find((item) => item.path === pagePath);
       iframeRef.current.src = previewUrl(page ? cleanPreviewPath(page) : pagePath, previewTokenRef.current);
     }
   }, [editorPages, syncPreviewDocument]);
@@ -548,11 +551,19 @@ export function StoreDesignV21() {
   const applyStructureDocument = useCallback(async (next: ThemeDocument, label: string) => {
     const before = structuredClone(document) as ThemeDocument;
     const after = structuredClone(next) as ThemeDocument;
-    await applyStructureSnapshot(after, activePath);
-    setHistory((items) => [...items.slice(-79), { kind: "structure", label, before, after, pagePath: activePath }]);
+    await applyStructureSnapshot(after, activePath, true);
+    setHistory((items) => [...items.slice(-79), { kind: "structure", label, before, after, pagePath: activePath, reload: true }]);
     setFuture([]);
     toast.success(label);
   }, [activePath, applyStructureSnapshot, document, toast]);
+
+  const applyMediaDocument = useCallback(async (next: ThemeDocument, label: string) => {
+    const before = structuredClone(document) as ThemeDocument;
+    const after = structuredClone(next) as ThemeDocument;
+    await applyStructureSnapshot(after, activePath, false);
+    setHistory((items) => [...items.slice(-79), { kind: "structure", label, before, after, pagePath: activePath, reload: false }]);
+    setFuture([]);
+  }, [activePath, applyStructureSnapshot, document]);
 
   const applyPatchValue = (
     target: SelectedTarget,
@@ -597,7 +608,7 @@ export function StoreDesignV21() {
       return;
     }
     try {
-      await applyStructureSnapshot(entry.before, entry.pagePath);
+      await applyStructureSnapshot(entry.before, entry.pagePath, entry.reload);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Yapısal geri alma uygulanamadı.");
     }
@@ -613,7 +624,7 @@ export function StoreDesignV21() {
       return;
     }
     try {
-      await applyStructureSnapshot(entry.after, entry.pagePath);
+      await applyStructureSnapshot(entry.after, entry.pagePath, entry.reload);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Yapısal yineleme uygulanamadı.");
     }
@@ -690,6 +701,9 @@ export function StoreDesignV21() {
           </button>
         </div>
 
+        <button type="button" onClick={() => setMediaOpen(true)} className="hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] lg:flex">
+          <Images className="h-3.5 w-3.5" />Medya
+        </button>
         <button type="button" disabled={saving !== null} onClick={() => void save("draft")} className="hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] disabled:opacity-50 sm:flex">
           <Save className="h-3.5 w-3.5" />{saving === "draft" ? "Kaydediliyor…" : "Taslağı Kaydet"}
         </button>
@@ -863,6 +877,14 @@ export function StoreDesignV21() {
           </aside>
         ) : null}
       </div>
+
+      {mediaOpen ? (
+        <StoreDesignMediaLibrary
+          document={document}
+          onApply={applyMediaDocument}
+          onClose={() => setMediaOpen(false)}
+        />
+      ) : null}
 
       {pageManagerMode ? (
         <StoreDesignPageManager
