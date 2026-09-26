@@ -82,6 +82,10 @@ function fieldLabel(key: string) {
     text: "Metin",
     question: "Soru",
     answer: "Cevap",
+    x: "X konumu (%)",
+    y: "Y konumu (%)",
+    targetType: "Hedef tipi",
+    targetId: "Hedef",
   };
   return labels[key] || key;
 }
@@ -314,6 +318,45 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   </label>
                 </>
               ) : null}
+              {section.type === "before-after" ? (
+                <>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Önce görseli
+                    <select value={text(settings.beforeAssetId)} onChange={(event) => updateSetting("beforeAssetId", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="">Medya seçilmedi</option>
+                      {mediaAssets.filter((asset) => asset.type === "image").map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.assetId} · v{asset.version || 1}</option>)}
+                    </select>
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Sonra görseli
+                    <select value={text(settings.afterAssetId)} onChange={(event) => updateSetting("afterAssetId", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="">Medya seçilmedi</option>
+                      {mediaAssets.filter((asset) => asset.type === "image").map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.assetId} · v{asset.version || 1}</option>)}
+                    </select>
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Önce etiketi
+                    <input value={text(settings.beforeLabel)} onChange={(event) => updateSetting("beforeLabel", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Sonra etiketi
+                    <input value={text(settings.afterLabel)} onChange={(event) => updateSetting("afterLabel", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                    Başlangıç divider konumu
+                    <input type="range" min={10} max={90} value={numberValue(settings.divider, 50)} onChange={(event) => updateSetting("divider", Number(event.target.value))} />
+                  </label>
+                </>
+              ) : null}
+              {section.type === "hotspot-lookbook" ? (
+                <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                  Lookbook görseli
+                  <select value={text(settings.imageAssetId)} onChange={(event) => updateSetting("imageAssetId", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                    <option value="">Medya seçilmedi</option>
+                    {mediaAssets.filter((asset) => asset.type === "image").map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.assetId} · v{asset.version || 1}</option>)}
+                  </select>
+                </label>
+              ) : null}
               {["image-text-split", "video-text-split"].includes(section.type) ? (
                 <>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
@@ -435,6 +478,25 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                             <label key={key} className="grid gap-1 text-[8px] font-semibold text-black/45 md:col-span-2">
                               {fieldLabel(key)}
                               <textarea value={text(value)} onChange={(event) => updateBlock(block.id, key, event.target.value)} className="min-h-20 resize-y rounded-lg border border-black/10 p-2.5 text-[9px] leading-5 outline-none" />
+                            </label>
+                          );
+                        }
+                        if ((key === "x" || key === "y") && block.type === "hotspot") {
+                          return (
+                            <label key={key} className="grid gap-1 text-[8px] font-semibold text-black/45">
+                              {fieldLabel(key)}
+                              <input type="number" min={0} max={100} value={numberValue(value, 50)} onChange={(event) => updateBlock(block.id, key, Number(event.target.value))} className="h-9 rounded-lg border border-black/10 px-2.5 text-[9px] outline-none" />
+                            </label>
+                          );
+                        }
+                        if (key === "targetType" && block.type === "hotspot") {
+                          return (
+                            <label key={key} className="grid gap-1 text-[8px] font-semibold text-black/45">
+                              {fieldLabel(key)}
+                              <select value={text(value) || "link"} onChange={(event) => updateBlock(block.id, key, event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                                <option value="link">Bağlantı</option>
+                                <option value="product">Ürün / ürün route'u</option>
+                              </select>
                             </label>
                           );
                         }
