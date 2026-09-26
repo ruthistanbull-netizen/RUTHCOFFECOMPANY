@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { SEMANTIC_RUNTIME_PATCH_EVENT } from "@/components/theme/SemanticThemeRuntimeProvider";
 import {
   COMPONENT_REGISTRY,
   STORE_DESIGN_MESSAGES,
@@ -25,6 +26,8 @@ type ThemePatchMessage = {
   path: string;
   value: unknown;
   revision: number;
+  scope?: EditorScope;
+  device?: "desktop" | "mobile";
 };
 
 const TARGET_SELECTOR = "[data-editor-id][data-editor-type]";
@@ -166,42 +169,70 @@ function allowedPatch(definition: ComponentDefinition, path: string) {
   return false;
 }
 
-function applyPatch(target: SemanticTarget, message: ThemePatchMessage) {
+function validatePatch(target: SemanticTarget, message: ThemePatchMessage) {
   if (!allowedPatch(target.definition, message.path)) {
     return { ok: false, error: "Bu kontrol bu semantik bileşen için izinli değil." };
   }
 
-  const { element } = target;
   switch (message.path) {
     case "visible":
-      element.style.display = message.value === false ? "none" : "";
-      return { ok: true };
+      return { ok: typeof message.value === "boolean", error: typeof message.value === "boolean" ? undefined : "Geçersiz görünürlük değeri." };
     case "textAlign":
-      if (!["left", "center", "right", "start", "end"].includes(String(message.value))) {
-        return { ok: false, error: "Geçersiz hizalama." };
-      }
-      element.style.textAlign = String(message.value);
-      return { ok: true };
+      return ["left", "center", "right", "start", "end"].includes(String(message.value))
+        ? { ok: true }
+        : { ok: false, error: "Geçersiz hizalama." };
     case "opacity": {
       const value = Number(message.value);
-      if (!Number.isFinite(value) || value < 0 || value > 1) return { ok: false, error: "Opacity 0-1 aralığında olmalı." };
-      element.style.opacity = String(value);
-      return { ok: true };
+      return Number.isFinite(value) && value >= 0 && value <= 1
+        ? { ok: true }
+        : { ok: false, error: "Opacity 0-1 aralığında olmalı." };
     }
     case "borderRadius": {
       const value = Number(message.value);
-      if (!Number.isFinite(value) || value < 0 || value > 120) return { ok: false, error: "Radius preset aralığı dışında." };
-      element.style.borderRadius = `${value}px`;
-      return { ok: true };
+      return Number.isFinite(value) && value >= 0 && value <= 120
+        ? { ok: true }
+        : { ok: false, error: "Radius preset aralığı dışında." };
     }
     case "media.objectFit":
-      if (!(element instanceof HTMLImageElement || element instanceof HTMLVideoElement)) return { ok: false, error: "Hedef medya değil." };
-      if (!["cover", "contain"].includes(String(message.value))) return { ok: false, error: "Geçersiz medya fit değeri." };
-      element.style.objectFit = String(message.value);
-      return { ok: true };
+      return ["cover", "contain"].includes(String(message.value))
+        ? { ok: true }
+        : { ok: false, error: "Geçersiz medya fit değeri." };
     default:
       return { ok: false, error: "Bu patch yolu henüz runtime tarafından desteklenmiyor." };
   }
+}
+
+function runtimeSelector(target: SemanticTarget, scope: EditorScope) {
+  if (scope === "family" || scope === "template") {
+    return { mode: "type" as const, value: target.type };
+  }
+  if (scope === "section") {
+    const section = target.element.closest<HTMLElement>('[data-editor-id^="section:"]');
+    const id = section?.dataset.editorId?.trim();
+    if (id) return { mode: "id" as const, value: id };
+  }
+  return { mode: "id" as const, value: target.id };
+}
+
+function dispatchRuntimePatch(target: SemanticTarget, message: ThemePatchMessage) {
+  const requestedScope = message.scope;
+  const scope = requestedScope && target.definition.allowedScopes.includes(requestedScope)
+    ? requestedScope
+    : target.definition.defaultScope;
+  const selector = runtimeSelector(target, scope);
+  const device = message.device === "mobile" ? "mobile" : "desktop";
+  window.dispatchEvent(new CustomEvent(SEMANTIC_RUNTIME_PATCH_EVENT, {
+    detail: {
+      key: `${scope}:${selector.mode}:${selector.value}:${device}:${message.path}`,
+      selectorMode: selector.mode,
+      selectorValue: selector.value,
+      path: message.path,
+      value: message.value,
+      scope,
+      device,
+      revision: Number(message.revision || 0),
+    },
+  }));
 }
 
 function routePath(value: unknown) {
@@ -352,10 +383,11 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
           : targetFrom(document.querySelector(`[data-editor-id="${CSS.escape(String(message.targetId || ""))}"]`));
 
         const result = target
-          ? applyPatch(target, message)
+          ? validatePatch(target, message)
           : { ok: false, error: "Semantik hedef bulunamadı." };
 
         if (target && result.ok) {
+          dispatchRuntimePatch(target, message);
           selectedRef.current = target;
           positionOverlay();
         }
