@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 import type { ThemeSection } from "@ruth-commerce/commerce-core/theme-sections";
+import { normalizeStoreDesignAnchorId } from "@ruth-commerce/commerce-core/store-design-v2";
 import { StoreDesignCountdown } from "@/components/theme/StoreDesignCountdown";
 import { StoreDesignBeforeAfter } from "@/components/theme/StoreDesignBeforeAfter";
 import { StoreDesignSlideshow } from "@/components/theme/StoreDesignSlideshow";
@@ -402,7 +403,33 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
     const ctaLabel = text(settings.linkLabel || settings.ctaLabel);
     const ctaHref = settings.linkHref || settings.link || settings.cta;
     const align = ["left", "center", "right"].includes(text(settings.align)) ? text(settings.align) : "center";
-    const maxWidth = text(settings.maxWidth) || (type === "manifesto" ? "900px" : "1100px");
+    const allowedWidths = ["640px", "800px", "900px", "1100px"];
+    const maxWidthValue = text(settings.maxWidth);
+    const maxWidth = allowedWidths.includes(maxWidthValue) ? maxWidthValue : (type === "manifesto" ? "900px" : "1100px");
+    const role = ["h1", "h2", "h3", "h4"].includes(text(settings.role)) ? text(settings.role) : "h2";
+    const HeadingTag = role as "h1" | "h2" | "h3" | "h4";
+    const size = ["sm", "md", "lg", "xl"].includes(text(settings.size)) ? text(settings.size) : "lg";
+    const headingSizeClass = size === "sm"
+      ? "text-[clamp(1.35rem,2.4vw,2.2rem)]"
+      : size === "md"
+        ? "text-[clamp(1.6rem,3vw,3rem)]"
+        : size === "xl"
+          ? "text-[clamp(2.2rem,6vw,6rem)]"
+          : "text-[clamp(1.9rem,4vw,4rem)]";
+    const typography = ["display", "editorial", "compact"].includes(text(settings.typography)) ? text(settings.typography) : "display";
+    const manifestoTitleClass = typography === "compact"
+      ? "text-[clamp(1.6rem,3vw,3rem)] leading-tight"
+      : typography === "editorial"
+        ? "text-[clamp(1.9rem,4.5vw,4.6rem)] leading-[1.02]"
+        : "text-[clamp(2.2rem,6vw,6rem)] leading-[0.95] tracking-[-0.03em]";
+    const titleClass = type === "heading-subtext"
+      ? `font-heading ${headingSizeClass} leading-tight`
+      : type === "manifesto"
+        ? `font-heading ${manifestoTitleClass}`
+        : "font-heading text-[clamp(1.7rem,4vw,4rem)] leading-tight";
+    const bodyClass = type === "manifesto"
+      ? "mt-6 whitespace-pre-wrap text-[clamp(1rem,1.8vw,1.35rem)] leading-8 opacity-78"
+      : "mt-5 whitespace-pre-wrap text-sm leading-7 opacity-72";
 
     return (
       <section
@@ -416,11 +443,11 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
         <div className="mx-auto" style={{ maxWidth, textAlign: align as "left" | "center" | "right" }}>
           {icon ? <div className="mb-4 text-xl" aria-hidden="true">{icon}</div> : null}
           {eyebrow ? <p className="mb-3 text-[9px] uppercase tracking-[0.16em] opacity-55">{eyebrow}</p> : null}
-          {title ? <h2 className="font-heading text-[clamp(1.7rem,4vw,4rem)] leading-tight">{title}</h2> : null}
+          {title ? <HeadingTag className={titleClass}>{title}</HeadingTag> : null}
           {body ? (
             type === "quote"
               ? <blockquote className="mt-5 font-heading text-[clamp(1.35rem,2.8vw,2.5rem)] leading-snug">“{body}”</blockquote>
-              : <p className="mt-5 whitespace-pre-wrap text-sm leading-7 opacity-72">{body}</p>
+              : <p className={bodyClass}>{body}</p>
           ) : null}
           {attribution ? <p className="mt-4 text-[10px] uppercase tracking-[0.12em] opacity-50">{attribution}</p> : null}
           {ctaLabel && href(ctaHref) ? <Link href={href(ctaHref)} className="mt-6 inline-flex rounded-full border border-current px-5 py-3 text-[10px] uppercase tracking-[0.12em]">{ctaLabel}</Link> : null}
@@ -470,8 +497,18 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
   }
 
   if (type === "divider") {
-    const width = text(settings.width) || "100%";
-    const thickness = number(settings.thickness, 1, 1, 12);
+    const widthValue = text(settings.width);
+    const width = ["25%", "50%", "75%", "100%"].includes(widthValue) ? widthValue : "100%";
+    const thicknessValue = Math.round(number(settings.thickness, 1, 1, 4));
+    const thickness = [1, 2, 4].includes(thicknessValue) ? thicknessValue : 1;
+    const colorToken = ["subtle", "muted", "strong", "current"].includes(text(settings.colorToken)) ? text(settings.colorToken) : "subtle";
+    const dividerColor = colorToken === "current"
+      ? "currentColor"
+      : colorToken === "muted"
+        ? "color-mix(in srgb, currentColor 12%, transparent)"
+        : colorToken === "strong"
+          ? "color-mix(in srgb, currentColor 48%, transparent)"
+          : "color-mix(in srgb, currentColor 22%, transparent)";
     return (
       <section
         data-theme-section-id={section.id}
@@ -481,13 +518,13 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
         className="px-5 md:px-8"
         style={{ paddingTop: paddingY, paddingBottom: paddingY }}
       >
-        <div className="mx-auto border-t border-current/20" style={{ width, borderTopWidth: thickness }} />
+        <div className="mx-auto border-t" style={{ width, borderTopWidth: thickness, borderTopColor: dividerColor }} />
       </section>
     );
   }
 
   if (type === "anchor") {
-    const anchorId = text(settings.anchorId).replace(/[^a-zA-Z0-9_-]/g, "-") || `section-${section.id}`;
+    const anchorId = normalizeStoreDesignAnchorId(text(settings.anchorId)) || `section-${section.id}`;
     const showLabel = settings.labelVisibility === true;
     return (
       <div
