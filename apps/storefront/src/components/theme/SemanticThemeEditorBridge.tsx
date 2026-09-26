@@ -163,6 +163,13 @@ function snapshot(target: SemanticTarget) {
       gapY: Number.parseFloat(computed.rowGap || "0") || 0,
       maxWidth: computed.maxWidth || "none",
     } : null,
+    card: target.type === "product-card" ? {
+      density: computed.getPropertyValue("--theme-card-density").trim() || "m",
+      imageRatio: computed.getPropertyValue("--theme-card-image-ratio-token").trim() || "3/4",
+      titleLines: Number.parseInt(computed.getPropertyValue("--theme-card-title-lines").trim() || "2", 10) || 2,
+      showPrice: computed.getPropertyValue("--theme-card-price-display").trim() !== "none",
+      showQuickAdd: computed.getPropertyValue("--theme-card-quick-add-display").trim() !== "none",
+    } : null,
   };
 }
 
@@ -177,6 +184,7 @@ function allowedPatch(definition: ComponentDefinition, path: string) {
   }
   if (root === "media") return definition.controlGroups.includes("media");
   if (root === "grid") return definition.semanticType === "product-grid" && definition.controlGroups.includes("layout");
+  if (root === "card") return definition.semanticType === "product-card" && definition.controlGroups.includes("card");
   return false;
 }
 
@@ -235,6 +243,25 @@ function validatePatch(target: SemanticTarget, message: ThemePatchMessage) {
       return ["none", "1200px", "1280px", "1440px", "1600px"].includes(String(message.value))
         ? { ok: true }
         : { ok: false, error: "Geçersiz grid max-width preset'i." };
+    case "card.density":
+      return ["s", "m", "l"].includes(String(message.value))
+        ? { ok: true }
+        : { ok: false, error: "Geçersiz ürün kartı yoğunluğu." };
+    case "card.imageRatio":
+      return ["1/1", "4/5", "3/4"].includes(String(message.value))
+        ? { ok: true }
+        : { ok: false, error: "Geçersiz ürün kartı görsel oranı." };
+    case "card.titleLines": {
+      const value = Number(message.value);
+      return Number.isInteger(value) && value >= 1 && value <= 3
+        ? { ok: true }
+        : { ok: false, error: "Ürün başlığı 1-3 satır olabilir." };
+    }
+    case "card.showPrice":
+    case "card.showQuickAdd":
+      return typeof message.value === "boolean"
+        ? { ok: true }
+        : { ok: false, error: "Geçersiz görünürlük değeri." };
     default:
       return { ok: false, error: "Bu patch yolu henüz runtime tarafından desteklenmiyor." };
   }
