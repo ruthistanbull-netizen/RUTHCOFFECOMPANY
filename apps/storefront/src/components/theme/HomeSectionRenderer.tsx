@@ -8,6 +8,7 @@ import TrustSection from "@/components/home/TrustSection";
 import { ThemeProductSlider } from "@/components/theme/ThemeProductSlider";
 import ProductCard from "@/components/ProductCard";
 import { StoreDesignResponsiveImage } from "@/components/theme/StoreDesignResponsiveImage";
+import { StoreDesignBlockSection } from "@/components/theme/StoreDesignBlockSection";
 import type { Collection, Product } from "@/types/site";
 import type { HomepageHeroImages } from "@/lib/themeMedia";
 import type { ThemeCustomizerSettings } from "@/lib/themeCustomizer";
@@ -97,6 +98,7 @@ export function HomeSectionRenderer({
   freeShippingThreshold: number;
 }) {
   if (!section.enabled) return null;
+  if (section.v2Type) return <StoreDesignBlockSection section={section} />;
   if (section.type === "hero") return <div data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}><Hero heroImages={heroImages} editorialVideo={editorialVideo} editorialImage={editorialImage} themeSettings={themeSettings} /></div>;
   if (section.type === "scroll-story") return <div data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}><ScrollStory images={scrollImages} themeSettings={themeSettings} /></div>;
   if (section.type === "collections") return <div data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}><CollectionCards collections={collections} /></div>;
