@@ -6,8 +6,22 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { storySlides as defaultStorySlides } from "@/data/storySlides";
 import { homeScrollMediaId, homepageDeviceMedia } from "@/lib/themeMedia";
 import type { ThemeCustomizerSettings } from "@/lib/themeCustomizer";
+import type { ThemeSection } from "@ruth-commerce/commerce-core/theme-sections";
 
-type StorySlide = (typeof defaultStorySlides)[number];
+type StorySlideBase = (typeof defaultStorySlides)[number];
+type V2StoryBlock = NonNullable<ThemeSection["v2Blocks"]>[number];
+type StorySlide = StorySlideBase & {
+  blockId?: string;
+  v2Media?: {
+    desktopSrc: string;
+    desktopType: "image" | "video";
+    mobileSrc: string;
+    mobileType: "image" | "video";
+    desktopPosition?: string;
+    mobilePosition?: string;
+    posterUrl?: string;
+  };
+};
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
@@ -35,6 +49,44 @@ function buildSlides(images: string[] | undefined | null): StorySlide[] {
   }));
 }
 
+function safeStoryHref(value: unknown) {
+  const raw = typeof value === "string" ? value.trim() : "";
+  if (!raw) return "/products";
+  if (raw.startsWith("#")) return raw;
+  if (raw.startsWith("/") && !raw.startsWith("//")) return raw;
+  try {
+    const url = new URL(raw);
+    return url.protocol === "https:" ? url.toString() : "/products";
+  } catch {
+    return "/products";
+  }
+}
+
+function buildV2Slides(blocks: V2StoryBlock[] | undefined): StorySlide[] {
+  if (!blocks?.length) return [];
+  return blocks
+    .filter((block) => block.type === "scroll-story-slide" && Boolean(block.assetUrl))
+    .map((block, index) => ({
+      eyebrow: "",
+      title: typeof block.settings.title === "string" && block.settings.title.trim()
+        ? block.settings.title.trim()
+        : `Scroll Story ${index + 1}`,
+      body: typeof block.settings.body === "string" ? block.settings.body.trim() : "",
+      image: block.assetUrl || "",
+      href: safeStoryHref(block.settings.href),
+      blockId: block.id,
+      v2Media: {
+        desktopSrc: block.assetUrl || "",
+        desktopType: block.assetType === "video" ? "video" : "image",
+        mobileSrc: block.mobileAssetUrl || block.assetUrl || "",
+        mobileType: block.mobileAssetType === "video" ? "video" : (block.assetType === "video" ? "video" : "image"),
+        desktopPosition: block.objectPosition,
+        mobilePosition: block.mobileObjectPosition || block.objectPosition,
+        posterUrl: block.posterUrl,
+      },
+    }));
+}
+
 function scrollImagesFromSettings(settings: unknown) {
   const raw = settings && typeof settings === "object" ? settings as Record<string, any> : {};
   const homepageImages = raw.homepageImages && typeof raw.homepageImages === "object"
@@ -47,16 +99,26 @@ function scrollImagesFromSettings(settings: unknown) {
 export default function ScrollStory({
   images,
   themeSettings,
+  v2Settings,
+  v2Slides,
 }: {
   images?: string[] | null;
   themeSettings: ThemeCustomizerSettings;
+  v2Settings?: Record<string, unknown>;
+  v2Slides?: ThemeSection["v2Blocks"];
 }) {
   const sectionRef = useRef<HTMLElement>(null);
   const [liveImages, setLiveImages] = useState<string[] | null | undefined>(images);
   const [liveThemeSettings, setLiveThemeSettings] = useState(themeSettings);
   const [mobileViewport, setMobileViewport] = useState(false);
-  const slides = useMemo(() => buildSlides(liveImages), [liveImages]);
+  const slides = useMemo(() => {
+    const custom = buildV2Slides(v2Slides);
+    return custom.length ? custom : buildSlides(liveImages);
+  }, [liveImages, v2Slides]);
   const [progress, setProgress] = useState(0);
+  const scrollLengthPreset = typeof v2Settings?.scrollLengthPreset === "string" ? v2Settings.scrollLengthPreset : "standard";
+  const transitionPreset = typeof v2Settings?.transitionPreset === "string" ? v2Settings.transitionPreset : "fade-scale";
+  const cueVisibility = v2Settings?.cueVisibility !== false;
 
   useEffect(() => {
     setLiveImages(images);
@@ -138,7 +200,8 @@ export default function ScrollStory({
     ? 0
     : smoothstep((localProgress - 0.68) / 0.32);
 
-  const sectionHeight = `${Math.max(slides.length, 3) * 100}svh`;
+  const slideScrollHeight = scrollLengthPreset === "compact" ? 75 : scrollLengthPreset === "long" ? 125 : 100;
+  const sectionHeight = `${Math.max(slides.length, 3) * slideScrollHeight}svh`;
   const scrollLetters = "KAYDIR".split("");
   const activeLetterIndex = clamp(Math.round(progress * (scrollLetters.length - 1)), 0, scrollLetters.length - 1);
 
