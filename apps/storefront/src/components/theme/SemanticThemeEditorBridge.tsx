@@ -157,6 +157,11 @@ function snapshot(target: SemanticTarget) {
       objectFit: computed.objectFit || "cover",
       objectPosition: computed.objectPosition || "50% 50%",
     } : null,
+    grid: target.type === "product-grid" ? {
+      columns: Math.max(1, computed.gridTemplateColumns.split(/\s+/).filter(Boolean).length || 1),
+      gapX: Number.parseFloat(computed.columnGap || "0") || 0,
+      gapY: Number.parseFloat(computed.rowGap || "0") || 0,
+    } : null,
   };
 }
 
@@ -170,6 +175,7 @@ function allowedPatch(definition: ComponentDefinition, path: string) {
     return definition.controlGroups.includes("layout") || definition.controlGroups.includes("card");
   }
   if (root === "media") return definition.controlGroups.includes("media");
+  if (root === "grid") return definition.semanticType === "product-grid" && definition.controlGroups.includes("layout");
   return false;
 }
 
@@ -201,6 +207,26 @@ function validatePatch(target: SemanticTarget, message: ThemePatchMessage) {
       return ["cover", "contain"].includes(String(message.value))
         ? { ok: true }
         : { ok: false, error: "Geçersiz medya fit değeri." };
+    case "backgroundColor":
+    case "color": {
+      const value = String(message.value || "").trim();
+      return value.length > 0 && value.length <= 80 && !/[;{}]/.test(value)
+        ? { ok: true }
+        : { ok: false, error: "Geçersiz renk değeri." };
+    }
+    case "grid.columns": {
+      const value = Number(message.value);
+      return Number.isInteger(value) && value >= 1 && value <= 6
+        ? { ok: true }
+        : { ok: false, error: "Grid kolon sayısı 1-6 arasında olmalı." };
+    }
+    case "grid.gapX":
+    case "grid.gapY": {
+      const value = Number(message.value);
+      return Number.isFinite(value) && value >= 0 && value <= 120
+        ? { ok: true }
+        : { ok: false, error: "Grid boşluğu 0-120px arasında olmalı." };
+    }
     default:
       return { ok: false, error: "Bu patch yolu henüz runtime tarafından desteklenmiyor." };
   }
