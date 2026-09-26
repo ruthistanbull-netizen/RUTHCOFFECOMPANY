@@ -308,6 +308,211 @@ export function HomeSectionRenderer({
   if (section.type === "hero") return <div data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}><Hero heroImages={heroImages} editorialVideo={editorialVideo} editorialImage={editorialImage} themeSettings={themeSettings} /></div>;
   if (section.type === "scroll-story") return <div data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}><ScrollStory images={scrollImages} themeSettings={themeSettings} v2Settings={section.v2Settings} v2Slides={section.v2Blocks} /></div>;
 
+  if (section.type === "product-spotlight") {
+    const settings = section.v2Settings;
+    const productId = settingText(settings, "productId");
+    const product = allProducts.find((item) => String(item.id) === productId);
+    if (!product) return null;
+
+    const mediaPosition = settingText(settings, "mediaPosition") === "right" ? "right" : "left";
+    const infoBlocks = Array.isArray(settings?.infoBlocks)
+      ? settings!.infoBlocks.filter((item): item is string => typeof item === "string")
+      : ["description", "stock", "compare-price"];
+    const paddingY = settingNumber(settings, "paddingY", 80, 0, 240);
+    const linkLabel = settingText(settings, "linkLabel") || "Ürünü İncele";
+    const price = formatPrice(product.price, product.currency || "TRY");
+    const compareAtValue = Number(product.compare_at_price || 0);
+    const priceValue = Number(product.price || 0);
+    const compareAt = compareAtValue > priceValue ? formatPrice(product.compare_at_price, product.currency || "TRY") : "";
+    const description = product.short_description || product.description || "";
+    const stockLabel = product.stock_status === "out_of_stock"
+      ? "Tükendi"
+      : product.stock_status === "preorder"
+        ? "Ön sipariş"
+        : "Stokta";
+    const mediaOrder = mediaPosition === "right" ? "md:order-2" : "";
+    const contentOrder = mediaPosition === "right" ? "md:order-1" : "";
+
+    return (
+      <section
+        data-theme-section-id={section.id}
+        data-editor-id={`section:${section.id}`}
+        data-editor-type={semanticSectionType(section)}
+        data-editor-label={product.name}
+        className="bg-cream px-4 text-carbon md:px-8"
+        style={{ paddingTop: paddingY, paddingBottom: paddingY }}
+      >
+        <div className="mx-auto grid max-w-7xl gap-8 md:grid-cols-2 md:items-center md:gap-14">
+          <Link href={`/products/${product.slug}`} className={`group block overflow-hidden rounded-[24px] bg-carbon/[0.04] ${mediaOrder}`}>
+            <div className="aspect-[4/5] overflow-hidden">
+              <img
+                src={product.main_image_url || "/product-placeholder.svg"}
+                alt={product.name}
+                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+              />
+            </div>
+          </Link>
+          <div className={`min-w-0 ${contentOrder}`}>
+            <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-brick">Ürün Spotlight</p>
+            <h2 className="mt-3 font-heading text-[clamp(2rem,5vw,4.5rem)] leading-[0.98]">{product.name}</h2>
+            <div className="mt-5 flex flex-wrap items-baseline gap-3">
+              <p className="text-base font-semibold">{price}</p>
+              {infoBlocks.includes("compare-price") && compareAt ? <p className="text-sm text-carbon/45 line-through">{compareAt}</p> : null}
+            </div>
+            {infoBlocks.includes("description") && description ? <p className="mt-6 max-w-xl whitespace-pre-wrap text-sm leading-7 text-carbon/70">{description}</p> : null}
+            {infoBlocks.includes("stock") ? (
+              <p className="mt-5 text-[10px] font-medium uppercase tracking-[0.14em] text-carbon/55">{stockLabel}</p>
+            ) : null}
+            <Link href={`/products/${product.slug}`} className="mt-8 inline-flex min-h-11 items-center justify-center rounded-full bg-carbon px-6 text-[10px] font-semibold uppercase tracking-[0.14em] text-cream">
+              {linkLabel}
+            </Link>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (section.type === "featured-collection") {
+    const settings = section.v2Settings;
+    const collectionId = settingText(settings, "collectionId");
+    const collection = collections.find((item) => String(item.id) === collectionId);
+    if (!collection) return null;
+
+    const limit = Math.round(settingNumber(settings, "limit", 8, 1, 24));
+    const desktopColumns = Math.round(settingNumber(settings, "desktopColumns", 4, 1, 6));
+    const mobileColumns = Math.round(settingNumber(settings, "mobileColumns", 2, 1, 3));
+    const gap = settingNumber(settings, "gap", 12, 0, 64);
+    const paddingY = settingNumber(settings, "paddingY", 72, 0, 240);
+    const layout = settingText(settings, "layout") === "grid" ? "grid" : "slider";
+    const heading = settingText(settings, "heading") || collection.name;
+    const linkLabel = settingText(settings, "linkLabel") || "Koleksiyonu Gör";
+    const products = allProducts
+      .filter((product) =>
+        String(product.collection_id || "") === collectionId
+        || product.collection_ids?.some((id) => String(id) === collectionId)
+        || product.collection_slugs?.includes(collection.slug),
+      )
+      .slice(0, limit);
+
+    if (!products.length) return null;
+
+    return (
+      <section
+        data-theme-section-id={section.id}
+        data-editor-id={`section:${section.id}`}
+        data-editor-type={semanticSectionType(section)}
+        data-editor-label={heading}
+        className="overflow-hidden bg-carbon px-0 text-cream"
+        style={{ paddingTop: paddingY, paddingBottom: paddingY }}
+      >
+        <div className="mb-8 flex items-end justify-between gap-4 px-4 md:mb-10 md:px-8">
+          <div>
+            <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-brick">Featured Collection</p>
+            <h2 className="mt-2 font-heading text-[clamp(1.8rem,4vw,3.4rem)] leading-tight">{heading}</h2>
+          </div>
+          <Link href={`/collections/${collection.slug}`} className="shrink-0 text-[9px] font-semibold uppercase tracking-[0.14em] text-cream/75 underline decoration-cream/30 underline-offset-4">
+            {linkLabel}
+          </Link>
+        </div>
+        {layout === "slider" ? (
+          <ThemeProductSlider products={products} desktopItems={desktopColumns} mobileItems={mobileColumns} gap={gap} showArrows />
+        ) : (
+          <div
+            className="v2-featured-collection-grid px-4 md:px-8"
+            style={{
+              ["--fc-desktop" as string]: String(desktopColumns),
+              ["--fc-mobile" as string]: String(mobileColumns),
+              ["--fc-gap" as string]: `${gap}px`,
+            }}
+          >
+            {products.map((product, index) => <ProductCard key={product.id} product={product} index={index} showShortDescription={false} />)}
+          </div>
+        )}
+        {layout === "grid" ? <style>{`.v2-featured-collection-grid{display:grid;grid-template-columns:repeat(var(--fc-mobile),minmax(0,1fr));gap:var(--fc-gap)}@media(min-width:768px){.v2-featured-collection-grid{grid-template-columns:repeat(var(--fc-desktop),minmax(0,1fr))}}`}</style> : null}
+      </section>
+    );
+  }
+
+  if (section.type === "category-cards") {
+    const settings = section.v2Settings;
+    const limit = Math.round(settingNumber(settings, "limit", 6, 1, 12));
+    const columns = Math.round(settingNumber(settings, "columns", 3, 1, 4));
+    const gap = settingNumber(settings, "gap", 20, 0, 64);
+    const paddingY = settingNumber(settings, "paddingY", 80, 0, 240);
+    const ratio = ["16/10", "4/5", "1/1"].includes(settingText(settings, "ratio"))
+      ? settingText(settings, "ratio")
+      : "4/5";
+    const titlePlacement = settingText(settings, "titlePlacement") === "below" ? "below" : "overlay";
+    const title = settingText(settings, "title") || "Kategoriler";
+    const eyebrow = settingText(settings, "eyebrow") || "Keşfet";
+    const visibleCategories = [...categories]
+      .filter((category) => category.status === "active")
+      .sort((left, right) => (left.sort_order ?? 9999) - (right.sort_order ?? 9999) || left.name.localeCompare(right.name, "tr"))
+      .slice(0, limit);
+    const ratioStyle = ratio === "16/10" ? "16 / 10" : ratio === "1/1" ? "1 / 1" : "4 / 5";
+
+    if (!visibleCategories.length) return null;
+
+    return (
+      <section
+        data-theme-section-id={section.id}
+        data-editor-id={`section:${section.id}`}
+        data-editor-type={semanticSectionType(section)}
+        data-editor-label={title}
+        className="bg-carbon-soft px-4 text-cream md:px-8"
+        style={{ paddingTop: paddingY, paddingBottom: paddingY }}
+      >
+        <div className="mx-auto max-w-[1440px]">
+          <div className="mb-10 text-center md:mb-14">
+            {eyebrow ? <p className="mb-3 text-[10px] font-medium uppercase tracking-[0.22em] text-brick">{eyebrow}</p> : null}
+            {title ? <h2 className="font-heading font-editorial text-[clamp(1.9rem,4vw,3.2rem)] font-normal">{title}</h2> : null}
+          </div>
+          <div
+            className="v2-category-card-grid"
+            style={{
+              ["--category-columns" as string]: String(columns),
+              ["--category-sm-columns" as string]: String(Math.min(2, columns)),
+              ["--category-gap" as string]: `${gap}px`,
+            }}
+          >
+            {visibleCategories.map((category) => {
+              const slug = category.public_slug || category.slug;
+              return (
+                <Link key={category.id} href={`/category/${slug}`} className="group block min-w-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brick">
+                  <div className="overflow-hidden">
+                    <div className="relative overflow-hidden rounded-[22px] bg-cream" style={{ aspectRatio: ratioStyle }}>
+                      {category.cover_image_url ? (
+                        <img src={category.cover_image_url} alt={category.name} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]" />
+                      ) : (
+                        <div className="ruth-card-gradient h-full w-full" />
+                      )}
+                      {titlePlacement === "overlay" ? (
+                        <>
+                          <div className="absolute inset-0 bg-gradient-to-t from-ink/55 via-ink/5 to-transparent" />
+                          <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
+                            <p className="mb-1 text-[9px] font-medium uppercase tracking-[0.18em] text-cream/80">Kategori</p>
+                            <h3 className="font-heading font-editorial text-xl font-normal text-cream md:text-2xl">{category.name}</h3>
+                          </div>
+                        </>
+                      ) : null}
+                    </div>
+                    {titlePlacement === "below" ? (
+                      <div className="pt-4">
+                        <p className="text-[9px] font-medium uppercase tracking-[0.18em] text-brick">Kategori</p>
+                        <h3 className="mt-1 font-heading font-editorial text-xl font-normal text-cream md:text-2xl">{category.name}</h3>
+                      </div>
+                    ) : null}
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+        <style>{`.v2-category-card-grid{display:grid;grid-template-columns:1fr;gap:var(--category-gap)}@media(min-width:640px){.v2-category-card-grid{grid-template-columns:repeat(var(--category-sm-columns),minmax(0,1fr))}}@media(min-width:768px){.v2-category-card-grid{grid-template-columns:repeat(var(--category-columns),minmax(0,1fr))}}`}</style>
+      </section>
+    );
+  }
+
   const collectionV2Settings = section.type === "collections" ? section.v2Settings : undefined;
   const customCollectionCards = section.type === "collections" && collectionV2Settings && Object.keys(collectionV2Settings).length > 0;
   if (section.type === "collections" && customCollectionCards) {
