@@ -297,6 +297,8 @@ export type SeoDocument = {
   openGraphAssetId?: string;
   canonical?: string;
   robots: "index,follow" | "noindex,follow" | "noindex,nofollow";
+  robotsPreset?: "index,follow" | "noindex,follow" | "noindex,nofollow";
+  structuredDataPolicy?: "inherit" | "page" | "none";
 };
 
 export type PageRecord = {
@@ -305,12 +307,15 @@ export type PageRecord = {
   slug: string;
   route: string;
   kind: PageKind;
+  type?: PageKind;
   templateId: string;
   status: PageStatus;
   seoId: string;
   reserved: boolean;
   createdAt?: string;
   updatedAt?: string;
+  publishedAt?: string | null;
+  schemaVersion?: number;
 };
 
 const PROTECTED_STORE_DESIGN_ROUTE_PREFIXES = [
@@ -368,6 +373,12 @@ export type RedirectRecord = {
   from: string;
   to: string;
   status: 301 | 302;
+  sourcePath?: string;
+  targetPath?: string;
+  statusCode?: 301 | 302;
+  reason?: string;
+  pageId?: string;
+  active?: boolean;
   createdAt: string;
 };
 
@@ -464,6 +475,193 @@ function integerValue(value: unknown, fallback = 0) {
   return Number.isFinite(number) ? Math.max(0, Math.floor(number)) : fallback;
 }
 
+const PAGE_KINDS = new Set<PageKind>(["system", "merchant", "managed-static", "catalog", "protected", "utility"]);
+const PAGE_STATUSES = new Set<PageStatus>(["draft", "published", "scheduled", "archived"]);
+const ROBOTS_PRESETS = new Set<SeoDocument["robots"]>(["index,follow", "noindex,follow", "noindex,nofollow"]);
+
+export const RESERVED_PAGE_SLUGS = new Set([
+  "api", "_next", "checkout", "account", "login", "register", "search",
+  "products", "product", "category", "categories", "collections", "cart",
+  "internal", "order-success", "order-fail", "order-failed", "order-tracking",
+  "siparis-takip", "reset-password", "activate-account",
+]);
+
+export function normalizePageSlug(value: unknown) {
+  const raw = stringValue(value, "", 180)
+    .replace(/[çÇ]/g, "c")
+    .replace(/[ğĞ]/g, "g")
+    .replace(/[ıİ]/g, "i")
+    .replace(/[öÖ]/g, "o")
+    .replace(/[şŞ]/g, "s")
+    .replace(/[üÜ]/g, "u")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .replace(/-{2,}/g, "-");
+  return raw.slice(0, 120);
+}
+
+export function customPageRoute(slug: unknown) {
+  const normalized = normalizePageSlug(slug);
+  return normalized ? `/pages/${normalized}` : "/pages";
+}
+
+export function isReservedPageSlug(slug: unknown) {
+  return RESERVED_PAGE_SLUGS.has(normalizePageSlug(slug));
+}
+
+function normalizeRoute(value: unknown, fallback = "/") {
+  const raw = stringValue(value, fallback, 240).split(/[?#]/)[0] || fallback;
+  const withSlash = `/${raw.replace(/^\/+/, "")}`.replace(/\/{2,}/g, "/");
+  return withSlash.length > 1 && withSlash.endsWith("/") ? withSlash.slice(0, -1) : withSlash;
+}
+
+function normalizePageRecord(input: unknown, fallbackKey: string): PageRecord | null {
+  const raw = objectRecord(input);
+  const name = stringValue(raw.name, "", 160);
+  const rawKind = raw.kind ?? raw.type;
+  const kind = PAGE_KINDS.has(rawKind as PageKind) ? rawKind as PageKind : "merchant";
+  const slug = normalizePageSlug(raw.slug || normalizeRoute(raw.route || fallbackKey).split("/").filter(Boolean).at(-1) || name);
+  if (!name || !slug) return null;
+
+  const route = kind === "merchant"
+    ? customPageRoute(slug)
+    : normalizeRoute(raw.route || fallbackKey, customPageRoute(slug));
+  const status = PAGE_STATUSES.has(raw.status as PageStatus) ? raw.status as PageStatus : "draft";
+  const id = stringValue(raw.id, `page-${slug}`, 160).replace(/[^a-zA-Z0-9_-]/g, "-") || `page-${slug}`;
+  const seoId = stringValue(raw.seoId, `seo:${id}`, 180);
+
+  return {
+    id,
+    name,
+    slug,
+    route,
+    kind,
+    type: kind,
+    templateId: stringValue(raw.templateId, `page:${id}`, 180),
+    status,
+    seoId,
+    reserved: raw.reserved === true || kind === "system" || kind === "protected" || kind === "catalog",
+    createdAt: raw.createdAt == null ? undefined : stringValue(raw.createdAt, "", 80) || undefined,
+    updatedAt: raw.updatedAt == null ? undefined : stringValue(raw.updatedAt, "", 80) || undefined,
+    publishedAt: raw.publishedAt == null ? null : stringValue(raw.publishedAt, "", 80) || null,
+    schemaVersion: integerValue(raw.schemaVersion, STORE_DESIGN_SCHEMA_VERSION),
+  };
+}
+
+function normalizeSeoDocument(input: unknown): SeoDocument {
+  const raw = objectRecord(input);
+  const robots = ROBOTS_PRESETS.has((raw.robots ?? raw.robotsPreset) as SeoDocument["robots"])
+    ? (raw.robots ?? raw.robotsPreset) as SeoDocument["robots"]
+    : "index,follow";
+  const canonicalRaw = stringValue(raw.canonical, "", 600);
+  const canonical = canonicalRaw && (canonicalRaw.startsWith("/") || /^https:\/\//i.test(canonicalRaw))
+    ? canonicalRaw
+    : undefined;
+  const structuredDataPolicy = raw.structuredDataPolicy === "page" || raw.structuredDataPolicy === "none"
+    ? raw.structuredDataPolicy
+    : "inherit";
+
+  return {
+    title: stringValue(raw.title, "", 180),
+    description: stringValue(raw.description, "", 400),
+    openGraphTitle: stringValue(raw.openGraphTitle ?? raw.ogTitle, "", 180) || undefined,
+    openGraphDescription: stringValue(raw.openGraphDescription ?? raw.ogDescription, "", 400) || undefined,
+    openGraphAssetId: stringValue(raw.openGraphAssetId ?? raw.ogAssetId, "", 180) || undefined,
+    canonical,
+    robots,
+    robotsPreset: robots,
+    structuredDataPolicy,
+  };
+}
+
+function normalizeRedirectRecord(input: unknown, index: number): RedirectRecord | null {
+  const raw = objectRecord(input);
+  const from = normalizeRoute(raw.from ?? raw.sourcePath, "");
+  const to = normalizeRoute(raw.to ?? raw.targetPath, "");
+  if (!from || !to || from === to) return null;
+  const status = Number(raw.status ?? raw.statusCode) === 302 ? 302 : 301;
+  return {
+    id: stringValue(raw.id, `redirect-${index}`, 180).replace(/[^a-zA-Z0-9_-]/g, "-") || `redirect-${index}`,
+    from,
+    to,
+    status,
+    sourcePath: from,
+    targetPath: to,
+    statusCode: status,
+    reason: stringValue(raw.reason, "", 120) || undefined,
+    pageId: stringValue(raw.pageId, "", 180) || undefined,
+    active: raw.active !== false,
+    createdAt: stringValue(raw.createdAt, new Date(0).toISOString(), 80),
+  };
+}
+
+export function flattenThemeRedirects(input: RedirectRecord[]) {
+  const active = input.filter((item) => item.active !== false);
+  const direct = new Map(active.map((item) => [item.from, item.to]));
+  const flattened: RedirectRecord[] = [];
+  const seenFrom = new Set<string>();
+
+  for (const item of active) {
+    if (seenFrom.has(item.from)) continue;
+    seenFrom.add(item.from);
+    let target = item.to;
+    const visited = new Set([item.from]);
+
+    for (let depth = 0; depth < 12; depth += 1) {
+      if (visited.has(target)) break;
+      visited.add(target);
+      const next = direct.get(target);
+      if (!next) break;
+      target = next;
+    }
+
+    if (target === item.from) continue;
+    flattened.push({
+      ...item,
+      to: target,
+      targetPath: target,
+      sourcePath: item.from,
+      statusCode: item.status,
+      active: true,
+    });
+  }
+
+  return flattened.slice(0, 500);
+}
+
+export function validateThemeDocument(document: ThemeDocument) {
+  const errors: string[] = [];
+  const routes = new Map<string, string>();
+
+  for (const [key, page] of Object.entries(document.pages)) {
+    if (!page.name.trim()) errors.push(`${key}: sayfa adı boş olamaz.`);
+    if (!page.slug) errors.push(`${key}: slug boş olamaz.`);
+    if (routes.has(page.route) && routes.get(page.route) !== page.id) errors.push(`${page.route}: aynı route birden fazla sayfada kullanılıyor.`);
+    routes.set(page.route, page.id);
+    if (page.kind === "merchant" && !page.reserved && isReservedPageSlug(page.slug)) {
+      errors.push(`${page.slug}: reserved route kullanılamaz.`);
+    }
+    const seo = document.seo[page.seoId];
+    if (seo?.canonical && !seo.canonical.startsWith("/") && !/^https:\/\//i.test(seo.canonical)) {
+      errors.push(`${page.route}: canonical yalnız relative path veya https olabilir.`);
+    }
+  }
+
+  const redirectMap = new Map<string, string>();
+  for (const redirect of document.redirects.filter((item) => item.active !== false)) {
+    if (redirect.from === redirect.to) errors.push(`${redirect.from}: redirect kendi üzerine gidemez.`);
+    if (redirectMap.has(redirect.from) && redirectMap.get(redirect.from) !== redirect.to) {
+      errors.push(`${redirect.from}: birden fazla aktif redirect hedefi var.`);
+    }
+    redirectMap.set(redirect.from, redirect.to);
+  }
+
+  return { ok: errors.length === 0, errors };
+}
+
 export function createEmptyThemeDocument(): ThemeDocument {
   return {
     schemaVersion: STORE_DESIGN_SCHEMA_VERSION,
@@ -482,8 +680,26 @@ export function createEmptyThemeDocument(): ThemeDocument {
 
 export function normalizeThemeDocument(input: unknown): ThemeDocument {
   const raw = objectRecord(input);
-  const base = createEmptyThemeDocument();
   const globals = objectRecord(raw.globals);
+
+  const pages: Record<string, PageRecord> = {};
+  for (const [key, value] of Object.entries(objectRecord(raw.pages)).slice(0, 500)) {
+    const page = normalizePageRecord(value, key);
+    if (page) pages[page.route] = page;
+  }
+
+  const seo: Record<string, SeoDocument> = {};
+  for (const [key, value] of Object.entries(objectRecord(raw.seo)).slice(0, 1000)) {
+    seo[key] = normalizeSeoDocument(value);
+  }
+
+  const redirects = flattenThemeRedirects(
+    (Array.isArray(raw.redirects) ? raw.redirects : [])
+      .slice(0, 500)
+      .map((value, index) => normalizeRedirectRecord(value, index))
+      .filter((value): value is RedirectRecord => value !== null),
+  );
+
   return {
     schemaVersion: STORE_DESIGN_SCHEMA_VERSION,
     revision: integerValue(raw.revision, 0),
@@ -493,13 +709,13 @@ export function normalizeThemeDocument(input: unknown): ThemeDocument {
       footer: objectRecord(globals.footer),
       componentFamilies: objectRecord(globals.componentFamilies) as Record<string, ComponentFamilyStyle>,
     },
-    pages: objectRecord(raw.pages) as Record<string, PageRecord>,
-    seo: objectRecord(raw.seo) as Record<string, SeoDocument>,
+    pages,
+    seo,
     templates: objectRecord(raw.templates) as Record<string, TemplateRecord>,
     sections: objectRecord(raw.sections) as Record<string, SectionInstance>,
     blocks: objectRecord(raw.blocks) as Record<string, BlockInstance>,
     media: objectRecord(raw.media) as Record<string, MediaAsset>,
-    redirects: Array.isArray(raw.redirects) ? raw.redirects.slice(0, 500) as RedirectRecord[] : [],
+    redirects,
     publishedAt: raw.publishedAt == null ? null : stringValue(raw.publishedAt, "", 80) || null,
   };
 }
