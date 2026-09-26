@@ -55,6 +55,7 @@ function blockDefaults(type: string): Record<string, unknown> {
   if (type === "award") return { assetId: "", label: "Ödül", link: "" };
   if (type === "member") return { assetId: "", name: "İsim", role: "", bio: "" };
   if (type === "faq-item") return { question: "Yeni soru", answer: "" };
+  if (type === "hotspot") return { x: 50, y: 50, targetType: "link", targetId: "#" };
   return {};
 }
 
