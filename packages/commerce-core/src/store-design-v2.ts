@@ -152,6 +152,7 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
   component("manifesto", "Manifesto", "İçerik", "section", sectionScopes, ["content", "typography", "layout", "responsive"], []),
   component("quote", "Quote", "İçerik", "section", sectionScopes, ["content", "typography", "layout"], []),
   component("promo-banner", "Promo Banner", "Marketing", "section", sectionScopes, ["content", "media", "layout", "responsive"], []),
+  component("countdown", "Countdown", "Marketing", "section", sectionScopes, ["content", "layout", "responsive"], ["serverTimeSource"]),
   component("shipping-returns-cta", "Shipping / Returns CTA", "Marketing", "section", sectionScopes, ["content", "layout"], ["shippingLogic"]),
   component("spacer", "Boşluk", "İçerik", "section", sectionScopes, ["layout", "responsive"], ["arbitraryHeight"]),
   component("divider", "Divider", "İçerik", "section", sectionScopes, ["layout", "responsive"], []),
@@ -300,7 +301,7 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
 
   section("announcement-bar", "Announcement Bar", "marketing", ["home", "content", "landing"], ["text", "links", "rotation", "sticky", "schedule"], ["announcement"], true, 8),
   section("promo-banner", "Promo Banner", "marketing", allContentPages, ["copy", "cta", "media", "schedule"], [], true),
-  section("countdown", "Countdown", "marketing", allContentPages, ["targetTime", "completedState", "style"]),
+  section("countdown", "Countdown", "marketing", allContentPages, ["targetTime", "completedState", "style"], [], true),
   section("marquee", "Marquee / Ticker", "marketing", allContentPages, ["speed", "pause"], ["ticker-item"], true, 20),
   section("newsletter", "Newsletter", "marketing", allContentPages, ["heading", "body", "fieldLabel", "consent", "successCopy"]),
   section("contact-form", "Contact Form", "marketing", ["content", "landing"], ["fieldVisibility", "labels", "copy", "successState"], [], false),
