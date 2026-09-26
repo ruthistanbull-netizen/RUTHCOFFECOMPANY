@@ -7,8 +7,9 @@ import {
   useScroll,
   useSpring,
   useTransform,
-  type MotionValue,
 } from "framer-motion";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { RostaHomeWordmark } from "@/components/brand/RostaHomeWordmark";
 import {
   HOME_EDITORIAL_IMAGE_ID,
@@ -367,20 +368,15 @@ const HORIZONTAL_STORY_PANELS: HorizontalStoryPanel[] = [
   },
 ];
 
-function HorizontalStoryCard({
+function HorizontalStoryMedia({
   id,
   media,
-  order,
 }: {
   id: string;
   media: { src: string; mediaType: HomepageMediaType };
-  order: 0 | 1;
 }) {
   return (
-    <div
-      className={`home-horizontal-story-card home-horizontal-story-card--${order === 0 ? "a" : "b"}`}
-      aria-label="Fotoğraf alanı"
-    >
+    <div className="home-horizontal-story-media h-full w-full" aria-label="Fotoğraf alanı">
       {media.mediaType === "video" ? (
         <video
           src={media.src}
@@ -409,81 +405,67 @@ function HorizontalStoryCard({
   );
 }
 
+const HORIZONTAL_CARD_CLASSES = [
+  ["red", "orange"],
+  ["blue", "cyan"],
+  ["green", "emerald"],
+  ["pink", "light-pink"],
+] as const;
+
 function HorizontalStoryPanelView({
   panel,
   index,
-  progress,
   themeSettings,
   mobileViewport,
 }: {
   panel: HorizontalStoryPanel;
   index: number;
-  progress: MotionValue<number>;
   themeSettings: ThemeCustomizerSettings;
   mobileViewport: boolean;
 }) {
-  const center = index / Math.max(1, HORIZONTAL_STORY_PANELS.length - 1);
-  const start = index === 0 ? 0 : Math.max(0, center - 0.13);
-  const titleEnd = Math.min(1, start + 0.09);
-  const descStart = Math.min(0.98, start + 0.025);
-  const descEnd = Math.min(1, descStart + 0.09);
-  const cardsEnd = Math.min(1, start + 0.11);
-
-  const titleY = useTransform(progress, [start, titleEnd], [80, 0]);
-  const titleOpacity = useTransform(progress, [start, titleEnd], [0, 1]);
-  const descY = useTransform(progress, [descStart, descEnd], [40, 0]);
-  const descOpacity = useTransform(progress, [descStart, descEnd], [0, 1]);
-  const cardsScale = useTransform(progress, [start, cardsEnd], [0.8, 1]);
-  const cardsRotate = useTransform(progress, [start, cardsEnd], [-10, 0]);
-  const cardsOpacity = useTransform(progress, [start, cardsEnd], [0, 1]);
-
   const firstCardId = panel.cardIds[0];
   const secondCardId = panel.cardIds[1];
   const firstResolved = homepageDeviceMedia(themeSettings, firstCardId, HORIZONTAL_CARD_PLACEHOLDER);
   const secondResolved = homepageDeviceMedia(themeSettings, secondCardId, HORIZONTAL_CARD_PLACEHOLDER);
   const firstMedia = mobileViewport ? firstResolved.mobile : firstResolved.desktop;
   const secondMedia = mobileViewport ? secondResolved.mobile : secondResolved.desktop;
+  const [firstClass, secondClass] = HORIZONTAL_CARD_CLASSES[index] || HORIZONTAL_CARD_CLASSES[0];
 
   return (
-    <article className="home-horizontal-story-panel h-[100svh] w-screen flex-none">
-      <div className="home-horizontal-story-panel-inner">
+    <article className="home-horizontal-story-panel panel h-[100svh] w-screen flex-none">
+      <div className="home-horizontal-story-panel-inner panel-inner">
         <div className="home-horizontal-story-copy">
           <div
-            className="home-horizontal-story-label"
+            className="home-horizontal-story-label label"
             data-theme-id={`home-horizontal-label-${index + 1}`}
             data-theme-label="Yatay hikaye üst etiketi"
           >
             {panel.label}
           </div>
-          <motion.h2
-            className="home-horizontal-story-title"
-            style={{ y: titleY, opacity: titleOpacity }}
+          <h2
+            className="home-horizontal-story-title title"
             data-theme-id={`home-horizontal-title-${index + 1}`}
             data-theme-label="Yatay hikaye başlığı"
           >
             {panel.title}
-          </motion.h2>
-          <motion.p
-            className="home-horizontal-story-desc"
-            style={{ y: descY, opacity: descOpacity }}
+          </h2>
+          <p
+            className="home-horizontal-story-desc desc"
             data-theme-id={`home-horizontal-desc-${index + 1}`}
             data-theme-label="Yatay hikaye açıklaması"
           >
             {panel.description}
-          </motion.p>
+          </p>
         </div>
 
-        <motion.div
-          className="home-horizontal-story-cards"
-          style={{
-            scale: cardsScale,
-            rotate: cardsRotate,
-            opacity: cardsOpacity,
-          }}
-        >
-          <HorizontalStoryCard id={firstCardId} media={firstMedia} order={0} />
-          <HorizontalStoryCard id={secondCardId} media={secondMedia} order={1} />
-        </motion.div>
+        <div className="home-horizontal-story-cards cards">
+          <div className={`home-horizontal-story-card card ${firstClass}`}>
+            <HorizontalStoryMedia id={firstCardId} media={firstMedia} />
+          </div>
+          <div className={`home-horizontal-story-card card ${secondClass}`}>
+            <HorizontalStoryMedia id={secondCardId} media={secondMedia} />
+          </div>
+        </div>
       </div>
     </article>
   );
@@ -496,67 +478,134 @@ function HorizontalPortfolioStory({
   themeSettings: ThemeCustomizerSettings;
   mobileViewport: boolean;
 }) {
-  const ref = useRef<HTMLElement | null>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end end"],
-  });
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
 
-  // Keep the horizontal story locked directly to native scroll progress.
-  // The previous spring kept animating after the user's scroll input stopped,
-  // which made this large 400vw scene feel heavy on slower devices.
-  const motionProgress = scrollYProgress;
-  const x = useTransform(
-    motionProgress,
-    mobileViewport
-      ? [0, 0.11, 0.27, 0.37, 0.53, 0.63, 0.73, 0.9, 1]
-      : [0, 0.1, 0.28, 0.36, 0.54, 0.62, 0.71, 0.88, 1],
-    ["0%", "0%", "-25%", "-25%", "-50%", "-50%", "-75%", "-75%", "-75%"],
-  );
+  useEffect(() => {
+    const section = sectionRef.current;
+    const wrapper = wrapperRef.current;
+    if (!section || !wrapper) return;
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    const ctx = gsap.context(() => {
+      const panels = gsap.utils.toArray<HTMLElement>(".panel", section);
+      const getScrollDistance = () => wrapper.scrollWidth - window.innerWidth;
+
+      const scrollTween = gsap.to(wrapper, {
+        x: () => -(getScrollDistance()),
+        ease: "none",
+        scrollTrigger: {
+          trigger: section,
+          start: "top top",
+          end: () => "+=" + getScrollDistance(),
+          pin: true,
+          scrub: 1,
+          invalidateOnRefresh: true,
+          anticipatePin: 1,
+        },
+      });
+
+      panels.forEach((panel) => {
+        const title = panel.querySelector(".title");
+        const desc = panel.querySelector(".desc");
+        const cards = panel.querySelector(".cards");
+
+        if (title) {
+          gsap.from(title, {
+            y: 80,
+            opacity: 0,
+            scrollTrigger: {
+              trigger: panel,
+              containerAnimation: scrollTween,
+              start: "left center",
+            },
+          });
+        }
+
+        if (desc) {
+          gsap.from(desc, {
+            y: 40,
+            opacity: 0,
+            delay: 0.1,
+            scrollTrigger: {
+              trigger: panel,
+              containerAnimation: scrollTween,
+              start: "left center",
+            },
+          });
+        }
+
+        if (cards) {
+          gsap.from(cards, {
+            scale: 0.8,
+            rotate: -10,
+            opacity: 0,
+            scrollTrigger: {
+              trigger: panel,
+              containerAnimation: scrollTween,
+              start: "left center",
+            },
+          });
+        }
+      });
+    }, section);
+
+    const refresh = () => ScrollTrigger.refresh();
+    const frame = window.requestAnimationFrame(refresh);
+    window.addEventListener("load", refresh);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("load", refresh);
+      ctx.revert();
+    };
+  }, [mobileViewport]);
 
   return (
     <section
-      ref={ref}
-      className="home-horizontal-editorial relative h-[540svh] overflow-visible bg-carbon md:h-[560svh]"
+      ref={sectionRef}
+      className="home-horizontal-editorial horizontal-section relative h-[100svh] overflow-hidden bg-carbon"
       aria-label="ROSTA yatay hikaye"
     >
       <style>{`
-        .home-horizontal-story-wrapper{
+        .home-horizontal-story-wrapper,
+        .horizontal-wrapper{
           display:flex;
           width:400vw;
           height:100svh;
-          transform:translateZ(0);
-          backface-visibility:hidden;
-          contain:layout paint style;
         }
-        .home-horizontal-story-panel{
+        .home-horizontal-story-panel,
+        .panel{
+          width:100vw;
+          height:100svh;
           display:flex;
           align-items:center;
-          padding:clamp(24px,4vw,60px);
+          padding:60px;
           background:var(--rosta-carbon);
           color:var(--rosta-cream);
-          contain:layout paint style;
-          backface-visibility:hidden;
         }
-        .home-horizontal-story-panel-inner{
+        .home-horizontal-story-panel-inner,
+        .panel-inner{
           width:100%;
           display:grid;
-          grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-          gap:clamp(32px,4vw,60px);
+          grid-template-columns:1fr 1fr;
+          gap:60px;
           align-items:center;
         }
         .home-horizontal-story-copy{
           padding-top:92px;
         }
-        .home-horizontal-story-label{
+        .home-horizontal-story-label,
+        .label{
+          letter-spacing:.3em;
+          font-size:12px;
+          opacity:.5;
           margin-bottom:20px;
           font-family:var(--font-body);
-          font-size:12px;
-          font-weight:600;
-          letter-spacing:.3em;
-          opacity:.5;
         }
-        .home-horizontal-story-title{
+        .home-horizontal-story-title,
+        .title{
           margin:0;
           max-width:720px;
           font-family:var(--font-heading)!important;
@@ -566,59 +615,64 @@ function HorizontalPortfolioStory({
           line-height:.9;
           letter-spacing:-.055em;
         }
-        .home-horizontal-story-desc{
+        .home-horizontal-story-desc,
+        .desc{
           margin:24px 0 0;
+          opacity:.6;
           max-width:500px;
-          color:color-mix(in srgb,var(--rosta-cream) 64%,transparent);
+          line-height:1.6;
+          color:var(--rosta-cream);
           font-family:var(--font-body);
           font-size:clamp(.95rem,1.2vw,1.15rem);
-          line-height:1.6;
         }
-        .home-horizontal-story-cards{
+        .home-horizontal-story-cards,
+        .cards{
           position:relative;
-          height:min(500px,58svh);
-          min-height:360px;
+          height:500px;
         }
-        .home-horizontal-story-card{
+        .home-horizontal-story-card.card{
           position:absolute;
-          width:min(320px,34vw);
-          height:min(420px,52svh);
-          overflow:hidden;
+          width:320px;
+          height:420px;
           border-radius:30px;
-          background:color-mix(in srgb,var(--rosta-cream) 6%,transparent);
-          border:1px solid color-mix(in srgb,var(--rosta-cream) 12%,transparent);
-          box-shadow:0 10px 30px rgba(0,0,0,.3);
+          overflow:hidden;
+          transition:transform .35s cubic-bezier(.2,.8,.2,1),
+                     box-shadow .35s ease,
+                     filter .35s ease;
+          will-change:transform;
           transform-origin:center;
-          transition:transform .28s cubic-bezier(.2,.8,.2,1),box-shadow .28s ease;
-          backface-visibility:hidden;
+          box-shadow:0 10px 30px rgba(0,0,0,.3);
+          background:rgba(255,255,255,.05);
+          border:1px solid rgba(255,255,255,.1);
         }
-        .home-horizontal-story-card--a{
-          left:8%;
-          top:7%;
-          transform:translateZ(0) rotate(-10deg);
+        .home-horizontal-story-card.card:hover{
+          transform:translateY(-18px) scale(1.08) rotate(6deg);
+          box-shadow:0 40px 120px rgba(0,0,0,.7),
+                     0 0 50px rgba(255,255,255,.18);
+          filter:brightness(1.2) saturate(1.3);
+          z-index:10;
         }
-        .home-horizontal-story-card--b{
-          right:8%;
-          top:14%;
-          transform:translateZ(0) rotate(8deg);
-          opacity:.88;
-        }
-        @media(hover:hover) and (pointer:fine){
-          .home-horizontal-story-card:hover{
-            transform:translate3d(0,-14px,0) scale(1.06) rotate(6deg);
-            box-shadow:0 28px 72px rgba(0,0,0,.52);
-            z-index:10;
-          }
-        }
-        .home-horizontal-story-card :is(img,video){
+        .home-horizontal-story-card.red{transform:rotate(-10deg);left:6%;top:6%}
+        .home-horizontal-story-card.orange{transform:rotate(8deg);opacity:.8;right:6%;top:12%}
+        .home-horizontal-story-card.blue{transform:rotate(10deg);left:6%;top:6%}
+        .home-horizontal-story-card.cyan{transform:rotate(-6deg);opacity:.8;right:6%;top:12%}
+        .home-horizontal-story-card.green{transform:rotate(-12deg);left:6%;top:6%}
+        .home-horizontal-story-card.emerald{transform:rotate(5deg);opacity:.8;right:6%;top:12%}
+        .home-horizontal-story-card.pink{transform:rotate(8deg);left:6%;top:6%}
+        .home-horizontal-story-card.light-pink{transform:rotate(-8deg);opacity:.8;right:6%;top:12%}
+        .home-horizontal-story-media,
+        .home-horizontal-story-media :is(img,video){
           display:block;
-          backface-visibility:hidden;
+          width:100%;
+          height:100%;
         }
         @media(max-width:767px){
-          .home-horizontal-story-panel{
+          .home-horizontal-story-panel,
+          .panel{
             padding:28px 22px 34px;
           }
-          .home-horizontal-story-panel-inner{
+          .home-horizontal-story-panel-inner,
+          .panel-inner{
             height:100%;
             grid-template-columns:1fr;
             grid-template-rows:auto 1fr;
@@ -629,57 +683,61 @@ function HorizontalPortfolioStory({
             align-self:end;
             padding-top:84px;
           }
-          .home-horizontal-story-label{
+          .home-horizontal-story-label,
+          .label{
             margin-bottom:12px;
             font-size:10px;
           }
-          .home-horizontal-story-title{
+          .home-horizontal-story-title,
+          .title{
             font-size:clamp(2.8rem,13vw,4.6rem);
             line-height:.88;
           }
-          .home-horizontal-story-desc{
+          .home-horizontal-story-desc,
+          .desc{
             margin-top:16px;
             max-width:88vw;
             font-size:.95rem;
             line-height:1.5;
           }
-          .home-horizontal-story-cards{
+          .home-horizontal-story-cards,
+          .cards{
             align-self:start;
             height:42svh;
             min-height:300px;
           }
-          .home-horizontal-story-card{
+          .home-horizontal-story-card.card{
             width:min(58vw,260px);
             height:min(36svh,330px);
             border-radius:22px;
           }
-          .home-horizontal-story-card--a{
+          .home-horizontal-story-card.red,
+          .home-horizontal-story-card.blue,
+          .home-horizontal-story-card.green,
+          .home-horizontal-story-card.pink{
             left:4%;
             top:5%;
           }
-          .home-horizontal-story-card--b{
+          .home-horizontal-story-card.orange,
+          .home-horizontal-story-card.cyan,
+          .home-horizontal-story-card.emerald,
+          .home-horizontal-story-card.light-pink{
             right:4%;
             top:13%;
           }
         }
       `}</style>
 
-      <div className="sticky top-0 h-[100svh] overflow-hidden bg-carbon">
-        <motion.div
-          className="home-horizontal-story-wrapper"
-          style={{ x, willChange: "transform" }}
-        >
-          {HORIZONTAL_STORY_PANELS.map((panel, index) => (
-            <HorizontalStoryPanelView
-              key={panel.label}
-              panel={panel}
-              index={index}
-              progress={motionProgress}
-              themeSettings={themeSettings}
-              mobileViewport={mobileViewport}
-            />
-          ))}
-        </motion.div>
+      <div ref={wrapperRef} className="home-horizontal-story-wrapper horizontal-wrapper">
+        {HORIZONTAL_STORY_PANELS.map((panel, index) => (
+          <HorizontalStoryPanelView
+            key={panel.label}
+            panel={panel}
+            index={index}
+            themeSettings={themeSettings}
+            mobileViewport={mobileViewport}
+          />
+        ))}
       </div>
     </section>
   );
