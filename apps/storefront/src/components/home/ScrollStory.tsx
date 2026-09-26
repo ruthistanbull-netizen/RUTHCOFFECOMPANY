@@ -18,6 +18,18 @@ function smoothstep(value: number) {
   return t * t * (3 - 2 * t);
 }
 
+function scrollCueProgress(rawPosition: number, slideIndex: number) {
+  // Progress is derived directly from page scroll, so the motion reverses
+  // naturally when the user scrolls back up.
+  return smoothstep((rawPosition - (slideIndex - 0.58)) / 0.68);
+}
+
+function scrollCueOpacity(rawPosition: number, slideIndex: number) {
+  const enter = scrollCueProgress(rawPosition, slideIndex);
+  const leave = 1 - smoothstep((rawPosition - (slideIndex + 0.46)) / 0.52);
+  return clamp(Math.min(enter, leave), 0, 1);
+}
+
 function cleanImage(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
 }
@@ -142,6 +154,16 @@ export default function ScrollStory({
   const scrollLetters = "KAYDIR".split("");
   const activeLetterIndex = clamp(Math.round(progress * (scrollLetters.length - 1)), 0, scrollLetters.length - 1);
 
+  const secondCueProgress = scrollCueProgress(rawPosition, 1);
+  const secondCueOpacity = scrollCueOpacity(rawPosition, 1);
+  const thirdCueProgress = scrollCueProgress(rawPosition, 2);
+  const thirdCueOpacity = scrollCueOpacity(rawPosition, 2);
+
+  const secondCueX = -Math.round((1 - secondCueProgress) * (mobileViewport ? 72 : 120));
+  const thirdCueX = mobileViewport
+    ? Math.round((1 - thirdCueProgress) * 86)
+    : -Math.round((1 - thirdCueProgress) * 120);
+
   return (
     <section
       ref={sectionRef}
@@ -218,6 +240,63 @@ export default function ScrollStory({
             })}
           </motion.div>
         </div>
+
+        {slides.length > 1 ? (
+          <div
+            className="pointer-events-none absolute inset-0 z-30 overflow-hidden"
+            aria-hidden="true"
+          >
+            <div
+              className="absolute left-6 top-[24%] max-w-[78vw] md:left-[6vw] md:top-[28%] md:max-w-[44vw]"
+              style={{
+                opacity: secondCueOpacity,
+                transform: `translate3d(${secondCueX}px, 0, 0)`,
+                willChange: "transform, opacity",
+              }}
+            >
+              <p
+                className="font-heading font-editorial m-0"
+                style={{
+                  color: "var(--rosta-brick-b)",
+                  fontSize: "clamp(2rem, 5.1vw, 5.6rem)",
+                  fontWeight: 900,
+                  lineHeight: 0.94,
+                  letterSpacing: "-0.055em",
+                }}
+              >
+                <span className="block">Doğru Çekirdek,</span>
+                <span className="block">Güçlü Deneyim</span>
+              </p>
+            </div>
+
+            {slides.length > 2 ? (
+              <div
+                className="absolute top-[28%] max-w-[78vw] md:left-[6vw] md:right-auto md:top-[31%] md:max-w-[46vw]"
+                style={{
+                  left: mobileViewport ? "auto" : undefined,
+                  right: mobileViewport ? "1.5rem" : undefined,
+                  opacity: thirdCueOpacity,
+                  transform: `translate3d(${thirdCueX}px, 0, 0)`,
+                  willChange: "transform, opacity",
+                  textAlign: mobileViewport ? "right" : "left",
+                }}
+              >
+                <p
+                  className="font-heading font-editorial m-0"
+                  style={{
+                    color: "var(--rosta-brick-b)",
+                    fontSize: "clamp(1.8rem, 4.6vw, 5rem)",
+                    fontWeight: 900,
+                    lineHeight: 0.98,
+                    letterSpacing: "-0.05em",
+                  }}
+                >
+                  Kahveyi sadeleştir, karakterini koru.
+                </p>
+              </div>
+            ) : null}
+          </div>
+        ) : null}
 
         <div className="absolute inset-x-0 bottom-[29%] flex justify-center px-6 md:bottom-[25%]">
           {slides.map((slide, index) => {
