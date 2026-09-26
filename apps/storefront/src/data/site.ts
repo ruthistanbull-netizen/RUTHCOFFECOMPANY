@@ -948,6 +948,31 @@ export async function getStoreDesignV2Published(): Promise<ThemeDocument> {
   return getCachedStoreDesignV2Published();
 }
 
+export async function getStoreDesignV2Preview(token: string): Promise<ThemeDocument | null> {
+  const cleanToken = token.replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 120);
+  if (!cleanToken) return null;
+
+  try {
+    const client = getSupabaseAdmin();
+    const { data, error } = await client
+      .from("site_settings")
+      .select("setting_value")
+      .eq("setting_key", `store_design_v2_preview_${cleanToken}`)
+      .eq("is_public", false)
+      .maybeSingle();
+
+    if (error) {
+      console.error("Store Design V2 preview verisi alınamadı:", error.message);
+      return null;
+    }
+
+    return data?.setting_value ? normalizeThemeDocument(data.setting_value) : null;
+  } catch (error) {
+    console.error("Store Design V2 preview okunamadı:", error);
+    return null;
+  }
+}
+
 export async function getSiteSettings(): Promise<
   Record<string, SiteSetting["setting_value"]>
 > {
