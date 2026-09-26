@@ -4,6 +4,7 @@ import {
   ChevronDown,
   CircleDot,
   Images,
+  LayoutTemplate,
   Monitor,
   PanelLeft,
   PanelRight,
@@ -34,6 +35,7 @@ import { useExactToast } from "@/components/base44-exact/primitives";
 import { StoreDesignPageManager } from "@/components/theme/StoreDesignPageManager";
 import { StoreDesignSectionManager } from "@/components/theme/StoreDesignSectionManager";
 import { StoreDesignMediaLibrary } from "@/components/theme/StoreDesignMediaLibrary";
+import { StoreDesignTemplateManager } from "@/components/theme/StoreDesignTemplateManager";
 
 type Device = "desktop" | "mobile";
 type PageItem = {
@@ -377,6 +379,7 @@ export function StoreDesignV21() {
   const [rightOpen, setRightOpen] = useState(true);
   const [pageManagerMode, setPageManagerMode] = useState<"create" | "edit" | null>(null);
   const [mediaOpen, setMediaOpen] = useState(false);
+  const [templateManagerOpen, setTemplateManagerOpen] = useState(false);
   const [history, setHistory] = useState<EditorHistoryEntry[]>([]);
   const [future, setFuture] = useState<EditorHistoryEntry[]>([]);
   const revisionRef = useRef(0);
@@ -772,6 +775,9 @@ export function StoreDesignV21() {
           </button>
         </div>
 
+        <button type="button" onClick={() => setTemplateManagerOpen(true)} className="hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] lg:flex">
+          <LayoutTemplate className="h-3.5 w-3.5" />Template
+        </button>
         <button type="button" onClick={() => setMediaOpen(true)} className="hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] lg:flex">
           <Images className="h-3.5 w-3.5" />Medya
         </button>
@@ -1064,6 +1070,17 @@ export function StoreDesignV21() {
           </aside>
         ) : null}
       </div>
+
+      {templateManagerOpen ? (
+        <StoreDesignTemplateManager
+          document={document}
+          activePath={activePath}
+          activeLabel={activePage?.label || activePath}
+          compatibility={activeCompatibility}
+          onApply={applyStructureDocument}
+          onClose={() => setTemplateManagerOpen(false)}
+        />
+      ) : null}
 
       {mediaOpen ? (
         <StoreDesignMediaLibrary
