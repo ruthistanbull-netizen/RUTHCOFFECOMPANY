@@ -733,9 +733,38 @@ export function validateThemeDocument(document: ThemeDocument) {
     if (page.kind === "merchant" && !page.reserved && isReservedPageSlug(page.slug)) {
       errors.push(`${page.slug}: reserved route kullanılamaz.`);
     }
+    if (!document.templates[page.templateId]) errors.push(`${page.route}: bağlı template bulunamadı (${page.templateId}).`);
+    if (!document.seo[page.seoId]) errors.push(`${page.route}: SEO kaydı bulunamadı (${page.seoId}).`);
     const seo = document.seo[page.seoId];
     if (seo?.canonical && !seo.canonical.startsWith("/") && !/^https:\/\//i.test(seo.canonical)) {
       errors.push(`${page.route}: canonical yalnız relative path veya https olabilir.`);
+    }
+  }
+
+  for (const [templateId, template] of Object.entries(document.templates)) {
+    if (!Array.isArray(template.compatibility) || template.compatibility.length === 0) {
+      errors.push(`${templateId}: template compatibility boş olamaz.`);
+    }
+    for (const sectionId of template.sectionIds || []) {
+      if (!document.sections[sectionId]) errors.push(`${templateId}: section referansı bulunamadı (${sectionId}).`);
+    }
+  }
+
+  for (const [sectionId, section] of Object.entries(document.sections)) {
+    const definition = SECTION_LIBRARY_BY_TYPE[section.type];
+    const blockIds = Array.isArray(section.blockIds) ? section.blockIds : [];
+    if (definition?.maxBlocks && blockIds.length > definition.maxBlocks) {
+      errors.push(`${sectionId}: maxBlocks sınırı aşıldı (${definition.maxBlocks}).`);
+    }
+    for (const blockId of blockIds) {
+      const block = document.blocks[blockId];
+      if (!block) {
+        errors.push(`${sectionId}: block referansı bulunamadı (${blockId}).`);
+        continue;
+      }
+      if (definition?.allowedBlocks?.length && !definition.allowedBlocks.includes(block.type)) {
+        errors.push(`${sectionId}: ${block.type} block tipi bu section için izinli değil.`);
+      }
     }
   }
 
