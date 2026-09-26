@@ -124,6 +124,9 @@ function safeKey(path: string) {
 }
 
 function defaultSettings(type: string): Record<string, unknown> {
+  if (type === "hero") {
+    return { imageAssetId: "", posterAssetId: "", heightPreset: "viewport", fit: "cover", playbackPreset: "ambient", title: "", body: "", linkLabel: "", linkHref: "", align: "center", overlayOpacity: 24, contrastMode: "adaptive" };
+  }
   if (type === "featured-products") {
     return { productSource: "featured", productLimit: 8, desktopItems: 4, mobileItems: 2, gap: 12, paddingY: 64 };
   }
@@ -278,6 +281,7 @@ function canRenderDefinition(definition: SectionDefinition) {
 }
 
 const GENERIC_V2_SECTION_TYPES = new Set([
+  "hero",
   "video-hero",
   "video-banner",
   "before-after",
