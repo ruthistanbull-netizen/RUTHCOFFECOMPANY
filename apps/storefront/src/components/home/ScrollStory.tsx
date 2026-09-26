@@ -271,7 +271,7 @@ export default function ScrollStory({
                   style={{
                     opacity,
                     transform: `scale(${scale})`,
-                    boxShadow: "0 30px 80px color-mix(in_srgb,var(--rosta-carbon)_72%,transparent)",
+                    boxShadow: "0 30px 80px color-mix(in srgb, var(--rosta-carbon) 72%, transparent)",
                     willChange: "transform, opacity",
                     pointerEvents: opacity > 0.5 ? "auto" : "none",
                     cursor: "pointer",
