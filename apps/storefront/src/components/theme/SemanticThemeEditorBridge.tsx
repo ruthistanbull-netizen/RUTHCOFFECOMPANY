@@ -3,6 +3,10 @@
 import { useEffect, useRef } from "react";
 import { SEMANTIC_RUNTIME_PATCH_EVENT } from "@/components/theme/SemanticThemeRuntimeProvider";
 import {
+  STORE_DESIGN_MEDIA_RUNTIME_EVENT,
+  type StoreDesignMediaRuntimeDetail,
+} from "@/components/theme/StoreDesignResponsiveImage";
+import {
   COMPONENT_REGISTRY,
   STORE_DESIGN_MESSAGES,
   STORE_DESIGN_SCHEMA_VERSION,
@@ -402,6 +406,16 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
           revision: Number(message.revision || 0),
           ...result,
         });
+        return;
+      }
+
+      if (event.data.type === STORE_DESIGN_MESSAGES.MEDIA_ASSET_READY) {
+        const asset = event.data.asset as StoreDesignMediaRuntimeDetail | undefined;
+        const validUrl = (value: unknown) => typeof value === "string" && /^https?:\/\//i.test(value);
+        if (!asset?.assetId || (asset.url && !validUrl(asset.url)) || (asset.mobileUrl && !validUrl(asset.mobileUrl))) {
+          return;
+        }
+        window.dispatchEvent(new CustomEvent(STORE_DESIGN_MEDIA_RUNTIME_EVENT, { detail: asset }));
         return;
       }
 
