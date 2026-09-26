@@ -37,7 +37,11 @@ export function ContactForm() {
   };
 
   return (
-    <form className="grid gap-5 text-cream" onSubmit={submit} noValidate>
+    <form
+      data-editor-id="contact-form"
+      data-editor-type="contact-form"
+      data-editor-label="İletişim Formu"
+      className="grid gap-5 text-cream" onSubmit={submit} noValidate>
       <div className="absolute -left-[9999px] h-px w-px overflow-hidden" aria-hidden="true">
         <label>
           Şirket
@@ -52,7 +56,7 @@ export function ContactForm() {
       </div>
 
       <div className="grid gap-5 md:grid-cols-2">
-        <label className="block">
+        <label data-editor-id="contact-field:name" data-editor-type="form-field" data-editor-label="Ad Soyad" className="block">
           <span className="mb-2 block text-[10px] uppercase tracking-[0.28em] text-brick">Ad Soyad</span>
           <input
             name="name"
@@ -66,7 +70,7 @@ export function ContactForm() {
             className="w-full rounded-full border border-kraft/35 bg-carbon px-5 py-4 text-sm text-cream outline-none transition placeholder:text-cream/40 focus:border-brick"
           />
         </label>
-        <label className="block">
+        <label data-editor-id="contact-field:email" data-editor-type="form-field" data-editor-label="E-posta" className="block">
           <span className="mb-2 block text-[10px] uppercase tracking-[0.28em] text-brick">E-posta</span>
           <input
             name="email"
@@ -81,7 +85,7 @@ export function ContactForm() {
         </label>
       </div>
 
-      <label className="block">
+      <label data-editor-id="contact-field:phone" data-editor-type="form-field" data-editor-label="Telefon" className="block">
         <span className="mb-2 block text-[10px] uppercase tracking-[0.28em] text-brick">Telefon Numarası</span>
         <input
           name="phone"
@@ -94,7 +98,7 @@ export function ContactForm() {
         />
       </label>
 
-      <label className="block">
+      <label data-editor-id="contact-field:message" data-editor-type="form-field" data-editor-label="Mesaj" className="block">
         <span className="mb-2 block text-[10px] uppercase tracking-[0.28em] text-brick">Mesajınız</span>
         <textarea
           name="message"
