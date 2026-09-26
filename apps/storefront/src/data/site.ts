@@ -23,6 +23,11 @@ import {
   normalizeThemeCustomizerSettings,
   type ThemeCustomizerSettings,
 } from "@/lib/themeCustomizer";
+import {
+  createEmptyThemeDocument,
+  normalizeThemeDocument,
+  type ThemeDocument,
+} from "@ruth-commerce/commerce-core/store-design-v2";
 import { applyRostaStorefrontDesignSystem } from "@/lib/rostaDesignSystem";
 // ROSTA never falls back to any copied legacy static catalog.
 // If ROSTA Supabase is unavailable, serving an empty/last-known-good catalog
@@ -908,6 +913,39 @@ export async function getHomepageSections(): Promise<HomepageSection[]> {
   }
 
   return (data || []) as HomepageSection[];
+}
+
+async function fetchStoreDesignV2Published(): Promise<ThemeDocument> {
+  const client = getCatalogClient();
+  if (!USE_SUPABASE_CATALOG || !client) return createEmptyThemeDocument();
+
+  const { data, error } = await client
+    .from("site_settings")
+    .select("setting_value")
+    .eq("setting_key", "store_design_v2_published")
+    .eq("is_public", true)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Store Design V2 yayın verisi alınamadı:", error.message);
+    return createEmptyThemeDocument();
+  }
+
+  return normalizeThemeDocument(data?.setting_value);
+}
+
+const getCachedStoreDesignV2Published = unstable_cache(
+  fetchStoreDesignV2Published,
+  ["rosta-store-design-v2-published"],
+  { revalidate: THEME_CACHE_REVALIDATE_SECONDS, tags: ["ruth-theme"] },
+);
+
+export async function getStoreDesignV2Published(): Promise<ThemeDocument> {
+  if (FORCE_LIVE_THEME_READS) {
+    noStore();
+    return fetchStoreDesignV2Published();
+  }
+  return getCachedStoreDesignV2Published();
 }
 
 export async function getSiteSettings(): Promise<
