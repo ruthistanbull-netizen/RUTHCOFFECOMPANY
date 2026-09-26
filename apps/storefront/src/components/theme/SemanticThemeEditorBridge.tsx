@@ -38,12 +38,14 @@ function editorEnabled() {
 
 function parentOrigin() {
   try {
+    const referrer = document.referrer ? new URL(document.referrer).origin : "";
+    if (!referrer) return "";
+
     const explicit = new URLSearchParams(window.location.search).get("editorOrigin");
-    if (explicit) {
-      const url = new URL(explicit);
-      if (url.protocol === "https:" || url.protocol === "http:") return url.origin;
-    }
-    return document.referrer ? new URL(document.referrer).origin : "";
+    if (!explicit) return referrer;
+
+    const explicitOrigin = new URL(explicit).origin;
+    return explicitOrigin === referrer ? referrer : "";
   } catch {
     return "";
   }
@@ -195,8 +197,10 @@ export function SemanticThemeEditorBridge() {
     if (!editorEnabled() || window.parent === window) return;
 
     const expectedParentOrigin = parentOrigin();
+    if (!expectedParentOrigin) return;
+
     const post = (payload: Record<string, unknown>) => {
-      window.parent.postMessage(payload, expectedParentOrigin || "*");
+      window.parent.postMessage(payload, expectedParentOrigin);
     };
 
     const overlay = document.createElement("div");
