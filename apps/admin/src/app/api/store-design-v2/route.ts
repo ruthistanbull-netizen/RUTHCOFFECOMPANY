@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";\nimport type { SupabaseClient } from "@supabase/supabase-js";
+import { NextResponse } from "next/server";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { requireAdmin } from "@/lib/auth";
 import { noStoreHeaders, revalidateWebsite } from "@/lib/websiteRevalidate";
 import {
@@ -13,15 +14,19 @@ export const dynamic = "force-dynamic";
 
 const DRAFT_KEY = "store_design_v2_draft";
 const PUBLISHED_KEY = "store_design_v2_published";
+const PREVIEW_PREFIX = "store_design_v2_preview_";
+
+function cleanPreviewToken(value: unknown) {
+  return typeof value === "string"
+    ? value.replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 120)
+    : "";
+}
 
 function nextRevision(document: ThemeDocument, current: ThemeDocument | null) {
   return Math.max(document.revision, current?.revision || 0) + 1;
 }
 
-async function readDocument(
-  supabase: Awaited<ReturnType<typeof requireAdmin>> extends { supabase: infer T } ? T : never,
-  key: string,
-) {
+async function readDocument(supabase: SupabaseClient, key: string) {
   const { data, error } = await supabase
     .from("site_settings")
     .select("setting_value,updated_at")
@@ -57,6 +62,49 @@ export async function GET(request: Request) {
   } catch (error) {
     return NextResponse.json(
       { ok: false, error: error instanceof Error ? error.message : "Mağaza tasarımı okunamadı." },
+      { status: 400, headers: noStoreHeaders() },
+    );
+  }
+}
+
+export async function POST(request: Request) {
+  const auth = await requireAdmin(request);
+  if ("error" in auth) return auth.error;
+
+  const body = await request.json().catch(() => ({}));
+  const token = cleanPreviewToken(body?.token);
+  if (!token) {
+    return NextResponse.json(
+      { ok: false, error: "Önizleme tokenı gerekli." },
+      { status: 400, headers: noStoreHeaders() },
+    );
+  }
+
+  const document = normalizeThemeDocument(body?.document);
+  const now = new Date().toISOString();
+
+  try {
+    const { data, error } = await auth.supabase.from("site_settings").upsert({
+      setting_key: `${PREVIEW_PREFIX}${token}`,
+      setting_value: document,
+      is_public: false,
+      updated_at: now,
+    }, { onConflict: "setting_key" })
+      .select("setting_key,updated_at")
+      .single();
+
+    if (error) throw new Error(error.message);
+    if (!data) throw new Error("Önizleme taslağı doğrulanamadı.");
+
+    return NextResponse.json({
+      ok: true,
+      token,
+      revision: document.revision,
+      persistedAt: data.updated_at || now,
+    }, { headers: noStoreHeaders() });
+  } catch (error) {
+    return NextResponse.json(
+      { ok: false, error: error instanceof Error ? error.message : "Önizleme taslağı kaydedilemedi." },
       { status: 400, headers: noStoreHeaders() },
     );
   }
