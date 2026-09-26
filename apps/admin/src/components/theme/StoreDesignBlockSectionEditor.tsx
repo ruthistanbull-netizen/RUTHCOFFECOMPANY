@@ -180,6 +180,10 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
 
   const hasColumns = ["gallery-grid", "logo-cloud", "text-columns", "stats", "feature-grid", "trust-badges", "testimonials", "press-awards", "team"].includes(section.type);
   const hasGap = hasColumns || section.type === "slideshow";
+  const hasGenericBody = ["heading-subtext", "manifesto", "promo-banner", "shipping-returns-cta"].includes(section.type);
+  const hasAlign = ["heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta"].includes(section.type);
+  const hasLink = ["promo-banner", "shipping-returns-cta"].includes(section.type);
+  const showBlockComposer = allowedDefinitions.length > 0;
 
   return (
     <div className="fixed inset-0 z-[2147483607] grid place-items-center bg-black/35 p-3 backdrop-blur-sm">
@@ -203,6 +207,94 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                 Eyebrow
                 <input value={text(settings.eyebrow)} onChange={(event) => updateSetting("eyebrow", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
               </label>
+              {hasGenericBody ? (
+                <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                  Metin
+                  <textarea value={text(settings.body)} onChange={(event) => updateSetting("body", event.target.value)} className="min-h-24 resize-y rounded-lg border border-black/10 bg-white p-2.5 text-[9px] leading-5 outline-none" />
+                </label>
+              ) : null}
+              {section.type === "quote" ? (
+                <>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                    Alıntı
+                    <textarea value={text(settings.quote)} onChange={(event) => updateSetting("quote", event.target.value)} className="min-h-24 resize-y rounded-lg border border-black/10 bg-white p-2.5 text-[9px] leading-5 outline-none" />
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                    Atıf
+                    <input value={text(settings.attribution)} onChange={(event) => updateSetting("attribution", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                  </label>
+                </>
+              ) : null}
+              {section.type === "shipping-returns-cta" ? (
+                <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                  İkon / sembol
+                  <input value={text(settings.icon)} onChange={(event) => updateSetting("icon", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                </label>
+              ) : null}
+              {hasAlign ? (
+                <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                  Hizalama
+                  <select value={text(settings.align) || "center"} onChange={(event) => updateSetting("align", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                    <option value="left">Sol</option>
+                    <option value="center">Orta</option>
+                    <option value="right">Sağ</option>
+                  </select>
+                </label>
+              ) : null}
+              {["heading-subtext", "manifesto"].includes(section.type) ? (
+                <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                  Max genişlik
+                  <input value={text(settings.maxWidth) || "900px"} onChange={(event) => updateSetting("maxWidth", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" placeholder="900px" />
+                </label>
+              ) : null}
+              {hasLink ? (
+                <>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    CTA metni
+                    <input value={text(settings.linkLabel)} onChange={(event) => updateSetting("linkLabel", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    CTA bağlantısı
+                    <input value={text(settings.linkHref)} onChange={(event) => updateSetting("linkHref", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" placeholder="/pages/..." />
+                  </label>
+                </>
+              ) : null}
+              {section.type === "spacer" ? (
+                <>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Masaüstü yükseklik
+                    <input type="number" min={0} max={400} value={numberValue(settings.desktopHeight, 64)} onChange={(event) => updateSetting("desktopHeight", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Mobil yükseklik
+                    <input type="number" min={0} max={300} value={numberValue(settings.mobileHeight, 40)} onChange={(event) => updateSetting("mobileHeight", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                  </label>
+                </>
+              ) : null}
+              {section.type === "divider" ? (
+                <>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Genişlik
+                    <input value={text(settings.width) || "100%"} onChange={(event) => updateSetting("width", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Kalınlık
+                    <input type="number" min={1} max={12} value={numberValue(settings.thickness, 1)} onChange={(event) => updateSetting("thickness", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                  </label>
+                </>
+              ) : null}
+              {section.type === "anchor" ? (
+                <>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Anchor ID
+                    <input value={text(settings.anchorId)} onChange={(event) => updateSetting("anchorId", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                  </label>
+                  <label className="flex items-center justify-between gap-3 rounded-lg border border-black/10 bg-white p-2.5 text-[8px] font-semibold text-black/45">
+                    Etiketi erişilebilir içerikte tut
+                    <input type="checkbox" checked={settings.labelVisibility === true} onChange={(event) => updateSetting("labelVisibility", event.target.checked)} />
+                  </label>
+                </>
+              ) : null}
               {hasColumns ? (
                 <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                   Masaüstü kolon
@@ -237,6 +329,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
             </div>
           ) : null}
 
+          {showBlockComposer ? (
           <div className="mt-4 rounded-xl border border-black/[0.08]">
             <div className="flex flex-wrap items-center gap-2 border-b border-black/[0.07] bg-[#fafafa] p-3">
               <div className="min-w-0 flex-1">
@@ -312,6 +405,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
               {!blocks.length ? <p className="py-7 text-center text-[8px] text-black/35">Henüz blok yok. “Blok Ekle” ile section içeriğini oluştur.</p> : null}
             </div>
           </div>
+          ) : null}
         </div>
 
         <footer className="flex shrink-0 items-center gap-2 border-t border-black/10 bg-[#fafafa] p-3">
