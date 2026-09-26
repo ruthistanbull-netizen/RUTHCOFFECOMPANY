@@ -17,8 +17,19 @@ const LEGACY_RENDER_ALIASES: Record<string, string> = {
 function versionedMediaUrl(asset: MediaAsset | undefined) {
   if (!asset?.url) return undefined;
   const version = Math.max(1, Number(asset.version || 1));
-  const joiner = asset.url.includes("?") ? "&" : "?";
-  return `${asset.url}${joiner}v=${version}`;
+
+  try {
+    const url = new URL(asset.url);
+    url.searchParams.set("v", String(version));
+    return url.toString();
+  } catch {
+    const [withoutHash, hash = ""] = asset.url.split("#", 2);
+    const [pathname, query = ""] = withoutHash.split("?", 2);
+    const params = new URLSearchParams(query);
+    params.set("v", String(version));
+    const search = params.toString();
+    return `${pathname}${search ? `?${search}` : ""}${hash ? `#${hash}` : ""}`;
+  }
 }
 
 function focalPosition(asset: MediaAsset | undefined) {
