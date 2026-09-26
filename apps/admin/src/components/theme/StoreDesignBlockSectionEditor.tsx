@@ -403,10 +403,28 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                 <input type="number" min={0} max={240} value={numberValue(settings.paddingY, 64)} onChange={(event) => updateSetting("paddingY", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
               </label>
               {section.type === "slideshow" ? (
-                <label className="flex items-center justify-between gap-3 rounded-lg border border-black/10 bg-white p-2.5 text-[8px] font-semibold text-black/45">
-                  Autoplay
-                  <input type="checkbox" checked={settings.autoplay === true} onChange={(event) => updateSetting("autoplay", event.target.checked)} />
-                </label>
+                <>
+                  <label className="flex items-center justify-between gap-3 rounded-lg border border-black/10 bg-white p-2.5 text-[8px] font-semibold text-black/45">
+                    Autoplay
+                    <input type="checkbox" checked={settings.autoplay === true} onChange={(event) => updateSetting("autoplay", event.target.checked)} />
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Geçiş
+                    <select value={text(settings.transition) || "slide"} onChange={(event) => updateSetting("transition", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="slide">Slide</option>
+                      <option value="fade">Fade</option>
+                    </select>
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Autoplay süresi
+                    <select value={String(numberValue(settings.intervalMs, 5000))} onChange={(event) => updateSetting("intervalMs", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="3000">3 sn</option>
+                      <option value="5000">5 sn</option>
+                      <option value="7000">7 sn</option>
+                      <option value="10000">10 sn</option>
+                    </select>
+                  </label>
+                </>
               ) : null}
               {section.type === "timeline" ? (
                 <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
