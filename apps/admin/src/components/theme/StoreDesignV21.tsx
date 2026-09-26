@@ -336,7 +336,7 @@ function persistSemanticPatch(
   }
 
   const existingPage = next.pages[page.path];
-  const templateId = existingPage?.templateId || (page.template ? page.path : `route:${page.path}`);
+  const templateId = existingPage?.templateId || (page.template ? (next.templateBindings[page.path] || page.path) : `route:${page.path}`);
   const template = next.templates[templateId] || {
     id: templateId,
     label: page.template ? page.label : `${page.label} şablonu`,
