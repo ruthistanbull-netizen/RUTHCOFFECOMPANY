@@ -126,10 +126,16 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
       <section data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type="timeline" data-editor-label={title || "Timeline"} className="px-5 md:px-8" style={style}>
         <div className="mx-auto max-w-4xl">
           {heading}
-          <div className="border-l border-current/15 pl-5 md:pl-8">
+          <div className={text(settings.orientation) === "horizontal" ? "flex snap-x gap-5 overflow-x-auto pb-4" : "border-l border-current/15 pl-5 md:pl-8"}>
             {blocks.map((block) => (
-              <article key={block.id} data-editor-id={`block:${block.id}`} data-editor-type={blockSemanticType(block.type)} data-editor-label={text(block.settings.heading) || text(block.settings.date) || "Timeline Öğesi"} className="relative pb-10 last:pb-0">
-                <span className="absolute -left-[25px] top-1.5 h-2 w-2 rounded-full bg-current md:-left-[37px]" />
+              <article
+                key={block.id}
+                data-editor-id={`block:${block.id}`}
+                data-editor-type={blockSemanticType(block.type)}
+                data-editor-label={text(block.settings.heading) || text(block.settings.date) || "Timeline Öğesi"}
+                className={text(settings.orientation) === "horizontal" ? "min-w-[78%] snap-start rounded-xl border border-current/10 p-5 md:min-w-[38%]" : "relative pb-10 last:pb-0"}
+              >
+                {text(settings.orientation) === "horizontal" ? null : <span className="absolute -left-[25px] top-1.5 h-2 w-2 rounded-full bg-current md:-left-[37px]" />}
                 {text(block.settings.date) ? <p className="text-[9px] uppercase tracking-[0.14em] opacity-50">{text(block.settings.date)}</p> : null}
                 {text(block.settings.heading) ? <h3 className="mt-2 font-heading text-xl">{text(block.settings.heading)}</h3> : null}
                 {text(block.settings.body) ? <p className="mt-3 whitespace-pre-wrap text-sm leading-7 opacity-70">{text(block.settings.body)}</p> : null}
@@ -187,7 +193,7 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
           {heading}
           <div className="divide-y divide-current/10 border-y border-current/10">
             {blocks.map((block, index) => (
-              <details key={block.id} open={index === 0} data-editor-id={`block:${block.id}`} data-editor-type={blockSemanticType(block.type)} data-editor-label={text(block.settings.label) || "Sekme"}>
+              <details key={block.id} defaultOpen={index === 0} data-editor-id={`block:${block.id}`} data-editor-type={blockSemanticType(block.type)} data-editor-label={text(block.settings.label) || "Sekme"}>
                 <summary className="cursor-pointer list-none py-4 text-sm font-medium">{text(block.settings.label) || `Sekme ${index + 1}`}</summary>
                 {text(block.settings.body) ? <p className="pb-5 whitespace-pre-wrap text-sm leading-7 opacity-70">{text(block.settings.body)}</p> : null}
               </details>
@@ -306,6 +312,8 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
     const ctaHref = block?.settings.cta || settings.linkHref;
     const ctaLabel = text(settings.ctaLabel || settings.linkLabel) || "Keşfet";
     const side = text(settings.side) === "right" ? "right" : "left";
+    const contentWidth = ["40%", "50%", "60%"].includes(text(settings.contentWidth)) ? text(settings.contentWidth) : "50%";
+    const mediaWidth = contentWidth === "40%" ? "60%" : contentWidth === "60%" ? "40%" : "50%";
     const mediaNode = section.imageSrc
       ? section.v2MediaType === "video"
         ? <video src={section.imageSrc} poster={section.v2PosterUrl} className="h-full w-full object-cover" muted playsInline loop autoPlay />
@@ -321,9 +329,9 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
         className="px-5 md:px-8"
         style={style}
       >
-        <div className="mx-auto grid max-w-[1440px] overflow-hidden rounded-2xl border border-current/10 md:grid-cols-2">
-          <div className={side === "right" ? "md:order-2" : ""}>{mediaNode}</div>
-          <div className={`flex items-center p-7 md:p-12 ${side === "right" ? "md:order-1" : ""}`}>
+        <div className="mx-auto flex max-w-[1440px] flex-col overflow-hidden rounded-2xl border border-current/10 md:flex-row">
+          <div className={side === "right" ? "md:order-2" : ""} style={{ ["--split-media-width" as string]: mediaWidth, flexBasis: "var(--split-media-width)" }}>{mediaNode}</div>
+          <div className={`flex flex-1 items-center p-7 md:p-12 ${side === "right" ? "md:order-1" : ""}`} style={{ ["--split-content-width" as string]: contentWidth, flexBasis: "var(--split-content-width)" }}>
             <div>
               {heading ? <h2 className="font-heading text-[clamp(1.7rem,3vw,3rem)] leading-tight">{heading}</h2> : null}
               {body ? <p className="mt-4 whitespace-pre-wrap text-sm leading-7 opacity-70">{body}</p> : null}
@@ -371,8 +379,8 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
 
   if (type === "announcement-bar" || type === "marquee") {
     return (
-      <section data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={type === "announcement-bar" ? "announcement-section" : type} data-editor-label={title || (type === "marquee" ? "Marquee" : "Announcement Bar")} className="overflow-hidden border-y border-current/10 py-3" style={{ background: section.backgroundColor || "transparent", color: section.textColor || "inherit" }}>
-        <div className="flex min-w-max items-center gap-10 px-5">
+      <section data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={type === "announcement-bar" ? "announcement-section" : type} data-editor-label={title || (type === "marquee" ? "Marquee" : "Announcement Bar")} className="overflow-hidden border-y border-current/10 py-3" style={{ background: section.backgroundColor || "transparent", color: section.textColor || "inherit", ["--marquee-duration" as string]: `${Math.max(8, Math.min(80, number(settings.speed, 24, 8, 80)))}s` }}>
+        <div className={type === "marquee" ? `v2-marquee-track flex min-w-max items-center gap-10 px-5 ${settings.pause === true ? "v2-marquee-paused" : ""}` : "flex min-w-max items-center gap-10 px-5"}>
           {blocks.map((block) => {
             const label = text(block.settings.text);
             return (
@@ -382,6 +390,7 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
             );
           })}
         </div>
+        {type === "marquee" ? <style>{`@keyframes v2MarqueeMove{from{transform:translateX(0)}to{transform:translateX(-25%)}}.v2-marquee-track{animation:v2MarqueeMove var(--marquee-duration) linear infinite}.v2-marquee-paused{animation-play-state:paused}@media(prefers-reduced-motion:reduce){.v2-marquee-track{animation:none}}`}</style> : null}
       </section>
     );
   }
