@@ -588,6 +588,7 @@ export function themeMediaUsageCount(document: ThemeDocument, assetId: string) {
   count += countExactReference(document.templates, assetId);
   count += countExactReference(document.sections, assetId);
   count += countExactReference(document.blocks, assetId);
+  count += countExactReference(document.presets, assetId);
 
   for (const asset of Object.values(document.media)) {
     if (asset.assetId === assetId) continue;
@@ -1299,7 +1300,8 @@ export function validateThemeDocument(document: ThemeDocument) {
     }
   }
 
-  return { ok: errors.length === 0, errors };
+  const uniqueErrors = [...new Set(errors)];
+  return { ok: uniqueErrors.length === 0, errors: uniqueErrors };
 }
 
 export function createEmptyThemeDocument(): ThemeDocument {
