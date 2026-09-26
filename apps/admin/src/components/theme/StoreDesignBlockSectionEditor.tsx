@@ -227,14 +227,17 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   const hasColumns = ["gallery-grid", "masonry-gallery", "collage", "social-grid", "logo-cloud", "text-columns", "stats", "feature-grid", "trust-badges", "testimonials", "press-awards", "team"].includes(section.type);
   const hasGap = hasColumns || section.type === "slideshow";
   const mediaNarrative = ["hero", "video-hero", "video-banner", "background-media"].includes(section.type);
+  const brandStory = section.type === "brand-story";
+  const collectionCards = section.type === "collection-cards";
   const genericZeroBlock = ["hero", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta", "spacer", "divider", "anchor"].includes(section.type);
-  const hasGenericBody = ["hero", "video-hero", "video-banner", "heading-subtext", "manifesto", "promo-banner", "shipping-returns-cta"].includes(section.type);
+  const hasGenericBody = ["hero", "video-hero", "video-banner", "brand-story", "heading-subtext", "manifesto", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const hasAlign = ["hero", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta"].includes(section.type);
-  const hasLink = ["hero", "video-hero", "video-banner", "promo-banner", "shipping-returns-cta"].includes(section.type);
+  const hasLink = ["hero", "video-hero", "video-banner", "brand-story", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const showTitle = !["background-media", "quote", "spacer", "divider", "anchor"].includes(section.type);
   const showEyebrow = !genericZeroBlock && section.type !== "background-media";
   const showPadding = !["hero", "video-hero", "video-banner", "background-media", "spacer", "anchor"].includes(section.type);
   const primaryMedia = mediaNarrative && text(settings.imageAssetId) ? document.media[text(settings.imageAssetId)] : undefined;
+  const brandStoryMedia = brandStory && text(settings.imageAssetId) ? document.media[text(settings.imageAssetId)] : undefined;
   const showBlockComposer = allowedDefinitions.length > 0;
 
   return (
@@ -376,6 +379,98 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   </label>
                 </>
               ) : null}
+              {collectionCards ? (
+                <>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Veri kaynağı
+                    <div className="flex h-9 items-center rounded-lg border border-black/10 bg-white px-2.5 text-[8px] font-medium text-black/55">
+                      Katalog · aktif koleksiyonlar
+                    </div>
+                    <span className="text-[7px] font-normal leading-4 text-black/35">Koleksiyon üyeliği ve isim/slug verisi catalog servisinden read-only gelir.</span>
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Koleksiyon limiti
+                    <input type="number" min={1} max={12} value={numberValue(settings.limit, 4)} onChange={(event) => updateSetting("limit", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Masaüstü kolon
+                    <select value={String(numberValue(settings.columns, 2))} onChange={(event) => updateSetting("columns", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                    </select>
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Kart aralığı
+                    <select value={String(numberValue(settings.gap, 20))} onChange={(event) => updateSetting("gap", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="8">Sıkı · 8px</option>
+                      <option value="12">Dar · 12px</option>
+                      <option value="20">Orta · 20px</option>
+                      <option value="32">Geniş · 32px</option>
+                    </select>
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Kart oranı
+                    <select value={text(settings.ratio) || "16/10"} onChange={(event) => updateSetting("ratio", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="16/10">Yatay · 16:10</option>
+                      <option value="4/5">Dikey · 4:5</option>
+                      <option value="1/1">Kare · 1:1</option>
+                    </select>
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Başlık konumu
+                    <select value={text(settings.titlePlacement) || "overlay"} onChange={(event) => updateSetting("titlePlacement", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="overlay">Görsel üzerinde</option>
+                      <option value="below">Görsel altında</option>
+                    </select>
+                  </label>
+                </>
+              ) : null}
+
+              {brandStory ? (
+                <>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                    Marka hikayesi medyası
+                    <div className="flex gap-2">
+                      <select value={text(settings.imageAssetId)} onChange={(event) => updateSetting("imageAssetId", event.target.value)} className="h-9 min-w-0 flex-1 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                        <option value="">Mevcut marka hikayesi görselini kullan</option>
+                        {mediaAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.type} · {asset.assetId} · v{asset.version || 1}</option>)}
+                      </select>
+                      <button type="button" onClick={() => setMediaPicker({ key: "imageAssetId", mediaType: "any" })} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
+                        Media Library
+                      </button>
+                    </div>
+                    <span className="text-[7px] font-normal leading-4 text-black/35">Responsive varyant ve focal point Media Library asset kaydından gelir.</span>
+                  </label>
+                  {brandStoryMedia?.type === "video" ? (
+                    <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                      Video politikası
+                      <select value={text(settings.playbackPreset) || "ambient"} onChange={(event) => updateSetting("playbackPreset", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                        <option value="ambient">Autoplay · sessiz · loop</option>
+                        <option value="once">Autoplay · sessiz · tek oynatım</option>
+                        <option value="controls">Kontrollü oynatıcı</option>
+                      </select>
+                    </label>
+                  ) : null}
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Medya konumu
+                    <select value={text(settings.side) || "left"} onChange={(event) => updateSetting("side", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="left">Sol</option>
+                      <option value="right">Sağ</option>
+                    </select>
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    İçerik genişliği
+                    <select value={text(settings.contentWidth) || "50%"} onChange={(event) => updateSetting("contentWidth", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="40%">40%</option>
+                      <option value="50%">50%</option>
+                      <option value="60%">60%</option>
+                    </select>
+                  </label>
+                </>
+              ) : null}
+
               {section.type === "quote" ? (
                 <>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
