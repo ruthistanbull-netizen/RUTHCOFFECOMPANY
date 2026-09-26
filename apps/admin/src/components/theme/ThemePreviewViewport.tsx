@@ -27,12 +27,21 @@ function canonicalPreviewUrl(frame: HTMLIFrameElement) {
 export function ThemePreviewViewport() {
   useEffect(() => {
     let stopped = false;
+    let frameObserver: MutationObserver | null = null;
+    let currentFrame: HTMLIFrameElement | null = null;
 
     const syncPreviewOrigin = () => {
       if (stopped) return;
       const root = document.querySelector("[data-theme-customizer-v4]") as HTMLElement | null;
       const frame = root?.querySelector("iframe") as HTMLIFrameElement | null;
       if (!frame) return;
+
+      if (frame !== currentFrame) {
+        frameObserver?.disconnect();
+        currentFrame = frame;
+        frameObserver = new MutationObserver(syncPreviewOrigin);
+        frameObserver.observe(frame, { attributes: true, attributeFilter: ["src"] });
+      }
 
       let origin = "";
       try { origin = new URL(frame.src).origin; }
@@ -44,11 +53,14 @@ export function ThemePreviewViewport() {
       }
     };
 
+    const rootObserver = new MutationObserver(syncPreviewOrigin);
+    rootObserver.observe(document.body, { childList: true, subtree: true });
     syncPreviewOrigin();
-    const interval = window.setInterval(syncPreviewOrigin, 1000);
+
     return () => {
       stopped = true;
-      window.clearInterval(interval);
+      rootObserver.disconnect();
+      frameObserver?.disconnect();
     };
   }, []);
 
