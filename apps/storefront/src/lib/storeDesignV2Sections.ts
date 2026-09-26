@@ -3,6 +3,7 @@ import {
   type ThemeSection,
 } from "@ruth-commerce/commerce-core/theme-sections";
 import type {
+  BlockInstance,
   MediaAsset,
   PageRecord,
   ThemeDocument,
@@ -55,7 +56,7 @@ export function storeDesignSectionsForPage(document: ThemeDocument, page: PageRe
       const faqItems = section.type === "faq"
         ? (section.blockIds || [])
             .map((blockId) => document.blocks[blockId])
-            .filter((block) => block?.type === "faq-item")
+            .filter((block): block is BlockInstance => Boolean(block && block.type === "faq-item"))
             .map((block) => ({
               id: block.id,
               question: typeof block.settings.question === "string" ? block.settings.question : "",
