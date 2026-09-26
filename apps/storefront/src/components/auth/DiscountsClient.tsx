@@ -89,7 +89,13 @@ export function DiscountsClient() {
         {discounts.length ? (
           <div className="grid gap-4 md:grid-cols-2">
             {discounts.map((discount) => (
-              <div key={discount.code} className="rounded-2xl border border-kraft/35 bg-carbon-soft p-5">
+              <div
+                key={discount.code}
+                data-editor-id={`discount-card:${discount.code}`}
+                data-editor-type="discount-card"
+                data-editor-label="İndirim Kartı"
+                className="rounded-2xl border border-kraft/35 bg-carbon-soft p-5"
+              >
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <p className="text-xs uppercase tracking-wide-luxe text-cream/70">Aktif indirim</p>
