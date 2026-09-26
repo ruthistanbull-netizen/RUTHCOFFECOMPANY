@@ -7,8 +7,9 @@ export const SEMANTIC_RUNTIME_PATCH_EVENT = "store-design-v2:runtime-patch";
 
 export type SemanticRuntimePatch = {
   key: string;
-  selectorMode: "id" | "type";
+  selectorMode: "id" | "type" | "sectionType";
   selectorValue: string;
+  targetType?: string;
   path: string;
   value: unknown;
   scope: EditorScope;
@@ -32,8 +33,13 @@ function declaration(path: string, value: unknown) {
 }
 
 function selectorFor(patch: SemanticRuntimePatch) {
-  const attribute = patch.selectorMode === "type" ? "data-editor-type" : "data-editor-id";
-  const selector = `[${attribute}=${cssString(patch.selectorValue)}]`;
+  let selector = "";
+  if (patch.selectorMode === "sectionType" && patch.targetType) {
+    selector = `[data-editor-id=${cssString(patch.selectorValue)}] [data-editor-type=${cssString(patch.targetType)}]`;
+  } else {
+    const attribute = patch.selectorMode === "type" ? "data-editor-type" : "data-editor-id";
+    selector = `[${attribute}=${cssString(patch.selectorValue)}]`;
+  }
   if (patch.path === "media.objectFit") return `${selector},${selector} img,${selector} video`;
   return selector;
 }
