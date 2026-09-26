@@ -311,6 +311,7 @@ for (const token of [
   "featured-collection",
   "category-cards",
   "product-comparison",
+  "best-sellers",
   "scroll-story",
   "Media Library",
   "Oynatma politikası",
@@ -329,6 +330,8 @@ for (const token of [
   "Karşılaştırılacak ürünler · 2-4 seçim",
   "Karşılaştırma alanları",
   "Tablo · mobilde yatay kaydırma",
+  "Otomatik · ödenmiş sipariş miktarları",
+  "Tarih penceresi",
   "Scroll uzunluğu",
   "Geçiş preset",
   "KAYDIR cue göster",
@@ -348,6 +351,7 @@ for (const token of [
   'section("featured-collection"',
   'section("category-cards"',
   'section("product-comparison"',
+  'section("best-sellers"',
   'section("collection-cards"',
   'section("brand-story"',
   'component("scroll-story-slide"',
@@ -362,7 +366,7 @@ for (const token of ["new-arrivals", "sale-products", "Otomatik · yeni ürün i
 }
 
 const themeSections = read("packages/commerce-core/src/theme-sections.ts");
-for (const token of ['| "product-spotlight"', '| "featured-collection"', '| "category-cards"', '| "product-comparison"', '| "new-arrivals"', '| "sale-products"', 'layout?: "slider" | "grid"', 'badgeStyle?: "pill" | "outline" | "minimal"', "mobileAssetUrl?: string", "mobileObjectPosition?: string"]) {
+for (const token of ['| "product-spotlight"', '| "featured-collection"', '| "category-cards"', '| "product-comparison"', '| "best-sellers"', '| "new-arrivals"', '| "sale-products"', 'layout?: "slider" | "grid"', 'badgeStyle?: "pill" | "outline" | "minimal"', "mobileAssetUrl?: string", "mobileObjectPosition?: string"]) {
   if (!themeSections.includes(token)) fail(`Product preset render contract eksik: ${token}`);
 }
 
@@ -378,6 +382,7 @@ for (const token of [
   'section.type === "featured-collection"',
   'section.type === "category-cards"',
   'section.type === "product-comparison"',
+  'section.type === "best-sellers"',
   "formatPrice",
   "customCollectionCards",
   "--collection-columns",
@@ -388,7 +393,7 @@ for (const token of [
 }
 
 for (const token of [
-  '["hero", "product-spotlight", "featured-collection", "category-cards", "product-comparison", "collection-cards", "brand-story"]',
+  '["hero", "product-spotlight", "featured-collection", "category-cards", "product-comparison", "best-sellers", "collection-cards", "brand-story"]',
   'section.type === "scroll-story"',
   "hydrateV2Blocks",
   "mobileAssetUrl",
@@ -413,6 +418,22 @@ for (const token of [
 
 const productCard = read("apps/storefront/src/components/ProductCard.tsx");
 if (!productCard.includes("--theme-sale-badge-bg")) fail("Sale badge style preset ProductCard'a bağlı değil.");
+
+const catalogCache = read("apps/storefront/src/data/catalogCache.ts");
+for (const token of [
+  "getCachedBestSellingProducts",
+  "paidBestSellerOrder",
+  "testBestSellerOrder",
+  '.from("orders")',
+  "order_items (product_id, product_slug, quantity)",
+]) {
+  if (!catalogCache.includes(token)) fail(`Best Sellers read-only order ranking eksik: ${token}`);
+}
+
+const storefrontHomePage = read("apps/storefront/src/app/page.tsx");
+for (const token of ["bestSellerWindows", "getCachedBestSellingProducts", "bestSellerProductsByWindow"]) {
+  if (!storefrontHomePage.includes(token)) fail(`Best Sellers server prefetch eksik: ${token}`);
+}
 
 note(`Section library: ${implementedSectionTypes.length} runtime hazır · ${pendingSectionTypes.length} kapalı/pending`);
 
