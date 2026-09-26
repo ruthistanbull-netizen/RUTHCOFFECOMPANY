@@ -6,6 +6,7 @@ import {
   BLOCK_LIBRARY_BY_TYPE,
   SECTION_LIBRARY_BY_TYPE,
   STORE_DESIGN_SCHEMA_VERSION,
+  normalizeStoreDesignAnchorId,
   type BlockDefinition,
   type BlockInstance,
   type SectionInstance,
@@ -118,7 +119,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   const [busy, setBusy] = useState(false);
 
   const mediaAssets = useMemo(() => Object.values(document.media), [document.media]);
-  const maxBlocks = definition?.maxBlocks || 50;
+  const maxBlocks = definition?.allowedBlocks.length ? (definition.maxBlocks || 50) : 0;
 
   const updateSetting = (key: string, value: unknown) => {
     setSettings((current) => ({ ...current, [key]: value }));
@@ -144,6 +145,17 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   const save = async () => {
     if (busy) return;
     if (blocks.length > maxBlocks) return toast.error(`Block sayısı maxBlocks sınırını aşıyor (${maxBlocks}).`);
+
+    if (section.type === "anchor") {
+      const anchorId = normalizeStoreDesignAnchorId(text(settings.anchorId));
+      if (!anchorId) return toast.error("Anchor ID boş olamaz.");
+      const duplicate = Object.values(document.sections).find((item) =>
+        item.id !== section.id
+        && item.type === "anchor"
+        && normalizeStoreDesignAnchorId(text(item.settings?.anchorId)) === anchorId);
+      if (duplicate) return toast.error(`Bu Anchor ID zaten kullanılıyor: ${anchorId}`);
+      settings.anchorId = anchorId;
+    }
 
     setBusy(true);
     try {
@@ -174,7 +186,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
         schemaVersion: STORE_DESIGN_SCHEMA_VERSION,
       };
 
-      await onApply(next, `${definition?.label || section.type} blokları güncellendi`);
+      await onApply(next, `${definition?.label || section.type} ${showBlockComposer ? "blokları " : ""}güncellendi`);
       onClose();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Bölüm kaydedilemedi.");
@@ -185,9 +197,13 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
 
   const hasColumns = ["gallery-grid", "masonry-gallery", "collage", "social-grid", "logo-cloud", "text-columns", "stats", "feature-grid", "trust-badges", "testimonials", "press-awards", "team"].includes(section.type);
   const hasGap = hasColumns || section.type === "slideshow";
+  const genericZeroBlock = ["heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta", "spacer", "divider", "anchor"].includes(section.type);
   const hasGenericBody = ["heading-subtext", "manifesto", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const hasAlign = ["heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const hasLink = ["promo-banner", "shipping-returns-cta"].includes(section.type);
+  const showTitle = !["quote", "spacer", "divider", "anchor"].includes(section.type);
+  const showEyebrow = !genericZeroBlock;
+  const showPadding = !["spacer", "anchor"].includes(section.type);
   const showBlockComposer = allowedDefinitions.length > 0;
 
   return (
@@ -204,14 +220,18 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
         <div className="min-h-0 flex-1 overflow-y-auto p-4">
           {!["announcement-bar", "marquee"].includes(section.type) ? (
             <div className="grid gap-3 rounded-xl border border-black/[0.08] bg-[#fafafa] p-3 md:grid-cols-2">
-              <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                Bölüm başlığı
-                <input value={text(settings.title)} onChange={(event) => updateSetting("title", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
-              </label>
-              <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                Eyebrow
-                <input value={text(settings.eyebrow)} onChange={(event) => updateSetting("eyebrow", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
-              </label>
+              {showTitle ? (
+                <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                  Bölüm başlığı
+                  <input value={text(settings.title)} onChange={(event) => updateSetting("title", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                </label>
+              ) : null}
+              {showEyebrow ? (
+                <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                  Eyebrow
+                  <input value={text(settings.eyebrow)} onChange={(event) => updateSetting("eyebrow", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                </label>
+              ) : null}
               {hasGenericBody ? (
                 <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
                   Metin
@@ -255,6 +275,38 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   <input value={text(settings.icon)} onChange={(event) => updateSetting("icon", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
                 </label>
               ) : null}
+              {section.type === "heading-subtext" ? (
+                <>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Başlık rolü
+                    <select value={text(settings.role) || "h2"} onChange={(event) => updateSetting("role", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="h1">H1</option>
+                      <option value="h2">H2</option>
+                      <option value="h3">H3</option>
+                      <option value="h4">H4</option>
+                    </select>
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Boyut preset
+                    <select value={text(settings.size) || "lg"} onChange={(event) => updateSetting("size", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="sm">S</option>
+                      <option value="md">M</option>
+                      <option value="lg">L</option>
+                      <option value="xl">XL</option>
+                    </select>
+                  </label>
+                </>
+              ) : null}
+              {section.type === "manifesto" ? (
+                <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                  Tipografi preset
+                  <select value={text(settings.typography) || "display"} onChange={(event) => updateSetting("typography", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                    <option value="display">Display</option>
+                    <option value="editorial">Editorial</option>
+                    <option value="compact">Compact</option>
+                  </select>
+                </label>
+              ) : null}
               {hasAlign ? (
                 <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                   Hizalama
@@ -267,8 +319,13 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
               ) : null}
               {["heading-subtext", "manifesto"].includes(section.type) ? (
                 <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                  Max genişlik
-                  <input value={text(settings.maxWidth) || "900px"} onChange={(event) => updateSetting("maxWidth", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" placeholder="900px" />
+                  Max genişlik preset
+                  <select value={text(settings.maxWidth) || "900px"} onChange={(event) => updateSetting("maxWidth", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                    <option value="640px">Dar · 640</option>
+                    <option value="800px">Orta · 800</option>
+                    <option value="900px">Geniş · 900</option>
+                    <option value="1100px">XL · 1100</option>
+                  </select>
                 </label>
               ) : null}
               {hasLink ? (
@@ -286,24 +343,46 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
               {section.type === "spacer" ? (
                 <>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                    Masaüstü yükseklik
-                    <input type="number" min={0} max={400} value={numberValue(settings.desktopHeight, 64)} onChange={(event) => updateSetting("desktopHeight", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                    Masaüstü yükseklik preset
+                    <select value={String(numberValue(settings.desktopHeight, 64))} onChange={(event) => updateSetting("desktopHeight", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      {[0, 16, 24, 32, 40, 48, 64, 80, 96, 120, 160, 200, 240].map((value) => <option key={value} value={value}>{value}px</option>)}
+                    </select>
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                    Mobil yükseklik
-                    <input type="number" min={0} max={300} value={numberValue(settings.mobileHeight, 40)} onChange={(event) => updateSetting("mobileHeight", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                    Mobil yükseklik preset
+                    <select value={String(numberValue(settings.mobileHeight, 40))} onChange={(event) => updateSetting("mobileHeight", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      {[0, 16, 24, 32, 40, 48, 64, 80, 96, 120, 160].map((value) => <option key={value} value={value}>{value}px</option>)}
+                    </select>
                   </label>
                 </>
               ) : null}
               {section.type === "divider" ? (
                 <>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                    Genişlik
-                    <input value={text(settings.width) || "100%"} onChange={(event) => updateSetting("width", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                    Genişlik preset
+                    <select value={text(settings.width) || "100%"} onChange={(event) => updateSetting("width", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="25%">25%</option>
+                      <option value="50%">50%</option>
+                      <option value="75%">75%</option>
+                      <option value="100%">100%</option>
+                    </select>
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                    Kalınlık
-                    <input type="number" min={1} max={12} value={numberValue(settings.thickness, 1)} onChange={(event) => updateSetting("thickness", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                    Kalınlık preset
+                    <select value={String(numberValue(settings.thickness, 1))} onChange={(event) => updateSetting("thickness", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="1">İnce · 1px</option>
+                      <option value="2">Orta · 2px</option>
+                      <option value="4">Kalın · 4px</option>
+                    </select>
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                    Renk tokenı
+                    <select value={text(settings.colorToken) || "subtle"} onChange={(event) => updateSetting("colorToken", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="subtle">Subtle</option>
+                      <option value="muted">Muted</option>
+                      <option value="strong">Strong</option>
+                      <option value="current">Current</option>
+                    </select>
                   </label>
                 </>
               ) : null}
@@ -398,10 +477,12 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   <input type="number" min={0} max={100} value={numberValue(settings.gap, 20)} onChange={(event) => updateSetting("gap", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
                 </label>
               ) : null}
-              <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                Dikey boşluk
-                <input type="number" min={0} max={240} value={numberValue(settings.paddingY, 64)} onChange={(event) => updateSetting("paddingY", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
-              </label>
+              {showPadding ? (
+                <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                  Dikey boşluk
+                  <input type="number" min={0} max={240} value={numberValue(settings.paddingY, 64)} onChange={(event) => updateSetting("paddingY", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                </label>
+              ) : null}
               {section.type === "slideshow" ? (
                 <>
                   <label className="flex items-center justify-between gap-3 rounded-lg border border-black/10 bg-white p-2.5 text-[8px] font-semibold text-black/45">
