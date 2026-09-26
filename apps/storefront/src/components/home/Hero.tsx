@@ -548,6 +548,9 @@ function HorizontalPortfolioStory({
           gap:clamp(32px,4vw,60px);
           align-items:center;
         }
+        .home-horizontal-story-copy{
+          padding-top:92px;
+        }
         .home-horizontal-story-label{
           margin-bottom:20px;
           font-family:var(--font-body);
@@ -622,6 +625,7 @@ function HorizontalPortfolioStory({
           }
           .home-horizontal-story-copy{
             align-self:end;
+            padding-top:84px;
           }
           .home-horizontal-story-label{
             margin-bottom:12px;
