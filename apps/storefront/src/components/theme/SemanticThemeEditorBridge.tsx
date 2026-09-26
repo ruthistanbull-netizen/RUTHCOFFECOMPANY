@@ -38,6 +38,11 @@ function editorEnabled() {
 
 function parentOrigin() {
   try {
+    const explicit = new URLSearchParams(window.location.search).get("editorOrigin");
+    if (explicit) {
+      const url = new URL(explicit);
+      if (url.protocol === "https:" || url.protocol === "http:") return url.origin;
+    }
     return document.referrer ? new URL(document.referrer).origin : "";
   } catch {
     return "";
@@ -341,6 +346,8 @@ export function SemanticThemeEditorBridge() {
         const url = new URL(next, window.location.origin);
         url.searchParams.set("themeEditor", "1");
         url.searchParams.set("storeDesignV2", "1");
+        const editorOrigin = new URLSearchParams(window.location.search).get("editorOrigin");
+        if (editorOrigin) url.searchParams.set("editorOrigin", editorOrigin);
         window.location.assign(url.toString());
       }
     };
