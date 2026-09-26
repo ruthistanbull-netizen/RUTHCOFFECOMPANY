@@ -194,34 +194,17 @@ function EditorialMedia({
     : mobileViewport
       ? -360
       : -540;
-  const cueStartY = mobileViewport ? -280 : -380;
-
-  // Scroll-locked, but with a damped follower. The copy tracks both down/up
-  // scrolling and keeps a small amount of physical easing instead of snapping.
+  // Keep the editorial copy on one fixed horizontal rail.
+  // Only X and opacity change with scroll: no Y drift, scale or rotation.
   const cueX = useTransform(
     cueSmoothProgress,
     [0, 0.16, 0.42, 0.72, 1],
     [cueStartX, cueStartX * 0.82, cueStartX * 0.5, cueStartX * 0.18, 0],
   );
-  const cueY = useTransform(
-    cueSmoothProgress,
-    [0, 0.18, 0.48, 0.76, 1],
-    [cueStartY, cueStartY * 0.78, cueStartY * 0.42, cueStartY * 0.14, 0],
-  );
   const cueOpacity = useTransform(
     cueSmoothProgress,
     [0, 0.08, 0.22, 0.46, 1],
     [0, 0.18, 0.62, 1, 1],
-  );
-  const cueScale = useTransform(
-    cueSmoothProgress,
-    [0, 0.22, 0.55, 1],
-    [0.9, 0.94, 0.985, 1],
-  );
-  const cueRotate = useTransform(
-    cueSmoothProgress,
-    [0, 0.5, 1],
-    [index === 2 && mobileViewport ? 1.8 : -1.8, index === 2 && mobileViewport ? 0.6 : -0.6, 0],
   );
   const wrapperClass = index === 0
     ? "absolute inset-0 overflow-hidden"
@@ -377,10 +360,7 @@ function EditorialMedia({
             className="home-editorial-cue home-editorial-cue--second pointer-events-none absolute left-[10vw] top-[38%] z-30 max-w-[84vw] md:left-[14vw] md:top-[40%] md:max-w-[48vw]"
             style={{
               x: cueX,
-              y: cueY,
               opacity: cueOpacity,
-              scale: cueScale,
-              rotate: cueRotate,
               transformOrigin: "left center",
               willChange: "transform, opacity",
             }}
@@ -400,10 +380,7 @@ function EditorialMedia({
               left: mobileViewport ? "auto" : undefined,
               right: mobileViewport ? "10vw" : undefined,
               x: cueX,
-              y: cueY,
               opacity: cueOpacity,
-              scale: cueScale,
-              rotate: cueRotate,
               transformOrigin: mobileViewport ? "right center" : "left center",
               textAlign: mobileViewport ? "right" : "left",
               willChange: "transform, opacity",
