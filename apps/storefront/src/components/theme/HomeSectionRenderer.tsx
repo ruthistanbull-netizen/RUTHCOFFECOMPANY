@@ -301,8 +301,164 @@ export function HomeSectionRenderer({
 
   if (section.type === "hero") return <div data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}><Hero heroImages={heroImages} editorialVideo={editorialVideo} editorialImage={editorialImage} themeSettings={themeSettings} /></div>;
   if (section.type === "scroll-story") return <div data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}><ScrollStory images={scrollImages} themeSettings={themeSettings} /></div>;
+
+  const collectionV2Settings = section.type === "collections" ? section.v2Settings : undefined;
+  const customCollectionCards = section.type === "collections" && collectionV2Settings && Object.keys(collectionV2Settings).length > 0;
+  if (section.type === "collections" && customCollectionCards) {
+    const limit = Math.round(settingNumber(collectionV2Settings, "limit", 4, 1, 12));
+    const columns = Math.round(settingNumber(collectionV2Settings, "columns", 2, 1, 4));
+    const gap = settingNumber(collectionV2Settings, "gap", 20, 0, 64);
+    const paddingY = settingNumber(collectionV2Settings, "paddingY", 80, 0, 240);
+    const ratio = ["16/10", "4/5", "1/1"].includes(settingText(collectionV2Settings, "ratio"))
+      ? settingText(collectionV2Settings, "ratio")
+      : "16/10";
+    const titlePlacement = settingText(collectionV2Settings, "titlePlacement") === "below" ? "below" : "overlay";
+    const title = settingText(collectionV2Settings, "title") || "Koleksiyonlar";
+    const eyebrow = settingText(collectionV2Settings, "eyebrow") || "Keşfet";
+    const visibleCollections = [...collections]
+      .filter((collection) => collection.status === "active")
+      .sort((left, right) => (left.sort_order ?? 9999) - (right.sort_order ?? 9999) || left.name.localeCompare(right.name, "tr"))
+      .slice(0, limit);
+    const ratioStyle = ratio === "4/5" ? "4 / 5" : ratio === "1/1" ? "1 / 1" : "16 / 10";
+
+    if (!visibleCollections.length) return null;
+
+    return (
+      <section
+        data-theme-section-id={section.id}
+        data-editor-id={`section:${section.id}`}
+        data-editor-type={semanticSectionType(section)}
+        data-editor-label={title}
+        className="bg-carbon px-4 text-cream md:px-8"
+        style={{ paddingTop: paddingY, paddingBottom: paddingY }}
+      >
+        <div className="mx-auto max-w-[1440px]">
+          {(eyebrow || title) ? (
+            <div className="mb-10 text-center md:mb-14">
+              {eyebrow ? <p className="mb-3 text-[10px] font-medium uppercase tracking-[0.22em] text-brick">{eyebrow}</p> : null}
+              {title ? <h2 className="font-heading font-editorial text-[clamp(1.9rem,4vw,3.2rem)] font-normal">{title}</h2> : null}
+            </div>
+          ) : null}
+          <div
+            className="v2-collection-card-grid"
+            style={{
+              ["--collection-columns" as string]: String(columns),
+              ["--collection-gap" as string]: `${gap}px`,
+            }}
+          >
+            {visibleCollections.map((collection) => (
+              <Link
+                key={collection.id}
+                href={`/collections/${collection.slug}`}
+                className="group block min-w-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brick"
+              >
+                <div className="overflow-hidden">
+                  <div className="relative overflow-hidden rounded-[22px] bg-cream" style={{ aspectRatio: ratioStyle }}>
+                    {collection.cover_image_url ? (
+                      <img src={collection.cover_image_url} alt={collection.name} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]" />
+                    ) : (
+                      <div className="ruth-card-gradient h-full w-full" />
+                    )}
+                    {titlePlacement === "overlay" ? (
+                      <>
+                        <div className="absolute inset-0 bg-gradient-to-t from-ink/55 via-ink/5 to-transparent" />
+                        <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
+                          <p className="mb-1 text-[9px] font-medium uppercase tracking-[0.18em] text-cream/80">Koleksiyon</p>
+                          <h3 className="font-heading font-editorial text-xl font-normal text-cream md:text-2xl">{collection.name}</h3>
+                        </div>
+                      </>
+                    ) : null}
+                  </div>
+                  {titlePlacement === "below" ? (
+                    <div className="pt-4">
+                      <p className="text-[9px] font-medium uppercase tracking-[0.18em] text-brick">Koleksiyon</p>
+                      <h3 className="mt-1 font-heading font-editorial text-xl font-normal text-cream md:text-2xl">{collection.name}</h3>
+                    </div>
+                  ) : null}
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+        <style>{`.v2-collection-card-grid{display:grid;grid-template-columns:1fr;gap:var(--collection-gap)}@media(min-width:640px){.v2-collection-card-grid{grid-template-columns:repeat(min(2,var(--collection-columns)),minmax(0,1fr))}}@media(min-width:768px){.v2-collection-card-grid{grid-template-columns:repeat(var(--collection-columns),minmax(0,1fr))}}`}</style>
+      </section>
+    );
+  }
+
   if (section.type === "collections") return <div data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}><CollectionCards collections={collections} /></div>;
   if (section.type === "featured-products" && !hasProductSectionCustomization(section)) return <div data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}><FeaturedProducts products={featuredProducts} /></div>;
+
+  const brandV2Settings = section.type === "brand-story" ? section.v2Settings : undefined;
+  const customBrandStory = section.type === "brand-story" && brandV2Settings && Object.keys(brandV2Settings).length > 0;
+  if (section.type === "brand-story" && customBrandStory) {
+    const side = settingText(brandV2Settings, "side") === "right" ? "right" : "left";
+    const contentWidthValue = settingText(brandV2Settings, "contentWidth");
+    const contentWidth = ["40%", "50%", "60%"].includes(contentWidthValue) ? contentWidthValue : "50%";
+    const mediaWidth = contentWidth === "40%" ? "60%" : contentWidth === "60%" ? "40%" : "50%";
+    const paddingY = settingNumber(brandV2Settings, "paddingY", 96, 0, 240);
+    const title = settingText(brandV2Settings, "title") || "Marka Hikayesi";
+    const eyebrow = settingText(brandV2Settings, "eyebrow");
+    const body = settingText(brandV2Settings, "body");
+    const linkLabel = settingText(brandV2Settings, "linkLabel");
+    const linkHref = safeSectionHref(settingText(brandV2Settings, "linkHref"));
+    const mediaSrc = section.imageSrc || "/home/rosta-under-hero-photo.jpg";
+    const mobileMediaSrc = section.mobileImageSrc || mediaSrc;
+    const mediaIsVideo = section.imageSrc ? section.v2MediaType === "video" : isVideoSource(mediaSrc);
+    const playback = heroPlayback(brandV2Settings);
+    const poster = section.v2PosterUrl;
+    const mediaOrderClass = side === "right" ? "md:order-2" : "";
+    const contentOrderClass = side === "right" ? "md:order-1" : "";
+
+    return (
+      <section
+        data-theme-section-id={section.id}
+        data-editor-id={`section:${section.id}`}
+        data-editor-type={semanticSectionType(section)}
+        data-editor-label={title}
+        className="bg-carbon-soft px-4 text-cream md:px-8"
+        style={{ paddingTop: paddingY, paddingBottom: paddingY }}
+      >
+        <div className="mx-auto flex max-w-7xl flex-col items-stretch gap-10 md:flex-row md:gap-16">
+          <div className={`min-w-0 overflow-hidden rounded-2xl ${mediaOrderClass}`} style={{ flexBasis: mediaWidth }}>
+            {mediaIsVideo ? (
+              <video
+                className="h-full min-h-[360px] w-full object-cover"
+                poster={poster}
+                autoPlay={playback.autoPlay}
+                muted={playback.muted}
+                loop={playback.loop}
+                controls={playback.controls}
+                playsInline
+                preload="metadata"
+                style={{ objectPosition: section.imageObjectPosition || "50% 50%" }}
+              >
+                {section.mobileImageSrc ? <source media="(max-width: 767px)" src={mobileMediaSrc} /> : null}
+                <source src={mediaSrc} />
+              </video>
+            ) : (
+              <picture className="block h-full min-h-[360px]">
+                {section.mobileImageSrc ? <source media="(max-width: 767px)" srcSet={mobileMediaSrc} /> : null}
+                <img src={mediaSrc} alt="" className="h-full min-h-[360px] w-full object-cover" style={{ objectPosition: section.imageObjectPosition || "50% 50%" }} />
+              </picture>
+            )}
+          </div>
+          <div className={`flex min-w-0 items-center ${contentOrderClass}`} style={{ flexBasis: contentWidth }}>
+            <div className="max-w-2xl">
+              {eyebrow ? <p className="mb-4 text-xs uppercase tracking-wide-luxe text-brick">{eyebrow}</p> : null}
+              {title ? <h2 className="font-heading font-editorial text-[clamp(2rem,5vw,4rem)] leading-tight">{title}</h2> : null}
+              {body ? <p className="mt-6 whitespace-pre-wrap leading-8 text-cream/75">{body}</p> : null}
+              {linkLabel && linkHref ? (
+                <Link href={linkHref} className="mt-8 inline-flex rounded-full border border-kraft/45 px-7 py-3 text-[10px] uppercase tracking-[0.14em] text-cream">
+                  {linkLabel}
+                </Link>
+              ) : null}
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   if (section.type === "brand-story") return <div data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}><BrandStory /></div>;
   if (section.type === "trust") return <div data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}><TrustSection freeShippingThreshold={freeShippingThreshold} /></div>;
 
