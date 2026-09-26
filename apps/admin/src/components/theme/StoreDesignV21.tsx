@@ -64,6 +64,7 @@ type SelectedTarget = {
     width?: number;
     height?: number;
     media?: { src?: string; objectFit?: string; objectPosition?: string } | null;
+    grid?: { columns?: number; gapX?: number; gapY?: number } | null;
   };
 };
 
@@ -165,6 +166,9 @@ function sectionRegistration(target: SelectedTarget) {
 
 function snapshotValue(target: SelectedTarget, path: string) {
   if (path === "media.objectFit") return target.current.media?.objectFit || "cover";
+  if (path === "grid.columns") return target.current.grid?.columns ?? 2;
+  if (path === "grid.gapX") return target.current.grid?.gapX ?? 16;
+  if (path === "grid.gapY") return target.current.grid?.gapY ?? 32;
   if (path === "textAlign") return target.current.textAlign || "left";
   if (path === "borderRadius") return target.current.borderRadius || 0;
   if (path === "opacity") return target.current.opacity ?? 1;
@@ -175,6 +179,16 @@ function snapshotValue(target: SelectedTarget, path: string) {
 function updateTargetSnapshot(target: SelectedTarget, path: string, value: unknown): SelectedTarget {
   if (path === "media.objectFit") {
     return { ...target, current: { ...target.current, media: { ...(target.current.media || {}), objectFit: String(value) } } };
+  }
+  if (path.startsWith("grid.")) {
+    const key = path.slice("grid.".length) as "columns" | "gapX" | "gapY";
+    return {
+      ...target,
+      current: {
+        ...target.current,
+        grid: { ...(target.current.grid || {}), [key]: Number(value) },
+      },
+    };
   }
   return { ...target, current: { ...target.current, [path]: value } };
 }
@@ -870,6 +884,47 @@ export function StoreDesignV21() {
                           <option value="contain">Sığdır</option>
                         </select>
                       </label>
+                    ) : null}
+
+                    {selected.type === "product-grid" ? (
+                      <div className="rounded-xl border border-black/[0.08] bg-[#fafafa] p-3">
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="text-[8px] font-semibold text-black/55">Responsive ürün grid'i</p>
+                          <span className="rounded-full bg-white px-2 py-1 text-[7px] font-semibold text-black/40">{device === "mobile" ? "Mobil" : "Masaüstü"}</span>
+                        </div>
+                        <div className="mt-3 grid gap-3">
+                          <label className="grid gap-1.5 text-[8px] text-black/45">
+                            Kolon sayısı
+                            <select
+                              value={String(selected.current.grid?.columns ?? (device === "mobile" ? 2 : 3))}
+                              onChange={(event) => applyInspectorPatch("grid.columns", Number(event.target.value))}
+                              className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none"
+                            >
+                              {[1, 2, 3, 4, 5, 6].map((value) => <option key={value} value={value}>{value} kolon</option>)}
+                            </select>
+                          </label>
+                          <label className="grid gap-1.5 text-[8px] text-black/45">
+                            Yatay kart aralığı
+                            <select
+                              value={String(Math.round(selected.current.grid?.gapX ?? (device === "mobile" ? 16 : 20)))}
+                              onChange={(event) => applyInspectorPatch("grid.gapX", Number(event.target.value))}
+                              className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none"
+                            >
+                              {[0, 8, 12, 16, 20, 24, 32, 40, 48, 64].map((value) => <option key={value} value={value}>{value}px</option>)}
+                            </select>
+                          </label>
+                          <label className="grid gap-1.5 text-[8px] text-black/45">
+                            Dikey kart aralığı
+                            <select
+                              value={String(Math.round(selected.current.grid?.gapY ?? (device === "mobile" ? 32 : 48)))}
+                              onChange={(event) => applyInspectorPatch("grid.gapY", Number(event.target.value))}
+                              className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none"
+                            >
+                              {[0, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96].map((value) => <option key={value} value={value}>{value}px</option>)}
+                            </select>
+                          </label>
+                        </div>
+                      </div>
                     ) : null}
 
                     {!selected.controlGroups.includes("typography") && !selected.controlGroups.includes("card") && !selected.controlGroups.includes("layout") && !(selected.controlGroups.includes("media") && selected.current.media) ? (
