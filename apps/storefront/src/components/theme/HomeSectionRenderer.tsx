@@ -26,6 +26,7 @@ const SEMANTIC_SECTION_TYPE: Record<ThemeSection["type"], string> = {
   "product-spotlight": "product-spotlight",
   "featured-collection": "featured-collection",
   "category-cards": "category-cards",
+  "product-comparison": "product-comparison",
   "new-arrivals": "new-arrivals",
   "sale-products": "sale-products",
   "image-banner": "image-banner",
@@ -509,6 +510,101 @@ export function HomeSectionRenderer({
           </div>
         </div>
         <style>{`.v2-category-card-grid{display:grid;grid-template-columns:1fr;gap:var(--category-gap)}@media(min-width:640px){.v2-category-card-grid{grid-template-columns:repeat(var(--category-sm-columns),minmax(0,1fr))}}@media(min-width:768px){.v2-category-card-grid{grid-template-columns:repeat(var(--category-columns),minmax(0,1fr))}}`}</style>
+      </section>
+    );
+  }
+
+  if (section.type === "product-comparison") {
+    const settings = section.v2Settings;
+    const productIds = Array.isArray(settings?.productIds)
+      ? settings!.productIds.filter((item): item is string => typeof item === "string").slice(0, 4)
+      : [];
+    const selectedProducts = productIds
+      .map((id) => allProducts.find((product) => String(product.id) === id))
+      .filter((product): product is Product => Boolean(product));
+    if (selectedProducts.length < 2) return null;
+
+    const fields = Array.isArray(settings?.fields)
+      ? settings!.fields.filter((item): item is string => typeof item === "string")
+      : ["price", "stock", "description"];
+    const title = settingText(settings, "title") || "Ürünleri Karşılaştır";
+    const paddingY = settingNumber(settings, "paddingY", 80, 0, 240);
+    const fieldLabel: Record<string, string> = {
+      price: "Fiyat",
+      "compare-price": "Karşılaştırma fiyatı",
+      stock: "Stok",
+      description: "Açıklama",
+      material: "Materyal / ürün bilgisi",
+    };
+    const fieldValue = (product: Product, field: string) => {
+      if (field === "price") return formatPrice(product.price, product.currency || "TRY") || "—";
+      if (field === "compare-price") {
+        const compareAt = Number(product.compare_at_price || 0);
+        const price = Number(product.price || 0);
+        return compareAt > price ? formatPrice(product.compare_at_price, product.currency || "TRY") : "—";
+      }
+      if (field === "stock") return product.stock_status === "out_of_stock" ? "Tükendi" : product.stock_status === "preorder" ? "Ön sipariş" : "Stokta";
+      if (field === "description") return product.short_description || product.description || "—";
+      if (field === "material") return product.material || product.product_type || "—";
+      return "—";
+    };
+
+    return (
+      <section
+        data-theme-section-id={section.id}
+        data-editor-id={`section:${section.id}`}
+        data-editor-type={semanticSectionType(section)}
+        data-editor-label={title}
+        className="bg-cream px-4 text-carbon md:px-8"
+        style={{ paddingTop: paddingY, paddingBottom: paddingY }}
+      >
+        <div className="mx-auto max-w-[1440px]">
+          <div className="mb-8 text-center md:mb-10">
+            <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-brick">Karşılaştır</p>
+            <h2 className="mt-2 font-heading text-[clamp(1.8rem,4vw,3.4rem)] leading-tight">{title}</h2>
+          </div>
+          <div className="overflow-x-auto rounded-[22px] border border-carbon/10 bg-white">
+            <table className="w-full min-w-[760px] table-fixed border-collapse">
+              <thead>
+                <tr>
+                  <th className="w-40 border-b border-r border-carbon/10 p-4 text-left text-[9px] font-semibold uppercase tracking-[0.14em] text-carbon/45">Özellik</th>
+                  {selectedProducts.map((product) => (
+                    <th key={product.id} className="border-b border-carbon/10 p-4 text-left align-top">
+                      <Link href={`/products/${product.slug}`} className="group block">
+                        <div className="aspect-[4/5] overflow-hidden rounded-xl bg-carbon/[0.04]">
+                          <img src={product.main_image_url || "/product-placeholder.svg"} alt={product.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]" />
+                        </div>
+                        <p className="mt-3 font-heading text-lg leading-tight">{product.name}</p>
+                      </Link>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {fields.map((field) => (
+                  <tr key={field}>
+                    <th className="border-r border-t border-carbon/10 p-4 text-left align-top text-[9px] font-semibold uppercase tracking-[0.12em] text-carbon/50">{fieldLabel[field] || field}</th>
+                    {selectedProducts.map((product) => (
+                      <td key={`${field}-${product.id}`} className="border-t border-carbon/10 p-4 align-top text-sm leading-6 text-carbon/72">
+                        {fieldValue(product, field)}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+                <tr>
+                  <th className="border-r border-t border-carbon/10 p-4 text-left text-[9px] font-semibold uppercase tracking-[0.12em] text-carbon/50">Bağlantı</th>
+                  {selectedProducts.map((product) => (
+                    <td key={`link-${product.id}`} className="border-t border-carbon/10 p-4">
+                      <Link href={`/products/${product.slug}`} className="inline-flex min-h-10 items-center justify-center rounded-full bg-carbon px-4 text-[9px] font-semibold uppercase tracking-[0.12em] text-cream">
+                        Ürünü İncele
+                      </Link>
+                    </td>
+                  ))}
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </section>
     );
   }
