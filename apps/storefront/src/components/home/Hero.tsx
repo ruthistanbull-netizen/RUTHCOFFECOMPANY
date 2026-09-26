@@ -175,6 +175,13 @@ function EditorialMedia({
     offset: ["start 78%", "start 0%"],
   });
   const progress = useSpring(scrollYProgress, { stiffness: 92, damping: 30, mass: 0.42 });
+  const cueSmoothProgress = useSpring(cueScrollYProgress, {
+    stiffness: 48,
+    damping: 22,
+    mass: 0.9,
+    restDelta: 0.0008,
+    restSpeed: 0.0008,
+  });
   const scale = useTransform(
     progress,
     [0, 0.16, 0.5, 1],
@@ -183,19 +190,39 @@ function EditorialMedia({
   const y = useTransform(progress, [0, 0.5, 1], ["0%", "-0.65%", "-1.35%"]);
   const opacity = useTransform(progress, [0, 0.78, 1], [1, 1, 0.96]);
   const cueStartX = index === 2 && mobileViewport
-    ? 320
+    ? 380
     : mobileViewport
-      ? -300
-      : -460;
-  const cueStartY = mobileViewport ? -220 : -300;
+      ? -360
+      : -540;
+  const cueStartY = mobileViewport ? -280 : -380;
 
-  // Direct scroll mapping: while the photo itself rises into view, the copy
-  // is revealed from the photo's upper edge and travels inward with it.
-  // It reaches its final X/Y position exactly when the photo becomes fully visible.
-  const cueX = useTransform(cueScrollYProgress, [0, 1], [cueStartX, 0]);
-  const cueY = useTransform(cueScrollYProgress, [0, 1], [cueStartY, 0]);
-  const cueOpacity = useTransform(cueScrollYProgress, [0, 0.1, 0.24, 1], [0, 0.35, 1, 1]);
-  const cueScale = useTransform(cueScrollYProgress, [0, 1], [0.94, 1]);
+  // Scroll-locked, but with a damped follower. The copy tracks both down/up
+  // scrolling and keeps a small amount of physical easing instead of snapping.
+  const cueX = useTransform(
+    cueSmoothProgress,
+    [0, 0.16, 0.42, 0.72, 1],
+    [cueStartX, cueStartX * 0.82, cueStartX * 0.5, cueStartX * 0.18, 0],
+  );
+  const cueY = useTransform(
+    cueSmoothProgress,
+    [0, 0.18, 0.48, 0.76, 1],
+    [cueStartY, cueStartY * 0.78, cueStartY * 0.42, cueStartY * 0.14, 0],
+  );
+  const cueOpacity = useTransform(
+    cueSmoothProgress,
+    [0, 0.08, 0.22, 0.46, 1],
+    [0, 0.18, 0.62, 1, 1],
+  );
+  const cueScale = useTransform(
+    cueSmoothProgress,
+    [0, 0.22, 0.55, 1],
+    [0.9, 0.94, 0.985, 1],
+  );
+  const cueRotate = useTransform(
+    cueSmoothProgress,
+    [0, 0.5, 1],
+    [index === 2 && mobileViewport ? 1.8 : -1.8, index === 2 && mobileViewport ? 0.6 : -0.6, 0],
+  );
   const wrapperClass = index === 0
     ? "absolute inset-0 overflow-hidden"
     : "absolute inset-x-[2vw] inset-y-[1svh] overflow-hidden lg:bottom-[32px] lg:left-[7vw] lg:right-[7vw] lg:top-[52px]";
@@ -353,6 +380,7 @@ function EditorialMedia({
               y: cueY,
               opacity: cueOpacity,
               scale: cueScale,
+              rotate: cueRotate,
               transformOrigin: "left center",
               willChange: "transform, opacity",
             }}
@@ -375,6 +403,7 @@ function EditorialMedia({
               y: cueY,
               opacity: cueOpacity,
               scale: cueScale,
+              rotate: cueRotate,
               transformOrigin: mobileViewport ? "right center" : "left center",
               textAlign: mobileViewport ? "right" : "left",
               willChange: "transform, opacity",
