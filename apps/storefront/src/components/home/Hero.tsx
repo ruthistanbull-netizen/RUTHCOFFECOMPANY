@@ -170,15 +170,15 @@ function EditorialMedia({
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const { scrollYProgress: cueScrollYProgress } = useScroll({
     target: ref,
-    offset: ["start end", "end start"],
+    offset: ["start 92%", "start 0%"],
   });
   const progress = useSpring(scrollYProgress, { stiffness: 92, damping: 30, mass: 0.42 });
   const cueSmoothProgress = useSpring(cueScrollYProgress, {
-    stiffness: 210,
-    damping: 34,
-    mass: 0.2,
-    restDelta: 0.0005,
-    restSpeed: 0.0005,
+    stiffness: 128,
+    damping: 30,
+    mass: 0.38,
+    restDelta: 0.0002,
+    restSpeed: 0.0002,
   });
   const scale = useTransform(
     progress,
@@ -192,24 +192,25 @@ function EditorialMedia({
     : mobileViewport
       ? -360
       : -540;
-  // Phase 1: enter on a perfectly straight horizontal rail.
-  // Phase 2: once inside, keep following page scroll vertically with the photo.
+  // Phase 1: as soon as the photo appears, the copy starts at its upper edge
+  // and glides inward on a perfectly horizontal rail.
+  // Phase 2: after the entrance is nearly complete, it follows the photo/scroll vertically.
   const cueX = useTransform(
     cueSmoothProgress,
-    [0, 0.12, 0.24, 0.36, 0.44],
-    [cueStartX, cueStartX * 0.74, cueStartX * 0.42, cueStartX * 0.16, 0],
+    [0, 0.18, 0.38, 0.6, 0.8, 1],
+    [cueStartX, cueStartX * 0.8, cueStartX * 0.56, cueStartX * 0.32, cueStartX * 0.12, 0],
   );
   const cueFollowY = useTransform(
     cueSmoothProgress,
-    [0, 0.42, 0.58, 0.78, 1],
+    [0, 0.72, 0.84, 0.93, 1],
     mobileViewport
-      ? ["0svh", "0svh", "6svh", "16svh", "25svh"]
-      : ["0px", "0px", "5vh", "13vh", "21vh"],
+      ? ["0svh", "0svh", "3svh", "8svh", "13svh"]
+      : ["0px", "0px", "2.5vh", "6.5vh", "11vh"],
   );
   const cueOpacity = useTransform(
     cueSmoothProgress,
-    [0, 0.07, 0.18, 0.34, 1],
-    [0, 0.18, 0.7, 1, 1],
+    [0, 0.06, 0.16, 0.3, 1],
+    [0, 0.14, 0.52, 1, 1],
   );
   const wrapperClass = index === 0
     ? "absolute inset-0 overflow-hidden"
@@ -362,7 +363,7 @@ function EditorialMedia({
 
         {index === 1 ? (
           <motion.div
-            className="home-editorial-cue home-editorial-cue--second pointer-events-none absolute left-[10vw] top-[8svh] z-30 max-w-[84vw] md:left-[14vw] md:top-[96px] md:max-w-[48vw]"
+            className="home-editorial-cue home-editorial-cue--second pointer-events-none absolute left-[10vw] top-[1svh] z-30 max-w-[84vw] md:left-[14vw] md:top-[52px] md:max-w-[48vw]"
             style={{
               x: cueX,
               y: cueFollowY,
@@ -381,7 +382,7 @@ function EditorialMedia({
 
         {index === 2 ? (
           <motion.div
-            className="home-editorial-cue home-editorial-cue--third pointer-events-none absolute top-[8svh] z-30 max-w-[84vw] md:left-[14vw] md:right-auto md:top-[96px] md:max-w-[50vw]"
+            className="home-editorial-cue home-editorial-cue--third pointer-events-none absolute top-[1svh] z-30 max-w-[84vw] md:left-[14vw] md:right-auto md:top-[52px] md:max-w-[50vw]"
             style={{
               left: mobileViewport ? "auto" : undefined,
               right: mobileViewport ? "10vw" : undefined,
