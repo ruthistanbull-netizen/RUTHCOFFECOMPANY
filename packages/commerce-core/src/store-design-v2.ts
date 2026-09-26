@@ -108,6 +108,9 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
   component("featured-products", "Öne Çıkan Ürünler", "Ana Sayfa", "section", sectionScopes, ["data", "layout", "responsive"], ["productPrice"]),
   component("product-slider", "Ürün Sliderı", "Ana Sayfa", "section", sectionScopes, ["data", "layout", "animation", "responsive"], ["productPrice"]),
   component("product-grid", "Ürün Grid'i", "Katalog", "section", ["section", "template"], ["layout", "responsive"], ["individualCardWidth", "catalogData"]),
+  component("product-spotlight", "Tek Ürün Spotlight", "Katalog", "section", sectionScopes, ["data", "content", "layout", "responsive"], ["productData", "priceValue", "stockLogic"]),
+  component("featured-collection", "Featured Collection", "Katalog", "section", sectionScopes, ["data", "content", "layout", "responsive"], ["catalogMembership", "productData"]),
+  component("category-cards", "Kategori Kartları", "Katalog", "section", sectionScopes, ["data", "layout", "responsive"], ["catalogMembership"]),
   component("new-arrivals", "Yeni Gelenler", "Katalog", "section", sectionScopes, ["data", "layout", "responsive"], ["sourceRule", "productData"]),
   component("sale-products", "İndirimdekiler", "Katalog", "section", sectionScopes, ["data", "layout", "card", "responsive"], ["discountLogic", "productData"]),
   component("product-card", "Ürün Kartı", "Katalog", "family", ["family", "section", "template"], ["card", "typography", "layout", "responsive"], ["productData", "individualMediaScale", "individualWidth"]),
@@ -266,9 +269,9 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
   section("featured-products", "Öne Çıkan Ürünler", "commerce", allCommercePages, ["source", "limit", "desktopColumns", "mobileColumns", "gap", "cardPreset", "heading", "cta"], [], true),
   section("product-slider", "Ürün Sliderı / Carousel", "commerce", allCommercePages, ["source", "itemsPerView", "arrows", "dots", "autoplay", "gap"], [], true),
   section("product-grid", "Ürün Grid", "commerce", ["content", "landing", "category", "collection"], ["columns", "density", "maxWidth", "pagination"], [], true),
-  section("product-spotlight", "Tek Ürün Spotlight", "commerce", allCommercePages, ["productId", "mediaPosition", "infoBlocks", "cta"]),
-  section("featured-collection", "Featured Collection", "commerce", allCommercePages, ["collectionId", "layout", "limit", "cta"]),
-  section("category-cards", "Kategori Kartları", "commerce", allContentPages, ["source", "ratio", "columns", "titlePlacement"]),
+  section("product-spotlight", "Tek Ürün Spotlight", "commerce", allCommercePages, ["productId", "mediaPosition", "infoBlocks", "linkLabel", "paddingY"], [], true),
+  section("featured-collection", "Featured Collection", "commerce", allCommercePages, ["collectionId", "layout", "limit", "desktopColumns", "mobileColumns", "gap", "heading", "linkLabel", "paddingY"], [], true),
+  section("category-cards", "Kategori Kartları", "commerce", allContentPages, ["title", "eyebrow", "source", "limit", "ratio", "columns", "gap", "titlePlacement", "paddingY"], [], true),
   section("collection-cards", "Koleksiyon Kartları", "commerce", allContentPages, ["title", "eyebrow", "source", "limit", "ratio", "columns", "gap", "titlePlacement", "paddingY"], [], true),
   section("new-arrivals", "Yeni Gelenler", "commerce", allCommercePages, ["limit", "layout"], [], true),
   section("best-sellers", "Çok Satanlar", "commerce", allCommercePages, ["window", "limit", "layout"]),
@@ -1291,6 +1294,42 @@ export function validateThemeDocument(document: ThemeDocument) {
     }
     if (asset && section.type === "video-text-split" && asset.type !== "video") {
       errors.push(`${section.id}: Video + Text Split yalnız video asset kabul eder.`);
+    }
+
+    if (section.type === "product-spotlight") {
+      const productId = typeof section.settings.productId === "string" ? section.settings.productId.trim() : "";
+      if (!productId) errors.push(`${section.id}: Tek Ürün Spotlight için ürün seçimi zorunlu.`);
+      const mediaPosition = String(section.settings.mediaPosition || "left");
+      if (!["left", "right"].includes(mediaPosition)) errors.push(`${section.id}: Spotlight mediaPosition geçersiz.`);
+      const infoBlocks = Array.isArray(section.settings.infoBlocks) ? section.settings.infoBlocks : ["description", "stock", "compare-price"];
+      const allowedInfoBlocks = new Set(["description", "stock", "compare-price"]);
+      if (infoBlocks.some((item) => typeof item !== "string" || !allowedInfoBlocks.has(item))) errors.push(`${section.id}: Spotlight infoBlocks geçersiz.`);
+    }
+
+    if (section.type === "featured-collection") {
+      const collectionId = typeof section.settings.collectionId === "string" ? section.settings.collectionId.trim() : "";
+      if (!collectionId) errors.push(`${section.id}: Featured Collection için koleksiyon seçimi zorunlu.`);
+      const layout = String(section.settings.layout || "slider");
+      if (!["slider", "grid"].includes(layout)) errors.push(`${section.id}: Featured Collection layout geçersiz.`);
+      const limit = Number(section.settings.limit ?? 8);
+      if (!Number.isFinite(limit) || limit < 1 || limit > 24) errors.push(`${section.id}: Featured Collection limiti 1-24 aralığında olmalı.`);
+      const desktopColumns = Number(section.settings.desktopColumns ?? 4);
+      const mobileColumns = Number(section.settings.mobileColumns ?? 2);
+      if (!Number.isFinite(desktopColumns) || desktopColumns < 1 || desktopColumns > 6) errors.push(`${section.id}: Featured Collection desktop kolon 1-6 aralığında olmalı.`);
+      if (!Number.isFinite(mobileColumns) || mobileColumns < 1 || mobileColumns > 3) errors.push(`${section.id}: Featured Collection mobil kolon 1-3 aralığında olmalı.`);
+    }
+
+    if (section.type === "category-cards") {
+      const columns = Number(section.settings.columns ?? 3);
+      const limit = Number(section.settings.limit ?? 6);
+      const gap = Number(section.settings.gap ?? 20);
+      const ratio = String(section.settings.ratio || "4/5");
+      const placement = String(section.settings.titlePlacement || "overlay");
+      if (!Number.isFinite(columns) || columns < 1 || columns > 4) errors.push(`${section.id}: Kategori kartı kolon sayısı 1-4 aralığında olmalı.`);
+      if (!Number.isFinite(limit) || limit < 1 || limit > 12) errors.push(`${section.id}: Kategori kartı limiti 1-12 aralığında olmalı.`);
+      if (!Number.isFinite(gap) || gap < 0 || gap > 64) errors.push(`${section.id}: Kategori kartı gap 0-64 aralığında olmalı.`);
+      if (!["16/10", "4/5", "1/1"].includes(ratio)) errors.push(`${section.id}: Kategori kartı ratio preset geçersiz.`);
+      if (!["overlay", "below"].includes(placement)) errors.push(`${section.id}: Kategori kartı titlePlacement geçersiz.`);
     }
 
     if (section.type === "scroll-story") {
