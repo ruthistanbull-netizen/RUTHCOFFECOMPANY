@@ -621,7 +621,11 @@ export function Header({
         }
         @media(max-width:1023px){
           .ruth-zara-menu-button{left:24px!important;top:0!important;width:64px!important;height:64px!important}
-          .ruth-zara-menu-button .ruth-zara-hamburger{left:0!important;top:24px!important}
+          .ruth-zara-menu-button .ruth-zara-hamburger{left:0!important;top:25px!important;width:56px!important;height:15px!important}
+          .ruth-zara-menu-button .ruth-zara-hamburger__line{width:56px!important}
+          .ruth-zara-menu-button .ruth-zara-hamburger__line--bottom{top:14px!important}
+          .ruth-zara-menu-button .ruth-zara-hamburger[data-open=true] .ruth-zara-hamburger__line--top{transform:translateY(7px) rotate(45deg)!important}
+          .ruth-zara-menu-button .ruth-zara-hamburger[data-open=true] .ruth-zara-hamburger__line--bottom{transform:translateY(-7px) rotate(-45deg)!important}
         }
       `}</style>
 
