@@ -249,6 +249,7 @@ export function StoreDesignV21() {
   const [history, setHistory] = useState<PatchHistoryEntry[]>([]);
   const [future, setFuture] = useState<PatchHistoryEntry[]>([]);
   const revisionRef = useRef(0);
+  const lastReconnectRef = useRef(0);
 
   const hasUnsavedChanges = JSON.stringify(document) !== JSON.stringify(savedDraft);
   const hasUnpublishedChanges = JSON.stringify(savedDraft) !== JSON.stringify(published);
@@ -328,15 +329,28 @@ export function StoreDesignV21() {
 
   useEffect(() => {
     const timer = window.setInterval(() => {
-      if (lastHeartbeat && Date.now() - lastHeartbeat > 12_000) setConnected(false);
+      if (!lastHeartbeat) return;
+      const now = Date.now();
+      const staleFor = now - lastHeartbeat;
+      if (staleFor > 12_000) setConnected(false);
+      if (
+        staleFor > 18_000 &&
+        activePage &&
+        iframeRef.current &&
+        now - lastReconnectRef.current > 18_000
+      ) {
+        lastReconnectRef.current = now;
+        iframeRef.current.src = previewUrl(cleanPreviewPath(activePage));
+      }
     }, 3_000);
     return () => window.clearInterval(timer);
-  }, [lastHeartbeat]);
+  }, [activePage, lastHeartbeat]);
 
   const changePage = (path: string) => {
     const page = pages.find((item) => item.path === path);
     if (!page) return;
     setActivePath(path);
+    setLastHeartbeat(Date.now());
     setSelected(null);
     setHistory([]);
     setFuture([]);
@@ -535,7 +549,10 @@ export function StoreDesignV21() {
               title="Store Design V2 Preview"
               src={initialSrcRef.current}
               className={`h-full w-full bg-white ${device === "mobile" ? "rounded-[34px]" : ""}`}
-              onLoad={() => setConnected(false)}
+              onLoad={() => {
+                setConnected(false);
+                setLastHeartbeat(Date.now());
+              }}
             />
           </div>
         </main>
