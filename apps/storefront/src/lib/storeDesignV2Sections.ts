@@ -28,6 +28,14 @@ const BLOCK_RENDER_SECTION_TYPES = new Set([
   "team",
   "announcement-bar",
   "marquee",
+  "heading-subtext",
+  "manifesto",
+  "quote",
+  "promo-banner",
+  "shipping-returns-cta",
+  "spacer",
+  "divider",
+  "anchor",
 ]);
 
 function versionedMediaUrl(asset: MediaAsset | undefined) {
