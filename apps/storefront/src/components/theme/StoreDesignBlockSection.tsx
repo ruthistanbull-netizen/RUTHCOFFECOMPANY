@@ -249,7 +249,7 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
 
   if (type === "announcement-bar" || type === "marquee") {
     return (
-      <section data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={type} data-editor-label={title || (type === "marquee" ? "Marquee" : "Announcement Bar")} className="overflow-hidden border-y border-current/10 py-3" style={{ background: section.backgroundColor || "transparent", color: section.textColor || "inherit" }}>
+      <section data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={type === "announcement-bar" ? "announcement-section" : type} data-editor-label={title || (type === "marquee" ? "Marquee" : "Announcement Bar")} className="overflow-hidden border-y border-current/10 py-3" style={{ background: section.backgroundColor || "transparent", color: section.textColor || "inherit" }}>
         <div className="flex min-w-max items-center gap-10 px-5">
           {blocks.map((block) => {
             const label = text(block.settings.text);
