@@ -170,7 +170,9 @@ function EditorialMedia({
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const { scrollYProgress: cueScrollYProgress } = useScroll({
     target: ref,
-    offset: ["start 94%", "end 6%"],
+    // 0: the next photo has only started entering the viewport.
+    // 1: the photo's top reaches the viewport top and the frame is fully presented.
+    offset: ["start 78%", "start 0%"],
   });
   const progress = useSpring(scrollYProgress, { stiffness: 92, damping: 30, mass: 0.42 });
   const scale = useTransform(
@@ -181,16 +183,19 @@ function EditorialMedia({
   const y = useTransform(progress, [0, 0.5, 1], ["0%", "-0.65%", "-1.35%"]);
   const opacity = useTransform(progress, [0, 0.78, 1], [1, 1, 0.96]);
   const cueStartX = index === 2 && mobileViewport
-    ? 250
+    ? 320
     : mobileViewport
-      ? -250
-      : -420;
-  // Keep the copy physically tied to the page scroll. It begins as soon as
-  // the editorial frame enters and takes most of that frame's scroll distance
-  // to settle, so one wheel gesture can never complete the entrance.
-  const cueX = useTransform(cueScrollYProgress, [0.02, 0.88], [cueStartX, 0]);
-  const cueOpacity = useTransform(cueScrollYProgress, [0.01, 0.12, 1], [0, 1, 1]);
-  const cueScale = useTransform(cueScrollYProgress, [0.02, 0.88], [0.95, 1]);
+      ? -300
+      : -460;
+  const cueStartY = mobileViewport ? -220 : -300;
+
+  // Direct scroll mapping: while the photo itself rises into view, the copy
+  // is revealed from the photo's upper edge and travels inward with it.
+  // It reaches its final X/Y position exactly when the photo becomes fully visible.
+  const cueX = useTransform(cueScrollYProgress, [0, 1], [cueStartX, 0]);
+  const cueY = useTransform(cueScrollYProgress, [0, 1], [cueStartY, 0]);
+  const cueOpacity = useTransform(cueScrollYProgress, [0, 0.1, 0.24, 1], [0, 0.35, 1, 1]);
+  const cueScale = useTransform(cueScrollYProgress, [0, 1], [0.94, 1]);
   const wrapperClass = index === 0
     ? "absolute inset-0 overflow-hidden"
     : "absolute inset-x-[2vw] inset-y-[1svh] overflow-hidden lg:bottom-[32px] lg:left-[7vw] lg:right-[7vw] lg:top-[52px]";
@@ -342,9 +347,10 @@ function EditorialMedia({
 
         {index === 1 ? (
           <motion.div
-            className="home-editorial-cue home-editorial-cue--second pointer-events-none absolute left-[6vw] top-[36%] z-30 max-w-[88vw] md:left-[8vw] md:top-[39%] md:max-w-[52vw]"
+            className="home-editorial-cue home-editorial-cue--second pointer-events-none absolute left-[10vw] top-[38%] z-30 max-w-[84vw] md:left-[14vw] md:top-[40%] md:max-w-[48vw]"
             style={{
               x: cueX,
+              y: cueY,
               opacity: cueOpacity,
               scale: cueScale,
               transformOrigin: "left center",
@@ -361,11 +367,12 @@ function EditorialMedia({
 
         {index === 2 ? (
           <motion.div
-            className="home-editorial-cue home-editorial-cue--third pointer-events-none absolute top-[40%] z-30 max-w-[88vw] md:left-[8vw] md:right-auto md:top-[41%] md:max-w-[54vw]"
+            className="home-editorial-cue home-editorial-cue--third pointer-events-none absolute top-[40%] z-30 max-w-[84vw] md:left-[14vw] md:right-auto md:top-[42%] md:max-w-[50vw]"
             style={{
               left: mobileViewport ? "auto" : undefined,
-              right: mobileViewport ? "6vw" : undefined,
+              right: mobileViewport ? "10vw" : undefined,
               x: cueX,
+              y: cueY,
               opacity: cueOpacity,
               scale: cueScale,
               transformOrigin: mobileViewport ? "right center" : "left center",
