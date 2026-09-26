@@ -81,6 +81,7 @@ const RENDERABLE_SECTION_TYPES = new Set([
   "manifesto",
   "quote",
   "promo-banner",
+  "countdown",
   "shipping-returns-cta",
   "spacer",
   "divider",
@@ -147,6 +148,7 @@ function defaultSettings(type: string): Record<string, unknown> {
   if (type === "manifesto") return { title: "Manifesto", body: "Marka anlatınızı buraya ekleyin.", align: "center", maxWidth: "900px", paddingY: 80 };
   if (type === "quote") return { quote: "Alıntı", attribution: "", align: "center", paddingY: 72 };
   if (type === "promo-banner") return { title: "Promo", body: "", linkLabel: "Keşfet", linkHref: "/", align: "center", paddingY: 56 };
+  if (type === "countdown") return { title: "Geri Sayım", targetTime: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), completedState: "Tamamlandı", style: "cards", paddingY: 64 };
   if (type === "shipping-returns-cta") return { icon: "•", title: "Kargo & İade", body: "", linkLabel: "Detaylar", linkHref: "/", align: "center", paddingY: 48 };
   if (type === "spacer") return { desktopHeight: 64, mobileHeight: 40, paddingY: 0 };
   if (type === "divider") return { width: "100%", thickness: 1, paddingY: 24 };
@@ -246,6 +248,7 @@ const GENERIC_V2_SECTION_TYPES = new Set([
   "manifesto",
   "quote",
   "promo-banner",
+  "countdown",
   "shipping-returns-cta",
   "spacer",
   "divider",
