@@ -164,8 +164,8 @@ export function HomeSectionRenderer({
   featuredProducts,
   allProducts,
   collections,
-  categories,
-  bestSellerProductsByWindow,
+  categories = [],
+  bestSellerProductsByWindow = {},
   heroImages,
   editorialVideo = "/home/rosta-under-hero-video.mp4",
   editorialImage = "/home/rosta-under-hero-photo.jpg",
@@ -177,8 +177,8 @@ export function HomeSectionRenderer({
   featuredProducts: Product[];
   allProducts: Product[];
   collections: Collection[];
-  categories: Category[];
-  bestSellerProductsByWindow: Record<string, Product[]>;
+  categories?: Category[];
+  bestSellerProductsByWindow?: Record<string, Product[]>;
   heroImages: HomepageHeroImages;
   editorialVideo?: string;
   editorialImage?: string;
