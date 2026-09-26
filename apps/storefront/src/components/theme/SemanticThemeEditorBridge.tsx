@@ -36,16 +36,41 @@ function editorEnabled() {
   return params.get("themeEditor") === "1" && params.get("storeDesignV2") === "1";
 }
 
-function parentOrigin() {
+function originMatches(origin: string, pattern: string) {
   try {
-    const referrer = document.referrer ? new URL(document.referrer).origin : "";
-    if (!referrer) return "";
+    const candidate = new URL(origin);
+    const raw = pattern.trim();
+    if (!raw) return false;
 
+    if (raw === "http://localhost:*" || raw === "https://localhost:*") {
+      return candidate.protocol === raw.split("//")[0] && candidate.hostname === "localhost";
+    }
+
+    const wildcard = raw.match(/^(https?:)\/\/\*\.([^/:]+)(?::(\d+))?$/);
+    if (wildcard) {
+      const [, protocol, domain, port] = wildcard;
+      return candidate.protocol === protocol &&
+        candidate.hostname.endsWith(`.${domain}`) &&
+        (!port || candidate.port === port);
+    }
+
+    return candidate.origin === new URL(raw).origin;
+  } catch {
+    return false;
+  }
+}
+
+function parentOrigin(allowedOrigins: string[]) {
+  try {
     const explicit = new URLSearchParams(window.location.search).get("editorOrigin");
-    if (!explicit) return referrer;
+    if (explicit) {
+      const explicitOrigin = new URL(explicit).origin;
+      if (allowedOrigins.some((pattern) => originMatches(explicitOrigin, pattern))) return explicitOrigin;
+      return "";
+    }
 
-    const explicitOrigin = new URL(explicit).origin;
-    return explicitOrigin === referrer ? referrer : "";
+    const referrer = document.referrer ? new URL(document.referrer).origin : "";
+    return referrer && allowedOrigins.some((pattern) => originMatches(referrer, pattern)) ? referrer : "";
   } catch {
     return "";
   }
@@ -190,13 +215,13 @@ function routePath(value: unknown) {
   }
 }
 
-export function SemanticThemeEditorBridge() {
+export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrigins?: string[] }) {
   const selectedRef = useRef<SemanticTarget | null>(null);
 
   useEffect(() => {
     if (!editorEnabled() || window.parent === window) return;
 
-    const expectedParentOrigin = parentOrigin();
+    const expectedParentOrigin = parentOrigin(allowedOrigins);
     if (!expectedParentOrigin) return;
 
     const post = (payload: Record<string, unknown>) => {
@@ -402,7 +427,7 @@ export function SemanticThemeEditorBridge() {
       overlay.remove();
       selectedRef.current = null;
     };
-  }, []);
+  }, [allowedOrigins]);
 
   return null;
 }
