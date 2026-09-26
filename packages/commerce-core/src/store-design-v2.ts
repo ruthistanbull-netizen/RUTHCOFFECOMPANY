@@ -1251,7 +1251,14 @@ export function validateThemeDocument(document: ThemeDocument) {
 
   for (const section of Object.values(document.sections)) {
     const imageAssetId = typeof section.settings.imageAssetId === "string" ? section.settings.imageAssetId : "";
-    if (imageAssetId && !document.media[imageAssetId]) errors.push(`${section.id}: bölüm medya referansı bulunamadı.`);
+    const asset = imageAssetId ? document.media[imageAssetId] : undefined;
+    if (imageAssetId && !asset) errors.push(`${section.id}: bölüm medya referansı bulunamadı.`);
+    if (asset && section.type === "image-text-split" && asset.type !== "image") {
+      errors.push(`${section.id}: Image + Text Split yalnız image asset kabul eder.`);
+    }
+    if (asset && section.type === "video-text-split" && asset.type !== "video") {
+      errors.push(`${section.id}: Video + Text Split yalnız video asset kabul eder.`);
+    }
   }
 
   for (const block of Object.values(document.blocks)) {
