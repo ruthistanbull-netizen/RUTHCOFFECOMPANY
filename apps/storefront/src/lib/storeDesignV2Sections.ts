@@ -11,8 +11,24 @@ import type {
 
 const LEGACY_RENDER_ALIASES: Record<string, string> = {
   "collection-cards": "collections",
-  "trust-badges": "trust",
 };
+
+const BLOCK_RENDER_SECTION_TYPES = new Set([
+  "slideshow",
+  "gallery-grid",
+  "logo-cloud",
+  "text-columns",
+  "stats",
+  "timeline",
+  "feature-grid",
+  "trust-badges",
+  "testimonials",
+  "tabs",
+  "press-awards",
+  "team",
+  "announcement-bar",
+  "marquee",
+]);
 
 function versionedMediaUrl(asset: MediaAsset | undefined) {
   if (!asset?.url) return undefined;
@@ -52,9 +68,10 @@ export function storeDesignSectionsForPage(document: ThemeDocument, page: PageRe
     .filter(Boolean)
     .map((section) => {
       const { semantic: _semantic, ...settings } = section.settings || {};
+      const v2BlockSection = BLOCK_RENDER_SECTION_TYPES.has(section.type);
       const normalized = normalizeThemeSection({
         id: section.id,
-        type: LEGACY_RENDER_ALIASES[section.type] || section.type,
+        type: LEGACY_RENDER_ALIASES[section.type] || (v2BlockSection ? "rich-text" : section.type),
         enabled: section.enabled,
         ...settings,
       });
@@ -76,6 +93,29 @@ export function storeDesignSectionsForPage(document: ThemeDocument, page: PageRe
             .filter((item) => item.question || item.answer)
         : undefined;
 
+      const v2Blocks = v2BlockSection
+        ? (section.blockIds || [])
+            .map((blockId) => document.blocks[blockId])
+            .filter((block): block is BlockInstance => Boolean(block))
+            .map((block) => {
+              const mediaRef = typeof block.settings.assetId === "string"
+                ? block.settings.assetId
+                : typeof block.settings.media === "string"
+                  ? block.settings.media
+                  : "";
+              const asset = mediaRef ? document.media[mediaRef] : undefined;
+              const poster = asset?.posterAssetId ? document.media[asset.posterAssetId] : undefined;
+              return {
+                id: block.id,
+                type: block.type,
+                settings: block.settings,
+                assetUrl: versionedMediaUrl(asset),
+                assetType: asset?.type,
+                posterUrl: versionedMediaUrl(poster),
+              };
+            })
+        : undefined;
+
       return {
         ...normalized,
         imageSrc: versionedMediaUrl(desktopAsset) || normalized.imageSrc,
@@ -85,6 +125,9 @@ export function storeDesignSectionsForPage(document: ThemeDocument, page: PageRe
         imageObjectPosition: focalPosition(desktopAsset),
         mobileImageObjectPosition: focalPosition(mobileAsset) || focalPosition(desktopAsset),
         faqItems,
+        v2Type: v2BlockSection ? section.type : undefined,
+        v2Settings: v2BlockSection ? settings : undefined,
+        v2Blocks,
       };
     })
     .filter((section): section is ThemeSection => section !== null);
