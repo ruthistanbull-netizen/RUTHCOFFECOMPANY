@@ -24,6 +24,7 @@ import {
 } from "@/lib/rewards";
 import { useRostaPointsSettings } from "@/lib/useRostaPointsSettings";
 import { displayBirthDate, formatManualDateInput } from "@/lib/manualDate";
+import { resolveThemeElementOverrides, type ThemeCustomizerSettings } from "@/lib/themeCustomizer";
 
 function formatLira(value: number) {
   return new Intl.NumberFormat("tr-TR", {
@@ -79,7 +80,7 @@ function CoffeeBeanMark({ size = 18 }: { size?: number }) {
   );
 }
 
-export function RostaPointsWidget() {
+export function RostaPointsWidget({ themeSettings }: { themeSettings: ThemeCustomizerSettings }) {
   const { isLoggedIn, isLoading, session } = useAuth();
   const { isOpen: isCartOpen } = useCart();
   const reduceMotion = useReducedMotion();
@@ -89,6 +90,8 @@ export function RostaPointsWidget() {
 
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<RewardSection | null>(null);
+  const [liveThemeSettings, setLiveThemeSettings] = useState(themeSettings);
+  const [mobileViewport, setMobileViewport] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [birthday, setBirthday] = useState<BirthdayStatus>({
     birthDate: null,
@@ -103,6 +106,52 @@ export function RostaPointsWidget() {
   const [savingBirthday, setSavingBirthday] = useState(false);
 
   const closeRewards = () => setIsOpen(false);
+
+  useEffect(() => {
+    setLiveThemeSettings(themeSettings);
+  }, [themeSettings]);
+
+  useEffect(() => {
+    const syncViewport = () => setMobileViewport(window.innerWidth < 768);
+    syncViewport();
+    window.addEventListener("resize", syncViewport);
+    return () => window.removeEventListener("resize", syncViewport);
+  }, []);
+
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("themeEditor") !== "1") return;
+    if (window.parent === window) return;
+    const onThemeMessage = (event: MessageEvent) => {
+      if (event.source !== window.parent || !event.data || typeof event.data !== "object") return;
+      if (event.data.type !== "RUTH_THEME_EDITOR_SETTINGS" || !event.data.settings) return;
+      setLiveThemeSettings(event.data.settings as ThemeCustomizerSettings);
+    };
+    window.addEventListener("message", onThemeMessage);
+    return () => window.removeEventListener("message", onThemeMessage);
+  }, []);
+
+  const rewardsMediaOverride = useMemo(() => {
+    const overrides = resolveThemeElementOverrides(liveThemeSettings, "/");
+    const stable = overrides.find((item) => item.id === "rosta-points-offer-image");
+    if (stable) return stable;
+    return [...overrides].reverse().find((item) =>
+      item.kind === "image"
+      && item.label === "ROSTA Coffee Co. kahve"
+      && Boolean(item.desktopImageSrc || item.mobileImageSrc || item.imageSrc),
+    );
+  }, [liveThemeSettings]);
+
+  const rewardsMedia = useMemo(() => {
+    const override = rewardsMediaOverride;
+    const src = mobileViewport
+      ? override?.mobileImageSrc || override?.imageSrc || override?.desktopImageSrc || "/home/rosta-under-hero-photo.jpg"
+      : override?.desktopImageSrc || override?.imageSrc || override?.mobileImageSrc || "/home/rosta-under-hero-photo.jpg";
+    const explicitType = mobileViewport
+      ? override?.mobileMediaType || override?.mediaType || override?.desktopMediaType
+      : override?.desktopMediaType || override?.mediaType || override?.mobileMediaType;
+    const mediaType = explicitType || (/\.(mp4|m4v|mov|webm)(?:$|[?#])/i.test(src) ? "video" : "image");
+    return { src, mediaType };
+  }, [mobileViewport, rewardsMediaOverride]);
 
   useEffect(() => {
     const open = () => setIsOpen(true);
@@ -442,7 +491,8 @@ export function RostaPointsWidget() {
           overflow: hidden;
           background: var(--rosta-kraft);
         }
-        .rosta-points-offer-photo img {
+        .rosta-points-offer-photo img,
+        .rosta-points-offer-photo video {
           display: block;
           width: 100%;
           height: 100%;
@@ -806,13 +856,35 @@ export function RostaPointsWidget() {
                   animate={{ opacity: 1 }}
                   transition={{ delay: reduceMotion ? 0 : 0.08, duration: 0.55 }}
                 >
-                  <motion.img
-                    src="/home/rosta-under-hero-photo.jpg?v=20260926"
-                    alt="ROSTA Coffee Co. kahve"
-                    initial={reduceMotion ? undefined : { scale: 1.035 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: reduceMotion ? 0.01 : 0.9, ease: [0.22, 1, 0.36, 1] }}
-                  />
+                  {rewardsMedia.mediaType === "video" ? (
+                    <motion.video
+                      key={`video-${rewardsMedia.src}`}
+                      data-theme-id="rosta-points-offer-image"
+                      data-theme-label="ROSTA Points görseli"
+                      src={rewardsMedia.src}
+                      aria-label="ROSTA Coffee Co. kahve"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      preload="metadata"
+                      disablePictureInPicture
+                      initial={reduceMotion ? undefined : { scale: 1.035 }}
+                      animate={{ scale: 1 }}
+                      transition={{ duration: reduceMotion ? 0.01 : 0.9, ease: [0.22, 1, 0.36, 1] }}
+                    />
+                  ) : (
+                    <motion.img
+                      key={`image-${rewardsMedia.src}`}
+                      data-theme-id="rosta-points-offer-image"
+                      data-theme-label="ROSTA Points görseli"
+                      src={rewardsMedia.src}
+                      alt="ROSTA Coffee Co. kahve"
+                      initial={reduceMotion ? undefined : { scale: 1.035 }}
+                      animate={{ scale: 1 }}
+                      transition={{ duration: reduceMotion ? 0.01 : 0.9, ease: [0.22, 1, 0.36, 1] }}
+                    />
+                  )}
                 </motion.div>
 
                 <section className="rosta-points-offer-details">
