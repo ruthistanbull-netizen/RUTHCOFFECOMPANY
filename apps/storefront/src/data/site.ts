@@ -25,6 +25,7 @@ import {
 } from "@/lib/themeCustomizer";
 import {
   createEmptyThemeDocument,
+  migrateThemeDocument,
   normalizeThemeDocument,
   type ThemeDocument,
 } from "@ruth-commerce/commerce-core/store-design-v2";
@@ -931,7 +932,7 @@ async function fetchStoreDesignV2Published(): Promise<ThemeDocument> {
     return createEmptyThemeDocument();
   }
 
-  return normalizeThemeDocument(data?.setting_value);
+  return migrateThemeDocument(data?.setting_value).document;
 }
 
 const getCachedStoreDesignV2Published = unstable_cache(
@@ -966,7 +967,7 @@ export async function getStoreDesignV2Preview(token: string): Promise<ThemeDocum
       return null;
     }
 
-    return data?.setting_value ? normalizeThemeDocument(data.setting_value) : null;
+    return data?.setting_value ? migrateThemeDocument(data.setting_value).document : null;
   } catch (error) {
     console.error("Store Design V2 preview okunamadı:", error);
     return null;
