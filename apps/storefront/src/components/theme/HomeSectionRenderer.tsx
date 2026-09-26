@@ -61,12 +61,7 @@ function hasProductSectionCustomization(section: ThemeSection) {
 function productHasDiscount(product: Product) {
   const price = Number(product.price || 0);
   const compareAt = Number(product.compare_at_price || 0);
-  if (Number.isFinite(price) && Number.isFinite(compareAt) && price > 0 && compareAt > price) return true;
-  return (product.variants || []).some((variant) => {
-    const variantPrice = Number(variant.price || 0);
-    const variantCompareAt = Number(variant.compare_at_price || 0);
-    return Number.isFinite(variantPrice) && Number.isFinite(variantCompareAt) && variantPrice > 0 && variantCompareAt > variantPrice;
-  });
+  return Number.isFinite(price) && Number.isFinite(compareAt) && price > 0 && compareAt > price;
 }
 
 function productsForSection(section: ThemeSection, featuredProducts: Product[], allProducts: Product[]) {
