@@ -852,7 +852,29 @@ export function createEmptyThemeDocument(): ThemeDocument {
   };
 }
 
+export type ThemeMigrationResult = {
+  document: ThemeDocument;
+  fromVersion: number;
+  toVersion: number;
+  changed: boolean;
+  notes: string[];
+};
+
+export function themeDocumentSchemaVersion(input: unknown) {
+  const raw = objectRecord(input);
+  return integerValue(raw.schemaVersion, 0);
+}
+
+export function assertSupportedThemeDocumentVersion(input: unknown) {
+  const version = themeDocumentSchemaVersion(input);
+  if (version > STORE_DESIGN_SCHEMA_VERSION) {
+    throw new Error(`Tema şeması bu editor sürümünden daha yeni (v${version} > v${STORE_DESIGN_SCHEMA_VERSION}). Downgrade uygulanmadı.`);
+  }
+  return version;
+}
+
 export function normalizeThemeDocument(input: unknown): ThemeDocument {
+  assertSupportedThemeDocumentVersion(input);
   const raw = objectRecord(input);
   const globals = objectRecord(raw.globals);
 
@@ -894,6 +916,52 @@ export function normalizeThemeDocument(input: unknown): ThemeDocument {
     media: objectRecord(raw.media) as Record<string, MediaAsset>,
     redirects,
     publishedAt: raw.publishedAt == null ? null : stringValue(raw.publishedAt, "", 80) || null,
+  };
+}
+
+export function migrateThemeDocument(input: unknown): ThemeMigrationResult {
+  const fromVersion = assertSupportedThemeDocumentVersion(input);
+  const document = normalizeThemeDocument(input);
+  const notes: string[] = [];
+
+  if (fromVersion === 0) {
+    notes.push("Legacy/versionsuz ThemeDocument V2 kayıt modeline normalize edildi.");
+  } else if (fromVersion < STORE_DESIGN_SCHEMA_VERSION) {
+    notes.push(`ThemeDocument v${fromVersion} → v${STORE_DESIGN_SCHEMA_VERSION} normalize edildi.`);
+  }
+
+  const raw = objectRecord(input);
+  if (!raw.templateBindings) notes.push("Eksik templateBindings boş registry ile tamamlandı.");
+  const globals = objectRecord(raw.globals);
+  if (!globals.componentFamilies) notes.push("Eksik componentFamilies registry tamamlandı.");
+
+  for (const template of Object.values(document.templates)) {
+    if (!template.schemaVersion || template.schemaVersion !== STORE_DESIGN_SCHEMA_VERSION) {
+      template.schemaVersion = STORE_DESIGN_SCHEMA_VERSION;
+    }
+  }
+  for (const section of Object.values(document.sections)) {
+    if (!section.schemaVersion || section.schemaVersion !== STORE_DESIGN_SCHEMA_VERSION) {
+      section.schemaVersion = STORE_DESIGN_SCHEMA_VERSION;
+    }
+  }
+  for (const block of Object.values(document.blocks)) {
+    if (!block.schemaVersion || block.schemaVersion !== STORE_DESIGN_SCHEMA_VERSION) {
+      block.schemaVersion = STORE_DESIGN_SCHEMA_VERSION;
+    }
+  }
+  for (const page of Object.values(document.pages)) {
+    if (!page.schemaVersion || page.schemaVersion !== STORE_DESIGN_SCHEMA_VERSION) {
+      page.schemaVersion = STORE_DESIGN_SCHEMA_VERSION;
+    }
+  }
+
+  return {
+    document,
+    fromVersion,
+    toVersion: STORE_DESIGN_SCHEMA_VERSION,
+    changed: fromVersion !== STORE_DESIGN_SCHEMA_VERSION || notes.length > 0,
+    notes,
   };
 }
 
