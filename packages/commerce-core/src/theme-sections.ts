@@ -47,6 +47,8 @@ export type ThemeSection = {
   /** V2 registry section identity when the legacy renderer type is only an adapter shell. */
   v2Type?: string;
   v2Settings?: Record<string, unknown>;
+  v2MediaType?: "image" | "video";
+  v2PosterUrl?: string;
   v2Blocks?: Array<{
     id: string;
     type: string;
