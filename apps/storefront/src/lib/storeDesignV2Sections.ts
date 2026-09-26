@@ -88,6 +88,7 @@ export function storeDesignSectionsForPage(document: ThemeDocument, page: PageRe
     .map((section) => {
       const { semantic: _semantic, ...settings } = section.settings || {};
       const v2BlockSection = BLOCK_RENDER_SECTION_TYPES.has(section.type);
+      const semanticV2Section = v2BlockSection || section.type === "hero";
       const normalized = normalizeThemeSection({
         id: section.id,
         type: LEGACY_RENDER_ALIASES[section.type] || (v2BlockSection ? "rich-text" : section.type),
@@ -112,7 +113,7 @@ export function storeDesignSectionsForPage(document: ThemeDocument, page: PageRe
             .filter((item) => item.question || item.answer)
         : undefined;
 
-      const v2Assets = v2BlockSection
+      const v2Assets = semanticV2Section
         ? Object.fromEntries(
             Object.entries(settings)
               .filter(([key, value]) => /AssetId$/.test(key) && typeof value === "string" && Boolean(value))
@@ -160,9 +161,9 @@ export function storeDesignSectionsForPage(document: ThemeDocument, page: PageRe
         mobileImageObjectPosition: focalPosition(mobileAsset) || focalPosition(desktopAsset),
         faqItems,
         v2Type: v2BlockSection ? section.type : undefined,
-        v2Settings: v2BlockSection ? settings : undefined,
-        v2MediaType: v2BlockSection ? desktopAsset?.type : undefined,
-        v2PosterUrl: v2BlockSection && desktopAsset?.posterAssetId ? versionedMediaUrl(document.media[desktopAsset.posterAssetId]) : undefined,
+        v2Settings: semanticV2Section ? settings : undefined,
+        v2MediaType: semanticV2Section ? desktopAsset?.type : undefined,
+        v2PosterUrl: semanticV2Section && desktopAsset?.posterAssetId ? versionedMediaUrl(document.media[desktopAsset.posterAssetId]) : undefined,
         v2Assets,
         v2Blocks,
       };
