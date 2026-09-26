@@ -5,6 +5,7 @@ import { noStoreHeaders, revalidateWebsite } from "@/lib/websiteRevalidate";
 import {
   createEmptyThemeDocument,
   flattenThemeRedirects,
+  migrateThemeDocument,
   normalizeThemeDocument,
   STORE_DESIGN_SCHEMA_VERSION,
   validateThemeDocument,
@@ -39,7 +40,7 @@ async function readDocument(supabase: SupabaseClient, key: string) {
 
   if (error) throw new Error(error.message);
   return {
-    document: data?.setting_value ? normalizeThemeDocument(data.setting_value) : null,
+    document: data?.setting_value ? migrateThemeDocument(data.setting_value).document : null,
     updatedAt: data?.updated_at || null,
   };
 }
@@ -84,7 +85,8 @@ export async function POST(request: Request) {
     );
   }
 
-  const normalizedDocument = withThemeMediaUsageCounts(normalizeThemeDocument(body?.document));
+  const migration = migrateThemeDocument(body?.document);
+  const normalizedDocument = withThemeMediaUsageCounts(migration.document);
   const validation = validateThemeDocument(normalizedDocument);
   if (!validation.ok) {
     return NextResponse.json(
@@ -116,6 +118,12 @@ export async function POST(request: Request) {
       token,
       revision: document.revision,
       persistedAt: data.updated_at || now,
+      migration: {
+        fromVersion: migration.fromVersion,
+        toVersion: migration.toVersion,
+        changed: migration.changed,
+        notes: migration.notes,
+      },
     }, { headers: noStoreHeaders() });
   } catch (error) {
     return NextResponse.json(
@@ -131,7 +139,8 @@ export async function PUT(request: Request) {
 
   const body = await request.json().catch(() => ({}));
   const mode = body?.mode === "publish" ? "publish" : "draft";
-  const incoming = withThemeMediaUsageCounts(normalizeThemeDocument(body?.document));
+  const migration = migrateThemeDocument(body?.document);
+  const incoming = withThemeMediaUsageCounts(migration.document);
   const validation = validateThemeDocument(incoming);
   if (!validation.ok) {
     return NextResponse.json(
@@ -204,6 +213,12 @@ export async function PUT(request: Request) {
         snapshotKey,
         persistedAt: publishedRow?.updated_at || now,
         revalidate,
+        migration: {
+          fromVersion: migration.fromVersion,
+          toVersion: migration.toVersion,
+          changed: migration.changed,
+          notes: migration.notes,
+        },
       }, { headers: noStoreHeaders() });
     }
 
@@ -224,6 +239,12 @@ export async function PUT(request: Request) {
       mode,
       document: persisted,
       persistedAt: data?.updated_at || now,
+      migration: {
+        fromVersion: migration.fromVersion,
+        toVersion: migration.toVersion,
+        changed: migration.changed,
+        notes: migration.notes,
+      },
     }, { headers: noStoreHeaders() });
   } catch (error) {
     return NextResponse.json(
