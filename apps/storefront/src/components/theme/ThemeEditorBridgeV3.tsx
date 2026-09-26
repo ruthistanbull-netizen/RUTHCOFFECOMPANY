@@ -509,7 +509,7 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
   useEffect(() => { settingsRef.current = settings; }, [settings]);
 
   useEffect(() => {
-    const editorMode = new URLSearchParams(window.location.search).get("themeEditor") === "1";
+    const editorParams = new URLSearchParams(window.location.search);\n    const editorMode = editorParams.get("themeEditor") === "1" && editorParams.get("storeDesignV2") !== "1";
     let mutating = false;
     let releaseTimer = 0;
     let outlineTimer = 0;
