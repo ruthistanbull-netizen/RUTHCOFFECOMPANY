@@ -20,6 +20,7 @@ const SEMANTIC_SECTION_TYPE: Record<ThemeSection["type"], string> = {
   "product-slider": "product-slider",
   "image-banner": "image-banner",
   "rich-text": "rich-text",
+  faq: "faq-accordion",
 };
 
 function semanticSectionType(section: ThemeSection) {
@@ -218,6 +219,41 @@ export function HomeSectionRenderer({
           {section.title ? <h2 data-theme-section-title className="whitespace-pre-wrap font-heading font-editorial text-[clamp(1.7rem,3vw,3.2rem)]">{section.title}</h2> : null}
           {section.body ? <p data-theme-section-body className="mt-5 whitespace-pre-wrap text-sm leading-7 opacity-80">{section.body}</p> : null}
           {section.linkLabel && section.linkHref ? <Link data-theme-section-link href={section.linkHref} className="mt-6 inline-block whitespace-pre-wrap text-[10px] uppercase tracking-[0.12em] underline underline-offset-4">{section.linkLabel}</Link> : null}
+        </div>
+      </section>
+    );
+  }
+
+  if (section.type === "faq") {
+    const items = section.faqItems || [];
+    return (
+      <section
+        data-theme-section-id={section.id}
+        data-editor-id={`section:${section.id}`}
+        data-editor-type={semanticSectionType(section)}
+        data-editor-label={semanticSectionLabel(section)}
+        className="px-5 md:px-8"
+        style={{
+          background: section.backgroundColor || "transparent",
+          color: section.textColor || "inherit",
+          paddingTop: section.paddingY ?? 64,
+          paddingBottom: section.paddingY ?? 64,
+        }}
+      >
+        <div className="mx-auto max-w-3xl">
+          {section.eyebrow ? <p className="mb-3 text-[10px] uppercase tracking-[0.16em] opacity-60">{section.eyebrow}</p> : null}
+          {section.title ? <h2 className="font-heading font-editorial text-[clamp(1.7rem,3vw,3.2rem)]">{section.title}</h2> : null}
+          <div className="mt-6 divide-y divide-current/10 border-y border-current/10">
+            {items.map((item) => (
+              <details key={item.id} className="group py-1">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 text-[13px] font-medium">
+                  <span>{item.question}</span>
+                  <span aria-hidden="true" className="text-lg font-light transition-transform group-open:rotate-45">+</span>
+                </summary>
+                {item.answer ? <p className="pb-5 pr-8 text-[12px] leading-6 opacity-65">{item.answer}</p> : null}
+              </details>
+            ))}
+          </div>
         </div>
       </section>
     );
