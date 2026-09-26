@@ -312,19 +312,19 @@ export function StoreDesignMediaLibrary({
                 <div className="rounded-lg bg-white p-2"><dt className="text-black/35">Dosya</dt><dd className="mt-1 font-semibold">{bytesLabel(selected.bytes)}</dd></div>
               </dl>
 
-              {selected.type === "image" ? (
-                <div className="mt-4 rounded-xl border border-black/[0.08] bg-white p-3">
-                  <p className="text-[9px] font-semibold">Focal point</p>
-                  <p className="mt-1 text-[7px] leading-4 text-black/35">Cover/crop kullanılan alanlarda odak noktasını korur.</p>
-                  <label className="mt-3 grid gap-1 text-[8px] text-black/45">Yatay · {Math.round(focal?.x ?? selected.focalPoint?.x ?? 50)}%
-                    <input type="range" min="0" max="100" value={focal?.x ?? selected.focalPoint?.x ?? 50} onChange={(event) => setFocal({ x: Number(event.target.value), y: focal?.y ?? selected.focalPoint?.y ?? 50 })} />
-                  </label>
-                  <label className="mt-2 grid gap-1 text-[8px] text-black/45">Dikey · {Math.round(focal?.y ?? selected.focalPoint?.y ?? 50)}%
-                    <input type="range" min="0" max="100" value={focal?.y ?? selected.focalPoint?.y ?? 50} onChange={(event) => setFocal({ x: focal?.x ?? selected.focalPoint?.x ?? 50, y: Number(event.target.value) })} />
-                  </label>
-                  <button type="button" disabled={busy} onClick={() => void saveAssetSettings()} className="mt-3 h-9 w-full rounded-lg bg-[#111] text-[8px] font-semibold text-white disabled:opacity-40">Odak Noktasını Kaydet</button>
-                </div>
-              ) : (
+              <div className="mt-4 rounded-xl border border-black/[0.08] bg-white p-3">
+                <p className="text-[9px] font-semibold">Focal point</p>
+                <p className="mt-1 text-[7px] leading-4 text-black/35">Cover/crop kullanılan fotoğraf ve videolarda odak noktasını korur.</p>
+                <label className="mt-3 grid gap-1 text-[8px] text-black/45">Yatay · {Math.round(focal?.x ?? selected.focalPoint?.x ?? 50)}%
+                  <input type="range" min="0" max="100" value={focal?.x ?? selected.focalPoint?.x ?? 50} onChange={(event) => setFocal({ x: Number(event.target.value), y: focal?.y ?? selected.focalPoint?.y ?? 50 })} />
+                </label>
+                <label className="mt-2 grid gap-1 text-[8px] text-black/45">Dikey · {Math.round(focal?.y ?? selected.focalPoint?.y ?? 50)}%
+                  <input type="range" min="0" max="100" value={focal?.y ?? selected.focalPoint?.y ?? 50} onChange={(event) => setFocal({ x: focal?.x ?? selected.focalPoint?.x ?? 50, y: Number(event.target.value) })} />
+                </label>
+                <button type="button" disabled={busy} onClick={() => void saveAssetSettings()} className="mt-3 h-9 w-full rounded-lg bg-[#111] text-[8px] font-semibold text-white disabled:opacity-40">Odak Noktasını Kaydet</button>
+              </div>
+
+              {selected.type === "video" ? (
                 <label className="mt-4 grid gap-1.5 text-[8px] font-semibold text-black/45">
                   Video poster
                   <select value={selected.posterAssetId || ""} onChange={(event) => void setRelation("posterAssetId", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2 text-[8px] font-medium text-black outline-none">
@@ -332,7 +332,7 @@ export function StoreDesignMediaLibrary({
                     {imageAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.assetId}</option>)}
                   </select>
                 </label>
-              )}
+              ) : null}
 
               <label className="mt-4 grid gap-1.5 text-[8px] font-semibold text-black/45">
                 Mobil varyant
