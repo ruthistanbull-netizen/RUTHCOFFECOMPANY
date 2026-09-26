@@ -4,7 +4,6 @@ import {
   ChevronDown,
   ChevronRight,
   CircleDot,
-  Layers3,
   Monitor,
   PanelLeft,
   PanelRight,
@@ -29,9 +28,11 @@ import {
   type PageCompatibility,
   type ThemeDocument,
 } from "@ruth-commerce/commerce-core/store-design-v2";
+import { normalizeThemeSectionSettings } from "@ruth-commerce/commerce-core/theme-sections";
 import { adminRequest } from "@/lib/adminApi";
 import { useExactToast } from "@/components/base44-exact/primitives";
 import { StoreDesignPageManager } from "@/components/theme/StoreDesignPageManager";
+import { StoreDesignSectionManager } from "@/components/theme/StoreDesignSectionManager";
 
 type Device = "desktop" | "mobile";
 type PageItem = {
@@ -72,7 +73,8 @@ type StoreDesignResponse = {
   publishedUpdatedAt?: string | null;
 };
 
-type PatchHistoryEntry = {
+type SemanticHistoryEntry = {
+  kind: "semantic";
   target: SelectedTarget;
   scope: EditorScope;
   device: Device;
@@ -80,6 +82,16 @@ type PatchHistoryEntry = {
   before: unknown;
   after: unknown;
 };
+
+type StructureHistoryEntry = {
+  kind: "structure";
+  label: string;
+  before: ThemeDocument;
+  after: ThemeDocument;
+  pagePath: string;
+};
+
+type EditorHistoryEntry = SemanticHistoryEntry | StructureHistoryEntry;
 
 const RAW_STOREFRONT_URL = process.env.NEXT_PUBLIC_STOREFRONT_URL || "https://rostacoffecompany.zeabur.app";
 const STOREFRONT_ORIGIN = (() => {
@@ -163,6 +175,69 @@ function updateTargetSnapshot(target: SelectedTarget, path: string, value: unkno
     return { ...target, current: { ...target.current, media: { ...(target.current.media || {}), objectFit: String(value) } } };
   }
   return { ...target, current: { ...target.current, [path]: value } };
+}
+
+function documentFingerprint(value: ThemeDocument) {
+  const { revision: _revision, publishedAt: _publishedAt, ...rest } = value;
+  return JSON.stringify(rest);
+}
+
+function seedLegacyHomepage(value: ThemeDocument, input: unknown) {
+  const alreadyHasHome = Boolean(value.pages["/"] || Object.values(value.pages).find((page) => page.route === "/"));
+  if (alreadyHasHome) return value;
+
+  const legacy = normalizeThemeSectionSettings(input);
+  const legacyHome = legacy.pages["/"];
+  if (!legacyHome?.sections?.length) return value;
+
+  const next = structuredClone(value) as ThemeDocument;
+  const templateId = "template:home";
+  const sectionIds: string[] = [];
+
+  for (const legacySection of legacyHome.sections) {
+    const preferredId = legacySection.id || `legacy-${legacySection.type}-${sectionIds.length + 1}`;
+    const sectionId = next.sections[preferredId] ? `legacy-${preferredId}` : preferredId;
+    const { id: _id, type, enabled, ...settings } = legacySection;
+    next.sections[sectionId] = {
+      id: sectionId,
+      type,
+      schemaVersion: STORE_DESIGN_SCHEMA_VERSION,
+      enabled: enabled !== false,
+      settings: settings as Record<string, unknown>,
+      blockIds: [],
+    };
+    sectionIds.push(sectionId);
+  }
+
+  next.templates[templateId] = {
+    id: templateId,
+    label: "Ana Sayfa Şablonu",
+    compatibility: ["home"],
+    sectionIds,
+    componentSettings: {},
+    schemaVersion: STORE_DESIGN_SCHEMA_VERSION,
+  };
+  next.pages["/"] = {
+    id: "page:home",
+    name: "Ana Sayfa",
+    slug: "ana-sayfa",
+    route: "/",
+    kind: "system",
+    type: "system",
+    templateId,
+    status: "published",
+    seoId: "seo:home",
+    reserved: true,
+    schemaVersion: STORE_DESIGN_SCHEMA_VERSION,
+  };
+  next.seo["seo:home"] ||= {
+    title: "",
+    description: "",
+    robots: "index,follow",
+    robotsPreset: "index,follow",
+    structuredDataPolicy: "inherit",
+  };
+  return next;
 }
 
 function persistSemanticPatch(
@@ -254,13 +329,13 @@ export function StoreDesignV21() {
   const [leftOpen, setLeftOpen] = useState(true);
   const [rightOpen, setRightOpen] = useState(true);
   const [pageManagerMode, setPageManagerMode] = useState<"create" | "edit" | null>(null);
-  const [history, setHistory] = useState<PatchHistoryEntry[]>([]);
-  const [future, setFuture] = useState<PatchHistoryEntry[]>([]);
+  const [history, setHistory] = useState<EditorHistoryEntry[]>([]);
+  const [future, setFuture] = useState<EditorHistoryEntry[]>([]);
   const revisionRef = useRef(0);
   const lastReconnectRef = useRef(0);
 
-  const hasUnsavedChanges = JSON.stringify(document) !== JSON.stringify(savedDraft);
-  const hasUnpublishedChanges = JSON.stringify(savedDraft) !== JSON.stringify(published);
+  const hasUnsavedChanges = documentFingerprint(document) !== documentFingerprint(savedDraft);
+  const hasUnpublishedChanges = documentFingerprint(savedDraft) !== documentFingerprint(published);
   const editorPages = useMemo(() => {
     const merged = new Map(pages.map((page) => [page.path, page]));
     for (const page of Object.values(document.pages)) {
@@ -277,6 +352,9 @@ export function StoreDesignV21() {
   const groupedPages = useMemo(() => groupPages(editorPages), [editorPages]);
   const activePage = editorPages.find((item) => item.path === activePath) || editorPages[0] || null;
   const managedPage = document.pages[activePath] || Object.values(document.pages).find((page) => page.route === activePath) || null;
+  const activeCompatibility: PageCompatibility = (
+    managedPage ? document.templates[managedPage.templateId]?.compatibility?.[0] : undefined
+  ) || (activePage ? pageCompatibility(activePage) : "content");
 
   const postToPreview = useCallback((payload: Record<string, unknown>) => {
     iframeRef.current?.contentWindow?.postMessage(payload, STOREFRONT_ORIGIN);
@@ -309,10 +387,11 @@ export function StoreDesignV21() {
     Promise.all([
       adminRequest<StoreDesignResponse>(`/api/store-design-v2?t=${Date.now()}`, { force: true }),
       adminRequest<{ pages?: PageItem[] }>(`/api/theme-editor-pages?t=${Date.now()}`, { force: true, timeoutMs: 7_000 }),
-    ]).then(async ([themeResult, pageResult]) => {
+      adminRequest<{ settings?: unknown }>(`/api/theme-sections?t=${Date.now()}`, { force: true, timeoutMs: 7_000 }).catch(() => ({ settings: undefined })),
+    ]).then(async ([themeResult, pageResult, legacySections]) => {
       if (!active) return;
-      const nextDraft = normalizeThemeDocument(themeResult.draft || themeResult.published);
-      const nextPublished = normalizeThemeDocument(themeResult.published || themeResult.draft);
+      const nextDraft = seedLegacyHomepage(normalizeThemeDocument(themeResult.draft || themeResult.published), legacySections.settings);
+      const nextPublished = seedLegacyHomepage(normalizeThemeDocument(themeResult.published || themeResult.draft), legacySections.settings);
       const nextPages = Array.isArray(pageResult.pages) && pageResult.pages.length
         ? pageResult.pages
         : [{ path: "/", label: "Ana Sayfa", group: "Sayfalar" }];
@@ -451,6 +530,30 @@ export function StoreDesignV21() {
     }
   }, [syncPreviewDocument]);
 
+  const applyStructureSnapshot = useCallback(async (snapshot: ThemeDocument, pagePath: string) => {
+    const next = structuredClone(snapshot) as ThemeDocument;
+    next.revision = revisionRef.current + 1;
+    await syncPreviewDocument(next, true);
+    revisionRef.current = next.revision;
+    setDocument(next);
+    setSelected(null);
+    setLastHeartbeat(Date.now());
+
+    const page = editorPages.find((item) => item.path === pagePath);
+    if (iframeRef.current) {
+      iframeRef.current.src = previewUrl(page ? cleanPreviewPath(page) : pagePath, previewTokenRef.current);
+    }
+  }, [editorPages, syncPreviewDocument]);
+
+  const applyStructureDocument = useCallback(async (next: ThemeDocument, label: string) => {
+    const before = structuredClone(document) as ThemeDocument;
+    const after = structuredClone(next) as ThemeDocument;
+    await applyStructureSnapshot(after, activePath);
+    setHistory((items) => [...items.slice(-79), { kind: "structure", label, before, after, pagePath: activePath }]);
+    setFuture([]);
+    toast.success(label);
+  }, [activePath, applyStructureSnapshot, document, toast]);
+
   const applyPatchValue = (
     target: SelectedTarget,
     patchScope: EditorScope,
@@ -478,26 +581,42 @@ export function StoreDesignV21() {
     if (!selected || !activePage) return;
     const before = snapshotValue(selected, path);
     if (Object.is(before, value)) return;
-    const entry: PatchHistoryEntry = { target: selected, scope, device, path, before, after: value };
+    const entry: SemanticHistoryEntry = { kind: "semantic", target: selected, scope, device, path, before, after: value };
     setHistory((items) => [...items.slice(-79), entry]);
     setFuture([]);
     applyPatchValue(selected, scope, device, path, value);
   };
 
-  const undo = () => {
+  const undo = async () => {
     const entry = history.at(-1);
     if (!entry) return;
     setHistory((items) => items.slice(0, -1));
     setFuture((items) => [...items, entry]);
-    applyPatchValue(entry.target, entry.scope, entry.device, entry.path, entry.before);
+    if (entry.kind === "semantic") {
+      applyPatchValue(entry.target, entry.scope, entry.device, entry.path, entry.before);
+      return;
+    }
+    try {
+      await applyStructureSnapshot(entry.before, entry.pagePath);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Yapısal geri alma uygulanamadı.");
+    }
   };
 
-  const redo = () => {
+  const redo = async () => {
     const entry = future.at(-1);
     if (!entry) return;
     setFuture((items) => items.slice(0, -1));
     setHistory((items) => [...items, entry]);
-    applyPatchValue(entry.target, entry.scope, entry.device, entry.path, entry.after);
+    if (entry.kind === "semantic") {
+      applyPatchValue(entry.target, entry.scope, entry.device, entry.path, entry.after);
+      return;
+    }
+    try {
+      await applyStructureSnapshot(entry.after, entry.pagePath);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Yapısal yineleme uygulanamadı.");
+    }
   };
 
   const save = async (mode: "draft" | "publish") => {
@@ -563,10 +682,10 @@ export function StoreDesignV21() {
         </div>
 
         <div className="hidden items-center gap-1 md:flex">
-          <button type="button" disabled={!history.length || saving !== null} onClick={undo} className="grid h-9 w-9 place-items-center rounded-lg border border-black/10 bg-white hover:bg-black/[0.03] disabled:opacity-30" aria-label="Geri al">
+          <button type="button" disabled={!history.length || saving !== null} onClick={() => void undo()} className="grid h-9 w-9 place-items-center rounded-lg border border-black/10 bg-white hover:bg-black/[0.03] disabled:opacity-30" aria-label="Geri al">
             <Undo2 className="h-3.5 w-3.5" />
           </button>
-          <button type="button" disabled={!future.length || saving !== null} onClick={redo} className="grid h-9 w-9 place-items-center rounded-lg border border-black/10 bg-white hover:bg-black/[0.03] disabled:opacity-30" aria-label="Yinele">
+          <button type="button" disabled={!future.length || saving !== null} onClick={() => void redo()} className="grid h-9 w-9 place-items-center rounded-lg border border-black/10 bg-white hover:bg-black/[0.03] disabled:opacity-30" aria-label="Yinele">
             <Redo2 className="h-3.5 w-3.5" />
           </button>
         </div>
@@ -613,33 +732,12 @@ export function StoreDesignV21() {
             </div>
 
             <div className="min-h-0 flex-1 overflow-y-auto">
-              <section className="border-b border-black/[0.07] p-3">
-                <div className="flex items-center gap-2 text-[10px] font-semibold"><Layers3 className="h-3.5 w-3.5" /> Sayfa Yapısı</div>
-                <div className="mt-2 space-y-1">
-                  {["Header", "Sayfa şablonu", "Footer"].map((label, index) => (
-                    <button key={label} type="button" className="flex h-9 w-full items-center gap-2 rounded-lg px-2 text-left text-[10px] hover:bg-black/[0.035]">
-                      <ChevronRight className="h-3.5 w-3.5 text-black/30" />
-                      <span className="flex-1">{label}</span>
-                      <span className="text-[8px] text-black/30">{index === 1 ? "Bölümler" : "Global"}</span>
-                    </button>
-                  ))}
-                </div>
-              </section>
-
-              <section className="p-3">
-                <p className="text-[9px] font-semibold text-black/45">BÖLÜM KÜTÜPHANESİ</p>
-                <p className="mt-1 text-[8px] leading-4 text-black/35">Registry’deki tüm bölüm tipleri burada tek kaynaktan listeleniyor. Uyumlu sayfa filtresi Page Manager fazıyla bağlanacak.</p>
-                <div className="mt-2 space-y-1">
-                  {SECTION_LIBRARY.slice(0, 12).map((item) => (
-                    <div key={item.type} className="flex min-h-9 items-center gap-2 rounded-lg border border-black/[0.06] px-2.5">
-                      <span className="min-w-0 flex-1 truncate text-[9px] font-medium">{item.label}</span>
-                      <span className={`rounded px-1.5 py-0.5 text-[7px] font-semibold ${item.implemented ? "bg-emerald-50 text-emerald-700" : "bg-black/[0.04] text-black/35"}`}>
-                        {item.implemented ? "Hazır" : "Registry"}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </section>
+              <StoreDesignSectionManager
+                document={document}
+                activePage={activePage}
+                compatibility={activeCompatibility}
+                onApply={applyStructureDocument}
+              />
             </div>
           </aside>
         ) : null}
