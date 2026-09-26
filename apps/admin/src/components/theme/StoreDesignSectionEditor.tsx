@@ -23,6 +23,8 @@ const EDITABLE_TYPES = new Set([
   "featured-products",
   "product-slider",
   "product-grid",
+  "new-arrivals",
+  "sale-products",
   "image-banner",
   "rich-text",
   "faq",
@@ -112,7 +114,8 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
     }
   };
 
-  const productSection = section.type === "featured-products" || section.type === "product-slider" || section.type === "product-grid";
+  const presetProductSection = section.type === "new-arrivals" || section.type === "sale-products";
+  const productSection = section.type === "featured-products" || section.type === "product-slider" || section.type === "product-grid" || presetProductSection;
   const imageBanner = section.type === "image-banner";
   const richText = section.type === "rich-text";
   const faq = section.type === "faq";
@@ -137,19 +140,37 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
                 Başlık
                 <input value={textValue(settings.title)} onChange={(event) => set("title", event.target.value)} className="h-10 rounded-lg border border-black/10 px-3 text-[10px] outline-none" />
               </label>
-              <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
-                Veri kaynağı
-                <select value={textValue(settings.productSource) || "featured"} onChange={(event) => set("productSource", event.target.value)} className="h-10 rounded-lg border border-black/10 bg-white px-3 text-[10px] outline-none">
-                  <option value="featured">Öne çıkanlar</option>
-                  <option value="all">Tüm ürünler</option>
-                  <option value="collection">Koleksiyon</option>
-                  <option value="category">Kategori</option>
-                </select>
-              </label>
+              {presetProductSection ? (
+                <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
+                  Veri kaynağı
+                  <div className="flex h-10 items-center rounded-lg border border-black/10 bg-black/[0.025] px-3 text-[9px] font-medium text-black/55">
+                    {section.type === "new-arrivals" ? "Otomatik · yeni ürün işareti" : "Otomatik · gerçek indirim verisi"}
+                  </div>
+                </label>
+              ) : (
+                <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
+                  Veri kaynağı
+                  <select value={textValue(settings.productSource) || "featured"} onChange={(event) => set("productSource", event.target.value)} className="h-10 rounded-lg border border-black/10 bg-white px-3 text-[10px] outline-none">
+                    <option value="featured">Öne çıkanlar</option>
+                    <option value="all">Tüm ürünler</option>
+                    <option value="collection">Koleksiyon</option>
+                    <option value="category">Kategori</option>
+                  </select>
+                </label>
+              )}
               <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
                 Ürün limiti
-                <input type="number" min={1} max={40} value={numberValue(settings.productLimit, section.type === "product-slider" ? 12 : 8)} onChange={(event) => set("productLimit", Number(event.target.value))} className="h-10 rounded-lg border border-black/10 px-3 text-[10px] outline-none" />
+                <input type="number" min={1} max={40} value={numberValue(settings.productLimit, section.type === "product-slider" || presetProductSection ? 12 : 8)} onChange={(event) => set("productLimit", Number(event.target.value))} className="h-10 rounded-lg border border-black/10 px-3 text-[10px] outline-none" />
               </label>
+              {presetProductSection ? (
+                <label className="grid gap-1.5 text-[9px] font-semibold text-black/50 md:col-span-2">
+                  Yerleşim
+                  <select value={textValue(settings.layout) || "slider"} onChange={(event) => set("layout", event.target.value)} className="h-10 rounded-lg border border-black/10 bg-white px-3 text-[10px] outline-none">
+                    <option value="slider">Slider</option>
+                    <option value="grid">Grid</option>
+                  </select>
+                </label>
+              ) : null}
               <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
                 Masaüstü kolon
                 <input type="number" min={1} max={8} value={numberValue(settings.desktopItems, 4)} onChange={(event) => set("desktopItems", Number(event.target.value))} className="h-10 rounded-lg border border-black/10 px-3 text-[10px] outline-none" />
@@ -166,10 +187,20 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
                 Dikey boşluk
                 <input type="number" min={0} max={240} value={numberValue(settings.paddingY, 64)} onChange={(event) => set("paddingY", Number(event.target.value))} className="h-10 rounded-lg border border-black/10 px-3 text-[10px] outline-none" />
               </label>
-              {section.type === "product-slider" ? (
+              {section.type === "product-slider" || (presetProductSection && textValue(settings.layout) !== "grid") ? (
                 <label className="flex items-center justify-between gap-3 rounded-lg border border-black/[0.08] p-3 text-[9px] font-semibold text-black/55 md:col-span-2">
                   Okları göster
                   <input type="checkbox" checked={booleanValue(settings.showArrows, true)} onChange={(event) => set("showArrows", event.target.checked)} />
+                </label>
+              ) : null}
+              {section.type === "sale-products" ? (
+                <label className="grid gap-1.5 text-[9px] font-semibold text-black/50 md:col-span-2">
+                  İndirim rozeti
+                  <select value={textValue(settings.badgeStyle) || "pill"} onChange={(event) => set("badgeStyle", event.target.value)} className="h-10 rounded-lg border border-black/10 bg-white px-3 text-[10px] outline-none">
+                    <option value="pill">Dolu</option>
+                    <option value="outline">Çerçeveli</option>
+                    <option value="minimal">Minimal</option>
+                  </select>
                 </label>
               ) : null}
               {section.type === "product-grid" ? (
