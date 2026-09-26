@@ -564,7 +564,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
                     Layout
                     <div className="flex h-9 items-center rounded-lg border border-black/10 bg-black/[0.025] px-2.5 text-[8px] font-medium text-black/55">
-                      Tablo · responsive stack
+                      Tablo · mobilde yatay kaydırma
                     </div>
                   </label>
                 </>
