@@ -170,20 +170,19 @@ function EditorialMedia({
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const { scrollYProgress: cueScrollYProgress } = useScroll({
     target: ref,
-    offset: ["start 100%", "start 42%"],
+    offset: ["start 100%", "start 58%"],
   });
   const { scrollYProgress: cueLifecycleProgress } = useScroll({
     target: ref,
     offset: ["start 100%", "end 0%"],
   });
-  const cueSpringProgress = useSpring(cueScrollYProgress, {
-    stiffness: 180,
-    damping: 32,
-    mass: 0.24,
-    restDelta: 0.0002,
-    restSpeed: 0.0002,
+  const cueMotionProgress = useSpring(cueScrollYProgress, {
+    stiffness: 150,
+    damping: 27,
+    mass: 0.28,
+    restDelta: 0.0001,
+    restSpeed: 0.0001,
   });
-  const cueMotionProgress = mobileViewport ? cueScrollYProgress : cueSpringProgress;
   const progress = useSpring(scrollYProgress, { stiffness: 92, damping: 30, mass: 0.42 });
   const scale = useTransform(
     progress,
@@ -198,15 +197,13 @@ function EditorialMedia({
   // The cue is fixed to the viewport like the ROSTA wordmark.
   // The photo top edge only triggers its horizontal entrance; once visible,
   // the cue stays exactly at screen center until that photo's lifecycle ends.
-  const cueX = useTransform(
-    cueMotionProgress,
-    [0, 0.14, 0.34, 0.56, 0.78, 1],
-    [cueStartX, cueStartX * 0.74, cueStartX * 0.46, cueStartX * 0.23, cueStartX * 0.08, 0],
-  );
+  const cueX = useTransform(cueMotionProgress, [0, 1], [cueStartX, 0]);
+  // Each caption is gone before the following photo begins, so fixed captions
+  // can never sit on top of each other.
   const cueOpacity = useTransform(
     cueLifecycleProgress,
-    [0, 0.035, 0.9, 0.985, 1],
-    [0, 1, 1, 1, 0],
+    [0, 0.025, 0.78, 0.88, 1],
+    [0, 1, 1, 0, 0],
   );
   const wrapperClass = index === 0
     ? "absolute inset-0 overflow-hidden"
@@ -359,7 +356,7 @@ function EditorialMedia({
 
         {index === 1 ? (
           <motion.div
-            className="home-editorial-cue home-editorial-cue--second pointer-events-none fixed left-1/2 top-1/2 z-50 w-[88vw] max-w-[720px]"
+            className="home-editorial-cue home-editorial-cue--second pointer-events-none fixed left-1/2 top-1/2 z-50 w-[94vw] max-w-[760px]"
             style={{
               x: cueX,
               opacity: cueOpacity,
@@ -370,8 +367,8 @@ function EditorialMedia({
           >
             <div className="-translate-x-1/2 -translate-y-1/2 text-center">
               <p>
-                <span>Doğru Çekirdek,</span>
-                <span>Güçlü Deneyim</span>
+                <span className="whitespace-nowrap">Doğru Çekirdek,</span>
+                <span className="whitespace-nowrap">Güçlü Deneyim</span>
               </p>
             </div>
           </motion.div>
@@ -379,7 +376,7 @@ function EditorialMedia({
 
         {index === 2 ? (
           <motion.div
-            className="home-editorial-cue home-editorial-cue--third pointer-events-none fixed left-1/2 top-1/2 z-50 w-[88vw] max-w-[760px]"
+            className="home-editorial-cue home-editorial-cue--third pointer-events-none fixed left-1/2 top-1/2 z-50 w-[94vw] max-w-[820px]"
             style={{
               x: cueX,
               opacity: cueOpacity,
@@ -389,7 +386,10 @@ function EditorialMedia({
             aria-hidden="true"
           >
             <div className="-translate-x-1/2 -translate-y-1/2 text-center">
-              <p>Kahveyi sadeleştir, karakterini koru.</p>
+              <p>
+                <span className="whitespace-nowrap">Kahveyi sadeleştir,</span>
+                <span className="whitespace-nowrap">karakterini koru.</span>
+              </p>
             </div>
           </motion.div>
         ) : null}
@@ -516,9 +516,9 @@ export default function Hero({
         .home-editorial-wordmark{box-sizing:border-box;pointer-events:none;position:fixed;left:0;top:calc(100svh - clamp(184px,38vw,236px) + 20px);z-index:40;width:min(100vw,1208px);max-width:100vw;height:auto;aspect-ratio:3175/1343;user-select:none;transition:color .24s ease,opacity .28s ease,visibility .28s ease}.home-editorial-wordmark[data-visible="false"]{opacity:0!important;visibility:hidden}.home-editorial-wordmark svg{display:block;width:100%;height:100%;overflow:visible}@media(min-width:1024px){.home-editorial-wordmark{right:1vw!important;left:auto!important;top:calc(47vh + 18px)!important;width:44.8vw!important;max-width:44.8vw!important;height:auto!important;aspect-ratio:3175/1343}}
         .home-editorial-cue{color:var(--rosta-brick-b);font-family:var(--font-heading)!important;font-weight:900!important;font-variation-settings:"wght" 900!important;font-synthesis:weight!important;letter-spacing:-.045em;line-height:.92}
         .home-editorial-cue p,.home-editorial-cue span{margin:0;font-family:var(--font-heading)!important;font-weight:900!important;font-variation-settings:"wght" 900!important;font-synthesis:weight!important}
-        .home-editorial-cue p{font-size:clamp(3.75rem,15vw,5.4rem);line-height:.9}
+        .home-editorial-cue p{font-size:clamp(2.65rem,11.5vw,4.25rem);line-height:.9}
         .home-editorial-cue span{display:block}
-        .home-editorial-cue--third p{font-size:clamp(3.35rem,13.5vw,5rem);line-height:.92}
+        .home-editorial-cue--third p{font-size:clamp(2.15rem,9.4vw,3.7rem);line-height:.94}
         @media(min-width:768px){
           .home-editorial-cue p{font-size:clamp(3.1rem,5.7vw,6.45rem);line-height:.91}
           .home-editorial-cue--third p{font-size:clamp(2.85rem,5.25vw,5.9rem);line-height:.94}
