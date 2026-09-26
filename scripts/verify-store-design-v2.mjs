@@ -307,6 +307,7 @@ for (const token of [
   "background-media",
   "brand-story",
   "collection-cards",
+  "scroll-story",
   "Media Library",
   "Oynatma politikası",
   "Autoplay · sessiz · loop",
@@ -317,6 +318,9 @@ for (const token of [
   "Başlık konumu",
   "Marka hikayesi medyası",
   "İçerik genişliği",
+  "Scroll uzunluğu",
+  "Geçiş preset",
+  "KAYDIR cue göster",
 ]) {
   if (!mediaSectionEditor.includes(token)) fail(`Media narrative editor kontrolü eksik: ${token}`);
 }
@@ -331,6 +335,8 @@ for (const token of [
   'section("background-media"',
   'section("collection-cards"',
   'section("brand-story"',
+  'component("scroll-story-slide"',
+  'block("scroll-story-slide"',
 ]) {
   if (!core.includes(token)) fail(`Media narrative registry sözleşmesi eksik: ${token}`);
 }
@@ -341,7 +347,7 @@ for (const token of ["new-arrivals", "sale-products", "Otomatik · yeni ürün i
 }
 
 const themeSections = read("packages/commerce-core/src/theme-sections.ts");
-for (const token of ['| "new-arrivals"', '| "sale-products"', 'layout?: "slider" | "grid"', 'badgeStyle?: "pill" | "outline" | "minimal"']) {
+for (const token of ['| "new-arrivals"', '| "sale-products"', 'layout?: "slider" | "grid"', 'badgeStyle?: "pill" | "outline" | "minimal"', "mobileAssetUrl?: string", "mobileObjectPosition?: string"]) {
   if (!themeSections.includes(token)) fail(`Product preset render contract eksik: ${token}`);
 }
 
@@ -363,9 +369,26 @@ for (const token of [
 
 for (const token of [
   '["hero", "collection-cards", "brand-story"]',
+  'section.type === "scroll-story"',
+  "hydrateV2Blocks",
+  "mobileAssetUrl",
+  "mobileObjectPosition",
   "semanticV2Section",
 ]) {
   if (!v2Sections.includes(token)) fail(`Semantic V2 hydration eksik: ${token}`);
+}
+
+const scrollStory = read("apps/storefront/src/components/home/ScrollStory.tsx");
+for (const token of [
+  "buildV2Slides",
+  "scroll-story-slide",
+  "safeStoryHref",
+  "scrollLengthPreset",
+  "transitionPreset",
+  "cueVisibility",
+  "mobileObjectPosition",
+]) {
+  if (!scrollStory.includes(token)) fail(`Scroll Story V2 runtime eksik: ${token}`);
 }
 
 const productCard = read("apps/storefront/src/components/ProductCard.tsx");
