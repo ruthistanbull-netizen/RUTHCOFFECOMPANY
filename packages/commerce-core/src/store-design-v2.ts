@@ -689,6 +689,7 @@ function normalizeRedirectRecord(input: unknown, index: number): RedirectRecord 
 
 export function flattenThemeRedirects(input: RedirectRecord[]) {
   const active = input.filter((item) => item.active !== false);
+  const disabled = input.filter((item) => item.active === false);
   const direct = new Map(active.map((item) => [item.from, item.to]));
   const flattened: RedirectRecord[] = [];
   const seenFrom = new Set<string>();
@@ -698,16 +699,24 @@ export function flattenThemeRedirects(input: RedirectRecord[]) {
     seenFrom.add(item.from);
     let target = item.to;
     const visited = new Set([item.from]);
+    let looped = false;
 
-    for (let depth = 0; depth < 12; depth += 1) {
-      if (visited.has(target)) break;
+    for (let depth = 0; depth < 64; depth += 1) {
+      if (visited.has(target)) {
+        looped = true;
+        break;
+      }
       visited.add(target);
       const next = direct.get(target);
       if (!next) break;
       target = next;
     }
 
-    if (target === item.from) continue;
+    if (looped || target === item.from) {
+      flattened.push({ ...item, sourcePath: item.from, targetPath: item.to, statusCode: item.status, active: true });
+      continue;
+    }
+
     flattened.push({
       ...item,
       to: target,
@@ -718,7 +727,7 @@ export function flattenThemeRedirects(input: RedirectRecord[]) {
     });
   }
 
-  return flattened.slice(0, 500);
+  return [...flattened, ...disabled].slice(0, 500);
 }
 
 export function validateThemeDocument(document: ThemeDocument) {
@@ -800,10 +809,27 @@ export function validateThemeDocument(document: ThemeDocument) {
   const redirectMap = new Map<string, string>();
   for (const redirect of document.redirects.filter((item) => item.active !== false)) {
     if (redirect.from === redirect.to) errors.push(`${redirect.from}: redirect kendi üzerine gidemez.`);
+    if (isProtectedStoreDesignRoute(redirect.from)) errors.push(`${redirect.from}: korumalı sistem route'u redirect kaynağı olamaz.`);
     if (redirectMap.has(redirect.from) && redirectMap.get(redirect.from) !== redirect.to) {
       errors.push(`${redirect.from}: birden fazla aktif redirect hedefi var.`);
     }
+    if (Object.values(document.pages).some((page) => page.status === "published" && page.route === redirect.from)) {
+      errors.push(`${redirect.from}: yayınlanmış bir sayfa aktif redirect kaynağı olamaz.`);
+    }
     redirectMap.set(redirect.from, redirect.to);
+  }
+
+  for (const source of redirectMap.keys()) {
+    const visited = new Set<string>();
+    let cursor: string | undefined = source;
+    for (let depth = 0; cursor && depth < 128; depth += 1) {
+      if (visited.has(cursor)) {
+        errors.push(`${source}: redirect döngüsü tespit edildi.`);
+        break;
+      }
+      visited.add(cursor);
+      cursor = redirectMap.get(cursor);
+    }
   }
 
   return { ok: errors.length === 0, errors };
@@ -841,12 +867,10 @@ export function normalizeThemeDocument(input: unknown): ThemeDocument {
     seo[key] = normalizeSeoDocument(value);
   }
 
-  const redirects = flattenThemeRedirects(
-    (Array.isArray(raw.redirects) ? raw.redirects : [])
-      .slice(0, 500)
-      .map((value, index) => normalizeRedirectRecord(value, index))
-      .filter((value): value is RedirectRecord => value !== null),
-  );
+  const redirects = (Array.isArray(raw.redirects) ? raw.redirects : [])
+    .slice(0, 500)
+    .map((value, index) => normalizeRedirectRecord(value, index))
+    .filter((value): value is RedirectRecord => value !== null);
 
   return {
     schemaVersion: STORE_DESIGN_SCHEMA_VERSION,
