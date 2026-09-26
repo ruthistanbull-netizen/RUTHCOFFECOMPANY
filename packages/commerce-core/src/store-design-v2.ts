@@ -391,9 +391,14 @@ export type TemplateComponentSettings = {
 export type TemplateRecord = {
   id: string;
   label: string;
+  description?: string;
+  pageType?: PageCompatibility;
   compatibility: PageCompatibility[];
   sectionIds: string[];
   componentSettings?: Record<string, TemplateComponentSettings>;
+  version?: number;
+  createdAt?: string;
+  updatedAt?: string;
   schemaVersion: number;
 };
 
@@ -501,6 +506,7 @@ export type ThemeDocument = {
   pages: Record<string, PageRecord>;
   seo: Record<string, SeoDocument>;
   templates: Record<string, TemplateRecord>;
+  templateBindings: Record<string, string>;
   sections: Record<string, SectionInstance>;
   blocks: Record<string, BlockInstance>;
   media: Record<string, MediaAsset>;
@@ -733,6 +739,11 @@ export function validateThemeDocument(document: ThemeDocument) {
     }
   }
 
+  for (const [route, templateId] of Object.entries(document.templateBindings)) {
+    if (!document.templates[templateId]) errors.push(`${route}: atanmış template bulunamadı (${templateId}).`);
+    if (!route.startsWith("/")) errors.push(`${route}: template binding route geçersiz.`);
+  }
+
   for (const [assetId, asset] of Object.entries(document.media)) {
     if (!asset.url || !/^https?:\/\//i.test(asset.url)) errors.push(`${assetId}: medya URL geçersiz.`);
     if (asset.mobileAssetId && !document.media[asset.mobileAssetId]) errors.push(`${assetId}: mobil medya referansı bulunamadı.`);
@@ -777,6 +788,7 @@ export function createEmptyThemeDocument(): ThemeDocument {
     pages: {},
     seo: {},
     templates: {},
+    templateBindings: {},
     sections: {},
     blocks: {},
     media: {},
@@ -819,6 +831,11 @@ export function normalizeThemeDocument(input: unknown): ThemeDocument {
     pages,
     seo,
     templates: objectRecord(raw.templates) as Record<string, TemplateRecord>,
+    templateBindings: Object.fromEntries(
+      Object.entries(objectRecord(raw.templateBindings))
+        .slice(0, 500)
+        .filter((entry): entry is [string, string] => typeof entry[1] === "string" && Boolean(entry[1])),
+    ),
     sections: objectRecord(raw.sections) as Record<string, SectionInstance>,
     blocks: objectRecord(raw.blocks) as Record<string, BlockInstance>,
     media: objectRecord(raw.media) as Record<string, MediaAsset>,
