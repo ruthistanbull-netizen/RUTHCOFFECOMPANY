@@ -301,14 +301,22 @@ for (const token of [
 
 const mediaSectionEditor = read("apps/admin/src/components/theme/StoreDesignBlockSectionEditor.tsx");
 for (const token of [
+  "hero",
   "video-hero",
   "video-banner",
   "background-media",
+  "brand-story",
+  "collection-cards",
   "Media Library",
   "Oynatma politikası",
   "Autoplay · sessiz · loop",
   "Poster override",
   "Metin kontrastı",
+  "Katalog · aktif koleksiyonlar",
+  "Kart oranı",
+  "Başlık konumu",
+  "Marka hikayesi medyası",
+  "İçerik genişliği",
 ]) {
   if (!mediaSectionEditor.includes(token)) fail(`Media narrative editor kontrolü eksik: ${token}`);
 }
@@ -317,9 +325,12 @@ for (const token of [
   'component("video-hero"',
   'component("background-media"',
   'block("content"',
+  'section("hero"',
   'section("video-hero"',
   'section("video-banner"',
   'section("background-media"',
+  'section("collection-cards"',
+  'section("brand-story"',
 ]) {
   if (!core.includes(token)) fail(`Media narrative registry sözleşmesi eksik: ${token}`);
 }
@@ -337,6 +348,24 @@ for (const token of ['| "new-arrivals"', '| "sale-products"', 'layout?: "slider"
 const homeSectionRenderer = read("apps/storefront/src/components/theme/HomeSectionRenderer.tsx");
 for (const token of ['product.is_new === true', 'section.type === "sale-products"', 'section.layout === "grid"', "saleBadgeVars", "productHasDiscount"]) {
   if (!homeSectionRenderer.includes(token)) fail(`Product preset storefront runtime eksik: ${token}`);
+}
+for (const token of [
+  "customHero",
+  "safeSectionHref",
+  "data-home-editorial-media",
+  "customCollectionCards",
+  "--collection-columns",
+  "customBrandStory",
+  "v2-brand-story-media",
+]) {
+  if (!homeSectionRenderer.includes(token)) fail(`Hero/collection/brand V2 storefront runtime eksik: ${token}`);
+}
+
+for (const token of [
+  '["hero", "collection-cards", "brand-story"]',
+  "semanticV2Section",
+]) {
+  if (!v2Sections.includes(token)) fail(`Semantic V2 hydration eksik: ${token}`);
 }
 
 const productCard = read("apps/storefront/src/components/ProductCard.tsx");
