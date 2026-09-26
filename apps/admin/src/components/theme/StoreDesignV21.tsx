@@ -94,6 +94,12 @@ type SemanticHistoryEntry = {
   after: unknown;
 };
 
+type SemanticBatchHistoryEntry = {
+  kind: "semantic-batch";
+  label: string;
+  patches: SemanticHistoryEntry[];
+};
+
 type StructureHistoryEntry = {
   kind: "structure";
   label: string;
@@ -103,7 +109,7 @@ type StructureHistoryEntry = {
   reload: boolean;
 };
 
-type EditorHistoryEntry = SemanticHistoryEntry | StructureHistoryEntry;
+type EditorHistoryEntry = SemanticHistoryEntry | SemanticBatchHistoryEntry | StructureHistoryEntry;
 
 const RAW_STOREFRONT_URL = process.env.NEXT_PUBLIC_STOREFRONT_URL || "https://rostacoffecompany.zeabur.app";
 const STOREFRONT_ORIGIN = (() => {
@@ -168,9 +174,92 @@ function setNested(target: Record<string, unknown>, path: string, value: unknown
   cursor[parts[parts.length - 1]!] = value;
 }
 
+function deleteNested(target: Record<string, unknown>, path: string) {
+  const parts = path.split(".").filter(Boolean);
+  if (!parts.length) return;
+  const stack: Array<{ parent: Record<string, unknown>; key: string }> = [];
+  let cursor: Record<string, unknown> = target;
+
+  for (const part of parts.slice(0, -1)) {
+    const value = cursor[part];
+    if (!value || typeof value !== "object" || Array.isArray(value)) return;
+    stack.push({ parent: cursor, key: part });
+    cursor = value as Record<string, unknown>;
+  }
+
+  delete cursor[parts[parts.length - 1]!];
+
+  for (const { parent, key } of stack.reverse()) {
+    const value = parent[key];
+    if (value && typeof value === "object" && !Array.isArray(value) && Object.keys(value as Record<string, unknown>).length === 0) {
+      delete parent[key];
+    }
+  }
+}
+
+function writeNested(target: Record<string, unknown>, path: string, value: unknown) {
+  if (value === null) deleteNested(target, path);
+  else setNested(target, path, value);
+}
+
+function recordValue(value: unknown): Record<string, unknown> {
+  return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {};
+}
+
+function getNested(target: Record<string, unknown>, path: string) {
+  let value: unknown = target;
+  for (const part of path.split(".").filter(Boolean)) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) return undefined;
+    value = (value as Record<string, unknown>)[part];
+  }
+  return value;
+}
+
+function flattenResponsiveLeaves(value: unknown, prefix = ""): Array<[string, unknown]> {
+  if (value == null || typeof value !== "object" || Array.isArray(value)) return prefix ? [[prefix, value]] : [];
+  const output: Array<[string, unknown]> = [];
+  for (const [key, child] of Object.entries(value as Record<string, unknown>)) {
+    const path = prefix ? `${prefix}.${key}` : key;
+    output.push(...flattenResponsiveLeaves(child, path));
+  }
+  return output;
+}
+
 function sectionRegistration(target: SelectedTarget) {
   const entry = [...target.breadcrumb].reverse().find((item) => item.id.startsWith("section:"));
   return entry ? { id: entry.id.slice("section:".length), type: entry.type } : null;
+}
+
+function responsiveSettingsFor(
+  document: ThemeDocument,
+  target: SelectedTarget,
+  scope: EditorScope,
+  page: PageItem,
+) {
+  if (scope === "global") {
+    const container = target.type.startsWith("header") || target.type.includes("menu") || target.type.includes("nav")
+      ? document.globals.header
+      : target.type.startsWith("footer") || target.type === "social-links"
+        ? document.globals.footer
+        : document.globals.tokens;
+    return recordValue(container[target.type]);
+  }
+
+  if (scope === "family") return recordValue(document.globals.componentFamilies[target.type]);
+
+  const section = sectionRegistration(target);
+  if ((scope === "section" || scope === "instance") && section) {
+    const instance = document.sections[section.id];
+    const semantic = recordValue(instance?.settings?.semantic);
+    const semanticKey = scope === "section" ? target.type : target.id;
+    return recordValue(semantic[semanticKey]);
+  }
+
+  const existingPage = document.pages[page.path];
+  const templateId = existingPage?.templateId || (page.template ? (document.templateBindings[page.path] || page.path) : `route:${page.path}`);
+  const template = document.templates[templateId];
+  const semanticKey = scope === "instance" ? target.id : target.type;
+  return recordValue(template?.componentSettings?.[semanticKey]);
 }
 
 function snapshotValue(target: SelectedTarget, path: string) {
@@ -305,18 +394,18 @@ function persistSemanticPatch(
   if (scope === "global") {
     const globalPath = `${target.type}.${device}.${path}`;
     if (target.type.startsWith("header") || target.type.includes("menu") || target.type.includes("nav")) {
-      setNested(next.globals.header, globalPath, value);
+      writeNested(next.globals.header, globalPath, value);
     } else if (target.type.startsWith("footer") || target.type === "social-links") {
-      setNested(next.globals.footer, globalPath, value);
+      writeNested(next.globals.footer, globalPath, value);
     } else {
-      setNested(next.globals.tokens, globalPath, value);
+      writeNested(next.globals.tokens, globalPath, value);
     }
     return next;
   }
 
   if (scope === "family") {
     const family = next.globals.componentFamilies[target.type] || { type: target.type, desktop: {}, mobile: {} };
-    setNested(family[device], path, value);
+    writeNested(family[device], path, value);
     next.globals.componentFamilies[target.type] = family;
     return next;
   }
@@ -332,7 +421,7 @@ function persistSemanticPatch(
       blockIds: [],
     };
     const semanticKey = scope === "section" ? target.type : target.id;
-    setNested(instance.settings, `semantic.${semanticKey}.${device}.${path}`, value);
+    writeNested(instance.settings, `semantic.${semanticKey}.${device}.${path}`, value);
     next.sections[section.id] = instance;
     return next;
   }
@@ -350,7 +439,7 @@ function persistSemanticPatch(
   const componentSettings = { ...(template.componentSettings || {}) };
   const semanticKey = scope === "instance" ? target.id : target.type;
   const responsive = componentSettings[semanticKey] || { desktop: {}, mobile: {} };
-  setNested(responsive[device], path, value);
+  writeNested(responsive[device], path, value);
   componentSettings[semanticKey] = responsive;
   next.templates[templateId] = { ...template, componentSettings };
   return next;
@@ -670,6 +759,68 @@ export function StoreDesignV21() {
     applyPatchValue(selected, scope, device, path, value);
   };
 
+  const applyMobileResponsiveAction = (mode: "copy-desktop" | "inherit") => {
+    if (!selected || !activePage || device !== "mobile") return;
+
+    const responsive = responsiveSettingsFor(document, selected, scope, activePage);
+    const desktop = recordValue(responsive.desktop);
+    const mobile = recordValue(responsive.mobile);
+    const desktopLeaves = new Map(flattenResponsiveLeaves(desktop));
+    const mobileLeaves = new Map(flattenResponsiveLeaves(mobile));
+    const paths = mode === "copy-desktop"
+      ? [...new Set([...desktopLeaves.keys(), ...mobileLeaves.keys()])]
+      : [...mobileLeaves.keys()];
+
+    if (!paths.length) {
+      toast.error(mode === "copy-desktop" ? "Kopyalanacak masaüstü ayarı yok." : "Kaldırılacak mobil override yok.");
+      return;
+    }
+
+    let next = document;
+    let revision = revisionRef.current;
+    const patches: SemanticHistoryEntry[] = [];
+
+    for (const path of paths) {
+      const before = mobileLeaves.has(path) ? mobileLeaves.get(path) : null;
+      const after = mode === "copy-desktop"
+        ? (desktopLeaves.has(path) ? desktopLeaves.get(path) : null)
+        : null;
+      if (Object.is(before, after)) continue;
+
+      revision += 1;
+      next = persistSemanticPatch(next, selected, scope, "mobile", activePage, path, after, revision);
+      patches.push({
+        kind: "semantic",
+        target: selected,
+        scope,
+        device: "mobile",
+        path,
+        before,
+        after,
+      });
+      postToPreview({
+        type: STORE_DESIGN_MESSAGES.PATCH,
+        targetId: selected.id,
+        path,
+        value: after,
+        revision,
+        scope,
+        device: "mobile",
+      });
+    }
+
+    if (!patches.length) return;
+    revisionRef.current = revision;
+    setDocument(next);
+    setHistory((items) => [...items.slice(-79), {
+      kind: "semantic-batch",
+      label: mode === "copy-desktop" ? "Masaüstü ayarları mobile kopyalandı" : "Mobil override'lar inherit'e döndü",
+      patches,
+    }]);
+    setFuture([]);
+    toast.success(mode === "copy-desktop" ? "Masaüstü ayarları mobile kopyalandı." : "Mobil ayarlar masaüstünden devralacak.");
+  };
+
   const undo = async () => {
     const entry = history.at(-1);
     if (!entry) return;
@@ -677,6 +828,12 @@ export function StoreDesignV21() {
     setFuture((items) => [...items, entry]);
     if (entry.kind === "semantic") {
       applyPatchValue(entry.target, entry.scope, entry.device, entry.path, entry.before);
+      return;
+    }
+    if (entry.kind === "semantic-batch") {
+      for (const patch of [...entry.patches].reverse()) {
+        applyPatchValue(patch.target, patch.scope, patch.device, patch.path, patch.before);
+      }
       return;
     }
     try {
@@ -694,6 +851,12 @@ export function StoreDesignV21() {
     setHistory((items) => [...items, entry]);
     if (entry.kind === "semantic") {
       applyPatchValue(entry.target, entry.scope, entry.device, entry.path, entry.after);
+      return;
+    }
+    if (entry.kind === "semantic-batch") {
+      for (const patch of entry.patches) {
+        applyPatchValue(patch.target, patch.scope, patch.device, patch.path, patch.after);
+      }
       return;
     }
     try {
@@ -872,6 +1035,17 @@ export function StoreDesignV21() {
                   </select>
                   <p className="mt-1.5 text-[8px] leading-4 text-black/35">Varsayılan: {scopeLabel(selected.defaultScope)}. Dinamik tekrarlar tek karta değil aile/bölüm kapsamına gider.</p>
                 </section>
+
+                {device === "mobile" && (selected.controlGroups.includes("responsive") || selected.type === "product-card" || selected.type === "product-grid") ? (
+                  <section className="border-b border-black/[0.07] p-3">
+                    <p className="text-[9px] font-semibold text-black/45">RESPONSIVE</p>
+                    <p className="mt-1.5 text-[8px] leading-4 text-black/35">Mobile yalnız farklı alanları override eder; diğer değerler masaüstü/base ayarından miras alınır.</p>
+                    <div className="mt-2 grid grid-cols-2 gap-2">
+                      <button type="button" onClick={() => applyMobileResponsiveAction("copy-desktop")} className="min-h-9 rounded-lg border border-black/10 bg-white px-2 text-[8px] font-semibold hover:bg-black/[0.03]">Masaüstünü Kopyala</button>
+                      <button type="button" onClick={() => applyMobileResponsiveAction("inherit")} className="min-h-9 rounded-lg border border-black/10 bg-white px-2 text-[8px] font-semibold hover:bg-black/[0.03]">Inherit'e Dön</button>
+                    </div>
+                  </section>
+                ) : null}
 
                 <section className="border-b border-black/[0.07] p-3">
                   <p className="text-[9px] font-semibold text-black/45">İZİNLİ KONTROLLER</p>
