@@ -52,12 +52,25 @@ export function storeDesignSectionsForPage(document: ThemeDocument, page: PageRe
       const desktopAsset = imageAssetId ? document.media[imageAssetId] : undefined;
       const mobileAsset = desktopAsset?.mobileAssetId ? document.media[desktopAsset.mobileAssetId] : undefined;
 
+      const faqItems = section.type === "faq"
+        ? (section.blockIds || [])
+            .map((blockId) => document.blocks[blockId])
+            .filter((block) => block?.type === "faq-item")
+            .map((block) => ({
+              id: block.id,
+              question: typeof block.settings.question === "string" ? block.settings.question : "",
+              answer: typeof block.settings.answer === "string" ? block.settings.answer : "",
+            }))
+            .filter((item) => item.question || item.answer)
+        : undefined;
+
       return {
         ...normalized,
         imageSrc: versionedMediaUrl(desktopAsset) || normalized.imageSrc,
         mobileImageSrc: versionedMediaUrl(mobileAsset),
         imageObjectPosition: focalPosition(desktopAsset),
         mobileImageObjectPosition: focalPosition(mobileAsset) || focalPosition(desktopAsset),
+        faqItems,
       };
     })
     .filter((section): section is ThemeSection => section !== null);
