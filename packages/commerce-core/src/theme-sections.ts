@@ -60,6 +60,10 @@ export type ThemeSection = {
     settings: Record<string, unknown>;
     assetUrl?: string;
     assetType?: "image" | "video";
+    mobileAssetUrl?: string;
+    mobileAssetType?: "image" | "video";
+    objectPosition?: string;
+    mobileObjectPosition?: string;
     posterUrl?: string;
   }>;
 };
