@@ -757,6 +757,131 @@ export function flattenThemeRedirects(input: RedirectRecord[]) {
   return [...flattened, ...disabled].slice(0, 500);
 }
 
+export type ThemeReferenceIssue = {
+  severity: "error" | "warning";
+  code: string;
+  message: string;
+  ownerId?: string;
+  targetId?: string;
+};
+
+function internalManagedPageRoute(value: unknown) {
+  if (typeof value !== "string") return "";
+  const route = normalizeStoreDesignRoute(value);
+  return route.startsWith("/pages/") ? route : "";
+}
+
+export function themeDocumentReferenceReport(document: ThemeDocument): ThemeReferenceIssue[] {
+  const issues: ThemeReferenceIssue[] = [];
+  const referencedSections = new Set<string>();
+  const referencedBlocks = new Set<string>();
+  const referencedMedia = new Set<string>();
+  const publishedRoutes = new Set(
+    Object.values(document.pages)
+      .filter((page) => page.status === "published")
+      .map((page) => page.route),
+  );
+  const redirectSources = new Set(
+    document.redirects.filter((item) => item.active !== false).map((item) => item.from),
+  );
+
+  const push = (issue: ThemeReferenceIssue) => issues.push(issue);
+
+  for (const page of Object.values(document.pages)) {
+    if (!document.templates[page.templateId]) {
+      push({ severity: "error", code: "PAGE_TEMPLATE_MISSING", ownerId: page.id, targetId: page.templateId, message: `${page.route}: bağlı template bulunamadı (${page.templateId}).` });
+    }
+    if (!document.seo[page.seoId]) {
+      push({ severity: "error", code: "PAGE_SEO_MISSING", ownerId: page.id, targetId: page.seoId, message: `${page.route}: SEO kaydı bulunamadı (${page.seoId}).` });
+    }
+  }
+
+  for (const [templateId, template] of Object.entries(document.templates)) {
+    for (const sectionId of template.sectionIds || []) {
+      referencedSections.add(sectionId);
+      if (!document.sections[sectionId]) {
+        push({ severity: "error", code: "TEMPLATE_SECTION_MISSING", ownerId: templateId, targetId: sectionId, message: `${templateId}: section referansı bulunamadı (${sectionId}).` });
+      }
+    }
+  }
+
+  for (const [sectionId, section] of Object.entries(document.sections)) {
+    for (const blockId of section.blockIds || []) {
+      referencedBlocks.add(blockId);
+      if (!document.blocks[blockId]) {
+        push({ severity: "error", code: "SECTION_BLOCK_MISSING", ownerId: sectionId, targetId: blockId, message: `${sectionId}: block referansı bulunamadı (${blockId}).` });
+      }
+    }
+
+    const settings = section.settings || {};
+    for (const [key, value] of Object.entries(settings)) {
+      if (typeof value !== "string" || !value) continue;
+      if (key === "imageAssetId" || key === "mobileImageAssetId" || key === "posterAssetId" || key.endsWith("AssetId")) {
+        referencedMedia.add(value);
+        if (!document.media[value]) {
+          push({ severity: "error", code: "SECTION_MEDIA_MISSING", ownerId: sectionId, targetId: value, message: `${sectionId}: medya referansı bulunamadı (${value}).` });
+        }
+      }
+      if (["linkHref", "href", "link", "cta"].includes(key)) {
+        const route = internalManagedPageRoute(value);
+        if (route && !publishedRoutes.has(route) && !redirectSources.has(route)) {
+          push({ severity: "warning", code: "BROKEN_MANAGED_LINK", ownerId: sectionId, targetId: route, message: `${sectionId}: ${route} için yayınlanmış sayfa veya redirect bulunamadı.` });
+        }
+      }
+    }
+  }
+
+  for (const [blockId, block] of Object.entries(document.blocks)) {
+    for (const [key, value] of Object.entries(block.settings || {})) {
+      if (typeof value !== "string" || !value) continue;
+      if (key === "assetId" || key === "media" || key === "posterAssetId" || key.endsWith("AssetId")) {
+        referencedMedia.add(value);
+        if (!document.media[value]) {
+          push({ severity: "error", code: "BLOCK_MEDIA_MISSING", ownerId: blockId, targetId: value, message: `${blockId}: medya referansı bulunamadı (${value}).` });
+        }
+      }
+      if (["linkHref", "href", "link", "cta"].includes(key)) {
+        const route = internalManagedPageRoute(value);
+        if (route && !publishedRoutes.has(route) && !redirectSources.has(route)) {
+          push({ severity: "warning", code: "BROKEN_MANAGED_LINK", ownerId: blockId, targetId: route, message: `${blockId}: ${route} için yayınlanmış sayfa veya redirect bulunamadı.` });
+        }
+      }
+    }
+  }
+
+  for (const [seoId, seo] of Object.entries(document.seo)) {
+    if (seo.openGraphAssetId) {
+      referencedMedia.add(seo.openGraphAssetId);
+      if (!document.media[seo.openGraphAssetId]) {
+        push({ severity: "error", code: "SEO_MEDIA_MISSING", ownerId: seoId, targetId: seo.openGraphAssetId, message: `${seoId}: Open Graph medya referansı bulunamadı (${seo.openGraphAssetId}).` });
+      }
+    }
+  }
+
+  for (const asset of Object.values(document.media)) {
+    if (asset.mobileAssetId) referencedMedia.add(asset.mobileAssetId);
+    if (asset.posterAssetId) referencedMedia.add(asset.posterAssetId);
+  }
+
+  for (const [sectionId] of Object.entries(document.sections)) {
+    if (!referencedSections.has(sectionId)) {
+      push({ severity: "warning", code: "ORPHAN_SECTION", ownerId: sectionId, message: `${sectionId}: hiçbir template tarafından kullanılmıyor.` });
+    }
+  }
+  for (const [blockId] of Object.entries(document.blocks)) {
+    if (!referencedBlocks.has(blockId)) {
+      push({ severity: "warning", code: "ORPHAN_BLOCK", ownerId: blockId, message: `${blockId}: hiçbir section tarafından kullanılmıyor.` });
+    }
+  }
+  for (const [assetId, asset] of Object.entries(document.media)) {
+    if (!referencedMedia.has(assetId) && (asset.usageCount || 0) === 0) {
+      push({ severity: "warning", code: "ORPHAN_MEDIA", ownerId: assetId, message: `${assetId}: kullanım referansı olmayan medya.` });
+    }
+  }
+
+  return issues;
+}
+
 export function validateThemeDocument(document: ThemeDocument) {
   const errors: string[] = [];
   const routes = new Map<string, string>();
@@ -831,6 +956,15 @@ export function validateThemeDocument(document: ThemeDocument) {
   for (const section of Object.values(document.sections)) {
     const imageAssetId = typeof section.settings.imageAssetId === "string" ? section.settings.imageAssetId : "";
     if (imageAssetId && !document.media[imageAssetId]) errors.push(`${section.id}: bölüm medya referansı bulunamadı.`);
+  }
+
+  for (const block of Object.values(document.blocks)) {
+    for (const [key, value] of Object.entries(block.settings || {})) {
+      if (typeof value !== "string" || !value) continue;
+      if ((key === "assetId" || key === "media" || key === "posterAssetId" || key.endsWith("AssetId")) && !document.media[value]) {
+        errors.push(`${block.id}: block medya referansı bulunamadı (${value}).`);
+      }
+    }
   }
 
   const redirectMap = new Map<string, string>();
