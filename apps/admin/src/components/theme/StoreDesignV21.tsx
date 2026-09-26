@@ -5,6 +5,7 @@ import {
   CircleDot,
   Images,
   LayoutTemplate,
+  Link2,
   Monitor,
   PanelLeft,
   PanelRight,
@@ -36,6 +37,7 @@ import { StoreDesignPageManager } from "@/components/theme/StoreDesignPageManage
 import { StoreDesignSectionManager } from "@/components/theme/StoreDesignSectionManager";
 import { StoreDesignMediaLibrary } from "@/components/theme/StoreDesignMediaLibrary";
 import { StoreDesignTemplateManager } from "@/components/theme/StoreDesignTemplateManager";
+import { StoreDesignRedirectManager } from "@/components/theme/StoreDesignRedirectManager";
 
 type Device = "desktop" | "mobile";
 type PageItem = {
@@ -461,6 +463,7 @@ export function StoreDesignV21() {
   const [pageManagerMode, setPageManagerMode] = useState<"create" | "edit" | null>(null);
   const [mediaOpen, setMediaOpen] = useState(false);
   const [templateManagerOpen, setTemplateManagerOpen] = useState(false);
+  const [redirectManagerOpen, setRedirectManagerOpen] = useState(false);
   const [history, setHistory] = useState<EditorHistoryEntry[]>([]);
   const [future, setFuture] = useState<EditorHistoryEntry[]>([]);
   const revisionRef = useRef(0);
@@ -718,6 +721,15 @@ export function StoreDesignV21() {
     setFuture([]);
   }, [activePath, applyStructureSnapshot, document, postMediaDocumentDiff]);
 
+  const applyMetadataDocument = useCallback(async (next: ThemeDocument, label: string) => {
+    const before = structuredClone(document) as ThemeDocument;
+    const after = structuredClone(next) as ThemeDocument;
+    await applyStructureSnapshot(after, activePath, false);
+    setHistory((items) => [...items.slice(-79), { kind: "structure", label, before, after, pagePath: activePath, reload: false }]);
+    setFuture([]);
+    toast.success(label);
+  }, [activePath, applyStructureSnapshot, document, toast]);
+
   const applyPatchValue = (
     target: SelectedTarget,
     patchScope: EditorScope,
@@ -930,6 +942,9 @@ export function StoreDesignV21() {
           </button>
         </div>
 
+        <button type="button" onClick={() => setRedirectManagerOpen(true)} className="hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] xl:flex">
+          <Link2 className="h-3.5 w-3.5" />Redirect
+        </button>
         <button type="button" onClick={() => setTemplateManagerOpen(true)} className="hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] lg:flex">
           <LayoutTemplate className="h-3.5 w-3.5" />Template
         </button>
@@ -1236,6 +1251,14 @@ export function StoreDesignV21() {
           </aside>
         ) : null}
       </div>
+
+      {redirectManagerOpen ? (
+        <StoreDesignRedirectManager
+          document={document}
+          onApply={applyMetadataDocument}
+          onClose={() => setRedirectManagerOpen(false)}
+        />
+      ) : null}
 
       {templateManagerOpen ? (
         <StoreDesignTemplateManager
