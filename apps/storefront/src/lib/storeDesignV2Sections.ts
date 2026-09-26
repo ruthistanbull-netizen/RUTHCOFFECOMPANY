@@ -14,6 +14,9 @@ const LEGACY_RENDER_ALIASES: Record<string, string> = {
 };
 
 const BLOCK_RENDER_SECTION_TYPES = new Set([
+  "video-hero",
+  "video-banner",
+  "background-media",
   "slideshow",
   "gallery-grid",
   "masonry-gallery",
