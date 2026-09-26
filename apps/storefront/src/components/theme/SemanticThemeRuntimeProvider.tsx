@@ -72,7 +72,7 @@ function ruleFor(patch: SemanticRuntimePatch) {
   const value = declaration(patch.path, patch.value);
   if (!value) return "";
   const rule = `${selectorFor(patch)}{${value}}`;
-  return patch.device === "mobile" ? `@media(max-width:767px){${rule}}` : `@media(min-width:768px){${rule}}`;
+  return patch.device === "mobile" ? `@media(max-width:767px){${rule}}` : rule;
 }
 
 function objectRecord(value: unknown): Record<string, unknown> {
@@ -262,7 +262,7 @@ export function SemanticThemeRuntimeProvider({
       const detail = (event as CustomEvent<SemanticRuntimePatch>).detail;
       if (!detail?.key || !detail.selectorValue || !detail.path) return;
       setRuntimePatches((current) => {
-        if (detail.path === "visible" && detail.value !== false) {
+        if (detail.value === null || (detail.path === "visible" && detail.value !== false)) {
           const next = { ...current };
           delete next[detail.key];
           return next;
