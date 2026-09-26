@@ -157,7 +157,11 @@ export function AccountActivationClient() {
   };
 
   return (
-    <div className="min-h-screen bg-carbon px-4 pb-24 pt-28 md:px-8 md:pt-32 text-cream">
+    <div
+      data-editor-id="auth-form:activate-account"
+      data-editor-type="auth-form"
+      data-editor-label="Hesap Aktivasyonu"
+      className="min-h-screen bg-carbon px-4 pb-24 pt-28 md:px-8 md:pt-32 text-cream">
       <div className="mx-auto max-w-md rounded-2xl border border-kraft/35 bg-carbon-soft p-6 shadow-sm md:p-8">
         <p className="mb-3 text-xs uppercase tracking-wide-luxe text-brick">ROSTA Coffee</p>
         <h1 className="font-heading text-4xl">Hesabını Aktifleştir</h1>
