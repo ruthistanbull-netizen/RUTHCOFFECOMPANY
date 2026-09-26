@@ -300,7 +300,7 @@ export function HomeSectionRenderer({
   }
 
   if (section.type === "hero") return <div data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}><Hero heroImages={heroImages} editorialVideo={editorialVideo} editorialImage={editorialImage} themeSettings={themeSettings} /></div>;
-  if (section.type === "scroll-story") return <div data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}><ScrollStory images={scrollImages} themeSettings={themeSettings} /></div>;
+  if (section.type === "scroll-story") return <div data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}><ScrollStory images={scrollImages} themeSettings={themeSettings} v2Settings={section.v2Settings} v2Slides={section.v2Blocks} /></div>;
 
   const collectionV2Settings = section.type === "collections" ? section.v2Settings : undefined;
   const customCollectionCards = section.type === "collections" && collectionV2Settings && Object.keys(collectionV2Settings).length > 0;
