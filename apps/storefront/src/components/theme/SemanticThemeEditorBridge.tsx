@@ -209,7 +209,10 @@ function runtimeSelector(target: SemanticTarget, scope: EditorScope) {
   if (scope === "section") {
     const section = target.element.closest<HTMLElement>('[data-editor-id^="section:"]');
     const id = section?.dataset.editorId?.trim();
-    if (id) return { mode: "id" as const, value: id };
+    if (id) {
+      if (id === target.id) return { mode: "id" as const, value: id };
+      return { mode: "sectionType" as const, value: id, targetType: target.type };
+    }
   }
   return { mode: "id" as const, value: target.id };
 }
@@ -223,9 +226,10 @@ function dispatchRuntimePatch(target: SemanticTarget, message: ThemePatchMessage
   const device = message.device === "mobile" ? "mobile" : "desktop";
   window.dispatchEvent(new CustomEvent(SEMANTIC_RUNTIME_PATCH_EVENT, {
     detail: {
-      key: `${scope}:${selector.mode}:${selector.value}:${device}:${message.path}`,
+      key: `${scope}:${selector.mode}:${selector.value}:${"targetType" in selector ? selector.targetType || "" : ""}:${device}:${message.path}`,
       selectorMode: selector.mode,
       selectorValue: selector.value,
+      targetType: "targetType" in selector ? selector.targetType : undefined,
       path: message.path,
       value: message.value,
       scope,
