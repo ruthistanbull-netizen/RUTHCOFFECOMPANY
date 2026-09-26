@@ -52,6 +52,7 @@ function blockDefaults(type: string): Record<string, unknown> {
   if (type === "announcement") return { text: "Yeni duyuru", linkLabel: "", linkHref: "" };
   if (type === "ticker-item") return { text: "Yeni metin", link: "" };
   if (type === "slide") return { media: "", title: "Slayt", body: "", cta: "" };
+  if (type === "scroll-story-slide") return { assetId: "", title: "Scroll Story Slide", body: "", href: "/products" };
   if (type === "media") return { assetId: "", alt: "", link: "" };
   if (type === "logo") return { assetId: "", alt: "", link: "" };
   if (type === "award") return { assetId: "", label: "Ödül", link: "" };
@@ -69,6 +70,7 @@ function fieldLabel(key: string) {
     alt: "Alt metin",
     link: "Bağlantı",
     linkHref: "Bağlantı",
+    href: "Bağlantı",
     linkLabel: "Bağlantı metni",
     cta: "CTA bağlantısı",
     heading: "Başlık",
@@ -233,9 +235,9 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   const hasGenericBody = ["hero", "video-hero", "video-banner", "brand-story", "heading-subtext", "manifesto", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const hasAlign = ["hero", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const hasLink = ["hero", "video-hero", "video-banner", "brand-story", "promo-banner", "shipping-returns-cta"].includes(section.type);
-  const showTitle = !["background-media", "quote", "spacer", "divider", "anchor"].includes(section.type);
-  const showEyebrow = !genericZeroBlock && section.type !== "background-media";
-  const showPadding = !["hero", "video-hero", "video-banner", "background-media", "spacer", "anchor"].includes(section.type);
+  const showTitle = !["scroll-story", "background-media", "quote", "spacer", "divider", "anchor"].includes(section.type);
+  const showEyebrow = !genericZeroBlock && !["scroll-story", "background-media"].includes(section.type);
+  const showPadding = !["hero", "scroll-story", "video-hero", "video-banner", "background-media", "spacer", "anchor"].includes(section.type);
   const primaryMedia = mediaNarrative && text(settings.imageAssetId) ? document.media[text(settings.imageAssetId)] : undefined;
   const brandStoryMedia = brandStory && text(settings.imageAssetId) ? document.media[text(settings.imageAssetId)] : undefined;
   const showBlockComposer = allowedDefinitions.length > 0;
@@ -715,6 +717,29 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   Dikey boşluk
                   <input type="number" min={0} max={240} value={numberValue(settings.paddingY, 64)} onChange={(event) => updateSetting("paddingY", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
                 </label>
+              ) : null}
+              {section.type === "scroll-story" ? (
+                <>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Scroll uzunluğu
+                    <select value={text(settings.scrollLengthPreset) || "standard"} onChange={(event) => updateSetting("scrollLengthPreset", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="compact">Kompakt · slide başına 75svh</option>
+                      <option value="standard">Standart · slide başına 100svh</option>
+                      <option value="long">Uzun · slide başına 125svh</option>
+                    </select>
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Geçiş preset
+                    <select value={text(settings.transitionPreset) || "fade-scale"} onChange={(event) => updateSetting("transitionPreset", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="fade-scale">Fade + Scale</option>
+                      <option value="fade">Sadece Fade</option>
+                    </select>
+                  </label>
+                  <label className="flex items-center justify-between gap-3 rounded-lg border border-black/10 bg-white p-2.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                    KAYDIR cue göster
+                    <input type="checkbox" checked={settings.cueVisibility !== false} onChange={(event) => updateSetting("cueVisibility", event.target.checked)} />
+                  </label>
+                </>
               ) : null}
               {section.type === "slideshow" ? (
                 <>
