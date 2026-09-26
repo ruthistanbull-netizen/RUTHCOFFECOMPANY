@@ -4,6 +4,7 @@ import { LoadingState } from "@ruth-commerce/ui";
 import { PaytrIframeCheckoutClient } from "@/components/checkout/PaytrIframeCheckoutClient";
 import { PaytrTrustPanel } from "@/components/checkout/PaytrTrustPanel";
 import { CheckoutDiscountLabelEnhancer } from "@/components/checkout/CheckoutDiscountLabelEnhancer";
+import { ShippingLocationEnhancer } from "@/components/checkout/ShippingLocationEnhancer";
 
 export const metadata: Metadata = {
   title: "Ödeme",
@@ -27,6 +28,7 @@ export default function CheckoutPage() {
           <PaytrIframeCheckoutClient />
         </Suspense>
       </div>
+      <ShippingLocationEnhancer />
       <CheckoutDiscountLabelEnhancer />
       <PaytrTrustPanel />
     </>
