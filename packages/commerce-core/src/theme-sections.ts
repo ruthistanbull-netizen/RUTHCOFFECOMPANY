@@ -6,6 +6,7 @@ export type ThemeSectionType =
   | "brand-story"
   | "trust"
   | "product-slider"
+  | "product-grid"
   | "image-banner"
   | "rich-text"
   | "faq";
@@ -36,6 +37,7 @@ export type ThemeSection = {
   desktopHeight?: number;
   mobileHeight?: number;
   gap?: number;
+  maxWidth?: "none" | "1200px" | "1280px" | "1440px" | "1600px";
   paddingY?: number;
   borderRadius?: number;
   backgroundColor?: string;
@@ -142,7 +144,7 @@ function pagePath(value: unknown) {
 
 const sectionTypes = new Set<ThemeSectionType>([
   "hero", "scroll-story", "collections", "featured-products", "brand-story", "trust",
-  "product-slider", "image-banner", "rich-text", "faq",
+  "product-slider", "product-grid", "image-banner", "rich-text", "faq",
 ]);
 
 export function normalizeThemeSection(input: unknown, index = 0): ThemeSection | null {
@@ -172,6 +174,9 @@ export function normalizeThemeSection(input: unknown, index = 0): ThemeSection |
     desktopHeight: raw.desktopHeight == null ? undefined : Math.round(numberValue(raw.desktopHeight, 520, 120, 1200)),
     mobileHeight: raw.mobileHeight == null ? undefined : Math.round(numberValue(raw.mobileHeight, 360, 100, 900)),
     gap: raw.gap == null ? undefined : numberValue(raw.gap, 12, 0, 100),
+    maxWidth: ["none", "1200px", "1280px", "1440px", "1600px"].includes(String(raw.maxWidth))
+      ? String(raw.maxWidth) as ThemeSection["maxWidth"]
+      : undefined,
     paddingY: raw.paddingY == null ? undefined : numberValue(raw.paddingY, 64, 0, 240),
     borderRadius: raw.borderRadius == null ? undefined : numberValue(raw.borderRadius, 0, 0, 120),
     backgroundColor: color(raw.backgroundColor),
@@ -221,6 +226,7 @@ function usesCustomProductRenderer(section: ThemeSection) {
     section.productSource !== undefined ||
     section.productSourceId !== undefined ||
     section.gap !== undefined ||
+    section.maxWidth !== undefined ||
     section.paddingY !== undefined ||
     section.desktopHeight !== undefined ||
     section.mobileHeight !== undefined ||
@@ -258,6 +264,9 @@ export function themeSectionRenderSignature(settings: ThemeSectionSettings) {
 }
 
 export function createThemeSection(type: ThemeSectionType, id = `section-${Date.now()}`): ThemeSection {
+  if (type === "product-grid") {
+    return { id, type, enabled: true, title: "Ürünler", productSource: "featured", productLimit: 12, desktopItems: 3, mobileItems: 2, gap: 20, maxWidth: "none", paddingY: 64 };
+  }
   if (type === "product-slider") {
     return { id, type, enabled: true, title: "Ürünler", productSource: "featured", productLimit: 12, desktopItems: 4, mobileItems: 2, gap: 12, paddingY: 64, showArrows: true, autoplay: false };
   }
