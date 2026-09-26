@@ -100,6 +100,7 @@ function saleBadgeVars(section: ThemeSection): Record<string, string> {
       "--theme-sale-badge-border": "1px solid currentColor",
       "--theme-sale-badge-radius": "999px",
       "--theme-sale-badge-padding": "3px 7px",
+      "--theme-sale-badge-padding-compact": "2px 5px",
     };
   }
   if (section.badgeStyle === "minimal") {
@@ -108,6 +109,7 @@ function saleBadgeVars(section: ThemeSection): Record<string, string> {
       "--theme-sale-badge-border": "0",
       "--theme-sale-badge-radius": "0",
       "--theme-sale-badge-padding": "0",
+      "--theme-sale-badge-padding-compact": "0",
     };
   }
   return {};
