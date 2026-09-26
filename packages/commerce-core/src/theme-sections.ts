@@ -44,6 +44,17 @@ export type ThemeSection = {
   textColor?: string;
   autoplay?: boolean;
   showArrows?: boolean;
+  /** V2 registry section identity when the legacy renderer type is only an adapter shell. */
+  v2Type?: string;
+  v2Settings?: Record<string, unknown>;
+  v2Blocks?: Array<{
+    id: string;
+    type: string;
+    settings: Record<string, unknown>;
+    assetUrl?: string;
+    assetType?: "image" | "video";
+    posterUrl?: string;
+  }>;
 };
 
 export type ThemeSectionPage = {
