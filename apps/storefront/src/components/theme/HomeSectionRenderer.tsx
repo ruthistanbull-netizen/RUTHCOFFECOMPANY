@@ -343,6 +343,7 @@ export function HomeSectionRenderer({
             className="v2-collection-card-grid"
             style={{
               ["--collection-columns" as string]: String(columns),
+              ["--collection-sm-columns" as string]: String(Math.min(2, columns)),
               ["--collection-gap" as string]: `${gap}px`,
             }}
           >
@@ -380,7 +381,7 @@ export function HomeSectionRenderer({
             ))}
           </div>
         </div>
-        <style>{`.v2-collection-card-grid{display:grid;grid-template-columns:1fr;gap:var(--collection-gap)}@media(min-width:640px){.v2-collection-card-grid{grid-template-columns:repeat(min(2,var(--collection-columns)),minmax(0,1fr))}}@media(min-width:768px){.v2-collection-card-grid{grid-template-columns:repeat(var(--collection-columns),minmax(0,1fr))}}`}</style>
+        <style>{`.v2-collection-card-grid{display:grid;grid-template-columns:1fr;gap:var(--collection-gap)}@media(min-width:640px){.v2-collection-card-grid{grid-template-columns:repeat(var(--collection-sm-columns),minmax(0,1fr))}}@media(min-width:768px){.v2-collection-card-grid{grid-template-columns:repeat(var(--collection-columns),minmax(0,1fr))}}`}</style>
       </section>
     );
   }
@@ -422,7 +423,7 @@ export function HomeSectionRenderer({
           <div className={`min-w-0 overflow-hidden rounded-2xl ${mediaOrderClass}`} style={{ flexBasis: mediaWidth }}>
             {mediaIsVideo ? (
               <video
-                className="h-full min-h-[360px] w-full object-cover"
+                className="v2-brand-story-media h-full min-h-[360px] w-full object-cover"
                 poster={poster}
                 autoPlay={playback.autoPlay}
                 muted={playback.muted}
@@ -430,7 +431,10 @@ export function HomeSectionRenderer({
                 controls={playback.controls}
                 playsInline
                 preload="metadata"
-                style={{ objectPosition: section.imageObjectPosition || "50% 50%" }}
+                style={{
+                  ["--brand-media-pos-desktop" as string]: section.imageObjectPosition || "50% 50%",
+                  ["--brand-media-pos-mobile" as string]: section.mobileImageObjectPosition || section.imageObjectPosition || "50% 50%",
+                }}
               >
                 {section.mobileImageSrc ? <source media="(max-width: 767px)" src={mobileMediaSrc} /> : null}
                 <source src={mediaSrc} />
@@ -438,7 +442,15 @@ export function HomeSectionRenderer({
             ) : (
               <picture className="block h-full min-h-[360px]">
                 {section.mobileImageSrc ? <source media="(max-width: 767px)" srcSet={mobileMediaSrc} /> : null}
-                <img src={mediaSrc} alt="" className="h-full min-h-[360px] w-full object-cover" style={{ objectPosition: section.imageObjectPosition || "50% 50%" }} />
+                <img
+                  src={mediaSrc}
+                  alt=""
+                  className="v2-brand-story-media h-full min-h-[360px] w-full object-cover"
+                  style={{
+                    ["--brand-media-pos-desktop" as string]: section.imageObjectPosition || "50% 50%",
+                    ["--brand-media-pos-mobile" as string]: section.mobileImageObjectPosition || section.imageObjectPosition || "50% 50%",
+                  }}
+                />
               </picture>
             )}
           </div>
@@ -455,6 +467,7 @@ export function HomeSectionRenderer({
             </div>
           </div>
         </div>
+        <style>{`.v2-brand-story-media{object-position:var(--brand-media-pos-mobile)}@media(min-width:768px){.v2-brand-story-media{object-position:var(--brand-media-pos-desktop)}}`}</style>
       </section>
     );
   }
