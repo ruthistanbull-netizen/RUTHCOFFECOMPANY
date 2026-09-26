@@ -58,6 +58,9 @@ const RENDERABLE_SECTION_TYPES = new Set([
   "featured-products",
   "product-slider",
   "product-grid",
+  "product-spotlight",
+  "featured-collection",
+  "category-cards",
   "new-arrivals",
   "sale-products",
   "video-hero",
@@ -144,6 +147,15 @@ function defaultSettings(type: string): Record<string, unknown> {
   }
   if (type === "product-grid") {
     return { title: "Ürünler", productSource: "featured", productLimit: 12, desktopItems: 3, mobileItems: 2, gap: 20, maxWidth: "none", paddingY: 64 };
+  }
+  if (type === "product-spotlight") {
+    return { productId: "", mediaPosition: "left", infoBlocks: ["description", "stock", "compare-price"], linkLabel: "Ürünü İncele", paddingY: 80 };
+  }
+  if (type === "featured-collection") {
+    return { collectionId: "", layout: "slider", limit: 8, desktopColumns: 4, mobileColumns: 2, gap: 12, heading: "", linkLabel: "Koleksiyonu Gör", paddingY: 72 };
+  }
+  if (type === "category-cards") {
+    return { title: "Kategoriler", eyebrow: "Keşfet", source: "catalog", limit: 6, columns: 3, gap: 20, ratio: "4/5", titlePlacement: "overlay", paddingY: 80 };
   }
   if (type === "new-arrivals") {
     return { title: "Yeni Gelenler", productLimit: 12, desktopItems: 4, mobileItems: 2, gap: 12, paddingY: 64, layout: "slider", showArrows: true };
@@ -291,6 +303,9 @@ function canRenderDefinition(definition: SectionDefinition) {
 
 const GENERIC_V2_SECTION_TYPES = new Set([
   "hero",
+  "product-spotlight",
+  "featured-collection",
+  "category-cards",
   "collection-cards",
   "brand-story",
   "video-hero",
