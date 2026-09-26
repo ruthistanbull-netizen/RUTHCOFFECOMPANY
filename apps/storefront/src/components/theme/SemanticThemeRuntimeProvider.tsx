@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import type { EditorScope } from "@ruth-commerce/commerce-core/store-design-v2";
+import { usePathname } from "next/navigation";
+import {
+  COMPONENT_REGISTRY_BY_TYPE,
+  type EditorScope,
+  type ThemeDocument,
+} from "@ruth-commerce/commerce-core/store-design-v2";
 
 export const SEMANTIC_RUNTIME_PATCH_EVENT = "store-design-v2:runtime-patch";
 
@@ -22,7 +27,7 @@ function cssString(value: string) {
 }
 
 function declaration(path: string, value: unknown) {
-  if (path === "visible") return value === false ? "display:none!important;" : "display:revert;";
+  if (path === "visible") return value === false ? "display:none!important;" : "";
   if (path === "textAlign") return `text-align:${String(value)}!important;`;
   if (path === "opacity") return `opacity:${Number(value)}!important;`;
   if (path === "borderRadius") return `border-radius:${Number(value)}px!important;`;
@@ -51,26 +56,174 @@ function ruleFor(patch: SemanticRuntimePatch) {
   return patch.device === "mobile" ? `@media(max-width:767px){${rule}}` : `@media(min-width:768px){${rule}}`;
 }
 
-export function SemanticThemeRuntimeProvider({ children }: { children: ReactNode }) {
-  const [patches, setPatches] = useState<Record<string, SemanticRuntimePatch>>({});
+function objectRecord(value: unknown): Record<string, unknown> {
+  return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {};
+}
+
+function flattenLeaves(value: unknown, prefix = ""): Array<[string, unknown]> {
+  if (value == null || typeof value !== "object" || Array.isArray(value)) {
+    return prefix ? [[prefix, value]] : [];
+  }
+  const result: Array<[string, unknown]> = [];
+  for (const [key, child] of Object.entries(value as Record<string, unknown>)) {
+    const path = prefix ? `${prefix}.${key}` : key;
+    result.push(...flattenLeaves(child, path));
+  }
+  return result;
+}
+
+function patchKey(
+  scope: EditorScope,
+  selectorMode: SemanticRuntimePatch["selectorMode"],
+  selectorValue: string,
+  targetType: string | undefined,
+  device: SemanticRuntimePatch["device"],
+  path: string,
+) {
+  return `${scope}:${selectorMode}:${selectorValue}:${targetType || ""}:${device}:${path}`;
+}
+
+function addResponsive(
+  output: Record<string, SemanticRuntimePatch>,
+  args: {
+    scope: EditorScope;
+    selectorMode: SemanticRuntimePatch["selectorMode"];
+    selectorValue: string;
+    targetType?: string;
+    responsive: unknown;
+    revision: number;
+  },
+) {
+  const responsive = objectRecord(args.responsive);
+  for (const device of ["desktop", "mobile"] as const) {
+    for (const [path, value] of flattenLeaves(responsive[device])) {
+      const key = patchKey(args.scope, args.selectorMode, args.selectorValue, args.targetType, device, path);
+      output[key] = {
+        key,
+        selectorMode: args.selectorMode,
+        selectorValue: args.selectorValue,
+        targetType: args.targetType,
+        path,
+        value,
+        scope: args.scope,
+        device,
+        revision: args.revision,
+      };
+    }
+  }
+}
+
+function templateForPath(document: ThemeDocument, pathname: string) {
+  const direct = document.pages[pathname] || Object.values(document.pages).find((page) => page.route === pathname);
+  if (direct?.templateId && document.templates[direct.templateId]) return document.templates[direct.templateId];
+
+  const dynamicTemplateId =
+    /^\/products\/[^/]+$/.test(pathname) ? "/products/[slug]" :
+    /^\/(category|categories)\/[^/]+$/.test(pathname) ? "/category/[slug]" :
+    /^\/collections\/[^/]+$/.test(pathname) ? "/collections/[slug]" :
+    "";
+
+  if (dynamicTemplateId && document.templates[dynamicTemplateId]) return document.templates[dynamicTemplateId];
+  return document.templates[`route:${pathname}`] || null;
+}
+
+function patchesFromDocument(document: ThemeDocument, pathname: string) {
+  const output: Record<string, SemanticRuntimePatch> = {};
+  const revision = Number(document.revision || 0);
+
+  for (const container of [document.globals.header, document.globals.footer, document.globals.tokens]) {
+    for (const [semanticType, responsive] of Object.entries(container)) {
+      if (!COMPONENT_REGISTRY_BY_TYPE[semanticType]) continue;
+      addResponsive(output, {
+        scope: "global",
+        selectorMode: "type",
+        selectorValue: semanticType,
+        responsive,
+        revision,
+      });
+    }
+  }
+
+  for (const [semanticType, family] of Object.entries(document.globals.componentFamilies)) {
+    addResponsive(output, {
+      scope: "family",
+      selectorMode: "type",
+      selectorValue: semanticType,
+      responsive: family,
+      revision,
+    });
+  }
+
+  const template = templateForPath(document, pathname);
+  for (const [semanticKey, responsive] of Object.entries(template?.componentSettings || {})) {
+    const byType = Boolean(COMPONENT_REGISTRY_BY_TYPE[semanticKey]);
+    addResponsive(output, {
+      scope: "template",
+      selectorMode: byType ? "type" : "id",
+      selectorValue: semanticKey,
+      responsive,
+      revision,
+    });
+  }
+
+  for (const section of Object.values(document.sections)) {
+    const semantic = objectRecord(section.settings.semantic);
+    for (const [semanticKey, responsive] of Object.entries(semantic)) {
+      const byType = Boolean(COMPONENT_REGISTRY_BY_TYPE[semanticKey]);
+      const sectionTarget = `section:${section.id}`;
+      addResponsive(output, {
+        scope: byType ? "section" : "instance",
+        selectorMode: byType && semanticKey !== section.type ? "sectionType" : "id",
+        selectorValue: byType && semanticKey !== section.type ? sectionTarget : (byType ? sectionTarget : semanticKey),
+        targetType: byType && semanticKey !== section.type ? semanticKey : undefined,
+        responsive,
+        revision,
+      });
+    }
+  }
+
+  return output;
+}
+
+export function SemanticThemeRuntimeProvider({
+  children,
+  initialDocument,
+}: {
+  children: ReactNode;
+  initialDocument?: ThemeDocument;
+}) {
+  const pathname = usePathname() || "/";
+  const [runtimePatches, setRuntimePatches] = useState<Record<string, SemanticRuntimePatch>>({});
 
   useEffect(() => {
     const onPatch = (event: Event) => {
       const detail = (event as CustomEvent<SemanticRuntimePatch>).detail;
       if (!detail?.key || !detail.selectorValue || !detail.path) return;
-      setPatches((current) => ({ ...current, [detail.key]: detail }));
+      setRuntimePatches((current) => {
+        if (detail.path === "visible" && detail.value !== false) {
+          const next = { ...current };
+          delete next[detail.key];
+          return next;
+        }
+        return { ...current, [detail.key]: detail };
+      });
     };
     window.addEventListener(SEMANTIC_RUNTIME_PATCH_EVENT, onPatch as EventListener);
     return () => window.removeEventListener(SEMANTIC_RUNTIME_PATCH_EVENT, onPatch as EventListener);
   }, []);
 
+  const initialPatches = useMemo(
+    () => initialDocument ? patchesFromDocument(initialDocument, pathname) : {},
+    [initialDocument, pathname],
+  );
+
   const css = useMemo(
-    () => Object.values(patches)
+    () => Object.values({ ...initialPatches, ...runtimePatches })
       .sort((a, b) => a.revision - b.revision)
       .map(ruleFor)
       .filter(Boolean)
       .join("\n"),
-    [patches],
+    [initialPatches, runtimePatches],
   );
 
   return (
