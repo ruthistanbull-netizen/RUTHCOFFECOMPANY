@@ -21,6 +21,8 @@ const BLOCK_RENDER_SECTION_TYPES = new Set([
   "image-text-split",
   "video-text-split",
   "social-grid",
+  "before-after",
+  "hotspot-lookbook",
   "logo-cloud",
   "text-columns",
   "stats",
@@ -107,6 +109,21 @@ export function storeDesignSectionsForPage(document: ThemeDocument, page: PageRe
             .filter((item) => item.question || item.answer)
         : undefined;
 
+      const v2Assets = v2BlockSection
+        ? Object.fromEntries(
+            Object.entries(settings)
+              .filter(([key, value]) => /AssetId$/.test(key) && typeof value === "string" && Boolean(value))
+              .map(([key, value]) => {
+                const asset = document.media[String(value)];
+                const poster = asset?.posterAssetId ? document.media[asset.posterAssetId] : undefined;
+                return asset
+                  ? [key, { url: versionedMediaUrl(asset)!, type: asset.type, posterUrl: versionedMediaUrl(poster) }]
+                  : [key, undefined];
+              })
+              .filter((entry): entry is [string, { url: string; type: "image" | "video"; posterUrl?: string }] => Boolean(entry[1])),
+          )
+        : undefined;
+
       const v2Blocks = v2BlockSection
         ? (section.blockIds || [])
             .map((blockId) => document.blocks[blockId])
@@ -143,6 +160,7 @@ export function storeDesignSectionsForPage(document: ThemeDocument, page: PageRe
         v2Settings: v2BlockSection ? settings : undefined,
         v2MediaType: v2BlockSection ? desktopAsset?.type : undefined,
         v2PosterUrl: v2BlockSection && desktopAsset?.posterAssetId ? versionedMediaUrl(document.media[desktopAsset.posterAssetId]) : undefined,
+        v2Assets,
         v2Blocks,
       };
     })
