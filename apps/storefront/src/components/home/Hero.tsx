@@ -350,19 +350,49 @@ function HorizontalPhotoRail({
     restSpeed: 0.0001,
   });
   const x = useTransform(reduceMotion ? scrollYProgress : smooth, [0, 1], ["0%", "-66.666667%"]);
-  const positions = ["30% center", "50% center", "70% center"];
+  const panels = [
+    { position: "30% center", lines: [] as string[] },
+    { position: "50% center", lines: ["Doğru Çekirdek,", "Güçlü Deneyim"] },
+    { position: "70% center", lines: ["Kahveyi sadeleştir,", "karakterini koru."] },
+  ];
 
   return (
     <section ref={ref} className="home-horizontal-editorial relative h-[300svh] bg-carbon">
+      <style>{`
+        .home-horizontal-editorial-copy{
+          color:var(--rosta-brick-b);
+          font-family:var(--font-heading)!important;
+          font-weight:900!important;
+          font-variation-settings:"wght" 900!important;
+          font-synthesis:weight!important;
+          letter-spacing:-.045em;
+          line-height:.92;
+          text-shadow:0 8px 30px rgba(0,0,0,.18)
+        }
+        .home-horizontal-editorial-copy p{
+          margin:0;
+          font-size:clamp(2.6rem,11vw,5.8rem);
+          line-height:.9
+        }
+        .home-horizontal-editorial-copy span{
+          display:block;
+          white-space:nowrap
+        }
+        @media(min-width:768px){
+          .home-horizontal-editorial-copy p{
+            font-size:clamp(3.2rem,5.6vw,6.6rem)
+          }
+        }
+      `}</style>
       <div className="sticky top-0 h-[100svh] overflow-hidden bg-carbon">
         <motion.div className="flex h-full w-[300vw] flex-nowrap" style={{ x, willChange: "transform" }}>
-          {positions.map((position, index) => (
-            <div key={position} className="h-full w-screen flex-none overflow-hidden">
+          {panels.map((panel, index) => (
+            <div key={`${panel.position}-${index}`} className="relative h-full w-screen flex-none overflow-hidden">
               {mediaType === "video" ? (
                 <video
                   src={src}
                   className="h-full w-full object-cover"
-                  style={{ objectPosition: position }}
+                  style={{ objectPosition: panel.position }}
                   autoPlay
                   loop
                   muted
@@ -375,12 +405,24 @@ function HorizontalPhotoRail({
                   src={src}
                   alt="Rosta Coffee Co yatay editoryal medya"
                   className="h-full w-full object-cover"
-                  style={{ objectPosition: position }}
+                  style={{ objectPosition: panel.position }}
                   loading="lazy"
                   decoding="async"
                   draggable={false}
                 />
               )}
+
+              {panel.lines.length > 0 ? (
+                <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center px-[6vw]">
+                  <div className="home-horizontal-editorial-copy text-center">
+                    <p>
+                      {panel.lines.map((line) => (
+                        <span key={line}>{line}</span>
+                      ))}
+                    </p>
+                  </div>
+                </div>
+              ) : null}
             </div>
           ))}
         </motion.div>
