@@ -4,6 +4,7 @@ import { requireAdmin } from "@/lib/auth";
 import { noStoreHeaders, revalidateWebsite } from "@/lib/websiteRevalidate";
 import {
   createEmptyThemeDocument,
+  flattenThemeRedirects,
   normalizeThemeDocument,
   STORE_DESIGN_SCHEMA_VERSION,
   validateThemeDocument,
@@ -82,14 +83,18 @@ export async function POST(request: Request) {
     );
   }
 
-  const document = withThemeMediaUsageCounts(normalizeThemeDocument(body?.document));
-  const validation = validateThemeDocument(document);
+  const normalizedDocument = withThemeMediaUsageCounts(normalizeThemeDocument(body?.document));
+  const validation = validateThemeDocument(normalizedDocument);
   if (!validation.ok) {
     return NextResponse.json(
       { ok: false, error: validation.errors[0] || "Önizleme dokümanı geçersiz.", errors: validation.errors },
       { status: 422, headers: noStoreHeaders() },
     );
   }
+  const document: ThemeDocument = {
+    ...normalizedDocument,
+    redirects: flattenThemeRedirects(normalizedDocument.redirects),
+  };
   const now = new Date().toISOString();
 
   try {
@@ -150,6 +155,7 @@ export async function PUT(request: Request) {
     const document: ThemeDocument = {
       ...incoming,
       pages,
+      redirects: flattenThemeRedirects(incoming.redirects),
       schemaVersion: STORE_DESIGN_SCHEMA_VERSION,
       revision: nextRevision(incoming, current.document),
       publishedAt: mode === "publish" ? now : incoming.publishedAt,
