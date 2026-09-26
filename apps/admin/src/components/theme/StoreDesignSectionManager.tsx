@@ -50,6 +50,7 @@ const RENDERABLE_SECTION_TYPES = new Set([
   "hero",
   "featured-products",
   "product-slider",
+  "product-grid",
   "image-banner",
   "rich-text",
   "brand-story",
@@ -87,6 +88,9 @@ function defaultSettings(type: string): Record<string, unknown> {
   }
   if (type === "product-slider") {
     return { title: "Ürünler", productSource: "featured", productLimit: 12, desktopItems: 4, mobileItems: 2, gap: 12, paddingY: 64, showArrows: true, autoplay: false };
+  }
+  if (type === "product-grid") {
+    return { title: "Ürünler", productSource: "featured", productLimit: 12, desktopItems: 3, mobileItems: 2, gap: 20, maxWidth: "none", paddingY: 64 };
   }
   if (type === "image-banner") {
     return { title: "Yeni Bölüm", desktopHeight: 520, mobileHeight: 360, paddingY: 0, borderRadius: 0 };
