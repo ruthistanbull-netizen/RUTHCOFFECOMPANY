@@ -827,12 +827,7 @@ export function ProductDetailExperience({
 
       <div className="product-detail-page" key={product.id}>
         <section className="product-primary">
-          <div
-            data-editor-id={`product-gallery-region:${product.id}`}
-            data-editor-type="product-gallery"
-            data-editor-label="Ürün Galerisi"
-            className="product-media"
-          >
+          <div className="product-media">
             <ProductGallery key={product.id} product={product} images={images} />
             {showSwipeHint ? (
               <div
