@@ -127,6 +127,12 @@ function defaultSettings(type: string): Record<string, unknown> {
   if (type === "hero") {
     return { imageAssetId: "", posterAssetId: "", heightPreset: "viewport", fit: "cover", playbackPreset: "ambient", title: "", body: "", linkLabel: "", linkHref: "", align: "center", overlayOpacity: 24, contrastMode: "adaptive" };
   }
+  if (type === "collection-cards") {
+    return { title: "Koleksiyonlar", eyebrow: "Keşfet", source: "catalog", limit: 4, columns: 2, gap: 20, ratio: "16/10", titlePlacement: "overlay", paddingY: 80 };
+  }
+  if (type === "brand-story") {
+    return { imageAssetId: "", title: "Marka Hikayesi", eyebrow: "", body: "", linkLabel: "", linkHref: "", side: "left", contentWidth: "50%", playbackPreset: "ambient", paddingY: 96 };
+  }
   if (type === "featured-products") {
     return { productSource: "featured", productLimit: 8, desktopItems: 4, mobileItems: 2, gap: 12, paddingY: 64 };
   }
@@ -282,6 +288,8 @@ function canRenderDefinition(definition: SectionDefinition) {
 
 const GENERIC_V2_SECTION_TYPES = new Set([
   "hero",
+  "collection-cards",
+  "brand-story",
   "video-hero",
   "video-banner",
   "before-after",
