@@ -51,6 +51,18 @@ function isVideoSource(value: string) {
   return /\.(mp4|m4v|mov|webm)(?:$|[?#])/i.test(value || "");
 }
 
+function safeSectionHref(value: string) {
+  const raw = value.trim();
+  if (!raw) return "";
+  if (raw.startsWith("/") || raw.startsWith("#")) return raw;
+  try {
+    const url = new URL(raw);
+    return url.protocol === "https:" ? url.toString() : "";
+  } catch {
+    return "";
+  }
+}
+
 function heroPlayback(settings: Record<string, unknown> | undefined) {
   const preset = ["ambient", "once", "controls"].includes(settingText(settings, "playbackPreset"))
     ? settingText(settings, "playbackPreset")
@@ -168,7 +180,13 @@ export function HomeSectionRenderer({
   if (section.v2Type) return <StoreDesignBlockSection section={section} />;
 
   const heroV2Settings = section.type === "hero" ? section.v2Settings : undefined;
-  const customHero = section.type === "hero" && heroV2Settings && Object.keys(heroV2Settings).length > 0;
+  const customHero = section.type === "hero" && Boolean(
+    section.imageSrc
+    || settingText(heroV2Settings, "title")
+    || settingText(heroV2Settings, "body")
+    || settingText(heroV2Settings, "linkLabel")
+    || settingText(heroV2Settings, "linkHref"),
+  );
   if (section.type === "hero" && customHero) {
     const desktopSrc = section.imageSrc || heroImages.desktop;
     const mobileSrc = section.mobileImageSrc || heroImages.mobile || desktopSrc;
@@ -187,7 +205,7 @@ export function HomeSectionRenderer({
     const title = settingText(heroV2Settings, "title");
     const body = settingText(heroV2Settings, "body");
     const linkLabel = settingText(heroV2Settings, "linkLabel");
-    const linkHref = settingText(heroV2Settings, "linkHref");
+    const linkHref = safeSectionHref(settingText(heroV2Settings, "linkHref"));
     const contentAlignClass = align === "left"
       ? "items-start text-left"
       : align === "right"
