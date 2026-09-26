@@ -161,6 +161,7 @@ function snapshot(target: SemanticTarget) {
       columns: Math.max(1, computed.gridTemplateColumns.split(/\s+/).filter(Boolean).length || 1),
       gapX: Number.parseFloat(computed.columnGap || "0") || 0,
       gapY: Number.parseFloat(computed.rowGap || "0") || 0,
+      maxWidth: computed.maxWidth || "none",
     } : null,
   };
 }
@@ -216,9 +217,12 @@ function validatePatch(target: SemanticTarget, message: ThemePatchMessage) {
     }
     case "grid.columns": {
       const value = Number(message.value);
-      return Number.isInteger(value) && value >= 1 && value <= 6
+      const mobile = message.device === "mobile";
+      const min = mobile ? 1 : 2;
+      const max = mobile ? 2 : 6;
+      return Number.isInteger(value) && value >= min && value <= max
         ? { ok: true }
-        : { ok: false, error: "Grid kolon sayısı 1-6 arasında olmalı." };
+        : { ok: false, error: mobile ? "Mobil grid 1-2 kolon olmalı." : "Masaüstü grid 2-6 kolon olmalı." };
     }
     case "grid.gapX":
     case "grid.gapY": {
@@ -227,6 +231,10 @@ function validatePatch(target: SemanticTarget, message: ThemePatchMessage) {
         ? { ok: true }
         : { ok: false, error: "Grid boşluğu 0-120px arasında olmalı." };
     }
+    case "grid.maxWidth":
+      return ["none", "1200px", "1280px", "1440px", "1600px"].includes(String(message.value))
+        ? { ok: true }
+        : { ok: false, error: "Geçersiz grid max-width preset'i." };
     default:
       return { ok: false, error: "Bu patch yolu henüz runtime tarafından desteklenmiyor." };
   }
