@@ -76,6 +76,7 @@ function previewUrl(path: string) {
   const url = new URL(path || "/", STOREFRONT_ORIGIN);
   url.searchParams.set("themeEditor", "1");
   url.searchParams.set("storeDesignV2", "1");
+  if (typeof window !== "undefined") url.searchParams.set("editorOrigin", window.location.origin);
   return url.toString();
 }
 
