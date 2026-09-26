@@ -16,6 +16,11 @@ const LEGACY_RENDER_ALIASES: Record<string, string> = {
 const BLOCK_RENDER_SECTION_TYPES = new Set([
   "slideshow",
   "gallery-grid",
+  "masonry-gallery",
+  "collage",
+  "image-text-split",
+  "video-text-split",
+  "social-grid",
   "logo-cloud",
   "text-columns",
   "stats",
@@ -136,6 +141,8 @@ export function storeDesignSectionsForPage(document: ThemeDocument, page: PageRe
         faqItems,
         v2Type: v2BlockSection ? section.type : undefined,
         v2Settings: v2BlockSection ? settings : undefined,
+        v2MediaType: v2BlockSection ? desktopAsset?.type : undefined,
+        v2PosterUrl: v2BlockSection && desktopAsset?.posterAssetId ? versionedMediaUrl(document.media[desktopAsset.posterAssetId]) : undefined,
         v2Blocks,
       };
     })
