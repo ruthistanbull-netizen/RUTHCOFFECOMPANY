@@ -240,7 +240,7 @@ function applySectionDraft(settings: ThemeSectionSettings, pathname: string) {
 
 export function ThemeEditorEnhancements() {
   useEffect(() => {
-    if (new URLSearchParams(window.location.search).get("themeEditor") !== "1") return;
+    const editorParams = new URLSearchParams(window.location.search);\n    if (editorParams.get("themeEditor") !== "1" || editorParams.get("storeDesignV2") === "1") return;
 
     let applying = false;
     let mutationTimer = 0;
