@@ -24,15 +24,19 @@ function smootherstep(value: number) {
 }
 
 function scrollCueProgress(rawPosition: number, slideIndex: number) {
-  // Start before the target photo takes over and finish after it settles.
-  // This wider range makes the movement slower and keeps it tied directly
-  // to the user's scroll in both directions.
-  return smootherstep((rawPosition - (slideIndex - 0.72)) / 1.08);
+  // The media itself starts changing at local progress 0.68. Start the text
+  // there too and spread the entrance across almost a full viewport of scroll,
+  // so it never jumps in on a single wheel gesture.
+  const start = slideIndex - 0.32;
+  const duration = 0.92;
+  return smootherstep((rawPosition - start) / duration);
 }
 
 function scrollCueOpacity(rawPosition: number, slideIndex: number) {
   const enter = scrollCueProgress(rawPosition, slideIndex);
-  const leave = 1 - smootherstep((rawPosition - (slideIndex + 0.58)) / 0.64);
+  const leaveStart = slideIndex + 0.52;
+  const leaveDuration = 0.22;
+  const leave = 1 - smootherstep((rawPosition - leaveStart) / leaveDuration);
   return clamp(Math.min(enter, leave), 0, 1);
 }
 
@@ -165,10 +169,10 @@ export default function ScrollStory({
   const thirdCueProgress = scrollCueProgress(rawPosition, 2);
   const thirdCueOpacity = scrollCueOpacity(rawPosition, 2);
 
-  const secondCueX = -Math.round((1 - secondCueProgress) * (mobileViewport ? 116 : 180));
+  const secondCueX = -Math.round((1 - secondCueProgress) * (mobileViewport ? 150 : 230));
   const thirdCueX = mobileViewport
-    ? Math.round((1 - thirdCueProgress) * 132)
-    : -Math.round((1 - thirdCueProgress) * 180);
+    ? Math.round((1 - thirdCueProgress) * 165)
+    : -Math.round((1 - thirdCueProgress) * 230);
   const secondCueScale = 0.965 + secondCueProgress * 0.035;
   const thirdCueScale = 0.965 + thirdCueProgress * 0.035;
 
@@ -255,7 +259,7 @@ export default function ScrollStory({
             aria-hidden="true"
           >
             <div
-              className="absolute left-[9vw] top-[24%] max-w-[76vw] md:left-[11vw] md:top-[28%] md:max-w-[42vw]"
+              className="absolute left-[8vw] top-[37%] max-w-[80vw] md:left-[8.5vw] md:top-[40%] md:max-w-[43vw]"
               style={{
                 opacity: secondCueOpacity,
                 transform: `translate3d(${secondCueX}px, 0, 0) scale(${secondCueScale})`,
@@ -264,7 +268,7 @@ export default function ScrollStory({
               }}
             >
               <p
-                className="m-0"
+                className="m-0 font-black"
                 style={{
                   color: "var(--rosta-brick-b)",
                   fontFamily: "var(--font-heading)",
@@ -282,10 +286,10 @@ export default function ScrollStory({
 
             {slides.length > 2 ? (
               <div
-                className="absolute top-[28%] max-w-[76vw] md:left-[11vw] md:right-auto md:top-[31%] md:max-w-[44vw]"
+                className="absolute top-[42%] max-w-[80vw] md:left-[8.5vw] md:right-auto md:top-[42%] md:max-w-[45vw]"
                 style={{
                   left: mobileViewport ? "auto" : undefined,
-                  right: mobileViewport ? "9vw" : undefined,
+                  right: mobileViewport ? "8vw" : undefined,
                   opacity: thirdCueOpacity,
                   transform: `translate3d(${thirdCueX}px, 0, 0) scale(${thirdCueScale})`,
                   transformOrigin: mobileViewport ? "right center" : "left center",
@@ -294,7 +298,7 @@ export default function ScrollStory({
                 }}
               >
                 <p
-                  className="m-0"
+                  className="m-0 font-black"
                   style={{
                     color: "var(--rosta-brick-b)",
                     fontFamily: "var(--font-heading)",
