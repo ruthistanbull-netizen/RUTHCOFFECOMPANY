@@ -32,6 +32,7 @@ const BLOCK_RENDER_SECTION_TYPES = new Set([
   "manifesto",
   "quote",
   "promo-banner",
+  "countdown",
   "shipping-returns-cta",
   "spacer",
   "divider",
