@@ -184,6 +184,9 @@ for (const token of ["StoreDesignPresetLibrary", "StoreDesignBlockSectionEditor"
 
 const blockRenderer = read("apps/storefront/src/components/theme/StoreDesignBlockSection.tsx");
 for (const type of [
+  "video-hero",
+  "video-banner",
+  "background-media",
   "slideshow",
   "gallery-grid",
   "text-columns",
@@ -281,6 +284,44 @@ for (const token of [
 
 for (const token of ["HeadingTag", "headingSizeClass", "manifestoTitleClass", "dividerColor", "normalizeStoreDesignAnchorId"]) {
   if (!blockRenderer.includes(token)) fail(`Generic zero-block storefront preset runtime eksik: ${token}`);
+}
+for (const token of ["playbackPolicy", "v2-media-narrative-media", "posterAssetId", "data-editor-type=\"content\""]) {
+  if (!blockRenderer.includes(token)) fail(`Media narrative storefront runtime eksik: ${token}`);
+}
+
+const mediaLibrary = read("apps/admin/src/components/theme/StoreDesignMediaLibrary.tsx");
+for (const token of [
+  "Fotoğraf/video kayıtları",
+  "Cover/crop kullanılan fotoğraf ve videolarda",
+  "Video poster",
+  "Mobil varyant",
+]) {
+  if (!mediaLibrary.includes(token)) fail(`Media Library V2 video/focal kontrolü eksik: ${token}`);
+}
+
+const mediaSectionEditor = read("apps/admin/src/components/theme/StoreDesignBlockSectionEditor.tsx");
+for (const token of [
+  "video-hero",
+  "video-banner",
+  "background-media",
+  "Media Library",
+  "Oynatma politikası",
+  "Autoplay · sessiz · loop",
+  "Poster override",
+  "Metin kontrastı",
+]) {
+  if (!mediaSectionEditor.includes(token)) fail(`Media narrative editor kontrolü eksik: ${token}`);
+}
+
+for (const token of [
+  'component("video-hero"',
+  'component("background-media"',
+  'block("content"',
+  'section("video-hero"',
+  'section("video-banner"',
+  'section("background-media"',
+]) {
+  if (!core.includes(token)) fail(`Media narrative registry sözleşmesi eksik: ${token}`);
 }
 
 const productPresetEditor = read("apps/admin/src/components/theme/StoreDesignSectionEditor.tsx");
