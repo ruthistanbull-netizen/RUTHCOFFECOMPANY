@@ -307,6 +307,9 @@ for (const token of [
   "background-media",
   "brand-story",
   "collection-cards",
+  "product-spotlight",
+  "featured-collection",
+  "category-cards",
   "scroll-story",
   "Media Library",
   "Oynatma politikası",
@@ -318,6 +321,10 @@ for (const token of [
   "Başlık konumu",
   "Marka hikayesi medyası",
   "İçerik genişliği",
+  "Tek Ürün Spotlight için katalogdan bir ürün seç",
+  "Featured Collection için katalogdan bir koleksiyon seç",
+  "Katalog · ",
+  "Bilgi blokları",
   "Scroll uzunluğu",
   "Geçiş preset",
   "KAYDIR cue göster",
@@ -333,6 +340,9 @@ for (const token of [
   'section("video-hero"',
   'section("video-banner"',
   'section("background-media"',
+  'section("product-spotlight"',
+  'section("featured-collection"',
+  'section("category-cards"',
   'section("collection-cards"',
   'section("brand-story"',
   'component("scroll-story-slide"',
@@ -347,7 +357,7 @@ for (const token of ["new-arrivals", "sale-products", "Otomatik · yeni ürün i
 }
 
 const themeSections = read("packages/commerce-core/src/theme-sections.ts");
-for (const token of ['| "new-arrivals"', '| "sale-products"', 'layout?: "slider" | "grid"', 'badgeStyle?: "pill" | "outline" | "minimal"', "mobileAssetUrl?: string", "mobileObjectPosition?: string"]) {
+for (const token of ['| "product-spotlight"', '| "featured-collection"', '| "category-cards"', '| "new-arrivals"', '| "sale-products"', 'layout?: "slider" | "grid"', 'badgeStyle?: "pill" | "outline" | "minimal"', "mobileAssetUrl?: string", "mobileObjectPosition?: string"]) {
   if (!themeSections.includes(token)) fail(`Product preset render contract eksik: ${token}`);
 }
 
@@ -359,6 +369,10 @@ for (const token of [
   "customHero",
   "safeSectionHref",
   "data-home-editorial-media",
+  'section.type === "product-spotlight"',
+  'section.type === "featured-collection"',
+  'section.type === "category-cards"',
+  "formatPrice",
   "customCollectionCards",
   "--collection-columns",
   "customBrandStory",
@@ -368,7 +382,7 @@ for (const token of [
 }
 
 for (const token of [
-  '["hero", "collection-cards", "brand-story"]',
+  '["hero", "product-spotlight", "featured-collection", "category-cards", "collection-cards", "brand-story"]',
   'section.type === "scroll-story"',
   "hydrateV2Blocks",
   "mobileAssetUrl",
