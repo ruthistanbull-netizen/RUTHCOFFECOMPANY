@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import type { ThemeSection } from "@ruth-commerce/commerce-core/theme-sections";
 
 type V2Block = NonNullable<ThemeSection["v2Blocks"]>[number];
@@ -25,7 +25,7 @@ function href(value: unknown) {
   }
 }
 
-function BlockLink({ value, children, className }: { value: unknown; children: React.ReactNode; className?: string }) {
+function BlockLink({ value, children, className }: { value: unknown; children: ReactNode; className?: string }) {
   const target = href(value);
   if (!target) return <>{children}</>;
   return <Link href={target} className={className}>{children}</Link>;
