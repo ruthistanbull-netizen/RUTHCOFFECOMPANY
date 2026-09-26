@@ -60,7 +60,10 @@ const RENDERABLE_SECTION_TYPES = new Set([
   "product-grid",
   "new-arrivals",
   "sale-products",
+  "video-hero",
   "image-banner",
+  "video-banner",
+  "background-media",
   "rich-text",
   "brand-story",
   "collection-cards",
@@ -135,6 +138,15 @@ function defaultSettings(type: string): Record<string, unknown> {
   }
   if (type === "sale-products") {
     return { title: "İndirimdekiler", productLimit: 12, desktopItems: 4, mobileItems: 2, gap: 12, paddingY: 64, layout: "slider", showArrows: true, badgeStyle: "pill" };
+  }
+  if (type === "video-hero") {
+    return { imageAssetId: "", posterAssetId: "", heightPreset: "viewport", fit: "cover", playbackPreset: "ambient", title: "Video Hero", body: "", linkLabel: "", linkHref: "", align: "center", overlayOpacity: 32, contrastMode: "light" };
+  }
+  if (type === "video-banner") {
+    return { imageAssetId: "", posterAssetId: "", heightPreset: "medium", fit: "cover", playbackPreset: "ambient", title: "Video Banner", body: "", linkLabel: "", linkHref: "", align: "center", overlayOpacity: 28, contrastMode: "light" };
+  }
+  if (type === "background-media") {
+    return { imageAssetId: "", posterAssetId: "", minHeightPreset: "medium", fit: "cover", playbackPreset: "ambient", overlayOpacity: 36, contrastMode: "light" };
   }
   if (type === "image-banner") {
     return { title: "Yeni Bölüm", desktopHeight: 520, mobileHeight: 360, paddingY: 0, borderRadius: 0 };
@@ -266,6 +278,8 @@ function canRenderDefinition(definition: SectionDefinition) {
 }
 
 const GENERIC_V2_SECTION_TYPES = new Set([
+  "video-hero",
+  "video-banner",
   "heading-subtext",
   "manifesto",
   "quote",
