@@ -250,7 +250,13 @@ export function HomeSectionRenderer({
           {section.title ? <h2 className="font-heading font-editorial text-[clamp(1.7rem,3vw,3.2rem)]">{section.title}</h2> : null}
           <div className="mt-6 divide-y divide-current/10 border-y border-current/10">
             {items.map((item) => (
-              <details key={item.id} className="group py-1">
+              <details
+                key={item.id}
+                data-editor-id={`block:${item.id}`}
+                data-editor-type="faq-item"
+                data-editor-label={item.question || "FAQ Öğesi"}
+                className="group py-1"
+              >
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 text-[13px] font-medium">
                   <span>{item.question}</span>
                   <span aria-hidden="true" className="text-lg font-light transition-transform group-open:rotate-45">+</span>
