@@ -255,7 +255,7 @@ export default function ScrollStory({
         </div>
 
         <div
-          className="pointer-events-none absolute right-3 top-[47%] z-20 flex -translate-y-1/2 flex-col items-center gap-1.5 md:right-8 md:top-1/2 md:gap-2"
+          className="pointer-events-none absolute right-4 top-1/2 z-40 flex -translate-y-1/2 flex-col items-center gap-1.5 md:right-8 md:gap-2"
           aria-hidden="true"
         >
           {scrollLetters.map((letter, index) => {
@@ -271,7 +271,7 @@ export default function ScrollStory({
                 className="font-heading block text-center font-medium uppercase"
                 style={{
                   width: "1.5rem",
-                  color: "var(--ink)",
+                  color: "var(--rosta-cream)",
                   fontSize: "clamp(0.72rem, 1.2vw, 0.9rem)",
                   lineHeight: 1,
                   letterSpacing: 0,
