@@ -4,7 +4,12 @@ import { HomeHeroRuntimeAdjustments } from "@/components/HomeHeroRuntimeAdjustme
 import { HomeHeaderAdaptiveTone } from "@/components/HomeHeaderAdaptiveTone";
 import { ThemeEditorHomeScrollBridge } from "@/components/theme/ThemeEditorHomeScrollBridge";
 import { getFeaturedProducts, getProducts } from "@/data/catalogReadModel";
-import { getCachedCategories, getCachedCollections, getCachedSiteSettings } from "@/data/catalogCache";
+import {
+  getCachedBestSellingProducts,
+  getCachedCategories,
+  getCachedCollections,
+  getCachedSiteSettings,
+} from "@/data/catalogCache";
 import {
   getStoreDesignV2Preview,
   getStoreDesignV2Published,
@@ -56,6 +61,20 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
       ? storeDesignSectionsForPage(publishedV2, publishedHome)
       : legacyPage.sections;
 
+  const bestSellerWindows = [...new Set(
+    pageSections
+      .filter((section) => section.type === "best-sellers")
+      .map((section) => {
+        const preset = typeof section.v2Settings?.window === "string" ? section.v2Settings.window : "30d";
+        return preset === "7d" || preset === "90d" ? preset : "30d";
+      }),
+  )];
+  const bestSellerEntries = await Promise.all(bestSellerWindows.map(async (windowPreset) => {
+    const windowDays = windowPreset === "7d" ? 7 : windowPreset === "90d" ? 90 : 30;
+    return [windowPreset, await getCachedBestSellingProducts(windowDays, 24)] as const;
+  }));
+  const bestSellerProductsByWindow = Object.fromEntries(bestSellerEntries);
+
   const heroImages = homepageHeroImages(themeSettings);
   const editorialVideo = themeSettings.homepageImages.editorialVideo || "/home/rosta-under-hero-video.mp4";
   const editorialImage = themeSettings.homepageImages.editorialImage || "/home/rosta-under-hero-photo.jpg";
@@ -74,6 +93,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
           allProducts={allProducts}
           collections={collections}
           categories={categories}
+          bestSellerProductsByWindow={bestSellerProductsByWindow}
           heroImages={heroImages}
           editorialVideo={editorialVideo}
           editorialImage={editorialImage}
