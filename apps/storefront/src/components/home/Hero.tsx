@@ -176,26 +176,26 @@ function EditorialMedia({
   });
   const progress = useSpring(scrollYProgress, { stiffness: 92, damping: 30, mass: 0.42 });
   const cueMotionProgress = useSpring(cueScrollYProgress, {
-    stiffness: 132,
-    damping: 31,
-    mass: 0.3,
+    stiffness: 190,
+    damping: 34,
+    mass: 0.22,
     restDelta: 0.0005,
     restSpeed: 0.0005,
   });
   const scale = useTransform(
     progress,
     [0, 0.16, 0.5, 1],
-    index === 0 ? [1, 0.975, 0.925, 0.88] : [1, 0.998, 0.992, 0.984],
+    index === 0 ? [1, 0.975, 0.925, 0.88] : [1, 0.99, 0.965, 0.94],
   );
   const y = useTransform(
     progress,
     [0, 0.5, 1],
-    index === 0 ? ["0%", "-0.65%", "-1.35%"] : ["0%", "-0.12%", "-0.28%"],
+    index === 0 ? ["0%", "-0.65%", "-1.35%"] : ["0%", "-0.4%", "-0.85%"],
   );
   const opacity = useTransform(
     progress,
     [0, 0.78, 1],
-    index === 0 ? [1, 1, 0.96] : [1, 1, 1],
+    index === 0 ? [1, 1, 0.96] : [1, 1, 0.985],
   );
   const cueComesFromRight = index === 2;
   const cueStartX = cueComesFromRight
@@ -210,13 +210,7 @@ function EditorialMedia({
     [0, 0.18, 0.42, 0.68, 0.86, 1],
     [cueStartX, cueStartX * 0.82, cueStartX * 0.55, cueStartX * 0.28, cueStartX * 0.09, 0],
   );
-  const cueY = useTransform(
-    cueMotionProgress,
-    [0, 0.2, 0.46, 0.72, 1],
-    mobileViewport
-      ? ["0svh", "8svh", "18svh", "28svh", "35svh"]
-      : ["0px", "7vh", "17vh", "27vh", "34vh"],
-  );
+  const cueY = useTransform(cueMotionProgress, [0, 1], [0, 0]);
   const cueOpacity = useTransform(
     cueMotionProgress,
     [0, 0.06, 0.16, 0.34, 1],
@@ -229,7 +223,7 @@ function EditorialMedia({
   return (
     <div
       ref={ref}
-      className={`home-editorial-slide relative ${index === 0 ? "h-[108svh]" : "h-[158svh] -mt-[8svh] md:h-[150svh]"}`}
+      className={`home-editorial-slide relative ${index === 0 ? "h-[108svh]" : "h-[124svh] -mt-[8svh] md:h-[122svh]"}`}
       data-editorial-kind={slide.kind}
     >
       <div className="sticky top-0 h-[100svh] min-h-[560px] overflow-hidden bg-carbon lg:min-h-[700px]">
