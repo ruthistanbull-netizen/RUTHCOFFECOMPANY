@@ -170,14 +170,9 @@ function EditorialMedia({
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const { scrollYProgress: cueScrollYProgress } = useScroll({
     target: ref,
-    offset: ["start end", "end start"],
+    offset: ["start 94%", "end 6%"],
   });
   const progress = useSpring(scrollYProgress, { stiffness: 92, damping: 30, mass: 0.42 });
-  const cueProgress = useSpring(cueScrollYProgress, {
-    stiffness: 42,
-    damping: 24,
-    mass: 0.82,
-  });
   const scale = useTransform(
     progress,
     [0, 0.16, 0.5, 1],
@@ -185,14 +180,17 @@ function EditorialMedia({
   );
   const y = useTransform(progress, [0, 0.5, 1], ["0%", "-0.65%", "-1.35%"]);
   const opacity = useTransform(progress, [0, 0.78, 1], [1, 1, 0.96]);
-  const cueStartX = index === 2 && mobileViewport ? 280 : -300;
-  const cueX = useTransform(cueProgress, [0.18, 0.76], [cueStartX, 0]);
-  const cueOpacity = useTransform(
-    cueProgress,
-    [0.16, 0.34, 0.78, 0.94],
-    [0, 1, 1, 0],
-  );
-  const cueScale = useTransform(cueProgress, [0.18, 0.76], [0.97, 1]);
+  const cueStartX = index === 2 && mobileViewport
+    ? 250
+    : mobileViewport
+      ? -250
+      : -420;
+  // Keep the copy physically tied to the page scroll. It begins as soon as
+  // the editorial frame enters and takes most of that frame's scroll distance
+  // to settle, so one wheel gesture can never complete the entrance.
+  const cueX = useTransform(cueScrollYProgress, [0.02, 0.88], [cueStartX, 0]);
+  const cueOpacity = useTransform(cueScrollYProgress, [0.01, 0.12, 1], [0, 1, 1]);
+  const cueScale = useTransform(cueScrollYProgress, [0.02, 0.88], [0.95, 1]);
   const wrapperClass = index === 0
     ? "absolute inset-0 overflow-hidden"
     : "absolute inset-x-[2vw] inset-y-[1svh] overflow-hidden lg:bottom-[32px] lg:left-[7vw] lg:right-[7vw] lg:top-[52px]";
@@ -344,7 +342,7 @@ function EditorialMedia({
 
         {index === 1 ? (
           <motion.div
-            className="home-editorial-cue home-editorial-cue--second pointer-events-none absolute left-[8vw] top-[41%] z-30 max-w-[76vw] md:left-[9vw] md:top-[42%] md:max-w-[46vw]"
+            className="home-editorial-cue home-editorial-cue--second pointer-events-none absolute left-[6vw] top-[36%] z-30 max-w-[88vw] md:left-[8vw] md:top-[39%] md:max-w-[52vw]"
             style={{
               x: cueX,
               opacity: cueOpacity,
@@ -363,10 +361,10 @@ function EditorialMedia({
 
         {index === 2 ? (
           <motion.div
-            className="home-editorial-cue home-editorial-cue--third pointer-events-none absolute top-[43%] z-30 max-w-[78vw] md:left-[9vw] md:right-auto md:top-[43%] md:max-w-[48vw]"
+            className="home-editorial-cue home-editorial-cue--third pointer-events-none absolute top-[40%] z-30 max-w-[88vw] md:left-[8vw] md:right-auto md:top-[41%] md:max-w-[54vw]"
             style={{
               left: mobileViewport ? "auto" : undefined,
-              right: mobileViewport ? "8vw" : undefined,
+              right: mobileViewport ? "6vw" : undefined,
               x: cueX,
               opacity: cueOpacity,
               scale: cueScale,
@@ -500,11 +498,15 @@ export default function Hero({
     >
       <style>{`
         .home-editorial-wordmark{box-sizing:border-box;pointer-events:none;position:fixed;left:0;top:calc(100svh - clamp(184px,38vw,236px) + 20px);z-index:40;width:min(100vw,1208px);max-width:100vw;height:auto;aspect-ratio:3175/1343;user-select:none;transition:color .24s ease,opacity .28s ease,visibility .28s ease}.home-editorial-wordmark[data-visible="false"]{opacity:0!important;visibility:hidden}.home-editorial-wordmark svg{display:block;width:100%;height:100%;overflow:visible}@media(min-width:1024px){.home-editorial-wordmark{right:1vw!important;left:auto!important;top:calc(47vh + 18px)!important;width:44.8vw!important;max-width:44.8vw!important;height:auto!important;aspect-ratio:3175/1343}}
-        .home-editorial-cue{color:var(--rosta-brick-b);font-family:var(--font-heading)!important;font-weight:900!important;font-variation-settings:"wght" 900!important;letter-spacing:-.04em;line-height:.94}
-        .home-editorial-cue p,.home-editorial-cue span{margin:0;font-family:var(--font-heading)!important;font-weight:900!important;font-variation-settings:"wght" 900!important}
-        .home-editorial-cue p{font-size:clamp(2.15rem,5vw,5.7rem);line-height:.94}
+        .home-editorial-cue{color:var(--rosta-brick-b);font-family:var(--font-heading)!important;font-weight:900!important;font-variation-settings:"wght" 900!important;font-synthesis:weight!important;letter-spacing:-.045em;line-height:.92}
+        .home-editorial-cue p,.home-editorial-cue span{margin:0;font-family:var(--font-heading)!important;font-weight:900!important;font-variation-settings:"wght" 900!important;font-synthesis:weight!important}
+        .home-editorial-cue p{font-size:clamp(3.75rem,15vw,5.4rem);line-height:.9}
         .home-editorial-cue span{display:block}
-        .home-editorial-cue--third p{font-size:clamp(1.9rem,4.6vw,5.15rem);line-height:.98}
+        .home-editorial-cue--third p{font-size:clamp(3.35rem,13.5vw,5rem);line-height:.92}
+        @media(min-width:768px){
+          .home-editorial-cue p{font-size:clamp(3.1rem,5.7vw,6.45rem);line-height:.91}
+          .home-editorial-cue--third p{font-size:clamp(2.85rem,5.25vw,5.9rem);line-height:.94}
+        }
       `}</style>
       <motion.div
         ref={wordmarkRef}
