@@ -3,6 +3,7 @@
 import {
   ChevronDown,
   CircleDot,
+  History,
   Images,
   LayoutTemplate,
   Link2,
@@ -38,6 +39,7 @@ import { StoreDesignSectionManager } from "@/components/theme/StoreDesignSection
 import { StoreDesignMediaLibrary } from "@/components/theme/StoreDesignMediaLibrary";
 import { StoreDesignTemplateManager } from "@/components/theme/StoreDesignTemplateManager";
 import { StoreDesignRedirectManager } from "@/components/theme/StoreDesignRedirectManager";
+import { StoreDesignSnapshotManager } from "@/components/theme/StoreDesignSnapshotManager";
 
 type Device = "desktop" | "mobile";
 type PageItem = {
@@ -464,6 +466,7 @@ export function StoreDesignV21() {
   const [mediaOpen, setMediaOpen] = useState(false);
   const [templateManagerOpen, setTemplateManagerOpen] = useState(false);
   const [redirectManagerOpen, setRedirectManagerOpen] = useState(false);
+  const [snapshotManagerOpen, setSnapshotManagerOpen] = useState(false);
   const [history, setHistory] = useState<EditorHistoryEntry[]>([]);
   const [future, setFuture] = useState<EditorHistoryEntry[]>([]);
   const revisionRef = useRef(0);
@@ -730,6 +733,21 @@ export function StoreDesignV21() {
     toast.success(label);
   }, [activePath, applyStructureSnapshot, document, toast]);
 
+  const applyRestoredSnapshot = useCallback(async (next: ThemeDocument) => {
+    await syncPreviewDocument(next, true);
+    setDocument(next);
+    setSavedDraft(next);
+    revisionRef.current = next.revision;
+    setSelected(null);
+    setHistory([]);
+    setFuture([]);
+    setLastHeartbeat(Date.now());
+
+    if (iframeRef.current && activePage) {
+      iframeRef.current.src = previewUrl(cleanPreviewPath(activePage), previewTokenRef.current);
+    }
+  }, [activePage, syncPreviewDocument]);
+
   const applyPatchValue = (
     target: SelectedTarget,
     patchScope: EditorScope,
@@ -942,6 +960,9 @@ export function StoreDesignV21() {
           </button>
         </div>
 
+        <button type="button" onClick={() => setSnapshotManagerOpen(true)} className="hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] 2xl:flex">
+          <History className="h-3.5 w-3.5" />Geçmiş
+        </button>
         <button type="button" onClick={() => setRedirectManagerOpen(true)} className="hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] xl:flex">
           <Link2 className="h-3.5 w-3.5" />Redirect
         </button>
@@ -1251,6 +1272,14 @@ export function StoreDesignV21() {
           </aside>
         ) : null}
       </div>
+
+      {snapshotManagerOpen ? (
+        <StoreDesignSnapshotManager
+          currentPublishedRevision={published.revision}
+          onRestore={applyRestoredSnapshot}
+          onClose={() => setSnapshotManagerOpen(false)}
+        />
+      ) : null}
 
       {redirectManagerOpen ? (
         <StoreDesignRedirectManager
