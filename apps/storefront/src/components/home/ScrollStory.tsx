@@ -255,13 +255,14 @@ export default function ScrollStory({
               }}
             >
               <p
-                className="font-heading font-editorial m-0"
+                className="m-0"
                 style={{
                   color: "var(--rosta-brick-b)",
+                  fontFamily: "var(--font-heading)",
                   fontSize: "clamp(2rem, 5.1vw, 5.6rem)",
                   fontWeight: 900,
                   lineHeight: 0.94,
-                  letterSpacing: "-0.055em",
+                  letterSpacing: "-0.04em",
                 }}
               >
                 <span className="block">Doğru Çekirdek,</span>
@@ -282,13 +283,14 @@ export default function ScrollStory({
                 }}
               >
                 <p
-                  className="font-heading font-editorial m-0"
+                  className="m-0"
                   style={{
                     color: "var(--rosta-brick-b)",
+                    fontFamily: "var(--font-heading)",
                     fontSize: "clamp(1.8rem, 4.6vw, 5rem)",
                     fontWeight: 900,
                     lineHeight: 0.98,
-                    letterSpacing: "-0.05em",
+                    letterSpacing: "-0.04em",
                   }}
                 >
                   Kahveyi sadeleştir, karakterini koru.
