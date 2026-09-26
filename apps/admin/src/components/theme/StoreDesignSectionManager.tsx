@@ -58,6 +58,20 @@ const RENDERABLE_SECTION_TYPES = new Set([
   "collection-cards",
   "trust-badges",
   "faq",
+  "slideshow",
+  "gallery-grid",
+  "logo-cloud",
+  "text-columns",
+  "stats",
+  "timeline",
+  "feature-grid",
+  "trust-badges",
+  "testimonials",
+  "tabs",
+  "press-awards",
+  "team",
+  "announcement-bar",
+  "marquee",
 ]);
 
 function uid(prefix: string) {
@@ -102,6 +116,20 @@ function defaultSettings(type: string): Record<string, unknown> {
   if (type === "faq") {
     return { title: "Sık Sorulan Sorular", paddingY: 64 };
   }
+  if (type === "slideshow") return { title: "Slideshow", gap: 16, paddingY: 64, autoplay: false };
+  if (type === "gallery-grid") return { title: "Galeri", columns: 3, gap: 16, paddingY: 64 };
+  if (type === "logo-cloud") return { title: "Markalar", columns: 5, gap: 24, paddingY: 64 };
+  if (type === "text-columns") return { title: "Metin Kolonları", columns: 3, gap: 24, paddingY: 64 };
+  if (type === "stats") return { title: "Rakamlarla", columns: 4, gap: 24, paddingY: 64 };
+  if (type === "timeline") return { title: "Hikayemiz", orientation: "vertical", paddingY: 64 };
+  if (type === "feature-grid") return { title: "Özellikler", columns: 3, gap: 16, paddingY: 64 };
+  if (type === "trust-badges") return { title: "Neden Biz", columns: 3, gap: 16, paddingY: 64 };
+  if (type === "testimonials") return { title: "Yorumlar", columns: 3, gap: 16, paddingY: 64 };
+  if (type === "tabs") return { title: "Detaylar", paddingY: 64 };
+  if (type === "press-awards") return { title: "Basın / Ödüller", columns: 4, gap: 20, paddingY: 64 };
+  if (type === "team") return { title: "Ekibimiz", columns: 4, gap: 20, paddingY: 64 };
+  if (type === "announcement-bar") return { paddingY: 0 };
+  if (type === "marquee") return { paddingY: 0, speed: 24, pause: false };
   return {};
 }
 
