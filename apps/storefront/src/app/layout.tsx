@@ -123,6 +123,11 @@ export default async function RootLayout({
     getCachedCollections(),
   ]);
 
+  const themeEditorOrigins = (process.env.THEME_EDITOR_ORIGINS || process.env.NEXT_PUBLIC_ADMIN_URL || process.env.NEXT_PUBLIC_PANEL_URL || "https://rostapanel.zeabur.app http://localhost:* https://localhost:*")
+    .split(/[\s,]+/)
+    .map((value) => value.trim())
+    .filter(Boolean);
+
   const themeStyle = {
     "--rosta-carbon": "#111111",
     "--rosta-carbon-soft": "#242424",
@@ -291,7 +296,7 @@ export default async function RootLayout({
             letter-spacing: normal;
           }
         `}</style>
-        <SemanticThemeEditorBridge />
+        <SemanticThemeEditorBridge allowedOrigins={themeEditorOrigins} />
         <ThemeEditorNativeNavigation />
         <ThemeEditorEnhancements />
         <ThemeEditorBridgeV3 settings={themeSettings} />
