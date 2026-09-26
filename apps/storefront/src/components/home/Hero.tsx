@@ -151,7 +151,7 @@ function Editorial3DText({
 }: {
   lines: string[];
 }) {
-  const depthLayers = [24, 20, 16, 12, 8, 4];
+  const depthLayers = [80, 70, 60, 50, 40, 30, 22, 14, 8];
 
   return (
     <div className="home-editorial-cue-3d" aria-hidden="true">
@@ -160,7 +160,7 @@ function Editorial3DText({
           key={depth}
           className="home-editorial-cue-face home-editorial-cue-face--depth"
           style={{
-            transform: `translate3d(${layerIndex * 0.7}px, ${layerIndex * 0.42}px, -${depth}px)`,
+            transform: `translate3d(${layerIndex * 0.9}px, 0px, -${depth}px)`,
           }}
         >
           {lines.map((line) => <span key={line}>{line}</span>)}
@@ -234,13 +234,7 @@ function EditorialMedia({
     [0, 0.18, 0.46, 0.74, 1],
     [cueStartX, cueStartX * 0.8, cueStartX * 0.46, cueStartX * 0.16, 0],
   );
-  const cueY = useTransform(
-    cueMotionProgress,
-    [0, 0.2, 0.5, 0.78, 1],
-    mobileViewport
-      ? ["0svh", "7svh", "18svh", "28svh", "34svh"]
-      : ["0px", "8vh", "19vh", "30vh", "35vh"],
-  );
+  const cueY = useTransform(cueMotionProgress, [0, 1], [0, 0]);
   const cueOpacity = useTransform(
     cueMotionProgress,
     [0, 0.07, 0.2, 0.42, 1],
@@ -248,23 +242,17 @@ function EditorialMedia({
   );
   const cueRotateY = useTransform(
     cueMotionProgress,
-    [0, 0.16, 0.42, 0.7, 0.9, 1],
+    [0, 0.18, 0.5, 0.82, 1],
     cueComesFromRight
-      ? [68, 54, 34, 14, 3, 0]
-      : [-68, -54, -34, -14, -3, 0],
+      ? [66, 58, 42, 24, 12]
+      : [-66, -58, -42, -24, -12],
   );
   const cueRotateX = useTransform(
     cueMotionProgress,
-    [0, 0.34, 0.72, 1],
-    [16, 9, 3, 0],
+    [0, 0.45, 1],
+    [4, 2, 0],
   );
-  const cueRotateZ = useTransform(
-    cueMotionProgress,
-    [0, 0.18, 0.48, 0.76, 0.92, 1],
-    cueComesFromRight
-      ? [-11, -8, -4, -1.2, 0.4, 0]
-      : [11, 8, 4, 1.2, -0.4, 0],
-  );
+  const cueRotateZ = useTransform(cueMotionProgress, [0, 1], [0, 0]);
   const cueZ = useTransform(
     cueMotionProgress,
     [0, 0.2, 0.5, 0.78, 1],
@@ -430,7 +418,7 @@ function EditorialMedia({
               rotateY: cueRotateY,
               rotateZ: cueRotateZ,
               z: cueZ,
-              transformPerspective: mobileViewport ? 1050 : 1650,
+              transformPerspective: mobileViewport ? 1150 : 1800,
               transformOrigin: "left top",
               willChange: "transform, opacity",
             }}
@@ -453,7 +441,7 @@ function EditorialMedia({
               rotateY: cueRotateY,
               rotateZ: cueRotateZ,
               z: cueZ,
-              transformPerspective: mobileViewport ? 1050 : 1650,
+              transformPerspective: mobileViewport ? 1150 : 1800,
               transformOrigin: "right top",
               textAlign: "right",
               willChange: "transform, opacity",
@@ -589,7 +577,7 @@ export default function Hero({
         .home-editorial-cue-face{margin:0;font-family:var(--font-heading)!important;font-size:clamp(3.75rem,15vw,5.4rem);font-weight:900!important;font-variation-settings:"wght" 900!important;font-synthesis:weight!important;line-height:.9;letter-spacing:-.045em;white-space:normal;transform-style:preserve-3d;backface-visibility:hidden}
         .home-editorial-cue-face span{display:block;margin:0;font:inherit;font-weight:900!important;font-variation-settings:"wght" 900!important}
         .home-editorial-cue-face--front{position:relative;z-index:20;color:var(--rosta-brick-b);text-shadow:0 12px 24px color-mix(in srgb,var(--rosta-carbon) 34%,transparent)}
-        .home-editorial-cue-face--depth{position:absolute;inset:0;z-index:1;color:color-mix(in srgb,var(--rosta-brick-b) 50%,var(--rosta-carbon));-webkit-text-stroke:.35px color-mix(in srgb,var(--rosta-brick-b) 64%,var(--rosta-carbon));pointer-events:none}
+        .home-editorial-cue-face--depth{position:absolute;inset:0;z-index:1;color:color-mix(in srgb,var(--rosta-brick-b) 38%,var(--rosta-carbon));-webkit-text-stroke:.45px color-mix(in srgb,var(--rosta-brick-b) 56%,var(--rosta-carbon));pointer-events:none}
         .home-editorial-cue--third .home-editorial-cue-face{font-size:clamp(3.35rem,13.5vw,5rem);line-height:.92}
         @media(min-width:768px){
           .home-editorial-cue-face{font-size:clamp(3.1rem,5.7vw,6.45rem);line-height:.91}
