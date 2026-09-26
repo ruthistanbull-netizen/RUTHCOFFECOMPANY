@@ -146,33 +146,6 @@ function isVideoMediaSource(value: string) {
   return /\.(mp4|m4v|mov|webm)(?:$|[?#])/i.test(value || "");
 }
 
-function Editorial3DText({
-  lines,
-}: {
-  lines: string[];
-}) {
-  const depthLayers = [80, 70, 60, 50, 40, 30, 22, 14, 8];
-
-  return (
-    <div className="home-editorial-cue-3d" aria-hidden="true">
-      {depthLayers.map((depth, layerIndex) => (
-        <p
-          key={depth}
-          className="home-editorial-cue-face home-editorial-cue-face--depth"
-          style={{
-            transform: `translate3d(${layerIndex * 0.9}px, 0px, -${depth}px)`,
-          }}
-        >
-          {lines.map((line) => <span key={line}>{line}</span>)}
-        </p>
-      ))}
-      <p className="home-editorial-cue-face home-editorial-cue-face--front">
-        {lines.map((line) => <span key={line}>{line}</span>)}
-      </p>
-    </div>
-  );
-}
-
 function EditorialMedia({
   slide,
   index,
@@ -202,61 +175,52 @@ function EditorialMedia({
     offset: ["start 78%", "start 0%"],
   });
   const progress = useSpring(scrollYProgress, { stiffness: 92, damping: 30, mass: 0.42 });
-  const cueSmoothProgress = useSpring(cueScrollYProgress, {
-    stiffness: 86,
-    damping: 28,
-    mass: 0.5,
-    restDelta: 0.001,
-    restSpeed: 0.001,
+  const cueMotionProgress = useSpring(cueScrollYProgress, {
+    stiffness: 132,
+    damping: 31,
+    mass: 0.3,
+    restDelta: 0.0005,
+    restSpeed: 0.0005,
   });
-  // Touch scrolling on mobile already has native momentum. Feeding it through
-  // another heavy spring makes the copy look like it is dropping frames.
-  // Mobile therefore follows the scroll value directly; desktop keeps a light
-  // spring for a softer mouse-wheel feel.
-  const cueMotionProgress = mobileViewport ? cueScrollYProgress : cueSmoothProgress;
   const scale = useTransform(
     progress,
     [0, 0.16, 0.5, 1],
-    index === 0 ? [1, 0.975, 0.925, 0.88] : [1, 0.985, 0.955, 0.925],
+    index === 0 ? [1, 0.975, 0.925, 0.88] : [1, 0.998, 0.992, 0.984],
   );
-  const y = useTransform(progress, [0, 0.5, 1], ["0%", "-0.65%", "-1.35%"]);
-  const opacity = useTransform(progress, [0, 0.78, 1], [1, 1, 0.96]);
+  const y = useTransform(
+    progress,
+    [0, 0.5, 1],
+    index === 0 ? ["0%", "-0.65%", "-1.35%"] : ["0%", "-0.12%", "-0.28%"],
+  );
+  const opacity = useTransform(
+    progress,
+    [0, 0.78, 1],
+    index === 0 ? [1, 1, 0.96] : [1, 1, 1],
+  );
   const cueComesFromRight = index === 2;
   const cueStartX = cueComesFromRight
-    ? (mobileViewport ? 470 : 650)
-    : (mobileViewport ? -440 : -650);
+    ? (mobileViewport ? 560 : 820)
+    : (mobileViewport ? -560 : -820);
 
-  // Start exactly at the top edge of the editorial photo and travel down/in
-  // with the same scroll that brings the photo into view. This avoids the
-  // previous fixed mid-frame starting point on phones.
+  // Pure 2D scroll motion. The copy begins at the photo's upper edge,
+  // travels a long horizontal distance, and descends into its final reading
+  // position while the photo itself is entering the viewport.
   const cueX = useTransform(
     cueMotionProgress,
-    [0, 0.18, 0.46, 0.74, 1],
-    [cueStartX, cueStartX * 0.8, cueStartX * 0.46, cueStartX * 0.16, 0],
+    [0, 0.18, 0.42, 0.68, 0.86, 1],
+    [cueStartX, cueStartX * 0.82, cueStartX * 0.55, cueStartX * 0.28, cueStartX * 0.09, 0],
   );
-  const cueY = useTransform(cueMotionProgress, [0, 1], [0, 0]);
+  const cueY = useTransform(
+    cueMotionProgress,
+    [0, 0.2, 0.46, 0.72, 1],
+    mobileViewport
+      ? ["0svh", "8svh", "18svh", "28svh", "35svh"]
+      : ["0px", "7vh", "17vh", "27vh", "34vh"],
+  );
   const cueOpacity = useTransform(
     cueMotionProgress,
-    [0, 0.07, 0.2, 0.42, 1],
-    [0, 0.22, 0.68, 1, 1],
-  );
-  const cueRotateY = useTransform(
-    cueMotionProgress,
-    [0, 0.18, 0.5, 0.82, 1],
-    cueComesFromRight
-      ? [66, 58, 42, 24, 12]
-      : [-66, -58, -42, -24, -12],
-  );
-  const cueRotateX = useTransform(
-    cueMotionProgress,
-    [0, 0.45, 1],
-    [4, 2, 0],
-  );
-  const cueRotateZ = useTransform(cueMotionProgress, [0, 1], [0, 0]);
-  const cueZ = useTransform(
-    cueMotionProgress,
-    [0, 0.2, 0.5, 0.78, 1],
-    [-190, -145, -82, -28, 0],
+    [0, 0.06, 0.16, 0.34, 1],
+    [0, 0.16, 0.58, 1, 1],
   );
   const wrapperClass = index === 0
     ? "absolute inset-0 overflow-hidden"
@@ -265,7 +229,7 @@ function EditorialMedia({
   return (
     <div
       ref={ref}
-      className={`home-editorial-slide relative h-[108svh] ${index ? "-mt-[8svh]" : ""}`}
+      className={`home-editorial-slide relative ${index === 0 ? "h-[108svh]" : "h-[158svh] -mt-[8svh] md:h-[150svh]"}`}
       data-editorial-kind={slide.kind}
     >
       <div className="sticky top-0 h-[100svh] min-h-[560px] overflow-hidden bg-carbon lg:min-h-[700px]">
@@ -414,17 +378,15 @@ function EditorialMedia({
               x: cueX,
               y: cueY,
               opacity: cueOpacity,
-              rotateX: cueRotateX,
-              rotateY: cueRotateY,
-              rotateZ: cueRotateZ,
-              z: cueZ,
-              transformPerspective: mobileViewport ? 1150 : 1800,
               transformOrigin: "left top",
               willChange: "transform, opacity",
             }}
             aria-hidden="true"
           >
-            <Editorial3DText lines={["Doğru Çekirdek,", "Güçlü Deneyim"]} />
+            <p>
+              <span>Doğru Çekirdek,</span>
+              <span>Güçlü Deneyim</span>
+            </p>
           </motion.div>
         ) : null}
 
@@ -437,18 +399,13 @@ function EditorialMedia({
               x: cueX,
               y: cueY,
               opacity: cueOpacity,
-              rotateX: cueRotateX,
-              rotateY: cueRotateY,
-              rotateZ: cueRotateZ,
-              z: cueZ,
-              transformPerspective: mobileViewport ? 1150 : 1800,
               transformOrigin: "right top",
               textAlign: "right",
               willChange: "transform, opacity",
             }}
             aria-hidden="true"
           >
-            <Editorial3DText lines={["Kahveyi sadeleştir, karakterini koru."]} />
+            <p>Kahveyi sadeleştir, karakterini koru.</p>
           </motion.div>
         ) : null}
       </div>
@@ -572,16 +529,14 @@ export default function Hero({
     >
       <style>{`
         .home-editorial-wordmark{box-sizing:border-box;pointer-events:none;position:fixed;left:0;top:calc(100svh - clamp(184px,38vw,236px) + 20px);z-index:40;width:min(100vw,1208px);max-width:100vw;height:auto;aspect-ratio:3175/1343;user-select:none;transition:color .24s ease,opacity .28s ease,visibility .28s ease}.home-editorial-wordmark[data-visible="false"]{opacity:0!important;visibility:hidden}.home-editorial-wordmark svg{display:block;width:100%;height:100%;overflow:visible}@media(min-width:1024px){.home-editorial-wordmark{right:1vw!important;left:auto!important;top:calc(47vh + 18px)!important;width:44.8vw!important;max-width:44.8vw!important;height:auto!important;aspect-ratio:3175/1343}}
-        .home-editorial-cue{font-family:var(--font-heading)!important;font-weight:900!important;font-variation-settings:"wght" 900!important;font-synthesis:weight!important;letter-spacing:-.045em;line-height:.92;transform-style:preserve-3d;backface-visibility:hidden;perspective-origin:center}
-        .home-editorial-cue-3d{position:relative;display:inline-block;transform-style:preserve-3d;backface-visibility:hidden;isolation:isolate}
-        .home-editorial-cue-face{margin:0;font-family:var(--font-heading)!important;font-size:clamp(3.75rem,15vw,5.4rem);font-weight:900!important;font-variation-settings:"wght" 900!important;font-synthesis:weight!important;line-height:.9;letter-spacing:-.045em;white-space:normal;transform-style:preserve-3d;backface-visibility:hidden}
-        .home-editorial-cue-face span{display:block;margin:0;font:inherit;font-weight:900!important;font-variation-settings:"wght" 900!important}
-        .home-editorial-cue-face--front{position:relative;z-index:20;color:var(--rosta-brick-b);text-shadow:0 12px 24px color-mix(in srgb,var(--rosta-carbon) 34%,transparent)}
-        .home-editorial-cue-face--depth{position:absolute;inset:0;z-index:1;color:color-mix(in srgb,var(--rosta-brick-b) 38%,var(--rosta-carbon));-webkit-text-stroke:.45px color-mix(in srgb,var(--rosta-brick-b) 56%,var(--rosta-carbon));pointer-events:none}
-        .home-editorial-cue--third .home-editorial-cue-face{font-size:clamp(3.35rem,13.5vw,5rem);line-height:.92}
+        .home-editorial-cue{color:var(--rosta-brick-b);font-family:var(--font-heading)!important;font-weight:900!important;font-variation-settings:"wght" 900!important;font-synthesis:weight!important;letter-spacing:-.045em;line-height:.92;backface-visibility:hidden}
+        .home-editorial-cue p,.home-editorial-cue span{margin:0;font-family:var(--font-heading)!important;font-weight:900!important;font-variation-settings:"wght" 900!important;font-synthesis:weight!important}
+        .home-editorial-cue p{font-size:clamp(3.75rem,15vw,5.4rem);line-height:.9}
+        .home-editorial-cue span{display:block}
+        .home-editorial-cue--third p{font-size:clamp(3.35rem,13.5vw,5rem);line-height:.92}
         @media(min-width:768px){
-          .home-editorial-cue-face{font-size:clamp(3.1rem,5.7vw,6.45rem);line-height:.91}
-          .home-editorial-cue--third .home-editorial-cue-face{font-size:clamp(2.85rem,5.25vw,5.9rem);line-height:.94}
+          .home-editorial-cue p{font-size:clamp(3.1rem,5.7vw,6.45rem);line-height:.91}
+          .home-editorial-cue--third p{font-size:clamp(2.85rem,5.25vw,5.9rem);line-height:.94}
         }
       `}</style>
       <motion.div
