@@ -943,10 +943,11 @@ export function PaytrIframeCheckoutClient() {
                         }));
                       }}
                       className={`${inputClass} cursor-pointer disabled:cursor-wait disabled:opacity-60`}
+                      style={{ textTransform: "none" }}
                     >
-                      <option value="">{shippingCitiesLoading ? "İller yükleniyor..." : "İl seç"}</option>
+                      <option value="" style={{ textTransform: "none" }}>{shippingCitiesLoading ? "İller yükleniyor..." : "İl seç"}</option>
                       {shippingCities.map((city) => (
-                        <option key={city.id} value={city.name}>{city.name}</option>
+                        <option key={city.id} value={city.name} style={{ textTransform: "none" }}>{city.name}</option>
                       ))}
                     </select>
                   </Field>
@@ -958,8 +959,9 @@ export function PaytrIframeCheckoutClient() {
                       disabled={!selectedShippingCity || shippingTownsLoading}
                       onChange={(event) => updateField("district", event.target.value)}
                       className={`${inputClass} cursor-pointer disabled:cursor-not-allowed disabled:opacity-60`}
+                      style={{ textTransform: "none" }}
                     >
-                      <option value="">
+                      <option value="" style={{ textTransform: "none" }}>
                         {!selectedShippingCity
                           ? "Önce il seç"
                           : shippingTownsLoading
@@ -967,7 +969,7 @@ export function PaytrIframeCheckoutClient() {
                             : "İlçe seç"}
                       </option>
                       {shippingTowns.map((town) => (
-                        <option key={town.id} value={town.name}>{town.name}</option>
+                        <option key={town.id} value={town.name} style={{ textTransform: "none" }}>{town.name}</option>
                       ))}
                     </select>
                   </Field>
