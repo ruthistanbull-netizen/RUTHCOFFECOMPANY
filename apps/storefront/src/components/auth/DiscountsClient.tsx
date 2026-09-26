@@ -74,7 +74,11 @@ export function DiscountsClient() {
   }
 
   return (
-    <div className="min-h-screen bg-carbon px-4 pb-24 pt-28 md:px-8 md:pt-32 text-cream">
+    <div
+      data-editor-id="account-discounts"
+      data-editor-type="account-profile"
+      data-editor-label="İndirimlerim"
+      className="min-h-screen bg-carbon px-4 pb-24 pt-28 md:px-8 md:pt-32 text-cream">
       <div className="mx-auto max-w-4xl">
         <div className="mb-8">
           <p className="mb-3 text-xs uppercase tracking-wide-luxe text-brick">Hesabım</p>
