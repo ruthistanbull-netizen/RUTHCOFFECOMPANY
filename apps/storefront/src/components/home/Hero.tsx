@@ -192,20 +192,12 @@ function EditorialMedia({
     : mobileViewport
       ? -360
       : -540;
-  // Phase 1: as soon as the photo appears, the copy starts at its upper edge
-  // and glides inward on a perfectly horizontal rail.
-  // Phase 2: after the entrance is nearly complete, it follows the photo/scroll vertically.
+  // The copy is viewport-pinned like the ROSTA wordmark for the whole photo.
+  // Scroll only drives horizontal entry/exit; its vertical position never changes.
   const cueX = useTransform(
     cueSmoothProgress,
     [0, 0.18, 0.38, 0.6, 0.8, 1],
     [cueStartX, cueStartX * 0.8, cueStartX * 0.56, cueStartX * 0.32, cueStartX * 0.12, 0],
-  );
-  const cueFollowY = useTransform(
-    cueSmoothProgress,
-    [0, 0.72, 0.84, 0.93, 1],
-    mobileViewport
-      ? ["0svh", "0svh", "3svh", "8svh", "13svh"]
-      : ["0px", "0px", "2.5vh", "6.5vh", "11vh"],
   );
   const cueOpacity = useTransform(
     cueSmoothProgress,
@@ -366,7 +358,6 @@ function EditorialMedia({
             className="home-editorial-cue home-editorial-cue--second pointer-events-none absolute left-[10vw] top-[1svh] z-30 max-w-[84vw] md:left-[14vw] md:top-[52px] md:max-w-[48vw]"
             style={{
               x: cueX,
-              y: cueFollowY,
               opacity: cueOpacity,
               transformOrigin: "left center",
               willChange: "transform, opacity",
@@ -387,7 +378,6 @@ function EditorialMedia({
               left: mobileViewport ? "auto" : undefined,
               right: mobileViewport ? "10vw" : undefined,
               x: cueX,
-              y: cueFollowY,
               opacity: cueOpacity,
               transformOrigin: mobileViewport ? "right center" : "left center",
               textAlign: mobileViewport ? "right" : "left",
