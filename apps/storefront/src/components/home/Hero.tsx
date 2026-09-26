@@ -154,6 +154,7 @@ function EditorialMedia({
   editorialVideoType,
   editorialImage,
   editorialImageType,
+  mobileViewport,
 }: {
   slide: EditorialSlide;
   index: number;
@@ -162,11 +163,21 @@ function EditorialMedia({
   editorialVideoType: HomepageMediaType;
   editorialImage: string;
   editorialImageType: HomepageMediaType;
+  mobileViewport: boolean;
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const reduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  const { scrollYProgress: cueScrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
   const progress = useSpring(scrollYProgress, { stiffness: 92, damping: 30, mass: 0.42 });
+  const cueProgress = useSpring(cueScrollYProgress, {
+    stiffness: 42,
+    damping: 24,
+    mass: 0.82,
+  });
   const scale = useTransform(
     progress,
     [0, 0.16, 0.5, 1],
@@ -174,6 +185,14 @@ function EditorialMedia({
   );
   const y = useTransform(progress, [0, 0.5, 1], ["0%", "-0.65%", "-1.35%"]);
   const opacity = useTransform(progress, [0, 0.78, 1], [1, 1, 0.96]);
+  const cueStartX = index === 2 && mobileViewport ? 280 : -300;
+  const cueX = useTransform(cueProgress, [0.18, 0.76], [cueStartX, 0]);
+  const cueOpacity = useTransform(
+    cueProgress,
+    [0.16, 0.34, 0.78, 0.94],
+    [0, 1, 1, 0],
+  );
+  const cueScale = useTransform(cueProgress, [0.18, 0.76], [0.97, 1]);
   const wrapperClass = index === 0
     ? "absolute inset-0 overflow-hidden"
     : "absolute inset-x-[2vw] inset-y-[1svh] overflow-hidden lg:bottom-[32px] lg:left-[7vw] lg:right-[7vw] lg:top-[52px]";
@@ -322,6 +341,44 @@ function EditorialMedia({
             )
           )}
         </motion.div>
+
+        {index === 1 ? (
+          <motion.div
+            className="home-editorial-cue home-editorial-cue--second pointer-events-none absolute left-[8vw] top-[41%] z-30 max-w-[76vw] md:left-[9vw] md:top-[42%] md:max-w-[46vw]"
+            style={{
+              x: cueX,
+              opacity: cueOpacity,
+              scale: cueScale,
+              transformOrigin: "left center",
+              willChange: "transform, opacity",
+            }}
+            aria-hidden="true"
+          >
+            <p>
+              <span>Doğru Çekirdek,</span>
+              <span>Güçlü Deneyim</span>
+            </p>
+          </motion.div>
+        ) : null}
+
+        {index === 2 ? (
+          <motion.div
+            className="home-editorial-cue home-editorial-cue--third pointer-events-none absolute top-[43%] z-30 max-w-[78vw] md:left-[9vw] md:right-auto md:top-[43%] md:max-w-[48vw]"
+            style={{
+              left: mobileViewport ? "auto" : undefined,
+              right: mobileViewport ? "8vw" : undefined,
+              x: cueX,
+              opacity: cueOpacity,
+              scale: cueScale,
+              transformOrigin: mobileViewport ? "right center" : "left center",
+              textAlign: mobileViewport ? "right" : "left",
+              willChange: "transform, opacity",
+            }}
+            aria-hidden="true"
+          >
+            <p>Kahveyi sadeleştir, karakterini koru.</p>
+          </motion.div>
+        ) : null}
       </div>
     </div>
   );
@@ -443,6 +500,11 @@ export default function Hero({
     >
       <style>{`
         .home-editorial-wordmark{box-sizing:border-box;pointer-events:none;position:fixed;left:0;top:calc(100svh - clamp(184px,38vw,236px) + 20px);z-index:40;width:min(100vw,1208px);max-width:100vw;height:auto;aspect-ratio:3175/1343;user-select:none;transition:color .24s ease,opacity .28s ease,visibility .28s ease}.home-editorial-wordmark[data-visible="false"]{opacity:0!important;visibility:hidden}.home-editorial-wordmark svg{display:block;width:100%;height:100%;overflow:visible}@media(min-width:1024px){.home-editorial-wordmark{right:1vw!important;left:auto!important;top:calc(47vh + 18px)!important;width:44.8vw!important;max-width:44.8vw!important;height:auto!important;aspect-ratio:3175/1343}}
+        .home-editorial-cue{color:var(--rosta-brick-b);font-family:var(--font-heading)!important;font-weight:900!important;font-variation-settings:"wght" 900!important;letter-spacing:-.04em;line-height:.94}
+        .home-editorial-cue p,.home-editorial-cue span{margin:0;font-family:var(--font-heading)!important;font-weight:900!important;font-variation-settings:"wght" 900!important}
+        .home-editorial-cue p{font-size:clamp(2.15rem,5vw,5.7rem);line-height:.94}
+        .home-editorial-cue span{display:block}
+        .home-editorial-cue--third p{font-size:clamp(1.9rem,4.6vw,5.15rem);line-height:.98}
       `}</style>
       <motion.div
         ref={wordmarkRef}
@@ -473,6 +535,7 @@ export default function Hero({
           editorialVideoType={activeEditorialVideo.mediaType}
           editorialImage={activeEditorialImage.src}
           editorialImageType={activeEditorialImage.mediaType}
+          mobileViewport={mobileViewport}
         />
       ))}
     </section>
