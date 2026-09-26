@@ -37,6 +37,32 @@ function semanticSectionLabel(section: ThemeSection) {
   return section.title || section.type.replace(/-/g, " ");
 }
 
+function settingText(settings: Record<string, unknown> | undefined, key: string) {
+  const value = settings?.[key];
+  return typeof value === "string" ? value : "";
+}
+
+function settingNumber(settings: Record<string, unknown> | undefined, key: string, fallback: number, min: number, max: number) {
+  const value = Number(settings?.[key]);
+  return Number.isFinite(value) ? Math.min(max, Math.max(min, value)) : fallback;
+}
+
+function isVideoSource(value: string) {
+  return /\.(mp4|m4v|mov|webm)(?:$|[?#])/i.test(value || "");
+}
+
+function heroPlayback(settings: Record<string, unknown> | undefined) {
+  const preset = ["ambient", "once", "controls"].includes(settingText(settings, "playbackPreset"))
+    ? settingText(settings, "playbackPreset")
+    : "ambient";
+  return {
+    autoPlay: preset !== "controls",
+    muted: preset !== "controls",
+    loop: preset === "ambient",
+    controls: preset === "controls",
+  };
+}
+
 import { ROSTA_PALETTE, sanitizeRostaPaletteColor } from "@/lib/rostaDesignSystem";
 
 function hasProductSectionCustomization(section: ThemeSection) {
@@ -140,6 +166,121 @@ export function HomeSectionRenderer({
 }) {
   if (!section.enabled) return null;
   if (section.v2Type) return <StoreDesignBlockSection section={section} />;
+
+  const heroV2Settings = section.type === "hero" ? section.v2Settings : undefined;
+  const customHero = section.type === "hero" && heroV2Settings && Object.keys(heroV2Settings).length > 0;
+  if (section.type === "hero" && customHero) {
+    const desktopSrc = section.imageSrc || heroImages.desktop;
+    const mobileSrc = section.mobileImageSrc || heroImages.mobile || desktopSrc;
+    const desktopVideo = section.imageSrc ? section.v2MediaType === "video" : isVideoSource(desktopSrc);
+    const mobileVideo = section.mobileImageSrc ? section.v2MediaType === "video" : isVideoSource(mobileSrc);
+    const playback = heroPlayback(heroV2Settings);
+    const fit = settingText(heroV2Settings, "fit") === "contain" ? "contain" : "cover";
+    const heightPreset = settingText(heroV2Settings, "heightPreset") || "viewport";
+    const minHeight = heightPreset === "medium" ? "620px" : heightPreset === "tall" ? "760px" : "100svh";
+    const align = ["left", "right"].includes(settingText(heroV2Settings, "align")) ? settingText(heroV2Settings, "align") : "center";
+    const contrast = ["light", "dark", "adaptive"].includes(settingText(heroV2Settings, "contrastMode"))
+      ? settingText(heroV2Settings, "contrastMode")
+      : "adaptive";
+    const overlay = settingNumber(heroV2Settings, "overlayOpacity", 24, 0, 80) / 100;
+    const poster = section.v2Assets?.posterAssetId?.url || section.v2PosterUrl;
+    const title = settingText(heroV2Settings, "title");
+    const body = settingText(heroV2Settings, "body");
+    const linkLabel = settingText(heroV2Settings, "linkLabel");
+    const linkHref = settingText(heroV2Settings, "linkHref");
+    const contentAlignClass = align === "left"
+      ? "items-start text-left"
+      : align === "right"
+        ? "items-end text-right"
+        : "items-center text-center";
+    const contentColor = contrast === "light"
+      ? "#FBF3E6"
+      : contrast === "dark"
+        ? "#111111"
+        : "var(--ruth-home-header-ink, #FBF3E6)";
+    const overlayBackground = contrast === "light"
+      ? `rgba(0,0,0,${overlay})`
+      : contrast === "dark"
+        ? `rgba(255,255,255,${overlay})`
+        : `rgba(0,0,0,${overlay * 0.25})`;
+    const mediaStyle = (position: string | undefined) => ({
+      objectFit: fit,
+      objectPosition: position || "50% 50%",
+    } as const);
+
+    return (
+      <section
+        data-theme-section-id={section.id}
+        data-editor-id={`section:${section.id}`}
+        data-editor-type={semanticSectionType(section)}
+        data-editor-label={semanticSectionLabel(section)}
+        className="relative isolate overflow-hidden bg-black"
+        style={{ minHeight, color: contentColor }}
+      >
+        {mobileVideo ? (
+          <video
+            src={mobileSrc}
+            poster={poster}
+            className="absolute inset-0 h-full w-full md:hidden"
+            style={mediaStyle(section.mobileImageObjectPosition)}
+            autoPlay={playback.autoPlay}
+            muted={playback.muted}
+            loop={playback.loop}
+            controls={playback.controls}
+            playsInline
+            preload="metadata"
+            data-home-editorial-media
+          />
+        ) : (
+          <img
+            src={mobileSrc}
+            alt=""
+            className="absolute inset-0 h-full w-full md:hidden"
+            style={mediaStyle(section.mobileImageObjectPosition)}
+            fetchPriority="high"
+            data-home-editorial-media
+          />
+        )}
+        {desktopVideo ? (
+          <video
+            src={desktopSrc}
+            poster={poster}
+            className="absolute inset-0 hidden h-full w-full md:block"
+            style={mediaStyle(section.imageObjectPosition)}
+            autoPlay={playback.autoPlay}
+            muted={playback.muted}
+            loop={playback.loop}
+            controls={playback.controls}
+            playsInline
+            preload="metadata"
+            data-home-editorial-media
+          />
+        ) : (
+          <img
+            src={desktopSrc}
+            alt=""
+            className="absolute inset-0 hidden h-full w-full md:block"
+            style={mediaStyle(section.imageObjectPosition)}
+            fetchPriority="high"
+            data-home-editorial-media
+          />
+        )}
+        <div className="pointer-events-none absolute inset-0" style={{ background: overlayBackground }} />
+        <div className={`relative z-10 mx-auto flex w-full max-w-[1600px] flex-col justify-center px-6 py-14 md:px-10 ${contentAlignClass}`} style={{ minHeight }}>
+          <div className="max-w-3xl">
+            {title ? <h2 className="font-heading text-[clamp(2rem,6vw,6rem)] leading-[0.94] tracking-[-0.025em]">{title}</h2> : null}
+            {body ? <p className="mt-5 whitespace-pre-wrap text-sm leading-7 opacity-90 md:text-base">{body}</p> : null}
+            {linkLabel && linkHref ? (
+              <Link href={linkHref} className="mt-7 inline-flex min-h-11 items-center justify-center border border-current px-5 text-[10px] uppercase tracking-[0.14em]">
+                {linkLabel}
+              </Link>
+            ) : null}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   if (section.type === "hero") return <div data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}><Hero heroImages={heroImages} editorialVideo={editorialVideo} editorialImage={editorialImage} themeSettings={themeSettings} /></div>;
   if (section.type === "scroll-story") return <div data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}><ScrollStory images={scrollImages} themeSettings={themeSettings} /></div>;
   if (section.type === "collections") return <div data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}><CollectionCards collections={collections} /></div>;
