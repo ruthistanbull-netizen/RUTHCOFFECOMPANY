@@ -2,7 +2,11 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-carbon px-6 py-32 text-center text-cream">
+    <div
+      data-editor-id="system-state:not-found"
+      data-editor-type="system-state"
+      data-editor-label="404 Durumu"
+      className="flex min-h-screen items-center justify-center bg-carbon px-6 py-32 text-center text-cream">
       <div>
         <p className="mb-4 text-xs uppercase tracking-wide-luxe text-brick">404</p>
         <h1 className="font-heading" style={{ fontSize: "clamp(2.2rem, 6vw, 4.5rem)", color: "var(--ink)" }}>
