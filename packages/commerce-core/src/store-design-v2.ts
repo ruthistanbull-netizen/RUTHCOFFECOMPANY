@@ -986,7 +986,7 @@ function collectThemeSettingReferences(
       }
     }
 
-    if (MEDIA_SETTING_KEYS.has(key) && value && !document.media[value]) {
+    if ((MEDIA_SETTING_KEYS.has(key) || key.endsWith("AssetId")) && value && !document.media[value]) {
       issues.push({
         severity: "error",
         code: "missing-media-reference",
@@ -1262,6 +1262,38 @@ export function validateThemeDocument(document: ThemeDocument) {
     }
     if (asset && section.type === "video-text-split" && asset.type !== "video") {
       errors.push(`${section.id}: Video + Text Split yalnız video asset kabul eder.`);
+    }
+
+    if (section.type === "before-after") {
+      const beforeId = typeof section.settings.beforeAssetId === "string" ? section.settings.beforeAssetId : "";
+      const afterId = typeof section.settings.afterAssetId === "string" ? section.settings.afterAssetId : "";
+      const before = beforeId ? document.media[beforeId] : undefined;
+      const after = afterId ? document.media[afterId] : undefined;
+      if (!beforeId || !afterId) errors.push(`${section.id}: Before / After iki görsel gerektirir.`);
+      if (beforeId && !before) errors.push(`${section.id}: önce görsel referansı bulunamadı (${beforeId}).`);
+      if (afterId && !after) errors.push(`${section.id}: sonra görsel referansı bulunamadı (${afterId}).`);
+      if (before && before.type !== "image") errors.push(`${section.id}: önce asset image olmalı.`);
+      if (after && after.type !== "image") errors.push(`${section.id}: sonra asset image olmalı.`);
+      const divider = Number(section.settings.divider ?? 50);
+      if (!Number.isFinite(divider) || divider < 10 || divider > 90) errors.push(`${section.id}: divider 10-90 aralığında olmalı.`);
+    }
+
+    if (section.type === "hotspot-lookbook") {
+      if (!imageAssetId) errors.push(`${section.id}: Hotspot / Lookbook görseli gerekli.`);
+      if (asset && asset.type !== "image") errors.push(`${section.id}: Hotspot / Lookbook yalnız image asset kabul eder.`);
+      for (const blockId of section.blockIds || []) {
+        const block = document.blocks[blockId];
+        if (!block || block.type !== "hotspot") continue;
+        const x = Number(block.settings.x);
+        const y = Number(block.settings.y);
+        if (!Number.isFinite(x) || x < 0 || x > 100 || !Number.isFinite(y) || y < 0 || y > 100) {
+          errors.push(`${blockId}: hotspot x/y 0-100 aralığında olmalı.`);
+        }
+        const targetType = String(block.settings.targetType || "link");
+        if (targetType !== "link" && targetType !== "product") errors.push(`${blockId}: hotspot targetType geçersiz.`);
+        const targetId = typeof block.settings.targetId === "string" ? block.settings.targetId.trim() : "";
+        if (!targetId) errors.push(`${blockId}: hotspot hedefi boş olamaz.`);
+      }
     }
   }
 
