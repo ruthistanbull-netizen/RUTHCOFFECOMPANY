@@ -7,6 +7,7 @@ import {
   normalizeThemeDocument,
   STORE_DESIGN_SCHEMA_VERSION,
   validateThemeDocument,
+  withThemeMediaUsageCounts,
   type ThemeDocument,
 } from "@ruth-commerce/commerce-core/store-design-v2";
 
@@ -81,7 +82,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const document = normalizeThemeDocument(body?.document);
+  const document = withThemeMediaUsageCounts(normalizeThemeDocument(body?.document));
   const validation = validateThemeDocument(document);
   if (!validation.ok) {
     return NextResponse.json(
@@ -124,7 +125,7 @@ export async function PUT(request: Request) {
 
   const body = await request.json().catch(() => ({}));
   const mode = body?.mode === "publish" ? "publish" : "draft";
-  const incoming = normalizeThemeDocument(body?.document);
+  const incoming = withThemeMediaUsageCounts(normalizeThemeDocument(body?.document));
   const validation = validateThemeDocument(incoming);
   if (!validation.ok) {
     return NextResponse.json(
