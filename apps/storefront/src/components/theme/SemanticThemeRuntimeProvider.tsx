@@ -142,6 +142,9 @@ function templateForPath(document: ThemeDocument, pathname: string) {
     /^\/collections\/[^/]+$/.test(pathname) ? "/collections/[slug]" :
     "";
 
+  const bindingKey = dynamicTemplateId || pathname;
+  const boundTemplateId = document.templateBindings?.[bindingKey];
+  if (boundTemplateId && document.templates[boundTemplateId]) return document.templates[boundTemplateId];
   if (dynamicTemplateId && document.templates[dynamicTemplateId]) return document.templates[dynamicTemplateId];
   return document.templates[`route:${pathname}`] || null;
 }
