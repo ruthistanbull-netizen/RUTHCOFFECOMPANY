@@ -408,7 +408,10 @@ export type SectionInstance = {
 export type BlockDefinition = {
   type: string;
   label: string;
+  parentCompatibility: string[];
   settings: string[];
+  nesting: "none" | "children";
+  implemented: boolean;
   schemaVersion: number;
 };
 
@@ -418,6 +421,48 @@ export type BlockInstance = {
   schemaVersion: number;
   settings: Record<string, unknown>;
 };
+
+const block = (
+  type: string,
+  label: string,
+  parentCompatibility: string[],
+  settings: string[],
+  implemented = false,
+  nesting: BlockDefinition["nesting"] = "none",
+): BlockDefinition => ({
+  type,
+  label,
+  parentCompatibility,
+  settings,
+  nesting,
+  implemented,
+  schemaVersion: STORE_DESIGN_SCHEMA_VERSION,
+});
+
+export const BLOCK_LIBRARY: BlockDefinition[] = [
+  block("faq-item", "FAQ Öğesi", ["faq"], ["question", "answer"], true),
+  block("slide", "Slayt", ["slideshow"], ["media", "title", "body", "cta"]),
+  block("media", "Medya", ["gallery-grid", "masonry-gallery", "collage"], ["assetId", "alt", "link"]),
+  block("rich-text", "Metin Bloğu", ["image-text-split", "video-text-split"], ["heading", "body", "cta"]),
+  block("hotspot", "Hotspot", ["hotspot-lookbook"], ["x", "y", "targetType", "targetId"]),
+  block("logo", "Logo", ["logo-cloud"], ["assetId", "alt", "link"]),
+  block("content", "İçerik", ["background-media", "grid-stack-builder"], ["type", "content"], false, "children"),
+  block("text-column", "Metin Kolonu", ["text-columns"], ["heading", "body"], true),
+  block("stat", "İstatistik", ["stats"], ["value", "label"], true),
+  block("timeline-item", "Timeline Öğesi", ["timeline"], ["date", "heading", "body"], true),
+  block("feature", "Özellik", ["feature-grid"], ["icon", "heading", "body"], true),
+  block("trust-item", "Güven Öğesi", ["trust-badges"], ["icon", "heading", "body"], true),
+  block("testimonial", "Müşteri Yorumu", ["testimonials"], ["quote", "name", "meta"], true),
+  block("tab", "Sekme", ["tabs"], ["label", "body"], true),
+  block("award", "Basın / Ödül", ["press-awards"], ["assetId", "label", "link"]),
+  block("member", "Ekip Üyesi", ["team"], ["assetId", "name", "role", "bio"]),
+  block("announcement", "Duyuru", ["announcement-bar"], ["text", "linkLabel", "linkHref"], true),
+  block("ticker-item", "Ticker Öğesi", ["marquee"], ["text", "link"], true),
+  block("field", "Form Alanı", ["custom-form"], ["name", "label", "type", "required"]),
+];
+
+export const BLOCK_LIBRARY_BY_TYPE: Record<string, BlockDefinition> =
+  Object.fromEntries(BLOCK_LIBRARY.map((item) => [item.type, item]));
 
 export type ComponentFamilyStyle = {
   type: string;
