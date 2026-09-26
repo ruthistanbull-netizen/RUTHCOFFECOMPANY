@@ -437,13 +437,12 @@ function HorizontalStoryPanelView({
   const cardsRotate = useTransform(progress, [start, cardsEnd], [-10, 0]);
   const cardsOpacity = useTransform(progress, [start, cardsEnd], [0, 1]);
 
-  const media = panel.cardIds.map((id) => {
-    const resolved = homepageDeviceMedia(themeSettings, id, HORIZONTAL_CARD_PLACEHOLDER);
-    return {
-      id,
-      media: mobileViewport ? resolved.mobile : resolved.desktop,
-    };
-  });
+  const firstCardId = panel.cardIds[0];
+  const secondCardId = panel.cardIds[1];
+  const firstResolved = homepageDeviceMedia(themeSettings, firstCardId, HORIZONTAL_CARD_PLACEHOLDER);
+  const secondResolved = homepageDeviceMedia(themeSettings, secondCardId, HORIZONTAL_CARD_PLACEHOLDER);
+  const firstMedia = mobileViewport ? firstResolved.mobile : firstResolved.desktop;
+  const secondMedia = mobileViewport ? secondResolved.mobile : secondResolved.desktop;
 
   return (
     <article className="home-horizontal-story-panel h-[100svh] w-screen flex-none">
@@ -483,8 +482,8 @@ function HorizontalStoryPanelView({
             willChange: "transform, opacity",
           }}
         >
-          <HorizontalStoryCard id={media[0].id} media={media[0].media} order={0} />
-          <HorizontalStoryCard id={media[1].id} media={media[1].media} order={1} />
+          <HorizontalStoryCard id={firstCardId} media={firstMedia} order={0} />
+          <HorizontalStoryCard id={secondCardId} media={secondMedia} order={1} />
         </motion.div>
       </div>
     </article>
