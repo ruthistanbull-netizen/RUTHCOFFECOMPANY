@@ -27,6 +27,7 @@ const SEMANTIC_SECTION_TYPE: Record<ThemeSection["type"], string> = {
   "featured-collection": "featured-collection",
   "category-cards": "category-cards",
   "product-comparison": "product-comparison",
+  "best-sellers": "best-sellers",
   "new-arrivals": "new-arrivals",
   "sale-products": "sale-products",
   "image-banner": "image-banner",
@@ -164,6 +165,7 @@ export function HomeSectionRenderer({
   allProducts,
   collections,
   categories,
+  bestSellerProductsByWindow,
   heroImages,
   editorialVideo = "/home/rosta-under-hero-video.mp4",
   editorialImage = "/home/rosta-under-hero-photo.jpg",
@@ -176,6 +178,7 @@ export function HomeSectionRenderer({
   allProducts: Product[];
   collections: Collection[];
   categories: Category[];
+  bestSellerProductsByWindow: Record<string, Product[]>;
   heroImages: HomepageHeroImages;
   editorialVideo?: string;
   editorialImage?: string;
@@ -308,6 +311,51 @@ export function HomeSectionRenderer({
 
   if (section.type === "hero") return <div data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}><Hero heroImages={heroImages} editorialVideo={editorialVideo} editorialImage={editorialImage} themeSettings={themeSettings} /></div>;
   if (section.type === "scroll-story") return <div data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type={semanticSectionType(section)} data-editor-label={semanticSectionLabel(section)}><ScrollStory images={scrollImages} themeSettings={themeSettings} v2Settings={section.v2Settings} v2Slides={section.v2Blocks} /></div>;
+
+  if (section.type === "best-sellers") {
+    const settings = section.v2Settings;
+    const rawWindow = settingText(settings, "window") || "30d";
+    const windowPreset = rawWindow === "7d" || rawWindow === "90d" ? rawWindow : "30d";
+    const limit = Math.round(settingNumber(settings, "limit", 12, 1, 24));
+    const layout = settingText(settings, "layout") === "grid" ? "grid" : "slider";
+    const title = settingText(settings, "title") || "Çok Satanlar";
+    const paddingY = settingNumber(settings, "paddingY", 64, 0, 240);
+    const products = (bestSellerProductsByWindow[windowPreset] || []).slice(0, limit);
+
+    if (!products.length) return null;
+
+    return (
+      <section
+        data-theme-section-id={section.id}
+        data-editor-id={`section:${section.id}`}
+        data-editor-type={semanticSectionType(section)}
+        data-editor-label={title}
+        className="overflow-hidden bg-carbon text-cream"
+        style={{ paddingTop: paddingY, paddingBottom: paddingY }}
+      >
+        <div className="mb-8 px-4 text-center md:mb-10 md:px-8">
+          <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-brick">
+            {windowPreset === "7d" ? "Son 7 gün" : windowPreset === "90d" ? "Son 90 gün" : "Son 30 gün"}
+          </p>
+          <h2 className="mt-2 font-heading text-[clamp(1.8rem,4vw,3.4rem)] leading-tight">{title}</h2>
+        </div>
+
+        {layout === "slider" ? (
+          <ThemeProductSlider products={products} desktopItems={4} mobileItems={2} gap={12} showArrows />
+        ) : (
+          <div className="v2-best-seller-grid px-4 md:px-8">
+            {products.map((product, index) => (
+              <ProductCard key={product.id} product={product} index={index} showShortDescription={false} />
+            ))}
+          </div>
+        )}
+
+        {layout === "grid" ? (
+          <style>{`.v2-best-seller-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}@media(min-width:768px){.v2-best-seller-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}`}</style>
+        ) : null}
+      </section>
+    );
+  }
 
   if (section.type === "product-spotlight") {
     const settings = section.v2Settings;
