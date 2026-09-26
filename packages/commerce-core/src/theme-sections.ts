@@ -22,7 +22,9 @@ export type ThemeSection = {
   linkLabel?: string;
   linkHref?: string;
   imageSrc?: string;
+  imageAssetId?: string;
   mobileImageSrc?: string;
+  mobileImageAssetId?: string;
   imageObjectPosition?: string;
   mobileImageObjectPosition?: string;
   faqItems?: Array<{ id: string; question: string; answer: string }>;
