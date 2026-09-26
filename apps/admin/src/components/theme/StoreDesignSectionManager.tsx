@@ -71,6 +71,8 @@ const RENDERABLE_SECTION_TYPES = new Set([
   "image-text-split",
   "video-text-split",
   "social-grid",
+  "before-after",
+  "hotspot-lookbook",
   "logo-cloud",
   "text-columns",
   "stats",
@@ -140,6 +142,8 @@ function defaultSettings(type: string): Record<string, unknown> {
   if (type === "masonry-gallery") return { title: "Masonry Galeri", columns: 3, gap: 16, paddingY: 64 };
   if (type === "collage") return { title: "Collage", columns: 3, gap: 16, paddingY: 64 };
   if (type === "social-grid") return { title: "Sosyal Medya", columns: 4, gap: 12, paddingY: 64, source: "manual" };
+  if (type === "before-after") return { title: "Önce / Sonra", beforeAssetId: "", afterAssetId: "", beforeLabel: "Önce", afterLabel: "Sonra", divider: 50, paddingY: 64 };
+  if (type === "hotspot-lookbook") return { title: "Lookbook", imageAssetId: "", paddingY: 64 };
   if (type === "image-text-split") return { title: "Image + Text", imageAssetId: "", side: "left", contentWidth: "50%", paddingY: 64 };
   if (type === "video-text-split") return { title: "Video + Text", imageAssetId: "", side: "left", contentWidth: "50%", paddingY: 64 };
   if (type === "logo-cloud") return { title: "Markalar", columns: 5, gap: 24, paddingY: 64 };
