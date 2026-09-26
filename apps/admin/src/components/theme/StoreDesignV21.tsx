@@ -64,7 +64,7 @@ type SelectedTarget = {
     width?: number;
     height?: number;
     media?: { src?: string; objectFit?: string; objectPosition?: string } | null;
-    grid?: { columns?: number; gapX?: number; gapY?: number } | null;
+    grid?: { columns?: number; gapX?: number; gapY?: number; maxWidth?: string } | null;
   };
 };
 
@@ -169,6 +169,7 @@ function snapshotValue(target: SelectedTarget, path: string) {
   if (path === "grid.columns") return target.current.grid?.columns ?? 2;
   if (path === "grid.gapX") return target.current.grid?.gapX ?? 16;
   if (path === "grid.gapY") return target.current.grid?.gapY ?? 32;
+  if (path === "grid.maxWidth") return target.current.grid?.maxWidth || "none";
   if (path === "textAlign") return target.current.textAlign || "left";
   if (path === "borderRadius") return target.current.borderRadius || 0;
   if (path === "opacity") return target.current.opacity ?? 1;
@@ -181,12 +182,15 @@ function updateTargetSnapshot(target: SelectedTarget, path: string, value: unkno
     return { ...target, current: { ...target.current, media: { ...(target.current.media || {}), objectFit: String(value) } } };
   }
   if (path.startsWith("grid.")) {
-    const key = path.slice("grid.".length) as "columns" | "gapX" | "gapY";
+    const key = path.slice("grid.".length) as "columns" | "gapX" | "gapY" | "maxWidth";
     return {
       ...target,
       current: {
         ...target.current,
-        grid: { ...(target.current.grid || {}), [key]: Number(value) },
+        grid: {
+          ...(target.current.grid || {}),
+          [key]: key === "maxWidth" ? String(value) : Number(value),
+        },
       },
     };
   }
@@ -900,7 +904,7 @@ export function StoreDesignV21() {
                               onChange={(event) => applyInspectorPatch("grid.columns", Number(event.target.value))}
                               className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none"
                             >
-                              {[1, 2, 3, 4, 5, 6].map((value) => <option key={value} value={value}>{value} kolon</option>)}
+                              {(device === "mobile" ? [1, 2] : [2, 3, 4, 5, 6]).map((value) => <option key={value} value={value}>{value} kolon</option>)}
                             </select>
                           </label>
                           <label className="grid gap-1.5 text-[8px] text-black/45">
@@ -921,6 +925,20 @@ export function StoreDesignV21() {
                               className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none"
                             >
                               {[0, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96].map((value) => <option key={value} value={value}>{value}px</option>)}
+                            </select>
+                          </label>
+                          <label className="grid gap-1.5 text-[8px] text-black/45">
+                            Grid max genişlik
+                            <select
+                              value={selected.current.grid?.maxWidth || "none"}
+                              onChange={(event) => applyInspectorPatch("grid.maxWidth", event.target.value)}
+                              className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none"
+                            >
+                              <option value="none">Container'ı doldur</option>
+                              <option value="1200px">1200px</option>
+                              <option value="1280px">1280px</option>
+                              <option value="1440px">1440px</option>
+                              <option value="1600px">1600px</option>
                             </select>
                           </label>
                         </div>
