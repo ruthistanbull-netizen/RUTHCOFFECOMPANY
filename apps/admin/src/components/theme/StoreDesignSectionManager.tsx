@@ -23,6 +23,7 @@ import {
   SECTION_LIBRARY_BY_TYPE,
   STORE_DESIGN_SCHEMA_VERSION,
   normalizePageSlug,
+  type BlockInstance,
   type PageCompatibility,
   type PageKind,
   type PageRecord,
@@ -70,7 +71,6 @@ const RENDERABLE_SECTION_TYPES = new Set([
   "stats",
   "timeline",
   "feature-grid",
-  "trust-badges",
   "testimonials",
   "tabs",
   "press-awards",
@@ -367,7 +367,7 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
       settings: structuredClone(section.settings || {}),
       blocks: (section.blockIds || [])
         .map((blockId) => document.blocks[blockId])
-        .filter((block): block is NonNullable<typeof block> => Boolean(block))
+        .filter((block): block is BlockInstance => Boolean(block))
         .map((block) => ({ type: block.type, settings: structuredClone(block.settings || {}) })),
       createdAt: now,
       updatedAt: now,
