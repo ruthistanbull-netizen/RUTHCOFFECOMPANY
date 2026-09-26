@@ -9,7 +9,8 @@ import { ThemeProductSlider } from "@/components/theme/ThemeProductSlider";
 import ProductCard from "@/components/ProductCard";
 import { StoreDesignResponsiveImage } from "@/components/theme/StoreDesignResponsiveImage";
 import { StoreDesignBlockSection } from "@/components/theme/StoreDesignBlockSection";
-import type { Collection, Product } from "@/types/site";
+import type { Category, Collection, Product } from "@/types/site";
+import { formatPrice } from "@/lib/formatPrice";
 import type { HomepageHeroImages } from "@/lib/themeMedia";
 import type { ThemeCustomizerSettings } from "@/lib/themeCustomizer";
 import type { ThemeSection } from "@ruth-commerce/commerce-core/theme-sections";
@@ -22,6 +23,9 @@ const SEMANTIC_SECTION_TYPE: Record<ThemeSection["type"], string> = {
   trust: "trust-section",
   "product-slider": "product-slider",
   "product-grid": "product-grid",
+  "product-spotlight": "product-spotlight",
+  "featured-collection": "featured-collection",
+  "category-cards": "category-cards",
   "new-arrivals": "new-arrivals",
   "sale-products": "sale-products",
   "image-banner": "image-banner",
@@ -158,6 +162,7 @@ export function HomeSectionRenderer({
   featuredProducts,
   allProducts,
   collections,
+  categories,
   heroImages,
   editorialVideo = "/home/rosta-under-hero-video.mp4",
   editorialImage = "/home/rosta-under-hero-photo.jpg",
@@ -169,6 +174,7 @@ export function HomeSectionRenderer({
   featuredProducts: Product[];
   allProducts: Product[];
   collections: Collection[];
+  categories: Category[];
   heroImages: HomepageHeroImages;
   editorialVideo?: string;
   editorialImage?: string;
