@@ -84,10 +84,11 @@ const STOREFRONT_ORIGIN = (() => {
   catch { return "https://rostacoffecompany.zeabur.app"; }
 })();
 
-function previewUrl(path: string) {
+function previewUrl(path: string, previewToken: string) {
   const url = new URL(path || "/", STOREFRONT_ORIGIN);
   url.searchParams.set("themeEditor", "1");
   url.searchParams.set("storeDesignV2", "1");
+  if (previewToken) url.searchParams.set("storeDesignV2Preview", previewToken);
   if (typeof window !== "undefined") url.searchParams.set("editorOrigin", window.location.origin);
   return url.toString();
 }
@@ -232,6 +233,9 @@ export function StoreDesignV21() {
   const toast = useExactToast();
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const initialSrcRef = useRef("");
+  const previewTokenRef = useRef("");
+  const previewSyncTimerRef = useRef<number | null>(null);
+  const lastPreviewJsonRef = useRef("");
   const [pages, setPages] = useState<PageItem[]>([]);
   const [activePath, setActivePath] = useState("/");
   const [document, setDocument] = useState<ThemeDocument>(createEmptyThemeDocument());
@@ -260,14 +264,34 @@ export function StoreDesignV21() {
     iframeRef.current?.contentWindow?.postMessage(payload, STOREFRONT_ORIGIN);
   }, []);
 
+  const syncPreviewDocument = useCallback(async (value: ThemeDocument, force = false) => {
+    const token = previewTokenRef.current;
+    if (!token) return;
+    const serialized = JSON.stringify(value);
+    if (!force && lastPreviewJsonRef.current === serialized) return;
+
+    await adminRequest("/api/store-design-v2", {
+      method: "POST",
+      body: JSON.stringify({ token, document: value }),
+      confirmation: false,
+    });
+    lastPreviewJsonRef.current = serialized;
+  }, []);
+
   useEffect(() => {
     let active = true;
     setLoading(true);
 
+    if (!previewTokenRef.current) {
+      const random = window.crypto?.randomUUID?.().replace(/-/g, "") || Math.random().toString(36).slice(2);
+      previewTokenRef.current = `sdv2_${Date.now().toString(36)}_${random}`.slice(0, 120);
+    }
+    const previewToken = previewTokenRef.current;
+
     Promise.all([
       adminRequest<StoreDesignResponse>(`/api/store-design-v2?t=${Date.now()}`, { force: true }),
       adminRequest<{ pages?: PageItem[] }>(`/api/theme-editor-pages?t=${Date.now()}`, { force: true, timeoutMs: 7_000 }),
-    ]).then(([themeResult, pageResult]) => {
+    ]).then(async ([themeResult, pageResult]) => {
       if (!active) return;
       const nextDraft = normalizeThemeDocument(themeResult.draft || themeResult.published);
       const nextPublished = normalizeThemeDocument(themeResult.published || themeResult.draft);
@@ -281,7 +305,18 @@ export function StoreDesignV21() {
       revisionRef.current = nextDraft.revision;
       setPages(nextPages);
       setActivePath(nextPages[0]?.path || "/");
-      initialSrcRef.current = previewUrl(cleanPreviewPath(nextPages[0] || { path: "/", label: "Ana Sayfa", group: "Sayfalar" }));
+
+      try {
+        await syncPreviewDocument(nextDraft, true);
+      } catch (error) {
+        console.warn("Store Design V2 ilk preview taslağı senkronlanamadı:", error);
+      }
+      if (!active) return;
+
+      initialSrcRef.current = previewUrl(
+        cleanPreviewPath(nextPages[0] || { path: "/", label: "Ana Sayfa", group: "Sayfalar" }),
+        previewToken,
+      );
       setLoading(false);
     }).catch((error) => {
       if (!active) return;
@@ -290,7 +325,22 @@ export function StoreDesignV21() {
     });
 
     return () => { active = false; };
-  }, [toast]);
+  }, [syncPreviewDocument, toast]);
+
+  useEffect(() => {
+    if (loading || !previewTokenRef.current) return;
+    if (previewSyncTimerRef.current !== null) window.clearTimeout(previewSyncTimerRef.current);
+
+    previewSyncTimerRef.current = window.setTimeout(() => {
+      void syncPreviewDocument(document).catch((error) => {
+        console.warn("Store Design V2 preview taslağı senkronlanamadı:", error);
+      });
+    }, 250);
+
+    return () => {
+      if (previewSyncTimerRef.current !== null) window.clearTimeout(previewSyncTimerRef.current);
+    };
+  }, [document, loading, syncPreviewDocument]);
 
   useEffect(() => {
     const listener = (event: MessageEvent) => {
@@ -340,15 +390,23 @@ export function StoreDesignV21() {
         now - lastReconnectRef.current > 18_000
       ) {
         lastReconnectRef.current = now;
-        iframeRef.current.src = previewUrl(cleanPreviewPath(activePage));
+        iframeRef.current.src = previewUrl(cleanPreviewPath(activePage), previewTokenRef.current);
       }
     }, 3_000);
     return () => window.clearInterval(timer);
   }, [activePage, lastHeartbeat]);
 
-  const changePage = (path: string) => {
+  const changePage = async (path: string) => {
     const page = pages.find((item) => item.path === path);
     if (!page) return;
+
+    try {
+      await syncPreviewDocument(document, true);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Taslak önizleme senkronlanamadı.");
+      return;
+    }
+
     setActivePath(path);
     setLastHeartbeat(Date.now());
     setSelected(null);
@@ -497,7 +555,7 @@ export function StoreDesignV21() {
             <div className="border-b border-black/[0.07] p-3">
               <label className="block text-[9px] font-semibold text-black/45">SAYFA</label>
               <div className="relative mt-1.5">
-                <select value={activePath} onChange={(event) => changePage(event.target.value)} className="h-10 w-full appearance-none rounded-lg border border-black/10 bg-white px-3 pr-8 text-[11px] font-medium outline-none hover:border-black/20">
+                <select value={activePath} onChange={(event) => void changePage(event.target.value)} className="h-10 w-full appearance-none rounded-lg border border-black/10 bg-white px-3 pr-8 text-[11px] font-medium outline-none hover:border-black/20">
                   {groupedPages.map(([group, items]) => (
                     <optgroup key={group} label={group}>
                       {items.map((item) => <option key={item.path} value={item.path}>{item.label}</option>)}
