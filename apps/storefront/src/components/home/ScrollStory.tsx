@@ -18,15 +18,21 @@ function smoothstep(value: number) {
   return t * t * (3 - 2 * t);
 }
 
+function smootherstep(value: number) {
+  const t = clamp(value, 0, 1);
+  return t * t * t * (t * (t * 6 - 15) + 10);
+}
+
 function scrollCueProgress(rawPosition: number, slideIndex: number) {
-  // Progress is derived directly from page scroll, so the motion reverses
-  // naturally when the user scrolls back up.
-  return smoothstep((rawPosition - (slideIndex - 0.58)) / 0.68);
+  // Start before the target photo takes over and finish after it settles.
+  // This wider range makes the movement slower and keeps it tied directly
+  // to the user's scroll in both directions.
+  return smootherstep((rawPosition - (slideIndex - 0.72)) / 1.08);
 }
 
 function scrollCueOpacity(rawPosition: number, slideIndex: number) {
   const enter = scrollCueProgress(rawPosition, slideIndex);
-  const leave = 1 - smoothstep((rawPosition - (slideIndex + 0.46)) / 0.52);
+  const leave = 1 - smootherstep((rawPosition - (slideIndex + 0.58)) / 0.64);
   return clamp(Math.min(enter, leave), 0, 1);
 }
 
@@ -159,10 +165,12 @@ export default function ScrollStory({
   const thirdCueProgress = scrollCueProgress(rawPosition, 2);
   const thirdCueOpacity = scrollCueOpacity(rawPosition, 2);
 
-  const secondCueX = -Math.round((1 - secondCueProgress) * (mobileViewport ? 72 : 120));
+  const secondCueX = -Math.round((1 - secondCueProgress) * (mobileViewport ? 116 : 180));
   const thirdCueX = mobileViewport
-    ? Math.round((1 - thirdCueProgress) * 86)
-    : -Math.round((1 - thirdCueProgress) * 120);
+    ? Math.round((1 - thirdCueProgress) * 132)
+    : -Math.round((1 - thirdCueProgress) * 180);
+  const secondCueScale = 0.965 + secondCueProgress * 0.035;
+  const thirdCueScale = 0.965 + thirdCueProgress * 0.035;
 
   return (
     <section
@@ -247,10 +255,11 @@ export default function ScrollStory({
             aria-hidden="true"
           >
             <div
-              className="absolute left-6 top-[24%] max-w-[78vw] md:left-[6vw] md:top-[28%] md:max-w-[44vw]"
+              className="absolute left-[9vw] top-[24%] max-w-[76vw] md:left-[11vw] md:top-[28%] md:max-w-[42vw]"
               style={{
                 opacity: secondCueOpacity,
-                transform: `translate3d(${secondCueX}px, 0, 0)`,
+                transform: `translate3d(${secondCueX}px, 0, 0) scale(${secondCueScale})`,
+                transformOrigin: "left center",
                 willChange: "transform, opacity",
               }}
             >
@@ -261,6 +270,7 @@ export default function ScrollStory({
                   fontFamily: "var(--font-heading)",
                   fontSize: "clamp(2rem, 5.1vw, 5.6rem)",
                   fontWeight: 900,
+                  fontVariationSettings: '"wght" 900',
                   lineHeight: 0.94,
                   letterSpacing: "-0.04em",
                 }}
@@ -272,12 +282,13 @@ export default function ScrollStory({
 
             {slides.length > 2 ? (
               <div
-                className="absolute top-[28%] max-w-[78vw] md:left-[6vw] md:right-auto md:top-[31%] md:max-w-[46vw]"
+                className="absolute top-[28%] max-w-[76vw] md:left-[11vw] md:right-auto md:top-[31%] md:max-w-[44vw]"
                 style={{
                   left: mobileViewport ? "auto" : undefined,
-                  right: mobileViewport ? "1.5rem" : undefined,
+                  right: mobileViewport ? "9vw" : undefined,
                   opacity: thirdCueOpacity,
-                  transform: `translate3d(${thirdCueX}px, 0, 0)`,
+                  transform: `translate3d(${thirdCueX}px, 0, 0) scale(${thirdCueScale})`,
+                  transformOrigin: mobileViewport ? "right center" : "left center",
                   willChange: "transform, opacity",
                   textAlign: mobileViewport ? "right" : "left",
                 }}
@@ -289,6 +300,7 @@ export default function ScrollStory({
                     fontFamily: "var(--font-heading)",
                     fontSize: "clamp(1.8rem, 4.6vw, 5rem)",
                     fontWeight: 900,
+                    fontVariationSettings: '"wght" 900',
                     lineHeight: 0.98,
                     letterSpacing: "-0.04em",
                   }}
