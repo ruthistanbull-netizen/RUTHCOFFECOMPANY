@@ -606,27 +606,21 @@ export function Header({
         .ruth-zara-header :where(button,a):focus-visible,.ruth-zara-menu-surface :where(button,a):focus-visible{outline:2px solid var(--rosta-brick-b);outline-offset:2px}
         @media(forced-colors:active){.ruth-zara-header :where(button,a):focus-visible,.ruth-zara-menu-surface :where(button,a):focus-visible{outline:2px solid Highlight}}
         @media(prefers-reduced-motion:reduce){.ruth-zara-header,.ruth-zara-hamburger__line,.ruth-menu-collection-card__media img,.ruth-menu-collection-card__media video{transition-duration:1ms}}
-        /* Zara reference geometry: desktop lines at x=36, y=44/60, 64px wide. */
+        /* One Zara hamburger geometry on every viewport. Only the button position changes. */
+        .ruth-zara-menu-button{display:block!important;padding:0!important;margin:0!important;transform:none!important}
+        .ruth-zara-menu-button .ruth-zara-hamburger{position:absolute!important;display:block!important;width:64px!important;height:17px!important;margin:0!important;transform:none!important}
+        .ruth-zara-menu-button .ruth-zara-hamburger__line{position:absolute!important;left:0!important;width:64px!important;height:1px!important;background:currentColor!important;border:0!important}
+        .ruth-zara-menu-button .ruth-zara-hamburger__line--top{top:0!important}
+        .ruth-zara-menu-button .ruth-zara-hamburger__line--bottom{top:16px!important}
+        .ruth-zara-menu-button .ruth-zara-hamburger[data-open=true] .ruth-zara-hamburger__line--top{transform:translateY(8px) rotate(45deg)!important}
+        .ruth-zara-menu-button .ruth-zara-hamburger[data-open=true] .ruth-zara-hamburger__line--bottom{transform:translateY(-8px) rotate(-45deg)!important}
         @media(min-width:1024px){
-          .ruth-zara-menu-button{left:36px!important;top:0!important;width:64px!important;height:92px!important;display:block!important;padding:0!important}
-          .ruth-zara-menu-button .ruth-zara-hamburger{position:absolute!important;left:0!important;top:44px!important;display:block!important;width:64px!important;height:17px!important}
-          .ruth-zara-menu-button .ruth-zara-hamburger__line{position:absolute!important;left:0!important;width:64px!important;height:1px!important;background:currentColor!important}
-          .ruth-zara-menu-button .ruth-zara-hamburger__line--top{top:0!important}
-          .ruth-zara-menu-button .ruth-zara-hamburger__line--bottom{top:16px!important}
-          .ruth-zara-menu-button .ruth-zara-hamburger[data-open=true] .ruth-zara-hamburger__line--top{transform:translateY(8px) rotate(45deg)!important}
-          .ruth-zara-menu-button .ruth-zara-hamburger[data-open=true] .ruth-zara-hamburger__line--bottom{transform:translateY(-8px) rotate(-45deg)!important}
+          .ruth-zara-menu-button{left:36px!important;top:0!important;width:64px!important;height:92px!important}
+          .ruth-zara-menu-button .ruth-zara-hamburger{left:0!important;top:44px!important}
         }
         @media(max-width:1023px){
-          /* Zara mobile reference: visible lines start ~31px from the left,
-             sit at ~35/52px and remain 44px wide. Keep a larger invisible
-             hit target around them so the visual geometry never shifts. */
-          .ruth-zara-menu-button{left:16px!important;top:0!important;width:74px!important;height:64px!important;display:block!important;padding:0!important;margin:0!important;transform:none!important}
-          .ruth-zara-menu-button .ruth-zara-hamburger{position:absolute!important;left:15px!important;top:35px!important;display:block!important;width:44px!important;height:18px!important;margin:0!important;transform:none!important}
-          .ruth-zara-menu-button .ruth-zara-hamburger__line{position:absolute!important;left:0!important;width:44px!important;height:1px!important;background:currentColor!important;border:0!important}
-          .ruth-zara-menu-button .ruth-zara-hamburger__line--top{top:0!important}
-          .ruth-zara-menu-button .ruth-zara-hamburger__line--bottom{top:17px!important}
-          .ruth-zara-menu-button .ruth-zara-hamburger[data-open=true] .ruth-zara-hamburger__line--top{transform:translateY(8.5px) rotate(45deg)!important}
-          .ruth-zara-menu-button .ruth-zara-hamburger[data-open=true] .ruth-zara-hamburger__line--bottom{transform:translateY(-8.5px) rotate(-45deg)!important}
+          .ruth-zara-menu-button{left:24px!important;top:0!important;width:64px!important;height:64px!important}
+          .ruth-zara-menu-button .ruth-zara-hamburger{left:0!important;top:24px!important}
         }
       `}</style>
 
@@ -635,7 +629,7 @@ export function Header({
           type="button"
           data-theme-editor-ignore="true"
           onClick={() => setMenuOpen((current) => !current)}
-          className={`ruth-zara-menu-button fixed left-4 top-0 z-[130] lg:left-8 ${contrastHeader ? "ruth-zara-menu-button--contrast" : ""} ${menuOpen ? "ruth-zara-menu-button--menu-open" : ""}`}
+          className={`ruth-zara-menu-button fixed top-0 z-[130] ${contrastHeader ? "ruth-zara-menu-button--contrast" : ""} ${menuOpen ? "ruth-zara-menu-button--menu-open" : ""}`}
           style={menuOpen ? menuToneStyle : undefined}
           aria-label={menuOpen ? "Menüyü kapat" : "Menüyü aç"}
           aria-expanded={menuOpen}
