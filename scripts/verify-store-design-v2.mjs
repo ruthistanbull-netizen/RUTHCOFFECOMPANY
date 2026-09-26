@@ -209,6 +209,82 @@ for (const type of [
   if (!blockRenderer.includes(`"${type}"`)) fail(`Block section runtime eksik: ${type}`);
 }
 
+function extractStringSet(source, declaration) {
+  const start = source.indexOf(`const ${declaration} = new Set([`);
+  if (start < 0) {
+    fail(`Set declaration bulunamadı: ${declaration}`);
+    return new Set();
+  }
+  const end = source.indexOf("]);", start);
+  if (end < 0) {
+    fail(`Set declaration kapanışı bulunamadı: ${declaration}`);
+    return new Set();
+  }
+  return new Set([...source.slice(start, end).matchAll(/"([^"]+)"/g)].map((match) => match[1]));
+}
+
+const sectionRows = core
+  .split("\n")
+  .filter((line) => line.trim().startsWith("section("))
+  .map((line) => ({
+    type: line.match(/section\("([^"]+)"/)?.[1] || "",
+    implemented: /,\s*true(?:,\s*\d+)?\s*\),?\s*$/.test(line),
+  }))
+  .filter((item) => item.type);
+
+const implementedSectionTypes = sectionRows.filter((item) => item.implemented).map((item) => item.type);
+const pendingSectionTypes = sectionRows.filter((item) => !item.implemented).map((item) => item.type);
+const pickerRenderableTypes = extractStringSet(sectionManager, "RENDERABLE_SECTION_TYPES");
+const v2Sections = read("apps/storefront/src/lib/storeDesignV2Sections.ts");
+const blockRuntimeTypes = extractStringSet(v2Sections, "BLOCK_RENDER_SECTION_TYPES");
+const homeRenderer = read("apps/storefront/src/components/theme/HomeSectionRenderer.tsx");
+const homeRuntimeTypes = new Set([...homeRenderer.matchAll(/section\.type\s*===\s*"([^"]+)"/g)].map((match) => match[1]));
+const runtimeAliases = new Map([["collection-cards", "collections"]]);
+
+function hasSectionRuntime(type) {
+  const alias = runtimeAliases.get(type);
+  return blockRuntimeTypes.has(type) || homeRuntimeTypes.has(type) || Boolean(alias && homeRuntimeTypes.has(alias));
+}
+
+for (const type of implementedSectionTypes) {
+  if (!pickerRenderableTypes.has(type)) fail(`implemented=true fakat admin picker runtime listesinde yok: ${type}`);
+  if (!hasSectionRuntime(type)) fail(`implemented=true fakat storefront runtime bulunamadı: ${type}`);
+}
+
+for (const type of pendingSectionTypes) {
+  if (pickerRenderableTypes.has(type)) fail(`implemented=false section admin picker'da yanlışlıkla açık: ${type}`);
+  if (hasSectionRuntime(type)) fail(`implemented=false section storefront runtime listesinde açık: ${type}`);
+}
+
+for (const token of [
+  "normalizeStoreDesignAnchorId",
+  'section.type === "anchor"',
+  "Anchor ID benzersiz olmalı",
+]) {
+  if (!core.includes(token)) fail(`Generic section güvenlik sözleşmesi eksik: ${token}`);
+}
+
+const genericEditor = read("apps/admin/src/components/theme/StoreDesignBlockSectionEditor.tsx");
+for (const token of [
+  "Başlık rolü",
+  "Boyut preset",
+  "Tipografi preset",
+  "Max genişlik preset",
+  "Masaüstü yükseklik preset",
+  "Mobil yükseklik preset",
+  "Kalınlık preset",
+  "Renk tokenı",
+  "Bu Anchor ID zaten kullanılıyor",
+]) {
+  if (!genericEditor.includes(token)) fail(`Generic zero-block editor kontrolü eksik: ${token}`);
+}
+
+for (const token of ["HeadingTag", "headingSizeClass", "manifestoTitleClass", "dividerColor", "normalizeStoreDesignAnchorId"]) {
+  if (!blockRenderer.includes(token)) fail(`Generic zero-block storefront preset runtime eksik: ${token}`);
+}
+
+note(`Section library: ${implementedSectionTypes.length} runtime hazır · ${pendingSectionTypes.length} kapalı/pending`);
+
 const storefrontData = read("apps/storefront/src/data/site.ts");
 if (!storefrontData.includes("migrateThemeDocument")) fail("Storefront published/preview theme read migration katmanından geçmiyor.");
 if (!storefrontData.includes("legacy storefront fallback")) fail("Unsupported schema için güvenli storefront fallback eksik.");
