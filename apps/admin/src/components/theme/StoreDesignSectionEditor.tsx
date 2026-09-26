@@ -6,6 +6,7 @@ import {
   BLOCK_LIBRARY_BY_TYPE,
   SECTION_LIBRARY_BY_TYPE,
   STORE_DESIGN_SCHEMA_VERSION,
+  type BlockInstance,
   type SectionInstance,
   type ThemeDocument,
 } from "@ruth-commerce/commerce-core/store-design-v2";
@@ -56,7 +57,7 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
   const [settings, setSettings] = useState<Record<string, unknown>>(() => structuredClone(section.settings || {}));
   const [faqItems, setFaqItems] = useState<FaqDraftItem[]>(() => (section.blockIds || [])
     .map((blockId) => document.blocks[blockId])
-    .filter((block) => block?.type === "faq-item")
+    .filter((block): block is BlockInstance => Boolean(block && block.type === "faq-item"))
     .map((block) => ({
       id: block.id,
       question: textValue(block.settings.question),
