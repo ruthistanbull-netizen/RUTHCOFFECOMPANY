@@ -49,6 +49,7 @@ export type ThemeSection = {
   v2Settings?: Record<string, unknown>;
   v2MediaType?: "image" | "video";
   v2PosterUrl?: string;
+  v2Assets?: Record<string, { url: string; type: "image" | "video"; posterUrl?: string }>;
   v2Blocks?: Array<{
     id: string;
     type: string;
