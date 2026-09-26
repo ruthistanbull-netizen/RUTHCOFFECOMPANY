@@ -411,8 +411,11 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
         const url = new URL(next, window.location.origin);
         url.searchParams.set("themeEditor", "1");
         url.searchParams.set("storeDesignV2", "1");
-        const editorOrigin = new URLSearchParams(window.location.search).get("editorOrigin");
+        const currentParams = new URLSearchParams(window.location.search);
+        const editorOrigin = currentParams.get("editorOrigin");
+        const previewToken = currentParams.get("storeDesignV2Preview");
         if (editorOrigin) url.searchParams.set("editorOrigin", editorOrigin);
+        if (previewToken) url.searchParams.set("storeDesignV2Preview", previewToken);
         window.location.assign(url.toString());
       }
     };
