@@ -226,27 +226,52 @@ export default function ScrollStory({
             transition={{ repeat: Infinity, duration: 6.2, ease: "easeInOut" }}
           >
             {slides.map((slide, index) => {
-              const resolvedMedia = homepageDeviceMedia(liveThemeSettings, homeScrollMediaId(index), slide.image);
-              const activeMedia = mobileViewport ? resolvedMedia.mobile : resolvedMedia.desktop;
+              const legacyMedia = slide.v2Media
+                ? null
+                : homepageDeviceMedia(liveThemeSettings, homeScrollMediaId(index), slide.image);
+              const activeMedia = slide.v2Media
+                ? mobileViewport
+                  ? {
+                      src: slide.v2Media.mobileSrc,
+                      mediaType: slide.v2Media.mobileType,
+                      objectPosition: slide.v2Media.mobilePosition,
+                      posterUrl: slide.v2Media.posterUrl,
+                    }
+                  : {
+                      src: slide.v2Media.desktopSrc,
+                      mediaType: slide.v2Media.desktopType,
+                      objectPosition: slide.v2Media.desktopPosition,
+                      posterUrl: slide.v2Media.posterUrl,
+                    }
+                : {
+                    ...(mobileViewport ? legacyMedia!.mobile : legacyMedia!.desktop),
+                    objectPosition: undefined,
+                    posterUrl: undefined,
+                  };
               const isCurrent = index === currentIndex;
               const isNext = index === nextIndex && nextIndex !== currentIndex;
               const opacity = isCurrent ? 1 - transitionProgress : isNext ? transitionProgress : 0;
-              const scale = isCurrent
-                ? 1 - transitionProgress * 0.035
-                : isNext
-                  ? 0.965 + transitionProgress * 0.035
-                  : 0.965;
+              const scale = transitionPreset === "fade"
+                ? 1
+                : isCurrent
+                  ? 1 - transitionProgress * 0.035
+                  : isNext
+                    ? 0.965 + transitionProgress * 0.035
+                    : 0.965;
 
               return (
                 <Link
                   key={`img-${activeMedia.src}-${index}`}
                   href={slide.href}
-                  aria-label={`${slide.title} ürününü incele`}
+                  aria-label={`${slide.title} içeriğini incele`}
+                  data-editor-id={slide.blockId ? `block:${slide.blockId}` : undefined}
+                  data-editor-type={slide.blockId ? "scroll-story-slide" : undefined}
+                  data-editor-label={slide.blockId ? slide.title : undefined}
                   className="absolute inset-0 overflow-hidden rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brick"
                   style={{
                     opacity,
                     transform: `scale(${scale})`,
-                    boxShadow: "0 30px 80px color-mix(in srgb, var(--rosta-carbon) 72%, transparent)",
+                    boxShadow: "0 30px 80px color-mix(in_srgb,var(--rosta-carbon)_72%,transparent)",
                     willChange: "transform, opacity",
                     pointerEvents: opacity > 0.5 ? "auto" : "none",
                     cursor: "pointer",
@@ -255,25 +280,28 @@ export default function ScrollStory({
                   {activeMedia.mediaType === "video" ? (
                     <video
                       src={activeMedia.src}
+                      poster={activeMedia.posterUrl}
                       aria-label={slide.title}
                       className="h-full w-full object-cover"
+                      style={{ objectPosition: activeMedia.objectPosition || "50% 50%" }}
                       autoPlay
                       loop
                       muted
                       playsInline
                       preload={index <= 1 ? "auto" : "metadata"}
                       disablePictureInPicture
-                      data-theme-id={homeScrollMediaId(index)}
-                      data-theme-label={`Kayan medya ${index + 1}`}
+                      data-theme-id={slide.blockId ? undefined : homeScrollMediaId(index)}
+                      data-theme-label={slide.blockId ? undefined : `Kayan medya ${index + 1}`}
                     />
                   ) : (
                     <img
                       src={activeMedia.src}
                       alt={slide.title}
                       className="h-full w-full object-cover"
+                      style={{ objectPosition: activeMedia.objectPosition || "50% 50%" }}
                       loading={index <= 1 ? "eager" : "lazy"}
-                      data-theme-id={homeScrollMediaId(index)}
-                      data-theme-label={`Kayan medya ${index + 1}`}
+                      data-theme-id={slide.blockId ? undefined : homeScrollMediaId(index)}
+                      data-theme-label={slide.blockId ? undefined : `Kayan medya ${index + 1}`}
                     />
                   )}
                 </Link>
@@ -287,7 +315,13 @@ export default function ScrollStory({
             const isCurrent = index === currentIndex;
             const isNext = index === nextIndex && nextIndex !== currentIndex;
             const opacity = isCurrent ? 1 - transitionProgress : isNext ? transitionProgress : 0;
-            const y = isCurrent ? -transitionProgress * 24 : isNext ? (1 - transitionProgress) * 24 : 24;
+            const y = transitionPreset === "fade"
+              ? 0
+              : isCurrent
+                ? -transitionProgress * 24
+                : isNext
+                  ? (1 - transitionProgress) * 24
+                  : 24;
 
             return (
               <div
@@ -317,35 +351,37 @@ export default function ScrollStory({
           })}
         </div>
 
-        <div
-          className="pointer-events-none absolute right-4 top-1/2 z-40 flex -translate-y-1/2 flex-col items-center gap-1.5 md:right-8 md:gap-2"
-          aria-hidden="true"
-        >
-          {scrollLetters.map((letter, index) => {
-            const isActive = index === activeLetterIndex;
-            return (
-              <motion.span
-                key={`${letter}-${index}`}
-                animate={{
-                  scale: isActive ? 1.55 : 1,
-                  opacity: isActive ? 1 : 0.42,
-                }}
-                transition={{ type: "spring", stiffness: 360, damping: 24, mass: 0.55 }}
-                className="font-heading block text-center font-medium uppercase"
-                style={{
-                  width: "1.5rem",
-                  color: "var(--rosta-cream)",
-                  fontSize: "clamp(0.72rem, 1.2vw, 0.9rem)",
-                  lineHeight: 1,
-                  letterSpacing: 0,
-                  transformOrigin: "center",
-                }}
-              >
-                {letter}
-              </motion.span>
-            );
-          })}
-        </div>
+        {cueVisibility ? (
+          <div
+            className="pointer-events-none absolute right-4 top-1/2 z-40 flex -translate-y-1/2 flex-col items-center gap-1.5 md:right-8 md:gap-2"
+            aria-hidden="true"
+          >
+            {scrollLetters.map((letter, index) => {
+              const isActive = index === activeLetterIndex;
+              return (
+                <motion.span
+                  key={`${letter}-${index}`}
+                  animate={{
+                    scale: isActive ? 1.55 : 1,
+                    opacity: isActive ? 1 : 0.42,
+                  }}
+                  transition={{ type: "spring", stiffness: 360, damping: 24, mass: 0.55 }}
+                  className="font-heading block text-center font-medium uppercase"
+                  style={{
+                    width: "1.5rem",
+                    color: "var(--rosta-cream)",
+                    fontSize: "clamp(0.72rem, 1.2vw, 0.9rem)",
+                    lineHeight: 1,
+                    letterSpacing: 0,
+                    transformOrigin: "center",
+                  }}
+                >
+                  {letter}
+                </motion.span>
+              );
+            })}
+          </div>
+        ) : null}
 
         <motion.div
           style={{ scaleX: progress, background: "var(--gold)" }}
