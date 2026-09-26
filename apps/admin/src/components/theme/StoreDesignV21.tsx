@@ -363,6 +363,29 @@ export function StoreDesignV21() {
     iframeRef.current?.contentWindow?.postMessage(payload, STOREFRONT_ORIGIN);
   }, []);
 
+  const postMediaDocumentDiff = useCallback((before: ThemeDocument, after: ThemeDocument) => {
+    const ids = new Set([...Object.keys(before.media), ...Object.keys(after.media)]);
+    for (const assetId of ids) {
+      const previous = before.media[assetId];
+      const asset = after.media[assetId];
+      if (JSON.stringify(previous) === JSON.stringify(asset) || !asset) continue;
+
+      const mobile = asset.mobileAssetId ? after.media[asset.mobileAssetId] : undefined;
+      postToPreview({
+        type: STORE_DESIGN_MESSAGES.MEDIA_ASSET_READY,
+        asset: {
+          assetId: asset.assetId,
+          url: asset.url,
+          version: asset.version,
+          focalPoint: asset.focalPoint,
+          mobileAssetId: mobile?.assetId,
+          mobileUrl: mobile?.url,
+          mobileFocalPoint: mobile?.focalPoint,
+        },
+      });
+    }
+  }, [postToPreview]);
+
   const syncPreviewDocument = useCallback(async (value: ThemeDocument, force = false) => {
     const token = previewTokenRef.current;
     if (!token) return;
@@ -561,9 +584,10 @@ export function StoreDesignV21() {
     const before = structuredClone(document) as ThemeDocument;
     const after = structuredClone(next) as ThemeDocument;
     await applyStructureSnapshot(after, activePath, false);
+    postMediaDocumentDiff(before, after);
     setHistory((items) => [...items.slice(-79), { kind: "structure", label, before, after, pagePath: activePath, reload: false }]);
     setFuture([]);
-  }, [activePath, applyStructureSnapshot, document]);
+  }, [activePath, applyStructureSnapshot, document, postMediaDocumentDiff]);
 
   const applyPatchValue = (
     target: SelectedTarget,
@@ -609,6 +633,7 @@ export function StoreDesignV21() {
     }
     try {
       await applyStructureSnapshot(entry.before, entry.pagePath, entry.reload);
+      if (!entry.reload) postMediaDocumentDiff(entry.after, entry.before);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Yapısal geri alma uygulanamadı.");
     }
@@ -625,6 +650,7 @@ export function StoreDesignV21() {
     }
     try {
       await applyStructureSnapshot(entry.after, entry.pagePath, entry.reload);
+      if (!entry.reload) postMediaDocumentDiff(entry.before, entry.after);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Yapısal yineleme uygulanamadı.");
     }
