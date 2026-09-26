@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import {
   COMPONENT_REGISTRY_BY_TYPE,
+  normalizeThemeDocument,
   type EditorScope,
   type ThemeDocument,
 } from "@ruth-commerce/commerce-core/store-design-v2";
@@ -194,6 +195,46 @@ export function SemanticThemeRuntimeProvider({
 }) {
   const pathname = usePathname() || "/";
   const [runtimePatches, setRuntimePatches] = useState<Record<string, SemanticRuntimePatch>>({});
+  const [previewDocument, setPreviewDocument] = useState<ThemeDocument | null>(null);
+
+  useEffect(() => {
+    const token = new URLSearchParams(window.location.search)
+      .get("storeDesignV2Preview")
+      ?.replace(/[^a-zA-Z0-9_-]/g, "")
+      .slice(0, 120) || "";
+
+    if (!token) {
+      setPreviewDocument(null);
+      return;
+    }
+
+    let active = true;
+    const controller = new AbortController();
+
+    fetch(`/api/store-design-v2-preview?token=${encodeURIComponent(token)}`, {
+      cache: "no-store",
+      credentials: "same-origin",
+      signal: controller.signal,
+    })
+      .then(async (response) => {
+        if (!response.ok) throw new Error(`Preview draft HTTP ${response.status}`);
+        return response.json() as Promise<{ document?: unknown }>;
+      })
+      .then((payload) => {
+        if (active && payload.document) setPreviewDocument(normalizeThemeDocument(payload.document));
+      })
+      .catch((error) => {
+        if (active && !(error instanceof DOMException && error.name === "AbortError")) {
+          console.warn("Store Design V2 preview draft alınamadı:", error);
+          setPreviewDocument(null);
+        }
+      });
+
+    return () => {
+      active = false;
+      controller.abort();
+    };
+  }, [pathname]);
 
   useEffect(() => {
     const onPatch = (event: Event) => {
@@ -212,9 +253,11 @@ export function SemanticThemeRuntimeProvider({
     return () => window.removeEventListener(SEMANTIC_RUNTIME_PATCH_EVENT, onPatch as EventListener);
   }, []);
 
+  const effectiveDocument = previewDocument || initialDocument;
+
   const initialPatches = useMemo(
-    () => initialDocument ? patchesFromDocument(initialDocument, pathname) : {},
-    [initialDocument, pathname],
+    () => effectiveDocument ? patchesFromDocument(effectiveDocument, pathname) : {},
+    [effectiveDocument, pathname],
   );
 
   const css = useMemo(
