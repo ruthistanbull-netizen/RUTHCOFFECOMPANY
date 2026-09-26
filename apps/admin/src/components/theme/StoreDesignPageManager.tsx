@@ -161,6 +161,15 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
     Object.values(document.templates).filter((template) => template.compatibility.includes(form.compatibility))
   ), [document.templates, form.compatibility]);
 
+  const previewRoute = routeLocked && editingPage
+    ? editingPage.route
+    : customPageRoute(form.slug || form.name || "sayfa-adi");
+  const previewTitle = form.seoTitle.trim() || form.name.trim() || "Sayfa Başlığı";
+  const previewDescription = form.seoDescription.trim() || "Meta açıklama girildiğinde arama sonucu önizlemesi burada görünür.";
+  const previewOgTitle = form.ogTitle.trim() || previewTitle;
+  const previewOgDescription = form.ogDescription.trim() || previewDescription;
+  const previewOgImage = form.ogAssetId ? document.media[form.ogAssetId]?.url : undefined;
+
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     setForm((current) => ({ ...current, [key]: value }));
   };
@@ -440,6 +449,49 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
               Canonical URL
               <input value={form.canonical} onChange={(event) => set("canonical", event.target.value)} className="h-10 rounded-lg border border-black/10 px-3 text-[10px] font-medium text-black outline-none" placeholder="Boş = self canonical" />
             </label>
+
+            <div className="rounded-xl border border-black/[0.08] bg-[#fafafa] p-3">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-[9px] font-semibold">SEO Önizleme</p>
+                <span className="rounded-full bg-white px-2 py-1 text-[7px] font-semibold text-black/35">{form.robots}</span>
+              </div>
+              <div className="mt-3 rounded-xl border border-black/[0.06] bg-white p-3">
+                <p className="truncate text-[8px] text-[#1a0dab]/70">{previewRoute}</p>
+                <p className="mt-1 line-clamp-1 text-[13px] font-medium text-[#1a0dab]">{previewTitle}</p>
+                <p className="mt-1 line-clamp-2 text-[9px] leading-4 text-black/55">{previewDescription}</p>
+              </div>
+
+              <div className="mt-3 overflow-hidden rounded-xl border border-black/[0.06] bg-white">
+                {previewOgImage ? <img src={previewOgImage} alt="" className="aspect-[1.91/1] w-full object-cover" /> : <div className="grid aspect-[1.91/1] place-items-center bg-black/[0.03] text-[8px] text-black/25">OG görsel fallback</div>}
+                <div className="p-3">
+                  <p className="line-clamp-1 text-[10px] font-semibold">{previewOgTitle}</p>
+                  <p className="mt-1 line-clamp-2 text-[8px] leading-4 text-black/45">{previewOgDescription}</p>
+                  <p className="mt-2 truncate text-[7px] uppercase tracking-[0.08em] text-black/30">{form.canonical.trim() || previewRoute}</p>
+                </div>
+              </div>
+            </div>
+
+            {editingPage ? (
+              <div className="rounded-xl border border-black/[0.08] p-3">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-[9px] font-semibold">URL Geçmişi</p>
+                  <span className="text-[7px] text-black/30">{document.redirects.filter((item) => item.pageId === editingPage.id).length} kayıt</span>
+                </div>
+                <div className="mt-2 space-y-1.5">
+                  {document.redirects.filter((item) => item.pageId === editingPage.id).slice(0, 6).map((item) => (
+                    <div key={item.id} className="flex items-center gap-2 rounded-lg bg-black/[0.025] px-2.5 py-2 text-[8px]">
+                      <code className="min-w-0 flex-1 truncate">{item.from}</code>
+                      <span className="text-black/25">→</span>
+                      <code className="min-w-0 flex-1 truncate">{item.to}</code>
+                      <span className="rounded bg-white px-1.5 py-0.5 text-[6px] font-semibold">{item.status}</span>
+                    </div>
+                  ))}
+                  {!document.redirects.some((item) => item.pageId === editingPage.id) ? (
+                    <p className="py-2 text-[8px] leading-4 text-black/35">Bu sayfa için henüz slug geçmişi / redirect kaydı yok.</p>
+                  ) : null}
+                </div>
+              </div>
+            ) : null}
           </div>
         </div>
 
