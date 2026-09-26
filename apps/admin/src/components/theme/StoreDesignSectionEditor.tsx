@@ -22,6 +22,7 @@ type Props = {
 const EDITABLE_TYPES = new Set([
   "featured-products",
   "product-slider",
+  "product-grid",
   "image-banner",
   "rich-text",
   "faq",
@@ -111,7 +112,7 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
     }
   };
 
-  const productSection = section.type === "featured-products" || section.type === "product-slider";
+  const productSection = section.type === "featured-products" || section.type === "product-slider" || section.type === "product-grid";
   const imageBanner = section.type === "image-banner";
   const richText = section.type === "rich-text";
   const faq = section.type === "faq";
@@ -169,6 +170,18 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
                 <label className="flex items-center justify-between gap-3 rounded-lg border border-black/[0.08] p-3 text-[9px] font-semibold text-black/55 md:col-span-2">
                   Okları göster
                   <input type="checkbox" checked={booleanValue(settings.showArrows, true)} onChange={(event) => set("showArrows", event.target.checked)} />
+                </label>
+              ) : null}
+              {section.type === "product-grid" ? (
+                <label className="grid gap-1.5 text-[9px] font-semibold text-black/50 md:col-span-2">
+                  Grid max genişlik
+                  <select value={textValue(settings.maxWidth) || "none"} onChange={(event) => set("maxWidth", event.target.value)} className="h-10 rounded-lg border border-black/10 bg-white px-3 text-[10px] outline-none">
+                    <option value="none">Container'ı doldur</option>
+                    <option value="1200px">1200px</option>
+                    <option value="1280px">1280px</option>
+                    <option value="1440px">1440px</option>
+                    <option value="1600px">1600px</option>
+                  </select>
                 </label>
               ) : null}
             </div>
