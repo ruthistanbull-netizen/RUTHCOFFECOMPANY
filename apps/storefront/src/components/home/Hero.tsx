@@ -356,7 +356,7 @@ function EditorialMedia({
 
         {index === 1 ? (
           <motion.div
-            className="home-editorial-cue home-editorial-cue--second pointer-events-none fixed left-1/2 top-1/2 z-50 w-[94vw] max-w-[760px]"
+            className="home-editorial-cue home-editorial-cue--second pointer-events-none fixed left-1/2 top-1/2 z-50 w-[94vw] max-w-[760px] md:top-[34%]"
             style={{
               x: cueX,
               opacity: cueOpacity,
@@ -376,7 +376,7 @@ function EditorialMedia({
 
         {index === 2 ? (
           <motion.div
-            className="home-editorial-cue home-editorial-cue--third pointer-events-none fixed left-1/2 top-1/2 z-50 w-[94vw] max-w-[820px]"
+            className="home-editorial-cue home-editorial-cue--third pointer-events-none fixed left-1/2 top-1/2 z-50 w-[94vw] max-w-[820px] md:top-[34%]"
             style={{
               x: cueX,
               opacity: cueOpacity,
