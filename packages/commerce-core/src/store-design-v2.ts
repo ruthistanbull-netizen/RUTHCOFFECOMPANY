@@ -820,6 +820,13 @@ export function themeDocumentReferenceReport(document: ThemeDocument): ThemeRefe
     }
   }
 
+  for (const [presetId, preset] of Object.entries(document.presets)) {
+    collectThemeSettingReferences(preset.settings, `preset:${presetId}`, issues, document);
+    preset.blocks.forEach((block, index) => {
+      collectThemeSettingReferences(block.settings, `preset:${presetId}.blocks[${index}]`, issues, document);
+    });
+  }
+
   for (const [sectionId, section] of Object.entries(document.sections)) {
     for (const blockId of section.blockIds || []) {
       referencedBlocks.add(blockId);
