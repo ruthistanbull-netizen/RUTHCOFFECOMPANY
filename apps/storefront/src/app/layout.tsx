@@ -312,7 +312,7 @@ export default async function RootLayout({
               </main>
               <Footer />
               <CartDrawer />
-              <RostaPointsWidget />
+              <RostaPointsWidget themeSettings={themeSettings} />
               <FloatingWhatsApp settings={themeSettings.whatsapp} />
             </CartProvider>
           </AuthProvider>
