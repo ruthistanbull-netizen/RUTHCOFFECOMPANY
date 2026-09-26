@@ -730,6 +730,117 @@ function HorizontalPortfolioStory({
   );
 }
 
+function HorizontalStoryOutro() {
+  return (
+    <section className="home-horizontal-story-outro contact bg-carbon text-cream">
+      <style>{`
+        .home-horizontal-story-outro{
+          min-height:100svh;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          text-align:center;
+          padding:96px 60px 60px;
+          background:var(--rosta-carbon);
+          color:var(--rosta-cream);
+        }
+        .home-horizontal-story-outro-inner{
+          width:min(100%,1200px);
+        }
+        .home-horizontal-story-outro-label{
+          margin-bottom:20px;
+          font-family:var(--font-body);
+          font-size:12px;
+          letter-spacing:.3em;
+          opacity:.5;
+        }
+        .home-horizontal-story-outro-title{
+          margin:0 auto;
+          max-width:1050px;
+          font-family:var(--font-heading)!important;
+          font-size:clamp(3rem,7vw,7rem);
+          font-weight:900!important;
+          font-variation-settings:"wght" 900!important;
+          line-height:.9;
+          letter-spacing:-.055em;
+        }
+        .home-horizontal-story-outro-desc{
+          margin:28px auto 0;
+          max-width:500px;
+          font-family:var(--font-body);
+          font-size:clamp(.95rem,1.2vw,1.15rem);
+          line-height:1.6;
+          opacity:.6;
+        }
+        .home-horizontal-story-outro-cta{
+          display:inline-flex;
+          align-items:center;
+          justify-content:center;
+          margin-top:30px;
+          padding:15px 35px;
+          border:1px solid color-mix(in srgb,var(--rosta-cream) 20%,transparent);
+          border-radius:999px;
+          color:var(--rosta-cream);
+          background:transparent;
+          font-family:var(--font-body);
+          font-size:.92rem;
+          text-decoration:none;
+          transition:background-color .25s ease,color .25s ease,border-color .25s ease;
+        }
+        .home-horizontal-story-outro-cta:hover{
+          background:var(--rosta-cream);
+          color:var(--rosta-carbon);
+          border-color:var(--rosta-cream);
+        }
+        @media(max-width:767px){
+          .home-horizontal-story-outro{
+            padding:92px 22px 44px;
+          }
+          .home-horizontal-story-outro-title{
+            font-size:clamp(3rem,14vw,5.2rem);
+            line-height:.88;
+          }
+          .home-horizontal-story-outro-desc{
+            margin-top:20px;
+            max-width:88vw;
+          }
+        }
+      `}</style>
+      <div className="home-horizontal-story-outro-inner">
+        <div
+          className="home-horizontal-story-outro-label"
+          data-theme-id="home-horizontal-outro-label"
+          data-theme-label="Yatay hikaye kapanış etiketi"
+        >
+          ROSTA COFFEE CO.
+        </div>
+        <h2
+          className="home-horizontal-story-outro-title"
+          data-theme-id="home-horizontal-outro-title"
+          data-theme-label="Yatay hikaye kapanış başlığı"
+        >
+          Sıradaki Fincanını Seç.
+        </h2>
+        <p
+          className="home-horizontal-story-outro-desc"
+          data-theme-id="home-horizontal-outro-desc"
+          data-theme-label="Yatay hikaye kapanış açıklaması"
+        >
+          Her fincanın bir karakteri var. Seninkini keşfet.
+        </p>
+        <a
+          href="/collections"
+          className="home-horizontal-story-outro-cta"
+          data-theme-id="home-horizontal-outro-cta"
+          data-theme-label="Yatay hikaye kapanış butonu"
+        >
+          Kahveleri Keşfet
+        </a>
+      </div>
+    </section>
+  );
+}
+
 export default function Hero({
   heroImages,
   editorialVideo,
@@ -883,6 +994,7 @@ export default function Hero({
       ))}
     </section>
     <HorizontalPortfolioStory themeSettings={liveThemeSettings} mobileViewport={mobileViewport} />
+    <HorizontalStoryOutro />
     </>
   );
 }
