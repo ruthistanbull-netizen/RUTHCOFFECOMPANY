@@ -3,6 +3,7 @@ import type { CSSProperties, ReactNode } from "react";
 import type { ThemeSection } from "@ruth-commerce/commerce-core/theme-sections";
 import { StoreDesignCountdown } from "@/components/theme/StoreDesignCountdown";
 import { StoreDesignBeforeAfter } from "@/components/theme/StoreDesignBeforeAfter";
+import { StoreDesignSlideshow } from "@/components/theme/StoreDesignSlideshow";
 
 type V2Block = NonNullable<ThemeSection["v2Blocks"]>[number];
 
@@ -335,23 +336,34 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
   }
 
   if (type === "slideshow") {
+    const transition = text(settings.transition) === "fade" ? "fade" : "slide";
+    const slides = blocks.map((block) => ({
+      id: block.id,
+      title: text(block.settings.title),
+      body: text(block.settings.body),
+      url: block.assetUrl,
+      type: block.assetType,
+      posterUrl: block.posterUrl,
+      ctaHref: href(block.settings.cta),
+      ctaLabel: text(block.settings.ctaLabel) || "Keşfet",
+    }));
     return (
-      <section data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type="slideshow" data-editor-label={title || "Slideshow"} className="overflow-hidden px-5 md:px-8" style={style}>
+      <section
+        data-theme-section-id={section.id}
+        data-editor-id={`section:${section.id}`}
+        data-editor-type="slideshow"
+        data-editor-label={title || "Slideshow"}
+        className="px-5 md:px-8"
+        style={style}
+      >
         <div className="mx-auto max-w-[1600px]">
           {heading}
-          <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3">
-            {blocks.map((block) => (
-              <article key={block.id} data-editor-id={`block:${block.id}`} data-editor-type={blockSemanticType(block.type)} data-editor-label={text(block.settings.title) || "Slayt"} className="relative min-w-[86%] snap-center overflow-hidden rounded-2xl md:min-w-[60%]">
-                {media(block, "aspect-[16/10] w-full object-cover")}
-                {(text(block.settings.title) || text(block.settings.body)) ? (
-                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-6 text-white">
-                    {text(block.settings.title) ? <h3 className="font-heading text-2xl">{text(block.settings.title)}</h3> : null}
-                    {text(block.settings.body) ? <p className="mt-2 max-w-xl text-sm leading-6 text-white/80">{text(block.settings.body)}</p> : null}
-                  </div>
-                ) : null}
-              </article>
-            ))}
-          </div>
+          <StoreDesignSlideshow
+            slides={slides}
+            autoplay={settings.autoplay === true}
+            transition={transition}
+            intervalMs={number(settings.intervalMs, 5000, 2500, 15000)}
+          />
         </div>
       </section>
     );
