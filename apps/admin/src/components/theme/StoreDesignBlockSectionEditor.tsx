@@ -153,7 +153,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
 
   const mediaAssets = useMemo(() => Object.values(document.media), [document.media]);
   const maxBlocks = definition?.allowedBlocks.length ? (definition.maxBlocks || 50) : 0;
-  const needsCommerceCatalog = ["product-spotlight", "featured-collection", "category-cards"].includes(section.type);
+  const needsCommerceCatalog = ["product-spotlight", "featured-collection", "category-cards", "product-comparison"].includes(section.type);
 
   useEffect(() => {
     if (!needsCommerceCatalog) return;
@@ -239,6 +239,10 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
     if (section.type === "product-spotlight" && !text(settings.productId)) {
       return toast.error("Tek Ürün Spotlight için katalogdan bir ürün seç.");
     }
+    if (section.type === "product-comparison") {
+      const productIds = Array.isArray(settings.productIds) ? settings.productIds.filter((item): item is string => typeof item === "string" && Boolean(item)) : [];
+      if (productIds.length < 2 || productIds.length > 4) return toast.error("Ürün Karşılaştırma için 2-4 ürün seç.");
+    }
     if (section.type === "featured-collection" && !text(settings.collectionId)) {
       return toast.error("Featured Collection için katalogdan bir koleksiyon seç.");
     }
@@ -318,9 +322,10 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   const brandStory = section.type === "brand-story";
   const productSpotlight = section.type === "product-spotlight";
   const featuredCollection = section.type === "featured-collection";
+  const productComparison = section.type === "product-comparison";
   const collectionCards = section.type === "collection-cards" || section.type === "category-cards";
   const categoryCards = section.type === "category-cards";
-  const genericZeroBlock = ["hero", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta", "spacer", "divider", "anchor"].includes(section.type);
+  const genericZeroBlock = ["hero", "product-comparison", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta", "spacer", "divider", "anchor"].includes(section.type);
   const hasGenericBody = ["hero", "video-hero", "video-banner", "brand-story", "heading-subtext", "manifesto", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const hasAlign = ["hero", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const hasLink = ["hero", "video-hero", "video-banner", "brand-story", "promo-banner", "shipping-returns-cta"].includes(section.type);
@@ -512,6 +517,56 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                       );
                     })}
                   </div>
+                </>
+              ) : null}
+
+              {productComparison ? (
+                <>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                    Karşılaştırılacak ürünler · 2-4 seçim
+                    <select
+                      multiple
+                      size={Math.min(8, Math.max(4, catalogProducts.length || 4))}
+                      value={Array.isArray(settings.productIds) ? settings.productIds.filter((item): item is string => typeof item === "string") : []}
+                      onChange={(event) => {
+                        const selected = Array.from(event.currentTarget.selectedOptions).map((option) => option.value).slice(0, 4);
+                        updateSetting("productIds", selected);
+                      }}
+                      disabled={catalogLoading}
+                      className="min-h-28 rounded-lg border border-black/10 bg-white p-2.5 text-[9px] outline-none disabled:opacity-50"
+                    >
+                      {catalogProducts.map((product) => <option key={product.id} value={product.id}>{product.name}</option>)}
+                    </select>
+                    {catalogError ? <span className="text-[7px] font-normal text-red-600">{catalogError}</span> : <span className="text-[7px] font-normal leading-4 text-black/35">Ctrl/Cmd ile birden fazla ürün seç. Fiyat, stok ve ürün alanları katalogdan read-only gelir.</span>}
+                  </label>
+                  <div className="grid gap-2 rounded-lg border border-black/10 bg-white p-2.5 md:col-span-2">
+                    <p className="text-[8px] font-semibold text-black/45">Karşılaştırma alanları</p>
+                    {[
+                      ["price", "Fiyat"],
+                      ["compare-price", "Karşılaştırma fiyatı"],
+                      ["stock", "Stok"],
+                      ["description", "Açıklama"],
+                      ["material", "Materyal / ürün bilgisi"],
+                    ].map(([value, label]) => {
+                      const current = Array.isArray(settings.fields) ? settings.fields.filter((item): item is string => typeof item === "string") : ["price", "stock", "description"];
+                      return (
+                        <label key={value} className="flex items-center justify-between gap-3 text-[8px] text-black/55">
+                          {label}
+                          <input
+                            type="checkbox"
+                            checked={current.includes(value)}
+                            onChange={(event) => updateSetting("fields", event.target.checked ? [...new Set([...current, value])] : current.filter((item) => item !== value))}
+                          />
+                        </label>
+                      );
+                    })}
+                  </div>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                    Layout
+                    <div className="flex h-9 items-center rounded-lg border border-black/10 bg-black/[0.025] px-2.5 text-[8px] font-medium text-black/55">
+                      Tablo · responsive stack
+                    </div>
+                  </label>
                 </>
               ) : null}
 
