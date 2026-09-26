@@ -478,12 +478,7 @@ export function ProductCatalog({
         </div>
       </div>
 
-      <div
-        data-editor-id="catalog-shell"
-        data-editor-type="catalog-shell"
-        data-editor-label="Katalog Sayfası"
-        className="flex gap-10"
-      >
+      <div className="flex gap-10">
         <aside
           data-editor-id="catalog-filter-panel"
           data-editor-type="filter-controls"
