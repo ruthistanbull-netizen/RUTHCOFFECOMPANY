@@ -462,6 +462,39 @@ export type ThemeDocument = {
   publishedAt: string | null;
 };
 
+function countExactReference(value: unknown, assetId: string): number {
+  if (value === assetId) return 1;
+  if (Array.isArray(value)) return value.reduce((sum, item) => sum + countExactReference(item, assetId), 0);
+  if (!value || typeof value !== "object") return 0;
+  return Object.values(value as Record<string, unknown>)
+    .reduce((sum, item) => sum + countExactReference(item, assetId), 0);
+}
+
+export function themeMediaUsageCount(document: ThemeDocument, assetId: string) {
+  let count = 0;
+  count += countExactReference(document.globals, assetId);
+  count += countExactReference(document.pages, assetId);
+  count += countExactReference(document.seo, assetId);
+  count += countExactReference(document.templates, assetId);
+  count += countExactReference(document.sections, assetId);
+  count += countExactReference(document.blocks, assetId);
+
+  for (const asset of Object.values(document.media)) {
+    if (asset.assetId === assetId) continue;
+    if (asset.posterAssetId === assetId) count += 1;
+    if (asset.mobileAssetId === assetId) count += 1;
+  }
+  return count;
+}
+
+export function withThemeMediaUsageCounts(document: ThemeDocument) {
+  const next = structuredClone(document) as ThemeDocument;
+  for (const [assetId, asset] of Object.entries(next.media)) {
+    next.media[assetId] = { ...asset, assetId, usageCount: themeMediaUsageCount(next, assetId) };
+  }
+  return next;
+}
+
 function objectRecord(value: unknown): Record<string, unknown> {
   return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {};
 }
@@ -652,6 +685,12 @@ export function validateThemeDocument(document: ThemeDocument) {
     if (seo?.canonical && !seo.canonical.startsWith("/") && !/^https:\/\//i.test(seo.canonical)) {
       errors.push(`${page.route}: canonical yalnız relative path veya https olabilir.`);
     }
+  }
+
+  for (const [assetId, asset] of Object.entries(document.media)) {
+    if (!asset.url || !/^https?:\/\//i.test(asset.url)) errors.push(`${assetId}: medya URL geçersiz.`);
+    if (asset.mobileAssetId && !document.media[asset.mobileAssetId]) errors.push(`${assetId}: mobil medya referansı bulunamadı.`);
+    if (asset.posterAssetId && !document.media[asset.posterAssetId]) errors.push(`${assetId}: video poster referansı bulunamadı.`);
   }
 
   const redirectMap = new Map<string, string>();
