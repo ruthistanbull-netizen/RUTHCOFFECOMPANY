@@ -77,6 +77,14 @@ const RENDERABLE_SECTION_TYPES = new Set([
   "team",
   "announcement-bar",
   "marquee",
+  "heading-subtext",
+  "manifesto",
+  "quote",
+  "promo-banner",
+  "shipping-returns-cta",
+  "spacer",
+  "divider",
+  "anchor",
 ]);
 
 function uid(prefix: string) {
@@ -135,6 +143,14 @@ function defaultSettings(type: string): Record<string, unknown> {
   if (type === "team") return { title: "Ekibimiz", columns: 4, gap: 20, paddingY: 64 };
   if (type === "announcement-bar") return { paddingY: 0 };
   if (type === "marquee") return { paddingY: 0, speed: 24, pause: false };
+  if (type === "heading-subtext") return { title: "Başlık", body: "Alt metin", align: "center", maxWidth: "900px", paddingY: 64 };
+  if (type === "manifesto") return { title: "Manifesto", body: "Marka anlatınızı buraya ekleyin.", align: "center", maxWidth: "900px", paddingY: 80 };
+  if (type === "quote") return { quote: "Alıntı", attribution: "", align: "center", paddingY: 72 };
+  if (type === "promo-banner") return { title: "Promo", body: "", linkLabel: "Keşfet", linkHref: "/", align: "center", paddingY: 56 };
+  if (type === "shipping-returns-cta") return { icon: "•", title: "Kargo & İade", body: "", linkLabel: "Detaylar", linkHref: "/", align: "center", paddingY: 48 };
+  if (type === "spacer") return { desktopHeight: 64, mobileHeight: 40, paddingY: 0 };
+  if (type === "divider") return { width: "100%", thickness: 1, paddingY: 24 };
+  if (type === "anchor") return { anchorId: "bolum", labelVisibility: false, title: "" };
   return {};
 }
 
@@ -225,13 +241,28 @@ function canRenderDefinition(definition: SectionDefinition) {
   return definition.implemented && RENDERABLE_SECTION_TYPES.has(definition.type);
 }
 
+const GENERIC_V2_SECTION_TYPES = new Set([
+  "heading-subtext",
+  "manifesto",
+  "quote",
+  "promo-banner",
+  "shipping-returns-cta",
+  "spacer",
+  "divider",
+  "anchor",
+]);
+
 function isBlockDrivenSection(type: string) {
   const definition = SECTION_LIBRARY_BY_TYPE[type];
   return Boolean(definition?.implemented && definition.allowedBlocks.length > 0);
 }
 
+function isGenericV2Section(type: string) {
+  return GENERIC_V2_SECTION_TYPES.has(type);
+}
+
 function canEditSection(type: string) {
-  return canEditStoreDesignSection(type) || isBlockDrivenSection(type);
+  return canEditStoreDesignSection(type) || isBlockDrivenSection(type) || isGenericV2Section(type);
 }
 
 function SectionPicker({
@@ -555,7 +586,7 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
         />
       ) : null}
       {editingSectionId && document.sections[editingSectionId] ? (
-        isBlockDrivenSection(document.sections[editingSectionId]!.type) && document.sections[editingSectionId]!.type !== "faq" ? (
+        (isBlockDrivenSection(document.sections[editingSectionId]!.type) || isGenericV2Section(document.sections[editingSectionId]!.type)) && document.sections[editingSectionId]!.type !== "faq" ? (
           <StoreDesignBlockSectionEditor
             document={document}
             section={document.sections[editingSectionId]!}
