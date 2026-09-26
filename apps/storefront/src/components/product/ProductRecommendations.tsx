@@ -206,7 +206,13 @@ export function ProductRecommendations({
   if (!items.length) return null;
 
   return (
-    <section className="product-recommendations" aria-labelledby="product-recommendations-title">
+    <section
+      data-editor-id={`recommendations:${current.id}`}
+      data-editor-type="recommendations"
+      data-editor-label="Önerilen Ürünler"
+      className="product-recommendations"
+      aria-labelledby="product-recommendations-title"
+    >
       <div className="product-recommendations-heading">
         <p>Ruth Seçkisi</p>
         <h2 id="product-recommendations-title">Bunları da beğenebilirsin</h2>
