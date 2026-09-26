@@ -233,6 +233,7 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
   section("product-comparison", "Ürün Karşılaştırma", "commerce", ["content", "landing"], ["products", "fields", "layout"]),
 
   section("hero", "Hero", "media", allContentPages, ["desktopMedia", "mobileMedia", "height", "focalPoint", "overlay", "cta", "contrast"], [], true),
+  section("scroll-story", "Scroll Story", "media", allContentPages, ["desktopMedia", "mobileMedia", "layout", "animation"], [], true),
   section("video-hero", "Video Hero", "media", allContentPages, ["video", "poster", "focalPoint", "loop", "muted", "cta"]),
   section("image-banner", "Image Banner", "media", allCommercePages, ["image", "height", "focalPoint", "overlay", "text", "cta"], [], true),
   section("video-banner", "Video Banner", "media", allCommercePages, ["video", "poster", "height", "fit", "text", "cta"]),
@@ -265,12 +266,12 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
   section("press-awards", "Press / Awards", "content", allContentPages, ["layout"], ["award"], false, 30),
   section("team", "Team", "content", allContentPages, ["layout"], ["member"], false, 30),
 
-  section("announcement-bar", "Announcement Bar", "marketing", ["home", "content", "landing"], ["text", "links", "rotation", "sticky", "schedule"], ["announcement"], true, 8),
+  section("announcement-bar", "Announcement Bar", "marketing", ["home", "content", "landing"], ["text", "links", "rotation", "sticky", "schedule"], ["announcement"], false, 8),
   section("promo-banner", "Promo Banner", "marketing", allContentPages, ["copy", "cta", "media", "schedule"]),
   section("countdown", "Countdown", "marketing", allContentPages, ["targetTime", "completedState", "style"]),
   section("marquee", "Marquee / Ticker", "marketing", allContentPages, ["speed", "pause"], ["ticker-item"], false, 20),
   section("newsletter", "Newsletter", "marketing", allContentPages, ["heading", "body", "fieldLabel", "consent", "successCopy"]),
-  section("contact-form", "Contact Form", "marketing", ["content", "landing"], ["fieldVisibility", "labels", "copy", "successState"], [], true),
+  section("contact-form", "Contact Form", "marketing", ["content", "landing"], ["fieldVisibility", "labels", "copy", "successState"], [], false),
   section("custom-form", "Custom Form", "marketing", ["content", "landing"], ["schema", "successCopy"], ["field"], false, 20),
   section("map-locator", "Map / Store Locator", "marketing", allContentPages, ["locations", "mapStyle", "cta"]),
   section("rewards-promo", "Puan / Ödül Promo", "marketing", allCommercePages, ["media", "copy", "cta", "layout"]),
