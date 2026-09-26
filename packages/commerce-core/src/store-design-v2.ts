@@ -101,6 +101,7 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
   component("hero-wordmark", "Hero Wordmark", "Ana Sayfa", "section", sectionScopes, ["layout", "typography", "responsive"], ["rawTransform"]),
   component("scroll-story", "Scroll Story", "Ana Sayfa", "section", sectionScopes, ["content", "media", "layout", "animation", "responsive"], ["rawJs"]),
   component("scroll-story-media", "Scroll Story Medyası", "Ana Sayfa", "instance", instanceScopes, ["media", "responsive"], ["freeFrame"]),
+  component("scroll-story-slide", "Scroll Story Slide", "Ana Sayfa", "instance", instanceScopes, ["content", "media", "responsive"], ["freeFrame", "rawAnimation"]),
   component("editorial-text", "Editorial Metin", "Ana Sayfa", "section", ["instance", "section"], ["content", "typography", "animation", "responsive"], ["rawEasing"]),
   component("collections-section", "Koleksiyonlar", "Ana Sayfa", "section", sectionScopes, ["data", "layout", "responsive"], ["catalogMembership"]),
   component("collection-card", "Koleksiyon Kartı", "Ana Sayfa", "family", familyScopes, ["card", "typography", "responsive"], ["catalogMembership", "individualWidth"]),
@@ -279,7 +280,7 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
   section("product-comparison", "Ürün Karşılaştırma", "commerce", ["content", "landing"], ["products", "fields", "layout"]),
 
   section("hero", "Hero", "media", allContentPages, ["imageAssetId", "posterAssetId", "heightPreset", "fit", "playbackPreset", "title", "body", "linkLabel", "linkHref", "align", "overlayOpacity", "contrastMode"], [], true),
-  section("scroll-story", "Scroll Story", "media", allContentPages, ["desktopMedia", "mobileMedia", "layout", "animation"], [], true),
+  section("scroll-story", "Scroll Story", "media", allContentPages, ["scrollLengthPreset", "transitionPreset", "cueVisibility"], ["scroll-story-slide"], true, 8),
   section("video-hero", "Video Hero", "media", allContentPages, ["imageAssetId", "posterAssetId", "heightPreset", "fit", "playbackPreset", "title", "body", "linkLabel", "linkHref", "align", "overlayOpacity", "contrastMode"], [], true),
   section("image-banner", "Image Banner", "media", allCommercePages, ["image", "height", "focalPoint", "overlay", "text", "cta"], [], true),
   section("video-banner", "Video Banner", "media", allCommercePages, ["imageAssetId", "posterAssetId", "heightPreset", "fit", "playbackPreset", "title", "body", "linkLabel", "linkHref", "align", "overlayOpacity", "contrastMode"], [], true),
@@ -506,6 +507,7 @@ const block = (
 export const BLOCK_LIBRARY: BlockDefinition[] = [
   block("faq-item", "FAQ Öğesi", ["faq"], ["question", "answer"], true),
   block("slide", "Slayt", ["slideshow"], ["media", "title", "body", "cta"], true),
+  block("scroll-story-slide", "Scroll Story Slide", ["scroll-story"], ["assetId", "title", "body", "href"], true),
   block("media", "Medya", ["gallery-grid", "masonry-gallery", "collage"], ["assetId", "alt", "link"], true),
   block("rich-text", "Metin Bloğu", ["image-text-split", "video-text-split"], ["heading", "body", "cta"], true),
   block("hotspot", "Hotspot", ["hotspot-lookbook"], ["x", "y", "targetType", "targetId"], true),
@@ -1289,6 +1291,23 @@ export function validateThemeDocument(document: ThemeDocument) {
     }
     if (asset && section.type === "video-text-split" && asset.type !== "video") {
       errors.push(`${section.id}: Video + Text Split yalnız video asset kabul eder.`);
+    }
+
+    if (section.type === "scroll-story") {
+      const lengthPreset = String(section.settings.scrollLengthPreset || "standard");
+      if (!["compact", "standard", "long"].includes(lengthPreset)) errors.push(`${section.id}: Scroll Story uzunluk preset geçersiz.`);
+      const transitionPreset = String(section.settings.transitionPreset || "fade-scale");
+      if (!["fade-scale", "fade"].includes(transitionPreset)) errors.push(`${section.id}: Scroll Story transition preset geçersiz.`);
+      if ((section.blockIds || []).length > 0) {
+        for (const blockId of section.blockIds || []) {
+          const block = document.blocks[blockId];
+          if (!block || block.type !== "scroll-story-slide") continue;
+          const assetId = typeof block.settings.assetId === "string" ? block.settings.assetId : "";
+          if (!assetId) errors.push(`${blockId}: Scroll Story slide medya seçimi zorunlu.`);
+          const asset = assetId ? document.media[assetId] : undefined;
+          if (assetId && !asset) errors.push(`${blockId}: Scroll Story medya referansı bulunamadı (${assetId}).`);
+        }
+      }
     }
 
     if (section.type === "collection-cards") {
