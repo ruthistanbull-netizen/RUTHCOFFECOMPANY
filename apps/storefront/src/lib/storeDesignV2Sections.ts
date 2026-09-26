@@ -88,7 +88,7 @@ export function storeDesignSectionsForPage(document: ThemeDocument, page: PageRe
     .map((section) => {
       const { semantic: _semantic, ...settings } = section.settings || {};
       const v2BlockSection = BLOCK_RENDER_SECTION_TYPES.has(section.type);
-      const semanticV2Section = v2BlockSection || section.type === "hero";
+      const semanticV2Section = v2BlockSection || ["hero", "collection-cards", "brand-story"].includes(section.type);
       const normalized = normalizeThemeSection({
         id: section.id,
         type: LEGACY_RENDER_ALIASES[section.type] || (v2BlockSection ? "rich-text" : section.type),
