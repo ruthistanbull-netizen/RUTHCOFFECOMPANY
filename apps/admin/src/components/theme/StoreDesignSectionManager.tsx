@@ -61,6 +61,7 @@ const RENDERABLE_SECTION_TYPES = new Set([
   "product-spotlight",
   "featured-collection",
   "category-cards",
+  "product-comparison",
   "new-arrivals",
   "sale-products",
   "video-hero",
@@ -156,6 +157,9 @@ function defaultSettings(type: string): Record<string, unknown> {
   }
   if (type === "category-cards") {
     return { title: "Kategoriler", eyebrow: "Keşfet", source: "catalog", limit: 6, columns: 3, gap: 20, ratio: "4/5", titlePlacement: "overlay", paddingY: 80 };
+  }
+  if (type === "product-comparison") {
+    return { productIds: [], fields: ["price", "stock", "description"], layout: "table", title: "Ürünleri Karşılaştır", paddingY: 80 };
   }
   if (type === "new-arrivals") {
     return { title: "Yeni Gelenler", productLimit: 12, desktopItems: 4, mobileItems: 2, gap: 12, paddingY: 64, layout: "slider", showArrows: true };
@@ -306,6 +310,7 @@ const GENERIC_V2_SECTION_TYPES = new Set([
   "product-spotlight",
   "featured-collection",
   "category-cards",
+  "product-comparison",
   "collection-cards",
   "brand-story",
   "video-hero",
