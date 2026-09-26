@@ -457,7 +457,7 @@ function HorizontalStoryPanelView({
           </div>
           <motion.h2
             className="home-horizontal-story-title"
-            style={{ y: titleY, opacity: titleOpacity, willChange: "transform, opacity" }}
+            style={{ y: titleY, opacity: titleOpacity }}
             data-theme-id={`home-horizontal-title-${index + 1}`}
             data-theme-label="Yatay hikaye başlığı"
           >
@@ -465,7 +465,7 @@ function HorizontalStoryPanelView({
           </motion.h2>
           <motion.p
             className="home-horizontal-story-desc"
-            style={{ y: descY, opacity: descOpacity, willChange: "transform, opacity" }}
+            style={{ y: descY, opacity: descOpacity }}
             data-theme-id={`home-horizontal-desc-${index + 1}`}
             data-theme-label="Yatay hikaye açıklaması"
           >
@@ -479,7 +479,6 @@ function HorizontalStoryPanelView({
             scale: cardsScale,
             rotate: cardsRotate,
             opacity: cardsOpacity,
-            willChange: "transform, opacity",
           }}
         >
           <HorizontalStoryCard id={firstCardId} media={firstMedia} order={0} />
@@ -498,22 +497,15 @@ function HorizontalPortfolioStory({
   mobileViewport: boolean;
 }) {
   const ref = useRef<HTMLElement | null>(null);
-  const reduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end end"],
   });
 
-  const smooth = useSpring(scrollYProgress, {
-    stiffness: 120,
-    damping: 28,
-    mass: 0.34,
-    restDelta: 0.0001,
-    restSpeed: 0.0001,
-  });
-  // On touch devices, follow the finger directly instead of letting the spring
-  // catch up after a fast swipe. Desktop keeps the soft eased follower.
-  const motionProgress = reduceMotion || mobileViewport ? scrollYProgress : smooth;
+  // Keep the horizontal story locked directly to native scroll progress.
+  // The previous spring kept animating after the user's scroll input stopped,
+  // which made this large 400vw scene feel heavy on slower devices.
+  const motionProgress = scrollYProgress;
   const x = useTransform(
     motionProgress,
     mobileViewport
@@ -533,6 +525,9 @@ function HorizontalPortfolioStory({
           display:flex;
           width:400vw;
           height:100svh;
+          transform:translateZ(0);
+          backface-visibility:hidden;
+          contain:layout paint style;
         }
         .home-horizontal-story-panel{
           display:flex;
@@ -540,6 +535,8 @@ function HorizontalPortfolioStory({
           padding:clamp(24px,4vw,60px);
           background:var(--rosta-carbon);
           color:var(--rosta-cream);
+          contain:layout paint style;
+          backface-visibility:hidden;
         }
         .home-horizontal-story-panel-inner{
           width:100%;
@@ -592,25 +589,30 @@ function HorizontalPortfolioStory({
           border:1px solid color-mix(in srgb,var(--rosta-cream) 12%,transparent);
           box-shadow:0 10px 30px rgba(0,0,0,.3);
           transform-origin:center;
-          transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s ease,filter .35s ease;
-          will-change:transform;
+          transition:transform .28s cubic-bezier(.2,.8,.2,1),box-shadow .28s ease;
+          backface-visibility:hidden;
         }
         .home-horizontal-story-card--a{
           left:8%;
           top:7%;
-          transform:rotate(-10deg);
+          transform:translateZ(0) rotate(-10deg);
         }
         .home-horizontal-story-card--b{
           right:8%;
           top:14%;
-          transform:rotate(8deg);
+          transform:translateZ(0) rotate(8deg);
           opacity:.88;
         }
-        .home-horizontal-story-card:hover{
-          transform:translateY(-18px) scale(1.08) rotate(6deg);
-          box-shadow:0 40px 120px rgba(0,0,0,.7),0 0 50px rgba(255,255,255,.12);
-          filter:brightness(1.08) saturate(1.08);
-          z-index:10;
+        @media(hover:hover) and (pointer:fine){
+          .home-horizontal-story-card:hover{
+            transform:translate3d(0,-14px,0) scale(1.06) rotate(6deg);
+            box-shadow:0 28px 72px rgba(0,0,0,.52);
+            z-index:10;
+          }
+        }
+        .home-horizontal-story-card :is(img,video){
+          display:block;
+          backface-visibility:hidden;
         }
         @media(max-width:767px){
           .home-horizontal-story-panel{
