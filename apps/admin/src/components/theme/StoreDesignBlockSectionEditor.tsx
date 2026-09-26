@@ -178,7 +178,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
     }
   };
 
-  const hasColumns = ["gallery-grid", "logo-cloud", "text-columns", "stats", "feature-grid", "trust-badges", "testimonials", "press-awards", "team"].includes(section.type);
+  const hasColumns = ["gallery-grid", "masonry-gallery", "collage", "social-grid", "logo-cloud", "text-columns", "stats", "feature-grid", "trust-badges", "testimonials", "press-awards", "team"].includes(section.type);
   const hasGap = hasColumns || section.type === "slideshow";
   const hasGenericBody = ["heading-subtext", "manifesto", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const hasAlign = ["heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta"].includes(section.type);
@@ -311,6 +311,34 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   <label className="flex items-center justify-between gap-3 rounded-lg border border-black/10 bg-white p-2.5 text-[8px] font-semibold text-black/45">
                     Etiketi erişilebilir içerikte tut
                     <input type="checkbox" checked={settings.labelVisibility === true} onChange={(event) => updateSetting("labelVisibility", event.target.checked)} />
+                  </label>
+                </>
+              ) : null}
+              {["image-text-split", "video-text-split"].includes(section.type) ? (
+                <>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                    Bölüm medyası
+                    <select value={text(settings.imageAssetId)} onChange={(event) => updateSetting("imageAssetId", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="">Medya seçilmedi</option>
+                      {mediaAssets
+                        .filter((asset) => section.type === "video-text-split" ? asset.type === "video" : asset.type === "image")
+                        .map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.type} · {asset.assetId} · v{asset.version || 1}</option>)}
+                    </select>
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Medya konumu
+                    <select value={text(settings.side) || "left"} onChange={(event) => updateSetting("side", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="left">Sol</option>
+                      <option value="right">Sağ</option>
+                    </select>
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    İçerik genişliği
+                    <select value={text(settings.contentWidth) || "50%"} onChange={(event) => updateSetting("contentWidth", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="40%">40%</option>
+                      <option value="50%">50%</option>
+                      <option value="60%">60%</option>
+                    </select>
                   </label>
                 </>
               ) : null}
