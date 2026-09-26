@@ -820,33 +820,40 @@ export function PaytrIframeCheckoutClient() {
                   <h2 className="mt-1 font-heading text-lg text-cream">Siparişin nereye gelsin?</h2>
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <Field label="İl" required editorId="form-field:city">
-                    <input
-                      required
-                      autoComplete="address-level1"
-                      value={form.city}
-                      onChange={(event) => {
-                        setPayment(null);
-                        setForm((current) => ({
-                          ...current,
-                          city: event.target.value,
-                          district: "",
-                        }));
-                      }}
-                      className={`${inputClass} cursor-pointer`}
-                      placeholder="İl seç"
-                    />
-                  </Field>
-                  <Field label="İlçe" required editorId="form-field:district">
-                    <input
-                      required
-                      autoComplete="address-level2"
-                      value={form.district}
-                      onChange={(event) => updateField("district", event.target.value)}
-                      className={`${inputClass} cursor-pointer`}
-                      placeholder="Önce il seç"
-                    />
-                  </Field>
+                  <div
+                    data-editor-id="city-district-selector"
+                    data-editor-type="city-district-selector"
+                    data-editor-label="İl / İlçe"
+                    className="contents"
+                  >
+                    <Field label="İl" required editorId="form-field:city">
+                      <input
+                        required
+                        autoComplete="address-level1"
+                        value={form.city}
+                        onChange={(event) => {
+                          setPayment(null);
+                          setForm((current) => ({
+                            ...current,
+                            city: event.target.value,
+                            district: "",
+                          }));
+                        }}
+                        className={`${inputClass} cursor-pointer`}
+                        placeholder="İl seç"
+                      />
+                    </Field>
+                    <Field label="İlçe" required editorId="form-field:district">
+                      <input
+                        required
+                        autoComplete="address-level2"
+                        value={form.district}
+                        onChange={(event) => updateField("district", event.target.value)}
+                        className={`${inputClass} cursor-pointer`}
+                        placeholder="Önce il seç"
+                      />
+                    </Field>
+                  </div>
                   <div className="sm:col-span-2">
                     <Field label="Posta Kodu (isteğe bağlı)" editorId="form-field:postal-code">
                       <input inputMode="numeric" autoComplete="postal-code" maxLength={10} value={form.postalCode} onChange={(event) => updateField("postalCode", event.target.value.replace(/[^0-9A-Za-z -]/g, ""))} className={inputClass} />
