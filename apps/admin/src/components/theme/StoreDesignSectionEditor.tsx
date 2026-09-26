@@ -1,9 +1,11 @@
 "use client";
 
-import { Save, X } from "lucide-react";
+import { ArrowDown, ArrowUp, Plus, Save, Trash2, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
+  BLOCK_LIBRARY_BY_TYPE,
   SECTION_LIBRARY_BY_TYPE,
+  STORE_DESIGN_SCHEMA_VERSION,
   type SectionInstance,
   type ThemeDocument,
 } from "@ruth-commerce/commerce-core/store-design-v2";
@@ -21,6 +23,7 @@ const EDITABLE_TYPES = new Set([
   "product-slider",
   "image-banner",
   "rich-text",
+  "faq",
 ]);
 
 export function canEditStoreDesignSection(type: string) {
@@ -40,10 +43,25 @@ function booleanValue(value: unknown, fallback: boolean) {
   return typeof value === "boolean" ? value : fallback;
 }
 
+type FaqDraftItem = { id: string; question: string; answer: string };
+
+function uid(prefix: string) {
+  const random = globalThis.crypto?.randomUUID?.().replace(/-/g, "") || Math.random().toString(36).slice(2);
+  return `${prefix}-${random}`.slice(0, 160);
+}
+
 export function StoreDesignSectionEditor({ document, section, onApply, onClose }: Props) {
   const toast = useExactToast();
   const definition = SECTION_LIBRARY_BY_TYPE[section.type];
   const [settings, setSettings] = useState<Record<string, unknown>>(() => structuredClone(section.settings || {}));
+  const [faqItems, setFaqItems] = useState<FaqDraftItem[]>(() => (section.blockIds || [])
+    .map((blockId) => document.blocks[blockId])
+    .filter((block) => block?.type === "faq-item")
+    .map((block) => ({
+      id: block.id,
+      question: textValue(block.settings.question),
+      answer: textValue(block.settings.answer),
+    })));
   const [busy, setBusy] = useState(false);
 
   const imageAssets = useMemo(
@@ -60,12 +78,28 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
     setBusy(true);
     try {
       const next = structuredClone(document) as ThemeDocument;
+      const nextBlockIds = section.type === "faq" ? faqItems.map((item) => item.id) : section.blockIds;
+      if (section.type === "faq") {
+        for (const blockId of section.blockIds || []) delete next.blocks[blockId];
+        for (const item of faqItems) {
+          next.blocks[item.id] = {
+            id: item.id,
+            type: "faq-item",
+            schemaVersion: STORE_DESIGN_SCHEMA_VERSION,
+            settings: {
+              question: item.question.trim(),
+              answer: item.answer.trim(),
+            },
+          };
+        }
+      }
       next.sections[section.id] = {
         ...section,
         settings: {
           ...section.settings,
           ...settings,
         },
+        blockIds: nextBlockIds,
       };
       await onApply(next, `${definition?.label || "Bölüm"} ayarları güncellendi`);
       onClose();
@@ -79,6 +113,7 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
   const productSection = section.type === "featured-products" || section.type === "product-slider";
   const imageBanner = section.type === "image-banner";
   const richText = section.type === "rich-text";
+  const faq = section.type === "faq";
 
   return (
     <div className="fixed inset-0 z-[2147483605] grid place-items-center bg-black/35 p-3 backdrop-blur-sm">
@@ -135,6 +170,66 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
                   <input type="checkbox" checked={booleanValue(settings.showArrows, true)} onChange={(event) => set("showArrows", event.target.checked)} />
                 </label>
               ) : null}
+            </div>
+          ) : null}
+
+          {faq ? (
+            <div className="grid gap-4">
+              <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
+                Bölüm başlığı
+                <input value={textValue(settings.title)} onChange={(event) => set("title", event.target.value)} className="h-10 rounded-lg border border-black/10 px-3 text-[10px] outline-none" />
+              </label>
+              <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
+                Dikey boşluk
+                <input type="number" min={0} max={240} value={numberValue(settings.paddingY, 64)} onChange={(event) => set("paddingY", Number(event.target.value))} className="h-10 rounded-lg border border-black/10 px-3 text-[10px] outline-none" />
+              </label>
+
+              <div className="rounded-xl border border-black/[0.08] bg-[#fafafa] p-3">
+                <div className="flex items-center gap-2">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[9px] font-semibold">Bloklar</p>
+                    <p className="mt-1 text-[7px] text-black/35">{BLOCK_LIBRARY_BY_TYPE["faq-item"]?.label || "FAQ Öğesi"} · en fazla {definition?.maxBlocks || 30}</p>
+                  </div>
+                  <button
+                    type="button"
+                    disabled={faqItems.length >= (definition?.maxBlocks || 30)}
+                    onClick={() => setFaqItems((items) => [...items, { id: uid("block-faq-item"), question: "Yeni soru", answer: "" }])}
+                    className="flex h-8 items-center gap-1 rounded-lg bg-[#111] px-2.5 text-[8px] font-semibold text-white disabled:opacity-35"
+                  >
+                    <Plus className="h-3 w-3" />Blok Ekle
+                  </button>
+                </div>
+
+                <div className="mt-3 space-y-2">
+                  {faqItems.map((item, index) => (
+                    <div key={item.id} className="rounded-lg border border-black/[0.08] bg-white p-3">
+                      <div className="flex items-center gap-1">
+                        <p className="min-w-0 flex-1 truncate text-[8px] font-semibold">{index + 1}. FAQ Öğesi</p>
+                        <button type="button" disabled={index === 0} onClick={() => setFaqItems((items) => {
+                          const next = [...items];
+                          [next[index - 1], next[index]] = [next[index]!, next[index - 1]!];
+                          return next;
+                        })} className="grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04] disabled:opacity-20" aria-label="Bloku yukarı taşı"><ArrowUp className="h-3 w-3" /></button>
+                        <button type="button" disabled={index === faqItems.length - 1} onClick={() => setFaqItems((items) => {
+                          const next = [...items];
+                          [next[index + 1], next[index]] = [next[index]!, next[index + 1]!];
+                          return next;
+                        })} className="grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04] disabled:opacity-20" aria-label="Bloku aşağı taşı"><ArrowDown className="h-3 w-3" /></button>
+                        <button type="button" onClick={() => setFaqItems((items) => items.filter((entry) => entry.id !== item.id))} className="grid h-7 w-7 place-items-center rounded-md text-red-600 hover:bg-red-50" aria-label="Bloku sil"><Trash2 className="h-3 w-3" /></button>
+                      </div>
+                      <label className="mt-2 grid gap-1 text-[8px] font-semibold text-black/45">
+                        Soru
+                        <input value={item.question} onChange={(event) => setFaqItems((items) => items.map((entry) => entry.id === item.id ? { ...entry, question: event.target.value } : entry))} className="h-9 rounded-lg border border-black/10 px-2.5 text-[9px] font-medium text-black outline-none" />
+                      </label>
+                      <label className="mt-2 grid gap-1 text-[8px] font-semibold text-black/45">
+                        Cevap
+                        <textarea value={item.answer} onChange={(event) => setFaqItems((items) => items.map((entry) => entry.id === item.id ? { ...entry, answer: event.target.value } : entry))} className="min-h-20 resize-y rounded-lg border border-black/10 p-2.5 text-[9px] leading-5 text-black outline-none" />
+                      </label>
+                    </div>
+                  ))}
+                  {!faqItems.length ? <p className="py-4 text-center text-[8px] text-black/35">Henüz blok yok. “Blok Ekle” ile ilk FAQ öğesini oluştur.</p> : null}
+                </div>
+              </div>
             </div>
           ) : null}
 
