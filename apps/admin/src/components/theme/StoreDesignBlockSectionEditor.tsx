@@ -225,6 +225,25 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   </label>
                 </>
               ) : null}
+              {section.type === "countdown" ? (
+                <>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                    Hedef zaman
+                    <input type="datetime-local" value={text(settings.targetTime).slice(0, 16)} onChange={(event) => updateSetting("targetTime", event.target.value ? new Date(event.target.value).toISOString() : "")} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Bitiş metni
+                    <input value={text(settings.completedState)} onChange={(event) => updateSetting("completedState", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Stil
+                    <select value={text(settings.style) || "cards"} onChange={(event) => updateSetting("style", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="cards">Kartlar</option>
+                      <option value="inline">Inline</option>
+                    </select>
+                  </label>
+                </>
+              ) : null}
               {section.type === "shipping-returns-cta" ? (
                 <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                   İkon / sembol
