@@ -7,6 +7,8 @@ export type ThemeSectionType =
   | "trust"
   | "product-slider"
   | "product-grid"
+  | "new-arrivals"
+  | "sale-products"
   | "image-banner"
   | "rich-text"
   | "faq";
@@ -44,6 +46,8 @@ export type ThemeSection = {
   textColor?: string;
   autoplay?: boolean;
   showArrows?: boolean;
+  layout?: "slider" | "grid";
+  badgeStyle?: "pill" | "outline" | "minimal";
   /** V2 registry section identity when the legacy renderer type is only an adapter shell. */
   v2Type?: string;
   v2Settings?: Record<string, unknown>;
@@ -158,7 +162,7 @@ function pagePath(value: unknown) {
 
 const sectionTypes = new Set<ThemeSectionType>([
   "hero", "scroll-story", "collections", "featured-products", "brand-story", "trust",
-  "product-slider", "product-grid", "image-banner", "rich-text", "faq",
+  "product-slider", "product-grid", "new-arrivals", "sale-products", "image-banner", "rich-text", "faq",
 ]);
 
 export function normalizeThemeSection(input: unknown, index = 0): ThemeSection | null {
@@ -197,6 +201,8 @@ export function normalizeThemeSection(input: unknown, index = 0): ThemeSection |
     textColor: color(raw.textColor),
     autoplay: typeof raw.autoplay === "boolean" ? raw.autoplay : undefined,
     showArrows: typeof raw.showArrows === "boolean" ? raw.showArrows : undefined,
+    layout: raw.layout === "grid" || raw.layout === "slider" ? raw.layout : undefined,
+    badgeStyle: raw.badgeStyle === "outline" || raw.badgeStyle === "minimal" || raw.badgeStyle === "pill" ? raw.badgeStyle : undefined,
   };
 }
 
@@ -268,6 +274,7 @@ export function themeSectionRenderSignature(settings: ThemeSectionSettings) {
       productSource: section.productSource,
       productSourceId: section.productSourceId,
       productLimit: section.productLimit,
+      layout: section.layout,
       showArrows: section.showArrows,
       hasTitle: Boolean(section.title),
       hasEyebrow: Boolean(section.eyebrow),
@@ -283,6 +290,12 @@ export function createThemeSection(type: ThemeSectionType, id = `section-${Date.
   }
   if (type === "product-slider") {
     return { id, type, enabled: true, title: "Ürünler", productSource: "featured", productLimit: 12, desktopItems: 4, mobileItems: 2, gap: 12, paddingY: 64, showArrows: true, autoplay: false };
+  }
+  if (type === "new-arrivals") {
+    return { id, type, enabled: true, title: "Yeni Gelenler", productLimit: 12, desktopItems: 4, mobileItems: 2, gap: 12, paddingY: 64, layout: "slider", showArrows: true };
+  }
+  if (type === "sale-products") {
+    return { id, type, enabled: true, title: "İndirimdekiler", productLimit: 12, desktopItems: 4, mobileItems: 2, gap: 12, paddingY: 64, layout: "slider", showArrows: true, badgeStyle: "pill" };
   }
   if (type === "image-banner") {
     return { id, type, enabled: true, title: "Yeni Bölüm", desktopHeight: 520, mobileHeight: 360, paddingY: 0, borderRadius: 0 };
