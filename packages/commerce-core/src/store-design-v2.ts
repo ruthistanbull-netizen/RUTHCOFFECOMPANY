@@ -513,8 +513,12 @@ export function isReservedPageSlug(slug: unknown) {
 }
 
 function normalizeRoute(value: unknown, fallback = "/") {
-  const raw = stringValue(value, fallback, 240).split(/[?#]/)[0] || fallback;
-  const withSlash = `/${raw.replace(/^\/+/, "")}`.replace(/\/{2,}/g, "/");
+  const input = stringValue(value, "", 240).split(/[?#]/)[0];
+  if (!input) {
+    if (!fallback) return "";
+    return normalizeRoute(fallback, "");
+  }
+  const withSlash = `/${input.replace(/^\/+/, "")}`.replace(/\/{2,}/g, "/");
   return withSlash.length > 1 && withSlash.endsWith("/") ? withSlash.slice(0, -1) : withSlash;
 }
 
