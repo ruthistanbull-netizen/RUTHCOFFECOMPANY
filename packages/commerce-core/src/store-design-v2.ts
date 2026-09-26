@@ -268,7 +268,7 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
   section("product-spotlight", "Tek Ürün Spotlight", "commerce", allCommercePages, ["productId", "mediaPosition", "infoBlocks", "cta"]),
   section("featured-collection", "Featured Collection", "commerce", allCommercePages, ["collectionId", "layout", "limit", "cta"]),
   section("category-cards", "Kategori Kartları", "commerce", allContentPages, ["source", "ratio", "columns", "titlePlacement"]),
-  section("collection-cards", "Koleksiyon Kartları", "commerce", allContentPages, ["source", "ratio", "columns", "titlePlacement"], [], true),
+  section("collection-cards", "Koleksiyon Kartları", "commerce", allContentPages, ["title", "eyebrow", "source", "limit", "ratio", "columns", "gap", "titlePlacement", "paddingY"], [], true),
   section("new-arrivals", "Yeni Gelenler", "commerce", allCommercePages, ["limit", "layout"], [], true),
   section("best-sellers", "Çok Satanlar", "commerce", allCommercePages, ["window", "limit", "layout"]),
   section("sale-products", "İndirimdekiler", "commerce", allCommercePages, ["limit", "layout", "badgeStyle"], [], true),
@@ -298,7 +298,7 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
   section("rich-text", "Rich Text", "content", allContentPages, ["eyebrow", "headingRole", "body", "align", "width", "cta"], [], true),
   section("heading-subtext", "Başlık + Alt Metin", "content", allContentPages, ["title", "body", "role", "size", "maxWidth", "align"], [], true),
   section("text-columns", "Metin Kolonları", "content", allContentPages, ["columns", "gap"], ["text-column"], true, 4),
-  section("brand-story", "Brand Story", "content", allContentPages, ["media", "copy", "layout"], [], true),
+  section("brand-story", "Brand Story", "content", allContentPages, ["imageAssetId", "title", "eyebrow", "body", "linkLabel", "linkHref", "side", "contentWidth", "playbackPreset", "paddingY"], [], true),
   section("manifesto", "Manifesto / Statement", "content", allContentPages, ["title", "body", "typography", "maxWidth", "align"], [], true),
   section("quote", "Quote / Pull Quote", "content", allContentPages, ["quote", "attribution", "align"], [], true),
   section("stats", "İstatistik / Sayaç", "content", allContentPages, ["columns", "animation"], ["stat"], true, 8),
@@ -1289,6 +1289,28 @@ export function validateThemeDocument(document: ThemeDocument) {
     }
     if (asset && section.type === "video-text-split" && asset.type !== "video") {
       errors.push(`${section.id}: Video + Text Split yalnız video asset kabul eder.`);
+    }
+
+    if (section.type === "collection-cards") {
+      const columns = Number(section.settings.columns ?? 2);
+      if (!Number.isFinite(columns) || columns < 1 || columns > 4) errors.push(`${section.id}: Koleksiyon kartı kolon sayısı 1-4 aralığında olmalı.`);
+      const limit = Number(section.settings.limit ?? 4);
+      if (!Number.isFinite(limit) || limit < 1 || limit > 12) errors.push(`${section.id}: Koleksiyon kartı limiti 1-12 aralığında olmalı.`);
+      const gap = Number(section.settings.gap ?? 20);
+      if (!Number.isFinite(gap) || gap < 0 || gap > 64) errors.push(`${section.id}: Koleksiyon kartı gap 0-64 aralığında olmalı.`);
+      const ratio = String(section.settings.ratio || "16/10");
+      if (!["16/10", "4/5", "1/1"].includes(ratio)) errors.push(`${section.id}: Koleksiyon kartı ratio preset geçersiz.`);
+      const placement = String(section.settings.titlePlacement || "overlay");
+      if (!["overlay", "below"].includes(placement)) errors.push(`${section.id}: Koleksiyon kartı titlePlacement geçersiz.`);
+    }
+
+    if (section.type === "brand-story" && imageAssetId) {
+      const playbackPreset = String(section.settings.playbackPreset || "ambient");
+      if (!["ambient", "once", "controls"].includes(playbackPreset)) errors.push(`${section.id}: Brand Story playbackPreset geçersiz.`);
+      const side = String(section.settings.side || "left");
+      if (!["left", "right"].includes(side)) errors.push(`${section.id}: Brand Story media side geçersiz.`);
+      const contentWidth = String(section.settings.contentWidth || "50%");
+      if (!["40%", "50%", "60%"].includes(contentWidth)) errors.push(`${section.id}: Brand Story contentWidth geçersiz.`);
     }
 
     if (section.type === "hero" && imageAssetId) {
