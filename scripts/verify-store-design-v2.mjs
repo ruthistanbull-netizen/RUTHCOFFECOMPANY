@@ -141,6 +141,85 @@ for (const type of requiredRegisteredTypes) {
   if (!registry.has(type)) fail(`Kritik semantic type registry'de yok: ${type}`);
 }
 
+
+const allSourceFiles = [...walk("apps/storefront/src"), ...walk("apps/admin/src")];
+for (const relativePath of allSourceFiles) {
+  const source = read(relativePath);
+  if (/<<<<<<<|=======|>>>>>>>/.test(source)) fail(`Conflict marker bulundu: ${relativePath}`);
+  if (source.includes("MutationObserver")) fail(`MutationObserver yasak: ${relativePath}`);
+  if (/postMessage\s*\([^)]*,\s*["']\*["']\s*\)/s.test(source)) fail(`Wildcard postMessage origin bulundu: ${relativePath}`);
+}
+
+const requiredV21Files = [
+  "apps/admin/src/components/theme/StoreDesignPublishReport.tsx",
+  "apps/admin/src/components/theme/StoreDesignSnapshotManager.tsx",
+  "apps/admin/src/components/theme/StoreDesignRedirectManager.tsx",
+  "apps/admin/src/components/theme/StoreDesignTemplateManager.tsx",
+  "apps/admin/src/components/theme/StoreDesignMediaLibrary.tsx",
+  "apps/admin/src/components/theme/StoreDesignBlockSectionEditor.tsx",
+  "apps/admin/src/components/theme/StoreDesignPresetLibrary.tsx",
+  "apps/storefront/src/components/theme/StoreDesignBlockSection.tsx",
+];
+
+for (const relativePath of requiredV21Files) read(relativePath);
+
+for (const token of [
+  "analyzeThemeDocumentReferences",
+  "ThemeReferenceIssue",
+  "presets:",
+  "SectionPresetRecord",
+  "migrateThemeDocument",
+  "flattenThemeRedirects",
+]) {
+  if (!core.includes(token)) fail(`V2.1 core sözleşmede eksik token: ${token}`);
+}
+
+const publishReport = read("apps/admin/src/components/theme/StoreDesignPublishReport.tsx");
+if (!publishReport.includes("Publish Öncesi Kontrol")) fail("Publish öncesi kırık referans raporu bağlı değil.");
+
+const sectionManager = read("apps/admin/src/components/theme/StoreDesignSectionManager.tsx");
+for (const token of ["StoreDesignPresetLibrary", "StoreDesignBlockSectionEditor", "allowedBlocks", "Presetler"]) {
+  if (!sectionManager.includes(token)) fail(`Section Manager V2.1 eksik: ${token}`);
+}
+
+const blockRenderer = read("apps/storefront/src/components/theme/StoreDesignBlockSection.tsx");
+for (const type of [
+  "slideshow",
+  "gallery-grid",
+  "text-columns",
+  "stats",
+  "timeline",
+  "feature-grid",
+  "trust-badges",
+  "testimonials",
+  "tabs",
+  "press-awards",
+  "team",
+  "announcement-bar",
+  "marquee",
+  "heading-subtext",
+  "manifesto",
+  "quote",
+  "promo-banner",
+  "shipping-returns-cta",
+  "spacer",
+  "divider",
+  "anchor",
+]) {
+  if (!blockRenderer.includes(`"${type}"`)) fail(`Block section runtime eksik: ${type}`);
+}
+
+const storefrontData = read("apps/storefront/src/data/site.ts");
+if (!storefrontData.includes("migrateThemeDocument")) fail("Storefront published/preview theme read migration katmanından geçmiyor.");
+if (!storefrontData.includes("legacy storefront fallback")) fail("Unsupported schema için güvenli storefront fallback eksik.");
+
+const v2Api = read("apps/admin/src/app/api/store-design-v2/route.ts");
+for (const token of ["MAX_PUBLISH_SNAPSHOTS", "SNAPSHOT_PREFIX", "validateThemeDocument", "migrateThemeDocument"]) {
+  if (!v2Api.includes(token)) fail(`Publish API güvenilirlik adımı eksik: ${token}`);
+}
+
+note(`Toplam admin+storefront kaynak dosyası: ${allSourceFiles.length}`);
+
 note(`Registry component sayısı: ${registry.size}`);
 note(`Storefront'ta literal semantic target tipi: ${semanticTypes.size}`);
 note(`Taranan storefront kaynak dosyası: ${sourceFiles.length}`);
