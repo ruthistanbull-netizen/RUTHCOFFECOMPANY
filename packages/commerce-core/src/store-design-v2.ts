@@ -121,6 +121,7 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
   component("gallery", "Galeri", "İçerik", "section", sectionScopes, ["media", "layout", "responsive"], ["freeCanvas"]),
   component("slideshow", "Slideshow", "İçerik", "section", sectionScopes, ["content", "media", "layout", "animation", "responsive"], ["rawJs"]),
   component("faq-accordion", "SSS Accordion", "İçerik", "family", familyScopes, ["content", "layout", "animation"], ["endpoint"]),
+  component("faq-item", "FAQ Öğesi", "İçerik", "instance", ["instance", "section"], ["content", "layout"], []),
   component("tabs", "Sekmeler", "İçerik", "family", familyScopes, ["content", "layout", "responsive"], []),
   component("spacer", "Boşluk", "İçerik", "section", sectionScopes, ["layout", "responsive"], ["arbitraryHeight"]),
 
@@ -736,6 +737,24 @@ export function validateThemeDocument(document: ThemeDocument) {
     if (!asset.url || !/^https?:\/\//i.test(asset.url)) errors.push(`${assetId}: medya URL geçersiz.`);
     if (asset.mobileAssetId && !document.media[asset.mobileAssetId]) errors.push(`${assetId}: mobil medya referansı bulunamadı.`);
     if (asset.posterAssetId && !document.media[asset.posterAssetId]) errors.push(`${assetId}: video poster referansı bulunamadı.`);
+    if (asset.mobileAssetId === assetId) errors.push(`${assetId}: medya kendi mobil varyantı olamaz.`);
+    if (asset.posterAssetId === assetId) errors.push(`${assetId}: medya kendi posteri olamaz.`);
+
+    const mobile = asset.mobileAssetId ? document.media[asset.mobileAssetId] : undefined;
+    if (mobile && mobile.type !== asset.type) errors.push(`${assetId}: mobil varyant aynı medya tipinde olmalı.`);
+    const poster = asset.posterAssetId ? document.media[asset.posterAssetId] : undefined;
+    if (poster && (asset.type !== "video" || poster.type !== "image")) errors.push(`${assetId}: video posteri görsel asset olmalı.`);
+  }
+
+  for (const seo of Object.values(document.seo)) {
+    if (seo.openGraphAssetId && !document.media[seo.openGraphAssetId]) {
+      errors.push(`${seo.openGraphAssetId}: Open Graph medya referansı bulunamadı.`);
+    }
+  }
+
+  for (const section of Object.values(document.sections)) {
+    const imageAssetId = typeof section.settings.imageAssetId === "string" ? section.settings.imageAssetId : "";
+    if (imageAssetId && !document.media[imageAssetId]) errors.push(`${section.id}: bölüm medya referansı bulunamadı.`);
   }
 
   const redirectMap = new Map<string, string>();
