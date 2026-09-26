@@ -291,10 +291,10 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
   section("social-grid", "Social Media Grid", "media", allContentPages, ["source", "layout"], ["media"], true, 20),
 
   section("rich-text", "Rich Text", "content", allContentPages, ["eyebrow", "headingRole", "body", "align", "width", "cta"], [], true),
-  section("heading-subtext", "Başlık + Alt Metin", "content", allContentPages, ["role", "size", "maxWidth", "align"], [], true),
+  section("heading-subtext", "Başlık + Alt Metin", "content", allContentPages, ["title", "body", "role", "size", "maxWidth", "align"], [], true),
   section("text-columns", "Metin Kolonları", "content", allContentPages, ["columns", "gap"], ["text-column"], true, 4),
   section("brand-story", "Brand Story", "content", allContentPages, ["media", "copy", "layout"], [], true),
-  section("manifesto", "Manifesto / Statement", "content", allContentPages, ["typography", "maxWidth", "align"], [], true),
+  section("manifesto", "Manifesto / Statement", "content", allContentPages, ["title", "body", "typography", "maxWidth", "align"], [], true),
   section("quote", "Quote / Pull Quote", "content", allContentPages, ["quote", "attribution", "align"], [], true),
   section("stats", "İstatistik / Sayaç", "content", allContentPages, ["columns", "animation"], ["stat"], true, 8),
   section("timeline", "Timeline", "content", allContentPages, ["orientation"], ["timeline-item"], true, 30),
@@ -308,7 +308,7 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
   section("team", "Team", "content", allContentPages, ["layout"], ["member"], true, 30),
 
   section("announcement-bar", "Announcement Bar", "marketing", ["home", "content", "landing"], ["text", "links", "rotation", "sticky", "schedule"], ["announcement"], true, 8),
-  section("promo-banner", "Promo Banner", "marketing", allContentPages, ["copy", "cta", "media", "schedule"], [], true),
+  section("promo-banner", "Promo Banner", "marketing", allContentPages, ["title", "body", "linkLabel", "linkHref", "align", "paddingY"], [], true),
   section("countdown", "Countdown", "marketing", allContentPages, ["targetTime", "completedState", "style"], [], true),
   section("marquee", "Marquee / Ticker", "marketing", allContentPages, ["speed", "pause"], ["ticker-item"], true, 20),
   section("newsletter", "Newsletter", "marketing", allContentPages, ["heading", "body", "fieldLabel", "consent", "successCopy"]),
@@ -316,10 +316,10 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
   section("custom-form", "Custom Form", "marketing", ["content", "landing"], ["schema", "successCopy"], ["field"], false, 20),
   section("map-locator", "Map / Store Locator", "marketing", allContentPages, ["locations", "mapStyle", "cta"]),
   section("rewards-promo", "Puan / Ödül Promo", "marketing", allCommercePages, ["media", "copy", "cta", "layout"]),
-  section("shipping-returns-cta", "Shipping / Returns CTA", "marketing", allCommercePages, ["icon", "copy", "link"], [], true),
+  section("shipping-returns-cta", "Shipping / Returns CTA", "marketing", allCommercePages, ["icon", "title", "body", "linkLabel", "linkHref", "align", "paddingY"], [], true),
   section("consent-banner", "Cookie / Consent Banner", "marketing", ["utility"], ["copy", "style", "position"]),
   section("spacer", "Spacer", "marketing", allContentPages, ["desktopHeight", "mobileHeight"], [], true),
-  section("divider", "Divider", "marketing", allContentPages, ["width", "thickness", "colorToken"], [], true),
+  section("divider", "Divider", "marketing", allContentPages, ["width", "thickness", "colorToken", "paddingY"], [], true),
   section("anchor", "Anchor / Jump Link", "marketing", allContentPages, ["anchorId", "labelVisibility"], [], true),
   section("breadcrumb", "Breadcrumb", "marketing", ["content", "product", "category", "collection"], ["visible", "separator", "typography"]),
   section("integration-block", "App / Integration Block", "marketing", allContentPages, ["integrationId", "settings"]),
@@ -399,6 +399,16 @@ export function storeDesignSlug(value: string) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 80);
+}
+
+export function normalizeStoreDesignAnchorId(value: string) {
+  return String(value || "")
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/[^a-zA-Z0-9_-]/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^[-_]+|[-_]+$/g, "")
+    .slice(0, 96);
 }
 
 export function merchantStoreDesignRoute(value: string) {
@@ -1185,6 +1195,7 @@ export function validateThemeDocument(document: ThemeDocument) {
   const referenceIssues = analyzeThemeDocumentReferences(document);
   errors.push(...referenceIssues.filter((issue) => issue.severity === "error").map((issue) => issue.message));
   const routes = new Map<string, string>();
+  const anchorIds = new Map<string, string>();
 
   for (const [key, page] of Object.entries(document.pages)) {
     if (!page.name.trim()) errors.push(`${key}: sayfa adı boş olamaz.`);
@@ -1214,6 +1225,17 @@ export function validateThemeDocument(document: ThemeDocument) {
   for (const [sectionId, section] of Object.entries(document.sections)) {
     const definition = SECTION_LIBRARY_BY_TYPE[section.type];
     const blockIds = Array.isArray(section.blockIds) ? section.blockIds : [];
+
+    if (section.type === "anchor") {
+      const anchorId = normalizeStoreDesignAnchorId(typeof section.settings?.anchorId === "string" ? section.settings.anchorId : "");
+      if (!anchorId) {
+        errors.push(`${sectionId}: Anchor ID boş olamaz.`);
+      } else if (anchorIds.has(anchorId)) {
+        errors.push(`${sectionId}: Anchor ID benzersiz olmalı (${anchorId}); zaten ${anchorIds.get(anchorId)} kullanıyor.`);
+      } else {
+        anchorIds.set(anchorId, sectionId);
+      }
+    }
     if (definition?.maxBlocks && blockIds.length > definition.maxBlocks) {
       errors.push(`${sectionId}: maxBlocks sınırı aşıldı (${definition.maxBlocks}).`);
     }
