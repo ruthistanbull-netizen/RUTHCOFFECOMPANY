@@ -280,6 +280,7 @@ function canRenderDefinition(definition: SectionDefinition) {
 const GENERIC_V2_SECTION_TYPES = new Set([
   "video-hero",
   "video-banner",
+  "before-after",
   "heading-subtext",
   "manifesto",
   "quote",
