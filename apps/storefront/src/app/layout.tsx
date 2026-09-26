@@ -36,6 +36,7 @@ import { ThemeEditorBridgeV3 } from "@/components/theme/ThemeEditorBridgeV3";
 import { ThemeEditorContextGestureBridge } from "@/components/theme/ThemeEditorContextGestureBridge";
 import { ThemeEditorDirectImageBridge } from "@/components/theme/ThemeEditorDirectImageBridge";
 import { SemanticThemeEditorBridge } from "@/components/theme/SemanticThemeEditorBridge";
+import { SemanticThemeRuntimeProvider } from "@/components/theme/SemanticThemeRuntimeProvider";
 import { ThemeEditorEnhancements } from "@/components/theme/ThemeEditorEnhancements";
 import { ThemeEditorNativeNavigation } from "@/components/theme/ThemeEditorNativeNavigation";
 import { getThemeCustomizerSettings } from "@/data/site";
@@ -302,7 +303,8 @@ export default async function RootLayout({
         <ThemeEditorBridgeV3 settings={themeSettings} />
         <ThemeEditorContextGestureBridge />
         <ThemeEditorDirectImageBridge />
-        <StorefrontMotionProvider>
+        <SemanticThemeRuntimeProvider>
+          <StorefrontMotionProvider>
           <AuthProvider>
             <AnalyticsConsentGate />
             <CartProvider>
@@ -330,7 +332,8 @@ export default async function RootLayout({
               <FloatingWhatsApp settings={themeSettings.whatsapp} />
             </CartProvider>
           </AuthProvider>
-        </StorefrontMotionProvider>
+          </StorefrontMotionProvider>
+        </SemanticThemeRuntimeProvider>
       </body>
     </html>
   );
