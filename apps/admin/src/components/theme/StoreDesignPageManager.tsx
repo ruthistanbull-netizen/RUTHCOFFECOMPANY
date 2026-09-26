@@ -148,6 +148,8 @@ function cloneTemplateTree(document: ThemeDocument, sourceTemplateId: string, ne
 export function StoreDesignPageManager({ document, activePath, mode, onClose, onApply }: Props) {
   const toast = useExactToast();
   const editingPage = mode === "edit" ? pageByRoute(document, activePath) : null;
+  const routeLocked = Boolean(editingPage?.reserved || editingPage?.kind === "system" || editingPage?.kind === "catalog" || editingPage?.kind === "protected" || editingPage?.kind === "utility");
+  const canDuplicate = Boolean(editingPage && !routeLocked && (editingPage.kind === "merchant" || editingPage.kind === "managed-static"));
   const [form, setForm] = useState<FormState>(() => initialForm(document, editingPage));
   const [busy, setBusy] = useState(false);
 
@@ -162,12 +164,12 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
   const submit = async () => {
     if (busy) return;
     const name = form.name.trim();
-    const slug = normalizePageSlug(form.slug || name);
+    const slug = routeLocked && editingPage ? editingPage.slug : normalizePageSlug(form.slug || name);
     if (!name) return toast.error("Sayfa adı boş olamaz.");
     if (!slug) return toast.error("Geçerli bir slug gir.");
-    if (isReservedPageSlug(slug)) return toast.error("Bu slug sistem tarafından korunuyor.");
+    if (!routeLocked && isReservedPageSlug(slug)) return toast.error("Bu slug sistem tarafından korunuyor.");
 
-    const route = customPageRoute(slug);
+    const route = routeLocked && editingPage ? editingPage.route : customPageRoute(slug);
     const duplicate = Object.values(document.pages).find((page) => page.route === route && page.id !== editingPage?.id);
     if (duplicate) return toast.error("Bu URL başka bir sayfa tarafından kullanılıyor.");
 
@@ -228,7 +230,7 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
         kind: editingPage?.kind || "merchant",
         type: editingPage?.type || editingPage?.kind || "merchant",
         templateId,
-        status: form.status,
+        status: routeLocked && editingPage ? editingPage.status : form.status,
         seoId,
         reserved: editingPage?.reserved || false,
         createdAt: editingPage?.createdAt || now,
@@ -261,7 +263,7 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
   };
 
   const duplicatePage = async () => {
-    if (!editingPage || busy) return;
+    if (!editingPage || !canDuplicate || busy) return;
     setBusy(true);
     try {
       const now = new Date().toISOString();
@@ -354,8 +356,8 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
             <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
               Slug / URL
               <div>
-                <input value={form.slug} onChange={(event) => set("slug", event.target.value)} className="h-10 w-full rounded-lg border border-black/10 px-3 text-[10px] font-medium text-black outline-none focus:border-black/25" placeholder="kahve-rehberi" />
-                <p className="mt-1 text-[8px] font-normal text-black/35">{customPageRoute(form.slug || form.name || "sayfa-adi")}</p>
+                <input disabled={routeLocked} value={form.slug} onChange={(event) => set("slug", event.target.value)} className="h-10 w-full rounded-lg border border-black/10 px-3 text-[10px] font-medium text-black outline-none focus:border-black/25 disabled:bg-black/[0.03] disabled:text-black/35" placeholder="kahve-rehberi" />
+                <p className="mt-1 text-[8px] font-normal text-black/35">{routeLocked && editingPage ? `${editingPage.route} · Sistem route'u korunuyor` : customPageRoute(form.slug || form.name || "sayfa-adi")}</p>
               </div>
             </label>
             <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
@@ -368,7 +370,7 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
             </label>
             <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
               Durum
-              <select value={form.status} onChange={(event) => set("status", event.target.value as PageStatus)} className="h-10 rounded-lg border border-black/10 bg-white px-3 text-[10px] font-medium text-black outline-none">
+              <select disabled={routeLocked} value={form.status} onChange={(event) => set("status", event.target.value as PageStatus)} className="h-10 rounded-lg border border-black/10 bg-white px-3 text-[10px] font-medium text-black outline-none disabled:bg-black/[0.03] disabled:text-black/35">
                 <option value="draft">Taslak</option>
                 <option value="published">Yayına Hazır</option>
                 <option value="scheduled">Planlandı</option>
@@ -428,9 +430,11 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
         <footer className="flex shrink-0 flex-wrap items-center gap-2 border-t border-black/10 bg-[#fafafa] p-3">
           {editingPage ? (
             <>
-              <button type="button" disabled={busy} onClick={() => void duplicatePage()} className="flex h-10 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold disabled:opacity-40">
-                <Copy className="h-3.5 w-3.5" />Çoğalt
-              </button>
+              {canDuplicate ? (
+                <button type="button" disabled={busy} onClick={() => void duplicatePage()} className="flex h-10 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold disabled:opacity-40">
+                  <Copy className="h-3.5 w-3.5" />Çoğalt
+                </button>
+              ) : null}
               {!editingPage.reserved ? (
                 <button type="button" disabled={busy} onClick={() => void archivePage()} className="flex h-10 items-center gap-2 rounded-lg border border-red-200 bg-white px-3 text-[9px] font-semibold text-red-700 disabled:opacity-40">
                   <Archive className="h-3.5 w-3.5" />Arşivle
