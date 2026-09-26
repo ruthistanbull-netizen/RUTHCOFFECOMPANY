@@ -882,8 +882,254 @@ export function themeDocumentReferenceReport(document: ThemeDocument): ThemeRefe
   return issues;
 }
 
+export type ThemeReferenceIssue = {
+  severity: "error" | "warning";
+  code: string;
+  message: string;
+  source?: string;
+  target?: string;
+};
+
+const LINK_SETTING_KEYS = new Set([
+  "href",
+  "link",
+  "linkHref",
+  "cta",
+  "url",
+  "targetUrl",
+  "buttonHref",
+]);
+
+const MEDIA_SETTING_KEYS = new Set([
+  "assetId",
+  "media",
+  "imageAssetId",
+  "posterAssetId",
+  "mobileAssetId",
+  "ogAssetId",
+]);
+
+function collectThemeSettingReferences(
+  value: unknown,
+  source: string,
+  issues: ThemeReferenceIssue[],
+  document: ThemeDocument,
+  key = "",
+  visited = new Set<unknown>(),
+) {
+  if (value == null) return;
+  if (typeof value === "object") {
+    if (visited.has(value)) return;
+    visited.add(value);
+  }
+
+  if (typeof value === "string") {
+    if (LINK_SETTING_KEYS.has(key) && value.startsWith("/pages/")) {
+      const route = normalizeStoreDesignRoute(value);
+      const page = Object.values(document.pages).find((candidate) => candidate.route === route);
+      const redirect = document.redirects.find((candidate) => candidate.active !== false && candidate.from === route);
+      if (!page && !redirect) {
+        issues.push({
+          severity: "warning",
+          code: "broken-merchant-link",
+          message: `${source}: ${route} için sayfa veya redirect kaydı bulunamadı.`,
+          source,
+          target: route,
+        });
+      } else if (page && page.status !== "published") {
+        issues.push({
+          severity: "warning",
+          code: "link-to-unpublished-page",
+          message: `${source}: ${route} henüz published değil; canlı sitede link çalışmayabilir.`,
+          source,
+          target: route,
+        });
+      }
+    }
+
+    if (MEDIA_SETTING_KEYS.has(key) && value && !document.media[value]) {
+      issues.push({
+        severity: "error",
+        code: "missing-media-reference",
+        message: `${source}: medya referansı bulunamadı (${value}).`,
+        source,
+        target: value,
+      });
+    }
+    return;
+  }
+
+  if (Array.isArray(value)) {
+    value.forEach((item, index) => collectThemeSettingReferences(item, `${source}[${index}]`, issues, document, key, visited));
+    return;
+  }
+
+  if (value && typeof value === "object") {
+    for (const [childKey, childValue] of Object.entries(value as Record<string, unknown>)) {
+      collectThemeSettingReferences(childValue, `${source}.${childKey}`, issues, document, childKey, visited);
+    }
+  }
+}
+
+export function analyzeThemeDocumentReferences(document: ThemeDocument): ThemeReferenceIssue[] {
+  const issues: ThemeReferenceIssue[] = [];
+  const sectionOwners = new Map<string, string[]>();
+  const blockOwners = new Map<string, string[]>();
+
+  for (const [route, page] of Object.entries(document.pages)) {
+    if (!document.templates[page.templateId]) {
+      issues.push({
+        severity: "error",
+        code: "missing-page-template",
+        message: `${route}: template bulunamadı (${page.templateId}).`,
+        source: route,
+        target: page.templateId,
+      });
+    }
+    if (!document.seo[page.seoId]) {
+      issues.push({
+        severity: "error",
+        code: "missing-page-seo",
+        message: `${route}: SEO kaydı bulunamadı (${page.seoId}).`,
+        source: route,
+        target: page.seoId,
+      });
+    }
+  }
+
+  for (const [templateId, template] of Object.entries(document.templates)) {
+    for (const sectionId of template.sectionIds || []) {
+      if (!document.sections[sectionId]) {
+        issues.push({
+          severity: "error",
+          code: "missing-template-section",
+          message: `${templateId}: section bulunamadı (${sectionId}).`,
+          source: templateId,
+          target: sectionId,
+        });
+        continue;
+      }
+      const owners = sectionOwners.get(sectionId) || [];
+      owners.push(templateId);
+      sectionOwners.set(sectionId, owners);
+    }
+    collectThemeSettingReferences(template.componentSettings, `template:${templateId}`, issues, document);
+  }
+
+  for (const [sectionId, section] of Object.entries(document.sections)) {
+    const definition = SECTION_LIBRARY_BY_TYPE[section.type];
+    if (!definition) {
+      issues.push({
+        severity: "warning",
+        code: "unknown-section-definition",
+        message: `${sectionId}: registry'de section definition yok (${section.type}).`,
+        source: sectionId,
+        target: section.type,
+      });
+    } else if (!definition.implemented) {
+      issues.push({
+        severity: "warning",
+        code: "section-runtime-unavailable",
+        message: `${sectionId}: ${definition.label} runtime henüz hazır değil.`,
+        source: sectionId,
+        target: section.type,
+      });
+    }
+
+    for (const blockId of section.blockIds || []) {
+      const block = document.blocks[blockId];
+      if (!block) {
+        issues.push({
+          severity: "error",
+          code: "missing-section-block",
+          message: `${sectionId}: block bulunamadı (${blockId}).`,
+          source: sectionId,
+          target: blockId,
+        });
+        continue;
+      }
+      const owners = blockOwners.get(blockId) || [];
+      owners.push(sectionId);
+      blockOwners.set(blockId, owners);
+    }
+    collectThemeSettingReferences(section.settings, `section:${sectionId}`, issues, document);
+  }
+
+  for (const [blockId, block] of Object.entries(document.blocks)) {
+    const definition = BLOCK_LIBRARY_BY_TYPE[block.type];
+    if (!definition) {
+      issues.push({
+        severity: "warning",
+        code: "unknown-block-definition",
+        message: `${blockId}: registry'de block definition yok (${block.type}).`,
+        source: blockId,
+        target: block.type,
+      });
+    } else if (!definition.implemented) {
+      issues.push({
+        severity: "warning",
+        code: "block-runtime-unavailable",
+        message: `${blockId}: ${definition.label} runtime henüz hazır değil.`,
+        source: blockId,
+        target: block.type,
+      });
+    }
+    collectThemeSettingReferences(block.settings, `block:${blockId}`, issues, document);
+  }
+
+  for (const [sectionId, owners] of sectionOwners) {
+    if (owners.length > 1) {
+      issues.push({
+        severity: "warning",
+        code: "shared-section-reference",
+        message: `${sectionId}: section birden fazla template tarafından kullanılıyor (${owners.join(", ")}). Silme/değiştirme tümünü etkiler.`,
+        source: sectionId,
+      });
+    }
+  }
+
+  for (const [blockId, owners] of blockOwners) {
+    if (owners.length > 1) {
+      issues.push({
+        severity: "warning",
+        code: "shared-block-reference",
+        message: `${blockId}: block birden fazla section tarafından kullanılıyor (${owners.join(", ")}).`,
+        source: blockId,
+      });
+    }
+  }
+
+  for (const [route, templateId] of Object.entries(document.templateBindings)) {
+    if (!document.templates[templateId]) {
+      issues.push({
+        severity: "error",
+        code: "missing-template-binding",
+        message: `${route}: template binding hedefi bulunamadı (${templateId}).`,
+        source: route,
+        target: templateId,
+      });
+    }
+  }
+
+  for (const [seoId, seo] of Object.entries(document.seo)) {
+    if (seo.openGraphAssetId && !document.media[seo.openGraphAssetId]) {
+      issues.push({
+        severity: "error",
+        code: "missing-og-media",
+        message: `${seoId}: Open Graph medya kaydı bulunamadı (${seo.openGraphAssetId}).`,
+        source: seoId,
+        target: seo.openGraphAssetId,
+      });
+    }
+  }
+
+  return issues;
+}
+
 export function validateThemeDocument(document: ThemeDocument) {
   const errors: string[] = [];
+  const referenceIssues = analyzeThemeDocumentReferences(document);
+  errors.push(...referenceIssues.filter((issue) => issue.severity === "error").map((issue) => issue.message));
   const routes = new Map<string, string>();
 
   for (const [key, page] of Object.entries(document.pages)) {
