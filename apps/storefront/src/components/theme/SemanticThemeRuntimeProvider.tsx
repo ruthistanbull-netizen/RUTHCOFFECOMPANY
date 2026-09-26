@@ -39,6 +39,20 @@ function declaration(path: string, value: unknown) {
   if (path === "grid.gapX") return `--theme-product-grid-gap-x:${Math.max(0, Math.min(120, Number(value)))}px;`;
   if (path === "grid.gapY") return `--theme-product-grid-gap-y:${Math.max(0, Math.min(120, Number(value)))}px;`;
   if (path === "grid.maxWidth") return `--theme-product-grid-max-width:${String(value)};`;
+  if (path === "card.density") {
+    const density = String(value);
+    if (density === "s") return "--theme-card-density:s;--theme-card-info-pad-top:8px;--theme-card-title-size:.80rem;--theme-card-control-size:32px;";
+    if (density === "l") return "--theme-card-density:l;--theme-card-info-pad-top:16px;--theme-card-title-size:1.02rem;--theme-card-control-size:42px;";
+    return "--theme-card-density:m;--theme-card-info-pad-top:12px;--theme-card-title-size:.91rem;--theme-card-control-size:38px;";
+  }
+  if (path === "card.imageRatio") {
+    const ratio = String(value);
+    const cssRatio = ratio === "1/1" ? "1 / 1" : ratio === "4/5" ? "4 / 5" : "3 / 4";
+    return `--theme-card-image-ratio-token:${ratio};--theme-card-image-ratio:${cssRatio};`;
+  }
+  if (path === "card.titleLines") return `--theme-card-title-lines:${Math.max(1, Math.min(3, Math.round(Number(value))))};`;
+  if (path === "card.showPrice") return `--theme-card-price-display:${value === false ? "none" : "flex"};`;
+  if (path === "card.showQuickAdd") return `--theme-card-quick-add-display:${value === false ? "none" : "grid"};`;
   return "";
 }
 
