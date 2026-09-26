@@ -63,6 +63,16 @@ type LoadedCheckoutDraft = {
   orderNo?: string | null;
 };
 
+type ShippingCity = {
+  id: string;
+  name: string;
+};
+
+type ShippingTown = {
+  id: string;
+  name: string;
+};
+
 const initialForm: CheckoutForm = {
   fullName: "",
   email: "",
@@ -79,6 +89,19 @@ const LEGACY_CHECKOUT_DRAFT_TOKEN_KEY = "ruth-checkout-draft-token";
 const SELECTED_DISCOUNT_CODE_KEY = "rosta-selected-discount-code";
 const LEGACY_SELECTED_DISCOUNT_CODE_KEY = "ruth-selected-discount-code";
 const inputClass = "mt-2 w-full rounded-lg border border-kraft/40 bg-carbon px-4 py-3 text-sm normal-case tracking-normal text-cream outline-none transition focus:border-brick";
+
+function normalizeLocationChoice(value: unknown) {
+  return String(value || "")
+    .trim()
+    .toLocaleLowerCase("tr-TR")
+    .replace(/ğ/g, "g")
+    .replace(/ü/g, "u")
+    .replace(/ş/g, "s")
+    .replace(/ı/g, "i")
+    .replace(/ö/g, "o")
+    .replace(/ç/g, "c")
+    .replace(/[^a-z0-9]+/g, "");
+}
 
 function makeLocalDraftToken() {
   return `local_${Date.now()}_${Math.random().toString(36).slice(2, 12)}`;
@@ -112,6 +135,11 @@ export function PaytrIframeCheckoutClient() {
   const openPaymentDirectly = searchParams.get("payment") === "1";
 
   const [form, setForm] = useState<CheckoutForm>(initialForm);
+  const [shippingCities, setShippingCities] = useState<ShippingCity[]>([]);
+  const [shippingTowns, setShippingTowns] = useState<ShippingTown[]>([]);
+  const [shippingCitiesLoading, setShippingCitiesLoading] = useState(true);
+  const [shippingTownsLoading, setShippingTownsLoading] = useState(false);
+  const [shippingLocationError, setShippingLocationError] = useState<string | null>(null);
   const [checkoutStep, setCheckoutStep] = useState<1 | 2 | 3>(openPaymentDirectly ? 2 : 1);
   const [checkoutDraftToken, setCheckoutDraftToken] = useState("");
   const [loadedCheckoutDraft, setLoadedCheckoutDraft] = useState<LoadedCheckoutDraft | null>(null);
@@ -137,6 +165,19 @@ export function PaytrIframeCheckoutClient() {
 
   const checkoutStepsRef = useRef<HTMLDivElement | null>(null);
   const paymentSectionRef = useRef<HTMLDivElement | null>(null);
+
+  const selectedShippingCity = useMemo(
+    () => shippingCities.find(
+      (city) => normalizeLocationChoice(city.name) === normalizeLocationChoice(form.city),
+    ) || null,
+    [form.city, shippingCities],
+  );
+  const selectedShippingTown = useMemo(
+    () => shippingTowns.find(
+      (town) => normalizeLocationChoice(town.name) === normalizeLocationChoice(form.district),
+    ) || null,
+    [form.district, shippingTowns],
+  );
 
   const selectedRuthiePoints = user
     ? Math.min(availableRuthiePoints, Math.max(0, Math.floor(requestedRuthiePoints)))
@@ -173,6 +214,75 @@ export function PaytrIframeCheckoutClient() {
     { id: 2 as const, title: "Sipariş", helper: "Kontrol" },
     { id: 3 as const, title: "Ödeme", helper: "PayTR" },
   ];
+
+  useEffect(() => {
+    const controller = new AbortController();
+    setShippingCitiesLoading(true);
+    setShippingLocationError(null);
+
+    fetch("/api/shipping/locations", {
+      cache: "no-store",
+      signal: controller.signal,
+    })
+      .then(async (response) => {
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || !data?.ok || !Array.isArray(data.cities)) {
+          throw new Error(data?.error || "Basit Kargo il listesi alınamadı.");
+        }
+        setShippingCities(data.cities as ShippingCity[]);
+      })
+      .catch((error) => {
+        if (controller.signal.aborted) return;
+        setShippingCities([]);
+        setShippingLocationError(error instanceof Error ? error.message : "Basit Kargo il listesi alınamadı.");
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setShippingCitiesLoading(false);
+      });
+
+    return () => controller.abort();
+  }, []);
+
+  useEffect(() => {
+    if (!selectedShippingCity?.id) {
+      setShippingTowns([]);
+      setShippingTownsLoading(false);
+      return;
+    }
+
+    const controller = new AbortController();
+    setShippingTownsLoading(true);
+    setShippingLocationError(null);
+
+    fetch(`/api/shipping/locations?cityId=${encodeURIComponent(selectedShippingCity.id)}`, {
+      cache: "no-store",
+      signal: controller.signal,
+    })
+      .then(async (response) => {
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || !data?.ok || !Array.isArray(data.towns)) {
+          throw new Error(data?.error || "Basit Kargo ilçe listesi alınamadı.");
+        }
+        const towns = data.towns as ShippingTown[];
+        setShippingTowns(towns);
+        const canonical = towns.find(
+          (town) => normalizeLocationChoice(town.name) === normalizeLocationChoice(form.district),
+        );
+        if (canonical && canonical.name !== form.district) {
+          setForm((current) => ({ ...current, district: canonical.name }));
+        }
+      })
+      .catch((error) => {
+        if (controller.signal.aborted) return;
+        setShippingTowns([]);
+        setShippingLocationError(error instanceof Error ? error.message : "Basit Kargo ilçe listesi alınamadı.");
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setShippingTownsLoading(false);
+      });
+
+    return () => controller.abort();
+  }, [selectedShippingCity?.id]);
 
   useEffect(() => {
     const token = externalDraftToken || window.localStorage.getItem(CHECKOUT_DRAFT_TOKEN_KEY) || window.localStorage.getItem(LEGACY_CHECKOUT_DRAFT_TOKEN_KEY) || makeLocalDraftToken();
@@ -332,6 +442,18 @@ export function PaytrIframeCheckoutClient() {
     }
     if (!form.city.trim() || !form.district.trim() || !form.addressLine.trim()) {
       setError("Devam etmek için il, ilçe ve açık adres bilgilerini doldur.");
+      return false;
+    }
+    if (shippingCitiesLoading || shippingTownsLoading) {
+      setError("Basit Kargo adres listesi yükleniyor. Birkaç saniye sonra tekrar dene.");
+      return false;
+    }
+    if (shippingCities.length && !selectedShippingCity) {
+      setError("İl bilgisini Basit Kargo listesinden seç.");
+      return false;
+    }
+    if (selectedShippingCity && shippingTowns.length && !selectedShippingTown) {
+      setError("İlçe bilgisini Basit Kargo listesinden seç.");
       return false;
     }
     return true;
@@ -807,11 +929,53 @@ export function PaytrIframeCheckoutClient() {
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <Field label="İl" required>
-                    <input required autoComplete="address-level1" value={form.city} onChange={(event) => updateField("city", event.target.value)} className={inputClass} />
+                    <select
+                      required
+                      autoComplete="address-level1"
+                      value={selectedShippingCity?.name || ""}
+                      disabled={shippingCitiesLoading}
+                      onChange={(event) => {
+                        setPayment(null);
+                        setForm((current) => ({
+                          ...current,
+                          city: event.target.value,
+                          district: "",
+                        }));
+                      }}
+                      className={`${inputClass} cursor-pointer disabled:cursor-wait disabled:opacity-60`}
+                    >
+                      <option value="">{shippingCitiesLoading ? "İller yükleniyor..." : "İl seç"}</option>
+                      {shippingCities.map((city) => (
+                        <option key={city.id} value={city.name}>{city.name}</option>
+                      ))}
+                    </select>
                   </Field>
                   <Field label="İlçe" required>
-                    <input required autoComplete="address-level2" value={form.district} onChange={(event) => updateField("district", event.target.value)} className={inputClass} />
+                    <select
+                      required
+                      autoComplete="address-level2"
+                      value={selectedShippingTown?.name || ""}
+                      disabled={!selectedShippingCity || shippingTownsLoading}
+                      onChange={(event) => updateField("district", event.target.value)}
+                      className={`${inputClass} cursor-pointer disabled:cursor-not-allowed disabled:opacity-60`}
+                    >
+                      <option value="">
+                        {!selectedShippingCity
+                          ? "Önce il seç"
+                          : shippingTownsLoading
+                            ? "İlçeler yükleniyor..."
+                            : "İlçe seç"}
+                      </option>
+                      {shippingTowns.map((town) => (
+                        <option key={town.id} value={town.name}>{town.name}</option>
+                      ))}
+                    </select>
                   </Field>
+                  {shippingLocationError ? (
+                    <p className="text-[11px] leading-5 text-[var(--ruth-color-danger-text)] sm:col-span-2">
+                      {shippingLocationError}
+                    </p>
+                  ) : null}
                   <div className="sm:col-span-2">
                     <Field label="Posta Kodu (isteğe bağlı)">
                       <input inputMode="numeric" autoComplete="postal-code" maxLength={10} value={form.postalCode} onChange={(event) => updateField("postalCode", event.target.value.replace(/[^0-9A-Za-z -]/g, ""))} className={inputClass} />
@@ -847,7 +1011,7 @@ export function PaytrIframeCheckoutClient() {
           {checkoutStep === 2 ? (
             <>
               <section className="min-w-0 space-y-5">
-                <div className="overflow-hidden rounded-xl border border-kraft/35 bg-carbon-soft">
+                <div className="checkout-order-preview overflow-hidden rounded-xl border border-kraft/35 bg-carbon-soft text-cream">
                   <div className="border-b border-kraft/25 bg-carbon/70 px-4 py-3 md:px-5">
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
