@@ -4,7 +4,7 @@ import { HomeHeroRuntimeAdjustments } from "@/components/HomeHeroRuntimeAdjustme
 import { HomeHeaderAdaptiveTone } from "@/components/HomeHeaderAdaptiveTone";
 import { ThemeEditorHomeScrollBridge } from "@/components/theme/ThemeEditorHomeScrollBridge";
 import { getFeaturedProducts, getProducts } from "@/data/catalogReadModel";
-import { getCachedCollections, getCachedSiteSettings } from "@/data/catalogCache";
+import { getCachedCategories, getCachedCollections, getCachedSiteSettings } from "@/data/catalogCache";
 import {
   getStoreDesignV2Preview,
   getStoreDesignV2Published,
@@ -29,10 +29,11 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
   const legacyToken = typeof query.themeSectionsPreview === "string" ? query.themeSectionsPreview : "";
   const v2Token = typeof query.storeDesignV2Preview === "string" ? query.storeDesignV2Preview : "";
 
-  const [featuredProducts, allProducts, collections, themeSettings, publishedSections, siteSettings, draftSections, publishedV2, previewV2] = await Promise.all([
+  const [featuredProducts, allProducts, collections, categories, themeSettings, publishedSections, siteSettings, draftSections, publishedV2, previewV2] = await Promise.all([
     getFeaturedProducts(),
     getProducts(),
     getCachedCollections(),
+    getCachedCategories(),
     getThemeCustomizerSettings(),
     getThemeSectionSettings(),
     getCachedSiteSettings(),
@@ -72,6 +73,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
           featuredProducts={featuredProducts}
           allProducts={allProducts}
           collections={collections}
+          categories={categories}
           heroImages={heroImages}
           editorialVideo={editorialVideo}
           editorialImage={editorialImage}
