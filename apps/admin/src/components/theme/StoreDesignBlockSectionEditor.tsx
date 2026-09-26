@@ -155,6 +155,15 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
     if (busy) return;
     if (blocks.length > maxBlocks) return toast.error(`Block sayısı maxBlocks sınırını aşıyor (${maxBlocks}).`);
 
+    if (section.type === "hero") {
+      const mediaId = text(settings.imageAssetId);
+      const asset = mediaId ? document.media[mediaId] : undefined;
+      if (mediaId && !asset) return toast.error("Hero medya referansı bulunamadı.");
+      const posterId = text(settings.posterAssetId);
+      if (posterId && document.media[posterId]?.type !== "image") return toast.error("Hero video poster yalnız görsel asset olabilir.");
+      if (posterId && asset?.type !== "video") return toast.error("Poster override yalnız video hero medyasında kullanılabilir.");
+    }
+
     if (["video-hero", "video-banner", "background-media"].includes(section.type)) {
       const mediaId = text(settings.imageAssetId);
       const asset = mediaId ? document.media[mediaId] : undefined;
@@ -217,14 +226,14 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
 
   const hasColumns = ["gallery-grid", "masonry-gallery", "collage", "social-grid", "logo-cloud", "text-columns", "stats", "feature-grid", "trust-badges", "testimonials", "press-awards", "team"].includes(section.type);
   const hasGap = hasColumns || section.type === "slideshow";
-  const mediaNarrative = ["video-hero", "video-banner", "background-media"].includes(section.type);
-  const genericZeroBlock = ["video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta", "spacer", "divider", "anchor"].includes(section.type);
-  const hasGenericBody = ["video-hero", "video-banner", "heading-subtext", "manifesto", "promo-banner", "shipping-returns-cta"].includes(section.type);
-  const hasAlign = ["video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta"].includes(section.type);
-  const hasLink = ["video-hero", "video-banner", "promo-banner", "shipping-returns-cta"].includes(section.type);
+  const mediaNarrative = ["hero", "video-hero", "video-banner", "background-media"].includes(section.type);
+  const genericZeroBlock = ["hero", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta", "spacer", "divider", "anchor"].includes(section.type);
+  const hasGenericBody = ["hero", "video-hero", "video-banner", "heading-subtext", "manifesto", "promo-banner", "shipping-returns-cta"].includes(section.type);
+  const hasAlign = ["hero", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta"].includes(section.type);
+  const hasLink = ["hero", "video-hero", "video-banner", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const showTitle = !["background-media", "quote", "spacer", "divider", "anchor"].includes(section.type);
   const showEyebrow = !genericZeroBlock && section.type !== "background-media";
-  const showPadding = !["video-hero", "video-banner", "background-media", "spacer", "anchor"].includes(section.type);
+  const showPadding = !["hero", "video-hero", "video-banner", "background-media", "spacer", "anchor"].includes(section.type);
   const primaryMedia = mediaNarrative && text(settings.imageAssetId) ? document.media[text(settings.imageAssetId)] : undefined;
   const showBlockComposer = allowedDefinitions.length > 0;
 
@@ -274,19 +283,23 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                         }}
                         className="h-9 min-w-0 flex-1 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none"
                       >
-                        <option value="">Medya seçilmedi</option>
+                        <option value="">{section.type === "hero" ? "Mevcut editorial hero medyasını kullan" : "Medya seçilmedi"}</option>
                         {mediaAssets
-                          .filter((asset) => section.type === "background-media" || asset.type === "video")
+                          .filter((asset) => section.type === "background-media" || section.type === "hero" || asset.type === "video")
                           .map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.type} · {asset.assetId} · v{asset.version || 1}</option>)}
                       </select>
-                      <button type="button" onClick={() => setMediaPicker({ key: "imageAssetId", mediaType: section.type === "background-media" ? "any" : "video" })} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
+                      <button type="button" onClick={() => setMediaPicker({ key: "imageAssetId", mediaType: section.type === "background-media" || section.type === "hero" ? "any" : "video" })} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
                         Media Library
                       </button>
                     </div>
-                    <span className="text-[7px] font-normal leading-4 text-black/35">Mobil varyant ve focal point seçili asset'in Media Library kaydından gelir.</span>
+                    <span className="text-[7px] font-normal leading-4 text-black/35">
+                      {section.type === "hero" && !text(settings.imageAssetId)
+                        ? "Medya seçmezsen mevcut editorial hero korunur. V2 media seçildiğinde mobil varyant ve focal point Media Library kaydından gelir."
+                        : "Mobil varyant ve focal point seçili asset'in Media Library kaydından gelir."}
+                    </span>
                   </label>
 
-                  {(section.type !== "background-media" || primaryMedia?.type === "video") ? (
+                  {(primaryMedia?.type === "video" || section.type === "video-hero" || section.type === "video-banner") ? (
                     <>
                       <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
                         Poster override
@@ -319,7 +332,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     </select>
                   </label>
 
-                  {section.type === "video-hero" ? (
+                  {section.type === "hero" || section.type === "video-hero" ? (
                     <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                       Hero yüksekliği
                       <select value={text(settings.heightPreset) || "viewport"} onChange={(event) => updateSetting("heightPreset", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
@@ -355,7 +368,8 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                     Metin kontrastı
-                    <select value={text(settings.contrastMode) || "light"} onChange={(event) => updateSetting("contrastMode", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                    <select value={text(settings.contrastMode) || (section.type === "hero" ? "adaptive" : "light")} onChange={(event) => updateSetting("contrastMode", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      {section.type === "hero" ? <option value="adaptive">Adaptive · medyaya göre</option> : null}
                       <option value="light">Açık metin</option>
                       <option value="dark">Koyu metin</option>
                     </select>
