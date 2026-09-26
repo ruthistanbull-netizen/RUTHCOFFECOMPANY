@@ -127,6 +127,9 @@ function defaultSettings(type: string): Record<string, unknown> {
   if (type === "hero") {
     return { imageAssetId: "", posterAssetId: "", heightPreset: "viewport", fit: "cover", playbackPreset: "ambient", title: "", body: "", linkLabel: "", linkHref: "", align: "center", overlayOpacity: 24, contrastMode: "adaptive" };
   }
+  if (type === "scroll-story") {
+    return { scrollLengthPreset: "standard", transitionPreset: "fade-scale", cueVisibility: true };
+  }
   if (type === "collection-cards") {
     return { title: "Koleksiyonlar", eyebrow: "Keşfet", source: "catalog", limit: 4, columns: 2, gap: 20, ratio: "16/10", titlePlacement: "overlay", paddingY: 80 };
   }
