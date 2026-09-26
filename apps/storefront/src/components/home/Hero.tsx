@@ -220,6 +220,26 @@ function EditorialMedia({
     [0, 0.07, 0.2, 0.42, 1],
     [0, 0.22, 0.68, 1, 1],
   );
+  const cueComesFromRight = index === 2 && mobileViewport;
+  const cueRotateY = useTransform(
+    cueMotionProgress,
+    [0, 0.18, 0.48, 0.78, 1],
+    cueComesFromRight
+      ? [22, 18, 10, 3, 0]
+      : [-22, -18, -10, -3, 0],
+  );
+  const cueRotateZ = useTransform(
+    cueMotionProgress,
+    [0, 0.2, 0.52, 0.82, 1],
+    cueComesFromRight
+      ? [4.5, 3.4, 1.8, 0.5, 0]
+      : [-4.5, -3.4, -1.8, -0.5, 0],
+  );
+  const cueZ = useTransform(
+    cueMotionProgress,
+    [0, 0.35, 0.72, 1],
+    [-54, -34, -12, 0],
+  );
   const wrapperClass = index === 0
     ? "absolute inset-0 overflow-hidden"
     : "absolute inset-x-[2vw] inset-y-[1svh] overflow-hidden lg:bottom-[32px] lg:left-[7vw] lg:right-[7vw] lg:top-[52px]";
@@ -376,6 +396,10 @@ function EditorialMedia({
               x: cueX,
               y: cueY,
               opacity: cueOpacity,
+              rotateY: cueRotateY,
+              rotateZ: cueRotateZ,
+              z: cueZ,
+              transformPerspective: mobileViewport ? 900 : 1400,
               transformOrigin: "left top",
               willChange: "transform, opacity",
             }}
@@ -397,6 +421,10 @@ function EditorialMedia({
               x: cueX,
               y: cueY,
               opacity: cueOpacity,
+              rotateY: cueRotateY,
+              rotateZ: cueRotateZ,
+              z: cueZ,
+              transformPerspective: mobileViewport ? 900 : 1400,
               transformOrigin: mobileViewport ? "right top" : "left top",
               textAlign: mobileViewport ? "right" : "left",
               willChange: "transform, opacity",
@@ -527,7 +555,7 @@ export default function Hero({
     >
       <style>{`
         .home-editorial-wordmark{box-sizing:border-box;pointer-events:none;position:fixed;left:0;top:calc(100svh - clamp(184px,38vw,236px) + 20px);z-index:40;width:min(100vw,1208px);max-width:100vw;height:auto;aspect-ratio:3175/1343;user-select:none;transition:color .24s ease,opacity .28s ease,visibility .28s ease}.home-editorial-wordmark[data-visible="false"]{opacity:0!important;visibility:hidden}.home-editorial-wordmark svg{display:block;width:100%;height:100%;overflow:visible}@media(min-width:1024px){.home-editorial-wordmark{right:1vw!important;left:auto!important;top:calc(47vh + 18px)!important;width:44.8vw!important;max-width:44.8vw!important;height:auto!important;aspect-ratio:3175/1343}}
-        .home-editorial-cue{color:var(--rosta-brick-b);font-family:var(--font-heading)!important;font-weight:900!important;font-variation-settings:"wght" 900!important;font-synthesis:weight!important;letter-spacing:-.045em;line-height:.92}
+        .home-editorial-cue{color:var(--rosta-brick-b);font-family:var(--font-heading)!important;font-weight:900!important;font-variation-settings:"wght" 900!important;font-synthesis:weight!important;letter-spacing:-.045em;line-height:.92;transform-style:preserve-3d;backface-visibility:hidden}
         .home-editorial-cue p,.home-editorial-cue span{margin:0;font-family:var(--font-heading)!important;font-weight:900!important;font-variation-settings:"wght" 900!important;font-synthesis:weight!important}
         .home-editorial-cue p{font-size:clamp(3.75rem,15vw,5.4rem);line-height:.9}
         .home-editorial-cue span{display:block}
