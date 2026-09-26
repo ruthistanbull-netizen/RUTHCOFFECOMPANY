@@ -3,11 +3,13 @@
 import {
   ArrowDown,
   ArrowUp,
+  BookmarkPlus,
   Copy,
   Eye,
   EyeOff,
   GripVertical,
   Layers3,
+  Library,
   Plus,
   Search,
   Settings2,
@@ -16,6 +18,7 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
+  BLOCK_LIBRARY_BY_TYPE,
   SECTION_LIBRARY,
   SECTION_LIBRARY_BY_TYPE,
   STORE_DESIGN_SCHEMA_VERSION,
@@ -33,6 +36,7 @@ import {
   canEditStoreDesignSection,
 } from "@/components/theme/StoreDesignSectionEditor";
 import { StoreDesignBlockSectionEditor } from "@/components/theme/StoreDesignBlockSectionEditor";
+import { StoreDesignPresetLibrary } from "@/components/theme/StoreDesignPresetLibrary";
 
 type ActivePage = {
   path: string;
@@ -306,6 +310,7 @@ function SectionPicker({
 export function StoreDesignSectionManager({ document, activePage, compatibility, onApply }: Props) {
   const toast = useExactToast();
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [presetOpen, setPresetOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [draggedId, setDraggedId] = useState<string | null>(null);
   const [editingSectionId, setEditingSectionId] = useState<string | null>(null);
@@ -343,6 +348,77 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
     nextTemplate.sectionIds = [...nextTemplate.sectionIds, sectionId];
     setPickerOpen(false);
     await commit(next, `${definition.label} eklendi`);
+  };
+
+  const saveSectionPreset = async (sectionId: string) => {
+    const section = document.sections[sectionId];
+    if (!section) return;
+    const definition = SECTION_LIBRARY_BY_TYPE[section.type];
+    if (!definition?.implemented) return toast.error("Bu bölüm preset olarak kaydedilemiyor.");
+
+    const next = structuredClone(document) as ThemeDocument;
+    const presetId = uid(`preset-${section.type}`);
+    const sameTypeCount = Object.values(next.presets).filter((preset) => preset.sectionType === section.type).length;
+    const now = new Date().toISOString();
+    next.presets[presetId] = {
+      id: presetId,
+      label: `${definition.label} Preset ${sameTypeCount + 1}`,
+      sectionType: section.type,
+      settings: structuredClone(section.settings || {}),
+      blocks: (section.blockIds || [])
+        .map((blockId) => document.blocks[blockId])
+        .filter((block): block is NonNullable<typeof block> => Boolean(block))
+        .map((block) => ({ type: block.type, settings: structuredClone(block.settings || {}) })),
+      createdAt: now,
+      updatedAt: now,
+      schemaVersion: STORE_DESIGN_SCHEMA_VERSION,
+    };
+    await commit(next, `${definition.label} preset olarak kaydedildi`);
+  };
+
+  const insertPreset = async (presetId: string) => {
+    if (!activePage) return;
+    const preset = document.presets[presetId];
+    const definition = preset ? SECTION_LIBRARY_BY_TYPE[preset.sectionType] : undefined;
+    if (!preset || !definition?.implemented || !definition.compatiblePages.includes(compatibility)) {
+      return toast.error("Preset bu sayfa tipiyle uyumlu değil.");
+    }
+
+    const { next, template: nextTemplate } = ensurePageContext(document, activePage, compatibility);
+    const sectionId = uid(`section-${preset.sectionType}`);
+    const blockIds: string[] = [];
+    for (const blockTemplate of preset.blocks) {
+      const blockDefinition = BLOCK_LIBRARY_BY_TYPE[blockTemplate.type];
+      if (!blockDefinition?.implemented || !definition.allowedBlocks.includes(blockTemplate.type)) continue;
+      const blockId = uid(`block-${blockTemplate.type}`);
+      next.blocks[blockId] = {
+        id: blockId,
+        type: blockTemplate.type,
+        schemaVersion: STORE_DESIGN_SCHEMA_VERSION,
+        settings: structuredClone(blockTemplate.settings || {}),
+      };
+      blockIds.push(blockId);
+    }
+
+    next.sections[sectionId] = {
+      id: sectionId,
+      type: preset.sectionType,
+      schemaVersion: STORE_DESIGN_SCHEMA_VERSION,
+      enabled: true,
+      settings: structuredClone(preset.settings || {}),
+      blockIds,
+    };
+    nextTemplate.sectionIds = [...nextTemplate.sectionIds, sectionId];
+    setPresetOpen(false);
+    await commit(next, `${preset.label} eklendi`);
+  };
+
+  const deletePreset = async (presetId: string) => {
+    const preset = document.presets[presetId];
+    if (!preset) return;
+    const next = structuredClone(document) as ThemeDocument;
+    delete next.presets[presetId];
+    await commit(next, `${preset.label} preset silindi`);
   };
 
   const mutateSection = async (sectionId: string, action: "up" | "down" | "toggle" | "duplicate" | "delete") => {
@@ -431,6 +507,9 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
                   <Settings2 className="h-3 w-3" />
                 </button>
               ) : null}
+              <button type="button" disabled={busy || !SECTION_LIBRARY_BY_TYPE[section.type]?.implemented} onClick={() => void saveSectionPreset(section.id)} className="grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04] disabled:opacity-20" aria-label="Preset olarak kaydet">
+                <BookmarkPlus className="h-3 w-3" />
+              </button>
               <button type="button" disabled={busy || index === 0} onClick={() => void mutateSection(section.id, "up")} className="grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04] disabled:opacity-20" aria-label="Yukarı taşı"><ArrowUp className="h-3 w-3" /></button>
               <button type="button" disabled={busy || index === sections.length - 1} onClick={() => void mutateSection(section.id, "down")} className="grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04] disabled:opacity-20" aria-label="Aşağı taşı"><ArrowDown className="h-3 w-3" /></button>
               <button type="button" disabled={busy} onClick={() => void mutateSection(section.id, "toggle")} className="grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04]" aria-label={section.enabled ? "Gizle" : "Göster"}>{section.enabled ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}</button>
@@ -449,6 +528,9 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
         <button type="button" disabled={!activePage || busy} onClick={() => setPickerOpen(true)} className="mt-2 flex h-9 w-full items-center justify-center gap-1.5 rounded-lg border border-black/10 bg-white text-[9px] font-semibold hover:bg-black/[0.03] disabled:opacity-40">
           <Plus className="h-3.5 w-3.5" />Bölüm Ekle
         </button>
+        <button type="button" disabled={!activePage || busy} onClick={() => setPresetOpen(true)} className="mt-1.5 flex h-9 w-full items-center justify-center gap-1.5 rounded-lg border border-black/10 bg-white text-[9px] font-semibold hover:bg-black/[0.03] disabled:opacity-40">
+          <Library className="h-3.5 w-3.5" />Presetler ({Object.keys(document.presets).length})
+        </button>
 
         <div className="mt-1.5 rounded-lg bg-black/[0.025] px-2.5 py-2 text-[9px] font-medium">
           <div className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-black/30" />Footer <span className="ml-auto text-[7px] text-black/30">Global</span></div>
@@ -463,6 +545,15 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
       </section>
 
       {pickerOpen ? <SectionPicker compatibility={compatibility} onAdd={(definition) => void addSection(definition)} onClose={() => setPickerOpen(false)} /> : null}
+      {presetOpen ? (
+        <StoreDesignPresetLibrary
+          presets={Object.values(document.presets)}
+          compatibility={compatibility}
+          onInsert={(presetId) => void insertPreset(presetId)}
+          onDelete={(presetId) => void deletePreset(presetId)}
+          onClose={() => setPresetOpen(false)}
+        />
+      ) : null}
       {editingSectionId && document.sections[editingSectionId] ? (
         isBlockDrivenSection(document.sections[editingSectionId]!.type) && document.sections[editingSectionId]!.type !== "faq" ? (
           <StoreDesignBlockSectionEditor
