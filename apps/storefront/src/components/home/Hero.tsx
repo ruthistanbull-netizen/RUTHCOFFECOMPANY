@@ -569,14 +569,12 @@ function HorizontalPortfolioStory({
       aria-label="ROSTA yatay hikaye"
     >
       <style>{`
-        .home-horizontal-story-wrapper,
-        .horizontal-wrapper{
+        .home-horizontal-story-wrapper{
           display:flex;
           width:400vw;
           height:100svh;
         }
-        .home-horizontal-story-panel,
-        .panel{
+        .home-horizontal-story-panel{
           width:100vw;
           height:100svh;
           display:flex;
@@ -585,8 +583,7 @@ function HorizontalPortfolioStory({
           background:var(--rosta-carbon);
           color:var(--rosta-cream);
         }
-        .home-horizontal-story-panel-inner,
-        .panel-inner{
+        .home-horizontal-story-panel-inner{
           width:100%;
           display:grid;
           grid-template-columns:1fr 1fr;
@@ -596,16 +593,14 @@ function HorizontalPortfolioStory({
         .home-horizontal-story-copy{
           padding-top:92px;
         }
-        .home-horizontal-story-label,
-        .label{
+        .home-horizontal-story-label{
           letter-spacing:.3em;
           font-size:12px;
           opacity:.5;
           margin-bottom:20px;
           font-family:var(--font-body);
         }
-        .home-horizontal-story-title,
-        .title{
+        .home-horizontal-story-title{
           margin:0;
           max-width:720px;
           font-family:var(--font-heading)!important;
@@ -615,8 +610,7 @@ function HorizontalPortfolioStory({
           line-height:.9;
           letter-spacing:-.055em;
         }
-        .home-horizontal-story-desc,
-        .desc{
+        .home-horizontal-story-desc{
           margin:24px 0 0;
           opacity:.6;
           max-width:500px;
@@ -625,8 +619,7 @@ function HorizontalPortfolioStory({
           font-family:var(--font-body);
           font-size:clamp(.95rem,1.2vw,1.15rem);
         }
-        .home-horizontal-story-cards,
-        .cards{
+        .home-horizontal-story-cards{
           position:relative;
           height:500px;
         }
@@ -667,12 +660,10 @@ function HorizontalPortfolioStory({
           height:100%;
         }
         @media(max-width:767px){
-          .home-horizontal-story-panel,
-          .panel{
+          .home-horizontal-story-panel{
             padding:28px 22px 34px;
           }
-          .home-horizontal-story-panel-inner,
-          .panel-inner{
+          .home-horizontal-story-panel-inner{
             height:100%;
             grid-template-columns:1fr;
             grid-template-rows:auto 1fr;
@@ -683,25 +674,21 @@ function HorizontalPortfolioStory({
             align-self:end;
             padding-top:84px;
           }
-          .home-horizontal-story-label,
-          .label{
+          .home-horizontal-story-label{
             margin-bottom:12px;
             font-size:10px;
           }
-          .home-horizontal-story-title,
-          .title{
+          .home-horizontal-story-title{
             font-size:clamp(2.8rem,13vw,4.6rem);
             line-height:.88;
           }
-          .home-horizontal-story-desc,
-          .desc{
+          .home-horizontal-story-desc{
             margin-top:16px;
             max-width:88vw;
             font-size:.95rem;
             line-height:1.5;
           }
-          .home-horizontal-story-cards,
-          .cards{
+          .home-horizontal-story-cards{
             align-self:start;
             height:42svh;
             min-height:300px;
