@@ -20,6 +20,7 @@ const DRAFT_KEY = "store_design_v2_draft";
 const PUBLISHED_KEY = "store_design_v2_published";
 const PREVIEW_PREFIX = "store_design_v2_preview_";
 const SNAPSHOT_PREFIX = "store_design_v2_snapshot_";
+const MAX_PUBLISH_SNAPSHOTS = 30;
 
 function cleanPreviewToken(value: unknown) {
   return typeof value === "string"
@@ -205,6 +206,23 @@ export async function PUT(request: Request) {
         paths: ["/", "/products", "/collections", "/categories", "/search"],
         tags: ["ruth-theme"],
       });
+
+      // Snapshot retention is deliberately best-effort: a cleanup problem must
+      // never turn a successful atomic publish into a failed publish response.
+      try {
+        const { data: staleSnapshots } = await auth.supabase
+          .from("site_settings")
+          .select("setting_key")
+          .like("setting_key", `${SNAPSHOT_PREFIX}%`)
+          .order("updated_at", { ascending: false })
+          .range(MAX_PUBLISH_SNAPSHOTS, MAX_PUBLISH_SNAPSHOTS + 199);
+        const staleKeys = (staleSnapshots || []).map((row) => row.setting_key).filter(Boolean);
+        if (staleKeys.length) {
+          await auth.supabase.from("site_settings").delete().in("setting_key", staleKeys);
+        }
+      } catch {
+        // Retention cleanup is non-critical; the published snapshot is already durable.
+      }
 
       return NextResponse.json({
         ok: true,
