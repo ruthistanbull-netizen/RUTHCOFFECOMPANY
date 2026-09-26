@@ -35,6 +35,9 @@ function declaration(path: string, value: unknown) {
   if (path === "backgroundColor") return `background-color:${String(value)}!important;`;
   if (path === "color") return `color:${String(value)}!important;`;
   if (path === "media.objectFit") return `object-fit:${String(value)}!important;`;
+  if (path === "grid.columns") return `--theme-product-grid-columns:${Math.max(1, Math.min(6, Math.round(Number(value))))};`;
+  if (path === "grid.gapX") return `--theme-product-grid-gap-x:${Math.max(0, Math.min(120, Number(value)))}px;`;
+  if (path === "grid.gapY") return `--theme-product-grid-gap-y:${Math.max(0, Math.min(120, Number(value)))}px;`;
   return "";
 }
 
