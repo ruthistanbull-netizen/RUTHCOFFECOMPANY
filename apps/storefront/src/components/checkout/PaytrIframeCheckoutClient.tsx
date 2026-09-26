@@ -94,9 +94,13 @@ function RequiredMark() {
   return <span className="required-star" aria-hidden="true">*</span>;
 }
 
-function Field({ label, required, children }: { label: string; required?: boolean; children: ReactNode }) {
+function Field({ label, required, children, editorId }: { label: string; required?: boolean; children: ReactNode; editorId?: string }) {
   return (
-    <label className="block text-xs uppercase tracking-wide-luxe text-cream/70">
+    <label
+      data-editor-id={editorId}
+      data-editor-type={editorId ? "form-field" : undefined}
+      data-editor-label={editorId ? label : undefined}
+      className="block text-xs uppercase tracking-wide-luxe text-cream/70">
       {label} {required ? <RequiredMark /> : null}
       {children}
     </label>
@@ -740,7 +744,12 @@ export function PaytrIframeCheckoutClient() {
           </p>
         </div>
 
-        <div ref={checkoutStepsRef} className="mb-6 scroll-mt-24 rounded-2xl border border-kraft/35 bg-carbon-soft p-3 shadow-sm md:scroll-mt-32">
+        <div
+          ref={checkoutStepsRef}
+          data-editor-id="checkout-stepper"
+          data-editor-type="checkout-stepper"
+          data-editor-label="Checkout Adımları"
+          className="mb-6 scroll-mt-24 rounded-2xl border border-kraft/35 bg-carbon-soft p-3 shadow-sm md:scroll-mt-32">
           <div className="grid grid-cols-3 gap-2">
             {checkoutSteps.map((step, index) => {
               const isActive = checkoutStep === step.id;
@@ -779,21 +788,26 @@ export function PaytrIframeCheckoutClient() {
             : "w-full min-w-0 max-w-full"}
         >
           {checkoutStep === 1 ? (
-            <section className="mx-auto w-full max-w-4xl space-y-6">
+            <section
+              data-editor-id="address-section"
+              data-editor-type="address-section"
+              data-editor-label="İletişim ve Teslimat"
+              className="mx-auto w-full max-w-4xl space-y-6"
+            >
               <div className="rounded-xl border border-kraft/35 bg-carbon-soft p-4 md:p-6">
                 <div className="mb-5">
                   <p className="text-[10px] uppercase tracking-wide-luxe text-brick">İletişim Bilgileri</p>
                   <h2 className="mt-1 font-heading text-lg text-cream">Sana ulaşabileceğimiz bilgiler</h2>
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <Field label="Ad Soyad" required>
+                  <Field label="Ad Soyad" required editorId="form-field:full-name">
                     <input required autoComplete="name" value={form.fullName} onChange={(event) => updateField("fullName", event.target.value)} className={inputClass} />
                   </Field>
-                  <Field label="Telefon" required>
+                  <Field label="Telefon" required editorId="form-field:phone">
                     <input required type="tel" inputMode="tel" autoComplete="tel" value={form.phone} onChange={(event) => updateField("phone", event.target.value)} className={inputClass} />
                   </Field>
                   <div className="sm:col-span-2">
-                    <Field label="E-posta" required>
+                    <Field label="E-posta" required editorId="form-field:email">
                       <input required type="email" inputMode="email" autoComplete="email" value={form.email} onChange={(event) => updateField("email", event.target.value)} className={inputClass} />
                     </Field>
                   </div>
@@ -806,7 +820,7 @@ export function PaytrIframeCheckoutClient() {
                   <h2 className="mt-1 font-heading text-lg text-cream">Siparişin nereye gelsin?</h2>
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <Field label="İl" required>
+                  <Field label="İl" required editorId="form-field:city">
                     <input
                       required
                       autoComplete="address-level1"
@@ -823,7 +837,7 @@ export function PaytrIframeCheckoutClient() {
                       placeholder="İl seç"
                     />
                   </Field>
-                  <Field label="İlçe" required>
+                  <Field label="İlçe" required editorId="form-field:district">
                     <input
                       required
                       autoComplete="address-level2"
@@ -834,17 +848,17 @@ export function PaytrIframeCheckoutClient() {
                     />
                   </Field>
                   <div className="sm:col-span-2">
-                    <Field label="Posta Kodu (isteğe bağlı)">
+                    <Field label="Posta Kodu (isteğe bağlı)" editorId="form-field:postal-code">
                       <input inputMode="numeric" autoComplete="postal-code" maxLength={10} value={form.postalCode} onChange={(event) => updateField("postalCode", event.target.value.replace(/[^0-9A-Za-z -]/g, ""))} className={inputClass} />
                     </Field>
                   </div>
                   <div className="sm:col-span-2">
-                    <Field label="Açık Adres" required>
+                    <Field label="Açık Adres" required editorId="form-field:address-line">
                       <textarea required autoComplete="street-address" rows={4} value={form.addressLine} onChange={(event) => updateField("addressLine", event.target.value)} className={`${inputClass} resize-none`} />
                     </Field>
                   </div>
                   <div className="sm:col-span-2">
-                    <Field label="Sipariş Notu">
+                    <Field label="Sipariş Notu" editorId="form-field:note">
                       <textarea rows={3} value={form.note} onChange={(event) => updateField("note", event.target.value)} className={`${inputClass} resize-none`} />
                     </Field>
                   </div>
@@ -892,6 +906,9 @@ export function PaytrIframeCheckoutClient() {
                       return (
                         <div
                           key={item.key}
+                          data-editor-id={`order-preview-row:${item.key}`}
+                          data-editor-type="order-preview-row"
+                          data-editor-label="Sipariş Önizleme Satırı"
                           className="grid min-w-0 grid-cols-[54px_minmax(0,1fr)] gap-3 px-4 py-3 sm:grid-cols-[60px_minmax(0,1fr)_auto] md:grid-cols-[68px_minmax(0,1fr)_auto] md:px-5"
                         >
                           <div className="h-16 overflow-hidden rounded-lg border border-kraft/35 bg-carbon md:h-20">
@@ -940,7 +957,12 @@ export function PaytrIframeCheckoutClient() {
                 </button>
               </section>
 
-              <aside className="w-full min-w-0 max-w-full xl:sticky xl:top-28 xl:self-start">
+              <aside
+                data-editor-id="payment-summary"
+                data-editor-type="payment-summary"
+                data-editor-label="Ödeme Özeti"
+                className="w-full min-w-0 max-w-full xl:sticky xl:top-28 xl:self-start"
+              >
                 <div className="rounded-xl border border-kraft/35 bg-carbon-soft p-4 md:p-6">
                   <h2 className="font-heading text-lg">Ödeme Özeti</h2>
                   <div className="mt-5 space-y-3 text-sm">
@@ -1009,7 +1031,12 @@ export function PaytrIframeCheckoutClient() {
                     {isSubmitting ? <><LoadingIndicator size="sm" label="Ödeme hazırlanıyor" /> Ödeme hazırlanıyor...</> : <><CreditCard size={15} /> Ödeme Yap</>}
                   </button>
 
-                  <div className="mt-10 grid grid-cols-3 gap-3 text-center">
+                  <div
+                    data-editor-id="checkout-trust"
+                    data-editor-type="checkout-trust"
+                    data-editor-label="Checkout Güven Alanı"
+                    className="mt-10 grid grid-cols-3 gap-3 text-center"
+                  >
                     {[
                       { icon: Truck, title: "Kargo", lines: ["2.000₺ Üzeri Ücretsiz Kargo"] },
                       { icon: Shield, title: "Güvenli", lines: ["PAYTR ile Güvenli Ödeme"] },
@@ -1032,7 +1059,13 @@ export function PaytrIframeCheckoutClient() {
           ) : null}
 
           {checkoutStep === 3 && payment ? (
-            <section ref={paymentSectionRef} className="mx-auto w-full max-w-5xl scroll-mt-24">
+            <section
+              ref={paymentSectionRef}
+              data-editor-id="payment-surface"
+              data-editor-type="payment-surface"
+              data-editor-label="PayTR Ödeme Alanı"
+              className="mx-auto w-full max-w-5xl scroll-mt-24"
+            >
               <PaytrIframePayment iframeUrl={payment.iframeUrl} orderNo={payment.orderNo} testMode={payment.testMode} />
             </section>
           ) : null}
