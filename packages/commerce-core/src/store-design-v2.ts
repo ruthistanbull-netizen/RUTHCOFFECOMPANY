@@ -313,6 +313,56 @@ export type PageRecord = {
   updatedAt?: string;
 };
 
+const PROTECTED_STORE_DESIGN_ROUTE_PREFIXES = [
+  "/checkout",
+  "/account",
+  "/login",
+  "/register",
+  "/reset-password",
+  "/activate-account",
+  "/order-success",
+  "/order-fail",
+  "/order-failed",
+  "/internal",
+] as const;
+
+export function normalizeStoreDesignRoute(value: string) {
+  const raw = String(value || "/").trim();
+  const pathname = raw.split(/[?#]/, 1)[0] || "/";
+  const normalized = `/${pathname.replace(/^\/+|\/+$/g, "")}`;
+  return normalized === "/" ? "/" : normalized.replace(/\/{2,}/g, "/");
+}
+
+export function isProtectedStoreDesignRoute(value: string) {
+  const route = normalizeStoreDesignRoute(value);
+  return PROTECTED_STORE_DESIGN_ROUTE_PREFIXES.some(
+    (prefix) => route === prefix || route.startsWith(`${prefix}/`),
+  );
+}
+
+export function storeDesignSlug(value: string) {
+  return String(value || "")
+    .trim()
+    .toLocaleLowerCase("tr-TR")
+    .replace(/ı/g, "i")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+}
+
+export function merchantStoreDesignRoute(value: string) {
+  const slug = storeDesignSlug(value);
+  return slug ? `/pages/${slug}` : "/pages";
+}
+
+export function deterministicStoreDesignId(prefix: string, value: string) {
+  const normalized = normalizeStoreDesignRoute(value);
+  const safe = normalized === "/" ? "home" : normalized.slice(1).replace(/[^a-zA-Z0-9_-]+/g, "-");
+  return `${prefix}:${safe || "page"}`;
+}
+
 export type RedirectRecord = {
   id: string;
   from: string;
