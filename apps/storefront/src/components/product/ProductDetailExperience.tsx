@@ -739,6 +739,9 @@ export function ProductDetailExperience({
   return (
     <div
       ref={rootRef}
+      data-editor-id={`product-detail-shell:${product.id}`}
+      data-editor-type="product-detail-shell"
+      data-editor-label="Ürün Detay"
       className="product-browser-root"
       data-browser-phase="idle"
       style={{ touchAction: "pan-y pinch-zoom" }}
@@ -808,7 +811,13 @@ export function ProductDetailExperience({
         @media(prefers-reduced-motion:reduce){.product-browser-track{transition-duration:1ms!important}.product-swipe-hint-icon{animation:none!important}}
       `}</style>
 
-      <div className="product-browser-stage" aria-hidden="true">
+      <div
+        data-editor-id={`product-sequence-nav:${product.id}`}
+        data-editor-type="product-sequence-nav"
+        data-editor-label="Ürün Sıra Navigasyonu"
+        className="product-browser-stage"
+        aria-hidden="true"
+      >
         <div ref={trackRef} className="product-browser-track">
           <ProductBrowserPreview product={browserWindow.previous} />
           <ProductBrowserPreview product={product} />
@@ -818,7 +827,12 @@ export function ProductDetailExperience({
 
       <div className="product-detail-page" key={product.id}>
         <section className="product-primary">
-          <div className="product-media">
+          <div
+            data-editor-id={`product-gallery-region:${product.id}`}
+            data-editor-type="product-gallery"
+            data-editor-label="Ürün Galerisi"
+            className="product-media"
+          >
             <ProductGallery key={product.id} product={product} images={images} />
             {showSwipeHint ? (
               <div
@@ -838,18 +852,33 @@ export function ProductDetailExperience({
           </div>
           <div className="product-summary">
             <div className="product-summary-inner">
-              <div className="product-summary-copy">
+              <div
+                data-editor-id={`product-title-meta:${product.id}`}
+                data-editor-type="product-title-meta"
+                data-editor-label="Ürün Başlık / Meta"
+                className="product-summary-copy"
+              >
                 <p className="product-eyebrow">{collectionName}</p>
                 <h1 className="product-title" lang="en-US" data-latin-uppercase>
                   {product.name}
                 </h1>
-                <div className="product-price-row">
+                <div
+                  data-editor-id={`price-block:${product.id}`}
+                  data-editor-type="price-block"
+                  data-editor-label="Fiyat Bloğu"
+                  className="product-price-row"
+                >
                   {hasDiscount ? (
                     <>
                       <del className="product-compare">
                         {formatPrice(compareAt, product.currency || "TRY")}
                       </del>
-                      <span className="product-detail-sale-pill">
+                      <span
+                        data-editor-id={`status-badges:${product.id}`}
+                        data-editor-type="status-badges"
+                        data-editor-label="Ürün Rozetleri"
+                        className="product-detail-sale-pill"
+                      >
                         <strong>{formatPrice(productPrice, product.currency || "TRY")}</strong>
                         <em>-%{discountPercentage}</em>
                       </span>
@@ -864,7 +893,12 @@ export function ProductDetailExperience({
 
               <ProductPurchasePanel key={product.id} product={product} details={details} />
 
-              <div className="product-service-grid">
+              <div
+                data-editor-id={`shipping-info:${product.id}`}
+                data-editor-type="shipping-info"
+                data-editor-label="Kargo / Güven Bilgileri"
+                className="product-service-grid"
+              >
                 {[
                   { icon: Truck, title: "Kargo", text: "2.000₺ üzeri ücretsiz" },
                   { icon: Shield, title: "Güvenli", text: "PAYTR ile ödeme" },
