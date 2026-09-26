@@ -321,11 +321,17 @@ export type RedirectRecord = {
   createdAt: string;
 };
 
+export type TemplateComponentSettings = {
+  desktop: Record<string, unknown>;
+  mobile: Record<string, unknown>;
+};
+
 export type TemplateRecord = {
   id: string;
   label: string;
   compatibility: PageCompatibility[];
   sectionIds: string[];
+  componentSettings?: Record<string, TemplateComponentSettings>;
   schemaVersion: number;
 };
 
