@@ -8,10 +8,12 @@ import {
   Monitor,
   PanelLeft,
   PanelRight,
+  Redo2,
   RefreshCw,
   Save,
   Send,
   Smartphone,
+  Undo2,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -22,6 +24,7 @@ import {
   createEmptyThemeDocument,
   normalizeThemeDocument,
   type EditorScope,
+  type PageCompatibility,
   type ThemeDocument,
 } from "@ruth-commerce/commerce-core/store-design-v2";
 import { adminRequest } from "@/lib/adminApi";
@@ -66,6 +69,15 @@ type StoreDesignResponse = {
   publishedUpdatedAt?: string | null;
 };
 
+type PatchHistoryEntry = {
+  target: SelectedTarget;
+  scope: EditorScope;
+  device: Device;
+  path: string;
+  before: unknown;
+  after: unknown;
+};
+
 const RAW_STOREFRONT_URL = process.env.NEXT_PUBLIC_STOREFRONT_URL || "https://rostacoffecompany.zeabur.app";
 const STOREFRONT_ORIGIN = (() => {
   try { return new URL(RAW_STOREFRONT_URL).origin; }
@@ -104,6 +116,118 @@ function groupPages(pages: PageItem[]) {
   return [...groups.entries()];
 }
 
+function pageCompatibility(page: PageItem): PageCompatibility {
+  if (page.path === "/") return "home";
+  if (page.path.startsWith("/products/") || page.path === "/products/[slug]") return "product";
+  if (page.path.startsWith("/category/") || page.path.startsWith("/categories/") || page.path === "/category/[slug]") return "category";
+  if (page.path.startsWith("/collections/") || page.path === "/collections/[slug]") return "collection";
+  if (page.path.startsWith("/search")) return "search";
+  if (page.path.startsWith("/account")) return "account";
+  if (page.path.startsWith("/checkout")) return "checkout";
+  if (/\/(privacy|kvkk|terms|commercial-communication-consent)/.test(page.path)) return "legal";
+  return page.template ? "utility" : "content";
+}
+
+function setNested(target: Record<string, unknown>, path: string, value: unknown) {
+  const parts = path.split(".").filter(Boolean);
+  if (!parts.length) return;
+  let cursor = target;
+  for (const part of parts.slice(0, -1)) {
+    const existing = cursor[part];
+    if (!existing || typeof existing !== "object" || Array.isArray(existing)) cursor[part] = {};
+    cursor = cursor[part] as Record<string, unknown>;
+  }
+  cursor[parts[parts.length - 1]!] = value;
+}
+
+function sectionRegistration(target: SelectedTarget) {
+  const entry = [...target.breadcrumb].reverse().find((item) => item.id.startsWith("section:"));
+  return entry ? { id: entry.id.slice("section:".length), type: entry.type } : null;
+}
+
+function snapshotValue(target: SelectedTarget, path: string) {
+  if (path === "media.objectFit") return target.current.media?.objectFit || "cover";
+  if (path === "textAlign") return target.current.textAlign || "left";
+  if (path === "borderRadius") return target.current.borderRadius || 0;
+  if (path === "opacity") return target.current.opacity ?? 1;
+  if (path === "visible") return target.current.visible !== false;
+  return undefined;
+}
+
+function updateTargetSnapshot(target: SelectedTarget, path: string, value: unknown): SelectedTarget {
+  if (path === "media.objectFit") {
+    return { ...target, current: { ...target.current, media: { ...(target.current.media || {}), objectFit: String(value) } } };
+  }
+  return { ...target, current: { ...target.current, [path]: value } };
+}
+
+function persistSemanticPatch(
+  current: ThemeDocument,
+  target: SelectedTarget,
+  scope: EditorScope,
+  device: Device,
+  page: PageItem,
+  path: string,
+  value: unknown,
+  revision: number,
+) {
+  const next = structuredClone(current) as ThemeDocument;
+  next.revision = revision;
+
+  if (scope === "global") {
+    const globalPath = `${target.type}.${device}.${path}`;
+    if (target.type.startsWith("header") || target.type.includes("menu") || target.type.includes("nav")) {
+      setNested(next.globals.header, globalPath, value);
+    } else if (target.type.startsWith("footer") || target.type === "social-links") {
+      setNested(next.globals.footer, globalPath, value);
+    } else {
+      setNested(next.globals.tokens, globalPath, value);
+    }
+    return next;
+  }
+
+  if (scope === "family") {
+    const family = next.globals.componentFamilies[target.type] || { type: target.type, desktop: {}, mobile: {} };
+    setNested(family[device], path, value);
+    next.globals.componentFamilies[target.type] = family;
+    return next;
+  }
+
+  const section = sectionRegistration(target);
+  if ((scope === "section" || scope === "instance") && section) {
+    const instance = next.sections[section.id] || {
+      id: section.id,
+      type: section.type,
+      schemaVersion: STORE_DESIGN_SCHEMA_VERSION,
+      enabled: true,
+      settings: {},
+      blockIds: [],
+    };
+    const semanticKey = scope === "section" ? "section" : target.id;
+    setNested(instance.settings, `semantic.${semanticKey}.${device}.${path}`, value);
+    next.sections[section.id] = instance;
+    return next;
+  }
+
+  const existingPage = next.pages[page.path];
+  const templateId = existingPage?.templateId || (page.template ? page.path : `route:${page.path}`);
+  const template = next.templates[templateId] || {
+    id: templateId,
+    label: page.template ? page.label : `${page.label} şablonu`,
+    compatibility: [pageCompatibility(page)],
+    sectionIds: [],
+    componentSettings: {},
+    schemaVersion: STORE_DESIGN_SCHEMA_VERSION,
+  };
+  const componentSettings = { ...(template.componentSettings || {}) };
+  const semanticKey = scope === "instance" ? target.id : target.type;
+  const responsive = componentSettings[semanticKey] || { desktop: {}, mobile: {} };
+  setNested(responsive[device], path, value);
+  componentSettings[semanticKey] = responsive;
+  next.templates[templateId] = { ...template, componentSettings };
+  return next;
+}
+
 export function StoreDesignV21() {
   const toast = useExactToast();
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
@@ -111,6 +235,7 @@ export function StoreDesignV21() {
   const [pages, setPages] = useState<PageItem[]>([]);
   const [activePath, setActivePath] = useState("/");
   const [document, setDocument] = useState<ThemeDocument>(createEmptyThemeDocument());
+  const [savedDraft, setSavedDraft] = useState<ThemeDocument>(createEmptyThemeDocument());
   const [published, setPublished] = useState<ThemeDocument>(createEmptyThemeDocument());
   const [loading, setLoading] = useState(true);
   const [device, setDevice] = useState<Device>("desktop");
@@ -121,8 +246,12 @@ export function StoreDesignV21() {
   const [saving, setSaving] = useState<"draft" | "publish" | null>(null);
   const [leftOpen, setLeftOpen] = useState(true);
   const [rightOpen, setRightOpen] = useState(true);
+  const [history, setHistory] = useState<PatchHistoryEntry[]>([]);
+  const [future, setFuture] = useState<PatchHistoryEntry[]>([]);
+  const revisionRef = useRef(0);
 
-  const dirty = JSON.stringify(document) !== JSON.stringify(published);
+  const hasUnsavedChanges = JSON.stringify(document) !== JSON.stringify(savedDraft);
+  const hasUnpublishedChanges = JSON.stringify(savedDraft) !== JSON.stringify(published);
   const groupedPages = useMemo(() => groupPages(pages), [pages]);
   const activePage = pages.find((item) => item.path === activePath) || pages[0] || null;
 
@@ -146,7 +275,9 @@ export function StoreDesignV21() {
         : [{ path: "/", label: "Ana Sayfa", group: "Sayfalar" }];
 
       setDocument(nextDraft);
+      setSavedDraft(nextDraft);
       setPublished(nextPublished);
+      revisionRef.current = nextDraft.revision;
       setPages(nextPages);
       setActivePath(nextPages[0]?.path || "/");
       initialSrcRef.current = previewUrl(cleanPreviewPath(nextPages[0] || { path: "/", label: "Ana Sayfa", group: "Sayfalar" }));
@@ -207,10 +338,61 @@ export function StoreDesignV21() {
     if (!page) return;
     setActivePath(path);
     setSelected(null);
+    setHistory([]);
+    setFuture([]);
     postToPreview({
       type: STORE_DESIGN_MESSAGES.ROUTE_NAVIGATE,
       path: cleanPreviewPath(page),
     });
+  };
+
+  const applyPatchValue = (
+    target: SelectedTarget,
+    patchScope: EditorScope,
+    patchDevice: Device,
+    path: string,
+    value: unknown,
+  ) => {
+    if (!activePage) return;
+    const revision = revisionRef.current + 1;
+    revisionRef.current = revision;
+    setDocument((current) => persistSemanticPatch(current, target, patchScope, patchDevice, activePage, path, value, revision));
+    setSelected((current) => current?.id === target.id ? updateTargetSnapshot(current, path, value) : current);
+    postToPreview({
+      type: STORE_DESIGN_MESSAGES.PATCH,
+      targetId: target.id,
+      path,
+      value,
+      revision,
+      scope: patchScope,
+      device: patchDevice,
+    });
+  };
+
+  const applyInspectorPatch = (path: string, value: unknown) => {
+    if (!selected || !activePage) return;
+    const before = snapshotValue(selected, path);
+    if (Object.is(before, value)) return;
+    const entry: PatchHistoryEntry = { target: selected, scope, device, path, before, after: value };
+    setHistory((items) => [...items.slice(-79), entry]);
+    setFuture([]);
+    applyPatchValue(selected, scope, device, path, value);
+  };
+
+  const undo = () => {
+    const entry = history.at(-1);
+    if (!entry) return;
+    setHistory((items) => items.slice(0, -1));
+    setFuture((items) => [...items, entry]);
+    applyPatchValue(entry.target, entry.scope, entry.device, entry.path, entry.before);
+  };
+
+  const redo = () => {
+    const entry = future.at(-1);
+    if (!entry) return;
+    setFuture((items) => items.slice(0, -1));
+    setHistory((items) => [...items, entry]);
+    applyPatchValue(entry.target, entry.scope, entry.device, entry.path, entry.after);
   };
 
   const save = async (mode: "draft" | "publish") => {
@@ -224,6 +406,8 @@ export function StoreDesignV21() {
       });
       const persisted = normalizeThemeDocument(result.document || document);
       setDocument(persisted);
+      setSavedDraft(persisted);
+      revisionRef.current = persisted.revision;
       if (mode === "publish") setPublished(persisted);
       toast.success(mode === "publish" ? "Mağaza tasarımı yayınlandı." : "Taslak kaydedildi.");
     } catch (error) {
@@ -270,6 +454,15 @@ export function StoreDesignV21() {
           </button>
           <button type="button" onClick={() => setDevice("mobile")} className={`flex h-8 items-center gap-1.5 rounded-md px-2.5 text-[9px] font-medium ${device === "mobile" ? "bg-white shadow-sm" : "text-black/45"}`}>
             <Smartphone className="h-3.5 w-3.5" /><span className="hidden sm:inline">Mobil</span>
+          </button>
+        </div>
+
+        <div className="hidden items-center gap-1 md:flex">
+          <button type="button" disabled={!history.length || saving !== null} onClick={undo} className="grid h-9 w-9 place-items-center rounded-lg border border-black/10 bg-white hover:bg-black/[0.03] disabled:opacity-30" aria-label="Geri al">
+            <Undo2 className="h-3.5 w-3.5" />
+          </button>
+          <button type="button" disabled={!future.length || saving !== null} onClick={redo} className="grid h-9 w-9 place-items-center rounded-lg border border-black/10 bg-white hover:bg-black/[0.03] disabled:opacity-30" aria-label="Yinele">
+            <Redo2 className="h-3.5 w-3.5" />
           </button>
         </div>
 
@@ -388,6 +581,45 @@ export function StoreDesignV21() {
                   </dl>
                 </section>
 
+                <section className="border-b border-black/[0.07] p-3">
+                  <p className="text-[9px] font-semibold text-black/45">HIZLI AYARLAR</p>
+                  <div className="mt-2 space-y-3">
+                    {selected.controlGroups.includes("typography") ? (
+                      <label className="grid gap-1.5 text-[8px] text-black/45">
+                        Metin hizası
+                        <select value={selected.current.textAlign || "left"} onChange={(event) => applyInspectorPatch("textAlign", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none">
+                          <option value="left">Sol</option>
+                          <option value="center">Orta</option>
+                          <option value="right">Sağ</option>
+                        </select>
+                      </label>
+                    ) : null}
+
+                    {selected.controlGroups.includes("card") || selected.controlGroups.includes("layout") ? (
+                      <label className="grid gap-1.5 text-[8px] text-black/45">
+                        Köşe yuvarlaklığı
+                        <select value={String(Math.round(selected.current.borderRadius || 0))} onChange={(event) => applyInspectorPatch("borderRadius", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none">
+                          {[0, 4, 8, 12, 16, 24, 32].map((value) => <option key={value} value={value}>{value === 0 ? "Düz" : `${value}px`}</option>)}
+                        </select>
+                      </label>
+                    ) : null}
+
+                    {selected.controlGroups.includes("media") && selected.current.media ? (
+                      <label className="grid gap-1.5 text-[8px] text-black/45">
+                        Medya sığdırma
+                        <select value={selected.current.media.objectFit || "cover"} onChange={(event) => applyInspectorPatch("media.objectFit", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none">
+                          <option value="cover">Kapla</option>
+                          <option value="contain">Sığdır</option>
+                        </select>
+                      </label>
+                    ) : null}
+
+                    {!selected.controlGroups.includes("typography") && !selected.controlGroups.includes("card") && !selected.controlGroups.includes("layout") && !(selected.controlGroups.includes("media") && selected.current.media) ? (
+                      <p className="text-[8px] leading-4 text-black/35">Bu hedefin V2 kontrol şeması registry üzerinden genişletiliyor; korumalı alanlara genel amaçlı CSS kontrolü açılmıyor.</p>
+                    ) : null}
+                  </div>
+                </section>
+
                 {selected.protectedFields.length ? (
                   <section className="p-3">
                     <p className="text-[9px] font-semibold text-black/45">KORUNAN ALANLAR</p>
@@ -403,7 +635,11 @@ export function StoreDesignV21() {
 
             <div className="border-t border-black/[0.07] p-3">
               <p className="text-[8px] leading-4 text-black/35">
-                {dirty ? "Taslak ile yayınlanan sürüm farklı." : "Taslak ve yayınlanan sürüm eşleşiyor."} Normal düzenlemeler iframe reload etmeden patch protokolüyle ilerleyecek.
+                {hasUnsavedChanges
+                  ? "Kaydedilmemiş düzenlemeler var."
+                  : hasUnpublishedChanges
+                    ? "Taslak kaydedildi; yayınlanan sürümden farklı."
+                    : "Taslak ve yayınlanan sürüm eşleşiyor."} Normal düzenlemeler iframe reload etmeden patch protokolüyle ilerler.
               </p>
             </div>
           </aside>
