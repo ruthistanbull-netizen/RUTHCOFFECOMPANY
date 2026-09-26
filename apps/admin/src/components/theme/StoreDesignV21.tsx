@@ -203,7 +203,7 @@ function persistSemanticPatch(
       settings: {},
       blockIds: [],
     };
-    const semanticKey = scope === "section" ? "section" : target.id;
+    const semanticKey = scope === "section" ? target.type : target.id;
     setNested(instance.settings, `semantic.${semanticKey}.${device}.${path}`, value);
     next.sections[section.id] = instance;
     return next;
