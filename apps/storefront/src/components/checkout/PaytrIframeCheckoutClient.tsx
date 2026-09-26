@@ -821,7 +821,6 @@ export function PaytrIframeCheckoutClient() {
                   <Field label="İl" required>
                     <input
                       required
-                      readOnly
                       autoComplete="address-level1"
                       value={form.city}
                       onChange={(event) => {
@@ -839,7 +838,6 @@ export function PaytrIframeCheckoutClient() {
                   <Field label="İlçe" required>
                     <input
                       required
-                      readOnly
                       autoComplete="address-level2"
                       value={form.district}
                       onChange={(event) => updateField("district", event.target.value)}
