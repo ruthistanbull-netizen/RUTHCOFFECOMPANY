@@ -932,7 +932,12 @@ async function fetchStoreDesignV2Published(): Promise<ThemeDocument> {
     return createEmptyThemeDocument();
   }
 
-  return migrateThemeDocument(data?.setting_value).document;
+  try {
+    return migrateThemeDocument(data?.setting_value).document;
+  } catch (error) {
+    console.error("Store Design V2 yayın şeması okunamadı; legacy storefront fallback kullanılacak:", error);
+    return createEmptyThemeDocument();
+  }
 }
 
 const getCachedStoreDesignV2Published = unstable_cache(
