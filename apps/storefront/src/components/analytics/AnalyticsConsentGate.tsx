@@ -42,6 +42,9 @@ export function AnalyticsConsentGate() {
     ready && consent === null && typeof document !== "undefined"
       ? createPortal(
           <aside
+            data-editor-id="consent-banner"
+            data-editor-type="consent-banner"
+            data-editor-label="Çerez / Onay"
             aria-labelledby="analytics-consent-title"
             aria-describedby="analytics-consent-description"
             data-ruth-cookie-consent
