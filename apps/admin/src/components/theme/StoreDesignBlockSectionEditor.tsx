@@ -13,6 +13,7 @@ import {
   type ThemeDocument,
 } from "@ruth-commerce/commerce-core/store-design-v2";
 import { useExactToast } from "@/components/base44-exact/primitives";
+import { StoreDesignMediaLibrary } from "@/components/theme/StoreDesignMediaLibrary";
 
 type Props = {
   document: ThemeDocument;
@@ -57,6 +58,7 @@ function blockDefaults(type: string): Record<string, unknown> {
   if (type === "member") return { assetId: "", name: "İsim", role: "", bio: "" };
   if (type === "faq-item") return { question: "Yeni soru", answer: "" };
   if (type === "hotspot") return { x: 50, y: 50, targetType: "link", targetId: "#" };
+  if (type === "content") return { eyebrow: "", heading: "Başlık", body: "", linkLabel: "", linkHref: "", align: "center", maxWidth: "800px" };
   return {};
 }
 
@@ -88,6 +90,9 @@ function fieldLabel(key: string) {
     y: "Y konumu (%)",
     targetType: "Hedef tipi",
     targetId: "Hedef",
+    eyebrow: "Eyebrow",
+    align: "Hizalama",
+    maxWidth: "Max genişlik",
   };
   return labels[key] || key;
 }
@@ -117,6 +122,10 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
     .map((block) => ({ id: block.id, type: block.type, settings: structuredClone(block.settings || {}) })));
   const [blockType, setBlockType] = useState(allowedDefinitions[0]?.type || "");
   const [busy, setBusy] = useState(false);
+  const [mediaPicker, setMediaPicker] = useState<{
+    key: "imageAssetId" | "posterAssetId";
+    mediaType: "image" | "video" | "any";
+  } | null>(null);
 
   const mediaAssets = useMemo(() => Object.values(document.media), [document.media]);
   const maxBlocks = definition?.allowedBlocks.length ? (definition.maxBlocks || 50) : 0;
@@ -145,6 +154,17 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   const save = async () => {
     if (busy) return;
     if (blocks.length > maxBlocks) return toast.error(`Block sayısı maxBlocks sınırını aşıyor (${maxBlocks}).`);
+
+    if (["video-hero", "video-banner", "background-media"].includes(section.type)) {
+      const mediaId = text(settings.imageAssetId);
+      const asset = mediaId ? document.media[mediaId] : undefined;
+      if (!mediaId || !asset) return toast.error("Bu bölüm için Media Library'den bir medya seç.");
+      if ((section.type === "video-hero" || section.type === "video-banner") && asset.type !== "video") {
+        return toast.error("Bu bölüm yalnız video asset kabul eder.");
+      }
+      const posterId = text(settings.posterAssetId);
+      if (posterId && document.media[posterId]?.type !== "image") return toast.error("Video poster yalnız görsel asset olabilir.");
+    }
 
     if (section.type === "anchor") {
       const anchorId = normalizeStoreDesignAnchorId(text(settings.anchorId));
@@ -197,13 +217,15 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
 
   const hasColumns = ["gallery-grid", "masonry-gallery", "collage", "social-grid", "logo-cloud", "text-columns", "stats", "feature-grid", "trust-badges", "testimonials", "press-awards", "team"].includes(section.type);
   const hasGap = hasColumns || section.type === "slideshow";
-  const genericZeroBlock = ["heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta", "spacer", "divider", "anchor"].includes(section.type);
-  const hasGenericBody = ["heading-subtext", "manifesto", "promo-banner", "shipping-returns-cta"].includes(section.type);
-  const hasAlign = ["heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta"].includes(section.type);
-  const hasLink = ["promo-banner", "shipping-returns-cta"].includes(section.type);
-  const showTitle = !["quote", "spacer", "divider", "anchor"].includes(section.type);
-  const showEyebrow = !genericZeroBlock;
-  const showPadding = !["spacer", "anchor"].includes(section.type);
+  const mediaNarrative = ["video-hero", "video-banner", "background-media"].includes(section.type);
+  const genericZeroBlock = ["video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta", "spacer", "divider", "anchor"].includes(section.type);
+  const hasGenericBody = ["video-hero", "video-banner", "heading-subtext", "manifesto", "promo-banner", "shipping-returns-cta"].includes(section.type);
+  const hasAlign = ["video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta"].includes(section.type);
+  const hasLink = ["video-hero", "video-banner", "promo-banner", "shipping-returns-cta"].includes(section.type);
+  const showTitle = !["background-media", "quote", "spacer", "divider", "anchor"].includes(section.type);
+  const showEyebrow = !genericZeroBlock && section.type !== "background-media";
+  const showPadding = !["video-hero", "video-banner", "background-media", "spacer", "anchor"].includes(section.type);
+  const primaryMedia = mediaNarrative && text(settings.imageAssetId) ? document.media[text(settings.imageAssetId)] : undefined;
   const showBlockComposer = allowedDefinitions.length > 0;
 
   return (
@@ -237,6 +259,108 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   Metin
                   <textarea value={text(settings.body)} onChange={(event) => updateSetting("body", event.target.value)} className="min-h-24 resize-y rounded-lg border border-black/10 bg-white p-2.5 text-[9px] leading-5 outline-none" />
                 </label>
+              ) : null}
+              {mediaNarrative ? (
+                <>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                    {section.type === "background-media" ? "Arka plan medyası" : "Video asset"}
+                    <div className="flex gap-2">
+                      <select
+                        value={text(settings.imageAssetId)}
+                        onChange={(event) => {
+                          updateSetting("imageAssetId", event.target.value);
+                          const nextAsset = event.target.value ? document.media[event.target.value] : undefined;
+                          if (nextAsset?.type !== "video") updateSetting("posterAssetId", "");
+                        }}
+                        className="h-9 min-w-0 flex-1 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none"
+                      >
+                        <option value="">Medya seçilmedi</option>
+                        {mediaAssets
+                          .filter((asset) => section.type === "background-media" || asset.type === "video")
+                          .map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.type} · {asset.assetId} · v{asset.version || 1}</option>)}
+                      </select>
+                      <button type="button" onClick={() => setMediaPicker({ key: "imageAssetId", mediaType: section.type === "background-media" ? "any" : "video" })} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
+                        Media Library
+                      </button>
+                    </div>
+                    <span className="text-[7px] font-normal leading-4 text-black/35">Mobil varyant ve focal point seçili asset'in Media Library kaydından gelir.</span>
+                  </label>
+
+                  {(section.type !== "background-media" || primaryMedia?.type === "video") ? (
+                    <>
+                      <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                        Poster override
+                        <div className="flex gap-2">
+                          <select value={text(settings.posterAssetId)} onChange={(event) => updateSetting("posterAssetId", event.target.value)} className="h-9 min-w-0 flex-1 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                            <option value="">Video asset posterini kullan</option>
+                            {mediaAssets.filter((asset) => asset.type === "image").map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.assetId} · v{asset.version || 1}</option>)}
+                          </select>
+                          <button type="button" onClick={() => setMediaPicker({ key: "posterAssetId", mediaType: "image" })} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
+                            Media Library
+                          </button>
+                        </div>
+                      </label>
+                      <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                        Oynatma politikası
+                        <select value={text(settings.playbackPreset) || "ambient"} onChange={(event) => updateSetting("playbackPreset", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                          <option value="ambient">Autoplay · sessiz · loop</option>
+                          <option value="once">Autoplay · sessiz · tek oynatım</option>
+                          <option value="controls">Kontrollü oynatıcı</option>
+                        </select>
+                      </label>
+                    </>
+                  ) : null}
+
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Media fit
+                    <select value={text(settings.fit) || "cover"} onChange={(event) => updateSetting("fit", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="cover">Cover</option>
+                      <option value="contain">Contain</option>
+                    </select>
+                  </label>
+
+                  {section.type === "video-hero" ? (
+                    <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                      Hero yüksekliği
+                      <select value={text(settings.heightPreset) || "viewport"} onChange={(event) => updateSetting("heightPreset", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                        <option value="medium">Orta · 620px</option>
+                        <option value="tall">Uzun · 760px</option>
+                        <option value="viewport">Ekran · 100svh</option>
+                      </select>
+                    </label>
+                  ) : section.type === "video-banner" ? (
+                    <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                      Banner yüksekliği
+                      <select value={text(settings.heightPreset) || "medium"} onChange={(event) => updateSetting("heightPreset", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                        <option value="compact">Kompakt · 360px</option>
+                        <option value="medium">Orta · 480px</option>
+                        <option value="tall">Uzun · 620px</option>
+                      </select>
+                    </label>
+                  ) : (
+                    <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                      Minimum yükseklik
+                      <select value={text(settings.minHeightPreset) || "medium"} onChange={(event) => updateSetting("minHeightPreset", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                        <option value="compact">Kompakt · 360px</option>
+                        <option value="medium">Orta · 520px</option>
+                        <option value="tall">Uzun · 680px</option>
+                        <option value="viewport">Ekran · 100svh</option>
+                      </select>
+                    </label>
+                  )}
+
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Overlay · %{Math.round(numberValue(settings.overlayOpacity, section.type === "background-media" ? 36 : 30))}
+                    <input type="range" min={0} max={80} step={4} value={numberValue(settings.overlayOpacity, section.type === "background-media" ? 36 : 30)} onChange={(event) => updateSetting("overlayOpacity", Number(event.target.value))} />
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Metin kontrastı
+                    <select value={text(settings.contrastMode) || "light"} onChange={(event) => updateSetting("contrastMode", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="light">Açık metin</option>
+                      <option value="dark">Koyu metin</option>
+                    </select>
+                  </label>
+                </>
               ) : null}
               {section.type === "quote" ? (
                 <>
@@ -600,6 +724,30 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                             </label>
                           );
                         }
+                        if (key === "align" && block.type === "content") {
+                          return (
+                            <label key={key} className="grid gap-1 text-[8px] font-semibold text-black/45">
+                              {fieldLabel(key)}
+                              <select value={text(value) || "center"} onChange={(event) => updateBlock(block.id, key, event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                                <option value="left">Sol</option>
+                                <option value="center">Orta</option>
+                                <option value="right">Sağ</option>
+                              </select>
+                            </label>
+                          );
+                        }
+                        if (key === "maxWidth" && block.type === "content") {
+                          return (
+                            <label key={key} className="grid gap-1 text-[8px] font-semibold text-black/45">
+                              {fieldLabel(key)}
+                              <select value={text(value) || "800px"} onChange={(event) => updateBlock(block.id, key, event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                                <option value="640px">Dar · 640</option>
+                                <option value="800px">Orta · 800</option>
+                                <option value="960px">Geniş · 960</option>
+                              </select>
+                            </label>
+                          );
+                        }
                         return (
                           <label key={key} className="grid gap-1 text-[8px] font-semibold text-black/45">
                             {fieldLabel(key)}
@@ -616,6 +764,21 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
           </div>
           ) : null}
         </div>
+
+        {mediaPicker ? (
+          <StoreDesignMediaLibrary
+            document={document}
+            onApply={onApply}
+            onClose={() => setMediaPicker(null)}
+            onSelect={(assetId) => {
+              updateSetting(mediaPicker.key, assetId);
+              if (mediaPicker.key === "imageAssetId" && document.media[assetId]?.type !== "video") updateSetting("posterAssetId", "");
+              setMediaPicker(null);
+            }}
+            selectedAssetId={text(settings[mediaPicker.key]) || undefined}
+            mediaType={mediaPicker.mediaType}
+          />
+        ) : null}
 
         <footer className="flex shrink-0 items-center gap-2 border-t border-black/10 bg-[#fafafa] p-3">
           <p className="min-w-0 flex-1 truncate text-[8px] text-black/35">Stable block ID · max {maxBlocks} · schema {STORE_DESIGN_SCHEMA_VERSION}</p>
