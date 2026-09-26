@@ -137,8 +137,18 @@ export async function PUT(request: Request) {
   try {
     const current = await readDocument(auth.supabase, key);
     const now = new Date().toISOString();
+    const pages = mode === "publish"
+      ? Object.fromEntries(Object.entries(incoming.pages).map(([route, page]) => [
+          route,
+          page.status === "published"
+            ? { ...page, publishedAt: page.publishedAt || now, updatedAt: now }
+            : page,
+        ]))
+      : incoming.pages;
+
     const document: ThemeDocument = {
       ...incoming,
+      pages,
       schemaVersion: STORE_DESIGN_SCHEMA_VERSION,
       revision: nextRevision(incoming, current.document),
       publishedAt: mode === "publish" ? now : incoming.publishedAt,
