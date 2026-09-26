@@ -250,9 +250,22 @@ export function StoreDesignTemplateManager({
   const deleteSelected = async () => {
     if (!selected || selectedUsage.count > 0 || protectedTemplate || busy) return;
     const next = structuredClone(document) as ThemeDocument;
+    const sectionsUsedElsewhere = new Set(
+      Object.values(next.templates)
+        .filter((template) => template.id !== selected.id)
+        .flatMap((template) => template.sectionIds || []),
+    );
     for (const sectionId of selected.sectionIds) {
+      if (sectionsUsedElsewhere.has(sectionId)) continue;
       const section = next.sections[sectionId];
-      for (const blockId of section?.blockIds || []) delete next.blocks[blockId];
+      const blocksUsedElsewhere = new Set(
+        Object.entries(next.sections)
+          .filter(([id]) => id !== sectionId)
+          .flatMap(([, item]) => item.blockIds || []),
+      );
+      for (const blockId of section?.blockIds || []) {
+        if (!blocksUsedElsewhere.has(blockId)) delete next.blocks[blockId];
+      }
       delete next.sections[sectionId];
     }
     delete next.templates[selected.id];
