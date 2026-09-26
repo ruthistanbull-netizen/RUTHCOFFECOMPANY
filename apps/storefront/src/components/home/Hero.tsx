@@ -170,12 +170,16 @@ function EditorialMedia({
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const { scrollYProgress: cueScrollYProgress } = useScroll({
     target: ref,
-    offset: ["start 94%", "start 18%"],
+    offset: ["start 100%", "start 42%"],
+  });
+  const { scrollYProgress: cueLifecycleProgress } = useScroll({
+    target: ref,
+    offset: ["start 100%", "end 0%"],
   });
   const cueSpringProgress = useSpring(cueScrollYProgress, {
-    stiffness: 260,
-    damping: 38,
-    mass: 0.18,
+    stiffness: 180,
+    damping: 32,
+    mass: 0.24,
     restDelta: 0.0002,
     restSpeed: 0.0002,
   });
@@ -191,18 +195,18 @@ function EditorialMedia({
   const cueStartX = index === 2
     ? (mobileViewport ? 420 : 620)
     : (mobileViewport ? -420 : -620);
-  // Horizontal entrance completes early, while the photo is still rising.
-  // The parent sticky frame supplies the ROSTA-like vertical behavior:
-  // text rises with the photo, pins with it, and follows back down on reverse scroll.
+  // The cue is fixed to the viewport like the ROSTA wordmark.
+  // The photo top edge only triggers its horizontal entrance; once visible,
+  // the cue stays exactly at screen center until that photo's lifecycle ends.
   const cueX = useTransform(
     cueMotionProgress,
     [0, 0.14, 0.34, 0.56, 0.78, 1],
     [cueStartX, cueStartX * 0.74, cueStartX * 0.46, cueStartX * 0.23, cueStartX * 0.08, 0],
   );
   const cueOpacity = useTransform(
-    cueMotionProgress,
-    [0, 0.05, 0.14, 0.28, 1],
-    [0, 0.18, 0.62, 1, 1],
+    cueLifecycleProgress,
+    [0, 0.035, 0.9, 0.985, 1],
+    [0, 1, 1, 1, 0],
   );
   const wrapperClass = index === 0
     ? "absolute inset-0 overflow-hidden"
@@ -355,38 +359,38 @@ function EditorialMedia({
 
         {index === 1 ? (
           <motion.div
-            className="home-editorial-cue home-editorial-cue--second pointer-events-none absolute left-[10vw] top-[1svh] z-30 max-w-[84vw] md:left-[14vw] md:top-[52px] md:max-w-[48vw]"
+            className="home-editorial-cue home-editorial-cue--second pointer-events-none fixed left-1/2 top-1/2 z-50 w-[88vw] max-w-[720px]"
             style={{
               x: cueX,
               opacity: cueOpacity,
-              transformOrigin: "left center",
+              transformOrigin: "center center",
               willChange: "transform, opacity",
-              translateZ: 0,
             }}
             aria-hidden="true"
           >
-            <p>
-              <span>Doğru Çekirdek,</span>
-              <span>Güçlü Deneyim</span>
-            </p>
+            <div className="-translate-x-1/2 -translate-y-1/2 text-center">
+              <p>
+                <span>Doğru Çekirdek,</span>
+                <span>Güçlü Deneyim</span>
+              </p>
+            </div>
           </motion.div>
         ) : null}
 
         {index === 2 ? (
           <motion.div
-            className="home-editorial-cue home-editorial-cue--third pointer-events-none absolute right-[10vw] top-[1svh] z-30 max-w-[84vw] md:right-[14vw] md:top-[52px] md:max-w-[50vw]"
+            className="home-editorial-cue home-editorial-cue--third pointer-events-none fixed left-1/2 top-1/2 z-50 w-[88vw] max-w-[760px]"
             style={{
-              left: "auto",
               x: cueX,
               opacity: cueOpacity,
-              transformOrigin: "right center",
-              textAlign: "right",
+              transformOrigin: "center center",
               willChange: "transform, opacity",
-              translateZ: 0,
             }}
             aria-hidden="true"
           >
-            <p>Kahveyi sadeleştir, karakterini koru.</p>
+            <div className="-translate-x-1/2 -translate-y-1/2 text-center">
+              <p>Kahveyi sadeleştir, karakterini koru.</p>
+            </div>
           </motion.div>
         ) : null}
       </div>
