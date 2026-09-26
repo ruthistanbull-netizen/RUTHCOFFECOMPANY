@@ -176,17 +176,12 @@ function EditorialMedia({
   });
   const progress = useSpring(scrollYProgress, { stiffness: 92, damping: 30, mass: 0.42 });
   const cueSmoothProgress = useSpring(cueScrollYProgress, {
-    stiffness: 86,
-    damping: 28,
-    mass: 0.5,
-    restDelta: 0.001,
-    restSpeed: 0.001,
+    stiffness: 48,
+    damping: 22,
+    mass: 0.9,
+    restDelta: 0.0008,
+    restSpeed: 0.0008,
   });
-  // Touch scrolling on mobile already has native momentum. Feeding it through
-  // another heavy spring makes the copy look like it is dropping frames.
-  // Mobile therefore follows the scroll value directly; desktop keeps a light
-  // spring for a softer mouse-wheel feel.
-  const cueMotionProgress = mobileViewport ? cueScrollYProgress : cueSmoothProgress;
   const scale = useTransform(
     progress,
     [0, 0.16, 0.5, 1],
@@ -195,30 +190,38 @@ function EditorialMedia({
   const y = useTransform(progress, [0, 0.5, 1], ["0%", "-0.65%", "-1.35%"]);
   const opacity = useTransform(progress, [0, 0.78, 1], [1, 1, 0.96]);
   const cueStartX = index === 2 && mobileViewport
-    ? 420
+    ? 380
     : mobileViewport
-      ? -400
-      : -560;
+      ? -360
+      : -540;
+  const cueStartY = mobileViewport ? -280 : -380;
 
-  // Start exactly at the top edge of the editorial photo and travel down/in
-  // with the same scroll that brings the photo into view. This avoids the
-  // previous fixed mid-frame starting point on phones.
+  // Scroll-locked, but with a damped follower. The copy tracks both down/up
+  // scrolling and keeps a small amount of physical easing instead of snapping.
   const cueX = useTransform(
-    cueMotionProgress,
-    [0, 0.18, 0.46, 0.74, 1],
-    [cueStartX, cueStartX * 0.8, cueStartX * 0.46, cueStartX * 0.16, 0],
+    cueSmoothProgress,
+    [0, 0.16, 0.42, 0.72, 1],
+    [cueStartX, cueStartX * 0.82, cueStartX * 0.5, cueStartX * 0.18, 0],
   );
   const cueY = useTransform(
-    cueMotionProgress,
-    [0, 0.2, 0.5, 0.78, 1],
-    mobileViewport
-      ? ["0svh", "7svh", "18svh", "28svh", "34svh"]
-      : ["0px", "8vh", "19vh", "30vh", "35vh"],
+    cueSmoothProgress,
+    [0, 0.18, 0.48, 0.76, 1],
+    [cueStartY, cueStartY * 0.78, cueStartY * 0.42, cueStartY * 0.14, 0],
   );
   const cueOpacity = useTransform(
-    cueMotionProgress,
-    [0, 0.07, 0.2, 0.42, 1],
-    [0, 0.22, 0.68, 1, 1],
+    cueSmoothProgress,
+    [0, 0.08, 0.22, 0.46, 1],
+    [0, 0.18, 0.62, 1, 1],
+  );
+  const cueScale = useTransform(
+    cueSmoothProgress,
+    [0, 0.22, 0.55, 1],
+    [0.9, 0.94, 0.985, 1],
+  );
+  const cueRotate = useTransform(
+    cueSmoothProgress,
+    [0, 0.5, 1],
+    [index === 2 && mobileViewport ? 1.8 : -1.8, index === 2 && mobileViewport ? 0.6 : -0.6, 0],
   );
   const wrapperClass = index === 0
     ? "absolute inset-0 overflow-hidden"
@@ -371,12 +374,14 @@ function EditorialMedia({
 
         {index === 1 ? (
           <motion.div
-            className="home-editorial-cue home-editorial-cue--second pointer-events-none absolute left-[10vw] top-[1svh] z-50 max-w-[84vw] md:left-[14vw] md:top-[52px] md:max-w-[48vw]"
+            className="home-editorial-cue home-editorial-cue--second pointer-events-none absolute left-[10vw] top-[38%] z-30 max-w-[84vw] md:left-[14vw] md:top-[40%] md:max-w-[48vw]"
             style={{
               x: cueX,
               y: cueY,
               opacity: cueOpacity,
-              transformOrigin: "left top",
+              scale: cueScale,
+              rotate: cueRotate,
+              transformOrigin: "left center",
               willChange: "transform, opacity",
             }}
             aria-hidden="true"
@@ -390,14 +395,16 @@ function EditorialMedia({
 
         {index === 2 ? (
           <motion.div
-            className="home-editorial-cue home-editorial-cue--third pointer-events-none absolute top-[1svh] z-50 max-w-[84vw] md:left-[14vw] md:right-auto md:top-[52px] md:max-w-[50vw]"
+            className="home-editorial-cue home-editorial-cue--third pointer-events-none absolute top-[40%] z-30 max-w-[84vw] md:left-[14vw] md:right-auto md:top-[42%] md:max-w-[50vw]"
             style={{
               left: mobileViewport ? "auto" : undefined,
               right: mobileViewport ? "10vw" : undefined,
               x: cueX,
               y: cueY,
               opacity: cueOpacity,
-              transformOrigin: mobileViewport ? "right top" : "left top",
+              scale: cueScale,
+              rotate: cueRotate,
+              transformOrigin: mobileViewport ? "right center" : "left center",
               textAlign: mobileViewport ? "right" : "left",
               willChange: "transform, opacity",
             }}
