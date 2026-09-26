@@ -334,18 +334,6 @@ export function PaytrIframeCheckoutClient() {
       setError("Devam etmek için il, ilçe ve açık adres bilgilerini doldur.");
       return false;
     }
-    if (shippingCitiesLoading || shippingTownsLoading) {
-      setError("Basit Kargo adres listesi yükleniyor. Birkaç saniye sonra tekrar dene.");
-      return false;
-    }
-    if (shippingCities.length && !selectedShippingCity) {
-      setError("İl bilgisini Basit Kargo listesinden seç.");
-      return false;
-    }
-    if (selectedShippingCity && shippingTowns.length && !selectedShippingTown) {
-      setError("İlçe bilgisini Basit Kargo listesinden seç.");
-      return false;
-    }
     return true;
   };
 
