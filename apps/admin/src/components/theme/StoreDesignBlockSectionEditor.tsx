@@ -164,16 +164,18 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
     setCatalogError("");
 
     void Promise.all([
-      fetch("/api/catalog", { cache: "no-store", signal: controller.signal }).then((response) => response.json()),
+      fetch("/api/catalog-groups?type=collection", { cache: "no-store", signal: controller.signal }).then((response) => response.json()),
+      fetch("/api/catalog-groups?type=category", { cache: "no-store", signal: controller.signal }).then((response) => response.json()),
       fetch("/api/products", { cache: "no-store", signal: controller.signal }).then((response) => response.json()),
-    ]).then(([catalog, products]) => {
+    ]).then(([collections, categories, products]) => {
       if (!active) return;
-      if (!catalog?.ok) throw new Error(catalog?.error || "Katalog grupları alınamadı.");
+      if (!collections?.ok) throw new Error(collections?.error || "Koleksiyonlar alınamadı.");
+      if (!categories?.ok) throw new Error(categories?.error || "Kategoriler alınamadı.");
       if (!products?.ok) throw new Error(products?.error || "Ürün kataloğu alınamadı.");
 
       const productRows = Array.isArray(products.products) ? products.products : [];
-      const collectionRows = Array.isArray(catalog.collections) ? catalog.collections : [];
-      const categoryRows = Array.isArray(catalog.categories) ? catalog.categories : [];
+      const collectionRows = Array.isArray(collections.items) ? collections.items : [];
+      const categoryRows = Array.isArray(categories.items) ? categories.items : [];
 
       setCatalogProducts(productRows
         .filter((item: CatalogProductOption) => !item.status || item.status === "active")
