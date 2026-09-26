@@ -278,7 +278,7 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
   section("cross-sell", "Cross-sell / Upsell", "commerce", ["cart", "checkout"], ["source", "position", "density"]),
   section("product-comparison", "Ürün Karşılaştırma", "commerce", ["content", "landing"], ["products", "fields", "layout"]),
 
-  section("hero", "Hero", "media", allContentPages, ["desktopMedia", "mobileMedia", "height", "focalPoint", "overlay", "cta", "contrast"], [], true),
+  section("hero", "Hero", "media", allContentPages, ["imageAssetId", "posterAssetId", "heightPreset", "fit", "playbackPreset", "title", "body", "linkLabel", "linkHref", "align", "overlayOpacity", "contrastMode"], [], true),
   section("scroll-story", "Scroll Story", "media", allContentPages, ["desktopMedia", "mobileMedia", "layout", "animation"], [], true),
   section("video-hero", "Video Hero", "media", allContentPages, ["imageAssetId", "posterAssetId", "heightPreset", "fit", "playbackPreset", "title", "body", "linkLabel", "linkHref", "align", "overlayOpacity", "contrastMode"], [], true),
   section("image-banner", "Image Banner", "media", allCommercePages, ["image", "height", "focalPoint", "overlay", "text", "cta"], [], true),
@@ -1289,6 +1289,23 @@ export function validateThemeDocument(document: ThemeDocument) {
     }
     if (asset && section.type === "video-text-split" && asset.type !== "video") {
       errors.push(`${section.id}: Video + Text Split yalnız video asset kabul eder.`);
+    }
+
+    if (section.type === "hero" && imageAssetId) {
+      const posterId = typeof section.settings.posterAssetId === "string" ? section.settings.posterAssetId : "";
+      const poster = posterId ? document.media[posterId] : undefined;
+      if (posterId && !poster) errors.push(`${section.id}: Hero poster medya referansı bulunamadı (${posterId}).`);
+      if (poster && poster.type !== "image") errors.push(`${section.id}: Hero video poster yalnız image asset olabilir.`);
+      const playbackPreset = String(section.settings.playbackPreset || "ambient");
+      if (!["ambient", "once", "controls"].includes(playbackPreset)) errors.push(`${section.id}: Hero playbackPreset geçersiz.`);
+      const fit = String(section.settings.fit || "cover");
+      if (!["cover", "contain"].includes(fit)) errors.push(`${section.id}: Hero media fit geçersiz.`);
+      const heightPreset = String(section.settings.heightPreset || "viewport");
+      if (!["medium", "tall", "viewport"].includes(heightPreset)) errors.push(`${section.id}: Hero heightPreset geçersiz.`);
+      const contrastMode = String(section.settings.contrastMode || "light");
+      if (!["light", "dark", "adaptive"].includes(contrastMode)) errors.push(`${section.id}: Hero contrastMode geçersiz.`);
+      const overlayOpacity = Number(section.settings.overlayOpacity ?? 24);
+      if (!Number.isFinite(overlayOpacity) || overlayOpacity < 0 || overlayOpacity > 80) errors.push(`${section.id}: Hero overlay 0-80 aralığında olmalı.`);
     }
 
     if (section.type === "video-hero" || section.type === "video-banner") {
