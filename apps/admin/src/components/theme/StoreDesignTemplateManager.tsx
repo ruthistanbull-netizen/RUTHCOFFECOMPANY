@@ -119,6 +119,7 @@ export function StoreDesignTemplateManager({
   const currentTemplateId = activeTemplateId(document, activePath);
   const initialSelected = currentTemplateId || Object.values(document.templates).find((template) => compatible(template, compatibility))?.id || "";
   const [selectedId, setSelectedId] = useState(initialSelected);
+  const [creating, setCreating] = useState(false);
   const [newName, setNewName] = useState("");
   const [newDescription, setNewDescription] = useState("");
   const [busy, setBusy] = useState(false);
@@ -166,6 +167,7 @@ export function StoreDesignTemplateManager({
     try {
       await commit(next, `${label} template'i oluşturuldu`);
       setSelectedId(id);
+      setCreating(false);
       setNewName("");
       setNewDescription("");
       toast.success("Boş template oluşturuldu.");
@@ -275,7 +277,18 @@ export function StoreDesignTemplateManager({
           <header className="border-b border-black/10 p-4">
             <div className="flex items-center gap-2">
               <LayoutTemplate className="h-4 w-4" />
-              <p className="text-[11px] font-semibold">Template Manager</p>
+              <p className="min-w-0 flex-1 text-[11px] font-semibold">Template Manager</p>
+              <button
+                type="button"
+                onClick={() => {
+                  setCreating(true);
+                  setNewName("");
+                  setNewDescription("");
+                }}
+                className="flex h-8 items-center gap-1 rounded-lg bg-[#111] px-2.5 text-[7px] font-semibold text-white"
+              >
+                <Plus className="h-3 w-3" />Yeni
+              </button>
             </div>
             <p className="mt-1 text-[8px] leading-4 text-black/40">{activeLabel} · {compatibility}</p>
           </header>
@@ -291,6 +304,7 @@ export function StoreDesignTemplateManager({
                   type="button"
                   onClick={() => {
                     setSelectedId(template.id);
+                    setCreating(false);
                     setNewName("");
                     setNewDescription("");
                   }}
@@ -311,14 +325,14 @@ export function StoreDesignTemplateManager({
         <div className="flex min-w-0 flex-1 flex-col">
           <header className="flex h-14 shrink-0 items-center gap-3 border-b border-black/10 px-4">
             <div className="min-w-0 flex-1">
-              <p className="text-[12px] font-semibold">{selected?.label || "Yeni Template"}</p>
-              <p className="mt-0.5 truncate text-[8px] text-black/40">{selected?.id || "Boş veya mevcut template'ten oluştur"}</p>
+              <p className="text-[12px] font-semibold">{creating ? "Yeni Template" : selected?.label || "Template Seç"}</p>
+              <p className="mt-0.5 truncate text-[8px] text-black/40">{creating ? "Boş template oluştur" : selected?.id || "Soldan template seç"}</p>
             </div>
             <button type="button" onClick={onClose} className="grid h-9 w-9 place-items-center rounded-lg hover:bg-black/[0.04]" aria-label="Kapat"><X className="h-4 w-4" /></button>
           </header>
 
           <div className="min-h-0 flex-1 overflow-y-auto p-4">
-            {selected ? (
+            {!creating && selected ? (
               <>
                 <div className="grid gap-3 sm:grid-cols-3">
                   <div className="rounded-xl border border-black/[0.07] p-3"><p className="text-[7px] text-black/35">Bölüm</p><p className="mt-1 text-[16px] font-semibold">{selected.sectionIds.length}</p></div>
@@ -372,16 +386,28 @@ export function StoreDesignTemplateManager({
               </>
             ) : null}
 
-            <div className="mt-6 border-t border-black/[0.07] pt-5">
-              <p className="text-[9px] font-semibold">Yeni boş template</p>
-              <p className="mt-1 text-[8px] leading-4 text-black/35">Bu template {compatibility} page type ile uyumlu oluşturulur; sonra Bölüm Ekle ile composition kurulabilir.</p>
-              <div className="mt-3 grid gap-3">
-                <input value={selected ? "" : newName} onChange={(event) => setNewName(event.target.value)} placeholder="Template adı" className="h-10 rounded-lg border border-black/10 px-3 text-[9px] font-medium outline-none" />
-                <textarea value={selected ? "" : newDescription} onChange={(event) => setNewDescription(event.target.value)} placeholder="Açıklama (opsiyonel)" className="min-h-16 resize-y rounded-lg border border-black/10 p-3 text-[9px] outline-none" />
-                <button type="button" disabled={busy || Boolean(selected)} onClick={() => void createBlank()} className="flex h-9 items-center justify-center gap-2 rounded-lg bg-[#111] text-[8px] font-semibold text-white disabled:opacity-35"><Plus className="h-3.5 w-3.5" />Boş Template Oluştur</button>
+            {creating ? (
+              <div>
+                <div className="rounded-xl border border-black/[0.08] bg-[#fafafa] p-4">
+                  <p className="text-[10px] font-semibold">Yeni boş template</p>
+                  <p className="mt-1 text-[8px] leading-4 text-black/35">Bu template {compatibility} page type ile uyumlu oluşturulur. Ardından template'i sayfaya atayıp Bölüm Ekle ile composition kurabilirsin.</p>
+                </div>
+                <div className="mt-4 grid gap-3">
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Template adı
+                    <input value={newName} onChange={(event) => setNewName(event.target.value)} placeholder="Örn. Editorial Product" className="h-10 rounded-lg border border-black/10 px-3 text-[9px] font-medium outline-none" />
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Açıklama
+                    <textarea value={newDescription} onChange={(event) => setNewDescription(event.target.value)} placeholder="Bu template'in kullanım amacı…" className="min-h-20 resize-y rounded-lg border border-black/10 p-3 text-[9px] outline-none" />
+                  </label>
+                  <div className="flex justify-end gap-2">
+                    <button type="button" disabled={busy} onClick={() => setCreating(false)} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold disabled:opacity-40">Vazgeç</button>
+                    <button type="button" disabled={busy || !newName.trim()} onClick={() => void createBlank()} className="flex h-9 items-center gap-2 rounded-lg bg-[#111] px-3 text-[8px] font-semibold text-white disabled:opacity-35"><Plus className="h-3.5 w-3.5" />Boş Template Oluştur</button>
+                  </div>
+                </div>
               </div>
-              {selected ? <p className="mt-2 text-[7px] text-black/30">Yeni template oluşturmak için soldaki seçimi kapatmaya gerek yok; bu alan bir sonraki iterasyonda bağımsız create drawer'a ayrılacak.</p> : null}
-            </div>
+            ) : null}
           </div>
         </div>
       </div>
