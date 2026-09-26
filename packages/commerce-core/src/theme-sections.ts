@@ -21,6 +21,9 @@ export type ThemeSection = {
   linkLabel?: string;
   linkHref?: string;
   imageSrc?: string;
+  mobileImageSrc?: string;
+  imageObjectPosition?: string;
+  mobileImageObjectPosition?: string;
   productSource?: ThemeProductSource;
   productSourceId?: string;
   productLimit?: number;
