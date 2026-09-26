@@ -340,7 +340,6 @@ export function VisualThemeCustomizer() {
       setSettings(next);
       setSaved(next);
       if (Array.isArray(pageResult.pages) && pageResult.pages.length) setPages(pageResult.pages);
-      setNonce(Date.now());
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Mağaza tasarımı yüklenemedi.");
     } finally {
@@ -796,8 +795,8 @@ export function VisualThemeCustomizer() {
           pendingContextRef.current = null;
           setMenu(null);
           setSelected(null);
-          [20, 140, 420].forEach((delay) => window.setTimeout(() => sendSettings(settings), delay));
-          window.setTimeout(() => iframeRef.current?.contentWindow?.postMessage({ type: "RUTH_THEME_EDITOR_REFRESH_OUTLINE" }, "*"), 180);
+          sendSettings(settings);
+          window.setTimeout(() => iframeRef.current?.contentWindow?.postMessage({ type: "RUTH_THEME_EDITOR_REFRESH_OUTLINE" }, "*"), 120);
         }
       }
     };
@@ -992,20 +991,28 @@ export function VisualThemeCustomizer() {
 
         <main className="flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-hidden bg-background p-3 md:p-4">
           <div className={cx("relative overflow-hidden bg-surface-primary shadow-floating transition-all duration-300", device === "mobile" ? "h-full max-h-[820px] w-[430px] max-w-full rounded-[24px] border border-border-subtle" : "h-full w-full rounded-xl border border-border-subtle")}>
-            <iframe
-              ref={iframeRef}
-              key={`${path}-${nonce}`}
-              src={previewUrl}
-              title="Mağaza önizleme"
-              className="h-full w-full border-0 bg-surface-primary"
-              onLoad={() => {
-                pendingContextRef.current = null;
-                setMenu(null);
-                setSelected(null);
-                [40, 180, 520].forEach((delay) => window.setTimeout(() => sendSettings(settings), delay));
-                window.setTimeout(() => iframeRef.current?.contentWindow?.postMessage({ type: "RUTH_THEME_EDITOR_REFRESH_OUTLINE" }, "*"), 240);
-              }}
-            />
+            {loading ? (
+              <div className="grid h-full w-full place-items-center bg-surface-primary">
+                <div className="flex items-center gap-2 text-[10px] text-subtle">
+                  <RefreshCw className="h-4 w-4 animate-spin" />
+                  Önizleme hazırlanıyor
+                </div>
+              </div>
+            ) : (
+              <iframe
+                ref={iframeRef}
+                key={`${path}-${nonce}`}
+                src={previewUrl}
+                title="Mağaza önizleme"
+                className="h-full w-full border-0 bg-surface-primary"
+                onLoad={() => {
+                  pendingContextRef.current = null;
+                  setMenu(null);
+                  setSelected(null);
+                  window.setTimeout(() => iframeRef.current?.contentWindow?.postMessage({ type: "RUTH_THEME_EDITOR_REFRESH_OUTLINE" }, "*"), 160);
+                }}
+              />
+            )}
           </div>
         </main>
       </div>
