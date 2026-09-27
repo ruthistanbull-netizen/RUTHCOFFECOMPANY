@@ -282,7 +282,7 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
   section("new-arrivals", "Yeni Gelenler", "commerce", allCommercePages, ["limit", "layout"], [], true),
   section("best-sellers", "Çok Satanlar", "commerce", allCommercePages, ["title", "window", "limit", "layout", "paddingY"], [], true),
   section("sale-products", "İndirimdekiler", "commerce", allCommercePages, ["limit", "layout", "badgeStyle"], [], true),
-  section("recommendations", "Önerilen Ürünler", "commerce", ["product", "cart"], ["algorithm", "limit", "layout"]),
+  section("recommendations", "Önerilen Ürünler", "commerce", ["product"], ["title", "eyebrow", "algorithm", "limit", "layout", "paddingY"], [], true),
   section("recently-viewed", "Son Görüntülenenler", "commerce", ["product", "cart"], ["limit", "layout", "heading"]),
   section("bundle", "Birlikte Alınanlar / Bundle", "commerce", ["product", "cart"], ["source", "layout", "cta"]),
   section("cross-sell", "Cross-sell / Upsell", "commerce", ["cart", "checkout"], ["source", "position", "density"]),
@@ -1374,6 +1374,15 @@ export function validateThemeDocument(document: ThemeDocument) {
         const value = section.settings[key];
         if (value !== undefined && typeof value !== "string") errors.push(`${section.id}: Contact Form ${key} metin olmalı.`);
       }
+    }
+
+    if (section.type === "recommendations") {
+      const algorithm = String(section.settings.algorithm || "related");
+      if (algorithm !== "related") errors.push(`${section.id}: Önerilen Ürünler yalnız korumalı related algoritmasını kullanabilir.`);
+      const limit = Number(section.settings.limit ?? 6);
+      if (!Number.isFinite(limit) || limit < 2 || limit > 12) errors.push(`${section.id}: Önerilen Ürünler limiti 2-12 aralığında olmalı.`);
+      const layout = String(section.settings.layout || "grid");
+      if (!["grid", "slider"].includes(layout)) errors.push(`${section.id}: Önerilen Ürünler layout geçersiz.`);
     }
 
     if (section.type === "best-sellers") {
