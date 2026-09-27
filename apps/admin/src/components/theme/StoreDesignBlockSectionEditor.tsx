@@ -153,7 +153,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
 
   const mediaAssets = useMemo(() => Object.values(document.media), [document.media]);
   const maxBlocks = definition?.allowedBlocks.length ? (definition.maxBlocks || 50) : 0;
-  const needsCommerceCatalog = ["product-spotlight", "featured-collection", "category-cards", "product-comparison"].includes(section.type);
+  const needsCommerceCatalog = ["product-spotlight", "featured-collection", "category-cards", "product-comparison", "review-highlights"].includes(section.type);
 
   useEffect(() => {
     if (!needsCommerceCatalog) return;
@@ -325,10 +325,11 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   const productComparison = section.type === "product-comparison";
   const bestSellers = section.type === "best-sellers";
   const contactForm = section.type === "contact-form";
+  const reviewHighlights = section.type === "review-highlights";
   const collectionCards = section.type === "collection-cards" || section.type === "category-cards";
   const categoryCards = section.type === "category-cards";
-  const genericZeroBlock = ["hero", "product-comparison", "best-sellers", "contact-form", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta", "spacer", "divider", "anchor"].includes(section.type);
-  const hasGenericBody = ["hero", "video-hero", "video-banner", "brand-story", "contact-form", "heading-subtext", "manifesto", "promo-banner", "shipping-returns-cta"].includes(section.type);
+  const genericZeroBlock = ["hero", "product-comparison", "best-sellers", "contact-form", "review-highlights", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta", "spacer", "divider", "anchor"].includes(section.type);
+  const hasGenericBody = ["hero", "video-hero", "video-banner", "brand-story", "contact-form", "review-highlights", "heading-subtext", "manifesto", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const hasAlign = ["hero", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const hasLink = ["hero", "video-hero", "video-banner", "brand-story", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const showTitle = !["product-spotlight", "featured-collection", "scroll-story", "background-media", "quote", "spacer", "divider", "anchor"].includes(section.type);
@@ -742,6 +743,27 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                       <option value="50%">50%</option>
                       <option value="60%">60%</option>
                     </select>
+                  </label>
+                </>
+              ) : null}
+
+              {reviewHighlights ? (
+                <>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                    Yorum kaynağı · ürün
+                    <select value={text(settings.productId)} onChange={(event) => updateSetting("productId", event.target.value)} disabled={catalogLoading} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none disabled:opacity-50">
+                      <option value="">{catalogLoading ? "Ürünler yükleniyor…" : "Ürün seç"}</option>
+                      {catalogProducts.map((product) => <option key={product.id} value={product.id}>{product.name}</option>)}
+                    </select>
+                    {catalogError ? <span className="text-[7px] font-normal text-red-600">{catalogError}</span> : <span className="text-[7px] font-normal leading-4 text-black/35">Yalnız onaylı yorumlar storefront review servisinden read-only gelir.</span>}
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Yorum limiti
+                    <input type="number" min={1} max={12} value={numberValue(settings.limit, 6)} onChange={(event) => updateSetting("limit", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                  </label>
+                  <label className="flex items-center justify-between gap-3 rounded-lg border border-black/10 bg-white p-2.5 text-[8px] font-semibold text-black/45">
+                    Puanı göster
+                    <input type="checkbox" checked={settings.ratingDisplay !== false} onChange={(event) => updateSetting("ratingDisplay", event.target.checked)} />
                   </label>
                 </>
               ) : null}
