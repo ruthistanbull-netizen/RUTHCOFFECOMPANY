@@ -14,6 +14,7 @@ export type ThemeSectionType =
   | "new-arrivals"
   | "best-sellers"
   | "recommendations"
+  | "breadcrumb"
   | "sale-products"
   | "image-banner"
   | "rich-text"
@@ -172,7 +173,7 @@ function pagePath(value: unknown) {
 
 const sectionTypes = new Set<ThemeSectionType>([
   "hero", "scroll-story", "collections", "featured-products", "brand-story", "trust",
-  "product-slider", "product-grid", "product-spotlight", "featured-collection", "category-cards", "product-comparison", "new-arrivals", "best-sellers", "recommendations", "sale-products", "image-banner", "rich-text", "faq",
+  "product-slider", "product-grid", "product-spotlight", "featured-collection", "category-cards", "product-comparison", "new-arrivals", "best-sellers", "recommendations", "breadcrumb", "sale-products", "image-banner", "rich-text", "faq",
 ]);
 
 export function normalizeThemeSection(input: unknown, index = 0): ThemeSection | null {
