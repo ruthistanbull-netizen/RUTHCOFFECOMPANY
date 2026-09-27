@@ -175,6 +175,7 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
   component("countdown", "Countdown", "Marketing", "section", sectionScopes, ["content", "layout", "responsive"], ["serverTimeSource"]),
   component("shipping-returns-cta", "Shipping / Returns CTA", "Marketing", "section", sectionScopes, ["content", "layout"], ["shippingLogic"]),
   component("contact-form", "İletişim Formu", "Marketing", "section", sectionScopes, ["content", "layout", "form"], ["submissionEndpoint", "antiSpam", "requiredFields"]),
+  component("rewards-promo", "Puan / Ödül Promo", "Marketing", "section", sectionScopes, ["content", "media", "layout", "responsive"], ["rewardMath", "rewardSettings"]),
   component("spacer", "Boşluk", "İçerik", "section", sectionScopes, ["layout", "responsive"], ["arbitraryHeight"]),
   component("divider", "Divider", "İçerik", "section", sectionScopes, ["layout", "responsive"], []),
   component("anchor", "Anchor", "İçerik", "section", sectionScopes, ["content", "advanced"], ["rawHtml"]),
@@ -329,7 +330,7 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
   section("contact-form", "Contact Form", "marketing", ["content", "landing"], ["title", "body", "phoneVisible", "nameLabel", "emailLabel", "phoneLabel", "messageLabel", "namePlaceholder", "emailPlaceholder", "phonePlaceholder", "messagePlaceholder", "buttonLabel", "successCopy", "paddingY"], [], true),
   section("custom-form", "Custom Form", "marketing", ["content", "landing"], ["schema", "successCopy"], ["field"], false, 20),
   section("map-locator", "Map / Store Locator", "marketing", allContentPages, ["locations", "mapStyle", "cta"]),
-  section("rewards-promo", "Puan / Ödül Promo", "marketing", allCommercePages, ["media", "copy", "cta", "layout"]),
+  section("rewards-promo", "Puan / Ödül Promo", "marketing", allCommercePages, ["imageAssetId", "title", "body", "linkLabel", "linkHref", "layout", "showSignupPoints", "showEarnRate", "paddingY"], [], true),
   section("shipping-returns-cta", "Shipping / Returns CTA", "marketing", allCommercePages, ["icon", "title", "body", "linkLabel", "linkHref", "align", "paddingY"], [], true),
   section("consent-banner", "Cookie / Consent Banner", "marketing", ["utility"], ["copy", "style", "position"]),
   section("spacer", "Spacer", "marketing", allContentPages, ["desktopHeight", "mobileHeight"], [], true),
@@ -1335,6 +1336,15 @@ export function validateThemeDocument(document: ThemeDocument) {
       if (!Number.isFinite(gap) || gap < 0 || gap > 64) errors.push(`${section.id}: Kategori kartı gap 0-64 aralığında olmalı.`);
       if (!["16/10", "4/5", "1/1"].includes(ratio)) errors.push(`${section.id}: Kategori kartı ratio preset geçersiz.`);
       if (!["overlay", "below"].includes(placement)) errors.push(`${section.id}: Kategori kartı titlePlacement geçersiz.`);
+    }
+
+    if (section.type === "rewards-promo") {
+      const layout = String(section.settings.layout || "split");
+      if (!["split", "card"].includes(layout)) errors.push(`${section.id}: Rewards Promo layout geçersiz.`);
+      if (section.settings.showSignupPoints !== undefined && typeof section.settings.showSignupPoints !== "boolean") errors.push(`${section.id}: Rewards Promo showSignupPoints boolean olmalı.`);
+      if (section.settings.showEarnRate !== undefined && typeof section.settings.showEarnRate !== "boolean") errors.push(`${section.id}: Rewards Promo showEarnRate boolean olmalı.`);
+      const paddingY = Number(section.settings.paddingY ?? 72);
+      if (!Number.isFinite(paddingY) || paddingY < 0 || paddingY > 240) errors.push(`${section.id}: Rewards Promo paddingY 0-240 aralığında olmalı.`);
     }
 
     if (section.type === "grid-stack-builder") {
