@@ -54,6 +54,12 @@ import {
 
 export const revalidate = 10;
 
+function recordValue(value: unknown): Record<string, unknown> {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : {};
+}
+
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
@@ -124,6 +130,10 @@ export default async function RootLayout({
     getCachedCategories(),
     getCachedCollections(),
   ]);
+
+  const consentResponsive = recordValue(storeDesignV2.globals.tokens["consent-banner"]);
+  const consentDesktopSettings = recordValue(consentResponsive.desktop);
+  const consentMobileSettings = recordValue(consentResponsive.mobile);
 
   const themeEditorOrigins = (process.env.THEME_EDITOR_ORIGINS || process.env.NEXT_PUBLIC_ADMIN_URL || process.env.NEXT_PUBLIC_PANEL_URL || "https://rostapanel.zeabur.app http://localhost:* https://localhost:*")
     .split(/[\s,]+/)
@@ -307,7 +317,10 @@ export default async function RootLayout({
         <SemanticThemeRuntimeProvider initialDocument={storeDesignV2}>
           <StorefrontMotionProvider>
           <AuthProvider>
-            <AnalyticsConsentGate />
+            <AnalyticsConsentGate
+              desktopSettings={consentDesktopSettings}
+              mobileSettings={consentMobileSettings}
+            />
             <CartProvider>
               <NavigationSpeedup />
               <ProductNavigationContextCapture />
