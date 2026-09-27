@@ -105,7 +105,9 @@ const RENDERABLE_SECTION_TYPES = new Set([
   "promo-banner",
   "countdown",
   "shipping-returns-cta",
+  "newsletter",
   "contact-form",
+  "custom-form",
   "rewards-promo",
   "spacer",
   "divider",
@@ -238,6 +240,23 @@ function defaultSettings(type: string): Record<string, unknown> {
   if (type === "promo-banner") return { title: "Promo", body: "", linkLabel: "Keşfet", linkHref: "/", align: "center", paddingY: 56 };
   if (type === "countdown") return { title: "Geri Sayım", targetTime: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), completedState: "Tamamlandı", style: "cards", paddingY: 64 };
   if (type === "shipping-returns-cta") return { icon: "•", title: "Kargo & İade", body: "", linkLabel: "Detaylar", linkHref: "/", align: "center", paddingY: 48 };
+  if (type === "newsletter") return {
+    heading: "Bültene Katıl",
+    body: "Yeni ürünler, içerikler ve duyurular için e-posta listemize katıl.",
+    fieldLabel: "E-posta",
+    consent: "Kampanya ve duyurular için e-posta almak istiyorum.",
+    buttonLabel: "Kaydol",
+    successCopy: "Kaydın alındı. Teşekkür ederiz.",
+    paddingY: 64,
+  };
+  if (type === "custom-form") return {
+    title: "Form",
+    body: "",
+    action: "store",
+    buttonLabel: "Gönder",
+    successCopy: "Formunuz alındı. Teşekkür ederiz.",
+    paddingY: 64,
+  };
   if (type === "contact-form") return {
     title: "Bize Ulaşın",
     body: "",
@@ -371,7 +390,9 @@ const GENERIC_V2_SECTION_TYPES = new Set([
   "recently-viewed",
   "bundle",
   "cross-sell",
+  "newsletter",
   "contact-form",
+  "custom-form",
   "review-highlights",
   "rewards-promo",
   "collection-cards",
