@@ -573,6 +573,20 @@ for (const token of [
 ]) {
   if (!semanticRuntimeProvider.includes(token)) fail(`Consent preview document hydration bridge eksik: ${token}`);
 }
+const semanticEditorBridge = read("apps/storefront/src/components/theme/SemanticThemeEditorBridge.tsx");
+for (const token of [
+  "CONSENT_APPEARANCE_PATCHES",
+  'definition.semanticType === "consent-banner"',
+  'case "intro"',
+  'case "position"',
+  'case "widthPreset"',
+  'case "radiusPreset"',
+  '"bottom-center", "bottom-left", "bottom-right"',
+  '"compact", "standard", "wide"',
+  '"soft", "rounded", "pill"',
+]) {
+  if (!semanticEditorBridge.includes(token)) fail(`Consent semantic patch validation eksik: ${token}`);
+}
 
 const breadcrumbRuntime = read("apps/storefront/src/components/theme/StoreDesignBreadcrumb.tsx");
 for (const token of [
