@@ -10,6 +10,7 @@ export type ControlGroup =
   | "typography"
   | "media"
   | "card"
+  | "form"
   | "responsive"
   | "animation"
   | "seo"
@@ -181,6 +182,8 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
   component("custom-form", "Custom Form", "Marketing", "section", sectionScopes, ["content", "layout", "card", "responsive"], ["submissionAction", "antiSpam", "schemaValidation"]),
   component("map-locator", "Map / Store Locator", "Marketing", "section", sectionScopes, ["content", "layout", "responsive"], ["geolocation", "providerScript", "rawEmbed"]),
   component("location", "Mağaza / Konum", "Marketing", "instance", instanceScopes, ["content", "layout"], ["geolocation", "providerEmbed", "rawHtml"]),
+  component("integration-block", "App / Integration Block", "Marketing", "section", sectionScopes, ["content", "layout", "responsive"], ["integrationCredentials", "integrationRuntime", "rawEmbed", "rawHtml", "rawJs"]),
+  component("developer-embed", "Developer Embed", "Marketing", "section", sectionScopes, ["layout", "responsive"], ["rawHtml", "rawJs", "arbitraryUrl", "sandboxFlags"]),
   component("contact-form", "İletişim Formu", "Marketing", "section", sectionScopes, ["content", "layout", "form"], ["submissionEndpoint", "antiSpam", "requiredFields"]),
   component("rewards-promo", "Puan / Ödül Promo", "Marketing", "section", sectionScopes, ["content", "media", "layout", "responsive"], ["rewardMath", "rewardSettings"]),
   component("spacer", "Boşluk", "İçerik", "section", sectionScopes, ["layout", "responsive"], ["arbitraryHeight"]),
@@ -256,6 +259,25 @@ export const COMPONENT_REGISTRY_BY_TYPE: Record<string, ComponentDefinition> =
   Object.fromEntries(COMPONENT_REGISTRY.map((item) => [item.semanticType, item]));
 
 export const GLOBAL_PROTECTED_COMPONENT_TYPES = new Set(["consent-banner"] as const);
+
+export type StoreDesignIntegrationBlockDefinition = {
+  id: string;
+  label: string;
+  settingKeys: readonly string[];
+  renderer: string;
+  credentialMode: "none";
+};
+
+export const STORE_DESIGN_INTEGRATION_BLOCK_REGISTRY: readonly StoreDesignIntegrationBlockDefinition[] = [];
+export const STORE_DESIGN_INTEGRATION_BLOCK_REGISTRY_BY_ID: Readonly<Record<string, StoreDesignIntegrationBlockDefinition>> =
+  Object.freeze(Object.fromEntries(STORE_DESIGN_INTEGRATION_BLOCK_REGISTRY.map((item) => [item.id, item])));
+
+export const STORE_DESIGN_DEVELOPER_EMBED_POLICY = Object.freeze({
+  merchantModeEnabled: false,
+  rawJsEnabled: false,
+  allowedHosts: [] as readonly string[],
+  sandboxFlags: ["allow-forms", "allow-popups", "allow-popups-to-escape-sandbox"] as readonly string[],
+});
 
 const allContentPages: PageCompatibility[] = ["home", "content", "landing"];
 const allCommercePages: PageCompatibility[] = ["home", "content", "landing", "product", "category", "collection"];
@@ -348,8 +370,8 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
   section("divider", "Divider", "marketing", allContentPages, ["width", "thickness", "colorToken", "paddingY"], [], true),
   section("anchor", "Anchor / Jump Link", "marketing", allContentPages, ["anchorId", "labelVisibility"], [], true),
   section("breadcrumb", "Breadcrumb", "marketing", ["content", "product", "category", "collection"], ["visible", "separator", "typography", "paddingY"], [], true),
-  section("integration-block", "App / Integration Block", "marketing", allContentPages, ["integrationId", "settings"], [], false, undefined, "Integration runtime contract ve credential boundary section-safe hale gelmeden açılamaz."),
-  section("developer-embed", "Developer Embed", "marketing", ["content", "landing"], ["whitelistedEmbed"], [], false, undefined, "Raw embed/code merchant yüzeyine açılmıyor; güvenli allowlist sandbox sözleşmesi olmadan kapalı kalır."),
+  section("integration-block", "App / Integration Block", "marketing", allContentPages, ["integrationId", "settings"], [], false, undefined, "Yalnız STORE_DESIGN_INTEGRATION_BLOCK_REGISTRY içindeki credential-free storefront block'lar açılabilir; registry şu anda boş olduğu için güvenlik kilidi aktiftir."),
+  section("developer-embed", "Developer Embed", "marketing", ["content", "landing"], ["whitelistedEmbed"], [], false, undefined, "Merchant mode raw HTML/JS kapalıdır; yalnız developer mode + explicit host allowlist + sandbox contract ile açılabilir."),
   section("grid-stack-builder", "Boş Grid / Stack Builder", "marketing", allContentPages, ["columns", "gap", "alignment", "responsiveStack"], ["content"], true, 24),
 ];
 
@@ -1105,7 +1127,7 @@ export function analyzeThemeDocumentReferences(document: ThemeDocument): ThemeRe
       });
     } else if (!definition.implemented) {
       issues.push({
-        severity: "warning",
+        severity: "error",
         code: "section-runtime-unavailable",
         message: `${sectionId}: ${definition.label} runtime henüz hazır değil.`,
         source: sectionId,
@@ -1144,7 +1166,7 @@ export function analyzeThemeDocumentReferences(document: ThemeDocument): ThemeRe
       });
     } else if (!definition.implemented) {
       issues.push({
-        severity: "warning",
+        severity: "error",
         code: "block-runtime-unavailable",
         message: `${blockId}: ${definition.label} runtime henüz hazır değil.`,
         source: blockId,
@@ -1295,6 +1317,22 @@ export function validateThemeDocument(document: ThemeDocument) {
             : [];
           if (!options.length) errors.push(`${blockId}: Select alanı en az bir seçenek içermeli.`);
         }
+      }
+    }
+
+    if (section.type === "integration-block") {
+      const integrationId = typeof section.settings?.integrationId === "string" ? section.settings.integrationId.trim() : "";
+      const integration = integrationId ? STORE_DESIGN_INTEGRATION_BLOCK_REGISTRY_BY_ID[integrationId] : undefined;
+      if (!integration) errors.push(`${sectionId}: Integration Block yalnız kayıtlı storefront entegrasyonlarını kullanabilir.`);
+      if (section.settings && Object.prototype.hasOwnProperty.call(section.settings, "credentials")) {
+        errors.push(`${sectionId}: Integration Block credential taşıyamaz.`);
+      }
+    }
+
+    if (section.type === "developer-embed") {
+      errors.push(`${sectionId}: Developer Embed merchant modunda kapalıdır.`);
+      if (section.settings && Object.prototype.hasOwnProperty.call(section.settings, "rawJs")) {
+        errors.push(`${sectionId}: Developer Embed raw JS ayarı yasaktır.`);
       }
     }
 
