@@ -246,7 +246,7 @@ const blockRuntimeTypes = extractStringSet(v2Sections, "BLOCK_RENDER_SECTION_TYP
 const homeRenderer = read("apps/storefront/src/components/theme/HomeSectionRenderer.tsx");
 const homeRuntimeTypes = new Set([...homeRenderer.matchAll(/section\.type\s*===\s*"([^"]+)"/g)].map((match) => match[1]));
 const runtimeAliases = new Map([["collection-cards", "collections"]]);
-const externalRuntimeTypes = new Set(["recommendations", "breadcrumb"]);
+const externalRuntimeTypes = new Set(["recommendations", "recently-viewed", "breadcrumb"]);
 
 function hasSectionRuntime(type) {
   const alias = runtimeAliases.get(type);
@@ -320,6 +320,7 @@ for (const token of [
   "product-comparison",
   "best-sellers",
   "recommendations",
+  "recently-viewed",
   "breadcrumb",
   "contact-form",
   "review-highlights",
@@ -347,6 +348,9 @@ for (const token of [
   "Tarih penceresi",
   "Öneri algoritması",
   "Öneri sıralaması storefront recommendation servisi tarafından read-only hesaplanır.",
+  "Geçmiş politikası",
+  "Analytics consent kabul edilirse cihazda local history",
+  "Reddedilirse geçmiş tutulmaz",
   "Breadcrumb göster",
   "Breadcrumb yolu route/template tarafından read-only üretilir",
   "Telefon alanını göster",
@@ -380,6 +384,8 @@ for (const token of [
   'section("product-comparison"',
   'section("best-sellers"',
   'section("recommendations"',
+  'component("recently-viewed"',
+  'section("recently-viewed"',
   'section("breadcrumb"',
   'component("contact-form"',
   'section("contact-form"',
@@ -403,7 +409,7 @@ for (const token of ["new-arrivals", "sale-products", "Otomatik · yeni ürün i
 }
 
 const themeSections = read("packages/commerce-core/src/theme-sections.ts");
-for (const token of ['| "product-spotlight"', '| "featured-collection"', '| "category-cards"', '| "product-comparison"', '| "best-sellers"', '| "recommendations"', '| "breadcrumb"', '| "new-arrivals"', '| "sale-products"', 'layout?: "slider" | "grid"', 'badgeStyle?: "pill" | "outline" | "minimal"', "mobileAssetUrl?: string", "mobileObjectPosition?: string"]) {
+for (const token of ['| "product-spotlight"', '| "featured-collection"', '| "category-cards"', '| "product-comparison"', '| "best-sellers"', '| "recommendations"', '| "recently-viewed"', '| "breadcrumb"', '| "new-arrivals"', '| "sale-products"', 'layout?: "slider" | "grid"', 'badgeStyle?: "pill" | "outline" | "minimal"', "mobileAssetUrl?: string", "mobileObjectPosition?: string"]) {
   if (!themeSections.includes(token)) fail(`Product preset render contract eksik: ${token}`);
 }
 
@@ -430,7 +436,7 @@ for (const token of [
 }
 
 for (const token of [
-  '["hero", "product-spotlight", "featured-collection", "category-cards", "product-comparison", "best-sellers", "recommendations", "breadcrumb", "collection-cards", "brand-story"]',
+  '["hero", "product-spotlight", "featured-collection", "category-cards", "product-comparison", "best-sellers", "recommendations", "recently-viewed", "breadcrumb", "collection-cards", "brand-story"]',
   'section.type === "scroll-story"',
   "hydrateV2Blocks",
   "mobileAssetUrl",
@@ -473,6 +479,22 @@ for (const token of ["storeDesignSectionsForTemplatePath", '"/products/[slug]"',
   if (!productRoute.includes(token)) fail(`Recommendations product template runtime bağlantısı eksik: ${token}`);
 }
 if (!v2Sections.includes("storeDesignSectionsForTemplatePath")) fail("Dynamic template storefront resolver eksik.");
+
+const recentlyViewedRuntime = read("apps/storefront/src/components/product/ProductRecentlyViewed.tsx");
+for (const token of [
+  'const CONSENT_KEY = "ruth_analytics_consent_v1"',
+  'const HISTORY_KEY = "storefront_recently_viewed_v1"',
+  'window.addEventListener("ruth:analytics-consent"',
+  "clearHistory()",
+  'consent !== "accepted"',
+  "productPrimaryDetailImageSrc",
+]) {
+  if (!recentlyViewedRuntime.includes(token)) fail(`Recently Viewed privacy runtime eksik: ${token}`);
+}
+if (!productDetailRuntime.includes("recentlyViewedConfig")) fail("Recently Viewed product detail config bağlantısı eksik.");
+for (const token of ['section.type === "recently-viewed"', "recentlyViewedConfig"]) {
+  if (!productRoute.includes(token)) fail(`Recently Viewed product template runtime bağlantısı eksik: ${token}`);
+}
 
 const breadcrumbRuntime = read("apps/storefront/src/components/theme/StoreDesignBreadcrumb.tsx");
 for (const token of [
