@@ -325,19 +325,20 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   const productComparison = section.type === "product-comparison";
   const bestSellers = section.type === "best-sellers";
   const recommendations = section.type === "recommendations";
+  const breadcrumb = section.type === "breadcrumb";
   const contactForm = section.type === "contact-form";
   const reviewHighlights = section.type === "review-highlights";
   const rewardsPromo = section.type === "rewards-promo";
   const gridStack = section.type === "grid-stack-builder";
   const collectionCards = section.type === "collection-cards" || section.type === "category-cards";
   const categoryCards = section.type === "category-cards";
-  const genericZeroBlock = ["hero", "product-comparison", "best-sellers", "contact-form", "review-highlights", "rewards-promo", "grid-stack-builder", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta", "spacer", "divider", "anchor"].includes(section.type);
+  const genericZeroBlock = ["hero", "product-comparison", "best-sellers", "breadcrumb", "contact-form", "review-highlights", "rewards-promo", "grid-stack-builder", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta", "spacer", "divider", "anchor"].includes(section.type);
   const hasGenericBody = ["hero", "video-hero", "video-banner", "brand-story", "contact-form", "review-highlights", "rewards-promo", "heading-subtext", "manifesto", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const hasAlign = ["hero", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const hasLink = ["hero", "video-hero", "video-banner", "brand-story", "rewards-promo", "promo-banner", "shipping-returns-cta"].includes(section.type);
-  const showTitle = !["product-spotlight", "featured-collection", "scroll-story", "background-media", "grid-stack-builder", "quote", "spacer", "divider", "anchor"].includes(section.type);
+  const showTitle = !["product-spotlight", "featured-collection", "scroll-story", "background-media", "breadcrumb", "grid-stack-builder", "quote", "spacer", "divider", "anchor"].includes(section.type);
   const showEyebrow = !genericZeroBlock && !["product-spotlight", "featured-collection", "scroll-story", "background-media"].includes(section.type);
-  const showPadding = !["hero", "scroll-story", "video-hero", "video-banner", "background-media", "grid-stack-builder", "spacer", "anchor"].includes(section.type);
+  const showPadding = !["hero", "scroll-story", "video-hero", "video-banner", "background-media", "breadcrumb", "grid-stack-builder", "spacer", "anchor"].includes(section.type);
   const primaryMedia = mediaNarrative && text(settings.imageAssetId) ? document.media[text(settings.imageAssetId)] : undefined;
   const brandStoryMedia = brandStory && text(settings.imageAssetId) ? document.media[text(settings.imageAssetId)] : undefined;
   const showBlockComposer = allowedDefinitions.length > 0;
@@ -522,6 +523,37 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                         </label>
                       );
                     })}
+                  </div>
+                </>
+              ) : null}
+
+              {breadcrumb ? (
+                <>
+                  <label className="flex items-center justify-between gap-3 rounded-lg border border-black/10 bg-white p-2.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                    Breadcrumb göster
+                    <input type="checkbox" checked={settings.visible !== false} onChange={(event) => updateSetting("visible", event.target.checked)} />
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Ayırıcı
+                    <select value={text(settings.separator) || "chevron"} onChange={(event) => updateSetting("separator", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="chevron">Chevron · ›</option>
+                      <option value="slash">Slash · /</option>
+                      <option value="dot">Nokta · ·</option>
+                    </select>
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Tipografi
+                    <select value={text(settings.typography) || "compact"} onChange={(event) => updateSetting("typography", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="compact">Compact</option>
+                      <option value="default">Default</option>
+                    </select>
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                    Dikey boşluk
+                    <input type="number" min={0} max={64} value={numberValue(settings.paddingY, 12)} onChange={(event) => updateSetting("paddingY", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                  </label>
+                  <div className="rounded-lg border border-black/10 bg-black/[0.025] p-2.5 text-[7px] leading-4 text-black/45 md:col-span-2">
+                    Breadcrumb yolu route/template tarafından read-only üretilir; tema editörü URL veya path generation mantığını değiştiremez.
                   </div>
                 </>
               ) : null}
