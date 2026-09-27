@@ -89,6 +89,7 @@ const RENDERABLE_SECTION_TYPES = new Set([
   "timeline",
   "feature-grid",
   "testimonials",
+  "review-highlights",
   "tabs",
   "press-awards",
   "team",
@@ -206,6 +207,7 @@ function defaultSettings(type: string): Record<string, unknown> {
   if (type === "feature-grid") return { title: "Özellikler", columns: 3, gap: 16, paddingY: 64 };
   if (type === "trust-badges") return { title: "Neden Biz", columns: 3, gap: 16, paddingY: 64 };
   if (type === "testimonials") return { title: "Yorumlar", columns: 3, gap: 16, paddingY: 64 };
+  if (type === "review-highlights") return { title: "Müşteri Yorumları", body: "", productId: "", limit: 6, ratingDisplay: true, paddingY: 72 };
   if (type === "tabs") return { title: "Detaylar", paddingY: 64 };
   if (type === "press-awards") return { title: "Basın / Ödüller", columns: 4, gap: 20, paddingY: 64 };
   if (type === "team") return { title: "Ekibimiz", columns: 4, gap: 20, paddingY: 64 };
@@ -334,6 +336,7 @@ const GENERIC_V2_SECTION_TYPES = new Set([
   "product-comparison",
   "best-sellers",
   "contact-form",
+  "review-highlights",
   "collection-cards",
   "brand-story",
   "video-hero",
