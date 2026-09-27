@@ -96,11 +96,8 @@ export const metadata: Metadata = {
     images: [DEFAULT_OG_IMAGE],
   },
   icons: {
-    icon: [
-      { url: "/rosta-mark-v10-32.png", sizes: "32x32", type: "image/png" },
-      { url: "/favicon-v10.ico", sizes: "any" },
-    ],
-    shortcut: ["/rosta-mark-v10-32.png"],
+    icon: [{ url: "/rosta-bean-tilt-v11.svg", sizes: "any", type: "image/svg+xml" }],
+    shortcut: ["/rosta-bean-tilt-v11.svg"],
     apple: [{ url: "/apple-touch-icon.png?v=4", sizes: "180x180", type: "image/png" }],
   },
   manifest: "/manifest.webmanifest",
