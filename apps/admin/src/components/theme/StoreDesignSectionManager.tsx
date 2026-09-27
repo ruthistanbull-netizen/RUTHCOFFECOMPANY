@@ -107,6 +107,7 @@ const RENDERABLE_SECTION_TYPES = new Set([
   "spacer",
   "divider",
   "anchor",
+  "breadcrumb",
   "grid-stack-builder",
 ]);
 
@@ -255,6 +256,7 @@ function defaultSettings(type: string): Record<string, unknown> {
   if (type === "spacer") return { desktopHeight: 64, mobileHeight: 40, paddingY: 0 };
   if (type === "divider") return { width: "100%", thickness: 1, colorToken: "subtle", paddingY: 24 };
   if (type === "anchor") return { anchorId: "bolum", labelVisibility: false, title: "" };
+  if (type === "breadcrumb") return { visible: true, separator: "chevron", typography: "compact", paddingY: 12 };
   if (type === "grid-stack-builder") return { columns: 2, gap: 20, alignment: "stretch", responsiveStack: true };
   return {};
 }
@@ -371,6 +373,7 @@ const GENERIC_V2_SECTION_TYPES = new Set([
   "spacer",
   "divider",
   "anchor",
+  "breadcrumb",
 ]);
 
 function isBlockDrivenSection(type: string) {
