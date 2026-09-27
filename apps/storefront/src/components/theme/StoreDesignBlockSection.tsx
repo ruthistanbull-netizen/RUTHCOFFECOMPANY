@@ -6,6 +6,8 @@ import { StoreDesignCountdown } from "@/components/theme/StoreDesignCountdown";
 import { StoreDesignBeforeAfter } from "@/components/theme/StoreDesignBeforeAfter";
 import { StoreDesignSlideshow } from "@/components/theme/StoreDesignSlideshow";
 import { StoreDesignContactForm } from "@/components/theme/StoreDesignContactForm";
+import { StoreDesignNewsletter } from "@/components/theme/StoreDesignNewsletter";
+import { StoreDesignCustomForm } from "@/components/theme/StoreDesignCustomForm";
 import { StoreDesignReviewHighlights } from "@/components/theme/StoreDesignReviewHighlights";
 import { StoreDesignRewardsPromo } from "@/components/theme/StoreDesignRewardsPromo";
 
@@ -111,6 +113,29 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
     </div>
   ) : null;
 
+  if (type === "newsletter") {
+    return (
+      <StoreDesignNewsletter
+        sectionId={section.id}
+        settings={settings}
+        backgroundColor={section.backgroundColor}
+        textColor={section.textColor}
+        paddingY={paddingY}
+      />
+    );
+  }
+  if (type === "custom-form") {
+    return (
+      <StoreDesignCustomForm
+        sectionId={section.id}
+        settings={settings}
+        fields={blocks}
+        backgroundColor={section.backgroundColor}
+        textColor={section.textColor}
+        paddingY={paddingY}
+      />
+    );
+  }
   if (type === "contact-form") {
     return (
       <StoreDesignContactForm
