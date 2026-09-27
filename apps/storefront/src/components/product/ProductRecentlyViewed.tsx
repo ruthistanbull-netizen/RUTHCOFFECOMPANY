@@ -6,15 +6,18 @@ import { productPrimaryDetailImageSrc } from "@/lib/productDisplayImage";
 import type { Product } from "@/types/site";
 
 const CONSENT_KEY = "ruth_analytics_consent_v1";
-const HISTORY_KEY = "storefront_recently_viewed_v1";
+const HISTORY_KEY = "storefront_recently_viewed_v2";
 const HISTORY_CAP = 24;
 
-type RecentItem = {
-  id: string;
+type RecentEntry = {
   slug: string;
-  name: string;
-  image: string;
   viewedAt: number;
+};
+
+type HydratedRecentItem = {
+  slug: string;
+  viewedAt: number;
+  product: Product;
 };
 
 type Props = {
@@ -32,32 +35,32 @@ function settingNumber(settings: Record<string, unknown> | undefined, key: strin
   return Number.isFinite(value) ? Math.min(max, Math.max(min, Math.round(value))) : fallback;
 }
 
-function readHistory(): RecentItem[] {
+function readHistory(): RecentEntry[] {
   try {
     const parsed = JSON.parse(window.localStorage.getItem(HISTORY_KEY) || "[]");
     if (!Array.isArray(parsed)) return [];
     return parsed
-      .filter((item): item is RecentItem =>
+      .filter((item): item is RecentEntry =>
         Boolean(
           item
-          && typeof item.id === "string"
           && typeof item.slug === "string"
-          && typeof item.name === "string"
-          && typeof item.image === "string"
-          && typeof item.viewedAt === "number",
+          && item.slug.trim()
+          && typeof item.viewedAt === "number"
+          && Number.isFinite(item.viewedAt),
         ),
       )
+      .map((item) => ({ slug: item.slug.trim(), viewedAt: item.viewedAt }))
       .slice(0, HISTORY_CAP);
   } catch {
     return [];
   }
 }
 
-function writeHistory(items: RecentItem[]) {
+function writeHistory(items: RecentEntry[]) {
   try {
     window.localStorage.setItem(HISTORY_KEY, JSON.stringify(items.slice(0, HISTORY_CAP)));
   } catch {
-    // History is an optional enhancement; storefront must still work without storage.
+    // Optional enhancement: storefront remains functional when storage is blocked.
   }
 }
 
@@ -65,13 +68,42 @@ function clearHistory() {
   try {
     window.localStorage.removeItem(HISTORY_KEY);
   } catch {
-    // Ignore storage failures.
+    // Ignore strict privacy/storage failures.
+  }
+}
+
+async function fetchProduct(slug: string, signal: AbortSignal): Promise<Product | null> {
+  try {
+    const response = await fetch(
+      `/api/products/${encodeURIComponent(slug)}/browser-window`,
+      {
+        credentials: "same-origin",
+        cache: "force-cache",
+        signal,
+        headers: { Accept: "application/json" },
+      },
+    );
+    if (!response.ok) return null;
+    const payload = (await response.json()) as {
+      ok?: boolean;
+      window?: { current?: Product | null };
+    };
+    return payload.ok && payload.window?.current ? payload.window.current : null;
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") return null;
+    return null;
   }
 }
 
 export function ProductRecentlyViewed({ current, settings }: Props) {
-  const [history, setHistory] = useState<RecentItem[]>([]);
+  const [history, setHistory] = useState<RecentEntry[]>([]);
+  const [products, setProducts] = useState<HydratedRecentItem[]>([]);
   const [consent, setConsent] = useState<"accepted" | "rejected" | null>(null);
+
+  const limit = settingNumber(settings, "limit", 8, 2, 12);
+  const layout = settingText(settings, "layout", "slider") === "grid" ? "grid" : "slider";
+  const title = settingText(settings, "title", "Son Görüntülenenler");
+  const paddingY = settingNumber(settings, "paddingY", 58, 0, 240);
 
   useEffect(() => {
     const readConsent = () => {
@@ -85,22 +117,27 @@ export function ProductRecentlyViewed({ current, settings }: Props) {
 
     const initial = readConsent();
     setConsent(initial);
+
     if (initial === "accepted") setHistory(readHistory());
     if (initial === "rejected") {
       clearHistory();
       setHistory([]);
+      setProducts([]);
     }
 
     const onConsent = (event: Event) => {
       const value = (event as CustomEvent<"accepted" | "rejected">).detail;
       if (value !== "accepted" && value !== "rejected") return;
       setConsent(value);
+
       if (value === "rejected") {
         clearHistory();
         setHistory([]);
-      } else {
-        setHistory(readHistory());
+        setProducts([]);
+        return;
       }
+
+      setHistory(readHistory());
     };
 
     window.addEventListener("ruth:analytics-consent", onConsent as EventListener);
@@ -110,13 +147,11 @@ export function ProductRecentlyViewed({ current, settings }: Props) {
   useEffect(() => {
     if (consent !== "accepted") return;
 
-    const snapshot: RecentItem = {
-      id: String(current.id),
+    const snapshot: RecentEntry = {
       slug: current.slug,
-      name: current.name,
-      image: productPrimaryDetailImageSrc(current) || "",
       viewedAt: Date.now(),
     };
+
     const next = [
       snapshot,
       ...readHistory().filter((item) => item.slug !== snapshot.slug),
@@ -124,16 +159,47 @@ export function ProductRecentlyViewed({ current, settings }: Props) {
 
     writeHistory(next);
     setHistory(next);
-  }, [consent, current]);
+  }, [consent, current.slug]);
 
-  const limit = settingNumber(settings, "limit", 8, 2, 12);
-  const layout = settingText(settings, "layout", "slider") === "grid" ? "grid" : "slider";
-  const title = settingText(settings, "title", "Son Görüntülenenler");
-  const paddingY = settingNumber(settings, "paddingY", 58, 0, 240);
+  useEffect(() => {
+    if (consent !== "accepted") {
+      setProducts([]);
+      return;
+    }
+
+    const candidates = history
+      .filter((item) => item.slug !== current.slug)
+      .slice(0, limit);
+
+    if (!candidates.length) {
+      setProducts([]);
+      return;
+    }
+
+    const controller = new AbortController();
+    let alive = true;
+
+    void Promise.all(
+      candidates.map(async (entry) => {
+        const product = await fetchProduct(entry.slug, controller.signal);
+        return product ? { ...entry, product } : null;
+      }),
+    ).then((items) => {
+      if (!alive) return;
+      setProducts(items.filter((item): item is HydratedRecentItem => Boolean(item)));
+    });
+
+    return () => {
+      alive = false;
+      controller.abort();
+    };
+  }, [consent, current.slug, history, limit]);
 
   const items = useMemo(
-    () => history.filter((item) => item.slug !== current.slug).slice(0, limit),
-    [current.slug, history, limit],
+    () => products
+      .filter((item) => item.product.status === "active")
+      .slice(0, limit),
+    [limit, products],
   );
 
   if (consent !== "accepted" || !items.length) return null;
@@ -156,25 +222,28 @@ export function ProductRecentlyViewed({ current, settings }: Props) {
         <h2 className="mt-2 font-heading text-[clamp(1.8rem,4vw,3.4rem)] leading-tight">{title}</h2>
 
         <div className={layout === "slider" ? "recent-viewed-list is-slider mt-8" : "recent-viewed-list is-grid mt-8"}>
-          {items.map((item) => (
-            <Link
-              key={item.slug}
-              href={`/products/${item.slug}`}
-              className="recent-viewed-card group block min-w-0"
-            >
-              <div className="aspect-[4/5] overflow-hidden rounded-[18px] bg-current/5">
-                {item.image ? (
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-                    loading="lazy"
-                  />
-                ) : null}
-              </div>
-              <p className="mt-3 truncate font-heading text-base leading-tight">{item.name}</p>
-            </Link>
-          ))}
+          {items.map(({ product }) => {
+            const image = productPrimaryDetailImageSrc(product) || product.main_image_url || "";
+            return (
+              <Link
+                key={product.slug}
+                href={`/products/${product.slug}`}
+                className="recent-viewed-card group block min-w-0"
+              >
+                <div className="aspect-[4/5] overflow-hidden rounded-[18px] bg-current/5">
+                  {image ? (
+                    <img
+                      src={image}
+                      alt={product.name}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                      loading="lazy"
+                    />
+                  ) : null}
+                </div>
+                <p className="mt-3 truncate font-heading text-base leading-tight">{product.name}</p>
+              </Link>
+            );
+          })}
         </div>
       </div>
 
