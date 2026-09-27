@@ -72,14 +72,28 @@ const STOREFRONT_URL = RAW_STOREFRONT_URL
 
 const SECTION_LABELS: Record<ThemeSectionType, string> = {
   hero: "Ana Görsel",
-  "scroll-story": "Kayan Görseller",
+  "scroll-story": "Görsel Hikâye",
   collections: "Koleksiyonlar",
   "featured-products": "Öne Çıkan Ürünler",
-  "brand-story": "Marka Hikayesi",
+  "brand-story": "Marka Hikâyesi",
   trust: "Güven / Kargo",
-  "product-slider": "Ürün Listesi",
+  "product-slider": "Ürün Slider",
+  "product-grid": "Ürün Grid",
+  "product-spotlight": "Ürün Vitrini",
+  "featured-collection": "Öne Çıkan Koleksiyon",
+  "category-cards": "Kategori Kartları",
+  "product-comparison": "Ürün Karşılaştırma",
+  "new-arrivals": "Yeni Gelenler",
+  "best-sellers": "Çok Satanlar",
+  recommendations: "Önerilen Ürünler",
+  "recently-viewed": "Son Görüntülenenler",
+  bundle: "Paket / Bundle",
+  "cross-sell": "Tamamlayıcı Ürünler",
+  breadcrumb: "Sayfa Yolu",
+  "sale-products": "İndirimli Ürünler",
   "image-banner": "Görsel Banner",
-  "rich-text": "Metin Alanı",
+  "rich-text": "Metin Bölümü",
+  faq: "SSS",
 };
 
 const SECTION_LIBRARY: Array<{ type: ThemeSectionType; title: string; detail: string }> = [

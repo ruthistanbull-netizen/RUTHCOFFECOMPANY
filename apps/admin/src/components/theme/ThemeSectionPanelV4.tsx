@@ -41,15 +41,29 @@ type ContextPoint = { x: number; y: number; viewportWidth: number; viewportHeigh
 type ContextPanel = { x: number; y: number; sectionId: string; elementId: string; point: ContextPoint };
 
 const LABELS: Record<ThemeSectionType, string> = {
-  hero: "Ana Görsel / Slayt",
-  "scroll-story": "Kayan Görseller",
-  collections: "Kategori Bölümü",
-  "featured-products": "Ürünler Slaytı",
-  "brand-story": "Marka Yazısı",
+  hero: "Ana Görsel",
+  "scroll-story": "Görsel Hikâye",
+  collections: "Koleksiyonlar",
+  "featured-products": "Öne Çıkan Ürünler",
+  "brand-story": "Marka Hikâyesi",
   trust: "Güven / Kargo",
   "product-slider": "Ürün Slider",
-  "image-banner": "Büyük Banner Görseli",
-  "rich-text": "Yazı Bölümü",
+  "product-grid": "Ürün Grid",
+  "product-spotlight": "Ürün Vitrini",
+  "featured-collection": "Öne Çıkan Koleksiyon",
+  "category-cards": "Kategori Kartları",
+  "product-comparison": "Ürün Karşılaştırma",
+  "new-arrivals": "Yeni Gelenler",
+  "best-sellers": "Çok Satanlar",
+  recommendations: "Önerilen Ürünler",
+  "recently-viewed": "Son Görüntülenenler",
+  bundle: "Paket / Bundle",
+  "cross-sell": "Tamamlayıcı Ürünler",
+  breadcrumb: "Sayfa Yolu",
+  "sale-products": "İndirimli Ürünler",
+  "image-banner": "Görsel Banner",
+  "rich-text": "Metin Bölümü",
+  faq: "SSS",
 };
 
 const LIBRARY: Array<{ type: ThemeSectionType; title: string; detail: string }> = [

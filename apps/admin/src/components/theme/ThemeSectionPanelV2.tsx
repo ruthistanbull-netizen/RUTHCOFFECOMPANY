@@ -8,8 +8,29 @@ import { createThemeSection, defaultThemeSectionSettings, normalizeThemeSectionS
 
 type InnerItem = { id: string; label: string; tag: string; kind: string };
 const labels: Record<ThemeSectionType, string> = {
-  hero: "Hero", "scroll-story": "Görsel Hikâye", collections: "Koleksiyonlar", "featured-products": "Öne Çıkan Ürünler",
-  "brand-story": "Marka Hikâyesi", trust: "Güven / Kargo", "product-slider": "Ürün Slider", "image-banner": "Görsel Banner", "rich-text": "Metin Bölümü",
+  hero: "Ana Görsel",
+  "scroll-story": "Görsel Hikâye",
+  collections: "Koleksiyonlar",
+  "featured-products": "Öne Çıkan Ürünler",
+  "brand-story": "Marka Hikâyesi",
+  trust: "Güven / Kargo",
+  "product-slider": "Ürün Slider",
+  "product-grid": "Ürün Grid",
+  "product-spotlight": "Ürün Vitrini",
+  "featured-collection": "Öne Çıkan Koleksiyon",
+  "category-cards": "Kategori Kartları",
+  "product-comparison": "Ürün Karşılaştırma",
+  "new-arrivals": "Yeni Gelenler",
+  "best-sellers": "Çok Satanlar",
+  recommendations: "Önerilen Ürünler",
+  "recently-viewed": "Son Görüntülenenler",
+  bundle: "Paket / Bundle",
+  "cross-sell": "Tamamlayıcı Ürünler",
+  breadcrumb: "Sayfa Yolu",
+  "sale-products": "İndirimli Ürünler",
+  "image-banner": "Görsel Banner",
+  "rich-text": "Metin Bölümü",
+  faq: "SSS",
 };
 const library: Array<{ type: ThemeSectionType; title: string; detail: string }> = [
   { type: "product-slider", title: "Ürün Slider", detail: "Ürünleri tek yatay sırada kaydırılabilir göster." },

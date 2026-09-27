@@ -34,15 +34,29 @@ import {
 type InnerItem = { id: string; label: string; tag: string; kind: string };
 
 const LABELS: Record<ThemeSectionType, string> = {
-  hero: "Hero",
+  hero: "Ana Görsel",
   "scroll-story": "Görsel Hikâye",
   collections: "Koleksiyonlar",
   "featured-products": "Öne Çıkan Ürünler",
   "brand-story": "Marka Hikâyesi",
   trust: "Güven / Kargo",
   "product-slider": "Ürün Slider",
+  "product-grid": "Ürün Grid",
+  "product-spotlight": "Ürün Vitrini",
+  "featured-collection": "Öne Çıkan Koleksiyon",
+  "category-cards": "Kategori Kartları",
+  "product-comparison": "Ürün Karşılaştırma",
+  "new-arrivals": "Yeni Gelenler",
+  "best-sellers": "Çok Satanlar",
+  recommendations: "Önerilen Ürünler",
+  "recently-viewed": "Son Görüntülenenler",
+  bundle: "Paket / Bundle",
+  "cross-sell": "Tamamlayıcı Ürünler",
+  breadcrumb: "Sayfa Yolu",
+  "sale-products": "İndirimli Ürünler",
   "image-banner": "Görsel Banner",
   "rich-text": "Metin Bölümü",
+  faq: "SSS",
 };
 
 const LIBRARY: Array<{ type: ThemeSectionType; title: string; detail: string }> = [
