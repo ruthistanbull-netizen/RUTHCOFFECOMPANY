@@ -246,7 +246,7 @@ const blockRuntimeTypes = extractStringSet(v2Sections, "BLOCK_RENDER_SECTION_TYP
 const homeRenderer = read("apps/storefront/src/components/theme/HomeSectionRenderer.tsx");
 const homeRuntimeTypes = new Set([...homeRenderer.matchAll(/section\.type\s*===\s*"([^"]+)"/g)].map((match) => match[1]));
 const runtimeAliases = new Map([["collection-cards", "collections"]]);
-const externalRuntimeTypes = new Set(["recommendations"]);
+const externalRuntimeTypes = new Set(["recommendations", "breadcrumb"]);
 
 function hasSectionRuntime(type) {
   const alias = runtimeAliases.get(type);
@@ -320,6 +320,7 @@ for (const token of [
   "product-comparison",
   "best-sellers",
   "recommendations",
+  "breadcrumb",
   "contact-form",
   "review-highlights",
   "rewards-promo",
@@ -346,6 +347,8 @@ for (const token of [
   "Tarih penceresi",
   "Öneri algoritması",
   "Öneri sıralaması storefront recommendation servisi tarafından read-only hesaplanır.",
+  "Breadcrumb göster",
+  "Breadcrumb yolu route/template tarafından read-only üretilir",
   "Telefon alanını göster",
   "Başarı mesajı",
   "endpoint doğrulaması nedeniyle zorunludur",
@@ -377,6 +380,7 @@ for (const token of [
   'section("product-comparison"',
   'section("best-sellers"',
   'section("recommendations"',
+  'section("breadcrumb"',
   'component("contact-form"',
   'section("contact-form"',
   'component("review-highlights"',
@@ -399,7 +403,7 @@ for (const token of ["new-arrivals", "sale-products", "Otomatik · yeni ürün i
 }
 
 const themeSections = read("packages/commerce-core/src/theme-sections.ts");
-for (const token of ['| "product-spotlight"', '| "featured-collection"', '| "category-cards"', '| "product-comparison"', '| "best-sellers"', '| "recommendations"', '| "new-arrivals"', '| "sale-products"', 'layout?: "slider" | "grid"', 'badgeStyle?: "pill" | "outline" | "minimal"', "mobileAssetUrl?: string", "mobileObjectPosition?: string"]) {
+for (const token of ['| "product-spotlight"', '| "featured-collection"', '| "category-cards"', '| "product-comparison"', '| "best-sellers"', '| "recommendations"', '| "breadcrumb"', '| "new-arrivals"', '| "sale-products"', 'layout?: "slider" | "grid"', 'badgeStyle?: "pill" | "outline" | "minimal"', "mobileAssetUrl?: string", "mobileObjectPosition?: string"]) {
   if (!themeSections.includes(token)) fail(`Product preset render contract eksik: ${token}`);
 }
 
@@ -426,7 +430,7 @@ for (const token of [
 }
 
 for (const token of [
-  '["hero", "product-spotlight", "featured-collection", "category-cards", "product-comparison", "best-sellers", "recommendations", "collection-cards", "brand-story"]',
+  '["hero", "product-spotlight", "featured-collection", "category-cards", "product-comparison", "best-sellers", "recommendations", "breadcrumb", "collection-cards", "brand-story"]',
   'section.type === "scroll-story"',
   "hydrateV2Blocks",
   "mobileAssetUrl",
@@ -469,6 +473,28 @@ for (const token of ["storeDesignSectionsForTemplatePath", '"/products/[slug]"',
   if (!productRoute.includes(token)) fail(`Recommendations product template runtime bağlantısı eksik: ${token}`);
 }
 if (!v2Sections.includes("storeDesignSectionsForTemplatePath")) fail("Dynamic template storefront resolver eksik.");
+
+const breadcrumbRuntime = read("apps/storefront/src/components/theme/StoreDesignBreadcrumb.tsx");
+for (const token of [
+  'data-editor-type="breadcrumb"',
+  'aria-label="Breadcrumb"',
+  'separatorPreset === "slash"',
+  'separatorPreset === "dot"',
+  "items.length < 2",
+]) {
+  if (!breadcrumbRuntime.includes(token)) fail(`Breadcrumb protected runtime eksik: ${token}`);
+}
+for (const [relativePath, tokens] of [
+  ["apps/storefront/src/app/products/[slug]/page.tsx", ["breadcrumbConfig", '"/products/[slug]"']],
+  ["apps/storefront/src/app/collections/[slug]/page.tsx", ["StoreDesignBreadcrumb", '"/collections/[slug]"']],
+  ["apps/storefront/src/app/category/[slug]/page.tsx", ["StoreDesignBreadcrumb", '"/category/[slug]"']],
+  ["apps/storefront/src/app/pages/[slug]/page.tsx", ["StoreDesignBreadcrumb", 'section.type === "breadcrumb"']],
+]) {
+  const source = read(relativePath);
+  for (const token of tokens) {
+    if (!source.includes(token)) fail(`Breadcrumb route runtime eksik (${relativePath}): ${token}`);
+  }
+}
 
 const contactFormRuntime = read("apps/storefront/src/components/theme/StoreDesignContactForm.tsx");
 for (const token of [
