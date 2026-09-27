@@ -48,6 +48,7 @@ const BLOCK_RENDER_SECTION_TYPES = new Set([
   "newsletter",
   "contact-form",
   "custom-form",
+  "map-locator",
   "rewards-promo",
   "spacer",
   "divider",
