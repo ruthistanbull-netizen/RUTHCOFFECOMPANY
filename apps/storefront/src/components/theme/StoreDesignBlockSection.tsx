@@ -86,6 +86,16 @@ function contrastMode(value: unknown): "light" | "dark" {
   return text(value) === "dark" ? "dark" : "light";
 }
 
+function storeMapHref(address: unknown, city: unknown) {
+  const query = [text(address).trim(), text(city).trim()].filter(Boolean).join(", ");
+  return query ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}` : "";
+}
+
+function storePhoneHref(value: unknown) {
+  const normalized = text(value).trim().replace(/[^\d+]/g, "");
+  return normalized ? `tel:${normalized}` : "";
+}
+
 export function StoreDesignBlockSection({ section }: { section: ThemeSection }) {
   const type = section.v2Type;
   if (!type) return null;
@@ -134,6 +144,92 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
         textColor={section.textColor}
         paddingY={paddingY}
       />
+    );
+  }
+  if (type === "map-locator") {
+    const body = text(settings.body);
+    const layout = text(settings.layout) === "list" ? "list" : "cards";
+    const showMapLinks = settings.showMapLinks !== false;
+    const mapLinkLabel = text(settings.mapLinkLabel) || "Haritada Aç";
+    const locations = blocks.filter((block) => block.type === "location");
+    const gridClass = layout === "list"
+      ? "grid gap-3"
+      : "grid gap-4 md:grid-cols-2 xl:grid-cols-3";
+
+    return (
+      <section
+        data-theme-section-id={section.id}
+        data-editor-id={`section:${section.id}`}
+        data-editor-type="map-locator"
+        data-editor-label={title || "Map / Store Locator"}
+        className="px-5 md:px-8"
+        style={style}
+      >
+        <div className="mx-auto max-w-[1440px]">
+          <div className="mb-8 max-w-3xl md:mb-10">
+            {title ? <h2 className="font-heading text-[clamp(1.8rem,4vw,4rem)] leading-[0.98]">{title}</h2> : null}
+            {body ? <p className="mt-4 whitespace-pre-wrap text-sm leading-7 opacity-70">{body}</p> : null}
+          </div>
+
+          <div className={gridClass}>
+            {locations.map((block) => {
+              const name = text(block.settings.name);
+              const address = text(block.settings.address);
+              const city = text(block.settings.city);
+              const phone = text(block.settings.phone);
+              const hours = text(block.settings.hours);
+              const mapHref = showMapLinks ? storeMapHref(address, city) : "";
+              const phoneHref = storePhoneHref(phone);
+
+              return (
+                <article
+                  key={block.id}
+                  data-editor-id={`block:${block.id}`}
+                  data-editor-type="location"
+                  data-editor-label={name || "Konum"}
+                  className={layout === "list"
+                    ? "grid gap-4 border-b border-current/10 py-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-end"
+                    : "rounded-2xl border border-current/10 p-5 md:p-6"}
+                >
+                  <div className="min-w-0">
+                    {name ? <h3 className="font-heading text-xl leading-tight">{name}</h3> : null}
+                    {address || city ? (
+                      <p className="mt-3 whitespace-pre-wrap text-sm leading-6 opacity-72">
+                        {[address, city].filter(Boolean).join(", ")}
+                      </p>
+                    ) : null}
+                    {hours ? <p className="mt-3 whitespace-pre-wrap text-xs leading-5 opacity-58">{hours}</p> : null}
+                  </div>
+
+                  <div className="mt-5 flex flex-wrap gap-2 md:mt-0">
+                    {phone && phoneHref ? (
+                      <a href={phoneHref} className="inline-flex min-h-10 items-center rounded-full border border-current/20 px-4 text-[9px] font-semibold uppercase tracking-[0.12em]">
+                        {phone}
+                      </a>
+                    ) : null}
+                    {mapHref ? (
+                      <a
+                        href={mapHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex min-h-10 items-center rounded-full border border-current/20 px-4 text-[9px] font-semibold uppercase tracking-[0.12em]"
+                      >
+                        {mapLinkLabel}
+                      </a>
+                    ) : null}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+
+          {!locations.length ? (
+            <p className="rounded-2xl border border-current/10 p-5 text-sm opacity-55">
+              Henüz konum eklenmedi.
+            </p>
+          ) : null}
+        </div>
+      </section>
     );
   }
   if (type === "contact-form") {
