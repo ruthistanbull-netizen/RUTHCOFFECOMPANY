@@ -324,6 +324,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   const featuredCollection = section.type === "featured-collection";
   const productComparison = section.type === "product-comparison";
   const bestSellers = section.type === "best-sellers";
+  const recommendations = section.type === "recommendations";
   const contactForm = section.type === "contact-form";
   const reviewHighlights = section.type === "review-highlights";
   const rewardsPromo = section.type === "rewards-promo";
@@ -522,6 +523,29 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                       );
                     })}
                   </div>
+                </>
+              ) : null}
+
+              {recommendations ? (
+                <>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                    Öneri algoritması
+                    <div className="flex h-9 items-center rounded-lg border border-black/10 bg-black/[0.025] px-2.5 text-[8px] font-medium text-black/55">
+                      Related · koleksiyon / kategori / materyal ilişkisi
+                    </div>
+                    <span className="text-[7px] font-normal leading-4 text-black/35">Öneri sıralaması storefront recommendation servisi tarafından read-only hesaplanır.</span>
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Ürün limiti
+                    <input type="number" min={2} max={12} value={numberValue(settings.limit, 6)} onChange={(event) => updateSetting("limit", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Yerleşim
+                    <select value={text(settings.layout) || "grid"} onChange={(event) => updateSetting("layout", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="grid">Grid</option>
+                      <option value="slider">Yatay slider</option>
+                    </select>
+                  </label>
                 </>
               ) : null}
 
