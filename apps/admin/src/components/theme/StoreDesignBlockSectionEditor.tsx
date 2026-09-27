@@ -76,6 +76,7 @@ function blockDefaults(type: string): Record<string, unknown> {
   if (type === "faq-item") return { question: "Yeni soru", answer: "" };
   if (type === "hotspot") return { x: 50, y: 50, targetType: "link", targetId: "#" };
   if (type === "content") return { eyebrow: "", heading: "Başlık", body: "", linkLabel: "", linkHref: "", align: "center", maxWidth: "800px" };
+  if (type === "field") return { name: "field", label: "Alan", type: "text", required: false, placeholder: "", options: "" };
   return {};
 }
 
@@ -111,6 +112,10 @@ function fieldLabel(key: string) {
     eyebrow: "Eyebrow",
     align: "Hizalama",
     maxWidth: "Max genişlik",
+    placeholder: "Placeholder",
+    options: "Seçenekler",
+    required: "Zorunlu",
+    type: "Alan tipi",
   };
   return labels[key] || key;
 }
@@ -247,6 +252,33 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
       return toast.error("Featured Collection için katalogdan bir koleksiyon seç.");
     }
 
+    if (section.type === "newsletter") {
+      if (!text(settings.heading).trim()) return toast.error("Newsletter başlığı boş olamaz.");
+      if (!text(settings.fieldLabel).trim()) return toast.error("Newsletter alan etiketi boş olamaz.");
+      if (!text(settings.consent).trim()) return toast.error("Newsletter consent metni boş olamaz.");
+      if (!text(settings.successCopy).trim()) return toast.error("Newsletter başarı mesajı boş olamaz.");
+    }
+
+    if (section.type === "custom-form") {
+      if ((text(settings.action) || "store") !== "store") return toast.error("Custom Form action whitelist dışında.");
+      const names = new Set<string>();
+      const allowedTypes = new Set(["text", "email", "tel", "textarea", "select", "checkbox"]);
+      for (const block of blocks) {
+        const name = text(block.settings.name).trim();
+        const label = text(block.settings.label).trim();
+        const fieldType = text(block.settings.type) || "text";
+        if (!/^[a-z][a-z0-9_-]{0,39}$/.test(name)) return toast.error(`Geçersiz alan adı: ${name || "boş"}`);
+        if (names.has(name)) return toast.error(`Alan adları benzersiz olmalı: ${name}`);
+        names.add(name);
+        if (!label) return toast.error(`${name}: alan etiketi boş olamaz.`);
+        if (!allowedTypes.has(fieldType)) return toast.error(`${name}: desteklenmeyen alan tipi.`);
+        if (fieldType === "select") {
+          const options = text(block.settings.options).split(/[\n,]/).map((item) => item.trim()).filter(Boolean);
+          if (!options.length) return toast.error(`${name}: select alanında en az bir seçenek olmalı.`);
+        }
+      }
+    }
+
     if (section.type === "hero") {
       const mediaId = text(settings.imageAssetId);
       const asset = mediaId ? document.media[mediaId] : undefined;
@@ -329,17 +361,19 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   const bundle = section.type === "bundle";
   const crossSell = section.type === "cross-sell";
   const breadcrumb = section.type === "breadcrumb";
+  const newsletter = section.type === "newsletter";
   const contactForm = section.type === "contact-form";
+  const customForm = section.type === "custom-form";
   const reviewHighlights = section.type === "review-highlights";
   const rewardsPromo = section.type === "rewards-promo";
   const gridStack = section.type === "grid-stack-builder";
   const collectionCards = section.type === "collection-cards" || section.type === "category-cards";
   const categoryCards = section.type === "category-cards";
-  const genericZeroBlock = ["hero", "product-comparison", "best-sellers", "recently-viewed", "bundle", "cross-sell", "breadcrumb", "contact-form", "review-highlights", "rewards-promo", "grid-stack-builder", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta", "spacer", "divider", "anchor"].includes(section.type);
-  const hasGenericBody = ["hero", "video-hero", "video-banner", "brand-story", "contact-form", "review-highlights", "rewards-promo", "heading-subtext", "manifesto", "promo-banner", "shipping-returns-cta"].includes(section.type);
+  const genericZeroBlock = ["hero", "product-comparison", "best-sellers", "recently-viewed", "bundle", "cross-sell", "breadcrumb", "newsletter", "contact-form", "custom-form", "review-highlights", "rewards-promo", "grid-stack-builder", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta", "spacer", "divider", "anchor"].includes(section.type);
+  const hasGenericBody = ["hero", "video-hero", "video-banner", "brand-story", "contact-form", "custom-form", "review-highlights", "rewards-promo", "heading-subtext", "manifesto", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const hasAlign = ["hero", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const hasLink = ["hero", "video-hero", "video-banner", "brand-story", "rewards-promo", "promo-banner", "shipping-returns-cta"].includes(section.type);
-  const showTitle = !["product-spotlight", "featured-collection", "scroll-story", "background-media", "bundle", "cross-sell", "breadcrumb", "grid-stack-builder", "quote", "spacer", "divider", "anchor"].includes(section.type);
+  const showTitle = !["product-spotlight", "featured-collection", "scroll-story", "background-media", "bundle", "cross-sell", "breadcrumb", "newsletter", "grid-stack-builder", "quote", "spacer", "divider", "anchor"].includes(section.type);
   const showEyebrow = !genericZeroBlock && !["product-spotlight", "featured-collection", "scroll-story", "background-media"].includes(section.type);
   const showPadding = !["hero", "scroll-story", "video-hero", "video-banner", "background-media", "bundle", "cross-sell", "breadcrumb", "grid-stack-builder", "spacer", "anchor"].includes(section.type);
   const primaryMedia = mediaNarrative && text(settings.imageAssetId) ? document.media[text(settings.imageAssetId)] : undefined;
@@ -944,6 +978,60 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                 </>
               ) : null}
 
+              {newsletter ? (
+                <>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                    Newsletter başlığı
+                    <input value={text(settings.heading)} onChange={(event) => updateSetting("heading", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                    Açıklama
+                    <textarea value={text(settings.body)} onChange={(event) => updateSetting("body", event.target.value)} className="min-h-20 resize-y rounded-lg border border-black/10 bg-white p-2.5 text-[9px] leading-5 outline-none" />
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    E-posta alan etiketi
+                    <input value={text(settings.fieldLabel) || "E-posta"} onChange={(event) => updateSetting("fieldLabel", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Buton metni
+                    <input value={text(settings.buttonLabel) || "Kaydol"} onChange={(event) => updateSetting("buttonLabel", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                    Consent metni
+                    <textarea value={text(settings.consent)} onChange={(event) => updateSetting("consent", event.target.value)} className="min-h-20 resize-y rounded-lg border border-black/10 bg-white p-2.5 text-[9px] leading-5 outline-none" />
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                    Başarı mesajı
+                    <textarea value={text(settings.successCopy)} onChange={(event) => updateSetting("successCopy", event.target.value)} className="min-h-20 resize-y rounded-lg border border-black/10 bg-white p-2.5 text-[9px] leading-5 outline-none" />
+                  </label>
+                  <div className="rounded-lg border border-black/10 bg-black/[0.025] p-2.5 text-[7px] leading-4 text-black/45 md:col-span-2">
+                    Subscription action korumalıdır. Endpoint, consent kaydı, rate limit ve subscriber state tema editöründen değiştirilemez.
+                  </div>
+                </>
+              ) : null}
+
+              {customForm ? (
+                <>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Buton metni
+                    <input value={text(settings.buttonLabel) || "Gönder"} onChange={(event) => updateSetting("buttonLabel", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Action whitelist
+                    <select value={text(settings.action) || "store"} onChange={(event) => updateSetting("action", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="store">Korumalı kayıt · store</option>
+                    </select>
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                    Başarı mesajı
+                    <textarea value={text(settings.successCopy) || "Formunuz alındı. Teşekkür ederiz."} onChange={(event) => updateSetting("successCopy", event.target.value)} className="min-h-20 resize-y rounded-lg border border-black/10 bg-white p-2.5 text-[9px] leading-5 outline-none" />
+                  </label>
+                  <div className="rounded-lg border border-black/10 bg-black/[0.025] p-2.5 text-[7px] leading-4 text-black/45 md:col-span-2">
+                    Form şeması aşağıdaki alan bloklarından üretilir. Raw HTML/JS yoktur; action yalnız whitelist üzerinden çalışır. Anti-spam ve server validation korumalıdır.
+                  </div>
+                </>
+              ) : null}
+
               {contactForm ? (
                 <>
                   <label className="flex items-center justify-between gap-3 rounded-lg border border-black/10 bg-white p-2.5 text-[8px] font-semibold text-black/45 md:col-span-2">
@@ -1391,6 +1479,37 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                             <label key={key} className="grid gap-1 text-[8px] font-semibold text-black/45">
                               {fieldLabel(key)}
                               <input type="number" min={0} max={100} value={numberValue(value, 50)} onChange={(event) => updateBlock(block.id, key, Number(event.target.value))} className="h-9 rounded-lg border border-black/10 px-2.5 text-[9px] outline-none" />
+                            </label>
+                          );
+                        }
+                        if (block.type === "field" && key === "type") {
+                          return (
+                            <label key={key} className="grid gap-1 text-[8px] font-semibold text-black/45">
+                              {fieldLabel(key)}
+                              <select value={text(value) || "text"} onChange={(event) => updateBlock(block.id, key, event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                                <option value="text">Metin</option>
+                                <option value="email">E-posta</option>
+                                <option value="tel">Telefon</option>
+                                <option value="textarea">Uzun metin</option>
+                                <option value="select">Seçim listesi</option>
+                                <option value="checkbox">Onay kutusu</option>
+                              </select>
+                            </label>
+                          );
+                        }
+                        if (block.type === "field" && key === "required") {
+                          return (
+                            <label key={key} className="flex items-center justify-between gap-3 rounded-lg border border-black/10 bg-white p-2.5 text-[8px] font-semibold text-black/45">
+                              {fieldLabel(key)}
+                              <input type="checkbox" checked={value === true} onChange={(event) => updateBlock(block.id, key, event.target.checked)} />
+                            </label>
+                          );
+                        }
+                        if (block.type === "field" && key === "options") {
+                          return (
+                            <label key={key} className="grid gap-1 text-[8px] font-semibold text-black/45 md:col-span-2">
+                              {fieldLabel(key)} · virgül veya satır sonu
+                              <textarea value={text(value)} onChange={(event) => updateBlock(block.id, key, event.target.value)} className="min-h-16 resize-y rounded-lg border border-black/10 p-2.5 text-[9px] leading-5 outline-none" />
                             </label>
                           );
                         }
