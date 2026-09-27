@@ -628,7 +628,7 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
           {heading}
           <div className="divide-y divide-current/10 border-y border-current/10">
             {blocks.map((block, index) => (
-              <details key={block.id} defaultOpen={index === 0} data-editor-id={`block:${block.id}`} data-editor-type={blockSemanticType(block.type)} data-editor-label={text(block.settings.label) || "Sekme"}>
+              <details key={block.id} open={index === 0 ? true : undefined} data-editor-id={`block:${block.id}`} data-editor-type={blockSemanticType(block.type)} data-editor-label={text(block.settings.label) || "Sekme"}>
                 <summary className="cursor-pointer list-none py-4 text-sm font-medium">{text(block.settings.label) || `Sekme ${index + 1}`}</summary>
                 {text(block.settings.body) ? <p className="pb-5 whitespace-pre-wrap text-sm leading-7 opacity-70">{text(block.settings.body)}</p> : null}
               </details>
