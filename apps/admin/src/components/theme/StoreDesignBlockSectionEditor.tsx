@@ -325,6 +325,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   const productComparison = section.type === "product-comparison";
   const bestSellers = section.type === "best-sellers";
   const recommendations = section.type === "recommendations";
+  const recentlyViewed = section.type === "recently-viewed";
   const breadcrumb = section.type === "breadcrumb";
   const contactForm = section.type === "contact-form";
   const reviewHighlights = section.type === "review-highlights";
@@ -332,7 +333,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   const gridStack = section.type === "grid-stack-builder";
   const collectionCards = section.type === "collection-cards" || section.type === "category-cards";
   const categoryCards = section.type === "category-cards";
-  const genericZeroBlock = ["hero", "product-comparison", "best-sellers", "breadcrumb", "contact-form", "review-highlights", "rewards-promo", "grid-stack-builder", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta", "spacer", "divider", "anchor"].includes(section.type);
+  const genericZeroBlock = ["hero", "product-comparison", "best-sellers", "recently-viewed", "breadcrumb", "contact-form", "review-highlights", "rewards-promo", "grid-stack-builder", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta", "spacer", "divider", "anchor"].includes(section.type);
   const hasGenericBody = ["hero", "video-hero", "video-banner", "brand-story", "contact-form", "review-highlights", "rewards-promo", "heading-subtext", "manifesto", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const hasAlign = ["hero", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const hasLink = ["hero", "video-hero", "video-banner", "brand-story", "rewards-promo", "promo-banner", "shipping-returns-cta"].includes(section.type);
@@ -555,6 +556,29 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   <div className="rounded-lg border border-black/10 bg-black/[0.025] p-2.5 text-[7px] leading-4 text-black/45 md:col-span-2">
                     Breadcrumb yolu route/template tarafından read-only üretilir; tema editörü URL veya path generation mantığını değiştiremez.
                   </div>
+                </>
+              ) : null}
+
+              {recentlyViewed ? (
+                <>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                    Geçmiş politikası
+                    <div className="flex h-9 items-center rounded-lg border border-black/10 bg-black/[0.025] px-2.5 text-[8px] font-medium text-black/55">
+                      Analytics consent kabul edilirse cihazda local history
+                    </div>
+                    <span className="text-[7px] font-normal leading-4 text-black/35">Reddedilirse geçmiş tutulmaz ve mevcut local history temizlenir. Bu politika tema editöründen değiştirilemez.</span>
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Ürün limiti
+                    <input type="number" min={2} max={12} value={numberValue(settings.limit, 8)} onChange={(event) => updateSetting("limit", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Yerleşim
+                    <select value={text(settings.layout) || "slider"} onChange={(event) => updateSetting("layout", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="slider">Yatay slider</option>
+                      <option value="grid">Grid</option>
+                    </select>
+                  </label>
                 </>
               ) : null}
 
