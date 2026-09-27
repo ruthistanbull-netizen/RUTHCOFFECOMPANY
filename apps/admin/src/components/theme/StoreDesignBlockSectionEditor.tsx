@@ -77,6 +77,7 @@ function blockDefaults(type: string): Record<string, unknown> {
   if (type === "hotspot") return { x: 50, y: 50, targetType: "link", targetId: "#" };
   if (type === "content") return { eyebrow: "", heading: "Başlık", body: "", linkLabel: "", linkHref: "", align: "center", maxWidth: "800px" };
   if (type === "field") return { name: "field", label: "Alan", type: "text", required: false, placeholder: "", options: "" };
+  if (type === "location") return { name: "Yeni Konum", address: "", city: "", phone: "", hours: "" };
   return {};
 }
 
@@ -116,6 +117,10 @@ function fieldLabel(key: string) {
     options: "Seçenekler",
     required: "Zorunlu",
     type: "Alan tipi",
+    address: "Adres",
+    city: "Şehir / ilçe",
+    phone: "Telefon",
+    hours: "Çalışma saatleri",
   };
   return labels[key] || key;
 }
@@ -125,7 +130,7 @@ function blockTitle(block: DraftBlock) {
 }
 
 function isLongField(key: string) {
-  return ["body", "bio", "quote", "answer"].includes(key);
+  return ["body", "bio", "quote", "answer", "address", "hours"].includes(key);
 }
 
 function isMediaField(key: string) {
@@ -260,6 +265,15 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
       return toast.error("Featured Collection için katalogdan bir koleksiyon seç.");
     }
 
+    if (section.type === "map-locator") {
+      const layout = text(settings.layout) || "cards";
+      if (!["cards", "list"].includes(layout)) return toast.error("Store Locator layout geçersiz.");
+      for (const block of blocks.filter((item) => item.type === "location")) {
+        if (!text(block.settings.name).trim()) return toast.error("Konum adı boş olamaz.");
+        if (!text(block.settings.address).trim()) return toast.error(`${text(block.settings.name) || "Konum"} için adres gerekli.`);
+      }
+    }
+
     if (section.type === "newsletter") {
       if (!text(settings.heading).trim()) return toast.error("Newsletter başlığı boş olamaz.");
       if (!text(settings.fieldLabel).trim()) return toast.error("Newsletter alan etiketi boş olamaz.");
@@ -372,13 +386,14 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   const newsletter = section.type === "newsletter";
   const contactForm = section.type === "contact-form";
   const customForm = section.type === "custom-form";
+  const mapLocator = section.type === "map-locator";
   const reviewHighlights = section.type === "review-highlights";
   const rewardsPromo = section.type === "rewards-promo";
   const gridStack = section.type === "grid-stack-builder";
   const collectionCards = section.type === "collection-cards" || section.type === "category-cards";
   const categoryCards = section.type === "category-cards";
-  const genericZeroBlock = ["hero", "product-comparison", "best-sellers", "recently-viewed", "bundle", "cross-sell", "breadcrumb", "newsletter", "contact-form", "custom-form", "review-highlights", "rewards-promo", "grid-stack-builder", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta", "spacer", "divider", "anchor"].includes(section.type);
-  const hasGenericBody = ["hero", "video-hero", "video-banner", "brand-story", "contact-form", "custom-form", "review-highlights", "rewards-promo", "heading-subtext", "manifesto", "promo-banner", "shipping-returns-cta"].includes(section.type);
+  const genericZeroBlock = ["hero", "product-comparison", "best-sellers", "recently-viewed", "bundle", "cross-sell", "breadcrumb", "newsletter", "contact-form", "custom-form", "map-locator", "review-highlights", "rewards-promo", "grid-stack-builder", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta", "spacer", "divider", "anchor"].includes(section.type);
+  const hasGenericBody = ["hero", "video-hero", "video-banner", "brand-story", "contact-form", "custom-form", "map-locator", "review-highlights", "rewards-promo", "heading-subtext", "manifesto", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const hasAlign = ["hero", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const hasLink = ["hero", "video-hero", "video-banner", "brand-story", "rewards-promo", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const showTitle = !["product-spotlight", "featured-collection", "scroll-story", "background-media", "bundle", "cross-sell", "breadcrumb", "newsletter", "grid-stack-builder", "quote", "spacer", "divider", "anchor"].includes(section.type);
@@ -1036,6 +1051,31 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   </label>
                   <div className="rounded-lg border border-black/10 bg-black/[0.025] p-2.5 text-[7px] leading-4 text-black/45 md:col-span-2">
                     Form şeması aşağıdaki alan bloklarından üretilir. Raw HTML/JS yoktur; action yalnız whitelist üzerinden çalışır. Anti-spam ve server validation korumalıdır.
+                  </div>
+                </>
+              ) : null}
+
+              {mapLocator ? (
+                <>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Yerleşim
+                    <select value={text(settings.layout) || "cards"} onChange={(event) => updateSetting("layout", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="cards">Kartlar</option>
+                      <option value="list">Liste</option>
+                    </select>
+                  </label>
+                  <label className="flex items-center justify-between gap-3 rounded-lg border border-black/10 bg-white p-2.5 text-[8px] font-semibold text-black/45">
+                    Haritada aç bağlantıları
+                    <input type="checkbox" checked={settings.showMapLinks !== false} onChange={(event) => updateSetting("showMapLinks", event.target.checked)} />
+                  </label>
+                  {settings.showMapLinks !== false ? (
+                    <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                      Harita bağlantısı metni
+                      <input value={text(settings.mapLinkLabel) || "Haritada Aç"} onChange={(event) => updateSetting("mapLinkLabel", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                    </label>
+                  ) : null}
+                  <div className="rounded-lg border border-black/10 bg-black/[0.025] p-2.5 text-[7px] leading-4 text-black/45 md:col-span-2">
+                    Store Locator konum bloklarından çalışır. Otomatik geolocation, üçüncü taraf map scripti ve raw embed yüklenmez; “Haritada Aç” bağlantısı yalnız adres metninden güvenli şekilde üretilir.
                   </div>
                 </>
               ) : null}
