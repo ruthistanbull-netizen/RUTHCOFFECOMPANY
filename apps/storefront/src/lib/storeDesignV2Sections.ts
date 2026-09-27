@@ -126,19 +126,25 @@ export function storeDesignSectionsForPage(document: ThemeDocument, page: PageRe
           .filter((item) => item.question || item.answer)
       : undefined;
 
-    const v2Assets = semanticV2Section
-      ? Object.fromEntries(
-          Object.entries(settings)
-            .filter(([key, value]) => /AssetId$/.test(key) && typeof value === "string" && Boolean(value))
-            .map(([key, value]) => {
-              const asset = document.media[String(value)];
-              const poster = asset?.posterAssetId ? document.media[asset.posterAssetId] : undefined;
-              return asset
-                ? [key, { url: versionedMediaUrl(asset)!, type: asset.type, posterUrl: versionedMediaUrl(poster) }]
-                : [key, undefined];
-            })
-            .filter((entry): entry is [string, { url: string; type: "image" | "video"; posterUrl?: string }] => Boolean(entry[1])),
-        )
+    const v2Assets: ThemeSection["v2Assets"] = semanticV2Section
+      ? (() => {
+          const assets: NonNullable<ThemeSection["v2Assets"]> = {};
+          for (const [key, value] of Object.entries(settings)) {
+            if (!/AssetId$/.test(key) || typeof value !== "string" || !value) continue;
+            const asset = document.media[value];
+            if (!asset) continue;
+            const url = versionedMediaUrl(asset);
+            if (!url) continue;
+            const poster = asset.posterAssetId ? document.media[asset.posterAssetId] : undefined;
+            const posterUrl = versionedMediaUrl(poster);
+            assets[key] = {
+              url,
+              type: asset.type,
+              ...(posterUrl ? { posterUrl } : {}),
+            };
+          }
+          return assets;
+        })()
       : undefined;
 
     const v2Blocks = hydrateV2Blocks
