@@ -497,6 +497,18 @@ export function StoreDesignV21() {
   const activeCompatibility: PageCompatibility = (
     managedPage ? document.templates[managedPage.templateId]?.compatibility?.[0] : undefined
   ) || (activePage ? pageCompatibility(activePage) : "content");
+  const consentResponsive = selected?.type === "consent-banner"
+    ? recordValue(document.globals.tokens["consent-banner"])
+    : {};
+  const consentDesktopSettings = recordValue(consentResponsive.desktop);
+  const consentMobileSettings = recordValue(consentResponsive.mobile);
+  const consentDeviceSettings = device === "mobile" ? consentMobileSettings : consentDesktopSettings;
+  const consentSetting = (key: string, fallback: string) => {
+    const direct = consentDeviceSettings[key];
+    const inherited = consentDesktopSettings[key];
+    const value = direct !== undefined ? direct : inherited;
+    return typeof value === "string" && value.trim() ? value : fallback;
+  };
 
   const postToPreview = useCallback((payload: Record<string, unknown>) => {
     iframeRef.current?.contentWindow?.postMessage(payload, STOREFRONT_ORIGIN);
@@ -777,7 +789,15 @@ export function StoreDesignV21() {
 
   const applyInspectorPatch = (path: string, value: unknown) => {
     if (!selected || !activePage) return;
-    const before = snapshotValue(selected, path);
+    const scopedResponsive = selected.type === "consent-banner"
+      ? responsiveSettingsFor(document, selected, scope, activePage)
+      : null;
+    const scopedDevice = scopedResponsive ? recordValue(scopedResponsive[device]) : null;
+    const before = scopedDevice && Object.prototype.hasOwnProperty.call(scopedDevice, path)
+      ? scopedDevice[path]
+      : selected.type === "consent-banner"
+        ? null
+        : snapshotValue(selected, path);
     if (Object.is(before, value)) return;
     const entry: SemanticHistoryEntry = { kind: "semantic", target: selected, scope, device, path, before, after: value };
     setHistory((items) => [...items.slice(-79), entry]);
@@ -1119,7 +1139,69 @@ export function StoreDesignV21() {
                       </label>
                     ) : null}
 
-                    {selected.controlGroups.includes("card") || selected.controlGroups.includes("layout") ? (
+                    {selected.type === "consent-banner" ? (
+                      <div className="rounded-xl border border-black/[0.08] bg-[#fafafa] p-3">
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="text-[8px] font-semibold text-black/55">GLOBAL CONSENT</p>
+                          <span className="rounded-full bg-white px-2 py-1 text-[7px] font-semibold text-black/40">{device === "mobile" ? "Mobil override" : "Masaüstü / base"}</span>
+                        </div>
+                        <div className="mt-3 grid gap-3">
+                          <label className="grid gap-1.5 text-[8px] text-black/45">
+                            Başlık
+                            <input value={consentSetting("title", "Çerezler")} onChange={(event) => applyInspectorPatch("title", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none" />
+                          </label>
+                          <label className="grid gap-1.5 text-[8px] text-black/45">
+                            Açıklama
+                            <textarea value={consentSetting("intro", "Deneyiminizi iyileştirmek ve site kullanımını anlamak için çerezlerden yararlanıyoruz.")} onChange={(event) => applyInspectorPatch("intro", event.target.value)} className="min-h-20 resize-y rounded-lg border border-black/10 bg-white p-2.5 text-[9px] leading-5 text-black outline-none" />
+                          </label>
+                          <div className="grid grid-cols-2 gap-2">
+                            <label className="grid gap-1.5 text-[8px] text-black/45">
+                              Kabul butonu
+                              <input value={consentSetting("acceptLabel", "Kabul et")} onChange={(event) => applyInspectorPatch("acceptLabel", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none" />
+                            </label>
+                            <label className="grid gap-1.5 text-[8px] text-black/45">
+                              Red butonu
+                              <input value={consentSetting("rejectLabel", "Reddet")} onChange={(event) => applyInspectorPatch("rejectLabel", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none" />
+                            </label>
+                          </div>
+                          <label className="grid gap-1.5 text-[8px] text-black/45">
+                            Gizlilik link metni
+                            <input value={consentSetting("privacyLabel", "Gizlilik ve çerezler")} onChange={(event) => applyInspectorPatch("privacyLabel", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none" />
+                          </label>
+                          <label className="grid gap-1.5 text-[8px] text-black/45">
+                            Konum preset
+                            <select value={consentSetting("position", "bottom-center")} onChange={(event) => applyInspectorPatch("position", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none">
+                              <option value="bottom-center">Alt orta</option>
+                              <option value="bottom-left">Alt sol</option>
+                              <option value="bottom-right">Alt sağ</option>
+                            </select>
+                          </label>
+                          <div className="grid grid-cols-2 gap-2">
+                            <label className="grid gap-1.5 text-[8px] text-black/45">
+                              Genişlik
+                              <select value={consentSetting("widthPreset", "standard")} onChange={(event) => applyInspectorPatch("widthPreset", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none">
+                                <option value="compact">Compact</option>
+                                <option value="standard">Standard</option>
+                                <option value="wide">Wide</option>
+                              </select>
+                            </label>
+                            <label className="grid gap-1.5 text-[8px] text-black/45">
+                              Radius
+                              <select value={consentSetting("radiusPreset", "rounded")} onChange={(event) => applyInspectorPatch("radiusPreset", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none">
+                                <option value="soft">Soft</option>
+                                <option value="rounded">Rounded</option>
+                                <option value="pill">Pill</option>
+                              </select>
+                            </label>
+                          </div>
+                          <p className="rounded-lg border border-black/10 bg-white p-2 text-[7px] leading-4 text-black/42">
+                            Kabul/red state, consent kategorileri ve /privacy-policy hedefi korunur. Burada yalnız policy içindeki copy ve görünüm presetleri değişir.
+                          </p>
+                        </div>
+                      </div>
+                    ) : null}
+
+                    {(selected.controlGroups.includes("card") || selected.controlGroups.includes("layout")) && selected.type !== "consent-banner" ? (
                       <label className="grid gap-1.5 text-[8px] text-black/45">
                         Köşe yuvarlaklığı
                         <select value={String(Math.round(selected.current.borderRadius || 0))} onChange={(event) => applyInspectorPatch("borderRadius", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none">
