@@ -33,6 +33,7 @@ const BLOCK_RENDER_SECTION_TYPES = new Set([
   "feature-grid",
   "trust-badges",
   "testimonials",
+  "review-highlights",
   "tabs",
   "press-awards",
   "team",
