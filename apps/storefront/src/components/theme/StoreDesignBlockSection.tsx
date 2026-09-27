@@ -7,6 +7,7 @@ import { StoreDesignBeforeAfter } from "@/components/theme/StoreDesignBeforeAfte
 import { StoreDesignSlideshow } from "@/components/theme/StoreDesignSlideshow";
 import { StoreDesignContactForm } from "@/components/theme/StoreDesignContactForm";
 import { StoreDesignReviewHighlights } from "@/components/theme/StoreDesignReviewHighlights";
+import { StoreDesignRewardsPromo } from "@/components/theme/StoreDesignRewardsPromo";
 
 type V2Block = NonNullable<ThemeSection["v2Blocks"]>[number];
 
@@ -132,6 +133,24 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
       />
     );
   }
+  if (type === "rewards-promo") {
+    return (
+      <StoreDesignRewardsPromo
+        sectionId={section.id}
+        settings={settings}
+        desktopSrc={section.imageSrc}
+        mobileSrc={section.mobileImageSrc}
+        mediaType={section.v2MediaType}
+        posterUrl={section.v2PosterUrl}
+        desktopPosition={section.imageObjectPosition}
+        mobilePosition={section.mobileImageObjectPosition}
+        backgroundColor={section.backgroundColor}
+        textColor={section.textColor}
+        paddingY={paddingY}
+      />
+    );
+  }
+
 
 
   if (type === "video-hero" || type === "video-banner") {
