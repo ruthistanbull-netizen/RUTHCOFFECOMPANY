@@ -50,6 +50,7 @@ export type SectionDefinition = {
   allowedBlocks: string[];
   maxBlocks?: number;
   implemented: boolean;
+  pendingReason?: string;
   schemaVersion: number;
 };
 
@@ -260,6 +261,7 @@ const section = (
   allowedBlocks: string[] = [],
   implemented = false,
   maxBlocks?: number,
+  pendingReason?: string,
 ): SectionDefinition => ({
   type,
   label,
@@ -269,6 +271,7 @@ const section = (
   allowedBlocks,
   implemented,
   maxBlocks,
+  pendingReason,
   schemaVersion: STORE_DESIGN_SCHEMA_VERSION,
 });
 
@@ -285,8 +288,8 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
   section("sale-products", "İndirimdekiler", "commerce", allCommercePages, ["limit", "layout", "badgeStyle"], [], true),
   section("recommendations", "Önerilen Ürünler", "commerce", ["product"], ["title", "eyebrow", "algorithm", "limit", "layout", "paddingY"], [], true),
   section("recently-viewed", "Son Görüntülenenler", "commerce", ["product"], ["title", "limit", "layout", "paddingY"], [], true),
-  section("bundle", "Birlikte Alınanlar / Bundle", "commerce", ["product", "cart"], ["source", "layout", "cta"]),
-  section("cross-sell", "Cross-sell / Upsell", "commerce", ["cart", "checkout"], ["source", "position", "density"]),
+  section("bundle", "Birlikte Alınanlar / Bundle", "commerce", ["product", "cart"], ["source", "layout", "cta"], [], false, undefined, "Bundle kaynak ve fiyat hesabı commerce service üzerinden gelmeli; güvenli bundle runtime henüz bağlı değil."),
+  section("cross-sell", "Cross-sell / Upsell", "commerce", ["cart", "checkout"], ["source", "position", "density"], [], false, undefined, "Cart/checkout protected zone ve cross-sell source service bağlantısı tamamlanmadan açılamaz."),
   section("product-comparison", "Ürün Karşılaştırma", "commerce", ["content", "landing"], ["productIds", "fields", "layout", "title", "paddingY"], [], true),
 
   section("hero", "Hero", "media", allContentPages, ["imageAssetId", "posterAssetId", "heightPreset", "fit", "playbackPreset", "title", "body", "linkLabel", "linkHref", "align", "overlayOpacity", "contrastMode"], [], true),
@@ -327,19 +330,19 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
   section("promo-banner", "Promo Banner", "marketing", allContentPages, ["title", "body", "linkLabel", "linkHref", "align", "paddingY"], [], true),
   section("countdown", "Countdown", "marketing", allContentPages, ["targetTime", "completedState", "style"], [], true),
   section("marquee", "Marquee / Ticker", "marketing", allContentPages, ["speed", "pause"], ["ticker-item"], true, 20),
-  section("newsletter", "Newsletter", "marketing", allContentPages, ["heading", "body", "fieldLabel", "consent", "successCopy"]),
+  section("newsletter", "Newsletter", "marketing", allContentPages, ["heading", "body", "fieldLabel", "consent", "successCopy"], [], false, undefined, "Anonim newsletter subscribe endpoint'i ve açık consent kayıt akışı yok; sahte form endpoint'i oluşturulmuyor."),
   section("contact-form", "Contact Form", "marketing", ["content", "landing"], ["title", "body", "phoneVisible", "nameLabel", "emailLabel", "phoneLabel", "messageLabel", "namePlaceholder", "emailPlaceholder", "phonePlaceholder", "messagePlaceholder", "buttonLabel", "successCopy", "paddingY"], [], true),
-  section("custom-form", "Custom Form", "marketing", ["content", "landing"], ["schema", "successCopy"], ["field"], false, 20),
-  section("map-locator", "Map / Store Locator", "marketing", allContentPages, ["locations", "mapStyle", "cta"]),
+  section("custom-form", "Custom Form", "marketing", ["content", "landing"], ["schema", "successCopy"], ["field"], false, 20, "Generic form submission, validation ve anti-spam service sözleşmesi hazır değil."),
+  section("map-locator", "Map / Store Locator", "marketing", allContentPages, ["locations", "mapStyle", "cta"], [], false, undefined, "Store location datasource ve map/provider integration sözleşmesi bağlı değil."),
   section("rewards-promo", "Puan / Ödül Promo", "marketing", allCommercePages, ["imageAssetId", "title", "body", "linkLabel", "linkHref", "layout", "showSignupPoints", "showEarnRate", "paddingY"], [], true),
   section("shipping-returns-cta", "Shipping / Returns CTA", "marketing", allCommercePages, ["icon", "title", "body", "linkLabel", "linkHref", "align", "paddingY"], [], true),
-  section("consent-banner", "Cookie / Consent Banner", "marketing", ["utility"], ["copy", "style", "position"]),
+  section("consent-banner", "Cookie / Consent Banner", "marketing", ["utility"], ["copy", "style", "position"], [], false, undefined, "Global consent categories/state protected runtime'da; section-tree üzerinden değiştirilmeden önce global settings bridge gerekli."),
   section("spacer", "Spacer", "marketing", allContentPages, ["desktopHeight", "mobileHeight"], [], true),
   section("divider", "Divider", "marketing", allContentPages, ["width", "thickness", "colorToken", "paddingY"], [], true),
   section("anchor", "Anchor / Jump Link", "marketing", allContentPages, ["anchorId", "labelVisibility"], [], true),
   section("breadcrumb", "Breadcrumb", "marketing", ["content", "product", "category", "collection"], ["visible", "separator", "typography", "paddingY"], [], true),
-  section("integration-block", "App / Integration Block", "marketing", allContentPages, ["integrationId", "settings"]),
-  section("developer-embed", "Developer Embed", "marketing", ["content", "landing"], ["whitelistedEmbed"]),
+  section("integration-block", "App / Integration Block", "marketing", allContentPages, ["integrationId", "settings"], [], false, undefined, "Integration runtime contract ve credential boundary section-safe hale gelmeden açılamaz."),
+  section("developer-embed", "Developer Embed", "marketing", ["content", "landing"], ["whitelistedEmbed"], [], false, undefined, "Raw embed/code merchant yüzeyine açılmıyor; güvenli allowlist sandbox sözleşmesi olmadan kapalı kalır."),
   section("grid-stack-builder", "Boş Grid / Stack Builder", "marketing", allContentPages, ["columns", "gap", "alignment", "responsiveStack"], ["content"], true, 24),
 ];
 
