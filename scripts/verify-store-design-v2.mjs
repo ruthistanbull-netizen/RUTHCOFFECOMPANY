@@ -185,6 +185,28 @@ for (const token of ["StoreDesignPresetLibrary", "StoreDesignBlockSectionEditor"
   if (!sectionManager.includes(token)) fail(`Section Manager V2.1 eksik: ${token}`);
 }
 
+const storeDesignShell = read("apps/admin/src/components/theme/StoreDesignV21.tsx");
+for (const token of [
+  'selected.type === "consent-banner"',
+  'document.globals.tokens["consent-banner"]',
+  "GLOBAL CONSENT",
+  "Kabul butonu",
+  "Red butonu",
+  "Konum preset",
+  "widthPreset",
+  "radiusPreset",
+  "consent kategorileri",
+  "/privacy-policy hedefi korunur",
+]) {
+  if (!storeDesignShell.includes(token)) fail(`Global protected consent editor eksik: ${token}`);
+}
+if (!core.includes('component("consent-banner", "Çerez / Onay", "Diğer", "global", globalScopes, ["content", "layout", "card", "responsive"], ["consentSemantics", "categories", "consentState", "privacyUrl"])')) {
+  fail("Consent banner global protected registry sözleşmesi eksik.");
+}
+if (!core.includes("Global protected target üzerinden yönetilir; consent categories/state ve privacy URL korunur, section tree'ye eklenmez.")) {
+  fail("Consent banner section capability gate açıklaması global protected modele uymuyor.");
+}
+
 const blockRenderer = read("apps/storefront/src/components/theme/StoreDesignBlockSection.tsx");
 for (const type of [
   "video-hero",
@@ -508,6 +530,37 @@ for (const forbiddenToken of ["name: current.name", "image: productPrimaryDetail
 if (!productDetailRuntime.includes("recentlyViewedConfig")) fail("Recently Viewed product detail config bağlantısı eksik.");
 for (const token of ['section.type === "recently-viewed"', "recentlyViewedConfig"]) {
   if (!productRoute.includes(token)) fail(`Recently Viewed product template runtime bağlantısı eksik: ${token}`);
+}
+
+const consentRuntime = read("apps/storefront/src/components/analytics/AnalyticsConsentGate.tsx");
+for (const token of [
+  "desktopSettings",
+  "mobileSettings",
+  "SEMANTIC_RUNTIME_PATCH_EVENT",
+  'detail.selectorValue !== "consent-banner"',
+  'detail.scope !== "global"',
+  'params.get("themeEditor") === "1"',
+  "if (editorPreview) return",
+  "Gerekli çerezler her zaman aktiftir",
+  'href="/privacy-policy"',
+  '"bottom-center", "bottom-left", "bottom-right"',
+  '"compact", "standard", "wide"',
+  '"soft", "rounded", "pill"',
+]) {
+  if (!consentRuntime.includes(token)) fail(`Consent protected runtime bridge eksik: ${token}`);
+}
+for (const forbiddenToken of ['settings?.categories', 'settings?.consentState', 'settings?.privacyUrl']) {
+  if (consentRuntime.includes(forbiddenToken)) fail(`Consent protected alanı runtime appearance settings'e açılmış: ${forbiddenToken}`);
+}
+const storefrontLayout = read("apps/storefront/src/app/layout.tsx");
+for (const token of [
+  'storeDesignV2.globals.tokens["consent-banner"]',
+  "consentDesktopSettings",
+  "consentMobileSettings",
+  "desktopSettings={consentDesktopSettings}",
+  "mobileSettings={consentMobileSettings}",
+]) {
+  if (!storefrontLayout.includes(token)) fail(`Consent global settings storefront bridge eksik: ${token}`);
 }
 
 const breadcrumbRuntime = read("apps/storefront/src/components/theme/StoreDesignBreadcrumb.tsx");
