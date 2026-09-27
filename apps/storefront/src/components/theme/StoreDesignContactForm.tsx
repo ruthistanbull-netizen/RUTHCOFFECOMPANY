@@ -5,6 +5,9 @@ import { useState } from "react";
 type Props = {
   sectionId: string;
   settings?: Record<string, unknown>;
+  backgroundColor?: string;
+  textColor?: string;
+  paddingY?: number;
 };
 
 type ContactDraft = {
@@ -28,7 +31,13 @@ function copy(settings: Record<string, unknown>, key: string, fallback: string, 
   return typeof value === "string" && value.trim() ? value.trim().slice(0, max) : fallback;
 }
 
-export function StoreDesignContactForm({ sectionId, settings = {} }: Props) {
+export function StoreDesignContactForm({
+  sectionId,
+  settings = {},
+  backgroundColor,
+  textColor,
+  paddingY = 72,
+}: Props) {
   const [form, setForm] = useState<ContactDraft>(EMPTY_FORM);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
@@ -97,6 +106,12 @@ export function StoreDesignContactForm({ sectionId, settings = {} }: Props) {
       data-editor-type="contact-form"
       data-editor-label={title}
       className="px-5 md:px-8"
+      style={{
+        background: backgroundColor || "transparent",
+        color: textColor || "inherit",
+        paddingTop: paddingY,
+        paddingBottom: paddingY,
+      }}
     >
       <div className="mx-auto grid max-w-6xl gap-9 md:grid-cols-[minmax(0,.8fr)_minmax(0,1.2fr)] md:gap-14">
         <div>
@@ -195,7 +210,7 @@ export function StoreDesignContactForm({ sectionId, settings = {} }: Props) {
           <button
             type="submit"
             disabled={sending}
-            className="min-h-12 justify-self-start rounded-full bg-current px-7 text-[10px] font-semibold uppercase tracking-[0.14em] disabled:cursor-not-allowed disabled:opacity-50"
+            className="min-h-12 justify-self-start rounded-full bg-brick px-7 text-[10px] font-semibold uppercase tracking-[0.14em] disabled:cursor-not-allowed disabled:opacity-50"
           >
             <span className="text-[var(--contact-form-button-text,#FBF3E6)]">
               {sending ? "Gönderiliyor…" : buttonLabel}
