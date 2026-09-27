@@ -93,7 +93,7 @@ export function storeDesignSectionsForPage(document: ThemeDocument, page: PageRe
       const { semantic: _semantic, ...settings } = section.settings || {};
       const v2BlockSection = BLOCK_RENDER_SECTION_TYPES.has(section.type);
       const hydrateV2Blocks = v2BlockSection || section.type === "scroll-story";
-      const semanticV2Section = hydrateV2Blocks || ["hero", "product-spotlight", "featured-collection", "category-cards", "product-comparison", "best-sellers", "collection-cards", "brand-story"].includes(section.type);
+      const semanticV2Section = hydrateV2Blocks || ["hero", "product-spotlight", "featured-collection", "category-cards", "product-comparison", "best-sellers", "recommendations", "collection-cards", "brand-story"].includes(section.type);
       const normalized = normalizeThemeSection({
         id: section.id,
         type: LEGACY_RENDER_ALIASES[section.type] || (v2BlockSection ? "rich-text" : section.type),
@@ -179,4 +179,11 @@ export function storeDesignSectionsForPage(document: ThemeDocument, page: PageRe
       };
     })
     .filter((section): section is ThemeSection => section !== null);
+}
+
+
+export function storeDesignSectionsForTemplatePath(document: ThemeDocument, templatePath: string): ThemeSection[] {
+  const templateId = document.templateBindings[templatePath] || templatePath;
+  if (!document.templates[templateId]) return [];
+  return storeDesignSectionsForPage(document, { templateId } as PageRecord);
 }
