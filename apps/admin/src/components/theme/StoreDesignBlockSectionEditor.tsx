@@ -326,6 +326,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   const bestSellers = section.type === "best-sellers";
   const recommendations = section.type === "recommendations";
   const recentlyViewed = section.type === "recently-viewed";
+  const bundle = section.type === "bundle";
   const breadcrumb = section.type === "breadcrumb";
   const contactForm = section.type === "contact-form";
   const reviewHighlights = section.type === "review-highlights";
@@ -333,13 +334,13 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   const gridStack = section.type === "grid-stack-builder";
   const collectionCards = section.type === "collection-cards" || section.type === "category-cards";
   const categoryCards = section.type === "category-cards";
-  const genericZeroBlock = ["hero", "product-comparison", "best-sellers", "recently-viewed", "breadcrumb", "contact-form", "review-highlights", "rewards-promo", "grid-stack-builder", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta", "spacer", "divider", "anchor"].includes(section.type);
+  const genericZeroBlock = ["hero", "product-comparison", "best-sellers", "recently-viewed", "bundle", "breadcrumb", "contact-form", "review-highlights", "rewards-promo", "grid-stack-builder", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta", "spacer", "divider", "anchor"].includes(section.type);
   const hasGenericBody = ["hero", "video-hero", "video-banner", "brand-story", "contact-form", "review-highlights", "rewards-promo", "heading-subtext", "manifesto", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const hasAlign = ["hero", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const hasLink = ["hero", "video-hero", "video-banner", "brand-story", "rewards-promo", "promo-banner", "shipping-returns-cta"].includes(section.type);
-  const showTitle = !["product-spotlight", "featured-collection", "scroll-story", "background-media", "breadcrumb", "grid-stack-builder", "quote", "spacer", "divider", "anchor"].includes(section.type);
+  const showTitle = !["product-spotlight", "featured-collection", "scroll-story", "background-media", "bundle", "breadcrumb", "grid-stack-builder", "quote", "spacer", "divider", "anchor"].includes(section.type);
   const showEyebrow = !genericZeroBlock && !["product-spotlight", "featured-collection", "scroll-story", "background-media"].includes(section.type);
-  const showPadding = !["hero", "scroll-story", "video-hero", "video-banner", "background-media", "breadcrumb", "grid-stack-builder", "spacer", "anchor"].includes(section.type);
+  const showPadding = !["hero", "scroll-story", "video-hero", "video-banner", "background-media", "bundle", "breadcrumb", "grid-stack-builder", "spacer", "anchor"].includes(section.type);
   const primaryMedia = mediaNarrative && text(settings.imageAssetId) ? document.media[text(settings.imageAssetId)] : undefined;
   const brandStoryMedia = brandStory && text(settings.imageAssetId) ? document.media[text(settings.imageAssetId)] : undefined;
   const showBlockComposer = allowedDefinitions.length > 0;
@@ -556,6 +557,29 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   <div className="rounded-lg border border-black/10 bg-black/[0.025] p-2.5 text-[7px] leading-4 text-black/45 md:col-span-2">
                     Breadcrumb yolu route/template tarafından read-only üretilir; tema editörü URL veya path generation mantığını değiştiremez.
                   </div>
+                </>
+              ) : null}
+
+              {bundle ? (
+                <>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                    Bundle veri kaynağı
+                    <select value={text(settings.source) || "related"} onChange={(event) => updateSetting("source", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="related">Bu ürünü içeren gerçek paketler</option>
+                      <option value="all">Tüm aktif paket ürünleri</option>
+                    </select>
+                    <span className="text-[7px] font-normal leading-4 text-black/35">Paket ilişkisi katalogdaki is_bundle / product_type / bundle_items alanlarından read-only çözülür. Paket içeriği ve fiyat tema editöründen değiştirilemez.</span>
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Yerleşim
+                    <select value={text(settings.layout) || "grid"} onChange={(event) => updateSetting("layout", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="grid">Grid</option><option value="slider">Yatay slider</option>
+                    </select>
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    CTA metni
+                    <input maxLength={80} value={text(settings.cta) || "Paketi İncele"} onChange={(event) => updateSetting("cta", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                  </label>
                 </>
               ) : null}
 

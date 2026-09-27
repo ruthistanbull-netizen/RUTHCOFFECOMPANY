@@ -269,7 +269,7 @@ const blockRuntimeTypes = extractStringSet(v2Sections, "BLOCK_RENDER_SECTION_TYP
 const homeRenderer = read("apps/storefront/src/components/theme/HomeSectionRenderer.tsx");
 const homeRuntimeTypes = new Set([...homeRenderer.matchAll(/section\.type\s*===\s*"([^"]+)"/g)].map((match) => match[1]));
 const runtimeAliases = new Map([["collection-cards", "collections"]]);
-const externalRuntimeTypes = new Set(["recommendations", "recently-viewed", "breadcrumb"]);
+const externalRuntimeTypes = new Set(["recommendations", "recently-viewed", "bundle", "breadcrumb"]);
 
 function hasSectionRuntime(type) {
   const alias = runtimeAliases.get(type);
@@ -352,6 +352,7 @@ for (const token of [
   "best-sellers",
   "recommendations",
   "recently-viewed",
+  "bundle",
   "breadcrumb",
   "contact-form",
   "review-highlights",
@@ -417,6 +418,8 @@ for (const token of [
   'section("recommendations"',
   'component("recently-viewed"',
   'section("recently-viewed"',
+  'component("bundle"',
+  'section("bundle"',
   'section("breadcrumb"',
   'component("contact-form"',
   'section("contact-form"',
@@ -440,7 +443,7 @@ for (const token of ["new-arrivals", "sale-products", "Otomatik · yeni ürün i
 }
 
 const themeSections = read("packages/commerce-core/src/theme-sections.ts");
-for (const token of ['| "product-spotlight"', '| "featured-collection"', '| "category-cards"', '| "product-comparison"', '| "best-sellers"', '| "recommendations"', '| "recently-viewed"', '| "breadcrumb"', '| "new-arrivals"', '| "sale-products"', 'layout?: "slider" | "grid"', 'badgeStyle?: "pill" | "outline" | "minimal"', "mobileAssetUrl?: string", "mobileObjectPosition?: string"]) {
+for (const token of ['| "product-spotlight"', '| "featured-collection"', '| "category-cards"', '| "product-comparison"', '| "best-sellers"', '| "recommendations"', '| "recently-viewed"', '| "bundle"', '| "breadcrumb"', '| "new-arrivals"', '| "sale-products"', 'layout?: "slider" | "grid"', 'badgeStyle?: "pill" | "outline" | "minimal"', "mobileAssetUrl?: string", "mobileObjectPosition?: string"]) {
   if (!themeSections.includes(token)) fail(`Product preset render contract eksik: ${token}`);
 }
 
@@ -467,7 +470,7 @@ for (const token of [
 }
 
 for (const token of [
-  '["hero", "product-spotlight", "featured-collection", "category-cards", "product-comparison", "best-sellers", "recommendations", "recently-viewed", "breadcrumb", "collection-cards", "brand-story"]',
+  '["hero", "product-spotlight", "featured-collection", "category-cards", "product-comparison", "best-sellers", "recommendations", "recently-viewed", "bundle", "breadcrumb", "collection-cards", "brand-story"]',
   'section.type === "scroll-story"',
   "hydrateV2Blocks",
   "mobileAssetUrl",
@@ -510,6 +513,44 @@ for (const token of ["storeDesignSectionsForTemplatePath", '"/products/[slug]"',
   if (!productRoute.includes(token)) fail(`Recommendations product template runtime bağlantısı eksik: ${token}`);
 }
 if (!v2Sections.includes("storeDesignSectionsForTemplatePath")) fail("Dynamic template storefront resolver eksik.");
+
+const bundleRuntime = read("apps/storefront/src/components/product/ProductBundleSection.tsx");
+for (const token of [
+  "/bundles?source=",
+  "bundleConfig",
+  "formatPrice",
+  "item.price",
+  'data-editor-type="bundle"',
+  "Paketi İncele",
+]) {
+  if (!bundleRuntime.includes(token) && !productDetailRuntime.includes(token)) fail(`Bundle protected runtime eksik: ${token}`);
+}
+const bundleRoute = read("apps/storefront/src/app/api/products/[slug]/bundles/route.ts");
+for (const token of [
+  "getBundleSectionProducts",
+  "getProductBySlug",
+  'sourceParam === "all" ? "all" : "related"',
+  "price: product.price",
+  "compare_at_price: product.compare_at_price",
+]) {
+  if (!bundleRoute.includes(token)) fail(`Bundle read-only endpoint eksik: ${token}`);
+}
+const storefrontData = read("apps/storefront/src/data/site.ts");
+for (const token of [
+  "getBundleSectionProducts",
+  'product.product_type === "bundle"',
+  "bundleItemIds(bundle).includes(productId)",
+  "bundleItemSlugs(bundle).includes(productSlug)",
+]) {
+  if (!storefrontData.includes(token)) fail(`Bundle catalog resolver eksik: ${token}`);
+}
+for (const forbiddenToken of ["bundle_items =", "price =", "compare_at_price ="]) {
+  if (bundleRuntime.includes(forbiddenToken)) fail(`Bundle runtime business verisi hesaplamamalı/değiştirmemeli: ${forbiddenToken}`);
+}
+if (!productDetailRuntime.includes("bundleConfig")) fail("Bundle product detail config bağlantısı eksik.");
+for (const token of ['section.type === "bundle"', "bundleConfig"]) {
+  if (!productRoute.includes(token)) fail(`Bundle product template runtime bağlantısı eksik: ${token}`);
+}
 
 const recentlyViewedRuntime = read("apps/storefront/src/components/product/ProductRecentlyViewed.tsx");
 for (const token of [
@@ -680,7 +721,6 @@ for (const token of ["bestSellerWindows", "getCachedBestSellingProducts", "bestS
 
 note(`Section library: ${implementedSectionTypes.length} runtime hazır · ${pendingSectionTypes.length} kapalı/pending`);
 
-const storefrontData = read("apps/storefront/src/data/site.ts");
 if (!storefrontData.includes("migrateThemeDocument")) fail("Storefront published/preview theme read migration katmanından geçmiyor.");
 if (!storefrontData.includes("legacy storefront fallback")) fail("Unsupported schema için güvenli storefront fallback eksik.");
 

@@ -898,6 +898,41 @@ export async function getBundleItemProducts(
   return inferBundleItemsFromName(product, products);
 }
 
+export type BundleSectionSource = "related" | "all";
+
+function isCatalogBundleProduct(product: Product) {
+  return Boolean(
+    product.is_bundle
+    || product.product_type === "bundle"
+    || bundleItemIds(product).length
+    || bundleItemSlugs(product).length
+  );
+}
+
+export async function getBundleSectionProducts(
+  product: Product,
+  source: BundleSectionSource = "related",
+): Promise<Product[]> {
+  const products = await getProducts();
+  const bundles = products.filter(
+    (item) =>
+      item.id !== product.id
+      && item.status === "active"
+      && isCatalogBundleProduct(item),
+  );
+
+  if (source === "all") return bundles.slice(0, 12);
+
+  const productId = String(product.id);
+  const productSlug = product.slug;
+  return bundles
+    .filter((bundle) =>
+      bundleItemIds(bundle).includes(productId)
+      || bundleItemSlugs(bundle).includes(productSlug),
+    )
+    .slice(0, 12);
+}
+
 export async function getHomepageSections(): Promise<HomepageSection[]> {
   const client = getCatalogClient();
   if (!USE_SUPABASE_CATALOG || !client) return [];

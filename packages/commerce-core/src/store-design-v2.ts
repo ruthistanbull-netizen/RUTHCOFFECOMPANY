@@ -116,6 +116,7 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
   component("new-arrivals", "Yeni Gelenler", "Katalog", "section", sectionScopes, ["data", "layout", "responsive"], ["sourceRule", "productData"]),
   component("best-sellers", "Çok Satanlar", "Katalog", "section", sectionScopes, ["data", "layout", "responsive"], ["orderAnalytics", "productData"]),
   component("recently-viewed", "Son Görüntülenenler", "Katalog", "section", sectionScopes, ["content", "layout", "responsive"], ["historyStoragePolicy", "catalogMutation"]),
+  component("bundle", "Birlikte Alınanlar / Bundle", "Katalog", "section", sectionScopes, ["data", "content", "layout", "responsive"], ["bundleItems", "bundlePrice", "priceValue", "cartLogic", "catalogMutation"]),
   component("sale-products", "İndirimdekiler", "Katalog", "section", sectionScopes, ["data", "layout", "card", "responsive"], ["discountLogic", "productData"]),
   component("product-card", "Ürün Kartı", "Katalog", "family", ["family", "section", "template"], ["card", "typography", "layout", "responsive"], ["productData", "individualMediaScale", "individualWidth"]),
   component("product-card-media", "Ürün Kartı Görseli", "Katalog", "family", familyScopes, ["media", "card", "responsive"], ["productMediaFile"]),
@@ -288,7 +289,7 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
   section("sale-products", "İndirimdekiler", "commerce", allCommercePages, ["limit", "layout", "badgeStyle"], [], true),
   section("recommendations", "Önerilen Ürünler", "commerce", ["product"], ["title", "eyebrow", "algorithm", "limit", "layout", "paddingY"], [], true),
   section("recently-viewed", "Son Görüntülenenler", "commerce", ["product"], ["title", "limit", "layout", "paddingY"], [], true),
-  section("bundle", "Birlikte Alınanlar / Bundle", "commerce", ["product", "cart"], ["source", "layout", "cta"], [], false, undefined, "Bundle kaynak ve fiyat hesabı commerce service üzerinden gelmeli; güvenli bundle runtime henüz bağlı değil."),
+  section("bundle", "Birlikte Alınanlar / Bundle", "commerce", ["product"], ["source", "layout", "cta"], [], true),
   section("cross-sell", "Cross-sell / Upsell", "commerce", ["cart", "checkout"], ["source", "position", "density"], [], false, undefined, "Cart/checkout protected zone ve cross-sell source service bağlantısı tamamlanmadan açılamaz."),
   section("product-comparison", "Ürün Karşılaştırma", "commerce", ["content", "landing"], ["productIds", "fields", "layout", "title", "paddingY"], [], true),
 
@@ -1397,6 +1398,18 @@ export function validateThemeDocument(document: ThemeDocument) {
       if (!["grid", "slider"].includes(layout)) errors.push(`${section.id}: Son Görüntülenenler layout geçersiz.`);
       const paddingY = Number(section.settings.paddingY ?? 58);
       if (!Number.isFinite(paddingY) || paddingY < 0 || paddingY > 240) errors.push(`${section.id}: Son Görüntülenenler paddingY 0-240 aralığında olmalı.`);
+    }
+
+    if (section.type === "bundle") {
+      const source = String(section.settings.source || "related");
+      if (!["related", "all"].includes(source)) errors.push(`${section.id}: Bundle source yalnız related/all olabilir.`);
+      const layout = String(section.settings.layout || "grid");
+      if (!["grid", "slider"].includes(layout)) errors.push(`${section.id}: Bundle layout geçersiz.`);
+      const cta = section.settings.cta;
+      if (cta !== undefined && (typeof cta !== "string" || cta.trim().length < 1 || cta.trim().length > 80)) errors.push(`${section.id}: Bundle CTA 1-80 karakter olmalı.`);
+      for (const protectedKey of ["bundleItems", "bundle_items", "bundlePrice", "price", "priceValue", "productIds", "cartLogic"]) {
+        if (protectedKey in section.settings) errors.push(`${section.id}: Bundle ${protectedKey} business verisi tema editöründen değiştirilemez.`);
+      }
     }
 
     if (section.type === "recommendations") {

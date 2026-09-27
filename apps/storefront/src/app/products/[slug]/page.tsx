@@ -90,6 +90,10 @@ export default async function ProductPage({
   const recentlyViewedConfig = recentlyViewedSection
     ? { enabled: recentlyViewedSection.enabled, settings: recentlyViewedSection.v2Settings || {} }
     : undefined;
+  const bundleSection = productTemplateSections.find((section) => section.type === "bundle");
+  const bundleConfig = bundleSection
+    ? { enabled: bundleSection.enabled, settings: bundleSection.v2Settings || {} }
+    : undefined;
   const breadcrumbSection = productTemplateSections.find((section) => section.type === "breadcrumb");
   const breadcrumbConfig = breadcrumbSection
     ? { id: breadcrumbSection.id, enabled: breadcrumbSection.enabled, settings: breadcrumbSection.v2Settings || {} }
@@ -148,6 +152,7 @@ export default async function ProductPage({
         initialWindow={initialWindow}
         recommendationsConfig={recommendationsConfig}
         recentlyViewedConfig={recentlyViewedConfig}
+        bundleConfig={bundleConfig}
         breadcrumbConfig={breadcrumbConfig}
       />
     </>

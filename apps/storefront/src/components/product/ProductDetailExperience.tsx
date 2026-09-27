@@ -9,6 +9,7 @@ import {
   ProductPurchasePanel,
   type ProductDetailItem,
 } from "@/components/product/ProductPurchasePanel";
+import { ProductBundleSection } from "@/components/product/ProductBundleSection";
 import { ProductRecommendations } from "@/components/product/ProductRecommendations";
 import { ProductRecentlyViewed } from "@/components/product/ProductRecentlyViewed";
 import { ProductReviewsSection } from "@/components/reviews/ProductReviewsSection";
@@ -231,6 +232,7 @@ export function ProductDetailExperience({
   initialWindow,
   recommendationsConfig,
   recentlyViewedConfig,
+  bundleConfig,
   breadcrumbConfig,
 }: {
   initialWindow: ProductBrowserWindow;
@@ -239,6 +241,10 @@ export function ProductDetailExperience({
     settings?: Record<string, unknown>;
   };
   recentlyViewedConfig?: {
+    enabled: boolean;
+    settings?: Record<string, unknown>;
+  };
+  bundleConfig?: {
     enabled: boolean;
     settings?: Record<string, unknown>;
   };
@@ -947,6 +953,14 @@ export function ProductDetailExperience({
             </div>
           </div>
         </section>
+
+        {bundleConfig?.enabled === false || !bundleConfig ? null : (
+          <ProductBundleSection
+            key={`bundle-${product.slug}`}
+            current={product}
+            settings={bundleConfig.settings}
+          />
+        )}
 
         {recommendationsConfig?.enabled === false ? null : (
           <ProductRecommendations
