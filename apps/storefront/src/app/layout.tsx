@@ -41,6 +41,7 @@ import { ThemeEditorEnhancements } from "@/components/theme/ThemeEditorEnhanceme
 import { ThemeEditorNativeNavigation } from "@/components/theme/ThemeEditorNativeNavigation";
 import { getStoreDesignV2Published, getThemeCustomizerSettings } from "@/data/site";
 import { getCachedCategories, getCachedCollections } from "@/data/catalogCache";
+import { storeDesignSectionsForTemplatePath } from "@/lib/storeDesignV2Sections";
 import {
   absoluteUrl,
   DEFAULT_OG_IMAGE,
@@ -134,6 +135,11 @@ export default async function RootLayout({
   const consentResponsive = recordValue(storeDesignV2.globals.tokens["consent-banner"]);
   const consentDesktopSettings = recordValue(consentResponsive.desktop);
   const consentMobileSettings = recordValue(consentResponsive.mobile);
+  const cartCrossSellSection = storeDesignSectionsForTemplatePath(storeDesignV2, "/cart")
+    .find((section) => section.type === "cross-sell");
+  const cartCrossSellConfig = cartCrossSellSection
+    ? { id: cartCrossSellSection.id, enabled: cartCrossSellSection.enabled, settings: cartCrossSellSection.v2Settings || {} }
+    : null;
 
   const themeEditorOrigins = (process.env.THEME_EDITOR_ORIGINS || process.env.NEXT_PUBLIC_ADMIN_URL || process.env.NEXT_PUBLIC_PANEL_URL || "https://rostapanel.zeabur.app http://localhost:* https://localhost:*")
     .split(/[\s,]+/)
@@ -341,7 +347,7 @@ export default async function RootLayout({
                 {children}
               </main>
               <Footer />
-              <CartDrawer />
+              <CartDrawer crossSellConfig={cartCrossSellConfig} />
               <RostaPointsWidget themeSettings={themeSettings} />
               <FloatingWhatsApp settings={themeSettings.whatsapp} />
             </CartProvider>
