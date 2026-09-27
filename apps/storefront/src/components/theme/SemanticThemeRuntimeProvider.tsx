@@ -11,6 +11,7 @@ import {
 
 export const SEMANTIC_RUNTIME_PATCH_EVENT = "store-design-v2:runtime-patch";
 export const STORE_DESIGN_CONSENT_SETTINGS_EVENT = "store-design-v2:consent-settings";
+export const STORE_DESIGN_CROSS_SELL_SETTINGS_EVENT = "store-design-v2:cross-sell-settings";
 
 export type SemanticRuntimePatch = {
   key: string;
@@ -150,6 +151,20 @@ function templateForPath(document: ThemeDocument, pathname: string) {
   return document.templates[`route:${pathname}`] || null;
 }
 
+function crossSellConfigForPath(document: ThemeDocument, pathname: string) {
+  const template = templateForPath(document, pathname);
+  if (!template) return null;
+  const section = (template.sectionIds || [])
+    .map((sectionId) => document.sections[sectionId])
+    .find((item) => item?.type === "cross-sell");
+  if (!section) return null;
+  return {
+    id: section.id,
+    enabled: section.enabled !== false,
+    settings: objectRecord(section.settings),
+  };
+}
+
 function patchesFromDocument(document: ThemeDocument, pathname: string) {
   const output: Record<string, SemanticRuntimePatch> = {};
   const revision = Number(document.revision || 0);
@@ -216,7 +231,13 @@ export function SemanticThemeRuntimeProvider({
   initialDocument?: ThemeDocument;
 }) {
   const pathname = usePathname() || "/";
+  const [templatePathname, setTemplatePathname] = useState(pathname);
   const [runtimePatches, setRuntimePatches] = useState<Record<string, SemanticRuntimePatch>>({});
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setTemplatePathname(params.get("storeDesignCartPreview") === "1" ? "/cart" : pathname);
+  }, [pathname]);
   const [previewDocument, setPreviewDocument] = useState<ThemeDocument | null>(null);
 
   useEffect(() => {
@@ -288,9 +309,19 @@ export function SemanticThemeRuntimeProvider({
     }));
   }, [effectiveDocument]);
 
+  useEffect(() => {
+    if (!effectiveDocument) return;
+    window.dispatchEvent(new CustomEvent(STORE_DESIGN_CROSS_SELL_SETTINGS_EVENT, {
+      detail: {
+        cart: crossSellConfigForPath(effectiveDocument, "/cart"),
+        checkout: crossSellConfigForPath(effectiveDocument, "/checkout"),
+      },
+    }));
+  }, [effectiveDocument]);
+
   const initialPatches = useMemo(
-    () => effectiveDocument ? patchesFromDocument(effectiveDocument, pathname) : {},
-    [effectiveDocument, pathname],
+    () => effectiveDocument ? patchesFromDocument(effectiveDocument, templatePathname) : {},
+    [effectiveDocument, templatePathname],
   );
 
   const css = useMemo(
