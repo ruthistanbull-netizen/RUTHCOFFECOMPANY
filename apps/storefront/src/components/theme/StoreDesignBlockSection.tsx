@@ -5,6 +5,7 @@ import { normalizeStoreDesignAnchorId } from "@ruth-commerce/commerce-core/store
 import { StoreDesignCountdown } from "@/components/theme/StoreDesignCountdown";
 import { StoreDesignBeforeAfter } from "@/components/theme/StoreDesignBeforeAfter";
 import { StoreDesignSlideshow } from "@/components/theme/StoreDesignSlideshow";
+import { StoreDesignContactForm } from "@/components/theme/StoreDesignContactForm";
 
 type V2Block = NonNullable<ThemeSection["v2Blocks"]>[number];
 
@@ -107,6 +108,18 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
       {title ? <h2 className="font-heading text-[clamp(1.5rem,3vw,3rem)] leading-tight">{title}</h2> : null}
     </div>
   ) : null;
+
+  if (type === "contact-form") {
+    return (
+      <StoreDesignContactForm
+        sectionId={section.id}
+        settings={settings}
+        backgroundColor={section.backgroundColor}
+        textColor={section.textColor}
+        paddingY={paddingY}
+      />
+    );
+  }
 
   if (type === "video-hero" || type === "video-banner") {
     if (!section.imageSrc || section.v2MediaType !== "video") return null;
