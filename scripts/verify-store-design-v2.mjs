@@ -246,10 +246,14 @@ const blockRuntimeTypes = extractStringSet(v2Sections, "BLOCK_RENDER_SECTION_TYP
 const homeRenderer = read("apps/storefront/src/components/theme/HomeSectionRenderer.tsx");
 const homeRuntimeTypes = new Set([...homeRenderer.matchAll(/section\.type\s*===\s*"([^"]+)"/g)].map((match) => match[1]));
 const runtimeAliases = new Map([["collection-cards", "collections"]]);
+const externalRuntimeTypes = new Set(["recommendations"]);
 
 function hasSectionRuntime(type) {
   const alias = runtimeAliases.get(type);
-  return blockRuntimeTypes.has(type) || homeRuntimeTypes.has(type) || Boolean(alias && homeRuntimeTypes.has(alias));
+  return blockRuntimeTypes.has(type)
+    || homeRuntimeTypes.has(type)
+    || externalRuntimeTypes.has(type)
+    || Boolean(alias && homeRuntimeTypes.has(alias));
 }
 
 for (const type of implementedSectionTypes) {
