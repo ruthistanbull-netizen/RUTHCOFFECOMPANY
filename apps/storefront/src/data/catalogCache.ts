@@ -108,6 +108,93 @@ const cachedSiteSettings = unstable_cache(readSiteSettings, ["rosta-public-site-
   tags: ["rosta-theme"],
 });
 
+type BestSellerOrder = {
+  status?: string | null;
+  payment_status?: string | null;
+  imported_source?: string | null;
+  customer_note?: string | null;
+  admin_note?: string | null;
+  order_items?: Array<{
+    product_id?: string | null;
+    product_slug?: string | null;
+    quantity?: number | string | null;
+  }> | null;
+};
+
+function paidBestSellerOrder(order: BestSellerOrder) {
+  const payment = String(order.payment_status || "").toLocaleLowerCase("tr-TR");
+  const status = String(order.status || "").toLocaleLowerCase("tr-TR");
+  return ["paid", "succeeded", "success"].includes(payment) || ["paid", "completed"].includes(status);
+}
+
+function testBestSellerOrder(order: BestSellerOrder) {
+  const source = String(order.imported_source || "").trim().toLocaleLowerCase("tr-TR");
+  const note = `${String(order.customer_note || "")} ${String(order.admin_note || "")}`.toLocaleLowerCase("tr-TR");
+  return source === "test" || source.includes("sandbox") || source.includes("demo") || note.includes("test sipariş") || note.includes("test siparis");
+}
+
+async function readBestSellingProducts(windowDays: number, limit: number): Promise<Product[]> {
+  const client = getCatalogClient();
+  if (!USE_SUPABASE_CATALOG || !client) return [];
+
+  const since = new Date(Date.now() - windowDays * 24 * 60 * 60 * 1000).toISOString();
+  const { data, error } = await client
+    .from("orders")
+    .select(`
+      id, status, payment_status, created_at, imported_source, customer_note, admin_note,
+      order_items (product_id, product_slug, quantity)
+    `)
+    .gte("created_at", since)
+    .order("created_at", { ascending: false })
+    .limit(1000);
+
+  if (error) {
+    console.error("Çok satan ürünler için sipariş verisi alınamadı:", error.message);
+    return [];
+  }
+
+  const byId = new Map<string, number>();
+  const bySlug = new Map<string, number>();
+
+  for (const order of (data || []) as BestSellerOrder[]) {
+    if (!paidBestSellerOrder(order) || testBestSellerOrder(order)) continue;
+    for (const item of order.order_items || []) {
+      const quantity = Math.max(1, Math.trunc(Number(item.quantity || 1) || 1));
+      const productId = String(item.product_id || "").trim();
+      const productSlug = String(item.product_slug || "").trim();
+      if (productId) byId.set(productId, (byId.get(productId) || 0) + quantity);
+      else if (productSlug) bySlug.set(productSlug, (bySlug.get(productSlug) || 0) + quantity);
+    }
+  }
+
+  const products = await getProducts();
+  return products
+    .map((product) => ({
+      product,
+      score: (byId.get(String(product.id)) || 0) + (bySlug.get(String(product.slug)) || 0),
+    }))
+    .filter((entry) => entry.score > 0)
+    .sort((left, right) =>
+      right.score - left.score
+      || (left.product.sort_order ?? Number.MAX_SAFE_INTEGER) - (right.product.sort_order ?? Number.MAX_SAFE_INTEGER)
+      || left.product.name.localeCompare(right.product.name, "tr"),
+    )
+    .slice(0, limit)
+    .map((entry) => entry.product);
+}
+
+const cachedBestSellingProducts = unstable_cache(
+  readBestSellingProducts,
+  ["rosta-best-selling-products-v1"],
+  { revalidate: 300, tags: ["rosta-products", "rosta-orders"] },
+);
+
+export function getCachedBestSellingProducts(windowDays = 30, limit = 12) {
+  const safeWindow = windowDays === 7 || windowDays === 90 ? windowDays : 30;
+  const safeLimit = Math.min(24, Math.max(1, Math.round(limit || 12)));
+  return cachedBestSellingProducts(safeWindow, safeLimit);
+}
+
 export function getCachedCollections() { return cachedCollections(); }
 export function getCachedCategories() { return cachedCategories(); }
 export function getCachedSiteSettings() { return cachedSiteSettings(); }

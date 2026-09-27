@@ -4,6 +4,15 @@ const MAX_THEME_IMAGE_BYTES = 24 * 1024 * 1024;
 const MAX_THEME_VIDEO_BYTES = 80 * 1024 * 1024;
 const MAX_BROWSER_IMAGE_EDGE = 4096;
 
+export type UploadedThemeMedia = {
+  url: string;
+  mediaType: "image" | "video";
+  bytes?: number;
+  mime?: string;
+  converted?: boolean;
+  videoNormalized?: boolean;
+};
+
 function looksLikeThemeImage(file: File) {
   if (file.type.startsWith("image/")) return true;
   return /\.(avif|heic|heif|jpe?g|png|webp)$/i.test(file.name || "");
@@ -62,11 +71,12 @@ async function normalizedUploadFile(file: File) {
   return await browserJpeg(file) || file;
 }
 
-export async function uploadThemeImage(file: File) {
+export async function uploadThemeMedia(file: File): Promise<UploadedThemeMedia> {
   if (!file || file.size <= 0) throw new Error("Bir fotoğraf veya video seç.");
   const isImage = looksLikeThemeImage(file);
   const isVideo = looksLikeThemeVideo(file);
   if (!isImage && !isVideo) throw new Error("JPG, PNG, WebP, AVIF, HEIC, MP4, MOV veya WebM yükleyebilirsin.");
+
   const maxBytes = isVideo ? MAX_THEME_VIDEO_BYTES : MAX_THEME_IMAGE_BYTES;
   if (file.size > maxBytes) throw new Error(isVideo ? "Video en fazla 80 MB olabilir." : "Görsel en fazla 24 MB olabilir.");
 
@@ -83,9 +93,18 @@ export async function uploadThemeImage(file: File) {
     body,
   });
   const result = await response.json().catch(() => ({}));
-  if (!response.ok || !result?.url) {
-    throw new Error(result?.error || "Görsel yüklenemedi.");
-  }
+  if (!response.ok || !result?.url) throw new Error(result?.error || "Medya yüklenemedi.");
 
-  return String(result.url);
+  return {
+    url: String(result.url),
+    mediaType: result.mediaType === "video" ? "video" : "image",
+    bytes: Number.isFinite(Number(result.bytes)) ? Number(result.bytes) : uploadFile.size,
+    mime: typeof result.mime === "string" ? result.mime : uploadFile.type || undefined,
+    converted: Boolean(result.converted),
+    videoNormalized: Boolean(result.videoNormalized),
+  };
+}
+
+export async function uploadThemeImage(file: File) {
+  return (await uploadThemeMedia(file)).url;
 }

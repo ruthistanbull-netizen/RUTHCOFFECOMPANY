@@ -2,14 +2,19 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AnimatedBlock } from "@/components/PageIntro";
 import { ProductCatalog } from "@/components/catalog/ProductCatalog";
+import { StoreDesignBreadcrumb } from "@/components/theme/StoreDesignBreadcrumb";
 import {
   getCachedCollectionBySlug,
   getCachedProductsByCollectionSlug,
 } from "@/data/catalogCache";
 import { toCatalogProducts } from "@/data/catalogReadModel";
+import { getStoreDesignV2Preview, getStoreDesignV2Published } from "@/data/site";
 import { SITE_URL } from "@/lib/seo";
+import { storeDesignSectionsForTemplatePath } from "@/lib/storeDesignV2Sections";
 
 export const revalidate = 600;
+
+type Query = Record<string, string | string[] | undefined>;
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -34,19 +39,53 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
-export default async function CollectionDetailPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const [collection, products] = await Promise.all([
+export default async function CollectionDetailPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<Query>;
+}) {
+  const [{ slug }, query] = await Promise.all([params, searchParams]);
+  const previewToken = typeof query.storeDesignV2Preview === "string" ? query.storeDesignV2Preview : "";
+  const [collection, products, publishedV2, previewV2] = await Promise.all([
     getCachedCollectionBySlug(slug),
     getCachedProductsByCollectionSlug(slug),
+    getStoreDesignV2Published(),
+    previewToken ? getStoreDesignV2Preview(previewToken) : Promise.resolve(null),
   ]);
 
   if (!collection) notFound();
 
+  const activeThemeDocument = previewV2 || publishedV2;
+  const templateSections = storeDesignSectionsForTemplatePath(activeThemeDocument, "/collections/[slug]");
+  const breadcrumbSection = templateSections.find((section) => section.type === "breadcrumb");
+
   return (
-    <div className="min-h-screen bg-carbon px-4 pb-24 pt-[calc(var(--announcement-height,0px)+128px)] text-cream md:px-8">
+    <div
+      data-editor-id="catalog-page-shell:collection"
+      data-editor-type="catalog-shell"
+      data-editor-label="Koleksiyon Katalog Sayfası"
+      className="min-h-screen bg-carbon px-4 pb-24 pt-[calc(var(--announcement-height,0px)+128px)] text-cream md:px-8"
+    >
       <div className="mx-auto max-w-7xl">
-        <div className="mb-12 grid gap-10 md:mb-16 md:grid-cols-[1fr_0.8fr] md:items-end">
+        {breadcrumbSection?.enabled ? (
+          <StoreDesignBreadcrumb
+            sectionId={breadcrumbSection.id}
+            settings={breadcrumbSection.v2Settings}
+            items={[
+              { label: "Ana Sayfa", href: "/" },
+              { label: collection.name },
+            ]}
+            className="mb-4"
+          />
+        ) : null}
+        <div
+          data-editor-id="collection-hero"
+          data-editor-type="collection-hero"
+          data-editor-label="Koleksiyon Hero"
+          className="mb-12 grid gap-10 md:mb-16 md:grid-cols-[1fr_0.8fr] md:items-end"
+        >
           <AnimatedBlock delay={0.08}>
             <p className="mb-3 text-xs uppercase tracking-wide-luxe text-brick">Koleksiyon</p>
             <h1

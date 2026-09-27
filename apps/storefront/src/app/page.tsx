@@ -4,12 +4,25 @@ import { HomeHeroRuntimeAdjustments } from "@/components/HomeHeroRuntimeAdjustme
 import { HomeHeaderAdaptiveTone } from "@/components/HomeHeaderAdaptiveTone";
 import { ThemeEditorHomeScrollBridge } from "@/components/theme/ThemeEditorHomeScrollBridge";
 import { getFeaturedProducts, getProducts } from "@/data/catalogReadModel";
-import { getCachedCollections, getCachedSiteSettings } from "@/data/catalogCache";
-import { getThemeCustomizerSettings } from "@/data/site";
+import {
+  getCachedBestSellingProducts,
+  getCachedCategories,
+  getCachedCollections,
+  getCachedSiteSettings,
+} from "@/data/catalogCache";
+import {
+  getStoreDesignV2Preview,
+  getStoreDesignV2Published,
+  getThemeCustomizerSettings,
+} from "@/data/site";
 import { getThemeSectionSettings } from "@/data/themeSections";
 import { getThemeSectionPreviewSettings } from "@/data/themeSectionPreview";
 import { homepageHeroImages } from "@/lib/themeMedia";
 import { themeSectionPage } from "@ruth-commerce/commerce-core/theme-sections";
+import {
+  storeDesignPageForRoute,
+  storeDesignSectionsForPage,
+} from "@/lib/storeDesignV2Sections";
 import { SITE_URL } from "@/lib/seo";
 
 export const metadata: Metadata = { alternates: { canonical: SITE_URL } };
@@ -18,22 +31,50 @@ export const revalidate = 10;
 
 export default async function Home({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const query = await searchParams;
-  const token = typeof query.themeSectionsPreview === "string" ? query.themeSectionsPreview : "";
-  const [featuredProducts, allProducts, collections, themeSettings, publishedSections, siteSettings, draftSections] = await Promise.all([
+  const legacyToken = typeof query.themeSectionsPreview === "string" ? query.themeSectionsPreview : "";
+  const v2Token = typeof query.storeDesignV2Preview === "string" ? query.storeDesignV2Preview : "";
+
+  const [featuredProducts, allProducts, collections, categories, themeSettings, publishedSections, siteSettings, draftSections, publishedV2, previewV2] = await Promise.all([
     getFeaturedProducts(),
     getProducts(),
     getCachedCollections(),
+    getCachedCategories(),
     getThemeCustomizerSettings(),
     getThemeSectionSettings(),
     getCachedSiteSettings(),
-    token ? getThemeSectionPreviewSettings(token) : Promise.resolve(null),
+    legacyToken ? getThemeSectionPreviewSettings(legacyToken) : Promise.resolve(null),
+    getStoreDesignV2Published(),
+    v2Token ? getStoreDesignV2Preview(v2Token) : Promise.resolve(null),
   ]);
 
   const freeShippingThreshold = Math.max(
     0,
     Number((siteSettings.shipping_settings as Record<string, unknown> | undefined)?.freeShippingThreshold ?? 2000),
   );
-  const page = themeSectionPage(draftSections || publishedSections, "/");
+
+  const legacyPage = themeSectionPage(draftSections || publishedSections, "/");
+  const previewHome = previewV2 ? storeDesignPageForRoute(previewV2, "/") : null;
+  const publishedHome = storeDesignPageForRoute(publishedV2, "/");
+  const pageSections = previewHome
+    ? storeDesignSectionsForPage(previewV2!, previewHome)
+    : publishedHome?.status === "published"
+      ? storeDesignSectionsForPage(publishedV2, publishedHome)
+      : legacyPage.sections;
+
+  const bestSellerWindows = [...new Set(
+    pageSections
+      .filter((section) => section.type === "best-sellers")
+      .map((section) => {
+        const preset = typeof section.v2Settings?.window === "string" ? section.v2Settings.window : "30d";
+        return preset === "7d" || preset === "90d" ? preset : "30d";
+      }),
+  )];
+  const bestSellerEntries = await Promise.all(bestSellerWindows.map(async (windowPreset) => {
+    const windowDays = windowPreset === "7d" ? 7 : windowPreset === "90d" ? 90 : 30;
+    return [windowPreset, await getCachedBestSellingProducts(windowDays, 24)] as const;
+  }));
+  const bestSellerProductsByWindow = Object.fromEntries(bestSellerEntries);
+
   const heroImages = homepageHeroImages(themeSettings);
   const editorialVideo = themeSettings.homepageImages.editorialVideo || "/home/rosta-under-hero-video.mp4";
   const editorialImage = themeSettings.homepageImages.editorialImage || "/home/rosta-under-hero-photo.jpg";
@@ -43,20 +84,24 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
     <HomeHeaderAdaptiveTone />
     <ThemeEditorHomeScrollBridge />
     <h1 className="sr-only">Rosta Coffee Co kahve, kahve danışmanlığı ve kahve tedariği</h1>
-    {page.sections.map((section) => (
-      <HomeSectionRenderer
-        key={section.id}
-        section={section}
-        featuredProducts={featuredProducts}
-        allProducts={allProducts}
-        collections={collections}
-        heroImages={heroImages}
-        editorialVideo={editorialVideo}
-        editorialImage={editorialImage}
-        scrollImages={themeSettings.homepageImages.scrollImages}
-        themeSettings={themeSettings}
-        freeShippingThreshold={freeShippingThreshold}
-      />
-    ))}
+    <main data-store-design-v2-page={previewHome?.id || publishedHome?.id || undefined}>
+      {pageSections.map((section) => (
+        <HomeSectionRenderer
+          key={section.id}
+          section={section}
+          featuredProducts={featuredProducts}
+          allProducts={allProducts}
+          collections={collections}
+          categories={categories}
+          bestSellerProductsByWindow={bestSellerProductsByWindow}
+          heroImages={heroImages}
+          editorialVideo={editorialVideo}
+          editorialImage={editorialImage}
+          scrollImages={themeSettings.homepageImages.scrollImages}
+          themeSettings={themeSettings}
+          freeShippingThreshold={freeShippingThreshold}
+        />
+      ))}
+    </main>
   </>;
 }

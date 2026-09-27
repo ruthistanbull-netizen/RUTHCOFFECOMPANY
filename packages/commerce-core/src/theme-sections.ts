@@ -6,8 +6,22 @@ export type ThemeSectionType =
   | "brand-story"
   | "trust"
   | "product-slider"
+  | "product-grid"
+  | "product-spotlight"
+  | "featured-collection"
+  | "category-cards"
+  | "product-comparison"
+  | "new-arrivals"
+  | "best-sellers"
+  | "recommendations"
+  | "recently-viewed"
+  | "bundle"
+  | "cross-sell"
+  | "breadcrumb"
+  | "sale-products"
   | "image-banner"
-  | "rich-text";
+  | "rich-text"
+  | "faq";
 
 export type ThemeProductSource = "featured" | "all" | "collection" | "category";
 
@@ -21,6 +35,12 @@ export type ThemeSection = {
   linkLabel?: string;
   linkHref?: string;
   imageSrc?: string;
+  imageAssetId?: string;
+  mobileImageSrc?: string;
+  mobileImageAssetId?: string;
+  imageObjectPosition?: string;
+  mobileImageObjectPosition?: string;
+  faqItems?: Array<{ id: string; question: string; answer: string }>;
   productSource?: ThemeProductSource;
   productSourceId?: string;
   productLimit?: number;
@@ -29,12 +49,33 @@ export type ThemeSection = {
   desktopHeight?: number;
   mobileHeight?: number;
   gap?: number;
+  maxWidth?: "none" | "1200px" | "1280px" | "1440px" | "1600px";
   paddingY?: number;
   borderRadius?: number;
   backgroundColor?: string;
   textColor?: string;
   autoplay?: boolean;
   showArrows?: boolean;
+  layout?: "slider" | "grid";
+  badgeStyle?: "pill" | "outline" | "minimal";
+  /** V2 registry section identity when the legacy renderer type is only an adapter shell. */
+  v2Type?: string;
+  v2Settings?: Record<string, unknown>;
+  v2MediaType?: "image" | "video";
+  v2PosterUrl?: string;
+  v2Assets?: Record<string, { url: string; type: "image" | "video"; posterUrl?: string }>;
+  v2Blocks?: Array<{
+    id: string;
+    type: string;
+    settings: Record<string, unknown>;
+    assetUrl?: string;
+    assetType?: "image" | "video";
+    mobileAssetUrl?: string;
+    mobileAssetType?: "image" | "video";
+    objectPosition?: string;
+    mobileObjectPosition?: string;
+    posterUrl?: string;
+  }>;
 };
 
 export type ThemeSectionPage = {
@@ -135,7 +176,7 @@ function pagePath(value: unknown) {
 
 const sectionTypes = new Set<ThemeSectionType>([
   "hero", "scroll-story", "collections", "featured-products", "brand-story", "trust",
-  "product-slider", "image-banner", "rich-text",
+  "product-slider", "product-grid", "product-spotlight", "featured-collection", "category-cards", "product-comparison", "new-arrivals", "best-sellers", "recommendations", "recently-viewed", "bundle", "cross-sell", "breadcrumb", "sale-products", "image-banner", "rich-text", "faq",
 ]);
 
 export function normalizeThemeSection(input: unknown, index = 0): ThemeSection | null {
@@ -165,12 +206,17 @@ export function normalizeThemeSection(input: unknown, index = 0): ThemeSection |
     desktopHeight: raw.desktopHeight == null ? undefined : Math.round(numberValue(raw.desktopHeight, 520, 120, 1200)),
     mobileHeight: raw.mobileHeight == null ? undefined : Math.round(numberValue(raw.mobileHeight, 360, 100, 900)),
     gap: raw.gap == null ? undefined : numberValue(raw.gap, 12, 0, 100),
+    maxWidth: ["none", "1200px", "1280px", "1440px", "1600px"].includes(String(raw.maxWidth))
+      ? String(raw.maxWidth) as ThemeSection["maxWidth"]
+      : undefined,
     paddingY: raw.paddingY == null ? undefined : numberValue(raw.paddingY, 64, 0, 240),
     borderRadius: raw.borderRadius == null ? undefined : numberValue(raw.borderRadius, 0, 0, 120),
     backgroundColor: color(raw.backgroundColor),
     textColor: color(raw.textColor),
     autoplay: typeof raw.autoplay === "boolean" ? raw.autoplay : undefined,
     showArrows: typeof raw.showArrows === "boolean" ? raw.showArrows : undefined,
+    layout: raw.layout === "grid" || raw.layout === "slider" ? raw.layout : undefined,
+    badgeStyle: raw.badgeStyle === "outline" || raw.badgeStyle === "minimal" || raw.badgeStyle === "pill" ? raw.badgeStyle : undefined,
   };
 }
 
@@ -214,6 +260,7 @@ function usesCustomProductRenderer(section: ThemeSection) {
     section.productSource !== undefined ||
     section.productSourceId !== undefined ||
     section.gap !== undefined ||
+    section.maxWidth !== undefined ||
     section.paddingY !== undefined ||
     section.desktopHeight !== undefined ||
     section.mobileHeight !== undefined ||
@@ -241,6 +288,7 @@ export function themeSectionRenderSignature(settings: ThemeSectionSettings) {
       productSource: section.productSource,
       productSourceId: section.productSourceId,
       productLimit: section.productLimit,
+      layout: section.layout,
       showArrows: section.showArrows,
       hasTitle: Boolean(section.title),
       hasEyebrow: Boolean(section.eyebrow),
@@ -251,8 +299,17 @@ export function themeSectionRenderSignature(settings: ThemeSectionSettings) {
 }
 
 export function createThemeSection(type: ThemeSectionType, id = `section-${Date.now()}`): ThemeSection {
+  if (type === "product-grid") {
+    return { id, type, enabled: true, title: "Ürünler", productSource: "featured", productLimit: 12, desktopItems: 3, mobileItems: 2, gap: 20, maxWidth: "none", paddingY: 64 };
+  }
   if (type === "product-slider") {
     return { id, type, enabled: true, title: "Ürünler", productSource: "featured", productLimit: 12, desktopItems: 4, mobileItems: 2, gap: 12, paddingY: 64, showArrows: true, autoplay: false };
+  }
+  if (type === "new-arrivals") {
+    return { id, type, enabled: true, title: "Yeni Gelenler", productLimit: 12, desktopItems: 4, mobileItems: 2, gap: 12, paddingY: 64, layout: "slider", showArrows: true };
+  }
+  if (type === "sale-products") {
+    return { id, type, enabled: true, title: "İndirimdekiler", productLimit: 12, desktopItems: 4, mobileItems: 2, gap: 12, paddingY: 64, layout: "slider", showArrows: true, badgeStyle: "pill" };
   }
   if (type === "image-banner") {
     return { id, type, enabled: true, title: "Yeni Bölüm", desktopHeight: 520, mobileHeight: 360, paddingY: 0, borderRadius: 0 };

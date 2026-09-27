@@ -132,14 +132,20 @@ export function StorefrontSearchClient({ initialQuery = "" }: { initialQuery?: s
   }, [router]);
 
   return (
-    <SearchShell
-      query={query}
-      onQueryChange={setQuery}
-      loadSections={loadSections}
-      label="ROSTA arama"
+    <div
+      data-editor-id="search-overlay"
+      data-editor-type="search-overlay"
+      data-editor-label="Arama"
+    >
+      <SearchShell
+        query={query}
+        onQueryChange={setQuery}
+        loadSections={loadSections}
+        label="ROSTA arama"
       placeholder="Ürün, koleksiyon veya kategori ara"
       hint="En az iki karakter yazın. Klavye oklarıyla sonuçlar arasında gezinebilirsiniz."
-      idleDescription="Ürünleri, koleksiyonları ve kategorileri birlikte arayın."
-    />
+        idleDescription="Ürünleri, koleksiyonları ve kategorileri birlikte arayın."
+      />
+    </div>
   );
 }

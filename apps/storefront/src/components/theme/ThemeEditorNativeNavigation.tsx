@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 export function ThemeEditorNativeNavigation() {
   useEffect(() => {
-    if (new URLSearchParams(window.location.search).get("themeEditor") !== "1") return;
+    const editorParams = new URLSearchParams(window.location.search);\n    if (editorParams.get("themeEditor") !== "1" || editorParams.get("storeDesignV2") === "1") return;
 
     const onMouseDown = (event: MouseEvent) => {
       if (event.detail < 2) return;

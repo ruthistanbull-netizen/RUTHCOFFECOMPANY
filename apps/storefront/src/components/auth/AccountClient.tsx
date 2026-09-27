@@ -314,7 +314,11 @@ export function AccountClient({ ordersOnly = false }: { ordersOnly?: boolean }) 
   void rewardRefreshKey;
 
   return (
-    <div className="min-h-screen bg-carbon px-4 pb-24 pt-28 md:px-8 md:pt-32">
+    <div
+      data-editor-id="account-profile"
+      data-editor-type="account-profile"
+      data-editor-label={ordersOnly ? "Hesap Siparişleri" : "Hesap Profili"}
+      className="min-h-screen bg-carbon px-4 pb-24 pt-28 md:px-8 md:pt-32">
       <div className="mx-auto max-w-6xl">
         <div className="mb-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div>
@@ -362,7 +366,11 @@ export function AccountClient({ ordersOnly = false }: { ordersOnly?: boolean }) 
               <p className="text-xs uppercase tracking-wide-luxe text-cream/70">Sipariş</p>
               <p className="mt-3 text-sm">{orders.length} kayıt</p>
             </div>
-            <div className="group rounded-2xl border border-kraft/35 bg-carbon-soft p-5 text-left transition active:bg-brick/10 md:col-span-2">
+            <div
+              data-editor-id="rewards-card"
+              data-editor-type="rewards-card"
+              data-editor-label="Puan Kartı"
+              className="group rounded-2xl border border-kraft/35 bg-carbon-soft p-5 text-left transition active:bg-brick/10 md:col-span-2">
               <div className="flex items-center justify-between gap-3">
                 <p className="text-xs uppercase tracking-wide-luxe text-cream/70">ROSTA Points</p>
                 <Gift size={18} className="text-brick" />
@@ -389,6 +397,9 @@ export function AccountClient({ ordersOnly = false }: { ordersOnly?: boolean }) 
             </div>
 
             <Link
+              data-editor-id="address-card:manager"
+              data-editor-type="address-card"
+              data-editor-label="Adreslerim"
               href="/account/addresses"
               className="group rounded-2xl border border-kraft/35 bg-carbon-soft p-5 transition active:bg-brick/10"
             >
@@ -458,7 +469,12 @@ export function AccountClient({ ordersOnly = false }: { ordersOnly?: boolean }) 
           ) : (
             <div className="space-y-4">
               {visibleOrders.map((order) => (
-                <div key={order.id} className="rounded-xl border border-kraft/25 bg-carbon p-4">
+                <div
+                  key={order.id}
+                  data-editor-id={`order-card:${order.id}`}
+                  data-editor-type="order-card"
+                  data-editor-label="Sipariş Kartı"
+                  className="rounded-xl border border-kraft/25 bg-carbon p-4">
                   <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                     <div>
                       <p className="font-heading text-sm">{order.order_no}</p>

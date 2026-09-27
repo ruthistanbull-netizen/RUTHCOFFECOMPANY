@@ -119,7 +119,7 @@ function requestContext(element: Element, clientX: number, clientY: number, poin
 
 export function ThemeEditorContextGestureBridge() {
   useEffect(() => {
-    if (new URLSearchParams(window.location.search).get("themeEditor") !== "1") return;
+    const params = new URLSearchParams(window.location.search);\n    if (params.get("themeEditor") !== "1" || params.get("storeDesignV2") === "1") return;
 
     let longPressTimer = 0;
     let pressTarget: Element | null = null;

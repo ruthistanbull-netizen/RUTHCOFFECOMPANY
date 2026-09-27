@@ -7,10 +7,12 @@ import { Minus, Plus, ShoppingBag, X } from "lucide-react";
 import { useOverlayBehavior } from "@ruth-commerce/ui";
 import { formatPrice } from "@/lib/formatPrice";
 import { useCart } from "@/components/cart/CartProvider";
+import { StoreDesignCrossSell, type StoreDesignCrossSellConfig } from "@/components/cart/StoreDesignCrossSell";
 import { trackRuthEvent } from "@/components/analytics/SiteAnalytics";
 
-export function CartDrawer() {
+export function CartDrawer({ crossSellConfig = null }: { crossSellConfig?: StoreDesignCrossSellConfig | null }) {
   const { items, count, subtotal, isOpen, setIsOpen, removeItem, updateQuantity } = useCart();
+  const cartSlugs = items.map((item) => item.slug);
   const overlay = useOverlayBehavior({
     active: isOpen,
     onClose: () => setIsOpen(false),
@@ -20,6 +22,11 @@ export function CartDrawer() {
   useEffect(() => {
     if (isOpen) trackRuthEvent("cart_open", { item_count: count, subtotal });
   }, [count, isOpen, subtotal]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("themeEditor") === "1" && params.get("storeDesignCartPreview") === "1") setIsOpen(true);
+  }, [setIsOpen]);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -85,6 +92,9 @@ export function CartDrawer() {
           >
             <motion.aside
               ref={overlay.containerRef}
+              data-editor-id="cart-drawer"
+              data-editor-type="cart-drawer"
+              data-editor-label="Sepet Drawer"
               role="dialog"
               aria-modal="true"
               aria-label="Sepet"
@@ -109,12 +119,18 @@ export function CartDrawer() {
                   <p className="font-heading text-xl">Sepetin henüz boş</p>
                   <p className="mt-3 max-w-xs text-sm leading-6 text-cream/70">Günlük anlarına eşlik edecek parçaları keşfet.</p>
                   <Link href="/products" onClick={() => setIsOpen(false)} className="mt-7 rounded-full bg-brick px-8 py-4 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)]">Ürünleri Keşfet</Link>
+                  <div className="mt-8 w-full text-left"><StoreDesignCrossSell context="cart" slot="after-items" cartSlugs={[]} initialConfig={crossSellConfig} /><StoreDesignCrossSell context="cart" slot="before-totals" cartSlugs={[]} initialConfig={crossSellConfig} /></div>
                 </div>
               ) : (
                 <>
                   <div className="flex-1 overflow-y-auto px-5 py-2 sm:px-6">
                     {items.map((item) => (
-                      <div key={item.key} className="grid grid-cols-[76px_minmax(0,1fr)] gap-4 border-b border-kraft/25 py-5">
+                      <div
+                        key={item.key}
+                        data-editor-id={`cart-line-item:${item.key}`}
+                        data-editor-type="cart-line-item"
+                        data-editor-label="Sepet Ürünü"
+                        className="grid grid-cols-[76px_minmax(0,1fr)] gap-4 border-b border-kraft/25 py-5">
                         <Link href={`/products/${item.slug}`} onClick={() => setIsOpen(false)} className="aspect-[3/4] w-[76px] shrink-0 overflow-hidden rounded-xl bg-cream">
                           {item.image ? <img src={item.image} alt={item.name} className="h-full w-full object-contain" loading="lazy" decoding="async" /> : <div className="ruth-card-gradient flex h-full w-full items-center justify-center p-2 text-center"><span className="font-heading text-xs text-carbon">{item.name}</span></div>}
                         </Link>
@@ -125,11 +141,20 @@ export function CartDrawer() {
                               <Link href={`/products/${item.slug}`} onClick={() => setIsOpen(false)} className="font-heading text-sm leading-5 text-cream">{item.name}</Link>
                               <p className="mt-1 break-words text-xs leading-5 text-cream/70">{[item.finish, item.size].filter(Boolean).join(" · ") || "Standart"}</p>
                             </div>
-                            <button type="button" onClick={() => removeItem(item.key)} className="shrink-0 text-cream/70 transition hover:text-cream" aria-label={`${item.name} ürününü sepetten kaldır`}><X size={15} /></button>
+                            <button
+                              data-editor-id={`cart-remove:${item.key}`}
+                              data-editor-type="cart-remove"
+                              data-editor-label="Sepetten Sil"
+                              type="button"
+                              onClick={() => removeItem(item.key)} className="shrink-0 text-cream/70 transition hover:text-cream" aria-label={`${item.name} ürününü sepetten kaldır`}><X size={15} /></button>
                           </div>
 
                           <div className="mt-4 flex items-center justify-between gap-3">
-                            <div className="flex items-center gap-1 rounded-full border border-kraft/45 px-1 py-0.5">
+                            <div
+                              data-editor-id={`cart-quantity:${item.key}`}
+                              data-editor-type="cart-quantity"
+                              data-editor-label="Sepet Adet"
+                              className="flex items-center gap-1 rounded-full border border-kraft/45 px-1 py-0.5">
                               <button type="button" onClick={() => updateQuantity(item.key, item.quantity - 1)} className="flex h-7 w-7 items-center justify-center rounded-full transition active:bg-brick/10" aria-label="Adedi azalt"><Minus size={11} /></button>
                               <span className="w-5 text-center text-sm">{item.quantity}</span>
                               <button type="button" onClick={() => updateQuantity(item.key, item.quantity + 1)} className="flex h-7 w-7 items-center justify-center rounded-full transition active:bg-brick/10" aria-label="Adedi artır"><Plus size={11} /></button>
@@ -139,12 +164,29 @@ export function CartDrawer() {
                         </div>
                       </div>
                     ))}
+                    <StoreDesignCrossSell context="cart" slot="after-items" cartSlugs={cartSlugs} initialConfig={crossSellConfig} />
                   </div>
 
-                  <div className="border-t border-kraft/35 bg-carbon px-5 py-5 sm:px-6">
+                  <div className="px-5 sm:px-6"><StoreDesignCrossSell context="cart" slot="before-totals" cartSlugs={cartSlugs} initialConfig={crossSellConfig} /></div>
+
+                  <div
+                    data-editor-id="cart-totals"
+                    data-editor-type="cart-totals"
+                    data-editor-label="Sepet Toplamları"
+                    className="border-t border-kraft/35 bg-carbon px-5 py-5 sm:px-6">
                     <div className="flex items-center justify-between"><span className="text-sm text-cream/70">Ara toplam</span><span className="font-heading text-xl">{formatPrice(subtotal, "TRY")}</span></div>
-                    <p className="mt-2 text-xs leading-5 text-cream/70">Kargo bilgileri sitede alınır, kart ödemesi PayTR güvenli ekranında tamamlanır.</p>
-                    <Link href="/checkout" onClick={() => setIsOpen(false)} className="mt-5 block w-full rounded-full bg-brick py-4 text-center text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)] transition active:bg-espresso">Ödemeye Geç</Link>
+                    <p
+                      data-editor-id="cart-shipping-message"
+                      data-editor-type="cart-shipping-message"
+                      data-editor-label="Sepet Kargo Mesajı"
+                      className="mt-2 text-xs leading-5 text-cream/70">Kargo bilgileri sitede alınır, kart ödemesi PayTR güvenli ekranında tamamlanır.</p>
+                    <Link
+                      data-editor-id="checkout-cta"
+                      data-editor-type="checkout-cta"
+                      data-editor-label="Ödemeye Geç"
+                      href="/checkout"
+                      onClick={() => setIsOpen(false)}
+                      className="mt-5 block w-full rounded-full bg-brick py-4 text-center text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)] transition active:bg-espresso">Ödemeye Geç</Link>
                     <button type="button" onClick={() => setIsOpen(false)} className="mt-2 w-full py-3 text-xs uppercase tracking-wide-luxe text-cream/70">Alışverişe Devam Et</button>
                   </div>
                 </>

@@ -9,15 +9,26 @@ export function PageIntro({
   description,
   align = "center",
   className = "",
+  editorId,
+  editorType,
+  editorLabel,
 }: {
   eyebrow?: string;
   title: string;
   description?: string;
   align?: "left" | "center";
   className?: string;
+  editorId?: string;
+  editorType?: string;
+  editorLabel?: string;
 }) {
   return (
     <motion.div
+      {...(editorId && editorType ? {
+        "data-editor-id": editorId,
+        "data-editor-type": editorType,
+        "data-editor-label": editorLabel || title,
+      } : {})}
       initial={{ opacity: 0, y: 34 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.72, ease: "easeOut" }}

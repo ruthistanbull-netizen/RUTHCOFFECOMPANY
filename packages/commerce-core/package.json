@@ -11,6 +11,7 @@
     "./status-normalization": "./src/status-normalization.ts",
     "./theme": "./src/theme-engine.ts",
     "./theme-sections": "./src/theme-sections.ts",
+    "./store-design-v2": "./src/store-design-v2.ts",
     "./http-resilience": "./src/http-resilience.ts",
     "./internal-transport": "./src/internal-transport.ts",
     "./theme-engine": "./src/theme-engine.ts"

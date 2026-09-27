@@ -175,7 +175,11 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
   };
 
   return (
-    <div className="min-h-screen bg-carbon px-4 pb-24 pt-28 md:px-8 md:pt-32">
+    <div
+      data-editor-id={`auth-form:${mode}`}
+      data-editor-type="auth-form"
+      data-editor-label={isRegister ? "Kayıt Formu" : "Giriş Formu"}
+      className="min-h-screen bg-carbon px-4 pb-24 pt-28 md:px-8 md:pt-32">
       <div className="mx-auto max-w-md rounded-2xl border border-kraft/35 bg-carbon-soft p-6 shadow-sm md:p-8">
         <p className="mb-3 text-xs uppercase tracking-wide-luxe text-brick">
           ROSTA Coffee

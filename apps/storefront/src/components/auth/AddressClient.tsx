@@ -225,7 +225,11 @@ export function AddressClient() {
   }
 
   return (
-    <div className="min-h-screen bg-carbon px-4 pb-24 pt-28 md:px-8 md:pt-32">
+    <div
+      data-editor-id="account-addresses"
+      data-editor-type="account-profile"
+      data-editor-label="Adres Yönetimi"
+      className="min-h-screen bg-carbon px-4 pb-24 pt-28 md:px-8 md:pt-32">
       <div className="mx-auto max-w-6xl">
         <div className="mb-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div>
@@ -318,7 +322,12 @@ export function AddressClient() {
                 const makingDefault = pendingAddressAction === `default:${address.id}`;
                 const deleting = pendingAddressAction === `delete:${address.id}`;
                 return (
-                  <div key={address.id} className="rounded-xl border border-kraft/25 bg-carbon p-5">
+                  <div
+                    key={address.id}
+                    data-editor-id={`address-card:${address.id}`}
+                    data-editor-type="address-card"
+                    data-editor-label="Adres Kartı"
+                    className="rounded-xl border border-kraft/25 bg-carbon p-5">
                     <div className="mb-4 flex items-start justify-between gap-3">
                       <div><p className="font-heading text-lg">{address.full_name}</p><p className="mt-1 text-xs text-cream/70">{address.phone}</p></div>
                       {address.is_default ? <span className="inline-flex items-center gap-1 rounded-full border border-kraft/40 bg-carbon-soft px-3 py-1 text-[10px] uppercase tracking-[0.16em] text-brick"><Star size={12} />Varsayılan</span> : null}

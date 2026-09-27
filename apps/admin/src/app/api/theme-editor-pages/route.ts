@@ -172,8 +172,24 @@ export async function GET(request: Request) {
   }
 
   pages.push(...templates.values());
+  pages.push(
+    {
+      path: "/cart",
+      label: "Sepet / Drawer",
+      group: "Sistem Şablonları",
+      previewPath: "/?storeDesignCartPreview=1",
+      template: true,
+    },
+    {
+      path: "/checkout",
+      label: "Checkout / Ödeme",
+      group: "Sistem Şablonları",
+      previewPath: "/checkout",
+      template: true,
+    },
+  );
   pages.sort((a, b) => {
-    const order = ["Sayfalar", "Şablonlar", "Özel Sayfalar", "Diğer"];
+    const order = ["Sayfalar", "Şablonlar", "Sistem Şablonları", "Özel Sayfalar", "Diğer"];
     const group = order.indexOf(a.group) - order.indexOf(b.group);
     return group || a.label.localeCompare(b.label, "tr");
   });

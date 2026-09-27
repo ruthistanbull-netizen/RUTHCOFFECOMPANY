@@ -196,6 +196,9 @@ function GalleryViewport({
 
   return (
     <div
+      data-editor-id={!lightbox ? `product-gallery:${product.id}` : undefined}
+      data-editor-type={!lightbox ? "product-gallery" : undefined}
+      data-editor-label={!lightbox ? "Ürün Galerisi" : undefined}
       className={`product-gallery-frame ${lightbox ? "is-lightbox" : ""} ${
         mobile ? "is-mobile-vertical" : ""
       }`}
@@ -208,6 +211,9 @@ function GalleryViewport({
         {images.map((image, index) => (
           <div
             key={`${image}-${index}`}
+            data-editor-id={!lightbox ? `product-gallery-media:${product.id}:${index}` : undefined}
+            data-editor-type={!lightbox ? "product-gallery-media" : undefined}
+            data-editor-label={!lightbox ? `Galeri Medyası ${index + 1}` : undefined}
             className="product-gallery-slide keen-slider__slide"
             onClick={() => {
               if (lightbox || draggedRef.current || !onOpenLightbox) return;

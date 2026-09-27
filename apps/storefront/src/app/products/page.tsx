@@ -21,13 +21,21 @@ export default async function ProductsPage() {
   const products = await getProducts();
 
   return (
-    <div className="min-h-screen bg-carbon px-4 pb-24 pt-[calc(var(--announcement-height,0px)+128px)] text-cream md:px-8">
+    <div
+      data-editor-id="catalog-page-shell:products"
+      data-editor-type="catalog-shell"
+      data-editor-label="Tüm Ürünler Katalog Sayfası"
+      className="min-h-screen bg-carbon px-4 pb-24 pt-[calc(var(--announcement-height,0px)+128px)] text-cream md:px-8"
+    >
       <div className="mx-auto max-w-7xl">
         <PageIntro
           eyebrow="Alışveriş"
           title="Tüm Ürünler"
           description="ROSTA Coffee Co. ürünlerini keşfet ve güvenle alışveriş yap."
           className="mb-12 md:mb-20"
+          editorId="page-intro:products"
+          editorType="page-intro"
+          editorLabel="Tüm Ürünler Sayfa Başlığı"
         />
         <ProductCatalog products={toCatalogProducts(products)} showProductDescriptions={false} />
       </div>
