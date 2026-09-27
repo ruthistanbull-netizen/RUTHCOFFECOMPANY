@@ -235,6 +235,7 @@ const sectionRows = core
   .map((line) => ({
     type: line.match(/section\("([^"]+)"/)?.[1] || "",
     implemented: /,\s*true(?:,\s*\d+)?\s*\),?\s*$/.test(line),
+    line,
   }))
   .filter((item) => item.type);
 
@@ -264,6 +265,14 @@ for (const type of implementedSectionTypes) {
 for (const type of pendingSectionTypes) {
   if (pickerRenderableTypes.has(type)) fail(`implemented=false section admin picker'da yanlışlıkla açık: ${type}`);
   if (hasSectionRuntime(type)) fail(`implemented=false section storefront runtime listesinde açık: ${type}`);
+  const row = sectionRows.find((item) => item.type === type);
+  if (!row || !/,\s*false,\s*(?:undefined|\d+),\s*"[^"]+"/.test(row.line)) {
+    fail(`Pending section capability gate açıklaması eksik: ${type}`);
+  }
+}
+
+for (const token of ["definition.pendingReason", "Altyapı bekliyor", "güvenli runtime bağlantısı henüz tamamlanmadı"]) {
+  if (!sectionManager.includes(token)) fail(`Section picker capability gate UI eksik: ${token}`);
 }
 
 for (const token of [
