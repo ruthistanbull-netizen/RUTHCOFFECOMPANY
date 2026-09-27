@@ -173,6 +173,7 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
   component("promo-banner", "Promo Banner", "Marketing", "section", sectionScopes, ["content", "media", "layout", "responsive"], []),
   component("countdown", "Countdown", "Marketing", "section", sectionScopes, ["content", "layout", "responsive"], ["serverTimeSource"]),
   component("shipping-returns-cta", "Shipping / Returns CTA", "Marketing", "section", sectionScopes, ["content", "layout"], ["shippingLogic"]),
+  component("contact-form", "İletişim Formu", "Marketing", "section", sectionScopes, ["content", "layout", "form"], ["submissionEndpoint", "antiSpam", "requiredFields"]),
   component("spacer", "Boşluk", "İçerik", "section", sectionScopes, ["layout", "responsive"], ["arbitraryHeight"]),
   component("divider", "Divider", "İçerik", "section", sectionScopes, ["layout", "responsive"], []),
   component("anchor", "Anchor", "İçerik", "section", sectionScopes, ["content", "advanced"], ["rawHtml"]),
@@ -323,7 +324,7 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
   section("countdown", "Countdown", "marketing", allContentPages, ["targetTime", "completedState", "style"], [], true),
   section("marquee", "Marquee / Ticker", "marketing", allContentPages, ["speed", "pause"], ["ticker-item"], true, 20),
   section("newsletter", "Newsletter", "marketing", allContentPages, ["heading", "body", "fieldLabel", "consent", "successCopy"]),
-  section("contact-form", "Contact Form", "marketing", ["content", "landing"], ["fieldVisibility", "labels", "copy", "successState"], [], false),
+  section("contact-form", "Contact Form", "marketing", ["content", "landing"], ["title", "body", "phoneVisible", "nameLabel", "emailLabel", "phoneLabel", "messageLabel", "namePlaceholder", "emailPlaceholder", "phonePlaceholder", "messagePlaceholder", "buttonLabel", "successCopy", "paddingY"], [], true),
   section("custom-form", "Custom Form", "marketing", ["content", "landing"], ["schema", "successCopy"], ["field"], false, 20),
   section("map-locator", "Map / Store Locator", "marketing", allContentPages, ["locations", "mapStyle", "cta"]),
   section("rewards-promo", "Puan / Ödül Promo", "marketing", allCommercePages, ["media", "copy", "cta", "layout"]),
@@ -1332,6 +1333,17 @@ export function validateThemeDocument(document: ThemeDocument) {
       if (!Number.isFinite(gap) || gap < 0 || gap > 64) errors.push(`${section.id}: Kategori kartı gap 0-64 aralığında olmalı.`);
       if (!["16/10", "4/5", "1/1"].includes(ratio)) errors.push(`${section.id}: Kategori kartı ratio preset geçersiz.`);
       if (!["overlay", "below"].includes(placement)) errors.push(`${section.id}: Kategori kartı titlePlacement geçersiz.`);
+    }
+
+    if (section.type === "contact-form") {
+      const phoneVisible = section.settings.phoneVisible;
+      if (phoneVisible !== undefined && typeof phoneVisible !== "boolean") errors.push(`${section.id}: Contact Form phoneVisible boolean olmalı.`);
+      const paddingY = Number(section.settings.paddingY ?? 72);
+      if (!Number.isFinite(paddingY) || paddingY < 0 || paddingY > 240) errors.push(`${section.id}: Contact Form paddingY 0-240 aralığında olmalı.`);
+      for (const key of ["title", "body", "nameLabel", "emailLabel", "phoneLabel", "messageLabel", "namePlaceholder", "emailPlaceholder", "phonePlaceholder", "messagePlaceholder", "buttonLabel", "successCopy"]) {
+        const value = section.settings[key];
+        if (value !== undefined && typeof value !== "string") errors.push(`${section.id}: Contact Form ${key} metin olmalı.`);
+      }
     }
 
     if (section.type === "best-sellers") {
