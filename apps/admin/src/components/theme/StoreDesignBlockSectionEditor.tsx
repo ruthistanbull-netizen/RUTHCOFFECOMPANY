@@ -324,10 +324,11 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   const featuredCollection = section.type === "featured-collection";
   const productComparison = section.type === "product-comparison";
   const bestSellers = section.type === "best-sellers";
+  const contactForm = section.type === "contact-form";
   const collectionCards = section.type === "collection-cards" || section.type === "category-cards";
   const categoryCards = section.type === "category-cards";
-  const genericZeroBlock = ["hero", "product-comparison", "best-sellers", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta", "spacer", "divider", "anchor"].includes(section.type);
-  const hasGenericBody = ["hero", "video-hero", "video-banner", "brand-story", "heading-subtext", "manifesto", "promo-banner", "shipping-returns-cta"].includes(section.type);
+  const genericZeroBlock = ["hero", "product-comparison", "best-sellers", "contact-form", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta", "spacer", "divider", "anchor"].includes(section.type);
+  const hasGenericBody = ["hero", "video-hero", "video-banner", "brand-story", "contact-form", "heading-subtext", "manifesto", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const hasAlign = ["hero", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const hasLink = ["hero", "video-hero", "video-banner", "brand-story", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const showTitle = !["product-spotlight", "featured-collection", "scroll-story", "background-media", "quote", "spacer", "divider", "anchor"].includes(section.type);
@@ -742,6 +743,38 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                       <option value="60%">60%</option>
                     </select>
                   </label>
+                </>
+              ) : null}
+
+              {contactForm ? (
+                <>
+                  <label className="flex items-center justify-between gap-3 rounded-lg border border-black/10 bg-white p-2.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                    Telefon alanını göster
+                    <input type="checkbox" checked={settings.phoneVisible !== false} onChange={(event) => updateSetting("phoneVisible", event.target.checked)} />
+                  </label>
+                  {[
+                    ["nameLabel", "Ad Soyad etiketi", "Ad Soyad"],
+                    ["emailLabel", "E-posta etiketi", "E-posta"],
+                    ["phoneLabel", "Telefon etiketi", "Telefon"],
+                    ["messageLabel", "Mesaj etiketi", "Mesaj"],
+                    ["namePlaceholder", "Ad Soyad placeholder", "Adınız Soyadınız"],
+                    ["emailPlaceholder", "E-posta placeholder", "ornek@mail.com"],
+                    ["phonePlaceholder", "Telefon placeholder", "05xx xxx xx xx"],
+                    ["messagePlaceholder", "Mesaj placeholder", "Mesajınızı yazın."],
+                    ["buttonLabel", "Buton metni", "Mesajı Gönder"],
+                  ].map(([key, label, fallback]) => (
+                    <label key={key} className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                      {label}
+                      <input value={text(settings[key]) || fallback} onChange={(event) => updateSetting(key, event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
+                    </label>
+                  ))}
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                    Başarı mesajı
+                    <textarea value={text(settings.successCopy) || "Mesajınız alındı. En kısa sürede size dönüş yapacağız."} onChange={(event) => updateSetting("successCopy", event.target.value)} className="min-h-20 resize-y rounded-lg border border-black/10 bg-white p-2.5 text-[9px] leading-5 outline-none" />
+                  </label>
+                  <div className="rounded-lg border border-black/10 bg-black/[0.025] p-2.5 text-[7px] leading-4 text-black/45 md:col-span-2">
+                    Ad Soyad, E-posta ve Mesaj alanları endpoint doğrulaması nedeniyle zorunludur. Anti-spam, rate limit ve gönderim endpoint'i tema editöründen değiştirilemez.
+                  </div>
                 </>
               ) : null}
 
