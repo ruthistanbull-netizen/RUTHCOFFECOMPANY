@@ -326,15 +326,16 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   const bestSellers = section.type === "best-sellers";
   const contactForm = section.type === "contact-form";
   const reviewHighlights = section.type === "review-highlights";
+  const gridStack = section.type === "grid-stack-builder";
   const collectionCards = section.type === "collection-cards" || section.type === "category-cards";
   const categoryCards = section.type === "category-cards";
-  const genericZeroBlock = ["hero", "product-comparison", "best-sellers", "contact-form", "review-highlights", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta", "spacer", "divider", "anchor"].includes(section.type);
+  const genericZeroBlock = ["hero", "product-comparison", "best-sellers", "contact-form", "review-highlights", "grid-stack-builder", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta", "spacer", "divider", "anchor"].includes(section.type);
   const hasGenericBody = ["hero", "video-hero", "video-banner", "brand-story", "contact-form", "review-highlights", "heading-subtext", "manifesto", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const hasAlign = ["hero", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const hasLink = ["hero", "video-hero", "video-banner", "brand-story", "promo-banner", "shipping-returns-cta"].includes(section.type);
-  const showTitle = !["product-spotlight", "featured-collection", "scroll-story", "background-media", "quote", "spacer", "divider", "anchor"].includes(section.type);
+  const showTitle = !["product-spotlight", "featured-collection", "scroll-story", "background-media", "grid-stack-builder", "quote", "spacer", "divider", "anchor"].includes(section.type);
   const showEyebrow = !genericZeroBlock && !["product-spotlight", "featured-collection", "scroll-story", "background-media"].includes(section.type);
-  const showPadding = !["hero", "scroll-story", "video-hero", "video-banner", "background-media", "spacer", "anchor"].includes(section.type);
+  const showPadding = !["hero", "scroll-story", "video-hero", "video-banner", "background-media", "grid-stack-builder", "spacer", "anchor"].includes(section.type);
   const primaryMedia = mediaNarrative && text(settings.imageAssetId) ? document.media[text(settings.imageAssetId)] : undefined;
   const brandStoryMedia = brandStory && text(settings.imageAssetId) ? document.media[text(settings.imageAssetId)] : undefined;
   const showBlockComposer = allowedDefinitions.length > 0;
@@ -1025,6 +1026,45 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                       <option value="60%">60%</option>
                     </select>
                   </label>
+                </>
+              ) : null}
+              {gridStack ? (
+                <>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Kolon
+                    <select value={String(numberValue(settings.columns, 2))} onChange={(event) => updateSetting("columns", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="1">1 kolon</option>
+                      <option value="2">2 kolon</option>
+                      <option value="3">3 kolon</option>
+                      <option value="4">4 kolon</option>
+                    </select>
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Gap preset
+                    <select value={String(numberValue(settings.gap, 20))} onChange={(event) => updateSetting("gap", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="0">Yok · 0px</option>
+                      <option value="8">Sıkı · 8px</option>
+                      <option value="12">Dar · 12px</option>
+                      <option value="20">Orta · 20px</option>
+                      <option value="32">Geniş · 32px</option>
+                      <option value="48">Çok geniş · 48px</option>
+                    </select>
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Dikey hizalama
+                    <select value={text(settings.alignment) || "stretch"} onChange={(event) => updateSetting("alignment", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="start">Üst</option>
+                      <option value="center">Orta</option>
+                      <option value="stretch">Eşit yükseklik</option>
+                    </select>
+                  </label>
+                  <label className="flex items-center justify-between gap-3 rounded-lg border border-black/10 bg-white p-2.5 text-[8px] font-semibold text-black/45">
+                    Mobilde tek kolona stack
+                    <input type="checkbox" checked={settings.responsiveStack !== false} onChange={(event) => updateSetting("responsiveStack", event.target.checked)} />
+                  </label>
+                  <div className="rounded-lg border border-black/10 bg-black/[0.025] p-2.5 text-[7px] leading-4 text-black/45 md:col-span-2">
+                    Güvenli composition kullanılır: absolute free-canvas, raw CSS ve serbest pixel konumlandırma yoktur.
+                  </div>
                 </>
               ) : null}
               {hasColumns ? (
