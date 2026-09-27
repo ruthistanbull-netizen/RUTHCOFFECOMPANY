@@ -155,7 +155,7 @@ export function AnalyticsConsentGate({
             aria-labelledby="analytics-consent-title"
             aria-describedby="analytics-consent-description"
             data-ruth-cookie-consent
-            className={`fixed w-[calc(100%-24px)] border border-kraft/40 bg-carbon-soft px-4 py-3.5 text-cream shadow-[0_18px_60px_color-mix(in_srgb,var(--rosta-carbon)_62%,transparent)] md:px-5 md:py-4 ${positionClass} ${widthClass} ${radiusClass}`}
+            className={`fixed w-[calc(100%_-_24px)] border border-kraft/40 bg-carbon-soft px-4 py-3.5 text-cream shadow-[0_18px_60px_color-mix(in_srgb,var(--rosta-carbon)_62%,transparent)] md:px-5 md:py-4 ${positionClass} ${widthClass} ${radiusClass}`}
             style={{
               bottom: "max(12px, env(safe-area-inset-bottom))",
               zIndex: 2147483000,
