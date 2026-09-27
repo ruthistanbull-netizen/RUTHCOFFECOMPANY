@@ -178,6 +178,7 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
   component("spacer", "Boşluk", "İçerik", "section", sectionScopes, ["layout", "responsive"], ["arbitraryHeight"]),
   component("divider", "Divider", "İçerik", "section", sectionScopes, ["layout", "responsive"], []),
   component("anchor", "Anchor", "İçerik", "section", sectionScopes, ["content", "advanced"], ["rawHtml"]),
+  component("grid-stack-builder", "Grid / Stack Builder", "İçerik", "section", sectionScopes, ["content", "layout", "responsive"], ["absoluteCanvas", "rawCss"]),
 
   component("catalog-shell", "Katalog Sayfası", "Katalog", "template", templateScopes, ["layout", "responsive"], ["catalogDataset"]),
   component("page-intro", "Sayfa Başlığı", "Katalog", "template", ["instance", "template"], ["content", "typography", "layout"], ["dynamicResultCount"]),
@@ -337,7 +338,7 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
   section("breadcrumb", "Breadcrumb", "marketing", ["content", "product", "category", "collection"], ["visible", "separator", "typography"]),
   section("integration-block", "App / Integration Block", "marketing", allContentPages, ["integrationId", "settings"]),
   section("developer-embed", "Developer Embed", "marketing", ["content", "landing"], ["whitelistedEmbed"]),
-  section("grid-stack-builder", "Boş Grid / Stack Builder", "marketing", allContentPages, ["columns", "gap", "alignment", "responsiveStack"], ["content"], false, 24),
+  section("grid-stack-builder", "Boş Grid / Stack Builder", "marketing", allContentPages, ["columns", "gap", "alignment", "responsiveStack"], ["content"], true, 24),
 ];
 
 export const SECTION_LIBRARY_BY_TYPE: Record<string, SectionDefinition> =
@@ -519,7 +520,7 @@ export const BLOCK_LIBRARY: BlockDefinition[] = [
   block("rich-text", "Metin Bloğu", ["image-text-split", "video-text-split"], ["heading", "body", "cta"], true),
   block("hotspot", "Hotspot", ["hotspot-lookbook"], ["x", "y", "targetType", "targetId"], true),
   block("logo", "Logo", ["logo-cloud"], ["assetId", "alt", "link"], true),
-  block("content", "İçerik", ["background-media"], ["eyebrow", "heading", "body", "linkLabel", "linkHref", "align", "maxWidth"], true),
+  block("content", "İçerik", ["background-media", "grid-stack-builder"], ["eyebrow", "heading", "body", "linkLabel", "linkHref", "align", "maxWidth"], true),
   block("text-column", "Metin Kolonu", ["text-columns"], ["heading", "body"], true),
   block("stat", "İstatistik", ["stats"], ["value", "label"], true),
   block("timeline-item", "Timeline Öğesi", ["timeline"], ["date", "heading", "body"], true),
@@ -1334,6 +1335,16 @@ export function validateThemeDocument(document: ThemeDocument) {
       if (!Number.isFinite(gap) || gap < 0 || gap > 64) errors.push(`${section.id}: Kategori kartı gap 0-64 aralığında olmalı.`);
       if (!["16/10", "4/5", "1/1"].includes(ratio)) errors.push(`${section.id}: Kategori kartı ratio preset geçersiz.`);
       if (!["overlay", "below"].includes(placement)) errors.push(`${section.id}: Kategori kartı titlePlacement geçersiz.`);
+    }
+
+    if (section.type === "grid-stack-builder") {
+      const columns = Number(section.settings.columns ?? 2);
+      if (!Number.isFinite(columns) || columns < 1 || columns > 4) errors.push(`${section.id}: Grid / Stack kolon sayısı 1-4 aralığında olmalı.`);
+      const gap = Number(section.settings.gap ?? 20);
+      if (!Number.isFinite(gap) || gap < 0 || gap > 64) errors.push(`${section.id}: Grid / Stack gap 0-64 aralığında olmalı.`);
+      const alignment = String(section.settings.alignment || "stretch");
+      if (!["start", "center", "stretch"].includes(alignment)) errors.push(`${section.id}: Grid / Stack alignment geçersiz.`);
+      if (section.settings.responsiveStack !== undefined && typeof section.settings.responsiveStack !== "boolean") errors.push(`${section.id}: Grid / Stack responsiveStack boolean olmalı.`);
     }
 
     if (section.type === "review-highlights") {
