@@ -634,10 +634,12 @@ export type ThemeDocument = {
 
 function countExactReference(value: unknown, assetId: string): number {
   if (value === assetId) return 1;
-  if (Array.isArray(value)) return value.reduce((sum, item) => sum + countExactReference(item, assetId), 0);
+  if (Array.isArray(value)) {
+    return value.reduce<number>((sum, item) => sum + countExactReference(item, assetId), 0);
+  }
   if (!value || typeof value !== "object") return 0;
   return Object.values(value as Record<string, unknown>)
-    .reduce((sum, item) => sum + countExactReference(item, assetId), 0);
+    .reduce<number>((sum, item) => sum + countExactReference(item, assetId), 0);
 }
 
 export function themeMediaUsageCount(document: ThemeDocument, assetId: string) {
