@@ -6,6 +6,7 @@ import { createPortal } from "react-dom";
 import { SiteAnalytics } from "@/components/analytics/SiteAnalytics";
 import {
   SEMANTIC_RUNTIME_PATCH_EVENT,
+  STORE_DESIGN_CONSENT_SETTINGS_EVENT,
   type SemanticRuntimePatch,
 } from "@/components/theme/SemanticThemeRuntimeProvider";
 
@@ -68,6 +69,18 @@ export function AnalyticsConsentGate({
     document.documentElement.classList.toggle("ruth-cookie-consent-open", open);
     return () => document.documentElement.classList.remove("ruth-cookie-consent-open");
   }, [consent, editorPreview, ready]);
+
+  useEffect(() => {
+    const onDocumentSettings = (event: Event) => {
+      const detail = (event as CustomEvent<{ desktop?: ConsentBannerSettings; mobile?: ConsentBannerSettings }>).detail;
+      if (!detail) return;
+      setRuntimeDesktop(detail.desktop && typeof detail.desktop === "object" ? detail.desktop : {});
+      setRuntimeMobile(detail.mobile && typeof detail.mobile === "object" ? detail.mobile : {});
+    };
+
+    window.addEventListener(STORE_DESIGN_CONSENT_SETTINGS_EVENT, onDocumentSettings as EventListener);
+    return () => window.removeEventListener(STORE_DESIGN_CONSENT_SETTINGS_EVENT, onDocumentSettings as EventListener);
+  }, []);
 
   useEffect(() => {
     const onRuntimePatch = (event: Event) => {
