@@ -534,7 +534,8 @@ begin
       'statusLabel', new.status_label,
       'provider', 'basit_kargo',
       'source', 'shipping_events_trigger'
-    );
+    )
+  );
 
   return new;
 end;
