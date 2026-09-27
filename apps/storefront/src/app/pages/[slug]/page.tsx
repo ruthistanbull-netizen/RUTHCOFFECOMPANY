@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound, permanentRedirect, redirect } from "next/navigation";
 import { HomeSectionRenderer } from "@/components/theme/HomeSectionRenderer";
+import { StoreDesignBreadcrumb } from "@/components/theme/StoreDesignBreadcrumb";
 import { getFeaturedProducts, getProducts } from "@/data/catalogReadModel";
 import {
   getCollections,
@@ -87,17 +88,32 @@ export default async function CustomThemePage({ params, searchParams }: { params
     return (
       <main className="min-h-[35vh]" data-store-design-v2-page={v2Page.id}>
         {sections.map((section) => (
-          <HomeSectionRenderer
-            key={section.id}
-            section={section}
-            featuredProducts={featuredProducts}
-            allProducts={allProducts}
-            collections={collections}
-            heroImages={heroImages}
-            scrollImages={themeSettings.homepageImages.scrollImages}
-            themeSettings={themeSettings}
-            freeShippingThreshold={freeShippingThreshold}
-          />
+          section.type === "breadcrumb" ? (
+            section.enabled ? (
+              <div key={section.id} className="mx-auto w-full max-w-7xl px-4 md:px-8">
+                <StoreDesignBreadcrumb
+                  sectionId={section.id}
+                  settings={section.v2Settings}
+                  items={[
+                    { label: "Ana Sayfa", href: "/" },
+                    { label: v2Page.name },
+                  ]}
+                />
+              </div>
+            ) : null
+          ) : (
+            <HomeSectionRenderer
+              key={section.id}
+              section={section}
+              featuredProducts={featuredProducts}
+              allProducts={allProducts}
+              collections={collections}
+              heroImages={heroImages}
+              scrollImages={themeSettings.homepageImages.scrollImages}
+              themeSettings={themeSettings}
+              freeShippingThreshold={freeShippingThreshold}
+            />
+          )
         ))}
       </main>
     );
