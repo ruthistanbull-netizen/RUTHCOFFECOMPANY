@@ -86,6 +86,10 @@ export default async function ProductPage({
   const recommendationsConfig = recommendationsSection
     ? { enabled: recommendationsSection.enabled, settings: recommendationsSection.v2Settings || {} }
     : undefined;
+  const breadcrumbSection = productTemplateSections.find((section) => section.type === "breadcrumb");
+  const breadcrumbConfig = breadcrumbSection
+    ? { id: breadcrumbSection.id, enabled: breadcrumbSection.enabled, settings: breadcrumbSection.v2Settings || {} }
+    : undefined;
 
   const adjacentProducts = [productWindow.next, productWindow.previous].filter(
     (value): value is Product => Boolean(value),
@@ -136,7 +140,11 @@ export default async function ProductPage({
           />
         ) : null;
       })}
-      <ProductDetailExperience initialWindow={initialWindow} recommendationsConfig={recommendationsConfig} />
+      <ProductDetailExperience
+        initialWindow={initialWindow}
+        recommendationsConfig={recommendationsConfig}
+        breadcrumbConfig={breadcrumbConfig}
+      />
     </>
   );
 }
