@@ -230,11 +230,19 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
     const selected = allowedDefinitions.find((item) => item.type === blockType) || allowedDefinitions[0];
     if (!selected) return toast.error("Bu section için eklenebilir hazır block yok.");
     if (blocks.length >= maxBlocks) return toast.error(`Bu bölüm en fazla ${maxBlocks} block kabul eder.`);
-    setBlocks((items) => [...items, {
-      id: uid(`block-${selected.type}`),
-      type: selected.type,
-      settings: blockDefaults(selected.type),
-    }]);
+    setBlocks((items) => {
+      const defaults = blockDefaults(selected.type);
+      if (selected.type === "field") {
+        const index = items.filter((item) => item.type === "field").length + 1;
+        defaults.name = `field${index}`;
+        defaults.label = `Alan ${index}`;
+      }
+      return [...items, {
+        id: uid(`block-${selected.type}`),
+        type: selected.type,
+        settings: defaults,
+      }];
+    });
   };
 
   const save = async () => {
