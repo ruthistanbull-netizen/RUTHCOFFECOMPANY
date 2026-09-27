@@ -537,6 +537,8 @@ for (const token of [
   "desktopSettings",
   "mobileSettings",
   "SEMANTIC_RUNTIME_PATCH_EVENT",
+  "STORE_DESIGN_CONSENT_SETTINGS_EVENT",
+  "onDocumentSettings",
   'detail.selectorValue !== "consent-banner"',
   'detail.scope !== "global"',
   'params.get("themeEditor") === "1"',
@@ -561,6 +563,15 @@ for (const token of [
   "mobileSettings={consentMobileSettings}",
 ]) {
   if (!storefrontLayout.includes(token)) fail(`Consent global settings storefront bridge eksik: ${token}`);
+}
+const semanticRuntimeProvider = read("apps/storefront/src/components/theme/SemanticThemeRuntimeProvider.tsx");
+for (const token of [
+  'STORE_DESIGN_CONSENT_SETTINGS_EVENT = "store-design-v2:consent-settings"',
+  'effectiveDocument.globals.tokens["consent-banner"]',
+  "desktop: objectRecord(responsive.desktop)",
+  "mobile: objectRecord(responsive.mobile)",
+]) {
+  if (!semanticRuntimeProvider.includes(token)) fail(`Consent preview document hydration bridge eksik: ${token}`);
 }
 
 const breadcrumbRuntime = read("apps/storefront/src/components/theme/StoreDesignBreadcrumb.tsx");
