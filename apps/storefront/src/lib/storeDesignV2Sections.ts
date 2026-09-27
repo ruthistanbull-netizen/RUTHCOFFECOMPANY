@@ -49,6 +49,7 @@ const BLOCK_RENDER_SECTION_TYPES = new Set([
   "spacer",
   "divider",
   "anchor",
+  "grid-stack-builder",
 ]);
 
 function versionedMediaUrl(asset: MediaAsset | undefined) {
