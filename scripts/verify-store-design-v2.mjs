@@ -269,7 +269,7 @@ const blockRuntimeTypes = extractStringSet(v2Sections, "BLOCK_RENDER_SECTION_TYP
 const homeRenderer = read("apps/storefront/src/components/theme/HomeSectionRenderer.tsx");
 const homeRuntimeTypes = new Set([...homeRenderer.matchAll(/section\.type\s*===\s*"([^"]+)"/g)].map((match) => match[1]));
 const runtimeAliases = new Map([["collection-cards", "collections"]]);
-const externalRuntimeTypes = new Set(["recommendations", "recently-viewed", "bundle", "breadcrumb"]);
+const externalRuntimeTypes = new Set(["recommendations", "recently-viewed", "bundle", "cross-sell", "breadcrumb"]);
 
 function hasSectionRuntime(type) {
   const alias = runtimeAliases.get(type);
@@ -353,6 +353,7 @@ for (const token of [
   "recommendations",
   "recently-viewed",
   "bundle",
+  "cross-sell",
   "breadcrumb",
   "contact-form",
   "review-highlights",
@@ -420,6 +421,8 @@ for (const token of [
   'section("recently-viewed"',
   'component("bundle"',
   'section("bundle"',
+  'component("cross-sell"',
+  'section("cross-sell"',
   'section("breadcrumb"',
   'component("contact-form"',
   'section("contact-form"',
@@ -443,7 +446,7 @@ for (const token of ["new-arrivals", "sale-products", "Otomatik · yeni ürün i
 }
 
 const themeSections = read("packages/commerce-core/src/theme-sections.ts");
-for (const token of ['| "product-spotlight"', '| "featured-collection"', '| "category-cards"', '| "product-comparison"', '| "best-sellers"', '| "recommendations"', '| "recently-viewed"', '| "bundle"', '| "breadcrumb"', '| "new-arrivals"', '| "sale-products"', 'layout?: "slider" | "grid"', 'badgeStyle?: "pill" | "outline" | "minimal"', "mobileAssetUrl?: string", "mobileObjectPosition?: string"]) {
+for (const token of ['| "product-spotlight"', '| "featured-collection"', '| "category-cards"', '| "product-comparison"', '| "best-sellers"', '| "recommendations"', '| "recently-viewed"', '| "bundle"', '| "cross-sell"', '| "breadcrumb"', '| "new-arrivals"', '| "sale-products"', 'layout?: "slider" | "grid"', 'badgeStyle?: "pill" | "outline" | "minimal"', "mobileAssetUrl?: string", "mobileObjectPosition?: string"]) {
   if (!themeSections.includes(token)) fail(`Product preset render contract eksik: ${token}`);
 }
 
@@ -470,7 +473,7 @@ for (const token of [
 }
 
 for (const token of [
-  '["hero", "product-spotlight", "featured-collection", "category-cards", "product-comparison", "best-sellers", "recommendations", "recently-viewed", "bundle", "breadcrumb", "collection-cards", "brand-story"]',
+  '["hero", "product-spotlight", "featured-collection", "category-cards", "product-comparison", "best-sellers", "recommendations", "recently-viewed", "bundle", "cross-sell", "breadcrumb", "collection-cards", "brand-story"]',
   'section.type === "scroll-story"',
   "hydrateV2Blocks",
   "mobileAssetUrl",
@@ -550,6 +553,51 @@ for (const forbiddenToken of ["bundle_items =", "price =", "compare_at_price ="]
 if (!productDetailRuntime.includes("bundleConfig")) fail("Bundle product detail config bağlantısı eksik.");
 for (const token of ['section.type === "bundle"', "bundleConfig"]) {
   if (!productRoute.includes(token)) fail(`Bundle product template runtime bağlantısı eksik: ${token}`);
+}
+
+const crossSellRuntime = read("apps/storefront/src/components/cart/StoreDesignCrossSell.tsx");
+for (const token of [
+  "STORE_DESIGN_CROSS_SELL_SETTINGS_EVENT",
+  "/api/cart/cross-sell",
+  'data-editor-type="cross-sell"',
+  "context",
+  "after-items",
+  "before-totals",
+]) {
+  if (!crossSellRuntime.includes(token)) fail(`Cross-sell protected runtime eksik: ${token}`);
+}
+const crossSellRoute = read("apps/storefront/src/app/api/cart/cross-sell/route.ts");
+for (const token of ["getCrossSellProducts", "best-sellers", "new-arrivals", "price: product.price"]) {
+  if (!crossSellRoute.includes(token)) fail(`Cross-sell read-only endpoint eksik: ${token}`);
+}
+const crossSellData = read("apps/storefront/src/data/crossSell.ts");
+for (const token of ["relationScore", "getCachedBestSellingProducts", "product.is_new", 'product.stock_status !== "out_of_stock"']) {
+  if (!crossSellData.includes(token)) fail(`Cross-sell source service eksik: ${token}`);
+}
+for (const forbiddenToken of ["addItem(", "updateQuantity(", "price =", "compare_at_price ="]) {
+  if (crossSellRuntime.includes(forbiddenToken)) fail(`Cross-sell protected runtime cart/fiyat mantığına dokunuyor: ${forbiddenToken}`);
+}
+const cartDrawer = read("apps/storefront/src/components/cart/CartDrawer.tsx");
+for (const token of ["crossSellConfig", 'context="cart"', "storeDesignCartPreview"]) {
+  if (!cartDrawer.includes(token)) fail(`Cart Cross-sell protected zone bağlantısı eksik: ${token}`);
+}
+const checkoutPage = read("apps/storefront/src/app/checkout/page.tsx");
+const checkoutClient = read("apps/storefront/src/components/checkout/PaytrIframeCheckoutClient.tsx");
+for (const token of ['"/checkout"', "crossSellConfig", "getStoreDesignV2Preview"]) {
+  if (!checkoutPage.includes(token)) fail(`Checkout Cross-sell config bağlantısı eksik: ${token}`);
+}
+for (const token of ['context="checkout"', "after-items", "before-totals"]) {
+  if (!checkoutClient.includes(token)) fail(`Checkout Cross-sell protected zone runtime eksik: ${token}`);
+}
+const editorPagesRoute = read("apps/admin/src/app/api/theme-editor-pages/route.ts");
+for (const token of ['path: "/cart"', 'path: "/checkout"', "Sistem Şablonları", "storeDesignCartPreview=1"]) {
+  if (!editorPagesRoute.includes(token)) fail(`Cart/Checkout protected editor hedefi eksik: ${token}`);
+}
+const storeDesignV21 = read("apps/admin/src/components/theme/StoreDesignV21.tsx");
+if (!storeDesignV21.includes('page.path.startsWith("/cart")')) fail("Cart page compatibility protected editor'a bağlı değil.");
+const crossSellSemanticRuntimeProvider = read("apps/storefront/src/components/theme/SemanticThemeRuntimeProvider.tsx");
+for (const token of ["STORE_DESIGN_CROSS_SELL_SETTINGS_EVENT", "crossSellConfigForPath", '"/cart"', '"/checkout"', "storeDesignCartPreview"]) {
+  if (!crossSellSemanticRuntimeProvider.includes(token)) fail(`Cross-sell preview document bridge eksik: ${token}`);
 }
 
 const recentlyViewedRuntime = read("apps/storefront/src/components/product/ProductRecentlyViewed.tsx");
