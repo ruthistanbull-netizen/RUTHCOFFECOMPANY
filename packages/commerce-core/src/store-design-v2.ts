@@ -177,6 +177,8 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
   component("promo-banner", "Promo Banner", "Marketing", "section", sectionScopes, ["content", "media", "layout", "responsive"], []),
   component("countdown", "Countdown", "Marketing", "section", sectionScopes, ["content", "layout", "responsive"], ["serverTimeSource"]),
   component("shipping-returns-cta", "Shipping / Returns CTA", "Marketing", "section", sectionScopes, ["content", "layout"], ["shippingLogic"]),
+  component("newsletter", "Newsletter", "Marketing", "section", sectionScopes, ["content", "layout", "responsive"], ["subscriptionAction", "subscriberState", "consentRecord"]),
+  component("custom-form", "Custom Form", "Marketing", "section", sectionScopes, ["content", "layout", "card", "responsive"], ["submissionAction", "antiSpam", "schemaValidation"]),
   component("contact-form", "İletişim Formu", "Marketing", "section", sectionScopes, ["content", "layout", "form"], ["submissionEndpoint", "antiSpam", "requiredFields"]),
   component("rewards-promo", "Puan / Ödül Promo", "Marketing", "section", sectionScopes, ["content", "media", "layout", "responsive"], ["rewardMath", "rewardSettings"]),
   component("spacer", "Boşluk", "İçerik", "section", sectionScopes, ["layout", "responsive"], ["arbitraryHeight"]),
@@ -332,9 +334,9 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
   section("promo-banner", "Promo Banner", "marketing", allContentPages, ["title", "body", "linkLabel", "linkHref", "align", "paddingY"], [], true),
   section("countdown", "Countdown", "marketing", allContentPages, ["targetTime", "completedState", "style"], [], true),
   section("marquee", "Marquee / Ticker", "marketing", allContentPages, ["speed", "pause"], ["ticker-item"], true, 20),
-  section("newsletter", "Newsletter", "marketing", allContentPages, ["heading", "body", "fieldLabel", "consent", "successCopy"], [], false, undefined, "Anonim newsletter subscribe endpoint'i ve açık consent kayıt akışı yok; sahte form endpoint'i oluşturulmuyor."),
+  section("newsletter", "Newsletter", "marketing", allContentPages, ["heading", "body", "fieldLabel", "consent", "buttonLabel", "successCopy", "paddingY"], [], true),
   section("contact-form", "Contact Form", "marketing", ["content", "landing"], ["title", "body", "phoneVisible", "nameLabel", "emailLabel", "phoneLabel", "messageLabel", "namePlaceholder", "emailPlaceholder", "phonePlaceholder", "messagePlaceholder", "buttonLabel", "successCopy", "paddingY"], [], true),
-  section("custom-form", "Custom Form", "marketing", ["content", "landing"], ["schema", "successCopy"], ["field"], false, 20, "Generic form submission, validation ve anti-spam service sözleşmesi hazır değil."),
+  section("custom-form", "Custom Form", "marketing", ["content", "landing"], ["schema", "action", "title", "body", "buttonLabel", "successCopy", "paddingY"], ["field"], true, 20),
   section("map-locator", "Map / Store Locator", "marketing", allContentPages, ["locations", "mapStyle", "cta"], [], false, undefined, "Store location datasource ve map/provider integration sözleşmesi bağlı değil."),
   section("rewards-promo", "Puan / Ödül Promo", "marketing", allCommercePages, ["imageAssetId", "title", "body", "linkLabel", "linkHref", "layout", "showSignupPoints", "showEarnRate", "paddingY"], [], true),
   section("shipping-returns-cta", "Shipping / Returns CTA", "marketing", allCommercePages, ["icon", "title", "body", "linkLabel", "linkHref", "align", "paddingY"], [], true),
@@ -539,7 +541,7 @@ export const BLOCK_LIBRARY: BlockDefinition[] = [
   block("member", "Ekip Üyesi", ["team"], ["assetId", "name", "role", "bio"], true),
   block("announcement", "Duyuru", ["announcement-bar"], ["text", "linkLabel", "linkHref"], true),
   block("ticker-item", "Ticker Öğesi", ["marquee"], ["text", "link"], true),
-  block("field", "Form Alanı", ["custom-form"], ["name", "label", "type", "required"]),
+  block("field", "Form Alanı", ["custom-form"], ["name", "label", "type", "required", "placeholder", "options"], true),
 ];
 
 export const BLOCK_LIBRARY_BY_TYPE: Record<string, BlockDefinition> =
@@ -1247,6 +1249,43 @@ export function validateThemeDocument(document: ThemeDocument) {
   for (const [sectionId, section] of Object.entries(document.sections)) {
     const definition = SECTION_LIBRARY_BY_TYPE[section.type];
     const blockIds = Array.isArray(section.blockIds) ? section.blockIds : [];
+
+    if (section.type === "newsletter") {
+      const heading = typeof section.settings?.heading === "string" ? section.settings.heading.trim() : "";
+      const fieldLabel = typeof section.settings?.fieldLabel === "string" ? section.settings.fieldLabel.trim() : "";
+      const consent = typeof section.settings?.consent === "string" ? section.settings.consent.trim() : "";
+      const successCopy = typeof section.settings?.successCopy === "string" ? section.settings.successCopy.trim() : "";
+      if (!heading) errors.push(`${sectionId}: Newsletter başlığı boş olamaz.`);
+      if (!fieldLabel) errors.push(`${sectionId}: Newsletter alan etiketi boş olamaz.`);
+      if (!consent) errors.push(`${sectionId}: Newsletter consent metni boş olamaz.`);
+      if (!successCopy) errors.push(`${sectionId}: Newsletter başarı mesajı boş olamaz.`);
+      if (blockIds.length) errors.push(`${sectionId}: Newsletter section block kabul etmez.`);
+    }
+
+    if (section.type === "custom-form") {
+      const action = String(section.settings?.action || "store");
+      if (action !== "store") errors.push(`${sectionId}: Custom Form action whitelist dışında.`);
+      const fieldNames = new Set<string>();
+      const allowedFieldTypes = new Set(["text", "email", "tel", "textarea", "select", "checkbox"]);
+      for (const blockId of blockIds) {
+        const block = document.blocks[blockId];
+        if (!block || block.type !== "field") continue;
+        const name = typeof block.settings?.name === "string" ? block.settings.name.trim() : "";
+        const label = typeof block.settings?.label === "string" ? block.settings.label.trim() : "";
+        const fieldType = String(block.settings?.type || "text");
+        if (!/^[a-z][a-z0-9_-]{0,39}$/.test(name)) errors.push(`${blockId}: Form alan adı geçersiz.`);
+        if (name && fieldNames.has(name)) errors.push(`${blockId}: Form alan adı benzersiz olmalı (${name}).`);
+        if (name) fieldNames.add(name);
+        if (!label) errors.push(`${blockId}: Form alan etiketi boş olamaz.`);
+        if (!allowedFieldTypes.has(fieldType)) errors.push(`${blockId}: Form alan tipi desteklenmiyor (${fieldType}).`);
+        if (fieldType === "select") {
+          const options = typeof block.settings?.options === "string"
+            ? block.settings.options.split(/[\n,]/).map((item) => item.trim()).filter(Boolean)
+            : [];
+          if (!options.length) errors.push(`${blockId}: Select alanı en az bir seçenek içermeli.`);
+        }
+      }
+    }
 
     if (section.type === "anchor") {
       const anchorId = normalizeStoreDesignAnchorId(typeof section.settings?.anchorId === "string" ? section.settings.anchorId : "");
