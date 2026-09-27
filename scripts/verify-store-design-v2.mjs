@@ -309,9 +309,31 @@ for (const type of pendingSectionTypes) {
   }
 }
 
-for (const token of ["definition.pendingReason", "Altyapı bekliyor", "güvenli runtime bağlantısı henüz tamamlanmadı"]) {
+for (const token of ["definition.pendingReason", "Güvenlik kilidi", "storefront güvenlik politikası nedeniyle kapalı"]) {
   if (!sectionManager.includes(token)) fail(`Section picker capability gate UI eksik: ${token}`);
 }
+
+for (const token of [
+  'component("integration-block"',
+  'component("developer-embed"',
+  "STORE_DESIGN_INTEGRATION_BLOCK_REGISTRY",
+  "STORE_DESIGN_INTEGRATION_BLOCK_REGISTRY_BY_ID",
+  "credentialMode: \"none\"",
+  "STORE_DESIGN_DEVELOPER_EMBED_POLICY",
+  "merchantModeEnabled: false",
+  "rawJsEnabled: false",
+  "allowedHosts: [] as readonly string[]",
+  'section.type === "integration-block"',
+  'section.type === "developer-embed"',
+  "Integration Block credential taşıyamaz",
+  "Developer Embed merchant modunda kapalıdır",
+]) {
+  if (!core.includes(token)) fail(`Extension surface güvenlik sözleşmesi eksik: ${token}`);
+}
+if (!core.includes('severity: "error",\n        code: "section-runtime-unavailable"')) {
+  fail("Pending section publish-blocking severity error değil.");
+}
+if (!core.includes('| "form"')) fail("ControlGroup union form alanını içermiyor.");
 
 for (const token of [
   "normalizeStoreDesignAnchorId",
@@ -892,6 +914,22 @@ for (const token of [
 const storefrontHomePage = read("apps/storefront/src/app/page.tsx");
 for (const token of ["bestSellerWindows", "getCachedBestSellingProducts", "bestSellerProductsByWindow"]) {
   if (!storefrontHomePage.includes(token)) fail(`Best Sellers server prefetch eksik: ${token}`);
+}
+
+const controlGroupStart = core.indexOf("export type ControlGroup");
+const pageCompatibilityStart = core.indexOf("export type PageCompatibility");
+if (controlGroupStart >= 0 && pageCompatibilityStart > controlGroupStart) {
+  const controlUnion = new Set([...core.slice(controlGroupStart, pageCompatibilityStart).matchAll(/\|\s*"([^"]+)"/g)].map((match) => match[1]));
+  const componentLines = core.split("\n").filter((line) => line.trim().startsWith("component("));
+  const usedControlGroups = new Set();
+  for (const line of componentLines) {
+    const arrays = [...line.matchAll(/\[([^\]]*)\]/g)];
+    const controlGroupArray = arrays.length >= 2 ? arrays[arrays.length - 2]?.[1] || "" : "";
+    for (const match of controlGroupArray.matchAll(/"([^"]+)"/g)) usedControlGroups.add(match[1]);
+  }
+  for (const control of usedControlGroups) {
+    if (!controlUnion.has(control)) fail(`Component registry ControlGroup union dışında değer kullanıyor: ${control}`);
+  }
 }
 
 const analyzeStart = core.indexOf("export function analyzeThemeDocumentReferences");
