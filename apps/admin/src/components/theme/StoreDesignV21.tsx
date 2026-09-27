@@ -164,6 +164,7 @@ function pageCompatibility(page: PageItem): PageCompatibility {
   if (page.path.startsWith("/collections/") || page.path === "/collections/[slug]") return "collection";
   if (page.path.startsWith("/search")) return "search";
   if (page.path.startsWith("/account")) return "account";
+  if (page.path.startsWith("/cart")) return "cart";
   if (page.path.startsWith("/checkout")) return "checkout";
   if (/\/(privacy|kvkk|terms|commercial-communication-consent)/.test(page.path)) return "legal";
   return page.template ? "utility" : "content";
