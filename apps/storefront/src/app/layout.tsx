@@ -97,10 +97,11 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/rosta-bean-favicon-v6.svg", sizes: "any", type: "image/svg+xml" },
-      { url: "/favicon.png?v=6", sizes: "192x192", type: "image/png" },
+      { url: "/rosta-mark-v9-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/rosta-mark-v9-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/favicon.ico?v=9", sizes: "any" },
     ],
-    shortcut: ["/rosta-bean-favicon-v6.svg"],
+    shortcut: ["/rosta-mark-v9-32.png"],
     apple: [{ url: "/apple-touch-icon.png?v=4", sizes: "180x180", type: "image/png" }],
   },
   manifest: "/manifest.webmanifest",
