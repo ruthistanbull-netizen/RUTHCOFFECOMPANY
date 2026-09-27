@@ -173,9 +173,21 @@ function snapshot(target: SemanticTarget) {
   };
 }
 
+const CONSENT_APPEARANCE_PATCHES = new Set([
+  "title",
+  "intro",
+  "acceptLabel",
+  "rejectLabel",
+  "privacyLabel",
+  "position",
+  "widthPreset",
+  "radiusPreset",
+]);
+
 function allowedPatch(definition: ComponentDefinition, path: string) {
   const root = path.split(".")[0] || "";
   if (definition.protectedFields.includes(path) || definition.protectedFields.includes(root)) return false;
+  if (definition.semanticType === "consent-banner" && CONSENT_APPEARANCE_PATCHES.has(path)) return true;
 
   if (root === "visible") return definition.controlGroups.includes("layout");
   if (root === "textAlign" || root === "color") return definition.controlGroups.includes("typography");
@@ -217,6 +229,36 @@ function validatePatch(target: SemanticTarget, message: ThemePatchMessage) {
       return ["cover", "contain"].includes(String(message.value))
         ? { ok: true }
         : { ok: false, error: "Geçersiz medya fit değeri." };
+    case "title":
+    case "acceptLabel":
+    case "rejectLabel":
+    case "privacyLabel": {
+      if (target.definition.semanticType !== "consent-banner") return { ok: false, error: "Bu metin alanı yalnız consent banner için kullanılabilir." };
+      const value = String(message.value || "").trim();
+      const max = message.path === "title" ? 80 : message.path === "privacyLabel" ? 80 : 40;
+      return value.length > 0 && value.length <= max && !/[{}]/.test(value)
+        ? { ok: true }
+        : { ok: false, error: "Consent metni izin verilen uzunlukta olmalı." };
+    }
+    case "intro": {
+      if (target.definition.semanticType !== "consent-banner") return { ok: false, error: "Bu açıklama alanı yalnız consent banner için kullanılabilir." };
+      const value = String(message.value || "").trim();
+      return value.length > 0 && value.length <= 360 && !/[{}]/.test(value)
+        ? { ok: true }
+        : { ok: false, error: "Consent açıklaması 1-360 karakter olmalı." };
+    }
+    case "position":
+      return target.definition.semanticType === "consent-banner" && ["bottom-center", "bottom-left", "bottom-right"].includes(String(message.value))
+        ? { ok: true }
+        : { ok: false, error: "Geçersiz consent konum preset'i." };
+    case "widthPreset":
+      return target.definition.semanticType === "consent-banner" && ["compact", "standard", "wide"].includes(String(message.value))
+        ? { ok: true }
+        : { ok: false, error: "Geçersiz consent genişlik preset'i." };
+    case "radiusPreset":
+      return target.definition.semanticType === "consent-banner" && ["soft", "rounded", "pill"].includes(String(message.value))
+        ? { ok: true }
+        : { ok: false, error: "Geçersiz consent radius preset'i." };
     case "backgroundColor":
     case "color": {
       const value = String(message.value || "").trim();
