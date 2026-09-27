@@ -89,101 +89,108 @@ export function storeDesignSectionsForPage(document: ThemeDocument, page: PageRe
   const template = document.templates[page.templateId];
   if (!template) return [];
 
-  return template.sectionIds
-    .map((id) => document.sections[id])
-    .filter(Boolean)
-    .map((section) => {
-      const { semantic: _semantic, ...settings } = section.settings || {};
-      const v2BlockSection = BLOCK_RENDER_SECTION_TYPES.has(section.type);
-      const hydrateV2Blocks = v2BlockSection || section.type === "scroll-story";
-      const semanticV2Section = hydrateV2Blocks || ["hero", "product-spotlight", "featured-collection", "category-cards", "product-comparison", "best-sellers", "recommendations", "recently-viewed", "bundle", "cross-sell", "breadcrumb", "collection-cards", "brand-story"].includes(section.type);
-      const normalized = normalizeThemeSection({
-        id: section.id,
-        type: LEGACY_RENDER_ALIASES[section.type] || (v2BlockSection ? "rich-text" : section.type),
-        enabled: section.enabled,
-        ...settings,
-      });
-      if (!normalized) return null;
+  const renderedSections: ThemeSection[] = [];
 
-      const imageAssetId = typeof settings.imageAssetId === "string" ? settings.imageAssetId : "";
-      const desktopAsset = imageAssetId ? document.media[imageAssetId] : undefined;
-      const mobileAsset = desktopAsset?.mobileAssetId ? document.media[desktopAsset.mobileAssetId] : undefined;
+  for (const id of template.sectionIds) {
+    const section = document.sections[id];
+    if (!section) continue;
 
-      const faqItems = section.type === "faq"
-        ? (section.blockIds || [])
-            .map((blockId) => document.blocks[blockId])
-            .filter((block): block is BlockInstance => Boolean(block && block.type === "faq-item"))
-            .map((block) => ({
-              id: block.id,
-              question: typeof block.settings.question === "string" ? block.settings.question : "",
-              answer: typeof block.settings.answer === "string" ? block.settings.answer : "",
-            }))
-            .filter((item) => item.question || item.answer)
-        : undefined;
+    const { semantic: _semantic, ...settings } = section.settings || {};
+    const v2BlockSection = BLOCK_RENDER_SECTION_TYPES.has(section.type);
+    const hydrateV2Blocks = v2BlockSection || section.type === "scroll-story";
+    const semanticV2Section =
+      hydrateV2Blocks
+      || ["hero", "product-spotlight", "featured-collection", "category-cards", "product-comparison", "best-sellers", "recommendations", "recently-viewed", "bundle", "cross-sell", "breadcrumb", "collection-cards", "brand-story"].includes(section.type);
 
-      const v2Assets = semanticV2Section
-        ? Object.fromEntries(
-            Object.entries(settings)
-              .filter(([key, value]) => /AssetId$/.test(key) && typeof value === "string" && Boolean(value))
-              .map(([key, value]) => {
-                const asset = document.media[String(value)];
-                const poster = asset?.posterAssetId ? document.media[asset.posterAssetId] : undefined;
-                return asset
-                  ? [key, { url: versionedMediaUrl(asset)!, type: asset.type, posterUrl: versionedMediaUrl(poster) }]
-                  : [key, undefined];
-              })
-              .filter((entry): entry is [string, { url: string; type: "image" | "video"; posterUrl?: string }] => Boolean(entry[1])),
-          )
-        : undefined;
+    const normalized = normalizeThemeSection({
+      id: section.id,
+      type: LEGACY_RENDER_ALIASES[section.type] || (v2BlockSection ? "rich-text" : section.type),
+      enabled: section.enabled,
+      ...settings,
+    });
+    if (!normalized) continue;
 
-      const v2Blocks = hydrateV2Blocks
-        ? (section.blockIds || [])
-            .map((blockId) => document.blocks[blockId])
-            .filter((block): block is BlockInstance => Boolean(block))
-            .map((block) => {
-              const mediaRef = typeof block.settings.assetId === "string"
-                ? block.settings.assetId
-                : typeof block.settings.media === "string"
-                  ? block.settings.media
-                  : "";
-              const asset = mediaRef ? document.media[mediaRef] : undefined;
-              const mobileAsset = asset?.mobileAssetId ? document.media[asset.mobileAssetId] : undefined;
+    const imageAssetId = typeof settings.imageAssetId === "string" ? settings.imageAssetId : "";
+    const desktopAsset = imageAssetId ? document.media[imageAssetId] : undefined;
+    const mobileAsset = desktopAsset?.mobileAssetId ? document.media[desktopAsset.mobileAssetId] : undefined;
+
+    const faqItems = section.type === "faq"
+      ? (section.blockIds || [])
+          .map((blockId) => document.blocks[blockId])
+          .filter((block): block is BlockInstance => Boolean(block && block.type === "faq-item"))
+          .map((block) => ({
+            id: block.id,
+            question: typeof block.settings.question === "string" ? block.settings.question : "",
+            answer: typeof block.settings.answer === "string" ? block.settings.answer : "",
+          }))
+          .filter((item) => item.question || item.answer)
+      : undefined;
+
+    const v2Assets = semanticV2Section
+      ? Object.fromEntries(
+          Object.entries(settings)
+            .filter(([key, value]) => /AssetId$/.test(key) && typeof value === "string" && Boolean(value))
+            .map(([key, value]) => {
+              const asset = document.media[String(value)];
               const poster = asset?.posterAssetId ? document.media[asset.posterAssetId] : undefined;
-              return {
-                id: block.id,
-                type: block.type,
-                settings: block.settings,
-                assetUrl: versionedMediaUrl(asset),
-                assetType: asset?.type,
-                mobileAssetUrl: versionedMediaUrl(mobileAsset),
-                mobileAssetType: mobileAsset?.type,
-                objectPosition: focalPosition(asset),
-                mobileObjectPosition: focalPosition(mobileAsset) || focalPosition(asset),
-                posterUrl: versionedMediaUrl(poster),
-              };
+              return asset
+                ? [key, { url: versionedMediaUrl(asset)!, type: asset.type, posterUrl: versionedMediaUrl(poster) }]
+                : [key, undefined];
             })
-        : undefined;
+            .filter((entry): entry is [string, { url: string; type: "image" | "video"; posterUrl?: string }] => Boolean(entry[1])),
+        )
+      : undefined;
 
-      return {
-        ...normalized,
-        imageSrc: versionedMediaUrl(desktopAsset) || normalized.imageSrc,
-        imageAssetId: desktopAsset?.assetId,
-        mobileImageSrc: versionedMediaUrl(mobileAsset),
-        mobileImageAssetId: mobileAsset?.assetId,
-        imageObjectPosition: focalPosition(desktopAsset),
-        mobileImageObjectPosition: focalPosition(mobileAsset) || focalPosition(desktopAsset),
-        faqItems,
-        v2Type: v2BlockSection ? section.type : undefined,
-        v2Settings: semanticV2Section ? settings : undefined,
-        v2MediaType: semanticV2Section ? desktopAsset?.type : undefined,
-        v2PosterUrl: semanticV2Section && desktopAsset?.posterAssetId ? versionedMediaUrl(document.media[desktopAsset.posterAssetId]) : undefined,
-        v2Assets,
-        v2Blocks,
-      };
-    })
-    .filter((section): section is ThemeSection => section !== null);
+    const v2Blocks = hydrateV2Blocks
+      ? (section.blockIds || [])
+          .map((blockId) => document.blocks[blockId])
+          .filter((block): block is BlockInstance => Boolean(block))
+          .map((block) => {
+            const mediaRef = typeof block.settings.assetId === "string"
+              ? block.settings.assetId
+              : typeof block.settings.media === "string"
+                ? block.settings.media
+                : "";
+            const asset = mediaRef ? document.media[mediaRef] : undefined;
+            const blockMobileAsset = asset?.mobileAssetId ? document.media[asset.mobileAssetId] : undefined;
+            const poster = asset?.posterAssetId ? document.media[asset.posterAssetId] : undefined;
+            return {
+              id: block.id,
+              type: block.type,
+              settings: block.settings,
+              assetUrl: versionedMediaUrl(asset),
+              assetType: asset?.type,
+              mobileAssetUrl: versionedMediaUrl(blockMobileAsset),
+              mobileAssetType: blockMobileAsset?.type,
+              objectPosition: focalPosition(asset),
+              mobileObjectPosition: focalPosition(blockMobileAsset) || focalPosition(asset),
+              posterUrl: versionedMediaUrl(poster),
+            };
+          })
+      : undefined;
+
+    renderedSections.push({
+      ...normalized,
+      imageSrc: versionedMediaUrl(desktopAsset) || normalized.imageSrc,
+      imageAssetId: desktopAsset?.assetId,
+      mobileImageSrc: versionedMediaUrl(mobileAsset),
+      mobileImageAssetId: mobileAsset?.assetId,
+      imageObjectPosition: focalPosition(desktopAsset),
+      mobileImageObjectPosition: focalPosition(mobileAsset) || focalPosition(desktopAsset),
+      faqItems,
+      v2Type: v2BlockSection ? section.type : undefined,
+      v2Settings: semanticV2Section ? settings : undefined,
+      v2MediaType: semanticV2Section ? desktopAsset?.type : undefined,
+      v2PosterUrl: semanticV2Section && desktopAsset?.posterAssetId
+        ? versionedMediaUrl(document.media[desktopAsset.posterAssetId])
+        : undefined,
+      v2Assets,
+      v2Blocks,
+    });
+  }
+
+  return renderedSections;
 }
-
 
 export function storeDesignSectionsForTemplatePath(document: ThemeDocument, templatePath: string): ThemeSection[] {
   const templateId = document.templateBindings[templatePath] || templatePath;
