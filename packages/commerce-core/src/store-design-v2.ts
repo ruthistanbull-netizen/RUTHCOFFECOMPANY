@@ -145,6 +145,7 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
   component("trust-badges", "Trust Badges", "İçerik", "section", sectionScopes, ["content", "layout", "responsive"], ["unverifiedPromises"]),
   component("trust-item", "Trust Öğesi", "İçerik", "family", familyScopes, ["content", "card", "typography"], ["unverifiedPromises"]),
   component("testimonials", "Testimonials", "İçerik", "section", sectionScopes, ["content", "layout", "responsive"], []),
+  component("review-highlights", "Review Highlights", "İçerik", "section", sectionScopes, ["data", "content", "layout", "responsive"], ["reviewContent", "reviewModeration"]),
   component("testimonial", "Testimonial", "İçerik", "family", familyScopes, ["content", "card", "typography"], []),
   component("gallery-grid", "Gallery Grid", "İçerik", "section", sectionScopes, ["media", "layout", "responsive"], ["freeCanvas"]),
   component("masonry-gallery", "Masonry Gallery", "İçerik", "section", sectionScopes, ["media", "layout", "responsive"], ["freeCanvas"]),
@@ -313,7 +314,7 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
   section("feature-grid", "Icon List / Feature Grid", "content", allContentPages, ["columns"], ["feature"], true, 12),
   section("trust-badges", "Trust Badges", "content", allCommercePages, ["layout", "density"], ["trust-item"], true, 12),
   section("testimonials", "Testimonials", "content", allContentPages, ["layout"], ["testimonial"], true, 20),
-  section("review-highlights", "Review Highlights", "content", allCommercePages, ["source", "limit", "ratingDisplay"]),
+  section("review-highlights", "Review Highlights", "content", allCommercePages, ["productId", "title", "body", "limit", "ratingDisplay", "paddingY"], [], true),
   section("faq", "FAQ / Accordion", "content", allContentPages, ["initialOpen", "dividers"], ["faq-item"], true, 30),
   section("tabs", "Tabs", "content", allContentPages, ["style", "firstActive"], ["tab"], true, 12),
   section("press-awards", "Press / Awards", "content", allContentPages, ["layout"], ["award"], true, 30),
@@ -1333,6 +1334,14 @@ export function validateThemeDocument(document: ThemeDocument) {
       if (!Number.isFinite(gap) || gap < 0 || gap > 64) errors.push(`${section.id}: Kategori kartı gap 0-64 aralığında olmalı.`);
       if (!["16/10", "4/5", "1/1"].includes(ratio)) errors.push(`${section.id}: Kategori kartı ratio preset geçersiz.`);
       if (!["overlay", "below"].includes(placement)) errors.push(`${section.id}: Kategori kartı titlePlacement geçersiz.`);
+    }
+
+    if (section.type === "review-highlights") {
+      const productId = typeof section.settings.productId === "string" ? section.settings.productId.trim() : "";
+      if (!productId) errors.push(`${section.id}: Review Highlights için ürün kaynağı seçilmeli.`);
+      const limit = Number(section.settings.limit ?? 6);
+      if (!Number.isFinite(limit) || limit < 1 || limit > 12) errors.push(`${section.id}: Review Highlights limiti 1-12 aralığında olmalı.`);
+      if (section.settings.ratingDisplay !== undefined && typeof section.settings.ratingDisplay !== "boolean") errors.push(`${section.id}: Review Highlights ratingDisplay boolean olmalı.`);
     }
 
     if (section.type === "contact-form") {
