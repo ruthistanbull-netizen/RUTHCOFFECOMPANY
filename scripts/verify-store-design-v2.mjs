@@ -714,6 +714,86 @@ for (const token of [
 if (!blockRenderer.includes('type === "contact-form"')) fail("Contact Form StoreDesignBlockSection runtime'a bağlı değil.");
 if (!v2Sections.includes('"contact-form"')) fail("Contact Form V2 adapter allowlist'e bağlı değil.");
 
+const newsletterRuntime = read("apps/storefront/src/components/theme/StoreDesignNewsletter.tsx");
+for (const token of [
+  'fetch("/api/newsletter/subscribe"',
+  'data-editor-type="newsletter"',
+  "consent",
+  "Önizleme modunda gerçek abonelik gönderilmez.",
+]) {
+  if (!newsletterRuntime.includes(token)) fail(`Newsletter protected runtime eksik: ${token}`);
+}
+const newsletterRoute = read("apps/storefront/src/app/api/newsletter/subscribe/route.ts");
+for (const token of [
+  "getStoreDesignV2Published",
+  'section.type !== "newsletter"',
+  "storefront_public_submission_attempts",
+  "newsletter_subscribers",
+  "consent_copy",
+  'onConflict: "email"',
+]) {
+  if (!newsletterRoute.includes(token)) fail(`Newsletter protected endpoint eksik: ${token}`);
+}
+if (!blockRenderer.includes('type === "newsletter"')) fail("Newsletter StoreDesignBlockSection runtime'a bağlı değil.");
+if (!v2Sections.includes('"newsletter"')) fail("Newsletter V2 adapter allowlist'e bağlı değil.");
+
+const customFormRuntime = read("apps/storefront/src/components/theme/StoreDesignCustomForm.tsx");
+for (const token of [
+  'fetch("/api/store-design/forms"',
+  'data-editor-type="custom-form"',
+  'data-editor-type="form-field"',
+  'action: "store"',
+  "Önizleme modunda gerçek form gönderimi yapılmaz.",
+]) {
+  if (!customFormRuntime.includes(token)) fail(`Custom Form protected runtime eksik: ${token}`);
+}
+const customFormRoute = read("apps/storefront/src/app/api/store-design/forms/route.ts");
+for (const token of [
+  "getStoreDesignV2Published",
+  'section.type !== "custom-form"',
+  'const ACTIONS = new Set(["store"])',
+  "storefront_public_submission_attempts",
+  "storefront_form_submissions",
+  "schema_snapshot",
+  "FIELD_TYPES",
+]) {
+  if (!customFormRoute.includes(token)) fail(`Custom Form protected endpoint eksik: ${token}`);
+}
+if (!blockRenderer.includes('type === "custom-form"')) fail("Custom Form StoreDesignBlockSection runtime'a bağlı değil.");
+if (!v2Sections.includes('"custom-form"')) fail("Custom Form V2 adapter allowlist'e bağlı değil.");
+
+const publicFormsMigration = read("supabase/migrations/20260928003000_store_design_newsletter_custom_forms.sql");
+for (const token of [
+  "newsletter_subscribers",
+  "storefront_form_submissions",
+  "storefront_public_submission_attempts",
+  "enable row level security",
+  "revoke all",
+  "service_role",
+]) {
+  if (!publicFormsMigration.includes(token)) fail(`Public form storage migration eksik: ${token}`);
+}
+
+for (const token of [
+  'component("newsletter"',
+  'section("newsletter"',
+  'component("custom-form"',
+  'section("custom-form"',
+  'block("field", "Form Alanı", ["custom-form"]',
+]) {
+  if (!core.includes(token)) fail(`Newsletter/Custom Form registry sözleşmesi eksik: ${token}`);
+}
+
+for (const token of [
+  "Subscription action korumalıdır",
+  "Action whitelist",
+  "Raw HTML/JS yoktur",
+  'block.type === "field" && key === "type"',
+  'block.type === "field" && key === "required"',
+]) {
+  if (!genericEditor.includes(token)) fail(`Newsletter/Custom Form editor koruması eksik: ${token}`);
+}
+
 const reviewHighlightsRuntime = read("apps/storefront/src/components/theme/StoreDesignReviewHighlights.tsx");
 for (const token of [
   "/api/reviews/summary?productId=",
