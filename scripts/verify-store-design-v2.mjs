@@ -492,13 +492,18 @@ if (!v2Sections.includes("storeDesignSectionsForTemplatePath")) fail("Dynamic te
 const recentlyViewedRuntime = read("apps/storefront/src/components/product/ProductRecentlyViewed.tsx");
 for (const token of [
   'const CONSENT_KEY = "ruth_analytics_consent_v1"',
-  'const HISTORY_KEY = "storefront_recently_viewed_v1"',
+  'const HISTORY_KEY = "storefront_recently_viewed_v2"',
   'window.addEventListener("ruth:analytics-consent"',
   "clearHistory()",
   'consent !== "accepted"',
-  "productPrimaryDetailImageSrc",
+  "fetchProduct",
+  "/browser-window",
+  "product.status === \"active\"",
 ]) {
   if (!recentlyViewedRuntime.includes(token)) fail(`Recently Viewed privacy runtime eksik: ${token}`);
+}
+for (const forbiddenToken of ["name: current.name", "image: productPrimaryDetailImageSrc(current)"]) {
+  if (recentlyViewedRuntime.includes(forbiddenToken)) fail(`Recently Viewed history yalnız slug/timestamp tutmalı: ${forbiddenToken}`);
 }
 if (!productDetailRuntime.includes("recentlyViewedConfig")) fail("Recently Viewed product detail config bağlantısı eksik.");
 for (const token of ['section.type === "recently-viewed"', "recentlyViewedConfig"]) {
