@@ -314,6 +314,7 @@ for (const token of [
   "best-sellers",
   "contact-form",
   "review-highlights",
+  "grid-stack-builder",
   "scroll-story",
   "Media Library",
   "Oynatma politikası",
@@ -340,6 +341,8 @@ for (const token of [
   "Yorum kaynağı · ürün",
   "Yalnız onaylı yorumlar storefront review servisinden read-only gelir.",
   "Puanı göster",
+  "Mobilde tek kolona stack",
+  "Güvenli composition kullanılır",
   "Scroll uzunluğu",
   "Geçiş preset",
   "KAYDIR cue göster",
@@ -364,6 +367,8 @@ for (const token of [
   'section("contact-form"',
   'component("review-highlights"',
   'section("review-highlights"',
+  'component("grid-stack-builder"',
+  'section("grid-stack-builder"',
   'section("collection-cards"',
   'section("brand-story"',
   'component("scroll-story-slide"',
@@ -457,6 +462,17 @@ for (const token of [
 }
 if (!blockRenderer.includes('type === "review-highlights"')) fail("Review Highlights StoreDesignBlockSection runtime'a bağlı değil.");
 if (!v2Sections.includes('"review-highlights"')) fail("Review Highlights V2 adapter allowlist'e bağlı değil.");
+
+for (const token of [
+  'type === "grid-stack-builder"',
+  "v2-safe-grid",
+  "--v2-grid-mobile-columns",
+  "responsiveStack",
+]) {
+  if (!blockRenderer.includes(token)) fail(`Grid Stack storefront runtime eksik: ${token}`);
+}
+if (!v2Sections.includes('"grid-stack-builder"')) fail("Grid Stack V2 adapter allowlist'e bağlı değil.");
+if (!core.includes('block("content", "İçerik", ["background-media", "grid-stack-builder"]')) fail("Grid Stack content block contract eksik.");
 
 const catalogCache = read("apps/storefront/src/data/catalogCache.ts");
 for (const token of [
