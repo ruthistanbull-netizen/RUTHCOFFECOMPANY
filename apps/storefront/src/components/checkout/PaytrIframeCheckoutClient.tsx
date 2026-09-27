@@ -7,6 +7,7 @@ import { LoadingIndicator, Skeleton } from "@ruth-commerce/ui";
 import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { PaytrIframePayment } from "@/components/checkout/PaytrIframePayment";
 import { useCart } from "@/components/cart/CartProvider";
+import { StoreDesignCrossSell, type StoreDesignCrossSellConfig } from "@/components/cart/StoreDesignCrossSell";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { getRuthAttribution, trackRuthEvent } from "@/components/analytics/SiteAnalytics";
 import { formatPrice } from "@/lib/formatPrice";
@@ -107,8 +108,9 @@ function Field({ label, required, children, editorId }: { label: string; require
   );
 }
 
-export function PaytrIframeCheckoutClient() {
+export function PaytrIframeCheckoutClient({ crossSellConfig = null }: { crossSellConfig?: StoreDesignCrossSellConfig | null }) {
   const { items, subtotal, isReady, replaceCartItems } = useCart();
+  const cartSlugs = useMemo(() => items.map((item) => item.slug), [items]);
   const { user, session } = useAuth();
   const rewardSettings = useRostaPointsSettings();
   const searchParams = useSearchParams();
@@ -727,6 +729,10 @@ export function PaytrIframeCheckoutClient() {
           <Link href="/products" className="mt-7 inline-block bg-brick px-8 py-4 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)]">
             Ürünleri Keşfet
           </Link>
+          <div className="mt-8 w-full max-w-xl text-left">
+            <StoreDesignCrossSell context="checkout" slot="after-items" cartSlugs={[]} initialConfig={crossSellConfig} />
+            <StoreDesignCrossSell context="checkout" slot="before-totals" cartSlugs={[]} initialConfig={crossSellConfig} />
+          </div>
         </div>
       </div>
     );
@@ -958,6 +964,8 @@ export function PaytrIframeCheckoutClient() {
                   </div>
                 </div>
 
+                <StoreDesignCrossSell context="checkout" slot="after-items" cartSlugs={cartSlugs} initialConfig={crossSellConfig} />
+
                 {rewardsAndCoupons}
 
                 <button
@@ -975,6 +983,7 @@ export function PaytrIframeCheckoutClient() {
                 data-editor-label="Ödeme Özeti"
                 className="w-full min-w-0 max-w-full xl:sticky xl:top-28 xl:self-start"
               >
+                <StoreDesignCrossSell context="checkout" slot="before-totals" cartSlugs={cartSlugs} initialConfig={crossSellConfig} />
                 <div className="rounded-xl border border-kraft/35 bg-carbon-soft p-4 md:p-6">
                   <h2 className="font-heading text-lg">Ödeme Özeti</h2>
                   <div className="mt-5 space-y-3 text-sm">
