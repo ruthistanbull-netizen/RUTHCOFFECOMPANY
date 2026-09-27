@@ -44,19 +44,25 @@ function accepted(mediaType: Props["mediaType"]) {
   return "image/*,video/*,.jpg,.jpeg,.png,.webp,.avif,.heic,.heif,.mp4,.m4v,.mov,.webm";
 }
 
-async function readClientMetadata(file: File, type: "image" | "video") {
-  if (typeof URL === "undefined") return {} as { width?: number; height?: number; duration?: number };
+type ClientMediaMetadata = {
+  width?: number;
+  height?: number;
+  duration?: number;
+};
+
+async function readClientMetadata(file: File, type: "image" | "video"): Promise<ClientMediaMetadata> {
+  if (typeof URL === "undefined") return {};
   const url = URL.createObjectURL(file);
   try {
     if (type === "image") {
-      return await new Promise<{ width?: number; height?: number }>((resolve) => {
+      return await new Promise<ClientMediaMetadata>((resolve) => {
         const image = new Image();
         image.onload = () => resolve({ width: image.naturalWidth || undefined, height: image.naturalHeight || undefined });
         image.onerror = () => resolve({});
         image.src = url;
       });
     }
-    return await new Promise<{ width?: number; height?: number; duration?: number }>((resolve) => {
+    return await new Promise<ClientMediaMetadata>((resolve) => {
       const video = document.createElement("video");
       video.preload = "metadata";
       video.onloadedmetadata = () => resolve({
