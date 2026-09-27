@@ -312,6 +312,7 @@ for (const token of [
   "category-cards",
   "product-comparison",
   "best-sellers",
+  "contact-form",
   "scroll-story",
   "Media Library",
   "Oynatma politikası",
@@ -332,6 +333,9 @@ for (const token of [
   "Tablo · mobilde yatay kaydırma",
   "Otomatik · ödenmiş sipariş miktarları",
   "Tarih penceresi",
+  "Telefon alanını göster",
+  "Başarı mesajı",
+  "endpoint doğrulaması nedeniyle zorunludur",
   "Scroll uzunluğu",
   "Geçiş preset",
   "KAYDIR cue göster",
@@ -352,6 +356,8 @@ for (const token of [
   'section("category-cards"',
   'section("product-comparison"',
   'section("best-sellers"',
+  'component("contact-form"',
+  'section("contact-form"',
   'section("collection-cards"',
   'section("brand-story"',
   'component("scroll-story-slide"',
@@ -418,6 +424,21 @@ for (const token of [
 
 const productCard = read("apps/storefront/src/components/ProductCard.tsx");
 if (!productCard.includes("--theme-sale-badge-bg")) fail("Sale badge style preset ProductCard'a bağlı değil.");
+
+const contactFormRuntime = read("apps/storefront/src/components/theme/StoreDesignContactForm.tsx");
+for (const token of [
+  'fetch("/api/contact"',
+  'name="company"',
+  'minLength={2}',
+  'type="email"',
+  'minLength={10}',
+  'maxLength={4000}',
+  "successCopy",
+]) {
+  if (!contactFormRuntime.includes(token)) fail(`Protected Contact Form runtime eksik: ${token}`);
+}
+if (!blockRenderer.includes('type === "contact-form"')) fail("Contact Form StoreDesignBlockSection runtime'a bağlı değil.");
+if (!v2Sections.includes('"contact-form"')) fail("Contact Form V2 adapter allowlist'e bağlı değil.");
 
 const catalogCache = read("apps/storefront/src/data/catalogCache.ts");
 for (const token of [
