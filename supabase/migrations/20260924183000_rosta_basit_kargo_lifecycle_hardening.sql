@@ -606,7 +606,8 @@ begin
           'eventId', row.event_id,
           'rawStatus', row.status,
           'statusLabel', row.status_label
-        );
+        )
+      );
     exception when others then
       raise notice 'Basit Kargo history repair skipped for order %: %', row.order_id, sqlerrm;
     end;
