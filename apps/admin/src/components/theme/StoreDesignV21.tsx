@@ -505,9 +505,9 @@ export function StoreDesignV21() {
   const consentDeviceSettings = device === "mobile" ? consentMobileSettings : consentDesktopSettings;
   const consentSetting = (key: string, fallback: string) => {
     const direct = consentDeviceSettings[key];
+    if (typeof direct === "string" && direct.trim()) return direct;
     const inherited = consentDesktopSettings[key];
-    const value = direct !== undefined ? direct : inherited;
-    return typeof value === "string" && value.trim() ? value : fallback;
+    return typeof inherited === "string" && inherited.trim() ? inherited : fallback;
   };
 
   const postToPreview = useCallback((payload: Record<string, unknown>) => {
