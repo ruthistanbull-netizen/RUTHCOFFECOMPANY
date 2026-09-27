@@ -462,8 +462,11 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
   const [draggedId, setDraggedId] = useState<string | null>(null);
   const [editingSectionId, setEditingSectionId] = useState<string | null>(null);
 
-  const page = activePage ? pageRecord(document, activePage.path) : null;
-  const template = page ? document.templates[page.templateId] : null;
+  const page = activePage && !activePage.template ? pageRecord(document, activePage.path) : null;
+  const templateId = activePage?.template
+    ? (document.templateBindings[activePage.path] || activePage.path)
+    : page?.templateId;
+  const template = templateId ? document.templates[templateId] : null;
   const sectionIds = template?.sectionIds || [];
   const sections = sectionIds.map((id) => document.sections[id]).filter((section): section is SectionInstance => Boolean(section));
 
