@@ -10,6 +10,7 @@ import {
 } from "@ruth-commerce/commerce-core/store-design-v2";
 
 export const SEMANTIC_RUNTIME_PATCH_EVENT = "store-design-v2:runtime-patch";
+export const STORE_DESIGN_CONSENT_SETTINGS_EVENT = "store-design-v2:consent-settings";
 
 export type SemanticRuntimePatch = {
   key: string;
@@ -275,6 +276,17 @@ export function SemanticThemeRuntimeProvider({
   }, []);
 
   const effectiveDocument = previewDocument || initialDocument;
+
+  useEffect(() => {
+    if (!effectiveDocument) return;
+    const responsive = objectRecord(effectiveDocument.globals.tokens["consent-banner"]);
+    window.dispatchEvent(new CustomEvent(STORE_DESIGN_CONSENT_SETTINGS_EVENT, {
+      detail: {
+        desktop: objectRecord(responsive.desktop),
+        mobile: objectRecord(responsive.mobile),
+      },
+    }));
+  }, [effectiveDocument]);
 
   const initialPatches = useMemo(
     () => effectiveDocument ? patchesFromDocument(effectiveDocument, pathname) : {},
