@@ -455,7 +455,11 @@ function SectionPicker({
                       {available ? "Hazır" : "Geliştirici"}
                     </span>
                   </div>
-                  <p className="mt-2 line-clamp-2 text-[8px] leading-4 text-black/38">{definition.settings.slice(0, 5).join(" · ") || "Schema kontrollü bölüm"}</p>
+                  <p className="mt-2 line-clamp-3 text-[8px] leading-4 text-black/38">
+                    {available
+                      ? (definition.settings.slice(0, 5).join(" · ") || "Schema kontrollü bölüm")
+                      : (definition.pendingReason || "Bu bölüm için güvenli runtime bağlantısı henüz tamamlanmadı.")}
+                  </p>
                 </button>
               );
             })}
