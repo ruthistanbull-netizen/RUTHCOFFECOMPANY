@@ -336,7 +336,7 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
   section("spacer", "Spacer", "marketing", allContentPages, ["desktopHeight", "mobileHeight"], [], true),
   section("divider", "Divider", "marketing", allContentPages, ["width", "thickness", "colorToken", "paddingY"], [], true),
   section("anchor", "Anchor / Jump Link", "marketing", allContentPages, ["anchorId", "labelVisibility"], [], true),
-  section("breadcrumb", "Breadcrumb", "marketing", ["content", "product", "category", "collection"], ["visible", "separator", "typography"]),
+  section("breadcrumb", "Breadcrumb", "marketing", ["content", "product", "category", "collection"], ["visible", "separator", "typography", "paddingY"], [], true),
   section("integration-block", "App / Integration Block", "marketing", allContentPages, ["integrationId", "settings"]),
   section("developer-embed", "Developer Embed", "marketing", ["content", "landing"], ["whitelistedEmbed"]),
   section("grid-stack-builder", "Boş Grid / Stack Builder", "marketing", allContentPages, ["columns", "gap", "alignment", "responsiveStack"], ["content"], true, 24),
@@ -1374,6 +1374,16 @@ export function validateThemeDocument(document: ThemeDocument) {
         const value = section.settings[key];
         if (value !== undefined && typeof value !== "string") errors.push(`${section.id}: Contact Form ${key} metin olmalı.`);
       }
+    }
+
+    if (section.type === "breadcrumb") {
+      if (section.settings.visible !== undefined && typeof section.settings.visible !== "boolean") errors.push(`${section.id}: Breadcrumb visible boolean olmalı.`);
+      const separator = String(section.settings.separator || "chevron");
+      if (!["chevron", "slash", "dot"].includes(separator)) errors.push(`${section.id}: Breadcrumb separator preset geçersiz.`);
+      const typography = String(section.settings.typography || "compact");
+      if (!["compact", "default"].includes(typography)) errors.push(`${section.id}: Breadcrumb typography preset geçersiz.`);
+      const paddingY = Number(section.settings.paddingY ?? 12);
+      if (!Number.isFinite(paddingY) || paddingY < 0 || paddingY > 64) errors.push(`${section.id}: Breadcrumb paddingY 0-64 aralığında olmalı.`);
     }
 
     if (section.type === "recommendations") {
