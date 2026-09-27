@@ -107,11 +107,8 @@ export const metadata: Metadata = {
     images: [DEFAULT_OG_IMAGE],
   },
   icons: {
-    icon: [
-      { url: "/rosta-bean-favicon-v6.svg", sizes: "any", type: "image/svg+xml" },
-      { url: "/favicon.png?v=6", sizes: "192x192", type: "image/png" },
-    ],
-    shortcut: ["/rosta-bean-favicon-v6.svg"],
+    icon: [{ url: "/rosta-bean-tilt-v11.svg", sizes: "any", type: "image/svg+xml" }],
+    shortcut: ["/rosta-bean-tilt-v11.svg"],
     apple: [{ url: "/apple-touch-icon.png?v=4", sizes: "180x180", type: "image/png" }],
   },
   manifest: "/manifest.webmanifest",

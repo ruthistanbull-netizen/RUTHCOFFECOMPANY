@@ -9,8 +9,6 @@ import {
   CornerDownLeft,
   Menu,
   Moon,
-  PanelLeft,
-  PanelLeftClose,
   Search,
   Sun,
   X,
@@ -57,15 +55,24 @@ function Brand({ collapsed = false }: { collapsed?: boolean }) {
         className={exactCx(
           "flex shrink-0 items-center justify-center overflow-hidden",
           collapsed
-            ? "h-10 w-10 rounded-[var(--radius-small)] bg-white shadow-sm ring-1 ring-black/5"
+            ? "h-10 w-10 rounded-[var(--radius-small)] bg-transparent"
             : "h-[58px] w-full max-w-[202px] bg-transparent",
         )}
       >
-        <img
-          src="/rosta-coffee-co-cream.svg"
-          alt="ROSTA Coffee Co."
-          draggable={false}
-          className={collapsed ? "h-8 w-8 object-contain" : "block h-full w-full object-contain object-center"}
+        <span
+          aria-hidden="true"
+          className={collapsed ? "block h-8 w-8" : "block h-full w-full"}
+          style={{
+            backgroundColor: "var(--rosta-cream, #FBF3E6)",
+            WebkitMaskImage: 'url("/rosta-coffee-co-cream.svg?v=30")',
+            WebkitMaskRepeat: "no-repeat",
+            WebkitMaskPosition: "center",
+            WebkitMaskSize: "contain",
+            maskImage: 'url("/rosta-coffee-co-cream.svg?v=30")',
+            maskRepeat: "no-repeat",
+            maskPosition: "center",
+            maskSize: "contain",
+          }}
         />
       </div>
     </Link>
@@ -114,7 +121,7 @@ function Sidebar({ collapsed }: { collapsed: boolean }) {
   );
 }
 
-function TopHeader({ collapsed, onToggleSidebar, onOpenSearch, onOpenMore, dark, onToggleDark }: { collapsed: boolean; onToggleSidebar: () => void; onOpenSearch: () => void; onOpenMore: () => void; dark: boolean; onToggleDark: () => void }) {
+function TopHeader({ onOpenSearch, onOpenMore, dark, onToggleDark }: { onOpenSearch: () => void; onOpenMore: () => void; dark: boolean; onToggleDark: () => void }) {
   const pathname = usePathname();
   const currentItem = exactCurrentItem(pathname);
   const returnToHub = () => {
@@ -126,7 +133,6 @@ function TopHeader({ collapsed, onToggleSidebar, onOpenSearch, onOpenMore, dark,
   };
   return <header className="sticky top-0 z-header flex h-16 items-center gap-2 border-b border-border-subtle bg-surface-primary px-3 pt-1 md:px-4">
     <ExactIconButton icon={Menu} label="Menüyü aç" variant="ghost" size="icon-sm" className="lg:hidden" onClick={onOpenMore} />
-    <ExactIconButton icon={collapsed ? PanelLeft : PanelLeftClose} label="Kenar çubuğunu değiştir" variant="ghost" size="icon-sm" className="hidden lg:flex" onClick={onToggleSidebar} />
     <span className="ruth-type-card-title hidden truncate text-main md:block">{currentItem?.label || "Kontrol Merkezi"}</span>
     <div className="ml-auto flex min-w-0 items-center gap-1.5">
       <button
@@ -236,16 +242,15 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
 }
 
 export function ExactBase44ShellV2({ children }: { children: ReactNode }) {
-  const [collapsed, setCollapsed] = useState(false);
+  const collapsed = false;
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dark, setDark] = useState(false);
 
-  useEffect(() => { const stored = window.localStorage.getItem("ruth_exact_sidebar_collapsed") === "1"; setCollapsed(stored); const darkStored = window.localStorage.getItem("ruth_exact_dark") === "1"; setDark(darkStored); document.documentElement.classList.toggle("dark", darkStored); }, []);
+  useEffect(() => { window.localStorage.removeItem("ruth_exact_sidebar_collapsed"); const darkStored = window.localStorage.getItem("ruth_exact_dark") === "1"; setDark(darkStored); document.documentElement.classList.toggle("dark", darkStored); }, []);
   useEffect(() => { const handler = (event: KeyboardEvent) => { if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") { event.preventDefault(); setSearchOpen(true); } }; window.addEventListener("keydown", handler); return () => window.removeEventListener("keydown", handler); }, []);
 
-  const toggleSidebar = () => setCollapsed((value) => { const next = !value; window.localStorage.setItem("ruth_exact_sidebar_collapsed", next ? "1" : "0"); return next; });
   const toggleDark = () => setDark((value) => { const next = !value; window.localStorage.setItem("ruth_exact_dark", next ? "1" : "0"); document.documentElement.classList.toggle("dark", next); return next; });
 
-  return <ExactToastProvider><ExactNotificationProvider><div className="min-h-screen bg-background text-main lg:flex"><Sidebar collapsed={collapsed} /><div className="min-w-0 flex-1"><TopHeader collapsed={collapsed} onToggleSidebar={toggleSidebar} onOpenSearch={() => setSearchOpen(true)} onOpenMore={() => setMobileOpen(true)} dark={dark} onToggleDark={toggleDark} /><main className="mx-auto w-full max-w-[1600px] px-3 pb-[calc(6.5rem+env(safe-area-inset-bottom))] pt-4 md:px-5 lg:pb-8 lg:pt-5">{children}</main></div><MobileBottomNav /><MobileDrawer open={mobileOpen} onClose={() => setMobileOpen(false)} /><CommandPalette open={searchOpen} onClose={() => setSearchOpen(false)} /></div><ExactUnifiedToastLayer /></ExactNotificationProvider></ExactToastProvider>;
+  return <ExactToastProvider><ExactNotificationProvider><div className="min-h-screen bg-background text-main lg:flex"><Sidebar collapsed={collapsed} /><div className="min-w-0 flex-1"><TopHeader onOpenSearch={() => setSearchOpen(true)} onOpenMore={() => setMobileOpen(true)} dark={dark} onToggleDark={toggleDark} /><main className="mx-auto w-full max-w-[1600px] px-3 pb-[calc(6.5rem+env(safe-area-inset-bottom))] pt-4 md:px-5 lg:pb-8 lg:pt-5">{children}</main></div><MobileBottomNav /><MobileDrawer open={mobileOpen} onClose={() => setMobileOpen(false)} /><CommandPalette open={searchOpen} onClose={() => setSearchOpen(false)} /></div><ExactUnifiedToastLayer /></ExactNotificationProvider></ExactToastProvider>;
 }
