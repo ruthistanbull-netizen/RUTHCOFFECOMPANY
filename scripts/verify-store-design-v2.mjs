@@ -203,8 +203,18 @@ for (const token of [
 if (!core.includes('component("consent-banner", "Çerez / Onay", "Diğer", "global", globalScopes, ["content", "layout", "card", "responsive"], ["consentSemantics", "categories", "consentState", "privacyUrl"])')) {
   fail("Consent banner global protected registry sözleşmesi eksik.");
 }
-if (!core.includes("Global protected target üzerinden yönetilir; consent categories/state ve privacy URL korunur, section tree'ye eklenmez.")) {
-  fail("Consent banner section capability gate açıklaması global protected modele uymuyor.");
+if (!core.includes('export const GLOBAL_PROTECTED_COMPONENT_TYPES = new Set(["consent-banner"] as const)')) {
+  fail("Consent banner global protected component set içinde değil.");
+}
+if (core.includes('section("consent-banner"')) {
+  fail("Consent banner section library'ye geri eklenmiş; yalnız global protected hedef olmalı.");
+}
+for (const token of [
+  "globalProtectedSectionIds",
+  'sectionType !== "consent-banner"',
+  "legacy consent-banner section kaydı section tree'den kaldırıldı",
+]) {
+  if (!core.includes(token)) fail(`Consent global protected migration temizliği eksik: ${token}`);
 }
 
 const blockRenderer = read("apps/storefront/src/components/theme/StoreDesignBlockSection.tsx");
@@ -230,6 +240,7 @@ for (const type of [
   "quote",
   "promo-banner",
   "shipping-returns-cta",
+  "map-locator",
   "spacer",
   "divider",
   "anchor",
@@ -263,7 +274,12 @@ const sectionRows = core
 
 const implementedSectionTypes = sectionRows.filter((item) => item.implemented).map((item) => item.type);
 const pendingSectionTypes = sectionRows.filter((item) => !item.implemented).map((item) => item.type);
+const expectedPendingSectionTypes = new Set(["integration-block", "developer-embed"]);
+if (pendingSectionTypes.length !== expectedPendingSectionTypes.size || pendingSectionTypes.some((type) => !expectedPendingSectionTypes.has(type))) {
+  fail(`Beklenmeyen pending section seti: ${pendingSectionTypes.join(", ")}`);
+}
 const pickerRenderableTypes = extractStringSet(sectionManager, "RENDERABLE_SECTION_TYPES");
+if (pickerRenderableTypes.has("consent-banner")) fail("Consent banner section picker'a açılmış.");
 const v2Sections = read("apps/storefront/src/lib/storeDesignV2Sections.ts");
 const blockRuntimeTypes = extractStringSet(v2Sections, "BLOCK_RENDER_SECTION_TYPES");
 const homeRenderer = read("apps/storefront/src/components/theme/HomeSectionRenderer.tsx");
@@ -356,6 +372,7 @@ for (const token of [
   "cross-sell",
   "breadcrumb",
   "contact-form",
+  "map-locator",
   "review-highlights",
   "rewards-promo",
   "grid-stack-builder",
@@ -389,6 +406,8 @@ for (const token of [
   "Telefon alanını göster",
   "Başarı mesajı",
   "endpoint doğrulaması nedeniyle zorunludur",
+  "Haritada aç bağlantıları",
+  "üçüncü taraf map scripti",
   "Yorum kaynağı · ürün",
   "Yalnız onaylı yorumlar storefront review servisinden read-only gelir.",
   "Puanı göster",
@@ -426,6 +445,10 @@ for (const token of [
   'section("breadcrumb"',
   'component("contact-form"',
   'section("contact-form"',
+  'component("map-locator"',
+  'component("location"',
+  'section("map-locator"',
+  'block("location"',
   'component("review-highlights"',
   'section("review-highlights"',
   'component("rewards-promo"',
@@ -794,6 +817,30 @@ for (const token of [
   if (!genericEditor.includes(token)) fail(`Newsletter/Custom Form editor koruması eksik: ${token}`);
 }
 
+for (const token of [
+  'section.type === "map-locator"',
+  "Haritada aç bağlantıları",
+  "Otomatik geolocation",
+  "üçüncü taraf map scripti",
+  'if (type === "location")',
+]) {
+  if (!genericEditor.includes(token)) fail(`Store Locator editor koruması eksik: ${token}`);
+}
+for (const token of [
+  'type === "map-locator"',
+  'data-editor-type="map-locator"',
+  'data-editor-type="location"',
+  "storeMapHref",
+  "https://www.google.com/maps/search/?api=1&query=",
+  'rel="noopener noreferrer"',
+]) {
+  if (!blockRenderer.includes(token)) fail(`Store Locator provider-free runtime eksik: ${token}`);
+}
+for (const forbiddenToken of ["navigator.geolocation", "maps.googleapis.com", "<iframe"]) {
+  if (blockRenderer.includes(forbiddenToken)) fail(`Store Locator üçüncü taraf/geolocation runtime açmış: ${forbiddenToken}`);
+}
+if (!v2Sections.includes('"map-locator"')) fail("Store Locator V2 adapter allowlist'e bağlı değil.");
+
 const reviewHighlightsRuntime = read("apps/storefront/src/components/theme/StoreDesignReviewHighlights.tsx");
 for (const token of [
   "/api/reviews/summary?productId=",
@@ -845,6 +892,12 @@ for (const token of [
 const storefrontHomePage = read("apps/storefront/src/app/page.tsx");
 for (const token of ["bestSellerWindows", "getCachedBestSellingProducts", "bestSellerProductsByWindow"]) {
   if (!storefrontHomePage.includes(token)) fail(`Best Sellers server prefetch eksik: ${token}`);
+}
+
+const analyzeStart = core.indexOf("export function analyzeThemeDocumentReferences");
+const validateStart = core.indexOf("export function validateThemeDocument");
+if (analyzeStart >= 0 && validateStart > analyzeStart && core.slice(analyzeStart, validateStart).includes("errors.push")) {
+  fail("analyzeThemeDocumentReferences içinde tanımsız errors collector kullanılıyor.");
 }
 
 note(`Section library: ${implementedSectionTypes.length} runtime hazır · ${pendingSectionTypes.length} kapalı/pending`);
