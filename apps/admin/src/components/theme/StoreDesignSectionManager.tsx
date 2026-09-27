@@ -102,6 +102,7 @@ const RENDERABLE_SECTION_TYPES = new Set([
   "countdown",
   "shipping-returns-cta",
   "contact-form",
+  "rewards-promo",
   "spacer",
   "divider",
   "anchor",
@@ -236,6 +237,17 @@ function defaultSettings(type: string): Record<string, unknown> {
     successCopy: "Mesajınız alındı. En kısa sürede size dönüş yapacağız.",
     paddingY: 72,
   };
+  if (type === "rewards-promo") return {
+    imageAssetId: "",
+    title: "Points Ayrıcalıkları",
+    body: "Alışverişlerinden puan kazan, hesabındaki puanları sonraki siparişlerinde kullan.",
+    linkLabel: "Programa Katıl",
+    linkHref: "/register?redirect=/account",
+    layout: "split",
+    showSignupPoints: true,
+    showEarnRate: true,
+    paddingY: 72,
+  };
   if (type === "spacer") return { desktopHeight: 64, mobileHeight: 40, paddingY: 0 };
   if (type === "divider") return { width: "100%", thickness: 1, colorToken: "subtle", paddingY: 24 };
   if (type === "anchor") return { anchorId: "bolum", labelVisibility: false, title: "" };
@@ -339,6 +351,7 @@ const GENERIC_V2_SECTION_TYPES = new Set([
   "best-sellers",
   "contact-form",
   "review-highlights",
+  "rewards-promo",
   "collection-cards",
   "brand-story",
   "video-hero",
