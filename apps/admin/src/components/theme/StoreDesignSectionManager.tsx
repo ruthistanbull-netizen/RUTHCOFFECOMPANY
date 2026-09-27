@@ -105,6 +105,7 @@ const RENDERABLE_SECTION_TYPES = new Set([
   "spacer",
   "divider",
   "anchor",
+  "grid-stack-builder",
 ]);
 
 function uid(prefix: string) {
@@ -238,6 +239,7 @@ function defaultSettings(type: string): Record<string, unknown> {
   if (type === "spacer") return { desktopHeight: 64, mobileHeight: 40, paddingY: 0 };
   if (type === "divider") return { width: "100%", thickness: 1, colorToken: "subtle", paddingY: 24 };
   if (type === "anchor") return { anchorId: "bolum", labelVisibility: false, title: "" };
+  if (type === "grid-stack-builder") return { columns: 2, gap: 20, alignment: "stretch", responsiveStack: true };
   return {};
 }
 
