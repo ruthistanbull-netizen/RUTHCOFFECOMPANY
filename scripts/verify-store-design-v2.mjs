@@ -313,6 +313,7 @@ for (const token of [
   "product-comparison",
   "best-sellers",
   "contact-form",
+  "review-highlights",
   "scroll-story",
   "Media Library",
   "Oynatma politikası",
@@ -336,6 +337,9 @@ for (const token of [
   "Telefon alanını göster",
   "Başarı mesajı",
   "endpoint doğrulaması nedeniyle zorunludur",
+  "Yorum kaynağı · ürün",
+  "Yalnız onaylı yorumlar storefront review servisinden read-only gelir.",
+  "Puanı göster",
   "Scroll uzunluğu",
   "Geçiş preset",
   "KAYDIR cue göster",
@@ -358,6 +362,8 @@ for (const token of [
   'section("best-sellers"',
   'component("contact-form"',
   'section("contact-form"',
+  'component("review-highlights"',
+  'section("review-highlights"',
   'section("collection-cards"',
   'section("brand-story"',
   'component("scroll-story-slide"',
@@ -439,6 +445,18 @@ for (const token of [
 }
 if (!blockRenderer.includes('type === "contact-form"')) fail("Contact Form StoreDesignBlockSection runtime'a bağlı değil.");
 if (!v2Sections.includes('"contact-form"')) fail("Contact Form V2 adapter allowlist'e bağlı değil.");
+
+const reviewHighlightsRuntime = read("apps/storefront/src/components/theme/StoreDesignReviewHighlights.tsx");
+for (const token of [
+  "/api/reviews/summary?productId=",
+  "verified_purchase",
+  "ratingDisplay",
+  "summary.reviews.slice(0, limit)",
+]) {
+  if (!reviewHighlightsRuntime.includes(token)) fail(`Review Highlights read-only runtime eksik: ${token}`);
+}
+if (!blockRenderer.includes('type === "review-highlights"')) fail("Review Highlights StoreDesignBlockSection runtime'a bağlı değil.");
+if (!v2Sections.includes('"review-highlights"')) fail("Review Highlights V2 adapter allowlist'e bağlı değil.");
 
 const catalogCache = read("apps/storefront/src/data/catalogCache.ts");
 for (const token of [
