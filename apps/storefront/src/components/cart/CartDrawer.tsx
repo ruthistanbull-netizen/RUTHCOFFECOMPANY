@@ -7,10 +7,12 @@ import { Minus, Plus, ShoppingBag, X } from "lucide-react";
 import { useOverlayBehavior } from "@ruth-commerce/ui";
 import { formatPrice } from "@/lib/formatPrice";
 import { useCart } from "@/components/cart/CartProvider";
+import { StoreDesignCrossSell, type StoreDesignCrossSellConfig } from "@/components/cart/StoreDesignCrossSell";
 import { trackRuthEvent } from "@/components/analytics/SiteAnalytics";
 
-export function CartDrawer() {
+export function CartDrawer({ crossSellConfig = null }: { crossSellConfig?: StoreDesignCrossSellConfig | null }) {
   const { items, count, subtotal, isOpen, setIsOpen, removeItem, updateQuantity } = useCart();
+  const cartSlugs = items.map((item) => item.slug);
   const overlay = useOverlayBehavior({
     active: isOpen,
     onClose: () => setIsOpen(false),
@@ -20,6 +22,11 @@ export function CartDrawer() {
   useEffect(() => {
     if (isOpen) trackRuthEvent("cart_open", { item_count: count, subtotal });
   }, [count, isOpen, subtotal]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("themeEditor") === "1" && params.get("storeDesignCartPreview") === "1") setIsOpen(true);
+  }, [setIsOpen]);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -112,6 +119,7 @@ export function CartDrawer() {
                   <p className="font-heading text-xl">Sepetin henüz boş</p>
                   <p className="mt-3 max-w-xs text-sm leading-6 text-cream/70">Günlük anlarına eşlik edecek parçaları keşfet.</p>
                   <Link href="/products" onClick={() => setIsOpen(false)} className="mt-7 rounded-full bg-brick px-8 py-4 text-xs uppercase tracking-wide-luxe text-[var(--rosta-action-text)]">Ürünleri Keşfet</Link>
+                  <div className="mt-8 w-full text-left"><StoreDesignCrossSell context="cart" slot="after-items" cartSlugs={[]} initialConfig={crossSellConfig} /><StoreDesignCrossSell context="cart" slot="before-totals" cartSlugs={[]} initialConfig={crossSellConfig} /></div>
                 </div>
               ) : (
                 <>
@@ -156,7 +164,10 @@ export function CartDrawer() {
                         </div>
                       </div>
                     ))}
+                    <StoreDesignCrossSell context="cart" slot="after-items" cartSlugs={cartSlugs} initialConfig={crossSellConfig} />
                   </div>
+
+                  <div className="px-5 sm:px-6"><StoreDesignCrossSell context="cart" slot="before-totals" cartSlugs={cartSlugs} initialConfig={crossSellConfig} /></div>
 
                   <div
                     data-editor-id="cart-totals"
