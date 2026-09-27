@@ -38,6 +38,7 @@ export function AnalyticsConsentGate({
 }) {
   const [consent, setConsent] = useState<Consent>(null);
   const [ready, setReady] = useState(false);
+  const [editorPreview, setEditorPreview] = useState(false);
   const [mobileViewport, setMobileViewport] = useState(false);
   const [runtimeDesktop, setRuntimeDesktop] = useState<ConsentBannerSettings>({});
   const [runtimeMobile, setRuntimeMobile] = useState<ConsentBannerSettings>({});
@@ -49,6 +50,8 @@ export function AnalyticsConsentGate({
     } catch {
       setConsent(null);
     }
+    const params = new URLSearchParams(window.location.search);
+    setEditorPreview(params.get("themeEditor") === "1" && params.get("storeDesignV2") === "1");
     setReady(true);
   }, []);
 
@@ -61,10 +64,10 @@ export function AnalyticsConsentGate({
   }, []);
 
   useEffect(() => {
-    const open = ready && consent === null;
+    const open = ready && (consent === null || editorPreview);
     document.documentElement.classList.toggle("ruth-cookie-consent-open", open);
     return () => document.documentElement.classList.remove("ruth-cookie-consent-open");
-  }, [consent, ready]);
+  }, [consent, editorPreview, ready]);
 
   useEffect(() => {
     const onRuntimePatch = (event: Event) => {
@@ -99,6 +102,7 @@ export function AnalyticsConsentGate({
   }, [desktopSettings, mobileSettings, mobileViewport, runtimeDesktop, runtimeMobile]);
 
   const choose = (value: Exclude<Consent, null>) => {
+    if (editorPreview) return;
     try {
       window.localStorage.setItem(CONSENT_KEY, value);
     } catch {
@@ -142,7 +146,7 @@ export function AnalyticsConsentGate({
         : "rounded-[18px]";
 
   const banner =
-    ready && consent === null && typeof document !== "undefined"
+    ready && (consent === null || editorPreview) && typeof document !== "undefined"
       ? createPortal(
           <aside
             data-editor-id="consent-banner"
