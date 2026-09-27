@@ -179,6 +179,8 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
   component("shipping-returns-cta", "Shipping / Returns CTA", "Marketing", "section", sectionScopes, ["content", "layout"], ["shippingLogic"]),
   component("newsletter", "Newsletter", "Marketing", "section", sectionScopes, ["content", "layout", "responsive"], ["subscriptionAction", "subscriberState", "consentRecord"]),
   component("custom-form", "Custom Form", "Marketing", "section", sectionScopes, ["content", "layout", "card", "responsive"], ["submissionAction", "antiSpam", "schemaValidation"]),
+  component("map-locator", "Map / Store Locator", "Marketing", "section", sectionScopes, ["content", "layout", "responsive"], ["geolocation", "providerScript", "rawEmbed"]),
+  component("location", "Mağaza / Konum", "Marketing", "instance", instanceScopes, ["content", "layout"], ["geolocation", "providerEmbed", "rawHtml"]),
   component("contact-form", "İletişim Formu", "Marketing", "section", sectionScopes, ["content", "layout", "form"], ["submissionEndpoint", "antiSpam", "requiredFields"]),
   component("rewards-promo", "Puan / Ödül Promo", "Marketing", "section", sectionScopes, ["content", "media", "layout", "responsive"], ["rewardMath", "rewardSettings"]),
   component("spacer", "Boşluk", "İçerik", "section", sectionScopes, ["layout", "responsive"], ["arbitraryHeight"]),
@@ -252,6 +254,8 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
 
 export const COMPONENT_REGISTRY_BY_TYPE: Record<string, ComponentDefinition> =
   Object.fromEntries(COMPONENT_REGISTRY.map((item) => [item.semanticType, item]));
+
+export const GLOBAL_PROTECTED_COMPONENT_TYPES = new Set(["consent-banner"] as const);
 
 const allContentPages: PageCompatibility[] = ["home", "content", "landing"];
 const allCommercePages: PageCompatibility[] = ["home", "content", "landing", "product", "category", "collection"];
@@ -337,10 +341,9 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
   section("newsletter", "Newsletter", "marketing", allContentPages, ["heading", "body", "fieldLabel", "consent", "buttonLabel", "successCopy", "paddingY"], [], true),
   section("contact-form", "Contact Form", "marketing", ["content", "landing"], ["title", "body", "phoneVisible", "nameLabel", "emailLabel", "phoneLabel", "messageLabel", "namePlaceholder", "emailPlaceholder", "phonePlaceholder", "messagePlaceholder", "buttonLabel", "successCopy", "paddingY"], [], true),
   section("custom-form", "Custom Form", "marketing", ["content", "landing"], ["schema", "action", "title", "body", "buttonLabel", "successCopy", "paddingY"], ["field"], true, 20),
-  section("map-locator", "Map / Store Locator", "marketing", allContentPages, ["locations", "mapStyle", "cta"], [], false, undefined, "Store location datasource ve map/provider integration sözleşmesi bağlı değil."),
+  section("map-locator", "Map / Store Locator", "marketing", allContentPages, ["title", "body", "layout", "showMapLinks", "mapLinkLabel", "paddingY"], ["location"], true, 20),
   section("rewards-promo", "Puan / Ödül Promo", "marketing", allCommercePages, ["imageAssetId", "title", "body", "linkLabel", "linkHref", "layout", "showSignupPoints", "showEarnRate", "paddingY"], [], true),
   section("shipping-returns-cta", "Shipping / Returns CTA", "marketing", allCommercePages, ["icon", "title", "body", "linkLabel", "linkHref", "align", "paddingY"], [], true),
-  section("consent-banner", "Cookie / Consent Banner", "marketing", ["utility"], ["copy", "style", "position"], [], false, undefined, "Global protected target üzerinden yönetilir; consent categories/state ve privacy URL korunur, section tree'ye eklenmez."),
   section("spacer", "Spacer", "marketing", allContentPages, ["desktopHeight", "mobileHeight"], [], true),
   section("divider", "Divider", "marketing", allContentPages, ["width", "thickness", "colorToken", "paddingY"], [], true),
   section("anchor", "Anchor / Jump Link", "marketing", allContentPages, ["anchorId", "labelVisibility"], [], true),
@@ -542,6 +545,7 @@ export const BLOCK_LIBRARY: BlockDefinition[] = [
   block("announcement", "Duyuru", ["announcement-bar"], ["text", "linkLabel", "linkHref"], true),
   block("ticker-item", "Ticker Öğesi", ["marquee"], ["text", "link"], true),
   block("field", "Form Alanı", ["custom-form"], ["name", "label", "type", "required", "placeholder", "options"], true),
+  block("location", "Mağaza / Konum", ["map-locator"], ["name", "address", "city", "phone", "hours"], true),
 ];
 
 export const BLOCK_LIBRARY_BY_TYPE: Record<string, BlockDefinition> =
@@ -1174,16 +1178,23 @@ export function analyzeThemeDocumentReferences(document: ThemeDocument): ThemeRe
 
   for (const [presetId, preset] of Object.entries(document.presets)) {
     const definition = SECTION_LIBRARY_BY_TYPE[preset.sectionType];
-    if (!definition) errors.push(`${presetId}: preset section type registry'de yok (${preset.sectionType}).`);
-    if (definition && !definition.implemented) errors.push(`${presetId}: preset section runtime hazır değil (${preset.sectionType}).`);
+    const presetError = (message: string, target?: string) => issues.push({
+      severity: "error",
+      code: "invalid-preset-reference",
+      message,
+      source: presetId,
+      target,
+    });
+    if (!definition) presetError(`${presetId}: preset section type registry'de yok (${preset.sectionType}).`, preset.sectionType);
+    if (definition && !definition.implemented) presetError(`${presetId}: preset section runtime hazır değil (${preset.sectionType}).`, preset.sectionType);
     if (definition?.maxBlocks && preset.blocks.length > definition.maxBlocks) {
-      errors.push(`${presetId}: preset maxBlocks sınırını aşıyor (${definition.maxBlocks}).`);
+      presetError(`${presetId}: preset maxBlocks sınırını aşıyor (${definition.maxBlocks}).`, preset.sectionType);
     }
     for (const block of preset.blocks) {
       if (definition?.allowedBlocks?.length && !definition.allowedBlocks.includes(block.type)) {
-        errors.push(`${presetId}: ${block.type} preset block tipi section için izinli değil.`);
+        presetError(`${presetId}: ${block.type} preset block tipi section için izinli değil.`, block.type);
       }
-      if (!BLOCK_LIBRARY_BY_TYPE[block.type]) errors.push(`${presetId}: preset block registry'de yok (${block.type}).`);
+      if (!BLOCK_LIBRARY_BY_TYPE[block.type]) presetError(`${presetId}: preset block registry'de yok (${block.type}).`, block.type);
     }
   }
 
@@ -1284,6 +1295,22 @@ export function validateThemeDocument(document: ThemeDocument) {
             : [];
           if (!options.length) errors.push(`${blockId}: Select alanı en az bir seçenek içermeli.`);
         }
+      }
+    }
+
+    if (section.type === "map-locator") {
+      const layout = String(section.settings?.layout || "cards");
+      if (!["cards", "list"].includes(layout)) errors.push(`${sectionId}: Store Locator layout geçersiz.`);
+      if (section.settings?.showMapLinks != null && typeof section.settings.showMapLinks !== "boolean") {
+        errors.push(`${sectionId}: Store Locator showMapLinks boolean olmalı.`);
+      }
+      for (const blockId of blockIds) {
+        const block = document.blocks[blockId];
+        if (!block || block.type !== "location") continue;
+        const name = typeof block.settings?.name === "string" ? block.settings.name.trim() : "";
+        const address = typeof block.settings?.address === "string" ? block.settings.address.trim() : "";
+        if (!name) errors.push(`${blockId}: Konum adı boş olamaz.`);
+        if (!address) errors.push(`${blockId}: Konum adresi boş olamaz.`);
       }
     }
 
@@ -1709,6 +1736,25 @@ export function normalizeThemeDocument(input: unknown): ThemeDocument {
     .map((value, index) => normalizeRedirectRecord(value, index))
     .filter((value): value is RedirectRecord => value !== null);
 
+  const rawSections = objectRecord(raw.sections);
+  const globalProtectedSectionIds = new Set(
+    Object.entries(rawSections)
+      .filter(([, value]) => stringValue(objectRecord(value).type, "", 120) === "consent-banner")
+      .map(([id]) => id),
+  );
+  const sections = Object.fromEntries(
+    Object.entries(rawSections).filter(([id]) => !globalProtectedSectionIds.has(id)),
+  ) as Record<string, SectionInstance>;
+  const templates = Object.fromEntries(
+    Object.entries(objectRecord(raw.templates)).map(([templateId, value]) => {
+      const template = objectRecord(value);
+      const sectionIds = Array.isArray(template.sectionIds)
+        ? template.sectionIds.filter((sectionId) => typeof sectionId === "string" && !globalProtectedSectionIds.has(sectionId))
+        : [];
+      return [templateId, { ...template, sectionIds }];
+    }),
+  ) as Record<string, TemplateRecord>;
+
   return {
     schemaVersion: STORE_DESIGN_SCHEMA_VERSION,
     revision: integerValue(raw.revision, 0),
@@ -1720,13 +1766,13 @@ export function normalizeThemeDocument(input: unknown): ThemeDocument {
     },
     pages,
     seo,
-    templates: objectRecord(raw.templates) as Record<string, TemplateRecord>,
+    templates,
     templateBindings: Object.fromEntries(
       Object.entries(objectRecord(raw.templateBindings))
         .slice(0, 500)
         .filter((entry): entry is [string, string] => typeof entry[1] === "string" && Boolean(entry[1])),
     ),
-    sections: objectRecord(raw.sections) as Record<string, SectionInstance>,
+    sections,
     blocks: objectRecord(raw.blocks) as Record<string, BlockInstance>,
     media: objectRecord(raw.media) as Record<string, MediaAsset>,
     presets: Object.fromEntries(
@@ -1755,7 +1801,7 @@ export function normalizeThemeDocument(input: unknown): ThemeDocument {
             schemaVersion: integerValue(preset.schemaVersion, STORE_DESIGN_SCHEMA_VERSION),
           } satisfies SectionPresetRecord];
         })
-        .filter((entry) => Boolean(entry[1].sectionType)),
+        .filter((entry) => Boolean(entry[1].sectionType) && entry[1].sectionType !== "consent-banner"),
     ),
     redirects,
     publishedAt: raw.publishedAt == null ? null : stringValue(raw.publishedAt, "", 80) || null,
@@ -1776,6 +1822,11 @@ export function migrateThemeDocument(input: unknown): ThemeMigrationResult {
   const raw = objectRecord(input);
   if (!raw.templateBindings) notes.push("Eksik templateBindings boş registry ile tamamlandı.");
   if (!raw.presets) notes.push("Eksik presets registry boş kayıtla tamamlandı.");
+  const legacyConsentSections = Object.values(objectRecord(raw.sections))
+    .filter((value) => stringValue(objectRecord(value).type, "", 120) === "consent-banner").length;
+  if (legacyConsentSections) {
+    notes.push(`${legacyConsentSections} legacy consent-banner section kaydı section tree'den kaldırıldı; consent yalnız global protected hedef olarak tutulur.`);
+  }
   const globals = objectRecord(raw.globals);
   if (!globals.componentFamilies) notes.push("Eksik componentFamilies registry tamamlandı.");
 
