@@ -114,6 +114,7 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
   component("product-comparison", "Ürün Karşılaştırma", "Katalog", "section", sectionScopes, ["data", "content", "layout", "responsive"], ["productData", "priceValue", "stockLogic"]),
   component("new-arrivals", "Yeni Gelenler", "Katalog", "section", sectionScopes, ["data", "layout", "responsive"], ["sourceRule", "productData"]),
   component("best-sellers", "Çok Satanlar", "Katalog", "section", sectionScopes, ["data", "layout", "responsive"], ["orderAnalytics", "productData"]),
+  component("recently-viewed", "Son Görüntülenenler", "Katalog", "section", sectionScopes, ["content", "layout", "responsive"], ["historyStoragePolicy", "catalogMutation"]),
   component("sale-products", "İndirimdekiler", "Katalog", "section", sectionScopes, ["data", "layout", "card", "responsive"], ["discountLogic", "productData"]),
   component("product-card", "Ürün Kartı", "Katalog", "family", ["family", "section", "template"], ["card", "typography", "layout", "responsive"], ["productData", "individualMediaScale", "individualWidth"]),
   component("product-card-media", "Ürün Kartı Görseli", "Katalog", "family", familyScopes, ["media", "card", "responsive"], ["productMediaFile"]),
@@ -283,7 +284,7 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
   section("best-sellers", "Çok Satanlar", "commerce", allCommercePages, ["title", "window", "limit", "layout", "paddingY"], [], true),
   section("sale-products", "İndirimdekiler", "commerce", allCommercePages, ["limit", "layout", "badgeStyle"], [], true),
   section("recommendations", "Önerilen Ürünler", "commerce", ["product"], ["title", "eyebrow", "algorithm", "limit", "layout", "paddingY"], [], true),
-  section("recently-viewed", "Son Görüntülenenler", "commerce", ["product", "cart"], ["limit", "layout", "heading"]),
+  section("recently-viewed", "Son Görüntülenenler", "commerce", ["product"], ["title", "limit", "layout", "paddingY"], [], true),
   section("bundle", "Birlikte Alınanlar / Bundle", "commerce", ["product", "cart"], ["source", "layout", "cta"]),
   section("cross-sell", "Cross-sell / Upsell", "commerce", ["cart", "checkout"], ["source", "position", "density"]),
   section("product-comparison", "Ürün Karşılaştırma", "commerce", ["content", "landing"], ["productIds", "fields", "layout", "title", "paddingY"], [], true),
@@ -1384,6 +1385,15 @@ export function validateThemeDocument(document: ThemeDocument) {
       if (!["compact", "default"].includes(typography)) errors.push(`${section.id}: Breadcrumb typography preset geçersiz.`);
       const paddingY = Number(section.settings.paddingY ?? 12);
       if (!Number.isFinite(paddingY) || paddingY < 0 || paddingY > 64) errors.push(`${section.id}: Breadcrumb paddingY 0-64 aralığında olmalı.`);
+    }
+
+    if (section.type === "recently-viewed") {
+      const limit = Number(section.settings.limit ?? 8);
+      if (!Number.isFinite(limit) || limit < 2 || limit > 12) errors.push(`${section.id}: Son Görüntülenenler limiti 2-12 aralığında olmalı.`);
+      const layout = String(section.settings.layout || "slider");
+      if (!["grid", "slider"].includes(layout)) errors.push(`${section.id}: Son Görüntülenenler layout geçersiz.`);
+      const paddingY = Number(section.settings.paddingY ?? 58);
+      if (!Number.isFinite(paddingY) || paddingY < 0 || paddingY > 240) errors.push(`${section.id}: Son Görüntülenenler paddingY 0-240 aralığında olmalı.`);
     }
 
     if (section.type === "recommendations") {
