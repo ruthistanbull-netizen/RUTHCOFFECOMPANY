@@ -481,6 +481,7 @@ function SectionPicker({
           <div className="grid gap-2 sm:grid-cols-2">
             {definitions.map((definition) => {
               const available = canRenderDefinition(definition);
+              const securityLocked = definition.type === "integration-block" || definition.type === "developer-embed";
               return (
                 <button
                   key={definition.type}
@@ -492,13 +493,13 @@ function SectionPicker({
                   <div className="flex items-start gap-2">
                     <span className="min-w-0 flex-1 text-[10px] font-semibold">{definition.label}</span>
                     <span className={`rounded px-1.5 py-0.5 text-[7px] font-semibold ${available ? "bg-emerald-50 text-emerald-700" : "bg-black/[0.04] text-black/40"}`}>
-                      {available ? "Hazır" : "Altyapı bekliyor"}
+                      {available ? "Hazır" : securityLocked ? "Güvenlik kilidi" : "Altyapı bekliyor"}
                     </span>
                   </div>
                   <p className="mt-2 line-clamp-3 text-[8px] leading-4 text-black/38">
                     {available
                       ? (definition.settings.slice(0, 5).join(" · ") || "Schema kontrollü bölüm")
-                      : (definition.pendingReason || "Bu bölüm için güvenli runtime bağlantısı henüz tamamlanmadı.")}
+                      : (definition.pendingReason || "Bu bölüm storefront güvenlik politikası nedeniyle kapalı.")}
                   </p>
                 </button>
               );
