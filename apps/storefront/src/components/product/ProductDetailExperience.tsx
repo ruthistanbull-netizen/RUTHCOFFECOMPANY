@@ -10,6 +10,7 @@ import {
   type ProductDetailItem,
 } from "@/components/product/ProductPurchasePanel";
 import { ProductRecommendations } from "@/components/product/ProductRecommendations";
+import { ProductRecentlyViewed } from "@/components/product/ProductRecentlyViewed";
 import { ProductReviewsSection } from "@/components/reviews/ProductReviewsSection";
 import { StoreDesignBreadcrumb } from "@/components/theme/StoreDesignBreadcrumb";
 import { formatPrice } from "@/lib/formatPrice";
@@ -229,10 +230,15 @@ function ProductBrowserPreview({ product }: { product: Product | null }) {
 export function ProductDetailExperience({
   initialWindow,
   recommendationsConfig,
+  recentlyViewedConfig,
   breadcrumbConfig,
 }: {
   initialWindow: ProductBrowserWindow;
   recommendationsConfig?: {
+    enabled: boolean;
+    settings?: Record<string, unknown>;
+  };
+  recentlyViewedConfig?: {
     enabled: boolean;
     settings?: Record<string, unknown>;
   };
@@ -949,6 +955,14 @@ export function ProductDetailExperience({
             previous={browserWindow.previous}
             next={browserWindow.next}
             settings={recommendationsConfig?.settings}
+          />
+        )}
+
+        {recentlyViewedConfig?.enabled === false || !recentlyViewedConfig ? null : (
+          <ProductRecentlyViewed
+            key={`recent-${product.slug}`}
+            current={product}
+            settings={recentlyViewedConfig.settings}
           />
         )}
 
