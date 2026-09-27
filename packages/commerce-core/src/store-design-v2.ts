@@ -243,7 +243,7 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
   component("legal-document", "Yasal Metin", "Diğer", "template", templateScopes, ["typography", "layout"], ["legalContent"]),
   component("system-state", "Sistem Durumu", "Diğer", "template", templateScopes, ["content", "media", "layout"], ["httpStatus"]),
   component("toast", "Bildirim", "Diğer", "global", globalScopes, ["card", "typography"], ["systemMessage"]),
-  component("consent-banner", "Çerez / Onay", "Diğer", "global", globalScopes, ["content", "layout", "card"], ["consentSemantics", "categories"]),
+  component("consent-banner", "Çerez / Onay", "Diğer", "global", globalScopes, ["content", "layout", "card", "responsive"], ["consentSemantics", "categories", "consentState", "privacyUrl"]),
 ];
 
 export const COMPONENT_REGISTRY_BY_TYPE: Record<string, ComponentDefinition> =
@@ -336,7 +336,7 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
   section("map-locator", "Map / Store Locator", "marketing", allContentPages, ["locations", "mapStyle", "cta"], [], false, undefined, "Store location datasource ve map/provider integration sözleşmesi bağlı değil."),
   section("rewards-promo", "Puan / Ödül Promo", "marketing", allCommercePages, ["imageAssetId", "title", "body", "linkLabel", "linkHref", "layout", "showSignupPoints", "showEarnRate", "paddingY"], [], true),
   section("shipping-returns-cta", "Shipping / Returns CTA", "marketing", allCommercePages, ["icon", "title", "body", "linkLabel", "linkHref", "align", "paddingY"], [], true),
-  section("consent-banner", "Cookie / Consent Banner", "marketing", ["utility"], ["copy", "style", "position"], [], false, undefined, "Global consent categories/state protected runtime'da; section-tree üzerinden değiştirilmeden önce global settings bridge gerekli."),
+  section("consent-banner", "Cookie / Consent Banner", "marketing", ["utility"], ["copy", "style", "position"], [], false, undefined, "Global protected target üzerinden yönetilir; consent categories/state ve privacy URL korunur, section tree'ye eklenmez."),
   section("spacer", "Spacer", "marketing", allContentPages, ["desktopHeight", "mobileHeight"], [], true),
   section("divider", "Divider", "marketing", allContentPages, ["width", "thickness", "colorToken", "paddingY"], [], true),
   section("anchor", "Anchor / Jump Link", "marketing", allContentPages, ["anchorId", "labelVisibility"], [], true),
