@@ -4,6 +4,10 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { SiteAnalytics } from "@/components/analytics/SiteAnalytics";
+import {
+  SEMANTIC_RUNTIME_PATCH_EVENT,
+  type SemanticRuntimePatch,
+} from "@/components/theme/SemanticThemeRuntimeProvider";
 
 type Consent = "accepted" | "rejected" | null;
 type ConsentBannerSettings = Record<string, unknown>;
@@ -35,6 +39,8 @@ export function AnalyticsConsentGate({
   const [consent, setConsent] = useState<Consent>(null);
   const [ready, setReady] = useState(false);
   const [mobileViewport, setMobileViewport] = useState(false);
+  const [runtimeDesktop, setRuntimeDesktop] = useState<ConsentBannerSettings>({});
+  const [runtimeMobile, setRuntimeMobile] = useState<ConsentBannerSettings>({});
 
   useEffect(() => {
     try {
@@ -60,10 +66,37 @@ export function AnalyticsConsentGate({
     return () => document.documentElement.classList.remove("ruth-cookie-consent-open");
   }, [consent, ready]);
 
-  const activeSettings = useMemo(
-    () => mobileViewport ? { ...(desktopSettings || {}), ...(mobileSettings || {}) } : (desktopSettings || {}),
-    [desktopSettings, mobileSettings, mobileViewport],
-  );
+  useEffect(() => {
+    const onRuntimePatch = (event: Event) => {
+      const detail = (event as CustomEvent<SemanticRuntimePatch>).detail;
+      if (
+        !detail
+        || detail.scope !== "global"
+        || detail.selectorMode !== "type"
+        || detail.selectorValue !== "consent-banner"
+        || !["title", "intro", "acceptLabel", "rejectLabel", "privacyLabel", "position", "widthPreset", "radiusPreset"].includes(detail.path)
+      ) {
+        return;
+      }
+
+      const setter = detail.device === "mobile" ? setRuntimeMobile : setRuntimeDesktop;
+      setter((current) => {
+        const next = { ...current };
+        if (detail.value === null || detail.value === undefined || detail.value === "") delete next[detail.path];
+        else next[detail.path] = detail.value;
+        return next;
+      });
+    };
+
+    window.addEventListener(SEMANTIC_RUNTIME_PATCH_EVENT, onRuntimePatch as EventListener);
+    return () => window.removeEventListener(SEMANTIC_RUNTIME_PATCH_EVENT, onRuntimePatch as EventListener);
+  }, []);
+
+  const activeSettings = useMemo(() => {
+    const desktop = { ...(desktopSettings || {}), ...runtimeDesktop };
+    const mobile = { ...(mobileSettings || {}), ...runtimeMobile };
+    return mobileViewport ? { ...desktop, ...mobile } : desktop;
+  }, [desktopSettings, mobileSettings, mobileViewport, runtimeDesktop, runtimeMobile]);
 
   const choose = (value: Exclude<Consent, null>) => {
     try {
