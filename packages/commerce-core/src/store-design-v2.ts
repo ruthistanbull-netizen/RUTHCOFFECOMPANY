@@ -1776,18 +1776,57 @@ export function normalizeThemeDocument(input: unknown): ThemeDocument {
       .filter(([, value]) => stringValue(objectRecord(value).type, "", 120) === "consent-banner")
       .map(([id]) => id),
   );
-  const sections = Object.fromEntries(
-    Object.entries(rawSections).filter(([id]) => !globalProtectedSectionIds.has(id)),
-  ) as Record<string, SectionInstance>;
-  const templates = Object.fromEntries(
-    Object.entries(objectRecord(raw.templates)).map(([templateId, value]) => {
-      const template = objectRecord(value);
-      const sectionIds = Array.isArray(template.sectionIds)
-        ? template.sectionIds.filter((sectionId) => typeof sectionId === "string" && !globalProtectedSectionIds.has(sectionId))
-        : [];
-      return [templateId, { ...template, sectionIds }];
-    }),
-  ) as Record<string, TemplateRecord>;
+  const sections: Record<string, SectionInstance> = {};
+  for (const [id, value] of Object.entries(rawSections)) {
+    if (globalProtectedSectionIds.has(id)) continue;
+    sections[id] = value as SectionInstance;
+  }
+
+  const templates: Record<string, TemplateRecord> = {};
+  for (const [templateId, value] of Object.entries(objectRecord(raw.templates))) {
+    const template = objectRecord(value);
+    const sectionIds = Array.isArray(template.sectionIds)
+      ? template.sectionIds.filter(
+          (sectionId): sectionId is string =>
+            typeof sectionId === "string" && !globalProtectedSectionIds.has(sectionId),
+        )
+      : [];
+    templates[templateId] = { ...template, sectionIds } as TemplateRecord;
+  }
+
+  const templateBindings: Record<string, string> = {};
+  for (const [key, value] of Object.entries(objectRecord(raw.templateBindings)).slice(0, 500)) {
+    if (typeof value === "string" && value) templateBindings[key] = value;
+  }
+
+  const presets: Record<string, SectionPresetRecord> = {};
+  for (const [presetId, value] of Object.entries(objectRecord(raw.presets)).slice(0, 200)) {
+    const preset = objectRecord(value);
+    const blocks = (Array.isArray(preset.blocks) ? preset.blocks : [])
+      .slice(0, 50)
+      .map((blockValue) => {
+        const block = objectRecord(blockValue);
+        return {
+          type: stringValue(block.type, "", 120),
+          settings: objectRecord(block.settings),
+        };
+      })
+      .filter((block) => Boolean(block.type));
+
+    const normalizedPreset: SectionPresetRecord = {
+      id: stringValue(preset.id, presetId, 180) || presetId,
+      label: stringValue(preset.label, "Saved Section", 180),
+      sectionType: stringValue(preset.sectionType, "", 120),
+      settings: objectRecord(preset.settings),
+      blocks,
+      createdAt: stringValue(preset.createdAt, new Date(0).toISOString(), 80),
+      updatedAt: stringValue(preset.updatedAt, new Date(0).toISOString(), 80),
+      schemaVersion: integerValue(preset.schemaVersion, STORE_DESIGN_SCHEMA_VERSION),
+    };
+
+    if (!normalizedPreset.sectionType || normalizedPreset.sectionType === "consent-banner") continue;
+    presets[presetId] = normalizedPreset;
+  }
 
   return {
     schemaVersion: STORE_DESIGN_SCHEMA_VERSION,
@@ -1801,42 +1840,11 @@ export function normalizeThemeDocument(input: unknown): ThemeDocument {
     pages,
     seo,
     templates,
-    templateBindings: Object.fromEntries(
-      Object.entries(objectRecord(raw.templateBindings))
-        .slice(0, 500)
-        .filter((entry): entry is [string, string] => typeof entry[1] === "string" && Boolean(entry[1])),
-    ),
+    templateBindings,
     sections,
     blocks: objectRecord(raw.blocks) as Record<string, BlockInstance>,
     media: objectRecord(raw.media) as Record<string, MediaAsset>,
-    presets: Object.fromEntries(
-      Object.entries(objectRecord(raw.presets))
-        .slice(0, 200)
-        .map(([presetId, value]) => {
-          const preset = objectRecord(value);
-          const blocks = (Array.isArray(preset.blocks) ? preset.blocks : [])
-            .slice(0, 50)
-            .map((blockValue) => {
-              const block = objectRecord(blockValue);
-              return {
-                type: stringValue(block.type, "", 120),
-                settings: objectRecord(block.settings),
-              };
-            })
-            .filter((block) => Boolean(block.type));
-          return [presetId, {
-            id: stringValue(preset.id, presetId, 180) || presetId,
-            label: stringValue(preset.label, "Saved Section", 180),
-            sectionType: stringValue(preset.sectionType, "", 120),
-            settings: objectRecord(preset.settings),
-            blocks,
-            createdAt: stringValue(preset.createdAt, new Date(0).toISOString(), 80),
-            updatedAt: stringValue(preset.updatedAt, new Date(0).toISOString(), 80),
-            schemaVersion: integerValue(preset.schemaVersion, STORE_DESIGN_SCHEMA_VERSION),
-          } satisfies SectionPresetRecord];
-        })
-        .filter((entry) => Boolean(entry[1].sectionType) && entry[1].sectionType !== "consent-banner"),
-    ),
+    presets,
     redirects,
     publishedAt: raw.publishedAt == null ? null : stringValue(raw.publishedAt, "", 80) || null,
   };
