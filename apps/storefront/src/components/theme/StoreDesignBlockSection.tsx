@@ -6,6 +6,7 @@ import { StoreDesignCountdown } from "@/components/theme/StoreDesignCountdown";
 import { StoreDesignBeforeAfter } from "@/components/theme/StoreDesignBeforeAfter";
 import { StoreDesignSlideshow } from "@/components/theme/StoreDesignSlideshow";
 import { StoreDesignContactForm } from "@/components/theme/StoreDesignContactForm";
+import { StoreDesignReviewHighlights } from "@/components/theme/StoreDesignReviewHighlights";
 
 type V2Block = NonNullable<ThemeSection["v2Blocks"]>[number];
 
@@ -120,6 +121,18 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
       />
     );
   }
+  if (type === "review-highlights") {
+    return (
+      <StoreDesignReviewHighlights
+        sectionId={section.id}
+        settings={settings}
+        backgroundColor={section.backgroundColor}
+        textColor={section.textColor}
+        paddingY={paddingY}
+      />
+    );
+  }
+
 
   if (type === "video-hero" || type === "video-banner") {
     if (!section.imageSrc || section.v2MediaType !== "video") return null;
