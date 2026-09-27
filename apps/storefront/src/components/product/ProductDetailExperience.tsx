@@ -227,8 +227,13 @@ function ProductBrowserPreview({ product }: { product: Product | null }) {
 
 export function ProductDetailExperience({
   initialWindow,
+  recommendationsConfig,
 }: {
   initialWindow: ProductBrowserWindow;
+  recommendationsConfig?: {
+    enabled: boolean;
+    settings?: Record<string, unknown>;
+  };
 }) {
   const initialProducts = [
     initialWindow.previous,
@@ -910,12 +915,15 @@ export function ProductDetailExperience({
           </div>
         </section>
 
-        <ProductRecommendations
-          key={product.slug}
-          current={product}
-          previous={browserWindow.previous}
-          next={browserWindow.next}
-        />
+        {recommendationsConfig?.enabled === false ? null : (
+          <ProductRecommendations
+            key={product.slug}
+            current={product}
+            previous={browserWindow.previous}
+            next={browserWindow.next}
+            settings={recommendationsConfig?.settings}
+          />
+        )}
 
         <div className="product-secondary-content">
           <ProductReviewsSection
