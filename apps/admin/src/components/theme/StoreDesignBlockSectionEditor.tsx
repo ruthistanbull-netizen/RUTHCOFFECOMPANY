@@ -326,13 +326,14 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   const bestSellers = section.type === "best-sellers";
   const contactForm = section.type === "contact-form";
   const reviewHighlights = section.type === "review-highlights";
+  const rewardsPromo = section.type === "rewards-promo";
   const gridStack = section.type === "grid-stack-builder";
   const collectionCards = section.type === "collection-cards" || section.type === "category-cards";
   const categoryCards = section.type === "category-cards";
-  const genericZeroBlock = ["hero", "product-comparison", "best-sellers", "contact-form", "review-highlights", "grid-stack-builder", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta", "spacer", "divider", "anchor"].includes(section.type);
-  const hasGenericBody = ["hero", "video-hero", "video-banner", "brand-story", "contact-form", "review-highlights", "heading-subtext", "manifesto", "promo-banner", "shipping-returns-cta"].includes(section.type);
+  const genericZeroBlock = ["hero", "product-comparison", "best-sellers", "contact-form", "review-highlights", "rewards-promo", "grid-stack-builder", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta", "spacer", "divider", "anchor"].includes(section.type);
+  const hasGenericBody = ["hero", "video-hero", "video-banner", "brand-story", "contact-form", "review-highlights", "rewards-promo", "heading-subtext", "manifesto", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const hasAlign = ["hero", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta"].includes(section.type);
-  const hasLink = ["hero", "video-hero", "video-banner", "brand-story", "promo-banner", "shipping-returns-cta"].includes(section.type);
+  const hasLink = ["hero", "video-hero", "video-banner", "brand-story", "rewards-promo", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const showTitle = !["product-spotlight", "featured-collection", "scroll-story", "background-media", "grid-stack-builder", "quote", "spacer", "divider", "anchor"].includes(section.type);
   const showEyebrow = !genericZeroBlock && !["product-spotlight", "featured-collection", "scroll-story", "background-media"].includes(section.type);
   const showPadding = !["hero", "scroll-story", "video-hero", "video-banner", "background-media", "grid-stack-builder", "spacer", "anchor"].includes(section.type);
@@ -745,6 +746,42 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                       <option value="60%">60%</option>
                     </select>
                   </label>
+                </>
+              ) : null}
+
+              {rewardsPromo ? (
+                <>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                    Promo medyası
+                    <div className="flex gap-2">
+                      <select value={text(settings.imageAssetId)} onChange={(event) => updateSetting("imageAssetId", event.target.value)} className="h-9 min-w-0 flex-1 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                        <option value="">Medya yok</option>
+                        {mediaAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.type} · {asset.assetId} · v{asset.version || 1}</option>)}
+                      </select>
+                      <button type="button" onClick={() => setMediaPicker({ target: "section", key: "imageAssetId", mediaType: "any" })} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
+                        Media Library
+                      </button>
+                    </div>
+                    <span className="text-[7px] font-normal leading-4 text-black/35">Responsive varyant ve focal point Media Library kaydından gelir.</span>
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Yerleşim
+                    <select value={text(settings.layout) || "split"} onChange={(event) => updateSetting("layout", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="split">Split</option>
+                      <option value="card">Kart</option>
+                    </select>
+                  </label>
+                  <label className="flex items-center justify-between gap-3 rounded-lg border border-black/10 bg-white p-2.5 text-[8px] font-semibold text-black/45">
+                    Kayıt puanını göster
+                    <input type="checkbox" checked={settings.showSignupPoints !== false} onChange={(event) => updateSetting("showSignupPoints", event.target.checked)} />
+                  </label>
+                  <label className="flex items-center justify-between gap-3 rounded-lg border border-black/10 bg-white p-2.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                    Kazanma oranını göster
+                    <input type="checkbox" checked={settings.showEarnRate !== false} onChange={(event) => updateSetting("showEarnRate", event.target.checked)} />
+                  </label>
+                  <div className="rounded-lg border border-black/10 bg-black/[0.025] p-2.5 text-[7px] leading-4 text-black/45 md:col-span-2">
+                    Puan miktarları ve kazanma oranı tema ayarı değildir; storefront rewards settings servisinden read-only gelir.
+                  </div>
                 </>
               ) : null}
 
