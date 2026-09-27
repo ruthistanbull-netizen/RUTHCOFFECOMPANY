@@ -178,6 +178,9 @@ const publishReport = read("apps/admin/src/components/theme/StoreDesignPublishRe
 if (!publishReport.includes("Publish Öncesi Kontrol")) fail("Publish öncesi kırık referans raporu bağlı değil.");
 
 const sectionManager = read("apps/admin/src/components/theme/StoreDesignSectionManager.tsx");
+for (const token of ["document.templateBindings[activePage.path]", "activePage?.template", "templateId"]) {
+  if (!sectionManager.includes(token)) fail(`Dynamic template editor resolver eksik: ${token}`);
+}
 for (const token of ["StoreDesignPresetLibrary", "StoreDesignBlockSectionEditor", "allowedBlocks", "Presetler"]) {
   if (!sectionManager.includes(token)) fail(`Section Manager V2.1 eksik: ${token}`);
 }
@@ -312,6 +315,7 @@ for (const token of [
   "category-cards",
   "product-comparison",
   "best-sellers",
+  "recommendations",
   "contact-form",
   "review-highlights",
   "rewards-promo",
@@ -336,6 +340,8 @@ for (const token of [
   "Tablo · mobilde yatay kaydırma",
   "Otomatik · ödenmiş sipariş miktarları",
   "Tarih penceresi",
+  "Öneri algoritması",
+  "Öneri sıralaması storefront recommendation servisi tarafından read-only hesaplanır.",
   "Telefon alanını göster",
   "Başarı mesajı",
   "endpoint doğrulaması nedeniyle zorunludur",
@@ -366,6 +372,7 @@ for (const token of [
   'section("category-cards"',
   'section("product-comparison"',
   'section("best-sellers"',
+  'section("recommendations"',
   'component("contact-form"',
   'section("contact-form"',
   'component("review-highlights"',
@@ -388,7 +395,7 @@ for (const token of ["new-arrivals", "sale-products", "Otomatik · yeni ürün i
 }
 
 const themeSections = read("packages/commerce-core/src/theme-sections.ts");
-for (const token of ['| "product-spotlight"', '| "featured-collection"', '| "category-cards"', '| "product-comparison"', '| "best-sellers"', '| "new-arrivals"', '| "sale-products"', 'layout?: "slider" | "grid"', 'badgeStyle?: "pill" | "outline" | "minimal"', "mobileAssetUrl?: string", "mobileObjectPosition?: string"]) {
+for (const token of ['| "product-spotlight"', '| "featured-collection"', '| "category-cards"', '| "product-comparison"', '| "best-sellers"', '| "recommendations"', '| "new-arrivals"', '| "sale-products"', 'layout?: "slider" | "grid"', 'badgeStyle?: "pill" | "outline" | "minimal"', "mobileAssetUrl?: string", "mobileObjectPosition?: string"]) {
   if (!themeSections.includes(token)) fail(`Product preset render contract eksik: ${token}`);
 }
 
@@ -415,7 +422,7 @@ for (const token of [
 }
 
 for (const token of [
-  '["hero", "product-spotlight", "featured-collection", "category-cards", "product-comparison", "best-sellers", "collection-cards", "brand-story"]',
+  '["hero", "product-spotlight", "featured-collection", "category-cards", "product-comparison", "best-sellers", "recommendations", "collection-cards", "brand-story"]',
   'section.type === "scroll-story"',
   "hydrateV2Blocks",
   "mobileAssetUrl",
@@ -440,6 +447,24 @@ for (const token of [
 
 const productCard = read("apps/storefront/src/components/ProductCard.tsx");
 if (!productCard.includes("--theme-sale-badge-bg")) fail("Sale badge style preset ProductCard'a bağlı değil.");
+
+const recommendationsRuntime = read("apps/storefront/src/components/product/ProductRecommendations.tsx");
+for (const token of [
+  "relationScore",
+  "sortRecommendations",
+  "recommendationLimit",
+  'layout === "slider"',
+  "settings?: Record<string, unknown>",
+]) {
+  if (!recommendationsRuntime.includes(token)) fail(`Recommendations protected runtime eksik: ${token}`);
+}
+const productDetailRuntime = read("apps/storefront/src/components/product/ProductDetailExperience.tsx");
+if (!productDetailRuntime.includes("recommendationsConfig")) fail("Recommendations product detail config bağlantısı eksik.");
+const productRoute = read("apps/storefront/src/app/products/[slug]/page.tsx");
+for (const token of ["storeDesignSectionsForTemplatePath", '"/products/[slug]"', "recommendationsConfig"]) {
+  if (!productRoute.includes(token)) fail(`Recommendations product template runtime bağlantısı eksik: ${token}`);
+}
+if (!v2Sections.includes("storeDesignSectionsForTemplatePath")) fail("Dynamic template storefront resolver eksik.");
 
 const contactFormRuntime = read("apps/storefront/src/components/theme/StoreDesignContactForm.tsx");
 for (const token of [
