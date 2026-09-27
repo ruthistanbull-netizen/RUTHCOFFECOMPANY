@@ -314,6 +314,7 @@ for (const token of [
   "best-sellers",
   "contact-form",
   "review-highlights",
+  "rewards-promo",
   "grid-stack-builder",
   "scroll-story",
   "Media Library",
@@ -341,6 +342,8 @@ for (const token of [
   "Yorum kaynağı · ürün",
   "Yalnız onaylı yorumlar storefront review servisinden read-only gelir.",
   "Puanı göster",
+  "Kayıt puanını göster",
+  "Puan miktarları ve kazanma oranı tema ayarı değildir",
   "Mobilde tek kolona stack",
   "Güvenli composition kullanılır",
   "Scroll uzunluğu",
@@ -367,6 +370,8 @@ for (const token of [
   'section("contact-form"',
   'component("review-highlights"',
   'section("review-highlights"',
+  'component("rewards-promo"',
+  'section("rewards-promo"',
   'component("grid-stack-builder"',
   'section("grid-stack-builder"',
   'section("collection-cards"',
@@ -462,6 +467,20 @@ for (const token of [
 }
 if (!blockRenderer.includes('type === "review-highlights"')) fail("Review Highlights StoreDesignBlockSection runtime'a bağlı değil.");
 if (!v2Sections.includes('"review-highlights"')) fail("Review Highlights V2 adapter allowlist'e bağlı değil.");
+
+const rewardsPromoRuntime = read("apps/storefront/src/components/theme/StoreDesignRewardsPromo.tsx");
+for (const token of [
+  "useRostaPointsSettings",
+  "rewards.signupPoints",
+  "rewards.pointsPerTl",
+  "safeHref",
+  "showSignupPoints",
+  "showEarnRate",
+]) {
+  if (!rewardsPromoRuntime.includes(token)) fail(`Rewards Promo protected runtime eksik: ${token}`);
+}
+if (!blockRenderer.includes('type === "rewards-promo"')) fail("Rewards Promo StoreDesignBlockSection runtime'a bağlı değil.");
+if (!v2Sections.includes('"rewards-promo"')) fail("Rewards Promo V2 adapter allowlist'e bağlı değil.");
 
 for (const token of [
   'type === "grid-stack-builder"',
