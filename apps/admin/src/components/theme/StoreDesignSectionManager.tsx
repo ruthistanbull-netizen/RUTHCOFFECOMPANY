@@ -100,6 +100,7 @@ const RENDERABLE_SECTION_TYPES = new Set([
   "promo-banner",
   "countdown",
   "shipping-returns-cta",
+  "contact-form",
   "spacer",
   "divider",
   "anchor",
@@ -216,6 +217,22 @@ function defaultSettings(type: string): Record<string, unknown> {
   if (type === "promo-banner") return { title: "Promo", body: "", linkLabel: "Keşfet", linkHref: "/", align: "center", paddingY: 56 };
   if (type === "countdown") return { title: "Geri Sayım", targetTime: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), completedState: "Tamamlandı", style: "cards", paddingY: 64 };
   if (type === "shipping-returns-cta") return { icon: "•", title: "Kargo & İade", body: "", linkLabel: "Detaylar", linkHref: "/", align: "center", paddingY: 48 };
+  if (type === "contact-form") return {
+    title: "Bize Ulaşın",
+    body: "",
+    phoneVisible: true,
+    nameLabel: "Ad Soyad",
+    emailLabel: "E-posta",
+    phoneLabel: "Telefon",
+    messageLabel: "Mesaj",
+    namePlaceholder: "Adınız Soyadınız",
+    emailPlaceholder: "ornek@mail.com",
+    phonePlaceholder: "05xx xxx xx xx",
+    messagePlaceholder: "Mesajınızı yazın.",
+    buttonLabel: "Mesajı Gönder",
+    successCopy: "Mesajınız alındı. En kısa sürede size dönüş yapacağız.",
+    paddingY: 72,
+  };
   if (type === "spacer") return { desktopHeight: 64, mobileHeight: 40, paddingY: 0 };
   if (type === "divider") return { width: "100%", thickness: 1, colorToken: "subtle", paddingY: 24 };
   if (type === "anchor") return { anchorId: "bolum", labelVisibility: false, title: "" };
@@ -316,6 +333,7 @@ const GENERIC_V2_SECTION_TYPES = new Set([
   "category-cards",
   "product-comparison",
   "best-sellers",
+  "contact-form",
   "collection-cards",
   "brand-story",
   "video-hero",
