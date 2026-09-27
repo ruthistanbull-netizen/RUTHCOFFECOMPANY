@@ -313,6 +313,71 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
     );
   }
 
+  if (type === "grid-stack-builder") {
+    const gridColumns = Math.round(number(settings.columns, 2, 1, 4));
+    const gridGap = number(settings.gap, 20, 0, 64);
+    const alignment = ["start", "center", "stretch"].includes(text(settings.alignment))
+      ? text(settings.alignment)
+      : "stretch";
+    const responsiveStack = settings.responsiveStack !== false;
+    const mobileColumns = responsiveStack ? 1 : Math.min(2, gridColumns);
+    const alignItems = alignment === "start" ? "start" : alignment === "center" ? "center" : "stretch";
+
+    return (
+      <section
+        data-theme-section-id={section.id}
+        data-editor-id={`section:${section.id}`}
+        data-editor-type="grid-stack-builder"
+        data-editor-label="Grid / Stack Builder"
+        className="px-5 md:px-8"
+        style={{
+          ...style,
+          ["--v2-grid-columns" as string]: String(gridColumns),
+          ["--v2-grid-mobile-columns" as string]: String(mobileColumns),
+          ["--v2-grid-gap" as string]: `${gridGap}px`,
+          ["--v2-grid-align" as string]: alignItems,
+        }}
+      >
+        <div className="v2-safe-grid mx-auto max-w-[1440px]">
+          {blocks.map((block) => {
+            const blockHeading = text(block.settings.heading);
+            const blockEyebrow = text(block.settings.eyebrow);
+            const blockBody = text(block.settings.body);
+            const blockLinkLabel = text(block.settings.linkLabel);
+            const blockLinkHref = href(block.settings.linkHref);
+            const blockAlign = contentAlign(block.settings.align);
+            const maxWidthValue = text(block.settings.maxWidth);
+            const maxWidth = ["640px", "800px", "960px"].includes(maxWidthValue) ? maxWidthValue : "800px";
+            const textAlign = blockAlign === "left" ? "left" : blockAlign === "right" ? "right" : "center";
+
+            return (
+              <article
+                key={block.id}
+                data-editor-id={`block:${block.id}`}
+                data-editor-type="content"
+                data-editor-label={blockHeading || "İçerik"}
+                className="min-w-0 rounded-2xl border border-current/10 p-5 md:p-6"
+                style={{ textAlign }}
+              >
+                <div style={{ maxWidth, marginInline: blockAlign === "center" ? "auto" : undefined }}>
+                  {blockEyebrow ? <p className="mb-3 text-[9px] uppercase tracking-[0.16em] opacity-55">{blockEyebrow}</p> : null}
+                  {blockHeading ? <h3 className="font-heading text-[clamp(1.3rem,2.5vw,2.2rem)] leading-tight">{blockHeading}</h3> : null}
+                  {blockBody ? <p className="mt-4 whitespace-pre-wrap text-sm leading-7 opacity-70">{blockBody}</p> : null}
+                  {blockLinkLabel && blockLinkHref ? (
+                    <Link href={blockLinkHref} className="mt-5 inline-flex min-h-10 items-center justify-center rounded-full border border-current/25 px-4 text-[9px] font-semibold uppercase tracking-[0.12em]">
+                      {blockLinkLabel}
+                    </Link>
+                  ) : null}
+                </div>
+              </article>
+            );
+          })}
+        </div>
+        <style>{`.v2-safe-grid{display:grid;grid-template-columns:repeat(var(--v2-grid-mobile-columns),minmax(0,1fr));gap:var(--v2-grid-gap);align-items:var(--v2-grid-align)}@media(min-width:768px){.v2-safe-grid{grid-template-columns:repeat(var(--v2-grid-columns),minmax(0,1fr))}}`}</style>
+      </section>
+    );
+  }
+
   if (type === "text-columns") {
     return (
       <section data-theme-section-id={section.id} data-editor-id={`section:${section.id}`} data-editor-type="text-columns" data-editor-label={title || "Metin Kolonları"} className="px-5 md:px-8" style={style}>
