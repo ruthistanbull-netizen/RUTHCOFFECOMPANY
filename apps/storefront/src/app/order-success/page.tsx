@@ -16,11 +16,7 @@ export default async function OrderSuccessPage({ searchParams }: Props) {
   const orderNo = typeof resolvedSearchParams.order === "string" ? resolvedSearchParams.order : undefined;
 
   return (
-    <div
-      data-editor-id="system-state:order-success"
-      data-editor-type="system-state"
-      data-editor-label="Sipariş Başarılı"
-      className="order-success-page min-h-screen bg-carbon px-4 pb-8 pt-24 text-center md:pt-32 text-cream">
+    <div className="order-success-page min-h-screen bg-carbon px-4 pb-8 pt-24 text-center md:pt-32 text-cream">
       <PaytrOrderResult orderNo={orderNo} />
     </div>
   );

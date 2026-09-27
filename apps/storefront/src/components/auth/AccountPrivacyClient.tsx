@@ -77,11 +77,7 @@ export function AccountPrivacyClient() {
   };
 
   return (
-    <main
-      data-editor-id="account-privacy"
-      data-editor-type="account-profile"
-      data-editor-label="Hesap Gizlilik Tercihleri"
-      className="min-h-screen bg-carbon px-4 pb-24 pt-32 md:px-8 text-cream">
+    <main className="min-h-screen bg-carbon px-4 pb-24 pt-32 md:px-8 text-cream">
       <div className="mx-auto max-w-3xl space-y-6">
         <div>
           <p className="text-xs uppercase tracking-wide-luxe text-brick">Hesap gizliliği</p>

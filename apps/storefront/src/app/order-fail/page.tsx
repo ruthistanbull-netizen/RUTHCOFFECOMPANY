@@ -17,11 +17,7 @@ export default async function OrderFailPage({ searchParams }: Props) {
   const orderNo = typeof resolvedSearchParams.order === "string" ? resolvedSearchParams.order : "";
 
   return (
-    <div
-      data-editor-id="system-state:order-fail"
-      data-editor-type="system-state"
-      data-editor-label="Ödeme Başarısız"
-      className="flex min-h-screen items-center justify-center bg-carbon px-4 pt-20 text-center text-cream">
+    <div className="flex min-h-screen items-center justify-center bg-carbon px-4 pt-20 text-center text-cream">
       <div className="max-w-lg rounded-xl border border-kraft/35 bg-carbon-soft p-8">
         <XCircle className="mx-auto mb-5 text-brick" size={40} />
         <p className="mb-3 text-xs uppercase tracking-wide-luxe text-brick">Ödeme Tamamlanmadı</p>

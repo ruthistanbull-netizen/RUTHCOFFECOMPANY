@@ -7,8 +7,6 @@ import {
 } from "@/components/product/ProductDetailExperience";
 import { getProductPageWindow } from "@/data/productPageData";
 import { getProductPageWindowForSource } from "@/data/productNavigationContext";
-import { getStoreDesignV2Preview, getStoreDesignV2Published } from "@/data/site";
-import { storeDesignSectionsForTemplatePath } from "@/lib/storeDesignV2Sections";
 import { productPrimaryDetailImageSrc } from "@/lib/productDisplayImage";
 import { absoluteUrl, cleanSeoText, SITE_NAME, SITE_URL } from "@/lib/seo";
 import type { Product } from "@/types/site";
@@ -58,19 +56,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ProductPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const [{ slug }, query, cookieStore] = await Promise.all([params, searchParams, cookies()]);
+  const { slug } = await params;
+  const cookieStore = await cookies();
   const source = cookieStore.get("rosta_product_source")?.value || "";
-  const previewToken = typeof query.storeDesignV2Preview === "string" ? query.storeDesignV2Preview : "";
-  const [productWindow, publishedV2, previewV2] = await Promise.all([
-    getProductPageWindowForSource(slug, source),
-    getStoreDesignV2Published(),
-    previewToken ? getStoreDesignV2Preview(previewToken) : Promise.resolve(null),
-  ]);
+  const productWindow = await getProductPageWindowForSource(slug, source);
   if (!productWindow.current) return notFound();
 
   const initialWindow: ProductBrowserWindow = {
@@ -79,25 +71,6 @@ export default async function ProductPage({
     next: productWindow.next,
     source: productWindow.source,
   };
-
-  const activeThemeDocument = previewV2 || publishedV2;
-  const productTemplateSections = storeDesignSectionsForTemplatePath(activeThemeDocument, "/products/[slug]");
-  const recommendationsSection = productTemplateSections.find((section) => section.type === "recommendations");
-  const recommendationsConfig = recommendationsSection
-    ? { enabled: recommendationsSection.enabled, settings: recommendationsSection.v2Settings || {} }
-    : undefined;
-  const recentlyViewedSection = productTemplateSections.find((section) => section.type === "recently-viewed");
-  const recentlyViewedConfig = recentlyViewedSection
-    ? { enabled: recentlyViewedSection.enabled, settings: recentlyViewedSection.v2Settings || {} }
-    : undefined;
-  const bundleSection = productTemplateSections.find((section) => section.type === "bundle");
-  const bundleConfig = bundleSection
-    ? { enabled: bundleSection.enabled, settings: bundleSection.v2Settings || {} }
-    : undefined;
-  const breadcrumbSection = productTemplateSections.find((section) => section.type === "breadcrumb");
-  const breadcrumbConfig = breadcrumbSection
-    ? { id: breadcrumbSection.id, enabled: breadcrumbSection.enabled, settings: breadcrumbSection.v2Settings || {} }
-    : undefined;
 
   const adjacentProducts = [productWindow.next, productWindow.previous].filter(
     (value): value is Product => Boolean(value),
@@ -148,13 +121,7 @@ export default async function ProductPage({
           />
         ) : null;
       })}
-      <ProductDetailExperience
-        initialWindow={initialWindow}
-        recommendationsConfig={recommendationsConfig}
-        recentlyViewedConfig={recentlyViewedConfig}
-        bundleConfig={bundleConfig}
-        breadcrumbConfig={breadcrumbConfig}
-      />
+      <ProductDetailExperience initialWindow={initialWindow} />
     </>
   );
 }

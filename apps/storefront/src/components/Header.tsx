@@ -646,9 +646,6 @@ export function Header({
       ) : null}
 
       <header
-        data-editor-id="global.header"
-        data-editor-type="header-shell"
-        data-editor-label="Header"
         data-menu-open={menuOpen ? "true" : "false"}
         className={`ruth-zara-header fixed inset-x-0 top-0 z-[80] w-full ${homePage ? "is-home" : ""} ${transparentProductHeader ? "product-header-transparent" : ""} ${contrastHeader ? "is-contrast" : ""} ${scrolled && !contrastHeader ? "is-scrolled" : ""}`}
       >
@@ -656,7 +653,7 @@ export function Header({
           <span className="ruth-zara-menu-slot" aria-hidden="true" />
           <Link
             href="/"
-            data-editor-id="global.header.logo"\n            data-editor-type="header-logo"\n            data-editor-label="Logo"\n            className="header-wordmark-link flex justify-center"
+            className="header-wordmark-link flex justify-center"
             aria-label="Rosta Coffee Co ana sayfa"
           >
             <img

@@ -2,24 +2,19 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PageIntro } from "@/components/PageIntro";
 import { ProductCatalog } from "@/components/catalog/ProductCatalog";
-import { StoreDesignBreadcrumb } from "@/components/theme/StoreDesignBreadcrumb";
 import {
   getCachedCategoryBySlug,
   getCachedProductsByCategorySlug,
 } from "@/data/catalogCache";
 import { toCatalogProducts } from "@/data/catalogReadModel";
-import { getStoreDesignV2Preview, getStoreDesignV2Published } from "@/data/site";
 import {
   categoryDescription,
   categoryDisplayName,
   publicCategorySlug,
 } from "@/lib/catalogCategories";
 import { SITE_URL } from "@/lib/seo";
-import { storeDesignSectionsForTemplatePath } from "@/lib/storeDesignV2Sections";
 
 export const revalidate = 600;
-
-type Query = Record<string, string | string[] | undefined>;
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -47,58 +42,21 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
-export default async function CategoryPage({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ slug: string }>;
-  searchParams: Promise<Query>;
-}) {
-  const [{ slug }, query] = await Promise.all([params, searchParams]);
+export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   const normalized = publicCategorySlug(slug);
   const isNewArrivals = normalized === "new-arrivals";
-  const previewToken = typeof query.storeDesignV2Preview === "string" ? query.storeDesignV2Preview : "";
-  const [category, products, publishedV2, previewV2] = await Promise.all([
-    isNewArrivals ? Promise.resolve(null) : getCachedCategoryBySlug(slug),
-    getCachedProductsByCategorySlug(slug),
-    getStoreDesignV2Published(),
-    previewToken ? getStoreDesignV2Preview(previewToken) : Promise.resolve(null),
-  ]);
+  const category = isNewArrivals ? null : await getCachedCategoryBySlug(slug);
   if (!isNewArrivals && !category) return notFound();
+
+  const products = await getCachedProductsByCategorySlug(slug);
   const name = isNewArrivals ? "Yeni Gelenler" : categoryDisplayName(category?.slug, category?.name || "Ürünler");
   const description = isNewArrivals ? "ROSTA Coffee Co.’nun en yeni ürünleri." : category?.description || categoryDescription(category?.slug);
-  const activeThemeDocument = previewV2 || publishedV2;
-  const templateSections = storeDesignSectionsForTemplatePath(activeThemeDocument, "/category/[slug]");
-  const breadcrumbSection = templateSections.find((section) => section.type === "breadcrumb");
 
   return (
-    <div
-      data-editor-id="catalog-page-shell:category"
-      data-editor-type="catalog-shell"
-      data-editor-label="Kategori Katalog Sayfası"
-      className="min-h-screen bg-carbon px-4 pb-24 pt-[calc(var(--announcement-height,0px)+128px)] text-cream md:px-8"
-    >
+    <div className="min-h-screen bg-carbon px-4 pb-24 pt-[calc(var(--announcement-height,0px)+128px)] text-cream md:px-8">
       <div className="mx-auto max-w-7xl">
-        {breadcrumbSection?.enabled ? (
-          <StoreDesignBreadcrumb
-            sectionId={breadcrumbSection.id}
-            settings={breadcrumbSection.v2Settings}
-            items={[
-              { label: "Ana Sayfa", href: "/" },
-              { label: name },
-            ]}
-            className="mb-4"
-          />
-        ) : null}
-        <PageIntro
-          eyebrow="Kategori"
-          title={name}
-          description={description}
-          className="mb-12 md:mb-20"
-          editorId="category-hero"
-          editorType="category-hero"
-          editorLabel="Kategori Hero"
-        />
+        <PageIntro eyebrow="Kategori" title={name} description={description} className="mb-12 md:mb-20" />
         <ProductCatalog
           products={toCatalogProducts(products)}
           emptyMessage="Bu kategoride seçimine uygun aktif ürün bulunamadı."

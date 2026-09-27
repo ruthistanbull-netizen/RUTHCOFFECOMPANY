@@ -32,7 +32,6 @@
     "typecheck:commerce": "npm run typecheck:contracts && npm run typecheck:commerce-core",
     "typecheck:all": "npm run typecheck:commerce && npm run typecheck:admin-app && npm run typecheck:storefront",
     "build:all": "npm run build:storefront && npm run build:admin",
-    "verify:rosta-parity": "node scripts/verify-rosta-commerce-parity.mjs",
-    "verify:store-design-v2": "node scripts/verify-store-design-v2.mjs"
+    "verify:rosta-parity": "node scripts/verify-rosta-commerce-parity.mjs"
   }
 }

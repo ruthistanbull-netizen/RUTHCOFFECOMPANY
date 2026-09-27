@@ -250,11 +250,7 @@ export function AccountOrdersClient() {
   }
 
   return (
-    <div
-      data-editor-id="account-orders"
-      data-editor-type="account-profile"
-      data-editor-label="Siparişlerim"
-      className="min-h-screen bg-carbon px-4 pb-24 pt-28 md:px-8 md:pt-32">
+    <div className="min-h-screen bg-carbon px-4 pb-24 pt-28 md:px-8 md:pt-32">
       <div className="mx-auto max-w-6xl">
         <div className="mb-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div>
@@ -296,12 +292,7 @@ export function AccountOrdersClient() {
               const paymentLabel = friendlyLabel(paymentStatusLabels, order.payment_status, "Ödeme Bekleniyor");
 
               return (
-                <article
-                  key={order.id}
-                  data-editor-id={`order-card:${order.id}`}
-                  data-editor-type="order-card"
-                  data-editor-label="Sipariş Kartı"
-                  className="rounded-2xl border border-kraft/35 bg-carbon-soft p-4 md:p-6">
+                <article key={order.id} className="rounded-2xl border border-kraft/35 bg-carbon-soft p-4 md:p-6">
                   <div className="flex flex-col gap-4 border-b border-kraft/25 pb-5 md:flex-row md:items-start md:justify-between">
                     <div>
                       <p className="font-heading text-lg text-cream">#{order.order_no}</p>

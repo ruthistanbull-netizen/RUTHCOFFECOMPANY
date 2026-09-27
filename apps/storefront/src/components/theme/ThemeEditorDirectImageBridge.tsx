@@ -110,8 +110,7 @@ export function ThemeEditorDirectImageBridge() {
   const directIdsRef = useRef(new Set<string>());
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("themeEditor") !== "1" || params.get("storeDesignV2") === "1") return;
+    if (new URLSearchParams(window.location.search).get("themeEditor") !== "1") return;
 
     let timer = 0;
     let frame = 0;

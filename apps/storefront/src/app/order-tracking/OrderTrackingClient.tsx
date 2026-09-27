@@ -110,16 +110,9 @@ export function OrderTrackingClient() {
   };
 
   return (
-    <div
-      data-editor-id="order-tracking"
-      data-editor-type="order-tracking"
-      data-editor-label="Sipariş Takip"
-      className="min-h-screen bg-carbon pt-24 text-cream">
+    <div className="min-h-screen bg-carbon pt-24 text-cream">
       <div className="mx-auto max-w-6xl px-4 py-12 md:px-8 md:py-20">
         <PageIntro
-          editorId="order-tracking-intro"
-          editorType="page-intro"
-          editorLabel="Sipariş Takip Başlığı"
           eyebrow="Sipariş"
           title="Siparişini takip et"
           description="Sipariş numaran ve siparişte kullandığın e-posta ya da telefonla güncel durumu kontrol edebilirsin."

@@ -359,13 +359,7 @@ export function ProductCatalog({
 
   return (
     <>
-      <style>{`.theme-product-grid{display:grid;width:100%;max-width:var(--theme-product-grid-max-width,none);margin-inline:auto;grid-template-columns:repeat(var(--theme-product-grid-columns,2),minmax(0,1fr));column-gap:var(--theme-product-grid-gap-x,16px);row-gap:var(--theme-product-grid-gap-y,32px)}@media(min-width:640px){.theme-product-grid{column-gap:var(--theme-product-grid-gap-x,20px);row-gap:var(--theme-product-grid-gap-y,48px)}}@media(min-width:1280px){.theme-product-grid{grid-template-columns:repeat(var(--theme-product-grid-columns,3),minmax(0,1fr))}}`}</style>
-      <div
-        data-editor-id="catalog-search"
-        data-editor-type="filter-controls"
-        data-editor-label="Katalog Arama"
-        className="mb-5"
-      >
+      <div className="mb-5">
         <input
           value={searchTerm}
           onChange={(event) => setSearchTerm(event.target.value)}
@@ -394,9 +388,6 @@ export function ProductCatalog({
 
       <div className="mb-8 flex items-center justify-between gap-4 border-b border-kraft/35 pb-4">
         <button
-          data-editor-id="catalog-filter-trigger"
-          data-editor-type="filter-controls"
-          data-editor-label="Filtre Butonu"
           type="button"
           onClick={() => setMobileFiltersOpen(true)}
           className="flex items-center gap-2 text-sm text-cream focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick lg:hidden"
@@ -408,12 +399,7 @@ export function ProductCatalog({
           {filteredProducts.length} ürün
         </p>
 
-        <div
-          data-editor-id="catalog-sort-control"
-          data-editor-type="sort-control"
-          data-editor-label="Sıralama Kontrolü"
-          className="relative ml-auto flex items-center gap-3"
-        >
+        <div className="relative ml-auto flex items-center gap-3">
           <span className="hidden text-[10px] uppercase tracking-wide-luxe text-cream/60 sm:block">
             Sırala
           </span>
@@ -479,21 +465,11 @@ export function ProductCatalog({
       </div>
 
       <div className="flex gap-10">
-        <aside
-          data-editor-id="catalog-filter-panel"
-          data-editor-type="filter-controls"
-          data-editor-label="Filtreler"
-          className="hidden w-56 shrink-0 lg:block"
-        >{filterContent}</aside>
+        <aside className="hidden w-56 shrink-0 lg:block">{filterContent}</aside>
 
         <div className="min-w-0 flex-1">
           {filteredProducts.length > 0 ? (
-            <div
-              data-editor-id="catalog-product-grid"
-              data-editor-type="product-grid"
-              data-editor-label="Ürün Grid'i"
-              className="theme-product-grid"
-            >
+            <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-5 sm:gap-y-12 xl:grid-cols-3">
               {filteredProducts.map((product, index) => (
                 <ProductCard
                   key={product.id}
@@ -504,7 +480,7 @@ export function ProductCatalog({
               ))}
             </div>
           ) : (
-            <div data-editor-id="catalog-empty-state" data-editor-type="empty-state" data-editor-label="Boş Katalog Durumu" className="rounded-lg border border-kraft/35 bg-carbon-soft px-6 py-20 text-center text-cream">
+            <div className="rounded-lg border border-kraft/35 bg-carbon-soft px-6 py-20 text-center text-cream">
               <p className="font-heading text-xl">{emptyMessage}</p>
               <button
                 type="button"
@@ -528,9 +504,6 @@ export function ProductCatalog({
             onClick={() => setMobileFiltersOpen(false)}
           >
             <motion.aside
-              data-editor-id="catalog-mobile-filter-panel"
-              data-editor-type="filter-controls"
-              data-editor-label="Mobil Filtreler"
               className="absolute bottom-0 left-0 right-0 max-h-[85dvh] overflow-y-auto rounded-t-2xl border-t border-kraft/35 bg-carbon-soft text-cream"
               initial={{ y: "100%" }}
               animate={{ y: 0 }}

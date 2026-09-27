@@ -9,11 +9,8 @@ import {
   ProductPurchasePanel,
   type ProductDetailItem,
 } from "@/components/product/ProductPurchasePanel";
-import { ProductBundleSection } from "@/components/product/ProductBundleSection";
 import { ProductRecommendations } from "@/components/product/ProductRecommendations";
-import { ProductRecentlyViewed } from "@/components/product/ProductRecentlyViewed";
 import { ProductReviewsSection } from "@/components/reviews/ProductReviewsSection";
-import { StoreDesignBreadcrumb } from "@/components/theme/StoreDesignBreadcrumb";
 import { formatPrice } from "@/lib/formatPrice";
 import {
   cleanedProductDescription,
@@ -230,29 +227,8 @@ function ProductBrowserPreview({ product }: { product: Product | null }) {
 
 export function ProductDetailExperience({
   initialWindow,
-  recommendationsConfig,
-  recentlyViewedConfig,
-  bundleConfig,
-  breadcrumbConfig,
 }: {
   initialWindow: ProductBrowserWindow;
-  recommendationsConfig?: {
-    enabled: boolean;
-    settings?: Record<string, unknown>;
-  };
-  recentlyViewedConfig?: {
-    enabled: boolean;
-    settings?: Record<string, unknown>;
-  };
-  bundleConfig?: {
-    enabled: boolean;
-    settings?: Record<string, unknown>;
-  };
-  breadcrumbConfig?: {
-    id: string;
-    enabled: boolean;
-    settings?: Record<string, unknown>;
-  };
 }) {
   const initialProducts = [
     initialWindow.previous,
@@ -752,12 +728,6 @@ export function ProductDetailExperience({
   const details = useMemo(() => productDetails(product), [product]);
   const collectionName =
     displayCollectionName(product.collections?.name) || "ROSTA Coffee";
-  const collectionSlug = product.collections?.slug || product.collection_slugs?.[0] || "";
-  const breadcrumbItems = [
-    { label: "Ana Sayfa", href: "/" },
-    ...(collectionName && collectionSlug ? [{ label: collectionName, href: `/collections/${collectionSlug}` }] : []),
-    { label: product.name },
-  ];
   const productPrice = Number(product.price ?? 0);
   const compareAt = Number(product.compare_at_price ?? 0);
   const hasDiscount =
@@ -769,12 +739,8 @@ export function ProductDetailExperience({
   return (
     <div
       ref={rootRef}
-      data-editor-id={`product-detail-shell:${product.id}`}
-      data-editor-type="product-detail-shell"
-      data-editor-label="Ürün Detay"
       className="product-browser-root"
       data-browser-phase="idle"
-      data-has-breadcrumb={breadcrumbConfig?.enabled !== false && breadcrumbConfig ? "true" : "false"}
       style={{ touchAction: "pan-y pinch-zoom" }}
     >
       <style>{`
@@ -807,8 +773,6 @@ export function ProductDetailExperience({
         .product-swipe-hint-icon{flex:0 0 auto;animation:product-swipe-hint-nudge ${ruthMotion.milliseconds.slow * 2}ms cubic-bezier(.22,1,.36,1) infinite alternate}
         @keyframes product-swipe-hint-nudge{from{transform:translate3d(-6px,0,0)}to{transform:translate3d(6px,0,0)}}
         .product-detail-page{min-height:100svh;background:var(--rosta-carbon);color:var(--rosta-cream)}
-        .product-template-breadcrumb{width:min(100% - 48px,1280px);margin:0 auto;padding-top:calc(var(--announcement-height,0px) + 92px)}
-        .product-browser-root[data-has-breadcrumb="true"] .product-primary{padding-top:34px}
         .product-primary{display:grid;width:min(100% - 48px,1280px);margin:0 auto;grid-template-columns:minmax(0,1fr) minmax(360px,1fr);gap:clamp(38px,6vw,88px);padding:calc(var(--announcement-height,0px) + 126px) 0 76px}
         .product-media{min-width:0;background:transparent}
         .product-summary{position:relative;min-width:0;padding:18px 0 0}
@@ -829,8 +793,6 @@ export function ProductDetailExperience({
         .product-secondary-content{background:var(--rosta-carbon)}
         @media(max-width:767px){
           .product-detail-page{padding-top:0}
-          .product-template-breadcrumb{width:100%;padding:calc(var(--announcement-height,0px) + 68px) 14px 10px}
-          .product-browser-root[data-has-breadcrumb="true"] .product-primary{padding-top:0}
           .product-primary{display:flex;width:100%;margin:0;flex-direction:column;gap:0;padding:0}
           .product-media{position:relative;z-index:0;order:1;width:100%}
           .product-swipe-hint{position:absolute;right:max(24px,env(safe-area-inset-right));bottom:24px;left:max(24px,env(safe-area-inset-left));z-index:5;display:flex;width:max-content;max-width:calc(100% - 48px);min-height:44px;align-items:center;justify-content:center;gap:10px;margin-inline:auto;padding:10px 14px;border:1px solid color-mix(in srgb,var(--ruth-color-accent) 24%,transparent);border-radius:999px;background:color-mix(in srgb,var(--ruth-color-canvas) 91%,transparent);box-shadow:0 10px 30px color-mix(in srgb,var(--rosta-carbon) 58%,transparent);color:var(--ruth-color-text-primary);font-family:var(--ruth-font-body);font-size:11px;font-weight:500;line-height:1.35;letter-spacing:.01em;text-align:center;touch-action:pan-y pinch-zoom;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
@@ -846,13 +808,7 @@ export function ProductDetailExperience({
         @media(prefers-reduced-motion:reduce){.product-browser-track{transition-duration:1ms!important}.product-swipe-hint-icon{animation:none!important}}
       `}</style>
 
-      <div
-        data-editor-id={`product-sequence-nav:${product.id}`}
-        data-editor-type="product-sequence-nav"
-        data-editor-label="Ürün Sıra Navigasyonu"
-        className="product-browser-stage"
-        aria-hidden="true"
-      >
+      <div className="product-browser-stage" aria-hidden="true">
         <div ref={trackRef} className="product-browser-track">
           <ProductBrowserPreview product={browserWindow.previous} />
           <ProductBrowserPreview product={product} />
@@ -861,15 +817,6 @@ export function ProductDetailExperience({
       </div>
 
       <div className="product-detail-page" key={product.id}>
-        {breadcrumbConfig?.enabled !== false && breadcrumbConfig ? (
-          <div className="product-template-breadcrumb">
-            <StoreDesignBreadcrumb
-              sectionId={breadcrumbConfig.id}
-              settings={breadcrumbConfig.settings}
-              items={breadcrumbItems}
-            />
-          </div>
-        ) : null}
         <section className="product-primary">
           <div className="product-media">
             <ProductGallery key={product.id} product={product} images={images} />
@@ -891,33 +838,18 @@ export function ProductDetailExperience({
           </div>
           <div className="product-summary">
             <div className="product-summary-inner">
-              <div
-                data-editor-id={`product-title-meta:${product.id}`}
-                data-editor-type="product-title-meta"
-                data-editor-label="Ürün Başlık / Meta"
-                className="product-summary-copy"
-              >
+              <div className="product-summary-copy">
                 <p className="product-eyebrow">{collectionName}</p>
                 <h1 className="product-title" lang="en-US" data-latin-uppercase>
                   {product.name}
                 </h1>
-                <div
-                  data-editor-id={`price-block:${product.id}`}
-                  data-editor-type="price-block"
-                  data-editor-label="Fiyat Bloğu"
-                  className="product-price-row"
-                >
+                <div className="product-price-row">
                   {hasDiscount ? (
                     <>
                       <del className="product-compare">
                         {formatPrice(compareAt, product.currency || "TRY")}
                       </del>
-                      <span
-                        data-editor-id={`status-badges:${product.id}`}
-                        data-editor-type="status-badges"
-                        data-editor-label="Ürün Rozetleri"
-                        className="product-detail-sale-pill"
-                      >
+                      <span className="product-detail-sale-pill">
                         <strong>{formatPrice(productPrice, product.currency || "TRY")}</strong>
                         <em>-%{discountPercentage}</em>
                       </span>
@@ -932,12 +864,7 @@ export function ProductDetailExperience({
 
               <ProductPurchasePanel key={product.id} product={product} details={details} />
 
-              <div
-                data-editor-id={`shipping-info:${product.id}`}
-                data-editor-type="shipping-info"
-                data-editor-label="Kargo / Güven Bilgileri"
-                className="product-service-grid"
-              >
+              <div className="product-service-grid">
                 {[
                   { icon: Truck, title: "Kargo", text: "2.000₺ üzeri ücretsiz" },
                   { icon: Shield, title: "Güvenli", text: "PAYTR ile ödeme" },
@@ -954,31 +881,12 @@ export function ProductDetailExperience({
           </div>
         </section>
 
-        {bundleConfig?.enabled === false || !bundleConfig ? null : (
-          <ProductBundleSection
-            key={`bundle-${product.slug}`}
-            current={product}
-            settings={bundleConfig.settings}
-          />
-        )}
-
-        {recommendationsConfig?.enabled === false ? null : (
-          <ProductRecommendations
-            key={product.slug}
-            current={product}
-            previous={browserWindow.previous}
-            next={browserWindow.next}
-            settings={recommendationsConfig?.settings}
-          />
-        )}
-
-        {recentlyViewedConfig?.enabled === false || !recentlyViewedConfig ? null : (
-          <ProductRecentlyViewed
-            key={`recent-${product.slug}`}
-            current={product}
-            settings={recentlyViewedConfig.settings}
-          />
-        )}
+        <ProductRecommendations
+          key={product.slug}
+          current={product}
+          previous={browserWindow.previous}
+          next={browserWindow.next}
+        />
 
         <div className="product-secondary-content">
           <ProductReviewsSection

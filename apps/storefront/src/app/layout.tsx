@@ -35,13 +35,8 @@ import { StorefrontMotionProvider } from "@/components/StorefrontMotionProvider"
 import { ThemeEditorBridgeV3 } from "@/components/theme/ThemeEditorBridgeV3";
 import { ThemeEditorContextGestureBridge } from "@/components/theme/ThemeEditorContextGestureBridge";
 import { ThemeEditorDirectImageBridge } from "@/components/theme/ThemeEditorDirectImageBridge";
-import { SemanticThemeEditorBridge } from "@/components/theme/SemanticThemeEditorBridge";
-import { SemanticThemeRuntimeProvider } from "@/components/theme/SemanticThemeRuntimeProvider";
-import { ThemeEditorEnhancements } from "@/components/theme/ThemeEditorEnhancements";
-import { ThemeEditorNativeNavigation } from "@/components/theme/ThemeEditorNativeNavigation";
-import { getStoreDesignV2Published, getThemeCustomizerSettings } from "@/data/site";
+import { getThemeCustomizerSettings } from "@/data/site";
 import { getCachedCategories, getCachedCollections } from "@/data/catalogCache";
-import { storeDesignSectionsForTemplatePath } from "@/lib/storeDesignV2Sections";
 import {
   absoluteUrl,
   DEFAULT_OG_IMAGE,
@@ -54,12 +49,6 @@ import {
 } from "@/lib/seo";
 
 export const revalidate = 10;
-
-function recordValue(value: unknown): Record<string, unknown> {
-  return value && typeof value === "object" && !Array.isArray(value)
-    ? value as Record<string, unknown>
-    : {};
-}
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -122,26 +111,11 @@ export const metadata: Metadata = {
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const [themeSettings, storeDesignV2, categories, collections] = await Promise.all([
+  const [themeSettings, categories, collections] = await Promise.all([
     getThemeCustomizerSettings(),
-    getStoreDesignV2Published(),
     getCachedCategories(),
     getCachedCollections(),
   ]);
-
-  const consentResponsive = recordValue(storeDesignV2.globals.tokens["consent-banner"]);
-  const consentDesktopSettings = recordValue(consentResponsive.desktop);
-  const consentMobileSettings = recordValue(consentResponsive.mobile);
-  const cartCrossSellSection = storeDesignSectionsForTemplatePath(storeDesignV2, "/cart")
-    .find((section) => section.type === "cross-sell");
-  const cartCrossSellConfig = cartCrossSellSection
-    ? { id: cartCrossSellSection.id, enabled: cartCrossSellSection.enabled, settings: cartCrossSellSection.v2Settings || {} }
-    : null;
-
-  const themeEditorOrigins = (process.env.THEME_EDITOR_ORIGINS || process.env.NEXT_PUBLIC_ADMIN_URL || process.env.NEXT_PUBLIC_PANEL_URL || "https://rostapanel.zeabur.app http://localhost:* https://localhost:*")
-    .split(/[\s,]+/)
-    .map((value) => value.trim())
-    .filter(Boolean);
 
   const themeStyle = {
     "--rosta-carbon": "#111111",
@@ -311,19 +285,12 @@ export default async function RootLayout({
             letter-spacing: normal;
           }
         `}</style>
-        <SemanticThemeEditorBridge allowedOrigins={themeEditorOrigins} />
-        <ThemeEditorNativeNavigation />
-        <ThemeEditorEnhancements />
         <ThemeEditorBridgeV3 settings={themeSettings} />
         <ThemeEditorContextGestureBridge />
         <ThemeEditorDirectImageBridge />
-        <SemanticThemeRuntimeProvider initialDocument={storeDesignV2}>
-          <StorefrontMotionProvider>
+        <StorefrontMotionProvider>
           <AuthProvider>
-            <AnalyticsConsentGate
-              desktopSettings={consentDesktopSettings}
-              mobileSettings={consentMobileSettings}
-            />
+            <AnalyticsConsentGate />
             <CartProvider>
               <NavigationSpeedup />
               <ProductNavigationContextCapture />
@@ -344,13 +311,12 @@ export default async function RootLayout({
                 {children}
               </main>
               <Footer />
-              <CartDrawer crossSellConfig={cartCrossSellConfig} />
+              <CartDrawer />
               <RostaPointsWidget themeSettings={themeSettings} />
               <FloatingWhatsApp settings={themeSettings.whatsapp} />
             </CartProvider>
           </AuthProvider>
-          </StorefrontMotionProvider>
-        </SemanticThemeRuntimeProvider>
+        </StorefrontMotionProvider>
       </body>
     </html>
   );

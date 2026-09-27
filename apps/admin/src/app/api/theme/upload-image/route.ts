@@ -157,8 +157,6 @@ export async function POST(request: Request) {
         videoNormalized: video,
         mediaType: kind.mediaType || "image",
         preservedAspectRatio: true,
-        bytes: uploadBytes.byteLength,
-        mime: outputContentType,
       },
       { headers: { "Cache-Control": "no-store" } },
     );
