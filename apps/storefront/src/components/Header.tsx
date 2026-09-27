@@ -656,7 +656,10 @@ export function Header({
           <span className="ruth-zara-menu-slot" aria-hidden="true" />
           <Link
             href="/"
-            data-editor-id="global.header.logo"\n            data-editor-type="header-logo"\n            data-editor-label="Logo"\n            className="header-wordmark-link flex justify-center"
+            data-editor-id="global.header.logo"
+            data-editor-type="header-logo"
+            data-editor-label="Logo"
+            className="header-wordmark-link flex justify-center"
             aria-label="Rosta Coffee Co ana sayfa"
           >
             <img
