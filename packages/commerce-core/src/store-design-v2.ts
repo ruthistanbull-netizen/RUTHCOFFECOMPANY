@@ -855,6 +855,8 @@ export type ThemeReferenceIssue = {
   message: string;
   ownerId?: string;
   targetId?: string;
+  source?: string;
+  target?: string;
 };
 
 function internalManagedPageRoute(value: unknown) {
@@ -980,14 +982,6 @@ export function themeDocumentReferenceReport(document: ThemeDocument): ThemeRefe
 
   return issues;
 }
-
-export type ThemeReferenceIssue = {
-  severity: "error" | "warning";
-  code: string;
-  message: string;
-  source?: string;
-  target?: string;
-};
 
 const LINK_SETTING_KEYS = new Set([
   "href",
