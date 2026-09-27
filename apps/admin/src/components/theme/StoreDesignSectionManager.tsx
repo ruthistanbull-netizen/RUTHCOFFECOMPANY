@@ -108,6 +108,7 @@ const RENDERABLE_SECTION_TYPES = new Set([
   "newsletter",
   "contact-form",
   "custom-form",
+  "map-locator",
   "rewards-promo",
   "spacer",
   "divider",
@@ -256,6 +257,14 @@ function defaultSettings(type: string): Record<string, unknown> {
     buttonLabel: "Gönder",
     successCopy: "Formunuz alındı. Teşekkür ederiz.",
     paddingY: 64,
+  };
+  if (type === "map-locator") return {
+    title: "Bizi Bulun",
+    body: "",
+    layout: "cards",
+    showMapLinks: true,
+    mapLinkLabel: "Haritada Aç",
+    paddingY: 72,
   };
   if (type === "contact-form") return {
     title: "Bize Ulaşın",
