@@ -452,7 +452,7 @@ function SectionPicker({
                   <div className="flex items-start gap-2">
                     <span className="min-w-0 flex-1 text-[10px] font-semibold">{definition.label}</span>
                     <span className={`rounded px-1.5 py-0.5 text-[7px] font-semibold ${available ? "bg-emerald-50 text-emerald-700" : "bg-black/[0.04] text-black/40"}`}>
-                      {available ? "Hazır" : "Geliştirici"}
+                      {available ? "Hazır" : "Altyapı bekliyor"}
                     </span>
                   </div>
                   <p className="mt-2 line-clamp-3 text-[8px] leading-4 text-black/38">
