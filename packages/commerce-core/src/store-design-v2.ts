@@ -218,7 +218,8 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
   component("cart-quantity", "Sepet Adet", "Sepet", "family", familyScopes, ["card", "layout"], ["stockMinMax"]),
   component("cart-remove", "Sepetten Sil", "Sepet", "family", familyScopes, ["layout"], ["cartLogic"]),
   component("cart-shipping-message", "Sepet Kargo Mesajı", "Sepet", "template", templateScopes, ["content", "typography"], ["shippingCalculation"]),
-  component("cart-cross-sell", "Sepet Cross-sell", "Sepet", "section", sectionScopes, ["data", "layout"], ["pricingLogic"]),
+  component("cart-cross-sell", "Sepet Cross-sell", "Sepet", "section", sectionScopes, ["data", "layout"], ["pricingLogic", "recommendationData", "recommendationAlgorithm", "productData", "priceValue", "cartState", "cartLogic"]),
+  component("cross-sell", "Cross-sell / Upsell", "Sepet", "section", sectionScopes, ["data", "layout", "responsive"], ["recommendationData", "recommendationAlgorithm", "productData", "priceValue", "cartState", "cartLogic"]),
   component("discount-section", "İndirim Kodu", "Sepet", "template", templateScopes, ["layout"], ["couponValidation"]),
   component("cart-totals", "Sepet Toplamları", "Sepet", "template", templateScopes, ["typography", "layout"], ["calculatedTotals"]),
   component("checkout-cta", "Ödemeye Geç", "Sepet", "template", templateScopes, ["card", "layout"], ["checkoutRoute"]),
@@ -290,7 +291,7 @@ export const SECTION_LIBRARY: SectionDefinition[] = [
   section("recommendations", "Önerilen Ürünler", "commerce", ["product"], ["title", "eyebrow", "algorithm", "limit", "layout", "paddingY"], [], true),
   section("recently-viewed", "Son Görüntülenenler", "commerce", ["product"], ["title", "limit", "layout", "paddingY"], [], true),
   section("bundle", "Birlikte Alınanlar / Bundle", "commerce", ["product"], ["source", "layout", "cta"], [], true),
-  section("cross-sell", "Cross-sell / Upsell", "commerce", ["cart", "checkout"], ["source", "position", "density"], [], false, undefined, "Cart/checkout protected zone ve cross-sell source service bağlantısı tamamlanmadan açılamaz."),
+  section("cross-sell", "Cross-sell / Upsell", "commerce", ["cart", "checkout"], ["source", "limit", "position", "density"], [], true),
   section("product-comparison", "Ürün Karşılaştırma", "commerce", ["content", "landing"], ["productIds", "fields", "layout", "title", "paddingY"], [], true),
 
   section("hero", "Hero", "media", allContentPages, ["imageAssetId", "posterAssetId", "heightPreset", "fit", "playbackPreset", "title", "body", "linkLabel", "linkHref", "align", "overlayOpacity", "contrastMode"], [], true),
@@ -1409,6 +1410,20 @@ export function validateThemeDocument(document: ThemeDocument) {
       if (cta !== undefined && (typeof cta !== "string" || cta.trim().length < 1 || cta.trim().length > 80)) errors.push(`${section.id}: Bundle CTA 1-80 karakter olmalı.`);
       for (const protectedKey of ["bundleItems", "bundle_items", "bundlePrice", "price", "priceValue", "productIds", "cartLogic"]) {
         if (protectedKey in section.settings) errors.push(`${section.id}: Bundle ${protectedKey} business verisi tema editöründen değiştirilemez.`);
+      }
+    }
+
+    if (section.type === "cross-sell") {
+      const source = String(section.settings.source || "related");
+      if (!["related", "best-sellers", "new-arrivals"].includes(source)) errors.push(`${section.id}: Cross-sell source preset geçersiz.`);
+      const limit = Number(section.settings.limit ?? 4);
+      if (!Number.isFinite(limit) || limit < 2 || limit > 8) errors.push(`${section.id}: Cross-sell limiti 2-8 aralığında olmalı.`);
+      const position = String(section.settings.position || "after-items");
+      if (!["after-items", "before-totals"].includes(position)) errors.push(`${section.id}: Cross-sell position preset geçersiz.`);
+      const density = String(section.settings.density || "standard");
+      if (!["compact", "standard", "comfortable"].includes(density)) errors.push(`${section.id}: Cross-sell density preset geçersiz.`);
+      for (const protectedKey of ["productIds", "products", "recommendationData", "recommendationAlgorithm", "price", "priceValue", "cartState", "cartLogic"]) {
+        if (protectedKey in section.settings) errors.push(`${section.id}: Cross-sell ${protectedKey} business verisi tema editöründen değiştirilemez.`);
       }
     }
 
