@@ -65,6 +65,7 @@ const RENDERABLE_SECTION_TYPES = new Set([
   "new-arrivals",
   "best-sellers",
   "recommendations",
+  "recently-viewed",
   "sale-products",
   "video-hero",
   "image-banner",
@@ -176,6 +177,9 @@ function defaultSettings(type: string): Record<string, unknown> {
   }
   if (type === "recommendations") {
     return { title: "Bunları da beğenebilirsin", eyebrow: "Seçki", algorithm: "related", limit: 6, layout: "grid", paddingY: 58 };
+  }
+  if (type === "recently-viewed") {
+    return { title: "Son Görüntülenenler", limit: 8, layout: "slider", paddingY: 58 };
   }
   if (type === "sale-products") {
     return { title: "İndirimdekiler", productLimit: 12, desktopItems: 4, mobileItems: 2, gap: 12, paddingY: 64, layout: "slider", showArrows: true, badgeStyle: "pill" };
@@ -356,6 +360,7 @@ const GENERIC_V2_SECTION_TYPES = new Set([
   "product-comparison",
   "best-sellers",
   "recommendations",
+  "recently-viewed",
   "contact-form",
   "review-highlights",
   "rewards-promo",
