@@ -395,6 +395,57 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
     document.head.appendChild(previewScrollbarStyle);
 
     let interactionMode: "browse" | "edit" = "edit";
+    const originalTabIndex = new Map<HTMLElement, string | null>();
+    let keyboardSyncFrame = 0;
+
+    const syncKeyboardTargets = () => {
+      keyboardSyncFrame = 0;
+      const targets = Array.from(document.querySelectorAll<HTMLElement>(TARGET_SELECTOR));
+      const activeTargets = new Set(targets);
+
+      for (const [element, original] of originalTabIndex) {
+        if (activeTargets.has(element) || !document.contains(element)) continue;
+        if (original === null) element.removeAttribute("tabindex");
+        else element.setAttribute("tabindex", original);
+        element.removeAttribute("data-store-design-v2-keyboard-target");
+        originalTabIndex.delete(element);
+      }
+
+      for (const element of targets) {
+        if (!originalTabIndex.has(element)) originalTabIndex.set(element, element.getAttribute("tabindex"));
+        const original = originalTabIndex.get(element);
+
+        if (interactionMode === "edit" && original === null) {
+          element.setAttribute("tabindex", "0");
+          element.setAttribute("data-store-design-v2-keyboard-target", "true");
+        } else if (interactionMode === "browse") {
+          if (original === null) element.removeAttribute("tabindex");
+          else element.setAttribute("tabindex", original);
+          element.removeAttribute("data-store-design-v2-keyboard-target");
+        }
+      }
+    };
+
+    const scheduleKeyboardSync = () => {
+      if (keyboardSyncFrame) return;
+      keyboardSyncFrame = window.requestAnimationFrame(syncKeyboardTargets);
+    };
+
+    const restoreKeyboardTargets = () => {
+      if (keyboardSyncFrame) window.cancelAnimationFrame(keyboardSyncFrame);
+      keyboardSyncFrame = 0;
+      for (const [element, original] of originalTabIndex) {
+        if (!document.contains(element)) continue;
+        if (original === null) element.removeAttribute("tabindex");
+        else element.setAttribute("tabindex", original);
+        element.removeAttribute("data-store-design-v2-keyboard-target");
+      }
+      originalTabIndex.clear();
+    };
+
+    const targetObserver = new MutationObserver(scheduleKeyboardSync);
+    targetObserver.observe(document.body, { childList: true, subtree: true });
+    syncKeyboardTargets();
 
     const overlay = document.createElement("div");
     overlay.dataset.storeDesignV2Ui = "true";
@@ -465,6 +516,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
     };
 
     const onContextMenu = (event: MouseEvent) => {
+      if (interactionMode !== "edit") return;
       const target = targetFromEvent(event);
       if (!target) return;
       event.preventDefault();
@@ -488,6 +540,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
+      if (interactionMode !== "edit") return;
       const wantsQuickMenu = event.key === "ContextMenu" || (event.shiftKey && event.key === "F10");
       if (!wantsQuickMenu) return;
       const target = targetFromEvent(event) || targetFrom(document.activeElement);
@@ -517,6 +570,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
     };
 
     const onTouchStart = (event: TouchEvent) => {
+      if (interactionMode !== "edit") return clearPress();
       if (event.touches.length !== 1) return clearPress();
       const touch = event.touches.item(0);
       const target = targetFromEvent(event);
@@ -550,6 +604,13 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
 
     const onTouchEnd = () => clearPress();
 
+    const onFocusIn = (event: FocusEvent) => {
+      if (interactionMode !== "edit") return;
+      const target = targetFromEvent(event);
+      if (!target || selectedRef.current?.id === target.id) return;
+      select(target);
+    };
+
     const onMessage = (event: MessageEvent) => {
       if (event.source !== window.parent || !event.data || typeof event.data !== "object") return;
       if (expectedParentOrigin && event.origin !== expectedParentOrigin) return;
@@ -559,9 +620,11 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
         if (interactionMode === "browse") {
           overlay.style.opacity = "0";
           overlay.style.visibility = "hidden";
+          clearPress();
         } else {
           positionOverlay();
         }
+        syncKeyboardTargets();
         return;
       }
 
@@ -649,6 +712,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
     document.addEventListener("contextmenu", onContextMenu, true);
     document.addEventListener("click", onClick, true);
     document.addEventListener("keydown", onKeyDown, true);
+    document.addEventListener("focusin", onFocusIn, true);
     document.addEventListener("touchstart", onTouchStart, { capture: true, passive: true });
     document.addEventListener("touchmove", onTouchMove, { capture: true, passive: true });
     document.addEventListener("touchend", onTouchEnd, true);
@@ -665,6 +729,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
       document.removeEventListener("contextmenu", onContextMenu, true);
       document.removeEventListener("click", onClick, true);
       document.removeEventListener("keydown", onKeyDown, true);
+      document.removeEventListener("focusin", onFocusIn, true);
       document.removeEventListener("touchstart", onTouchStart, true);
       document.removeEventListener("touchmove", onTouchMove, true);
       document.removeEventListener("touchend", onTouchEnd, true);
@@ -672,6 +737,8 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
       window.removeEventListener("message", onMessage);
       window.removeEventListener("resize", positionOverlay);
       window.removeEventListener("scroll", onPreviewScroll, true);
+      targetObserver.disconnect();
+      restoreKeyboardTargets();
       previewScrollbarStyle.remove();
       overlay.remove();
       selectedRef.current = null;
