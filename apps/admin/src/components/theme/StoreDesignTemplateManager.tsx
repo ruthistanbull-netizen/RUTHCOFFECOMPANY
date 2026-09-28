@@ -350,7 +350,7 @@ export function StoreDesignTemplateManager({
                     <span className="min-w-0 flex-1 truncate text-[9px] font-semibold">{template.label}</span>
                     {assigned ? <span className="rounded-full bg-black px-1.5 py-0.5 text-[6px] font-semibold text-white">ATANMIŞ</span> : null}
                   </div>
-                  <p className="mt-1 truncate text-[7px] text-black/35">{usage.count} kullanım · {template.sectionIds.length} bölüm · sürüm {template.version || 1}</p>
+                  <p className="mt-1 truncate text-[7px] text-black/35">{usage.count} kullanım · {template.sectionIds.length} bölüm</p>
                 </button>
               );
             })}
