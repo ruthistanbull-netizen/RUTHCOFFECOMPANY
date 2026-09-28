@@ -482,6 +482,7 @@ export function StoreDesignV21() {
   const contextMenuRef = useRef<HTMLDivElement | null>(null);
   const structurePanelRef = useRef<HTMLElement | null>(null);
   const inspectorPanelRef = useRef<HTMLElement | null>(null);
+  const inspectorBodyRef = useRef<HTMLDivElement | null>(null);
   const initialSrcRef = useRef("");
   const previewTokenRef = useRef("");
   const previewSyncTimerRef = useRef<number | null>(null);
@@ -1456,6 +1457,7 @@ export function StoreDesignV21() {
                 const delta = end - start;
                 if (Math.abs(delta) < 48) return;
                 if (delta > 0) {
+                  if ((inspectorBodyRef.current?.scrollTop || 0) > 1) return;
                   if (mobileSheetLevel === "full") setMobileSheetLevel("medium");
                   else if (mobileSheetLevel === "medium") setMobileSheetLevel("peek");
                   else setRightOpen(false);
@@ -1500,7 +1502,7 @@ export function StoreDesignV21() {
             </div>
 
             {selected ? (
-              <div className="sd-inspector-body min-h-0 flex-1 overflow-y-auto">
+              <div ref={inspectorBodyRef} className="sd-inspector-body min-h-0 flex-1 overflow-y-auto">
                 <section className="border-b border-black/[0.07] p-3">
                   <label className="text-[9px] font-semibold text-black/45">UYGULAMA ALANI</label>
                   <select value={scope} onChange={(event) => setScope(event.target.value as EditorScope)} className="sd-field mt-1.5 h-10 w-full rounded-lg border border-black/10 bg-white px-3 text-[10px] font-medium outline-none">
