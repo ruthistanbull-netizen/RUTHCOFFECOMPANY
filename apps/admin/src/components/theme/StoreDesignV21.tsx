@@ -545,17 +545,22 @@ export function StoreDesignV21() {
     const closeWithEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") setContextMenu(null);
     };
+    const closeOnResize = () => setContextMenu(null);
     window.addEventListener("pointerdown", close);
     window.addEventListener("keydown", closeWithEscape);
-    window.addEventListener("resize", () => setContextMenu(null), { once: true });
+    window.addEventListener("resize", closeOnResize, { once: true });
     return () => {
       window.removeEventListener("pointerdown", close);
       window.removeEventListener("keydown", closeWithEscape);
+      window.removeEventListener("resize", closeOnResize);
     };
   }, [contextMenu]);
 
-  const hasUnsavedChanges = documentFingerprint(document) !== documentFingerprint(savedDraft);
-  const hasUnpublishedChanges = documentFingerprint(savedDraft) !== documentFingerprint(published);
+  const documentFingerprintValue = useMemo(() => documentFingerprint(document), [document]);
+  const savedDraftFingerprintValue = useMemo(() => documentFingerprint(savedDraft), [savedDraft]);
+  const publishedFingerprintValue = useMemo(() => documentFingerprint(published), [published]);
+  const hasUnsavedChanges = documentFingerprintValue !== savedDraftFingerprintValue;
+  const hasUnpublishedChanges = savedDraftFingerprintValue !== publishedFingerprintValue;
   const editorPages = useMemo(() => {
     const merged = new Map(pages.map((page) => [page.path, page]));
     for (const page of Object.values(document.pages)) {
