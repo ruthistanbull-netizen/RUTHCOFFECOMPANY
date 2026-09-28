@@ -1401,7 +1401,7 @@ export function StoreDesignV21() {
               </div>
             </div>
 
-            <div className="min-h-0 flex-1 overflow-y-auto">
+            <div className="sd-structure-scroll min-h-0 flex-1 overflow-y-auto">
               <StoreDesignSectionManager
                 document={document}
                 activePage={activePage}
