@@ -53,7 +53,7 @@ function mediaLabel(asset: ThemeDocument["media"][string]) {
   const readableDate = date && !Number.isNaN(date.getTime())
     ? date.toLocaleString("tr-TR", { dateStyle: "short", timeStyle: "short" })
     : null;
-  return readableDate ? `Görsel · ${readableDate}` : `Görsel · Sürüm ${asset.version || 1}`;
+  return readableDate ? `Görsel · ${readableDate}` : "Görsel";
 }
 
 type FaqDraftItem = { id: string; question: string; answer: string };
@@ -130,13 +130,14 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
   const imageBanner = section.type === "image-banner";
   const richText = section.type === "rich-text";
   const faq = section.type === "faq";
+  const sharedReferenceCount = Object.values(document.templates).filter((template) => template.sectionIds.includes(section.id)).length;
 
   return (
     <div data-closing={closing ? "true" : "false"} className="sd-modal-backdrop fixed inset-0 z-[2147483605] grid place-items-center bg-black/35 p-3 backdrop-blur-sm">
       <div className="sd-modal-card flex max-h-[90dvh] w-full max-w-[620px] flex-col overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl">
         <header className="flex h-14 shrink-0 items-center gap-3 border-b border-black/10 px-4">
           <div className="min-w-0 flex-1">
-            <p className="text-[12px] font-semibold">{definition?.label || section.type}</p>
+            <p className="text-[12px] font-semibold">{definition?.label || "Bölüm"}</p>
             <p className="mt-0.5 text-[10px] text-black/40">Bölüm ayarları</p>
           </div>
           <button type="button" onClick={requestClose} className="grid h-9 w-9 place-items-center rounded-lg hover:bg-black/[0.04]" aria-label="Kapat">
@@ -145,6 +146,11 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
         </header>
 
         <div className="min-h-0 flex-1 overflow-y-auto p-4">
+          {sharedReferenceCount > 1 ? (
+            <div className="mb-4 rounded-xl border border-amber-500/20 bg-amber-50 p-3 text-[11px] leading-5 text-amber-900">
+              Bu bölüm {sharedReferenceCount} yerde kullanılıyor. Burada yaptığın değişiklikler bağlı olan diğer yerleri de etkiler.
+            </div>
+          ) : null}
           {productSection ? (
             <div className="grid gap-4 md:grid-cols-2">
               <label className="grid gap-1.5 text-[9px] font-semibold text-black/50 md:col-span-2">
