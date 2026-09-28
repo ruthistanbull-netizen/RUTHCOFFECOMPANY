@@ -1442,6 +1442,20 @@ body {
     touch-action:manipulation;
   }
 
+  [data-store-design-v2-admin] .sd-sidebar-left .sd-row-action,
+  [data-store-design-v2-admin] .sd-inspector .sd-icon-button,
+  [data-store-design-v2-admin] .sd-modal-card button{
+    min-width:44px;
+    min-height:44px;
+  }
+
+  [data-store-design-v2-admin] .sd-modal-card input,
+  [data-store-design-v2-admin] .sd-modal-card select,
+  [data-store-design-v2-admin] .sd-modal-card textarea{
+    min-height:44px;
+    font-size:13px!important;
+  }
+
   [data-store-design-v2-admin] .sd-preview-stage,
   [data-store-design-v2-admin] .sd-sidebar-left,
   [data-store-design-v2-admin] .sd-inspector{
