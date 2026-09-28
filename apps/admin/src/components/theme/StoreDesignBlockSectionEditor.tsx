@@ -1028,7 +1028,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     <input value={text(settings.fieldLabel) || "E-posta"} onChange={(event) => updateSetting("fieldLabel", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                    Buton metni
+                    Düğme metni
                     <input value={text(settings.buttonLabel) || "Kaydol"} onChange={(event) => updateSetting("buttonLabel", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
@@ -1040,7 +1040,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     <textarea value={text(settings.successCopy)} onChange={(event) => updateSetting("successCopy", event.target.value)} className="min-h-20 resize-y rounded-lg border border-black/10 bg-white p-2.5 text-[9px] leading-5 outline-none" />
                   </label>
                   <div className="rounded-lg border border-black/10 bg-black/[0.025] p-2.5 text-[7px] leading-4 text-black/45 md:col-span-2">
-                    Subscription action korumalıdır. Endpoint, consent kaydı, rate limit ve subscriber state tema editöründen değiştirilemez.
+                    Bülten kaydı güvenli şekilde yönetilir. İzin kaydı, gönderim sıklığı ve abonelik durumu bu ekrandan değiştirilemez.
                   </div>
                 </>
               ) : null}
@@ -1052,9 +1052,9 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     <input value={text(settings.buttonLabel) || "Gönder"} onChange={(event) => updateSetting("buttonLabel", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                    Action whitelist
+                    Gönderim biçimi
                     <select value={text(settings.action) || "store"} onChange={(event) => updateSetting("action", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
-                      <option value="store">Korumalı kayıt · store</option>
+                      <option value="store">Güvenli kayıt</option>
                     </select>
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
@@ -1119,7 +1119,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     <textarea value={text(settings.successCopy) || "Mesajınız alındı. En kısa sürede size dönüş yapacağız."} onChange={(event) => updateSetting("successCopy", event.target.value)} className="min-h-20 resize-y rounded-lg border border-black/10 bg-white p-2.5 text-[9px] leading-5 outline-none" />
                   </label>
                   <div className="rounded-lg border border-black/10 bg-black/[0.025] p-2.5 text-[7px] leading-4 text-black/45 md:col-span-2">
-                    Ad Soyad, E-posta ve Mesaj alanları endpoint doğrulaması nedeniyle zorunludur. Anti-spam, rate limit ve gönderim endpoint'i tema editöründen değiştirilemez.
+                    Ad Soyad, E-posta ve Mesaj alanları güvenli gönderim için zorunludur. İstenmeyen gönderi koruması, gönderim sıklığı ve kayıt işlemi sistem tarafından yönetilir.
                   </div>
                 </>
               ) : null}
@@ -1480,7 +1480,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                 </select>
               ) : null}
               <button type="button" disabled={!allowedDefinitions.length || blocks.length >= maxBlocks} onClick={addBlock} className="flex h-8 items-center gap-1 rounded-lg bg-[#111] px-2.5 text-[8px] font-semibold text-white disabled:opacity-35">
-                <Plus className="h-3 w-3" />Blok Ekle
+                <Plus className="h-3 w-3" />Öğe Ekle
               </button>
             </div>
 
