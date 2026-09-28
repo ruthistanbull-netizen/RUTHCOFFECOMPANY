@@ -47,9 +47,9 @@ function accepted(mediaType: Props["mediaType"]) {
 
 function mediaDisplayName(asset: MediaAsset) {
   const kind = asset.type === "video" ? "Video" : "Görsel";
-  if (!asset.createdAt) return `${kind} · Sürüm ${asset.version || 1}`;
+  if (!asset.createdAt) return kind;
   const date = new Date(asset.createdAt);
-  if (Number.isNaN(date.getTime())) return `${kind} · Sürüm ${asset.version || 1}`;
+  if (Number.isNaN(date.getTime())) return kind;
   return `${kind} · ${date.toLocaleString("tr-TR", { dateStyle: "short", timeStyle: "short" })}`;
 }
 
@@ -355,7 +355,7 @@ export function StoreDesignMediaLibrary({
               </div>
 
               <dl className="mt-3 grid grid-cols-2 gap-2 text-[8px]">
-                <div className="rounded-lg bg-white p-2"><dt className="text-black/35">Sürüm</dt><dd className="mt-1 font-semibold">{selected.version || 1}</dd></div>
+                <div className="rounded-lg bg-white p-2"><dt className="text-black/35">Tür</dt><dd className="mt-1 font-semibold">{selected.type === "video" ? "Video" : "Görsel"}</dd></div>
                 <div className="rounded-lg bg-white p-2"><dt className="text-black/35">Kullanım</dt><dd className="mt-1 font-semibold">{themeMediaUsageCount(document, selected.assetId)}</dd></div>
                 <div className="rounded-lg bg-white p-2"><dt className="text-black/35">Boyut</dt><dd className="mt-1 font-semibold">{selected.width && selected.height ? `${selected.width}×${selected.height}` : "—"}</dd></div>
                 <div className="rounded-lg bg-white p-2"><dt className="text-black/35">Dosya</dt><dd className="mt-1 font-semibold">{bytesLabel(selected.bytes)}</dd></div>
