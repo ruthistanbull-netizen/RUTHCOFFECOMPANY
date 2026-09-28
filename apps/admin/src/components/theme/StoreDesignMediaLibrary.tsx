@@ -214,7 +214,7 @@ export function StoreDesignMediaLibrary({
       ...selected,
       [key]: value || undefined,
     };
-    await commit(next, key === "posterAssetId" ? "Video kapak görselii güncellendi" : "Mobil medya varyantı güncellendi");
+    await commit(next, key === "posterAssetId" ? "Video kapak görseli güncellendi" : "Mobil görsel güncellendi");
   };
 
   return (
@@ -315,7 +315,7 @@ export function StoreDesignMediaLibrary({
               </div>
 
               <dl className="mt-3 grid grid-cols-2 gap-2 text-[8px]">
-                <div className="rounded-lg bg-white p-2"><dt className="text-black/35">Sürüm</dt><dd className="mt-1 font-semibold">v{selected.version || 1}</dd></div>
+                <div className="rounded-lg bg-white p-2"><dt className="text-black/35">Sürüm</dt><dd className="mt-1 font-semibold">{selected.version || 1}</dd></div>
                 <div className="rounded-lg bg-white p-2"><dt className="text-black/35">Kullanım</dt><dd className="mt-1 font-semibold">{themeMediaUsageCount(document, selected.assetId)}</dd></div>
                 <div className="rounded-lg bg-white p-2"><dt className="text-black/35">Boyut</dt><dd className="mt-1 font-semibold">{selected.width && selected.height ? `${selected.width}×${selected.height}` : "—"}</dd></div>
                 <div className="rounded-lg bg-white p-2"><dt className="text-black/35">Dosya</dt><dd className="mt-1 font-semibold">{bytesLabel(selected.bytes)}</dd></div>
