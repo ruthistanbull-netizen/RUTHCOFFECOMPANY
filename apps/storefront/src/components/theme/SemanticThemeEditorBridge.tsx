@@ -202,7 +202,7 @@ function allowedPatch(definition: ComponentDefinition, path: string) {
 
 function validatePatch(target: SemanticTarget, message: ThemePatchMessage) {
   if (!allowedPatch(target.definition, message.path)) {
-    return { ok: false, error: "Bu kontrol bu semantik bileşen için izinli değil." };
+    return { ok: false, error: "Bu ayar seçilen öğe için kullanılamıyor." };
   }
   if (message.value === null) return { ok: true };
 
@@ -217,48 +217,48 @@ function validatePatch(target: SemanticTarget, message: ThemePatchMessage) {
       const value = Number(message.value);
       return Number.isFinite(value) && value >= 0 && value <= 1
         ? { ok: true }
-        : { ok: false, error: "Opacity 0-1 aralığında olmalı." };
+        : { ok: false, error: "Saydamlık değeri 0 ile 1 arasında olmalı." };
     }
     case "borderRadius": {
       const value = Number(message.value);
       return Number.isFinite(value) && value >= 0 && value <= 120
         ? { ok: true }
-        : { ok: false, error: "Radius preset aralığı dışında." };
+        : { ok: false, error: "Köşe değeri izin verilen aralığın dışında." };
     }
     case "media.objectFit":
       return ["cover", "contain"].includes(String(message.value))
         ? { ok: true }
-        : { ok: false, error: "Geçersiz medya fit değeri." };
+        : { ok: false, error: "Geçersiz medya yerleşimi." };
     case "title":
     case "acceptLabel":
     case "rejectLabel":
     case "privacyLabel": {
-      if (target.definition.semanticType !== "consent-banner") return { ok: false, error: "Bu metin alanı yalnız consent banner için kullanılabilir." };
+      if (target.definition.semanticType !== "consent-banner") return { ok: false, error: "Bu metin alanı yalnız çerez bildirimi için kullanılabilir." };
       const value = String(message.value || "").trim();
       const max = message.path === "title" ? 80 : message.path === "privacyLabel" ? 80 : 40;
       return value.length > 0 && value.length <= max && !/[{}]/.test(value)
         ? { ok: true }
-        : { ok: false, error: "Consent metni izin verilen uzunlukta olmalı." };
+        : { ok: false, error: "Çerez bildirimi metni izin verilen uzunlukta olmalı." };
     }
     case "intro": {
-      if (target.definition.semanticType !== "consent-banner") return { ok: false, error: "Bu açıklama alanı yalnız consent banner için kullanılabilir." };
+      if (target.definition.semanticType !== "consent-banner") return { ok: false, error: "Bu açıklama alanı yalnız çerez bildirimi için kullanılabilir." };
       const value = String(message.value || "").trim();
       return value.length > 0 && value.length <= 360 && !/[{}]/.test(value)
         ? { ok: true }
-        : { ok: false, error: "Consent açıklaması 1-360 karakter olmalı." };
+        : { ok: false, error: "Çerez bildirimi açıklaması 1-360 karakter olmalı." };
     }
     case "position":
       return target.definition.semanticType === "consent-banner" && ["bottom-center", "bottom-left", "bottom-right"].includes(String(message.value))
         ? { ok: true }
-        : { ok: false, error: "Geçersiz consent konum preset'i." };
+        : { ok: false, error: "Geçersiz çerez bildirimi konumu." };
     case "widthPreset":
       return target.definition.semanticType === "consent-banner" && ["compact", "standard", "wide"].includes(String(message.value))
         ? { ok: true }
-        : { ok: false, error: "Geçersiz consent genişlik preset'i." };
+        : { ok: false, error: "Geçersiz çerez bildirimi genişliği." };
     case "radiusPreset":
       return target.definition.semanticType === "consent-banner" && ["soft", "rounded", "pill"].includes(String(message.value))
         ? { ok: true }
-        : { ok: false, error: "Geçersiz consent radius preset'i." };
+        : { ok: false, error: "Geçersiz çerez bildirimi köşe biçimi." };
     case "backgroundColor":
     case "color": {
       const value = String(message.value || "").trim();
@@ -280,7 +280,7 @@ function validatePatch(target: SemanticTarget, message: ThemePatchMessage) {
       const value = Number(message.value);
       return Number.isFinite(value) && value >= 0 && value <= 120
         ? { ok: true }
-        : { ok: false, error: "Grid boşluğu 0-120px arasında olmalı." };
+        : { ok: false, error: "Izgara boşluğu 0-120 piksel arasında olmalı." };
     }
     case "grid.maxWidth":
       return ["none", "1200px", "1280px", "1440px", "1600px"].includes(String(message.value))
@@ -306,7 +306,7 @@ function validatePatch(target: SemanticTarget, message: ThemePatchMessage) {
         ? { ok: true }
         : { ok: false, error: "Geçersiz görünürlük değeri." };
     default:
-      return { ok: false, error: "Bu patch yolu henüz runtime tarafından desteklenmiyor." };
+      return { ok: false, error: "Bu ayar önizlemede henüz desteklenmiyor." };
   }
 }
 
