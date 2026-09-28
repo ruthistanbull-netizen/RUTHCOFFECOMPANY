@@ -674,6 +674,25 @@ export function StoreDesignV21() {
   const publishedFingerprintValue = useMemo(() => documentFingerprint(published), [published]);
   const hasUnsavedChanges = documentFingerprintValue !== savedDraftFingerprintValue;
   const hasUnpublishedChanges = savedDraftFingerprintValue !== publishedFingerprintValue;
+
+  useEffect(() => {
+    if (!hasUnsavedChanges) return;
+    const warnBeforeExit = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", warnBeforeExit);
+    return () => window.removeEventListener("beforeunload", warnBeforeExit);
+  }, [hasUnsavedChanges]);
+
+  const requestEditorExit = useCallback(() => {
+    if (hasUnsavedChanges) {
+      const leave = window.confirm("Kaydedilmemiş değişiklikler var. Çıkarsan bu değişiklikler kaybolacak. Yine de çıkmak istiyor musun?");
+      if (!leave) return;
+    }
+    window.history.back();
+  }, [hasUnsavedChanges]);
+
   const editorPages = useMemo(() => {
     const merged = new Map(pages.map((page) => [page.path, page]));
     for (const page of Object.values(document.pages)) {
@@ -1335,7 +1354,7 @@ export function StoreDesignV21() {
   return (
     <div ref={editorShellRef} data-store-design-v2-admin data-physical-mobile={isMobileViewport ? "true" : "false"} data-device={device} data-interaction-mode={interactionMode} className="sd-editor-shell flex h-dvh min-h-0 flex-col overflow-hidden bg-[#f5f5f3] text-[#111]">
       <header className="sd-toolbar z-20 flex h-[58px] shrink-0 items-center gap-3 border-b border-black/10 bg-white px-3 md:px-4">
-        <button type="button" onClick={() => window.history.back()} className="sd-mobile-back sd-icon-button hidden h-10 w-10 shrink-0 place-items-center rounded-xl border border-black/10" aria-label="Geri">
+        <button type="button" onClick={requestEditorExit} className="sd-mobile-back sd-icon-button hidden h-10 w-10 shrink-0 place-items-center rounded-xl border border-black/10" aria-label="Geri">
           <ArrowLeft className="h-4 w-4" />
         </button>
         <button type="button" onClick={() => setLeftOpen((value) => !value)} aria-pressed={leftOpen} className="sd-desktop-panel-toggle sd-icon-button grid h-9 w-9 place-items-center rounded-lg border border-black/10 hover:bg-black/[0.03]" aria-label="Sol panel">
