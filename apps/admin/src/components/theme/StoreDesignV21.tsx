@@ -930,6 +930,87 @@ export function StoreDesignV21() {
     });
   };
 
+  const pagePathForIssue = (issue: ThemeReferenceIssue) => {
+    const rawIds = [issue.source, issue.ownerId, issue.target, issue.targetId]
+      .filter((value): value is string => typeof value === "string" && Boolean(value.trim()));
+
+    const routeForTemplate = (templateId: string) => {
+      const page = Object.values(document.pages).find((item) => item.templateId === templateId);
+      if (page) return page.route;
+      const binding = Object.entries(document.templateBindings).find(([, id]) => id === templateId);
+      return binding?.[0] || null;
+    };
+
+    const routeForSection = (sectionId: string) => {
+      const template = Object.values(document.templates).find((item) => item.sectionIds.includes(sectionId));
+      return template ? routeForTemplate(template.id) : null;
+    };
+
+    for (const rawId of rawIds) {
+      const id = rawId.replace(/^(section|block|preset|template|seo):/, "");
+      if (rawId.startsWith("/")) {
+        const page = editorPages.find((item) => item.path === rawId);
+        if (page) return page.path;
+      }
+
+      const directPage = Object.values(document.pages).find((item) => (
+        item.id === rawId || item.id === id || item.route === rawId || item.templateId === rawId || item.seoId === rawId
+      ));
+      if (directPage) return directPage.route;
+
+      if (document.templates[rawId]) {
+        const route = routeForTemplate(rawId);
+        if (route) return route;
+      }
+      if (document.templates[id]) {
+        const route = routeForTemplate(id);
+        if (route) return route;
+      }
+
+      if (document.sections[rawId]) {
+        const route = routeForSection(rawId);
+        if (route) return route;
+      }
+      if (document.sections[id]) {
+        const route = routeForSection(id);
+        if (route) return route;
+      }
+
+      const blockId = document.blocks[rawId] ? rawId : document.blocks[id] ? id : null;
+      if (blockId) {
+        const ownerSection = Object.values(document.sections).find((section) => section.blockIds?.includes(blockId));
+        if (ownerSection) {
+          const route = routeForSection(ownerSection.id);
+          if (route) return route;
+        }
+      }
+    }
+
+    return activePath;
+  };
+
+  const fixPublishIssue = async (issue: ThemeReferenceIssue) => {
+    const path = pagePathForIssue(issue);
+    setPublishIssues(null);
+
+    if (path && path !== activePath && editorPages.some((page) => page.path === path)) {
+      await changePage(path);
+    }
+
+    if (["missing-page-template", "missing-page-seo", "missing-og-media"].includes(issue.code)) {
+      setPageManagerMode("edit");
+      return;
+    }
+
+    if (["missing-template-binding"].includes(issue.code)) {
+      setTemplateManagerOpen(true);
+      return;
+    }
+
+    setRightOpen(false);
+    setLeftOpen(true);
+  };
+
   const applyPageDocument = useCallback(async (next: ThemeDocument, nextPath: string) => {
     await syncPreviewDocument(next, true);
     setDocument(next);
@@ -2038,6 +2119,7 @@ export function StoreDesignV21() {
           publishing={saving === "publish"}
           onCancel={() => setPublishIssues(null)}
           onPublish={() => void save("publish", true)}
+          onFixIssue={(issue) => void fixPublishIssue(issue)}
         />
       ) : null}
 
