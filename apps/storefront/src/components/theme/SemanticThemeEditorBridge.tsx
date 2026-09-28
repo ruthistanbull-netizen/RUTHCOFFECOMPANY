@@ -37,6 +37,7 @@ type ThemePatchMessage = {
 const TARGET_SELECTOR = "[data-editor-id][data-editor-type]";
 const LONG_PRESS_MS = 430;
 const LONG_PRESS_TOLERANCE = 18;
+const PREVIEW_SCROLL_MESSAGE = "store-design-v2:preview-scroll";
 
 function editorEnabled() {
   const params = new URLSearchParams(window.location.search);
@@ -424,6 +425,18 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
       overlay.style.height = `${rect.height}px`;
     };
 
+    let lastScrollNotice = 0;
+    const onPreviewScroll = () => {
+      positionOverlay();
+      const now = Date.now();
+      if (now - lastScrollNotice < 80) return;
+      lastScrollNotice = now;
+      post({
+        type: PREVIEW_SCROLL_MESSAGE,
+        route: window.location.pathname,
+      });
+    };
+
     const select = (target: SemanticTarget, pointer?: { x: number; y: number; kind: "mouse" | "touch" }) => {
       selectedRef.current = target;
       positionOverlay();
@@ -614,7 +627,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
     document.addEventListener("touchcancel", onTouchEnd, true);
     window.addEventListener("message", onMessage);
     window.addEventListener("resize", positionOverlay);
-    window.addEventListener("scroll", positionOverlay, true);
+    window.addEventListener("scroll", onPreviewScroll, true);
 
     announceReady();
 
@@ -629,7 +642,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
       document.removeEventListener("touchcancel", onTouchEnd, true);
       window.removeEventListener("message", onMessage);
       window.removeEventListener("resize", positionOverlay);
-      window.removeEventListener("scroll", positionOverlay, true);
+      window.removeEventListener("scroll", onPreviewScroll, true);
       previewScrollbarStyle.remove();
       overlay.remove();
       selectedRef.current = null;
