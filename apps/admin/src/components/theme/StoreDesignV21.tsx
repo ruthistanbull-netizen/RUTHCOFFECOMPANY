@@ -2570,7 +2570,7 @@ export function StoreDesignV21() {
             {contextSection && contextSectionTemplate && contextMenu.target.protectedFields.length === 0 ? (
               <section className="border-t border-black/[0.07] pt-3" aria-label="Bölüm işlemleri">
                 <div className="flex items-center justify-between gap-2">
-                  <p className="text-[11px] font-semibold text-black/55">Bölüm işlemleri</p>
+                  <p className="text-[11px] font-semibold text-black/55">{contextTargetsWholeSection ? "Bölüm işlemleri" : "Üst bölüm işlemleri"}</p>
                   {contextSectionReferenceCount > 1 ? (
                     <span className="rounded-full border border-amber-500/20 bg-amber-50 px-2 py-1 text-[9px] font-semibold text-amber-900">
                       {contextSectionReferenceCount} yerde bağlı
@@ -2583,7 +2583,7 @@ export function StoreDesignV21() {
                     onClick={() => void applyContextSectionAction("focus")}
                     className="sd-secondary-button flex min-h-10 items-center justify-center gap-2 rounded-xl border border-black/10 bg-white px-3 text-[11px] font-semibold"
                   >
-                    <PanelLeft className="h-4 w-4" />Yapıda aç
+                    <PanelLeft className="h-4 w-4" />{contextTargetsWholeSection ? "Yapıda aç" : "Üst bölümü aç"}
                   </button>
                   <button
                     type="button"
