@@ -1089,23 +1089,23 @@ export function StoreDesignV21() {
           </button>
         </div>
 
-        <button type="button" onClick={() => setSnapshotManagerOpen(true)} className="sd-toolbar-button hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] 2xl:flex">
+        <button type="button" onClick={() => setSnapshotManagerOpen(true)} className="sd-toolbar-secondary sd-toolbar-button hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] 2xl:flex">
           <History className="h-3.5 w-3.5" />Geçmiş
         </button>
-        <button type="button" onClick={() => setRedirectManagerOpen(true)} className="sd-toolbar-button hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] xl:flex">
+        <button type="button" onClick={() => setRedirectManagerOpen(true)} className="sd-toolbar-secondary sd-toolbar-button hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] xl:flex">
           <Link2 className="h-3.5 w-3.5" />Yönlendirmeler
         </button>
-        <button type="button" onClick={() => setTemplateManagerOpen(true)} className="sd-toolbar-button hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] lg:flex">
+        <button type="button" onClick={() => setTemplateManagerOpen(true)} className="sd-toolbar-secondary sd-toolbar-button hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] lg:flex">
           <LayoutTemplate className="h-3.5 w-3.5" />Şablon
         </button>
-        <button type="button" onClick={() => setMediaOpen(true)} className="sd-toolbar-button hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] lg:flex">
+        <button type="button" onClick={() => setMediaOpen(true)} className="sd-toolbar-secondary sd-toolbar-button hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] lg:flex">
           <Images className="h-3.5 w-3.5" />Medya
         </button>
         <button type="button" data-save-state={saving === "draft" ? "loading" : saveFeedback === "draft" ? "success" : "idle"} disabled={saving !== null} onClick={() => void save("draft")} className="sd-toolbar-button sd-save-button hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] disabled:opacity-50 sm:flex">
           {saving === "draft" ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : saveFeedback === "draft" ? <Check className="h-3.5 w-3.5" /> : <Save className="h-3.5 w-3.5" />}
           <span>{saving === "draft" ? "Kaydediliyor…" : saveFeedback === "draft" ? "Kaydedildi" : "Taslağı Kaydet"}</span>
         </button>
-        <div className="sd-mobile-tools relative hidden">
+        <div className="sd-more-tools relative">
           <button
             type="button"
             onClick={() => setMobileMoreOpen((value) => !value)}
