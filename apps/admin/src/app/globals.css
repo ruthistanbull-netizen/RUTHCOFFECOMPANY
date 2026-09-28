@@ -685,6 +685,12 @@ body {
 [data-store-design-v2-admin] .sd-modal-card [class*="space-y-"] > button:nth-child(4){animation-delay:72ms}
 [data-store-design-v2-admin] .sd-modal-card [class*="grid-cols-"] > button:nth-child(5),
 [data-store-design-v2-admin] .sd-modal-card [class*="space-y-"] > button:nth-child(5){animation-delay:96ms}
+[data-store-design-v2-admin] .sd-modal-card [class*="grid-cols-"] > button:nth-child(6),
+[data-store-design-v2-admin] .sd-modal-card [class*="space-y-"] > button:nth-child(6){animation-delay:120ms}
+[data-store-design-v2-admin] .sd-modal-card [class*="grid-cols-"] > button:nth-child(7),
+[data-store-design-v2-admin] .sd-modal-card [class*="space-y-"] > button:nth-child(7){animation-delay:144ms}
+[data-store-design-v2-admin] .sd-modal-card [class*="grid-cols-"] > button:nth-child(8),
+[data-store-design-v2-admin] .sd-modal-card [class*="space-y-"] > button:nth-child(8){animation-delay:168ms}
 [data-store-design-v2-admin] .sd-loading-screen > div{
   animation:sd-loading-card-in var(--sd-motion-dialog) var(--sd-ease-enter) both;
 }
