@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  ArrowLeft,
   Check,
   ChevronDown,
   CircleDot,
@@ -1230,14 +1231,32 @@ export function StoreDesignV21() {
   return (
     <div ref={editorShellRef} data-store-design-v2-admin data-physical-mobile={isMobileViewport ? "true" : "false"} data-device={device} data-interaction-mode={interactionMode} className="sd-editor-shell flex h-dvh min-h-0 flex-col overflow-hidden bg-[#f5f5f3] text-[#111]">
       <header className="sd-toolbar z-20 flex h-[58px] shrink-0 items-center gap-3 border-b border-black/10 bg-white px-3 md:px-4">
+        <button type="button" onClick={() => window.history.back()} className="sd-mobile-back sd-icon-button hidden h-10 w-10 shrink-0 place-items-center rounded-xl border border-black/10" aria-label="Geri">
+          <ArrowLeft className="h-4 w-4" />
+        </button>
         <button type="button" onClick={() => setLeftOpen((value) => !value)} aria-pressed={leftOpen} className="sd-desktop-panel-toggle sd-icon-button grid h-9 w-9 place-items-center rounded-lg border border-black/10 hover:bg-black/[0.03]" aria-label="Sol panel">
           <PanelLeft className="h-4 w-4" />
         </button>
 
         <div className="sd-title-block min-w-0 flex-1">
-          <div className="flex items-center gap-2">
+          <div className="sd-desktop-title-row flex items-center gap-2">
             <p className="truncate text-[13px] font-semibold">{isMobileViewport ? (activePage?.label || "Mağaza Tasarımı") : "Mağaza Tasarımı"}</p>
             {hasUnsavedChanges ? <span className="sd-dirty-dot h-2 w-2 rounded-full bg-amber-500" aria-label="Kaydedilmemiş değişiklik var" /> : null}
+          </div>
+          <div className="sd-mobile-page-picker hidden min-w-0 items-center gap-1.5">
+            <select
+              aria-label="Düzenlenen sayfa"
+              value={activePath}
+              onChange={(event) => void changePage(event.target.value)}
+              className="sd-field min-w-0 flex-1 truncate rounded-lg border border-black/10 bg-white px-2 font-semibold outline-none"
+            >
+              {groupedPages.map(([group, items]) => (
+                <optgroup key={group} label={group}>
+                  {items.map((item) => <option key={item.path} value={item.path}>{item.label}</option>)}
+                </optgroup>
+              ))}
+            </select>
+            {hasUnsavedChanges ? <span className="sd-dirty-dot h-2 w-2 shrink-0 rounded-full bg-amber-500" aria-label="Kaydedilmemiş değişiklik var" /> : null}
           </div>
           <div className="sd-desktop-meta mt-0.5 flex items-center gap-1.5 text-[11px] text-black/40">
             <CircleDot className={`h-2.5 w-2.5 ${connected ? "text-emerald-600" : "text-amber-500"}`} />
@@ -1283,6 +1302,15 @@ export function StoreDesignV21() {
             className={`sd-device-button flex h-8 items-center gap-1.5 rounded-md px-2.5 text-[9px] font-medium ${interactionMode === "edit" ? "is-active bg-white shadow-sm" : "text-black/45"}`}
           >
             <SlidersHorizontal className="h-3.5 w-3.5" /><span className="hidden xl:inline">Düzenle</span>
+          </button>
+        </div>
+
+        <div className="sd-mobile-history hidden shrink-0 items-center">
+          <button type="button" disabled={!history.length || saving !== null} onClick={() => void undo()} className="sd-icon-button grid h-10 w-10 place-items-center rounded-xl border border-black/10 bg-white disabled:opacity-30" aria-label="Geri al">
+            <Undo2 className="h-3.5 w-3.5" />
+          </button>
+          <button type="button" disabled={!future.length || saving !== null} onClick={() => void redo()} className="sd-icon-button grid h-10 w-10 place-items-center rounded-xl border border-black/10 bg-white disabled:opacity-30" aria-label="Yinele">
+            <Redo2 className="h-3.5 w-3.5" />
           </button>
         </div>
 
