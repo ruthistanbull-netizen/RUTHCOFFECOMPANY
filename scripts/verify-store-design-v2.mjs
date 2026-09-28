@@ -821,9 +821,9 @@ for (const token of [
 }
 
 for (const token of [
-  "Subscription action korumalıdır",
-  "Action whitelist",
-  "Raw HTML/JS yoktur",
+  "Bülten kaydı güvenli şekilde yönetilir",
+  "Gönderim biçimi",
+  "güvenli gönderim için zorunludur",
   'block.type === "field" && key === "type"',
   'block.type === "field" && key === "required"',
 ]) {
@@ -833,8 +833,8 @@ for (const token of [
 for (const token of [
   'section.type === "map-locator"',
   "Haritada aç bağlantıları",
-  "Otomatik geolocation",
-  "üçüncü taraf map scripti",
+  "Konum kartları aşağıdaki adreslerden oluşturulur",
+  "güvenli biçimde hazırlanır",
   'if (type === "location")',
 ]) {
   if (!genericEditor.includes(token)) fail(`Store Locator editor koruması eksik: ${token}`);
