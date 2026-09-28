@@ -62,9 +62,9 @@ function numberValue(value: unknown, fallback: number) {
 
 function mediaOptionLabel(asset: MediaAsset) {
   const kind = asset.type === "video" ? "Video" : "Görsel";
-  if (!asset.createdAt) return `${kind} · Sürüm ${asset.version || 1}`;
+  if (!asset.createdAt) return kind;
   const date = new Date(asset.createdAt);
-  if (Number.isNaN(date.getTime())) return `${kind} · Sürüm ${asset.version || 1}`;
+  if (Number.isNaN(date.getTime())) return kind;
   return `${kind} · ${date.toLocaleString("tr-TR", { dateStyle: "short", timeStyle: "short" })}`;
 }
 
@@ -414,6 +414,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   const primaryMedia = mediaNarrative && text(settings.imageAssetId) ? document.media[text(settings.imageAssetId)] : undefined;
   const brandStoryMedia = brandStory && text(settings.imageAssetId) ? document.media[text(settings.imageAssetId)] : undefined;
   const showBlockComposer = allowedDefinitions.length > 0;
+  const sharedReferenceCount = Object.values(document.templates).filter((template) => template.sectionIds.includes(section.id)).length;
 
   return (
     <div data-closing={closing ? "true" : "false"} className="sd-modal-backdrop fixed inset-0 z-[2147483607] grid place-items-center bg-black/35 p-3 backdrop-blur-sm">
@@ -427,6 +428,11 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
         </header>
 
         <div className="min-h-0 flex-1 overflow-y-auto p-4">
+          {sharedReferenceCount > 1 ? (
+            <div className="mb-4 rounded-xl border border-amber-500/20 bg-amber-50 p-3 text-[11px] leading-5 text-amber-900">
+              Bu bölüm {sharedReferenceCount} yerde kullanılıyor. Burada yaptığın içerik ve görünüm değişiklikleri bağlı olan diğer yerleri de etkiler.
+            </div>
+          ) : null}
           {!["announcement-bar", "marquee"].includes(section.type) ? (
             <div className="grid gap-3 rounded-xl border border-black/[0.08] bg-[#fafafa] p-3 md:grid-cols-2">
               {showTitle ? (
