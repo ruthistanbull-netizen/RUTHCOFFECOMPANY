@@ -683,6 +683,15 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
   const template = templateId ? document.templates[templateId] : null;
   const sectionIds = template?.sectionIds || [];
   const sections = sectionIds.map((id) => document.sections[id]).filter((section): section is SectionInstance => Boolean(section));
+  const sectionReferenceCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const item of Object.values(document.templates)) {
+      for (const sectionId of new Set(item.sectionIds || [])) {
+        counts.set(sectionId, (counts.get(sectionId) || 0) + 1);
+      }
+    }
+    return counts;
+  }, [document.templates]);
 
   const commit = async (next: ThemeDocument, label: string) => {
     if (busy) return;
@@ -811,9 +820,21 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
       next.sections[copyId] = structuredClone({ ...section, id: copyId, blockIds });
       nextTemplate.sectionIds.splice(index + 1, 0, copyId);
     } else if (action === "delete") {
-      for (const blockId of section.blockIds || []) delete next.blocks[blockId];
-      delete next.sections[sectionId];
+      const referenceCount = sectionReferenceCounts.get(sectionId) || 1;
+      const message = referenceCount > 1
+        ? `Bu bölüm ${referenceCount} yerde kullanılıyor. Yalnız bu sayfadaki bağlantıyı kaldırmak istiyor musun?`
+        : "Bu bölümü sayfadan kaldırmak istiyor musun?";
+      if (!window.confirm(message)) return;
+
       nextTemplate.sectionIds.splice(index, 1);
+      const stillReferenced = Object.values(next.templates).some((item) => item.sectionIds.includes(sectionId));
+      if (!stillReferenced) {
+        for (const blockId of section.blockIds || []) {
+          const usedElsewhere = Object.values(next.sections).some((item) => item.id !== sectionId && item.blockIds?.includes(blockId));
+          if (!usedElsewhere) delete next.blocks[blockId];
+        }
+        delete next.sections[sectionId];
+      }
     } else {
       return;
     }
@@ -926,6 +947,7 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
           {sections.map((section, index) => {
             const childBlockIds = section.blockIds || [];
             const childrenOpen = expandedSectionIds.has(section.id);
+            const referenceCount = sectionReferenceCounts.get(section.id) || 1;
             return (
             <div key={section.id} className="sd-section-tree-item">
             <div
@@ -964,7 +986,9 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
               >
                 <p className={`truncate text-[12px] font-semibold ${section.enabled ? "" : "text-black/35"}`}>{sectionLabel(section)}</p>
                 <p className="mt-0.5 truncate text-[11px] text-black/40">
-                  {section.enabled ? "Görünür" : "Gizli"}{childBlockIds.length ? ` · ${childBlockIds.length} içerik öğesi` : ""}
+                  {section.enabled ? "Görünür" : "Gizli"}
+                  {childBlockIds.length ? ` · ${childBlockIds.length} içerik öğesi` : ""}
+                  {referenceCount > 1 ? ` · ${referenceCount} yerde bağlı` : ""}
                 </p>
               </button>
               {childBlockIds.length ? (
