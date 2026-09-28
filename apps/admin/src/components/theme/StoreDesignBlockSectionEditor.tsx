@@ -127,7 +127,7 @@ function fieldLabel(key: string) {
 }
 
 function blockTitle(block: DraftBlock) {
-  return text(block.settings.heading || block.settings.title || block.settings.label || block.settings.name || block.settings.question || block.settings.text) || BLOCK_LIBRARY_BY_TYPE[block.type]?.label || block.type;
+  return text(block.settings.heading || block.settings.title || block.settings.label || block.settings.name || block.settings.question || block.settings.text) || BLOCK_LIBRARY_BY_TYPE[block.type]?.label || "İçerik öğesi";
 }
 
 function isLongField(key: string) {
@@ -344,7 +344,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
       for (const block of blocks) {
         const blockDefinition = BLOCK_LIBRARY_BY_TYPE[block.type];
         if (!blockDefinition?.implemented || !definition?.allowedBlocks.includes(block.type)) {
-          throw new Error(`${block.type} bu bölüm için izinli değil.`);
+          throw new Error("Bu içerik öğesi seçilen bölümde kullanılamıyor.");
         }
         next.blocks[block.id] = {
           id: block.id,
@@ -364,7 +364,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
         schemaVersion: STORE_DESIGN_SCHEMA_VERSION,
       };
 
-      await onApply(next, `${definition?.label || section.type} ${showBlockComposer ? "blokları " : ""}güncellendi`);
+      await onApply(next, `${definition?.label || "Bölüm"} ${showBlockComposer ? "içerik öğeleri " : ""}güncellendi`);
       requestClose();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Bölüm kaydedilemedi.");
@@ -411,8 +411,8 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
       <div className="sd-modal-card flex max-h-[92dvh] w-full max-w-[760px] flex-col overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl">
         <header className="flex h-14 shrink-0 items-center gap-3 border-b border-black/10 px-4">
           <div className="min-w-0 flex-1">
-            <p className="text-[12px] font-semibold">{definition?.label || section.type}</p>
-            <p className="mt-0.5 truncate text-[8px] text-black/40">{section.id} · {blocks.length}/{maxBlocks} block</p>
+            <p className="text-[12px] font-semibold">{definition?.label || "Bölüm"}</p>
+            <p className="mt-0.5 truncate text-[8px] text-black/40">{blocks.length}/{maxBlocks} içerik öğesi</p>
           </div>
           <button type="button" onClick={requestClose} className="grid h-9 w-9 place-items-center rounded-lg hover:bg-black/[0.04]" aria-label="Kapat"><X className="h-4 w-4" /></button>
         </header>
@@ -564,7 +564,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     </select>
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                    CTA metni
+                    Düğme metni
                     <input value={text(settings.linkLabel) || "Ürünü İncele"} onChange={(event) => updateSetting("linkLabel", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
                   </label>
                   <div className="grid gap-2 rounded-lg border border-black/10 bg-white p-2.5 md:col-span-2">
@@ -657,7 +657,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
               {bundle ? (
                 <>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
-                    Bundle veri kaynağı
+                    Paket veri kaynağı
                     <select value={text(settings.source) || "related"} onChange={(event) => updateSetting("source", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                       <option value="related">Bu ürünü içeren gerçek paketler</option>
                       <option value="all">Tüm aktif paket ürünleri</option>
@@ -771,7 +771,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     >
                       {catalogProducts.map((product) => <option key={product.id} value={product.id}>{product.name}</option>)}
                     </select>
-                    {catalogError ? <span className="text-[7px] font-normal text-red-600">{catalogError}</span> : <span className="text-[7px] font-normal leading-4 text-black/35">Ctrl/Cmd ile birden fazla ürün seç. Fiyat, stok ve ürün bilgileri katalogdan gelir ve burada değiştirilemez.</span>}
+                    {catalogError ? <span className="text-[7px] font-normal text-red-600">{catalogError}</span> : <span className="text-[7px] font-normal leading-4 text-black/35">Birden fazla ürün seçmek için seçim sırasında klavyedeki çoklu seçim tuşunu basılı tut. Fiyat, stok ve ürün bilgileri katalogdan gelir ve burada değiştirilemez.</span>}
                   </label>
                   <div className="grid gap-2 rounded-lg border border-black/10 bg-white p-2.5 md:col-span-2">
                     <p className="text-[8px] font-semibold text-black/45">Karşılaştırma alanları</p>
@@ -796,7 +796,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     })}
                   </div>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
-                    Layout
+                    Yerleşim
                     <div className="flex h-9 items-center rounded-lg border border-black/10 bg-black/[0.025] px-2.5 text-[8px] font-medium text-black/55">
                       Tablo · mobilde yatay kaydırma
                     </div>
@@ -812,10 +812,10 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                       <option value="">{catalogLoading ? "Koleksiyonlar yükleniyor…" : "Koleksiyon seç"}</option>
                       {catalogCollections.map((collection) => <option key={collection.id} value={collection.id}>{collection.name}</option>)}
                     </select>
-                    {catalogError ? <span className="text-[7px] font-normal text-red-600">{catalogError}</span> : <span className="text-[7px] font-normal leading-4 text-black/35">Koleksiyon üyeliği ve ürün verileri theme editor tarafından değiştirilmez.</span>}
+                    {catalogError ? <span className="text-[7px] font-normal text-red-600">{catalogError}</span> : <span className="text-[7px] font-normal leading-4 text-black/35">Koleksiyon üyeliği ve ürün verileri tema düzenleyicisinden değiştirilmez.</span>}
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                    Başlık override
+                    Özel başlık
                     <input value={text(settings.heading)} onChange={(event) => updateSetting("heading", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" placeholder="Boşsa koleksiyon adı" />
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
