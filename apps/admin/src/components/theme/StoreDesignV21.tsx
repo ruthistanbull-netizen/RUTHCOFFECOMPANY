@@ -507,6 +507,8 @@ export function StoreDesignV21() {
   const editorShellRef = useRef<HTMLDivElement | null>(null);
   const mobileMoreButtonRef = useRef<HTMLButtonElement | null>(null);
   const mobileMoreMenuRef = useRef<HTMLDivElement | null>(null);
+  const mobileStructureButtonRef = useRef<HTMLButtonElement | null>(null);
+  const mobileEditButtonRef = useRef<HTMLButtonElement | null>(null);
   const contextMenuRef = useRef<HTMLDivElement | null>(null);
   const structurePanelRef = useRef<HTMLElement | null>(null);
   const inspectorPanelRef = useRef<HTMLElement | null>(null);
@@ -681,9 +683,13 @@ export function StoreDesignV21() {
       if (rightOpen) {
         setRightOpen(false);
         setMobileSheetLevel("peek");
+        window.requestAnimationFrame(() => mobileEditButtonRef.current?.focus({ preventScroll: true }));
         return;
       }
-      if (leftOpen) setLeftOpen(false);
+      if (leftOpen) {
+        setLeftOpen(false);
+        window.requestAnimationFrame(() => mobileStructureButtonRef.current?.focus({ preventScroll: true }));
+      }
     };
     window.addEventListener("keydown", onMobileEscape);
     return () => window.removeEventListener("keydown", onMobileEscape);
@@ -1951,7 +1957,11 @@ export function StoreDesignV21() {
                 <p className="text-[9px] font-semibold text-black/45">SEÇİLİ ÖĞE</p>
                 <button
                   type="button"
-                  onClick={() => { setRightOpen(false); setMobileSheetLevel("peek"); }}
+                  onClick={() => {
+                    setRightOpen(false);
+                    setMobileSheetLevel("peek");
+                    window.requestAnimationFrame(() => mobileEditButtonRef.current?.focus({ preventScroll: true }));
+                  }}
                   className="sd-mobile-sheet-close hidden h-10 w-10 place-items-center rounded-xl border border-black/10"
                   aria-label="Ayarları kapat"
                 >
@@ -2707,13 +2717,14 @@ export function StoreDesignV21() {
         <button type="button" aria-pressed={interactionMode === "browse" && !leftOpen && !rightOpen} className={interactionMode === "browse" && !leftOpen && !rightOpen ? "is-active" : ""} onClick={() => { setInteractionMode("browse"); setContextMenu(null); setLeftOpen(false); setRightOpen(false); }}>
           <Eye className="h-5 w-5" /><span>Önizleme</span>
         </button>
-        <button type="button" aria-pressed={leftOpen} className={leftOpen ? "is-active" : ""} onClick={() => { setInteractionMode("edit"); setContextMenu(null); setRightOpen(false); setLeftOpen(true); }}>
+        <button ref={mobileStructureButtonRef} type="button" aria-pressed={leftOpen} className={leftOpen ? "is-active" : ""} onClick={() => { setInteractionMode("edit"); setContextMenu(null); setRightOpen(false); setLeftOpen(true); }}>
           <PanelLeft className="h-5 w-5" /><span>Yapı</span>
         </button>
         <button type="button" onClick={() => { setInteractionMode("edit"); setContextMenu(null); setRightOpen(false); setLeftOpen(true); setSectionPickerSignal((value) => value + 1); }}>
           <Plus className="h-5 w-5" /><span>Ekle</span>
         </button>
         <button
+          ref={mobileEditButtonRef}
           type="button"
           aria-pressed={interactionMode === "edit" && rightOpen && !leftOpen}
           className={interactionMode === "edit" && rightOpen && !leftOpen ? "is-active" : ""}
