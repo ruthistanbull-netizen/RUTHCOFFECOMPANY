@@ -389,6 +389,8 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
     `;
     document.head.appendChild(previewScrollbarStyle);
 
+    let interactionMode: "browse" | "edit" = "edit";
+
     const overlay = document.createElement("div");
     overlay.dataset.storeDesignV2Ui = "true";
     overlay.style.cssText = [
@@ -455,6 +457,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
     };
 
     const onClick = (event: MouseEvent) => {
+      if (interactionMode !== "edit") return;
       const target = targetFromEvent(event);
       if (!target) return;
       event.preventDefault();
@@ -509,6 +512,17 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
     const onMessage = (event: MessageEvent) => {
       if (event.source !== window.parent || !event.data || typeof event.data !== "object") return;
       if (expectedParentOrigin && event.origin !== expectedParentOrigin) return;
+
+      if (event.data.type === STORE_DESIGN_MESSAGES.INTERACTION_MODE) {
+        interactionMode = event.data.mode === "browse" ? "browse" : "edit";
+        if (interactionMode === "browse") {
+          overlay.style.opacity = "0";
+          overlay.style.visibility = "hidden";
+        } else {
+          positionOverlay();
+        }
+        return;
+      }
 
       if (event.data.type === STORE_DESIGN_MESSAGES.PATCH) {
         const message = event.data as ThemePatchMessage;
