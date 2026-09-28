@@ -25,8 +25,6 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  COMPONENT_REGISTRY,
-  SECTION_LIBRARY,
   STORE_DESIGN_MESSAGES,
   STORE_DESIGN_SCHEMA_VERSION,
   analyzeThemeDocumentReferences,
