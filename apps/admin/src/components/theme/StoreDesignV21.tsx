@@ -526,6 +526,7 @@ export function StoreDesignV21() {
   const [selected, setSelected] = useState<SelectedTarget | null>(null);
   const [scope, setScope] = useState<EditorScope>("global");
   const [connected, setConnected] = useState(false);
+  const [connectionStalled, setConnectionStalled] = useState(false);
   const [lastHeartbeat, setLastHeartbeat] = useState(0);
   const [saving, setSaving] = useState<"draft" | "publish" | null>(null);
   const [saveFeedback, setSaveFeedback] = useState<"draft" | "publish" | null>(null);
@@ -548,7 +549,6 @@ export function StoreDesignV21() {
   const [history, setHistory] = useState<EditorHistoryEntry[]>([]);
   const [future, setFuture] = useState<EditorHistoryEntry[]>([]);
   const revisionRef = useRef(0);
-  const lastReconnectRef = useRef(0);
   const mobileSheetTouchStartRef = useRef<number | null>(null);
   const layoutBandRef = useRef<"mobile" | "tablet" | "compact" | "wide" | null>(null);
 
@@ -963,12 +963,14 @@ export function StoreDesignV21() {
 
       if (data.type === STORE_DESIGN_MESSAGES.READY) {
         setConnected(true);
+        setConnectionStalled(false);
         setLastHeartbeat(Date.now());
         return;
       }
 
       if (data.type === STORE_DESIGN_MESSAGES.HEARTBEAT) {
         setConnected(true);
+        setConnectionStalled(false);
         setLastHeartbeat(Date.now());
         return;
       }
@@ -1038,21 +1040,31 @@ export function StoreDesignV21() {
   useEffect(() => {
     const timer = window.setInterval(() => {
       if (!lastHeartbeat) return;
-      const now = Date.now();
-      const staleFor = now - lastHeartbeat;
-      if (staleFor > 12_000) setConnected(false);
-      if (
-        staleFor > 18_000 &&
-        activePage &&
-        iframeRef.current &&
-        now - lastReconnectRef.current > 18_000
-      ) {
-        lastReconnectRef.current = now;
-        iframeRef.current.src = previewUrl(cleanPreviewPath(activePage), previewTokenRef.current);
+      const staleFor = Date.now() - lastHeartbeat;
+      if (staleFor > 12_000) {
+        setConnected(false);
+        setConnectionStalled(true);
       }
     }, 3_000);
     return () => window.clearInterval(timer);
-  }, [activePage, lastHeartbeat]);
+  }, [lastHeartbeat]);
+
+  const reconnectPreview = async () => {
+    if (!activePage || !iframeRef.current) return;
+    setConnected(false);
+    setConnectionStalled(false);
+    setLastHeartbeat(Date.now());
+
+    try {
+      await syncPreviewDocument(document, true);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Önizleme yeniden bağlanamadı.");
+      setConnectionStalled(true);
+      return;
+    }
+
+    iframeRef.current.src = previewUrl(cleanPreviewPath(activePage), previewTokenRef.current);
+  };
 
   const changePage = async (path: string) => {
     const page = editorPages.find((item) => item.path === path);
@@ -1869,9 +1881,18 @@ export function StoreDesignV21() {
 
         <main className="sd-preview-stage relative flex min-w-0 flex-1 items-center justify-center overflow-auto p-3 md:p-6">
           {!connected ? (
-            <div role="status" aria-live="polite" className="sd-preview-connection-chip pointer-events-none absolute left-1/2 top-3 z-30 flex -translate-x-1/2 items-center gap-2 rounded-full px-3 py-2 text-[11px] font-semibold shadow-lg">
-              <RefreshCw className="h-3.5 w-3.5 animate-spin" />
-              Önizlemeye yeniden bağlanılıyor…
+            <div role="status" aria-live="polite" className="sd-preview-connection-chip absolute left-1/2 top-3 z-30 flex max-w-[calc(100%-24px)] -translate-x-1/2 items-center gap-2 rounded-full px-3 py-2 text-[11px] font-semibold shadow-lg">
+              <RefreshCw className={`h-3.5 w-3.5 shrink-0 ${connectionStalled ? "" : "animate-spin"}`} />
+              <span className="truncate">{connectionStalled ? "Önizleme yanıt vermiyor" : "Önizleme bağlanıyor…"}</span>
+              {connectionStalled ? (
+                <button
+                  type="button"
+                  onClick={() => void reconnectPreview()}
+                  className="rounded-full border border-current/20 px-2.5 py-1 text-[10px] font-semibold"
+                >
+                  Yeniden bağlan
+                </button>
+              ) : null}
             </div>
           ) : null}
           {isMobileViewport && interactionMode === "edit" && !leftOpen && !rightOpen ? (
@@ -1894,6 +1915,7 @@ export function StoreDesignV21() {
               className={`sd-preview-frame h-full w-full bg-white ${device === "mobile" && !isMobileViewport ? "rounded-[34px]" : ""}`}
               onLoad={() => {
                 setConnected(false);
+                setConnectionStalled(false);
                 setLastHeartbeat(Date.now());
               }}
             />
