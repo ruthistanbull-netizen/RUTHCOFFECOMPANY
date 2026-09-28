@@ -1062,7 +1062,7 @@ body {
   }
 
   [data-store-design-v2-admin] .sd-mobile-sheet-levels button{
-    min-height:36px!important;
+    min-height:44px!important;
     border:1px solid transparent;
     color:var(--sd-text-2)!important;
     background:transparent!important;
@@ -1696,11 +1696,37 @@ body {
     min-width:44px!important;
   }
 
+  [data-store-design-v2-admin] .sd-primary-button.sd-save-button{
+    gap:0!important;
+  }
+
+  [data-store-design-v2-admin] .sd-primary-button.sd-save-button svg{
+    display:none!important;
+  }
+
   [data-store-design-v2-admin] .sd-primary-button.sd-save-button span{
-    max-width:48px;
+    max-width:52px;
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
+  }
+}
+
+@media (max-width:360px){
+  [data-store-design-v2-admin] .sd-toolbar{
+    gap:2px!important;
+    padding-left:4px!important;
+    padding-right:4px!important;
+  }
+
+  [data-store-design-v2-admin] .sd-mobile-page-picker select{
+    font-size:14px!important;
+    padding-left:6px;
+    padding-right:18px;
+  }
+
+  [data-store-design-v2-admin] .sd-title-block{
+    min-width:64px!important;
   }
 }
 
