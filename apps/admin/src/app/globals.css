@@ -1231,6 +1231,26 @@ body {
   [data-store-design-v2-admin] .sd-inspector button{
     font-size:11px!important;
   }
+
+  [data-store-design-v2-admin] .sd-modal-card [class*="text-[6px]"],
+  [data-store-design-v2-admin] .sd-modal-card [class*="text-[7px]"]{
+    font-size:10px!important;
+    line-height:1.4!important;
+  }
+  [data-store-design-v2-admin] .sd-modal-card [class*="text-[8px]"]{
+    font-size:11px!important;
+    line-height:1.45!important;
+  }
+  [data-store-design-v2-admin] .sd-modal-card [class*="text-[9px]"]{
+    font-size:12px!important;
+    line-height:1.45!important;
+  }
+  [data-store-design-v2-admin] .sd-modal-card input:not([type="range"]):not([type="checkbox"]),
+  [data-store-design-v2-admin] .sd-modal-card select,
+  [data-store-design-v2-admin] .sd-modal-card textarea,
+  [data-store-design-v2-admin] .sd-modal-card button{
+    font-size:11px!important;
+  }
 }
 @media (max-width:767px){
   [data-store-design-v2-admin] .sd-desktop-mode-toggle{display:none!important}
