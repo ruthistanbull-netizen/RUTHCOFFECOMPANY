@@ -470,7 +470,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                         <option value="">{section.type === "hero" ? "Mevcut ana görseli kullan" : "Medya seçilmedi"}</option>
                         {mediaAssets
                           .filter((asset) => section.type === "background-media" || section.type === "hero" || asset.type === "video")
-                          .map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.type === "video" ? "Video" : "Görsel"} · Sürüm {asset.version || 1}</option>)}
+                          .map((asset) => <option key={asset.assetId} value={asset.assetId}>{mediaOptionLabel(asset)}</option>)}
                       </select>
                       <button type="button" onClick={() => setMediaPicker({ target: "section", key: "imageAssetId", mediaType: section.type === "background-media" || section.type === "hero" ? "any" : "video" })} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
                         Medya Arşivi
@@ -1156,7 +1156,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     Stil
                     <select value={text(settings.style) || "cards"} onChange={(event) => updateSetting("style", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                       <option value="cards">Kartlar</option>
-                      <option value="inline">Inline</option>
+                      <option value="inline">Satır içi</option>
                     </select>
                   </label>
                 </>
@@ -1181,10 +1181,10 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                     Boyut
                     <select value={text(settings.size) || "lg"} onChange={(event) => updateSetting("size", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
-                      <option value="sm">S</option>
-                      <option value="md">M</option>
-                      <option value="lg">L</option>
-                      <option value="xl">XL</option>
+                      <option value="sm">Küçük</option>
+                      <option value="md">Orta</option>
+                      <option value="lg">Büyük</option>
+                      <option value="xl">Çok büyük</option>
                     </select>
                   </label>
                 </>
@@ -1193,8 +1193,8 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                 <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                   Yazı biçimi
                   <select value={text(settings.typography) || "display"} onChange={(event) => updateSetting("typography", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
-                    <option value="display">Display</option>
-                    <option value="editorial">Editorial</option>
+                    <option value="display">Vurgulu</option>
+                    <option value="editorial">Editoryal</option>
                     <option value="compact">Sıkı</option>
                   </select>
                 </label>
@@ -1270,10 +1270,10 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
                     Renk
                     <select value={text(settings.colorToken) || "subtle"} onChange={(event) => updateSetting("colorToken", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
-                      <option value="subtle">Subtle</option>
-                      <option value="muted">Muted</option>
-                      <option value="strong">Strong</option>
-                      <option value="current">Current</option>
+                      <option value="subtle">Yumuşak</option>
+                      <option value="muted">Soluk</option>
+                      <option value="strong">Güçlü</option>
+                      <option value="current">Mevcut metin rengi</option>
                     </select>
                   </label>
                 </>
@@ -1281,7 +1281,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
               {section.type === "anchor" ? (
                 <>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                    Anchor ID
+                    Bağlantı kimliği
                     <input value={text(settings.anchorId)} onChange={(event) => updateSetting("anchorId", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
                   </label>
                   <label className="flex items-center justify-between gap-3 rounded-lg border border-black/10 bg-white p-2.5 text-[8px] font-semibold text-black/45">
@@ -1315,14 +1315,14 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     <input value={text(settings.afterLabel)} onChange={(event) => updateSetting("afterLabel", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
-                    Başlangıç divider konumu
+                    Başlangıç ayırıcı konumu
                     <input type="range" min={10} max={90} value={numberValue(settings.divider, 50)} onChange={(event) => updateSetting("divider", Number(event.target.value))} />
                   </label>
                 </>
               ) : null}
               {section.type === "hotspot-lookbook" ? (
                 <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
-                  Lookbook görseli
+                  Vitrin görseli
                   <select value={text(settings.imageAssetId)} onChange={(event) => updateSetting("imageAssetId", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                     <option value="">Medya seçilmedi</option>
                     {mediaAssets.filter((asset) => asset.type === "image").map((asset) => <option key={asset.assetId} value={asset.assetId}>{mediaOptionLabel(asset)}</option>)}
@@ -1360,12 +1360,12 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
               {gridStack ? (
                 <>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                    Kolon
+                    Sütun sayısı
                     <select value={String(numberValue(settings.columns, 2))} onChange={(event) => updateSetting("columns", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
-                      <option value="1">1 kolon</option>
-                      <option value="2">2 kolon</option>
-                      <option value="3">3 kolon</option>
-                      <option value="4">4 kolon</option>
+                      <option value="1">1 sütun</option>
+                      <option value="2">2 sütun</option>
+                      <option value="3">3 sütun</option>
+                      <option value="4">4 sütun</option>
                     </select>
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
