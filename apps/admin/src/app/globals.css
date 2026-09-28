@@ -1498,7 +1498,7 @@ body {
 
 [data-store-design-v2-admin] .sd-media-card,
 [data-store-design-v2-admin] .sd-library-card,
-[data-store-design-v2-admin] .sd-section-row:nth-child(n+9){
+[data-store-design-v2-admin] .sd-section-tree-item:nth-child(n+9){
   content-visibility:auto;
   contain-intrinsic-size:auto 72px;
 }
