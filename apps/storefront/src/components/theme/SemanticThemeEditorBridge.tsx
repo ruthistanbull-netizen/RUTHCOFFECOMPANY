@@ -391,6 +391,11 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
           display: none !important;
         }
       }
+
+      [data-store-design-v2-keyboard-target="true"]:focus-visible {
+        outline: 3px solid #e07b63 !important;
+        outline-offset: 3px !important;
+      }
     `;
     document.head.appendChild(previewScrollbarStyle);
 
