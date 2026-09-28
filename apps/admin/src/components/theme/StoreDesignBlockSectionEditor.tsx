@@ -13,6 +13,7 @@ import {
   type ThemeDocument,
 } from "@ruth-commerce/commerce-core/store-design-v2";
 import { useExactToast } from "@/components/base44-exact/primitives";
+import { useStoreDesignDialogExit } from "@/components/theme/useStoreDesignDialogExit";
 import { StoreDesignMediaLibrary } from "@/components/theme/StoreDesignMediaLibrary";
 
 type Props = {
@@ -138,6 +139,8 @@ function isMediaField(key: string) {
 }
 
 export function StoreDesignBlockSectionEditor({ document, section, onApply, onClose }: Props) {
+
+  const { closing, requestClose } = useStoreDesignDialogExit(onClose);
   const toast = useExactToast();
   const definition = SECTION_LIBRARY_BY_TYPE[section.type];
   const allowedDefinitions = useMemo(() => (definition?.allowedBlocks || [])
@@ -362,7 +365,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
       };
 
       await onApply(next, `${definition?.label || section.type} ${showBlockComposer ? "blokları " : ""}güncellendi`);
-      onClose();
+      requestClose();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Bölüm kaydedilemedi.");
     } finally {
@@ -404,14 +407,14 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   const showBlockComposer = allowedDefinitions.length > 0;
 
   return (
-    <div className="sd-modal-backdrop fixed inset-0 z-[2147483607] grid place-items-center bg-black/35 p-3 backdrop-blur-sm">
+    <div data-closing={closing ? "true" : "false"} className="sd-modal-backdrop fixed inset-0 z-[2147483607] grid place-items-center bg-black/35 p-3 backdrop-blur-sm">
       <div className="sd-modal-card flex max-h-[92dvh] w-full max-w-[760px] flex-col overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl">
         <header className="flex h-14 shrink-0 items-center gap-3 border-b border-black/10 px-4">
           <div className="min-w-0 flex-1">
             <p className="text-[12px] font-semibold">{definition?.label || section.type}</p>
             <p className="mt-0.5 truncate text-[8px] text-black/40">{section.id} · {blocks.length}/{maxBlocks} block</p>
           </div>
-          <button type="button" onClick={onClose} className="grid h-9 w-9 place-items-center rounded-lg hover:bg-black/[0.04]" aria-label="Kapat"><X className="h-4 w-4" /></button>
+          <button type="button" onClick={requestClose} className="grid h-9 w-9 place-items-center rounded-lg hover:bg-black/[0.04]" aria-label="Kapat"><X className="h-4 w-4" /></button>
         </header>
 
         <div className="min-h-0 flex-1 overflow-y-auto p-4">
@@ -1636,7 +1639,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
 
         <footer className="flex shrink-0 items-center gap-2 border-t border-black/10 bg-[#fafafa] p-3">
           <p className="min-w-0 flex-1 truncate text-[8px] text-black/35">Stable block ID · max {maxBlocks} · schema {STORE_DESIGN_SCHEMA_VERSION}</p>
-          <button type="button" disabled={busy} onClick={onClose} className="h-10 rounded-lg border border-black/10 bg-white px-4 text-[9px] font-semibold disabled:opacity-40">Vazgeç</button>
+          <button type="button" disabled={busy} onClick={requestClose} className="h-10 rounded-lg border border-black/10 bg-white px-4 text-[9px] font-semibold disabled:opacity-40">Vazgeç</button>
           <button type="button" disabled={busy} onClick={() => void save()} className="flex h-10 items-center gap-2 rounded-lg bg-[#111] px-4 text-[9px] font-semibold text-white disabled:opacity-40">
             <Save className="h-3.5 w-3.5" />{busy ? "Uygulanıyor…" : "Uygula"}
           </button>
