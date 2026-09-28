@@ -566,7 +566,7 @@ function SectionPicker({
                   <div className="flex items-start gap-2">
                     <span className="min-w-0 flex-1 text-[13px] font-semibold">{sectionTypeLabel(definition.type, definition.label)}</span>
                     <span className={`rounded px-1.5 py-0.5 text-[7px] font-semibold ${available ? "bg-emerald-50 text-emerald-700" : "bg-black/[0.04] text-black/40"}`}>
-                      {available ? "Hazır" : securityLocked ? "Güvenlik kilidi" : "Altyapı bekliyor"}
+                      {available ? "Hazır" : securityLocked ? "Güvenlik kilidi" : "Henüz hazır değil"}
                     </span>
                   </div>
                   <p className="mt-2 line-clamp-3 text-[11px] leading-4 text-black/38">
@@ -806,6 +806,13 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
     } else if (action === "down" && index < nextTemplate.sectionIds.length - 1) {
       [nextTemplate.sectionIds[index + 1], nextTemplate.sectionIds[index]] = [nextTemplate.sectionIds[index], nextTemplate.sectionIds[index + 1]];
     } else if (action === "toggle") {
+      const referenceCount = sectionReferenceCounts.get(sectionId) || 1;
+      if (referenceCount > 1) {
+        const confirmed = window.confirm(
+          `Bu bölüm ${referenceCount} yerde kullanılıyor. Görünürlük değişikliği bağlı olan tüm yerleri etkiler. Devam etmek istiyor musun?`,
+        );
+        if (!confirmed) return;
+      }
       next.sections[sectionId] = { ...section, enabled: !section.enabled };
     } else if (action === "duplicate") {
       const copyId = uid(`section-${section.type}`);
