@@ -268,10 +268,10 @@ function defaultSettings(type: string): Record<string, unknown> {
     return { title: "İndirimdekiler", productLimit: 12, desktopItems: 4, mobileItems: 2, gap: 12, paddingY: 64, layout: "slider", showArrows: true, badgeStyle: "pill" };
   }
   if (type === "video-hero") {
-    return { imageAssetId: "", posterAssetId: "", heightPreset: "viewport", fit: "cover", playbackPreset: "ambient", title: "Video Hero", body: "", linkLabel: "", linkHref: "", align: "center", overlayOpacity: 32, contrastMode: "light" };
+    return { imageAssetId: "", posterAssetId: "", heightPreset: "viewport", fit: "cover", playbackPreset: "ambient", title: "Video Ana Görsel", body: "", linkLabel: "", linkHref: "", align: "center", overlayOpacity: 32, contrastMode: "light" };
   }
   if (type === "video-banner") {
-    return { imageAssetId: "", posterAssetId: "", heightPreset: "medium", fit: "cover", playbackPreset: "ambient", title: "Video Banner", body: "", linkLabel: "", linkHref: "", align: "center", overlayOpacity: 28, contrastMode: "light" };
+    return { imageAssetId: "", posterAssetId: "", heightPreset: "medium", fit: "cover", playbackPreset: "ambient", title: "Video Afiş", body: "", linkLabel: "", linkHref: "", align: "center", overlayOpacity: 28, contrastMode: "light" };
   }
   if (type === "background-media") {
     return { imageAssetId: "", posterAssetId: "", minHeightPreset: "medium", fit: "cover", playbackPreset: "ambient", overlayOpacity: 36, contrastMode: "light" };
@@ -291,9 +291,9 @@ function defaultSettings(type: string): Record<string, unknown> {
   if (type === "collage") return { title: "Collage", columns: 3, gap: 16, paddingY: 64 };
   if (type === "social-grid") return { title: "Sosyal Medya", columns: 4, gap: 12, paddingY: 64, source: "manual" };
   if (type === "before-after") return { title: "Önce / Sonra", beforeAssetId: "", afterAssetId: "", beforeLabel: "Önce", afterLabel: "Sonra", divider: 50, paddingY: 64 };
-  if (type === "hotspot-lookbook") return { title: "Lookbook", imageAssetId: "", paddingY: 64 };
-  if (type === "image-text-split") return { title: "Image + Text", imageAssetId: "", side: "left", contentWidth: "50%", paddingY: 64 };
-  if (type === "video-text-split") return { title: "Video + Text", imageAssetId: "", side: "left", contentWidth: "50%", paddingY: 64 };
+  if (type === "hotspot-lookbook") return { title: "Ürün Görünümü", imageAssetId: "", paddingY: 64 };
+  if (type === "image-text-split") return { title: "Görsel + Metin", imageAssetId: "", side: "left", contentWidth: "50%", paddingY: 64 };
+  if (type === "video-text-split") return { title: "Video + Metin", imageAssetId: "", side: "left", contentWidth: "50%", paddingY: 64 };
   if (type === "logo-cloud") return { title: "Markalar", columns: 5, gap: 24, paddingY: 64 };
   if (type === "text-columns") return { title: "Metin Kolonları", columns: 3, gap: 24, paddingY: 64 };
   if (type === "stats") return { title: "Rakamlarla", columns: 4, gap: 24, paddingY: 64 };
@@ -310,7 +310,7 @@ function defaultSettings(type: string): Record<string, unknown> {
   if (type === "heading-subtext") return { title: "Başlık", body: "Alt metin", role: "h2", size: "lg", align: "center", maxWidth: "900px", paddingY: 64 };
   if (type === "manifesto") return { title: "Manifesto", body: "Marka anlatınızı buraya ekleyin.", typography: "display", align: "center", maxWidth: "900px", paddingY: 80 };
   if (type === "quote") return { quote: "Alıntı", attribution: "", align: "center", paddingY: 72 };
-  if (type === "promo-banner") return { title: "Promo", body: "", linkLabel: "Keşfet", linkHref: "/", align: "center", paddingY: 56 };
+  if (type === "promo-banner") return { title: "Kampanya", body: "", linkLabel: "Keşfet", linkHref: "/", align: "center", paddingY: 56 };
   if (type === "countdown") return { title: "Geri Sayım", targetTime: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), completedState: "Tamamlandı", style: "cards", paddingY: 64 };
   if (type === "shipping-returns-cta") return { icon: "•", title: "Kargo & İade", body: "", linkLabel: "Detaylar", linkHref: "/", align: "center", paddingY: 48 };
   if (type === "newsletter") return {
@@ -635,7 +635,7 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
     const section = document.sections[sectionId];
     if (!section) return;
     const definition = SECTION_LIBRARY_BY_TYPE[section.type];
-    if (!definition?.implemented) return toast.error("Bu bölüm preset olarak kaydedilemiyor.");
+    if (!definition?.implemented) return toast.error("Bu bölüm hazır düzen olarak kaydedilemiyor.");
 
     const next = structuredClone(document) as ThemeDocument;
     const presetId = uid(`preset-${section.type}`);
@@ -643,7 +643,7 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
     const now = new Date().toISOString();
     next.presets[presetId] = {
       id: presetId,
-      label: `${definition.label} Preset ${sameTypeCount + 1}`,
+      label: `${sectionTypeLabel(section.type, definition.label)} Hazır Düzen ${sameTypeCount + 1}`,
       sectionType: section.type,
       settings: structuredClone(section.settings || {}),
       blocks: (section.blockIds || [])
@@ -654,7 +654,7 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
       updatedAt: now,
       schemaVersion: STORE_DESIGN_SCHEMA_VERSION,
     };
-    await commit(next, `${definition.label} preset olarak kaydedildi`);
+    await commit(next, `${sectionTypeLabel(section.type, definition.label)} hazır düzen olarak kaydedildi`);
   };
 
   const insertPreset = async (presetId: string) => {
@@ -662,7 +662,7 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
     const preset = document.presets[presetId];
     const definition = preset ? SECTION_LIBRARY_BY_TYPE[preset.sectionType] : undefined;
     if (!preset || !definition?.implemented || !definition.compatiblePages.includes(compatibility)) {
-      return toast.error("Preset bu sayfa tipiyle uyumlu değil.");
+      return toast.error("Hazır düzen bu sayfa türüyle uyumlu değil.");
     }
 
     const { next, template: nextTemplate } = ensurePageContext(document, activePage, compatibility);
@@ -699,7 +699,7 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
     if (!preset) return;
     const next = structuredClone(document) as ThemeDocument;
     delete next.presets[presetId];
-    await commit(next, `${preset.label} preset silindi`);
+    await commit(next, `${preset.label} hazır düzen silindi`);
   };
 
   const mutateSection = async (sectionId: string, action: "up" | "down" | "toggle" | "duplicate" | "delete") => {
