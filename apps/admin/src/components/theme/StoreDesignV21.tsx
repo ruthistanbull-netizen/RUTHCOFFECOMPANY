@@ -1068,8 +1068,6 @@ export function StoreDesignV21() {
     setHistory((items) => [...items.slice(-79), { kind: "semantic-batch", label: "Hızlı ayarlar sıfırlandı", patches }]);
     setFuture([]);
     setContextMenu(null);
-    setSelected(null);
-    setRightOpen(false);
     toast.success("Özel hızlı ayarlar varsayılana döndürüldü.");
   };
 
