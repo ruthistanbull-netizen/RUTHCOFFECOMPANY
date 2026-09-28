@@ -9,7 +9,7 @@ import {
   Upload,
   X,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   themeMediaUsageCount,
   type MediaAsset,
@@ -96,12 +96,13 @@ export function StoreDesignMediaLibrary({
   mediaType = "any",
 }: Props) {
 
-  const { closing, requestClose } = useStoreDesignDialogExit(onClose);
   const toast = useExactToast();
   const [query, setQuery] = useState("");
   const [busy, setBusy] = useState(false);
   const [detailId, setDetailId] = useState<string | null>(selectedAssetId || null);
   const [focal, setFocal] = useState<{ x: number; y: number } | null>(null);
+  const detailPanelRef = useRef<HTMLElement | null>(null);
+  const { closing, requestClose } = useStoreDesignDialogExit(onClose, 180, Boolean(detailId));
 
   const assets = useMemo(() => Object.values(document.media)
     .filter((asset) => mediaType === "any" || asset.type === mediaType)
@@ -117,6 +118,29 @@ export function StoreDesignMediaLibrary({
 
   const selected = detailId ? document.media[detailId] : null;
   const imageAssets = useMemo(() => Object.values(document.media).filter((asset) => asset.type === "image"), [document.media]);
+
+  useEffect(() => {
+    if (!detailId) return;
+
+    const focusFrame = window.requestAnimationFrame(() => {
+      if (window.matchMedia("(max-width: 767px)").matches) {
+        detailPanelRef.current?.focus({ preventScroll: true });
+      }
+    });
+
+    const closeDetailsWithEscape = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      event.stopPropagation();
+      setDetailId(null);
+    };
+
+    document.addEventListener("keydown", closeDetailsWithEscape, true);
+    return () => {
+      window.cancelAnimationFrame(focusFrame);
+      document.removeEventListener("keydown", closeDetailsWithEscape, true);
+    };
+  }, [detailId]);
 
   const commit = async (next: ThemeDocument, label: string) => {
     setBusy(true);
@@ -306,7 +330,7 @@ export function StoreDesignMediaLibrary({
           </div>
         </div>
 
-        <aside className={`sd-media-details ${selected ? "is-open" : ""} hidden w-[310px] shrink-0 flex-col border-l border-black/10 bg-[#fafafa] md:flex`}>
+        <aside ref={detailPanelRef} tabIndex={-1} aria-label="Medya ayarları" className={`sd-media-details ${selected ? "is-open" : ""} hidden w-[310px] shrink-0 flex-col border-l border-black/10 bg-[#fafafa] md:flex`}>
           <div className="flex items-center gap-2 border-b border-black/10 p-3">
             <p className="min-w-0 flex-1 text-[9px] font-semibold text-black/45">MEDYA AYARLARI</p>
             <button
