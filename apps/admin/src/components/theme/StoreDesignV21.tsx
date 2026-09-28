@@ -1338,7 +1338,7 @@ export function StoreDesignV21() {
                         Metin hizası
                         <select value={selected.current.textAlign || "left"} onChange={(event) => applyInspectorPatch("textAlign", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none">
                           <option value="left">Sol</option>
-                          <option value="center">Ayarlar</option>
+                          <option value="center">Orta</option>
                           <option value="right">Sağ</option>
                         </select>
                       </label>
@@ -1395,7 +1395,7 @@ export function StoreDesignV21() {
                               <select value={consentSetting("radiusPreset", "rounded")} onChange={(event) => applyInspectorPatch("radiusPreset", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none">
                                 <option value="soft">Yumuşak</option>
                                 <option value="rounded">Yuvarlak</option>
-                                <option value="pill">Tam ekran yuvarlak</option>
+                                <option value="pill">Tam yuvarlak</option>
                               </select>
                             </label>
                           </div>
@@ -1619,7 +1619,7 @@ export function StoreDesignV21() {
                       className="sd-field h-10 rounded-xl border border-black/10 bg-white px-3 text-[12px] font-medium outline-none"
                     >
                       <option value="left">Sol</option>
-                      <option value="center">Ayarlar</option>
+                      <option value="center">Orta</option>
                       <option value="right">Sağ</option>
                     </select>
                   </label>
@@ -1647,7 +1647,7 @@ export function StoreDesignV21() {
                       className="sd-field h-10 rounded-xl border border-black/10 bg-white px-3 text-[12px] font-medium outline-none"
                     >
                       <option value="cover">Alanı kapla</option>
-                      <option value="contain">Tam ekranamını göster</option>
+                      <option value="contain">Görselin tamamını göster</option>
                     </select>
                   </label>
                 ) : null}
