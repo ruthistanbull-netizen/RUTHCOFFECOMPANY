@@ -129,7 +129,7 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
         <header className="flex h-14 shrink-0 items-center gap-3 border-b border-black/10 px-4">
           <div className="min-w-0 flex-1">
             <p className="text-[12px] font-semibold">{definition?.label || section.type}</p>
-            <p className="mt-0.5 truncate text-[8px] text-black/40">{section.id} · schema {section.schemaVersion}</p>
+            <p className="mt-0.5 text-[10px] text-black/40">Bölüm ayarları</p>
           </div>
           <button type="button" onClick={requestClose} className="grid h-9 w-9 place-items-center rounded-lg hover:bg-black/[0.04]" aria-label="Kapat">
             <X className="h-4 w-4" />
@@ -169,8 +169,8 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
                 <label className="grid gap-1.5 text-[9px] font-semibold text-black/50 md:col-span-2">
                   Yerleşim
                   <select value={textValue(settings.layout) || "slider"} onChange={(event) => set("layout", event.target.value)} className="h-10 rounded-lg border border-black/10 bg-white px-3 text-[10px] outline-none">
-                    <option value="slider">Slider</option>
-                    <option value="grid">Grid</option>
+                    <option value="slider">Yatay kaydırma</option>
+                    <option value="grid">Izgara</option>
                   </select>
                 </label>
               ) : null}
@@ -210,7 +210,7 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
                 <label className="grid gap-1.5 text-[9px] font-semibold text-black/50 md:col-span-2">
                   Grid max genişlik
                   <select value={textValue(settings.maxWidth) || "none"} onChange={(event) => set("maxWidth", event.target.value)} className="h-10 rounded-lg border border-black/10 bg-white px-3 text-[10px] outline-none">
-                    <option value="none">Container'ı doldur</option>
+                    <option value="none">Kullanılabilir alanı doldur</option>
                     <option value="1200px">1200px</option>
                     <option value="1280px">1280px</option>
                     <option value="1440px">1440px</option>
@@ -236,7 +236,7 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
                 <div className="flex items-center gap-2">
                   <div className="min-w-0 flex-1">
                     <p className="text-[9px] font-semibold">Bloklar</p>
-                    <p className="mt-1 text-[7px] text-black/35">{BLOCK_LIBRARY_BY_TYPE["faq-item"]?.label || "FAQ Öğesi"} · en fazla {definition?.maxBlocks || 30}</p>
+                    <p className="mt-1 text-[7px] text-black/35">{BLOCK_LIBRARY_BY_TYPE["faq-item"]?.label || "Soru - cevap"} · en fazla {definition?.maxBlocks || 30}</p>
                   </div>
                   <button
                     type="button"
@@ -350,7 +350,7 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
 
         <footer className="flex shrink-0 items-center gap-2 border-t border-black/10 bg-[#fafafa] p-3">
           <p className="min-w-0 flex-1 truncate text-[8px] text-black/35">
-            Registry izinleri: {definition?.settings.join(" · ") || "schema kontrollü"}
+            Bu bölüm için yalnız güvenli ve kullanılabilir ayarlar gösterilir.
           </p>
           <button type="button" disabled={busy} onClick={requestClose} className="h-10 rounded-lg border border-black/10 bg-white px-4 text-[9px] font-semibold disabled:opacity-40">Vazgeç</button>
           <button type="button" disabled={busy} onClick={() => void save()} className="flex h-10 items-center gap-2 rounded-lg bg-[#111] px-4 text-[9px] font-semibold text-white disabled:opacity-40">
