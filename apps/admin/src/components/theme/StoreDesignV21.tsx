@@ -1558,7 +1558,7 @@ export function StoreDesignV21() {
         <button type="button" onClick={requestEditorExit} className="sd-mobile-back sd-icon-button hidden h-10 w-10 shrink-0 place-items-center rounded-xl border border-black/10" aria-label="Geri">
           <ArrowLeft className="h-4 w-4" />
         </button>
-        <button type="button" onClick={() => setLeftOpen((value) => !value)} aria-pressed={leftOpen} className="sd-desktop-panel-toggle sd-icon-button grid h-9 w-9 place-items-center rounded-lg border border-black/10 hover:bg-black/[0.03]" aria-label="Sol panel">
+        <button type="button" onClick={() => setLeftOpen((value) => !value)} aria-pressed={leftOpen} className="sd-desktop-panel-toggle sd-icon-button grid h-9 w-9 place-items-center rounded-lg border border-black/10 hover:bg-black/[0.03]" aria-label="Sayfa yapısını aç veya kapat">
           <PanelLeft className="h-4 w-4" />
         </button>
 
@@ -1694,7 +1694,7 @@ export function StoreDesignV21() {
           {saving === "publish" ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : saveFeedback === "publish" ? <Check className="h-3.5 w-3.5" /> : <Send className="h-3.5 w-3.5" />}
           <span>{saving === "publish" ? "Yayınlanıyor…" : saveFeedback === "publish" ? "Yayınlandı" : "Yayınla"}</span>
         </button>
-        <button type="button" onClick={() => setRightOpen((value) => !value)} aria-pressed={rightOpen} className="sd-desktop-panel-toggle sd-icon-button grid h-9 w-9 place-items-center rounded-lg border border-black/10 hover:bg-black/[0.03]" aria-label="Sağ panel">
+        <button type="button" onClick={() => setRightOpen((value) => !value)} aria-pressed={rightOpen} className="sd-desktop-panel-toggle sd-icon-button grid h-9 w-9 place-items-center rounded-lg border border-black/10 hover:bg-black/[0.03]" aria-label="Düzenleme panelini aç veya kapat">
           <PanelRight className="h-4 w-4" />
         </button>
       </header>
