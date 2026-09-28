@@ -2721,12 +2721,8 @@ export function StoreDesignV21() {
             setInteractionMode("edit");
             setContextMenu(null);
             setLeftOpen(false);
-            if (selected) {
-              setMobileSheetLevel("medium");
-              setRightOpen(true);
-            } else {
-              setRightOpen(false);
-            }
+            setMobileSheetLevel(selected ? "medium" : "peek");
+            setRightOpen(true);
           }}
         >
           <SlidersHorizontal className="h-5 w-5" /><span>Düzenle</span>
