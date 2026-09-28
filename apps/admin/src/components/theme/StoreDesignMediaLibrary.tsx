@@ -215,8 +215,8 @@ export function StoreDesignMediaLibrary({
   };
 
   return (
-    <div className="fixed inset-0 z-[2147483610] grid place-items-center bg-black/35 p-3 backdrop-blur-sm">
-      <div className="flex h-[min(880px,94dvh)] w-full max-w-[1120px] overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl">
+    <div className="sd-modal-backdrop fixed inset-0 z-[2147483610] grid place-items-center bg-black/35 p-3 backdrop-blur-sm">
+      <div className="sd-modal-card flex h-[min(880px,94dvh)] w-full max-w-[1120px] overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl">
         <div className="flex min-w-0 flex-1 flex-col">
           <header className="flex h-14 shrink-0 items-center gap-3 border-b border-black/10 px-4">
             <div className="min-w-0 flex-1">
