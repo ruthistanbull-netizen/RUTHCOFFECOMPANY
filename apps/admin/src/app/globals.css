@@ -1547,3 +1547,77 @@ body {
   }
 }
 
+/* Store Design v4.1 — compact mobile top bar: back, page, history, publish. */
+@media (max-width:767px){
+  [data-store-design-v2-admin] .sd-toolbar{
+    gap:4px!important;
+    padding-left:6px!important;
+    padding-right:6px!important;
+  }
+
+  [data-store-design-v2-admin] .sd-mobile-back{
+    display:grid!important;
+  }
+
+  [data-store-design-v2-admin] .sd-mobile-history{
+    display:flex!important;
+    gap:2px;
+  }
+
+  [data-store-design-v2-admin] .sd-mobile-page-picker{
+    display:flex!important;
+  }
+
+  [data-store-design-v2-admin] .sd-desktop-title-row{
+    display:none!important;
+  }
+
+  [data-store-design-v2-admin] .sd-title-block{
+    min-width:72px!important;
+  }
+
+  [data-store-design-v2-admin] .sd-mobile-page-picker select{
+    width:100%;
+    min-width:0;
+    height:40px;
+    font-size:12px!important;
+    padding-left:8px;
+    padding-right:22px;
+  }
+
+  [data-store-design-v2-admin] .sd-mobile-history button,
+  [data-store-design-v2-admin] .sd-mobile-back,
+  [data-store-design-v2-admin] .sd-mobile-more-button{
+    width:44px!important;
+    min-width:44px!important;
+    height:44px!important;
+  }
+
+  [data-store-design-v2-admin] .sd-primary-button.sd-save-button{
+    min-width:64px!important;
+    padding-left:8px!important;
+    padding-right:8px!important;
+  }
+}
+
+@media (max-width:390px){
+  [data-store-design-v2-admin] .sd-mobile-history button{
+    width:40px!important;
+    min-width:40px!important;
+  }
+
+  [data-store-design-v2-admin] .sd-mobile-history button,
+  [data-store-design-v2-admin] .sd-mobile-back,
+  [data-store-design-v2-admin] .sd-mobile-more-button{
+    width:44px!important;
+    min-width:44px!important;
+  }
+
+  [data-store-design-v2-admin] .sd-primary-button.sd-save-button span{
+    max-width:48px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+}
+
