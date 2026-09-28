@@ -213,7 +213,8 @@ if (core.includes('section("consent-banner"')) {
 }
 for (const token of [
   "globalProtectedSectionIds",
-  'sectionType !== "consent-banner"',
+  "globalProtectedSectionIds.has(id)",
+  'normalizedPreset.sectionType === "consent-banner"',
   "legacy consent-banner section kaydı section tree'den kaldırıldı",
 ]) {
   if (!core.includes(token)) fail(`Consent global protected migration temizliği eksik: ${token}`);
