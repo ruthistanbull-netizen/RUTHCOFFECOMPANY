@@ -235,7 +235,7 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
               <div className="rounded-xl border border-black/[0.08] bg-[#fafafa] p-3">
                 <div className="flex items-center gap-2">
                   <div className="min-w-0 flex-1">
-                    <p className="text-[9px] font-semibold">Bloklar</p>
+                    <p className="text-[9px] font-semibold">İçerik öğeleri</p>
                     <p className="mt-1 text-[7px] text-black/35">Soru - cevap · en fazla {definition?.maxBlocks || 30}</p>
                   </div>
                   <button
@@ -244,7 +244,7 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
                     onClick={() => setFaqItems((items) => [...items, { id: uid("block-faq-item"), question: "Yeni soru", answer: "" }])}
                     className="flex h-8 items-center gap-1 rounded-lg bg-[#111] px-2.5 text-[8px] font-semibold text-white disabled:opacity-35"
                   >
-                    <Plus className="h-3 w-3" />Blok Ekle
+                    <Plus className="h-3 w-3" />Öğe Ekle
                   </button>
                 </div>
 
@@ -257,13 +257,13 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
                           const next = [...items];
                           [next[index - 1], next[index]] = [next[index]!, next[index - 1]!];
                           return next;
-                        })} className="grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04] disabled:opacity-20" aria-label="Bloku yukarı taşı"><ArrowUp className="h-3 w-3" /></button>
+                        })} className="grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04] disabled:opacity-20" aria-label="Öğeyi yukarı taşı"><ArrowUp className="h-3 w-3" /></button>
                         <button type="button" disabled={index === faqItems.length - 1} onClick={() => setFaqItems((items) => {
                           const next = [...items];
                           [next[index + 1], next[index]] = [next[index]!, next[index + 1]!];
                           return next;
-                        })} className="grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04] disabled:opacity-20" aria-label="Bloku aşağı taşı"><ArrowDown className="h-3 w-3" /></button>
-                        <button type="button" onClick={() => setFaqItems((items) => items.filter((entry) => entry.id !== item.id))} className="grid h-7 w-7 place-items-center rounded-md text-red-600 hover:bg-red-50" aria-label="Bloku sil"><Trash2 className="h-3 w-3" /></button>
+                        })} className="grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04] disabled:opacity-20" aria-label="Öğeyi aşağı taşı"><ArrowDown className="h-3 w-3" /></button>
+                        <button type="button" onClick={() => setFaqItems((items) => items.filter((entry) => entry.id !== item.id))} className="grid h-7 w-7 place-items-center rounded-md text-red-600 hover:bg-red-50" aria-label="Öğeyi sil"><Trash2 className="h-3 w-3" /></button>
                       </div>
                       <label className="mt-2 grid gap-1 text-[8px] font-semibold text-black/45">
                         Soru
@@ -275,7 +275,7 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
                       </label>
                     </div>
                   ))}
-                  {!faqItems.length ? <p className="py-4 text-center text-[8px] text-black/35">Henüz blok yok. “Blok Ekle” ile ilk soru-cevap öğesini oluştur.</p> : null}
+                  {!faqItems.length ? <p className="py-4 text-center text-[8px] text-black/35">Henüz içerik öğesi yok. “Öğe Ekle” ile ilk soru-cevap öğesini oluştur.</p> : null}
                 </div>
               </div>
             </div>
