@@ -404,7 +404,11 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
       const activeTargets = new Set(targets);
 
       for (const [element, original] of originalTabIndex) {
-        if (activeTargets.has(element) || !document.contains(element)) continue;
+        if (!document.contains(element)) {
+          originalTabIndex.delete(element);
+          continue;
+        }
+        if (activeTargets.has(element)) continue;
         if (original === null) element.removeAttribute("tabindex");
         else element.setAttribute("tabindex", original);
         element.removeAttribute("data-store-design-v2-keyboard-target");
