@@ -1,10 +1,13 @@
 "use client";
 
 import {
+  ArrowDown,
   ArrowLeft,
+  ArrowUp,
   Check,
   ChevronDown,
   CircleDot,
+  Copy,
   History,
   Images,
   LayoutTemplate,
@@ -24,6 +27,8 @@ import {
   Undo2,
   X,
   Eye,
+  EyeOff,
+  Trash2,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -162,6 +167,11 @@ function cleanPreviewPath(page: PageItem) {
   } catch {
     return "/";
   }
+}
+
+function editorUid(prefix: string) {
+  const random = globalThis.crypto?.randomUUID?.().replace(/-/g, "") || Math.random().toString(36).slice(2);
+  return `${prefix}-${random}`.slice(0, 160);
 }
 
 function scopeLabel(scope: EditorScope) {
@@ -783,6 +793,17 @@ export function StoreDesignV21() {
   const activePage = editorPages.find((item) => item.path === activePath) || editorPages[0] || null;
   const managedPage = document.pages[activePath] || Object.values(document.pages).find((page) => page.route === activePath) || null;
   const selectedSectionId = selected ? sectionRegistration(selected)?.id || null : null;
+  const contextSectionRegistration = contextMenu ? sectionRegistration(contextMenu.target) : null;
+  const contextSection = contextSectionRegistration ? document.sections[contextSectionRegistration.id] || null : null;
+  const contextSectionTemplate = contextSectionRegistration
+    ? Object.values(document.templates).find((template) => template.sectionIds.includes(contextSectionRegistration.id)) || null
+    : null;
+  const contextSectionIndex = contextSectionRegistration && contextSectionTemplate
+    ? contextSectionTemplate.sectionIds.indexOf(contextSectionRegistration.id)
+    : -1;
+  const contextSectionReferenceCount = contextSectionRegistration
+    ? Object.values(document.templates).filter((template) => template.sectionIds.includes(contextSectionRegistration.id)).length
+    : 0;
   const activeCompatibility: PageCompatibility = (
     managedPage ? document.templates[managedPage.templateId]?.compatibility?.[0] : undefined
   ) || (activePage ? pageCompatibility(activePage) : "content");
@@ -951,7 +972,7 @@ export function StoreDesignV21() {
         ) {
           const frame = iframeRef.current.getBoundingClientRect();
           const menuWidth = 336;
-          const menuHeight = 310;
+          const menuHeight = Math.min(620, Math.max(360, window.innerHeight - 88));
           const x = Math.max(12, Math.min(window.innerWidth - menuWidth - 12, frame.left + pointer.x));
           const y = Math.max(68, Math.min(window.innerHeight - menuHeight - 12, frame.top + pointer.y));
           setContextMenu({ x, y, target });
@@ -1345,6 +1366,82 @@ export function StoreDesignV21() {
     setMediaOpen(false);
     setQuickMediaEdit(null);
     toast.success(edit.mediaType === "video" ? "Video değiştirildi." : "Görsel değiştirildi.");
+  };
+
+  const applyContextSectionAction = async (action: "focus" | "up" | "down" | "toggle" | "duplicate" | "delete") => {
+    const registration = contextMenu ? sectionRegistration(contextMenu.target) : null;
+    if (!registration) return;
+
+    if (action === "focus") {
+      setContextMenu(null);
+      setSelected(null);
+      setStructureFocusSectionId(registration.id);
+      setRightOpen(false);
+      setLeftOpen(true);
+      return;
+    }
+
+    const source = document.sections[registration.id];
+    const ownerTemplate = Object.values(document.templates).find((template) => template.sectionIds.includes(registration.id));
+    if (!source || !ownerTemplate) {
+      toast.error("Bu bölümün sayfa yapısı bulunamadı.");
+      return;
+    }
+
+    const next = structuredClone(document) as ThemeDocument;
+    const template = next.templates[ownerTemplate.id];
+    const index = template?.sectionIds.indexOf(registration.id) ?? -1;
+    if (!template || index < 0) {
+      toast.error("Bu bölümün sayfa yapısı bulunamadı.");
+      return;
+    }
+
+    let label = "Bölüm güncellendi";
+
+    if (action === "up") {
+      if (index <= 0) return;
+      [template.sectionIds[index - 1], template.sectionIds[index]] = [template.sectionIds[index], template.sectionIds[index - 1]];
+      label = "Bölüm yukarı taşındı";
+    } else if (action === "down") {
+      if (index >= template.sectionIds.length - 1) return;
+      [template.sectionIds[index + 1], template.sectionIds[index]] = [template.sectionIds[index], template.sectionIds[index + 1]];
+      label = "Bölüm aşağı taşındı";
+    } else if (action === "toggle") {
+      next.sections[registration.id] = { ...source, enabled: !source.enabled };
+      label = source.enabled ? "Bölüm gizlendi" : "Bölüm gösterildi";
+    } else if (action === "duplicate") {
+      const copyId = editorUid(`section-${source.type}`);
+      const copiedBlockIds: string[] = [];
+      for (const blockId of source.blockIds || []) {
+        const block = next.blocks[blockId];
+        if (!block) continue;
+        const copyBlockId = editorUid(`block-${block.type}`);
+        next.blocks[copyBlockId] = structuredClone({ ...block, id: copyBlockId });
+        copiedBlockIds.push(copyBlockId);
+      }
+      next.sections[copyId] = structuredClone({ ...source, id: copyId, blockIds: copiedBlockIds });
+      template.sectionIds.splice(index + 1, 0, copyId);
+      label = "Bölüm çoğaltıldı";
+    } else if (action === "delete") {
+      const confirmed = window.confirm("Bu bölümü sayfa yapısından kaldırmak istiyor musun?");
+      if (!confirmed) return;
+
+      template.sectionIds.splice(index, 1);
+      const stillReferenced = Object.values(next.templates).some((item) => item.sectionIds.includes(registration.id));
+      if (!stillReferenced) {
+        for (const blockId of source.blockIds || []) {
+          const usedElsewhere = Object.values(next.sections).some((section) => section.id !== registration.id && section.blockIds?.includes(blockId));
+          if (!usedElsewhere) delete next.blocks[blockId];
+        }
+        delete next.sections[registration.id];
+      }
+      label = "Bölüm kaldırıldı";
+    }
+
+    setContextMenu(null);
+    setSelected(null);
+    setStructureFocusSectionId(null);
+    await applyStructureDocument(next, label);
   };
 
   const resetQuickOverrides = () => {
