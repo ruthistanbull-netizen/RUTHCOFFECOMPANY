@@ -113,8 +113,8 @@ function fieldLabel(key: string) {
     targetId: "Hedef",
     eyebrow: "Üst başlık",
     align: "Hizalama",
-    maxWidth: "Max genişlik",
-    placeholder: "Placeholder",
+    maxWidth: "En fazla genişlik",
+    placeholder: "Örnek metin",
     options: "Seçenekler",
     required: "Zorunlu",
     type: "Alan tipi",
@@ -400,7 +400,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   const hasAlign = ["hero", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const hasLink = ["hero", "video-hero", "video-banner", "brand-story", "rewards-promo", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const showTitle = !["product-spotlight", "featured-collection", "scroll-story", "background-media", "bundle", "cross-sell", "breadcrumb", "newsletter", "grid-stack-builder", "quote", "spacer", "divider", "anchor"].includes(section.type);
-  const showÜst başlık = !genericZeroBlock && !["product-spotlight", "featured-collection", "scroll-story", "background-media"].includes(section.type);
+  const showEyebrow = !genericZeroBlock && !["product-spotlight", "featured-collection", "scroll-story", "background-media"].includes(section.type);
   const showPadding = !["hero", "scroll-story", "video-hero", "video-banner", "background-media", "bundle", "cross-sell", "breadcrumb", "grid-stack-builder", "spacer", "anchor"].includes(section.type);
   const primaryMedia = mediaNarrative && text(settings.imageAssetId) ? document.media[text(settings.imageAssetId)] : undefined;
   const brandStoryMedia = brandStory && text(settings.imageAssetId) ? document.media[text(settings.imageAssetId)] : undefined;
@@ -426,7 +426,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   <input value={text(settings.title)} onChange={(event) => updateSetting("title", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
                 </label>
               ) : null}
-              {showÜst başlık ? (
+              {showEyebrow ? (
                 <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                   Üst başlık
                   <input value={text(settings.eyebrow)} onChange={(event) => updateSetting("eyebrow", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
