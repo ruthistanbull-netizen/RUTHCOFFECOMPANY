@@ -293,6 +293,7 @@ function responsiveSettingsFor(
 
 function snapshotValue(target: SelectedTarget, path: string) {
   if (path === "media.objectFit") return target.current.media?.objectFit || "cover";
+  if (path === "media.objectPosition") return target.current.media?.objectPosition || "50% 50%";
   if (path === "grid.columns") return target.current.grid?.columns ?? 2;
   if (path === "grid.gapX") return target.current.grid?.gapX ?? 16;
   if (path === "grid.gapY") return target.current.grid?.gapY ?? 32;
@@ -311,8 +312,9 @@ function snapshotValue(target: SelectedTarget, path: string) {
 
 function updateTargetSnapshot(target: SelectedTarget, path: string, value: unknown): SelectedTarget {
   if (value === null) return target;
-  if (path === "media.objectFit") {
-    return { ...target, current: { ...target.current, media: { ...(target.current.media || {}), objectFit: String(value) } } };
+  if (path === "media.objectFit" || path === "media.objectPosition") {
+    const key = path === "media.objectFit" ? "objectFit" : "objectPosition";
+    return { ...target, current: { ...target.current, media: { ...(target.current.media || {}), [key]: String(value) } } };
   }
   if (path.startsWith("grid.")) {
     const key = path.slice("grid.".length) as "columns" | "gapX" | "gapY" | "maxWidth";
@@ -1035,8 +1037,9 @@ export function StoreDesignV21() {
       ...(selected.controlGroups.includes("typography") ? ["textAlign"] : []),
       ...(selected.controlGroups.includes("layout") ? ["visible", "borderRadius"] : []),
       ...(selected.controlGroups.includes("card") ? ["borderRadius"] : []),
-      ...(selected.controlGroups.includes("media") && selected.current.media ? ["media.objectFit"] : []),
+      ...(selected.controlGroups.includes("media") && selected.current.media ? ["media.objectFit", "media.objectPosition"] : []),
       ...(selected.type === "product-grid" ? ["grid.columns"] : []),
+      ...(selected.type === "product-card" ? ["card.density", "card.imageRatio", "card.showPrice"] : []),
     ];
     const paths = [...new Set(candidates)].filter((path) => leaves.has(path));
 
@@ -1639,13 +1642,25 @@ export function StoreDesignV21() {
                     ) : null}
 
                     {selected.controlGroups.includes("media") && selected.current.media ? (
-                      <label className="grid gap-1.5 text-[8px] text-black/45">
-                        Medya sığdırma
-                        <select value={selected.current.media.objectFit || "cover"} onChange={(event) => applyInspectorPatch("media.objectFit", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none">
-                          <option value="cover">Kapla</option>
-                          <option value="contain">Sığdır</option>
-                        </select>
-                      </label>
+                      <div className="grid gap-3">
+                        <label className="grid gap-1.5 text-[8px] text-black/45">
+                          Medya sığdırma
+                          <select value={selected.current.media.objectFit || "cover"} onChange={(event) => applyInspectorPatch("media.objectFit", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none">
+                            <option value="cover">Kapla</option>
+                            <option value="contain">Sığdır</option>
+                          </select>
+                        </label>
+                        <label className="grid gap-1.5 text-[8px] text-black/45">
+                          Görsel odağı
+                          <select value={selected.current.media.objectPosition || "50% 50%"} onChange={(event) => applyInspectorPatch("media.objectPosition", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none">
+                            <option value="50% 50%">Orta</option>
+                            <option value="50% 0%">Üst</option>
+                            <option value="50% 100%">Alt</option>
+                            <option value="0% 50%">Sol</option>
+                            <option value="100% 50%">Sağ</option>
+                          </select>
+                        </label>
+                      </div>
                     ) : null}
 
                     {selected.type === "product-grid" ? (
@@ -1875,17 +1890,70 @@ export function StoreDesignV21() {
                 ) : null}
 
                 {contextMenu.target.controlGroups.includes("media") && selected?.current.media ? (
-                  <label className="grid gap-1 text-[11px] text-black/50">
-                    Görsel yerleşimi
-                    <select
-                      value={selected.current.media.objectFit || "cover"}
-                      onChange={(event) => applyInspectorPatch("media.objectFit", event.target.value)}
-                      className="sd-field h-10 rounded-xl border border-black/10 bg-white px-3 text-[12px] font-medium outline-none"
-                    >
-                      <option value="cover">Alanı kapla</option>
-                      <option value="contain">Görselin tamamını göster</option>
-                    </select>
-                  </label>
+                  <>
+                    <label className="grid gap-1 text-[11px] text-black/50">
+                      Görsel yerleşimi
+                      <select
+                        value={selected.current.media.objectFit || "cover"}
+                        onChange={(event) => applyInspectorPatch("media.objectFit", event.target.value)}
+                        className="sd-field h-10 rounded-xl border border-black/10 bg-white px-3 text-[12px] font-medium outline-none"
+                      >
+                        <option value="cover">Alanı kapla</option>
+                        <option value="contain">Görselin tamamını göster</option>
+                      </select>
+                    </label>
+                    <label className="grid gap-1 text-[11px] text-black/50">
+                      Görsel odağı
+                      <select
+                        value={selected.current.media.objectPosition || "50% 50%"}
+                        onChange={(event) => applyInspectorPatch("media.objectPosition", event.target.value)}
+                        className="sd-field h-10 rounded-xl border border-black/10 bg-white px-3 text-[12px] font-medium outline-none"
+                      >
+                        <option value="50% 50%">Orta</option>
+                        <option value="50% 0%">Üst</option>
+                        <option value="50% 100%">Alt</option>
+                        <option value="0% 50%">Sol</option>
+                        <option value="100% 50%">Sağ</option>
+                      </select>
+                    </label>
+                  </>
+                ) : null}
+
+                {contextMenu.target.type === "product-card" ? (
+                  <>
+                    <label className="grid gap-1 text-[11px] text-black/50">
+                      Kart yoğunluğu
+                      <select
+                        value={selected?.current.card?.density || "m"}
+                        onChange={(event) => applyInspectorPatch("card.density", event.target.value)}
+                        className="sd-field h-10 rounded-xl border border-black/10 bg-white px-3 text-[12px] font-medium outline-none"
+                      >
+                        <option value="s">Sıkı</option>
+                        <option value="m">Standart</option>
+                        <option value="l">Ferah</option>
+                      </select>
+                    </label>
+                    <label className="grid gap-1 text-[11px] text-black/50">
+                      Görsel oranı
+                      <select
+                        value={selected?.current.card?.imageRatio || "3/4"}
+                        onChange={(event) => applyInspectorPatch("card.imageRatio", event.target.value)}
+                        className="sd-field h-10 rounded-xl border border-black/10 bg-white px-3 text-[12px] font-medium outline-none"
+                      >
+                        <option value="3/4">3:4</option>
+                        <option value="4/5">4:5</option>
+                        <option value="1/1">1:1</option>
+                      </select>
+                    </label>
+                    <label className="flex min-h-10 items-center justify-between gap-3 rounded-xl border border-black/10 bg-white px-3 text-[11px] font-semibold text-black/55">
+                      Fiyatı göster
+                      <input
+                        type="checkbox"
+                        checked={selected?.current.card?.showPrice !== false}
+                        onChange={(event) => applyInspectorPatch("card.showPrice", event.target.checked)}
+                      />
+                    </label>
+                  </>
                 ) : null}
 
                 {contextMenu.target.type === "product-grid" ? (
