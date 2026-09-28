@@ -181,7 +181,7 @@ const sectionManager = read("apps/admin/src/components/theme/StoreDesignSectionM
 for (const token of ["document.templateBindings[activePage.path]", "activePage?.template", "templateId"]) {
   if (!sectionManager.includes(token)) fail(`Dynamic template editor resolver eksik: ${token}`);
 }
-for (const token of ["StoreDesignPresetLibrary", "StoreDesignBlockSectionEditor", "allowedBlocks", "Presetler"]) {
+for (const token of ["StoreDesignPresetLibrary", "StoreDesignBlockSectionEditor", "allowedBlocks", "Hazır Düzenler"]) {
   if (!sectionManager.includes(token)) fail(`Section Manager V2.1 eksik: ${token}`);
 }
 
@@ -189,14 +189,13 @@ const storeDesignShell = read("apps/admin/src/components/theme/StoreDesignV21.ts
 for (const token of [
   'selected.type === "consent-banner"',
   'document.globals.tokens["consent-banner"]',
-  "GLOBAL CONSENT",
-  "Kabul butonu",
-  "Red butonu",
-  "Konum preset",
+  "ÇEREZ BİLDİRİMİ",
+  "Kabul düğmesi",
+  "Ret düğmesi",
+  "Konum",
   "widthPreset",
   "radiusPreset",
-  "consent kategorileri",
-  "/privacy-policy hedefi korunur",
+  "Kabul ve ret davranışı",
 ]) {
   if (!storeDesignShell.includes(token)) fail(`Global protected consent editor eksik: ${token}`);
 }
@@ -309,7 +308,7 @@ for (const type of pendingSectionTypes) {
   }
 }
 
-for (const token of ["definition.pendingReason", "Güvenlik kilidi", "storefront güvenlik politikası nedeniyle kapalı"]) {
+for (const token of ["securityLocked", "Güvenlik kilidi", "Henüz hazır değil"]) {
   if (!sectionManager.includes(token)) fail(`Section picker capability gate UI eksik: ${token}`);
 }
 
@@ -346,14 +345,14 @@ for (const token of [
 const genericEditor = read("apps/admin/src/components/theme/StoreDesignBlockSectionEditor.tsx");
 for (const token of [
   "Başlık rolü",
-  "Boyut preset",
-  "Tipografi preset",
-  "Max genişlik preset",
-  "Masaüstü yükseklik preset",
-  "Mobil yükseklik preset",
-  "Kalınlık preset",
-  "Renk tokenı",
-  "Bu Anchor ID zaten kullanılıyor",
+  "Boyut",
+  "Yazı biçimi",
+  "En fazla genişlik",
+  "Masaüstü yüksekliği",
+  "Mobil yüksekliği",
+  "Kalınlık",
+  "Renk",
+  "Bağlantı kimliği",
 ]) {
   if (!genericEditor.includes(token)) fail(`Generic zero-block editor kontrolü eksik: ${token}`);
 }
@@ -367,10 +366,10 @@ for (const token of ["playbackPolicy", "v2-media-narrative-media", "posterAssetI
 
 const mediaLibrary = read("apps/admin/src/components/theme/StoreDesignMediaLibrary.tsx");
 for (const token of [
-  "Fotoğraf/video kayıtları",
-  "Cover/crop kullanılan fotoğraf ve videolarda",
-  "Video poster",
-  "Mobil varyant",
+  "Fotoğraf ve video kayıtları",
+  "Kaplama ve kırpma",
+  "Video kapak görseli",
+  "Mobil görsel",
 ]) {
   if (!mediaLibrary.includes(token)) fail(`Media Library V2 video/focal kontrolü eksik: ${token}`);
 }
@@ -399,47 +398,39 @@ for (const token of [
   "rewards-promo",
   "grid-stack-builder",
   "scroll-story",
-  "Media Library",
+  "Medya Arşivi",
   "Oynatma politikası",
-  "Autoplay · sessiz · loop",
-  "Poster override",
+  "Otomatik · sessiz · sürekli",
   "Metin kontrastı",
   "Katalog · aktif koleksiyonlar",
   "Kart oranı",
   "Başlık konumu",
   "Marka hikayesi medyası",
   "İçerik genişliği",
-  "Tek Ürün Spotlight için katalogdan bir ürün seç",
-  "Featured Collection için katalogdan bir koleksiyon seç",
-  "Katalog · ",
-  "Bilgi blokları",
+  "Bilgi alanları",
   "Karşılaştırılacak ürünler · 2-4 seçim",
   "Karşılaştırma alanları",
   "Tablo · mobilde yatay kaydırma",
   "Otomatik · ödenmiş sipariş miktarları",
   "Tarih penceresi",
   "Öneri algoritması",
-  "Öneri sıralaması storefront recommendation servisi tarafından read-only hesaplanır.",
+  "Öneri sıralaması mağaza tarafından otomatik hesaplanır.",
   "Geçmiş politikası",
-  "Analytics consent kabul edilirse cihazda local history",
-  "Reddedilirse geçmiş tutulmaz",
-  "Breadcrumb göster",
-  "Breadcrumb yolu route/template tarafından read-only üretilir",
+  "İzin verilmezse geçmiş tutulmaz",
   "Telefon alanını göster",
   "Başarı mesajı",
-  "endpoint doğrulaması nedeniyle zorunludur",
+  "güvenli gönderim için zorunludur",
   "Haritada aç bağlantıları",
-  "üçüncü taraf map scripti",
+  "Konum kartları aşağıdaki adreslerden oluşturulur",
   "Yorum kaynağı · ürün",
-  "Yalnız onaylı yorumlar storefront review servisinden read-only gelir.",
+  "Yalnız onaylı yorumlar mağaza verilerinden otomatik gelir.",
   "Puanı göster",
   "Kayıt puanını göster",
-  "Puan miktarları ve kazanma oranı tema ayarı değildir",
-  "Mobilde tek kolona stack",
-  "Güvenli composition kullanılır",
-  "Scroll uzunluğu",
-  "Geçiş preset",
-  "KAYDIR cue göster",
+  "Mobilde tek sütuna indir",
+  "Güvenli yerleşim kullanılır",
+  "Kaydırma uzunluğu",
+  "Geçiş biçimi",
+  "Kaydırma ipucunu göster",
 ]) {
   if (!mediaSectionEditor.includes(token)) fail(`Media narrative editor kontrolü eksik: ${token}`);
 }
