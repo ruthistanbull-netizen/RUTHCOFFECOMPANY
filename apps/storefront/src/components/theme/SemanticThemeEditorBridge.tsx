@@ -145,6 +145,7 @@ function snapshot(target: SemanticTarget) {
     : target.definition.controlGroups.includes("media")
       ? target.element.querySelector<HTMLImageElement | HTMLVideoElement>("img,video")
       : null;
+  const mediaComputed = media ? window.getComputedStyle(media) : null;
 
   return {
     visible: computed.display !== "none",
@@ -158,8 +159,8 @@ function snapshot(target: SemanticTarget) {
     media: media ? {
       kind: media instanceof HTMLVideoElement ? "video" : "image",
       src: media.currentSrc || media.getAttribute("src") || "",
-      objectFit: computed.objectFit || "cover",
-      objectPosition: computed.objectPosition || "50% 50%",
+      objectFit: mediaComputed?.objectFit || "cover",
+      objectPosition: mediaComputed?.objectPosition || "50% 50%",
     } : null,
     grid: target.type === "product-grid" ? {
       columns: Math.max(1, computed.gridTemplateColumns.split(/\s+/).filter(Boolean).length || 1),
@@ -422,6 +423,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
 
     let interactionMode: "browse" | "edit" = "edit";
     const originalTabIndex = new Map<HTMLElement, string | null>();
+    const originalMediaSources = new WeakMap<HTMLImageElement | HTMLVideoElement, string | null>();
     let keyboardSyncFrame = 0;
 
     const syncKeyboardTargets = () => {
@@ -520,6 +522,34 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
         type: PREVIEW_SCROLL_MESSAGE,
         route: window.location.pathname,
       });
+    };
+
+    const mediaElementForTarget = (target: SemanticTarget) => (
+      target.element instanceof HTMLImageElement || target.element instanceof HTMLVideoElement
+        ? target.element
+        : target.definition.controlGroups.includes("media")
+          ? target.element.querySelector<HTMLImageElement | HTMLVideoElement>("img,video")
+          : null
+    );
+
+    const applyDirectMediaPatch = (target: SemanticTarget, message: ThemePatchMessage) => {
+      if (message.path !== "media.src") return;
+      const media = mediaElementForTarget(target);
+      if (!media) return;
+
+      if (!originalMediaSources.has(media)) {
+        originalMediaSources.set(media, media.getAttribute("src"));
+      }
+
+      if (message.value === null) {
+        const original = originalMediaSources.get(media);
+        if (original) media.setAttribute("src", original);
+        else media.removeAttribute("src");
+      } else {
+        media.setAttribute("src", String(message.value));
+      }
+
+      if (media instanceof HTMLVideoElement) media.load();
     };
 
     const select = (target: SemanticTarget, pointer?: { x: number; y: number; kind: "mouse" | "touch" }) => {
@@ -684,6 +714,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
           : { ok: false, error: "Seçilen öğe bulunamadı. Öğeyi yeniden seçip tekrar dene." };
 
         if (target && result.ok) {
+          applyDirectMediaPatch(target, message);
           dispatchRuntimePatch(target, message);
           selectedRef.current = target;
           positionOverlay();
