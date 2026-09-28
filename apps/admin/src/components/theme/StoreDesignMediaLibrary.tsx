@@ -45,6 +45,14 @@ function accepted(mediaType: Props["mediaType"]) {
   return "image/*,video/*,.jpg,.jpeg,.png,.webp,.avif,.heic,.heif,.mp4,.m4v,.mov,.webm";
 }
 
+function mediaDisplayName(asset: MediaAsset) {
+  const kind = asset.type === "video" ? "Video" : "Görsel";
+  if (!asset.createdAt) return `${kind} · Sürüm ${asset.version || 1}`;
+  const date = new Date(asset.createdAt);
+  if (Number.isNaN(date.getTime())) return `${kind} · Sürüm ${asset.version || 1}`;
+  return `${kind} · ${date.toLocaleString("tr-TR", { dateStyle: "short", timeStyle: "short" })}`;
+}
+
 type ClientMediaMetadata = {
   width?: number;
   height?: number;
@@ -247,7 +255,7 @@ export function StoreDesignMediaLibrary({
           <div className="border-b border-black/[0.07] p-3">
             <label className="relative block">
               <Search className="pointer-events-none absolute left-3 top-2.5 h-3.5 w-3.5 text-black/30" />
-              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Medya ara…" className="h-9 w-full rounded-lg border border-black/10 pl-9 pr-3 text-[9px] outline-none focus:border-black/25" />
+              <input data-dialog-initial-focus value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Medya ara…" className="h-9 w-full rounded-lg border border-black/10 pl-9 pr-3 text-[9px] outline-none focus:border-black/25" />
             </label>
           </div>
 
@@ -279,7 +287,7 @@ export function StoreDesignMediaLibrary({
                       </span>
                     </div>
                     <div className="p-2">
-                      <p className="truncate text-[8px] font-semibold">{asset.assetId}</p>
+                      <p className="truncate text-[8px] font-semibold">{mediaDisplayName(asset)}</p>
                       <p className="mt-1 text-[7px] text-black/35">Sürüm {asset.version || 1} · {bytesLabel(asset.bytes)} · {usage} kullanım</p>
                     </div>
                   </button>
@@ -346,7 +354,7 @@ export function StoreDesignMediaLibrary({
                   Video kapak görseli
                   <select value={selected.posterAssetId || ""} onChange={(event) => void setRelation("posterAssetId", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2 text-[8px] font-medium text-black outline-none">
                     <option value="">Kapak görseli yok</option>
-                    {imageAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.assetId}</option>)}
+                    {imageAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{mediaDisplayName(asset)}</option>)}
                   </select>
                 </label>
               ) : null}
@@ -356,7 +364,7 @@ export function StoreDesignMediaLibrary({
                 <select value={selected.mobileAssetId || ""} onChange={(event) => void setRelation("mobileAssetId", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2 text-[8px] font-medium text-black outline-none">
                   <option value="">Aynı medyayı kullan</option>
                   {Object.values(document.media).filter((asset) => asset.assetId !== selected.assetId && asset.type === selected.type).map((asset) => (
-                    <option key={asset.assetId} value={asset.assetId}>{asset.assetId}</option>
+                    <option key={asset.assetId} value={asset.assetId}>{mediaDisplayName(asset)}</option>
                   ))}
                 </select>
               </label>
