@@ -117,7 +117,7 @@ for (const token of ["migrateThemeDocument", "validateThemeDocument", "liveSiteC
 
 const bridge = read("apps/storefront/src/components/theme/SemanticThemeEditorBridge.tsx");
 const runtime = read("apps/storefront/src/components/theme/SemanticThemeRuntimeProvider.tsx");
-if (!bridge.includes("COMPONENT_REGISTRY_BY_TYPE")) fail("Semantic bridge registry tabanlı değil.");
+if (!bridge.includes("COMPONENT_REGISTRY")) fail("Semantic bridge registry tabanlı değil.");
 if (!runtime.includes("templateBindings")) fail("Semantic runtime templateBindings çözümlemiyor.");
 
 const requiredRegisteredTypes = [
@@ -175,7 +175,7 @@ for (const token of [
 }
 
 const publishReport = read("apps/admin/src/components/theme/StoreDesignPublishReport.tsx");
-if (!publishReport.includes("Publish Öncesi Kontrol")) fail("Publish öncesi kırık referans raporu bağlı değil.");
+if (!publishReport.includes("Yayınlama Öncesi Kontrol")) fail("Yayınlama öncesi kırık referans raporu bağlı değil.");
 
 const sectionManager = read("apps/admin/src/components/theme/StoreDesignSectionManager.tsx");
 for (const token of ["document.templateBindings[activePage.path]", "activePage?.template", "templateId"]) {
