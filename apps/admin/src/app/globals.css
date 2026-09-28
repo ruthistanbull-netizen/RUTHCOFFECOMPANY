@@ -575,3 +575,30 @@ body {
 [data-store-design-v2-admin] .fixed.inset-0[class*="backdrop-blur"] section{
   border-color:var(--sd-border)!important;
 }
+
+
+/* Store Design section stagger + micro feedback. */
+[data-store-design-v2-admin] .sd-section-row{
+  animation:sd-section-row-in var(--sd-motion-base) var(--sd-ease-enter) both;
+}
+[data-store-design-v2-admin] .sd-section-row:nth-child(1){animation-delay:0ms}
+[data-store-design-v2-admin] .sd-section-row:nth-child(2){animation-delay:24ms}
+[data-store-design-v2-admin] .sd-section-row:nth-child(3){animation-delay:48ms}
+[data-store-design-v2-admin] .sd-section-row:nth-child(4){animation-delay:72ms}
+[data-store-design-v2-admin] .sd-section-row:nth-child(5){animation-delay:96ms}
+[data-store-design-v2-admin] .sd-section-row:nth-child(6){animation-delay:120ms}
+[data-store-design-v2-admin] .sd-section-row:nth-child(7){animation-delay:144ms}
+[data-store-design-v2-admin] .sd-section-row:nth-child(8){animation-delay:168ms}
+[data-store-design-v2-admin] .sd-row-action{
+  transition:
+    color var(--sd-motion-micro) var(--sd-ease),
+    background-color var(--sd-motion-micro) var(--sd-ease),
+    opacity var(--sd-motion-micro) var(--sd-ease),
+    transform var(--sd-motion-instant) var(--sd-ease);
+}
+[data-store-design-v2-admin] .sd-row-action:hover:not(:disabled){transform:translateY(-1px) scale(1.03)}
+[data-store-design-v2-admin] .sd-row-action:active:not(:disabled){transform:scale(.94)}
+@keyframes sd-section-row-in{
+  from{opacity:0;transform:translateY(6px)}
+  to{opacity:1;transform:translateY(0)}
+}
