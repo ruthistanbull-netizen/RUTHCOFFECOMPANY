@@ -69,7 +69,7 @@ function blockDefaults(type: string): Record<string, unknown> {
   if (type === "announcement") return { text: "Yeni duyuru", linkLabel: "", linkHref: "" };
   if (type === "ticker-item") return { text: "Yeni metin", link: "" };
   if (type === "slide") return { media: "", title: "Slayt", body: "", cta: "" };
-  if (type === "scroll-story-slide") return { assetId: "", title: "Scroll Story Slide", body: "", href: "/products" };
+  if (type === "scroll-story-slide") return { assetId: "", title: "Kaydırmalı Hikâye Öğesi", body: "", href: "/products" };
   if (type === "media") return { assetId: "", alt: "", link: "" };
   if (type === "logo") return { assetId: "", alt: "", link: "" };
   if (type === "award") return { assetId: "", label: "Ödül", link: "" };
@@ -236,8 +236,8 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
 
   const addBlock = () => {
     const selected = allowedDefinitions.find((item) => item.type === blockType) || allowedDefinitions[0];
-    if (!selected) return toast.error("Bu section için eklenebilir hazır block yok.");
-    if (blocks.length >= maxBlocks) return toast.error(`Bu bölüm en fazla ${maxBlocks} block kabul eder.`);
+    if (!selected) return toast.error("Bu bölüme eklenebilecek hazır blok yok.");
+    if (blocks.length >= maxBlocks) return toast.error(`Bu bölüm en fazla ${maxBlocks} blok kabul eder.`);
     setBlocks((items) => {
       const defaults = blockDefaults(selected.type);
       if (selected.type === "field") {
@@ -255,7 +255,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
 
   const save = async () => {
     if (busy) return;
-    if (blocks.length > maxBlocks) return toast.error(`Block sayısı maxBlocks sınırını aşıyor (${maxBlocks}).`);
+    if (blocks.length > maxBlocks) return toast.error(`Blok sayısı izin verilen sınırı aşıyor (${maxBlocks}).`);
 
     if (section.type === "product-spotlight" && !text(settings.productId)) {
       return toast.error("Tek Ürün Spotlight için katalogdan bir ürün seç.");
@@ -607,7 +607,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                     Tipografi
                     <select value={text(settings.typography) || "compact"} onChange={(event) => updateSetting("typography", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
-                      <option value="compact">Compact</option>
+                      <option value="compact">Sıkı</option>
                       <option value="default">Default</option>
                     </select>
                   </label>
@@ -630,7 +630,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                       <option value="best-sellers">Çok satanlar</option>
                       <option value="new-arrivals">Yeni gelenler</option>
                     </select>
-                    <span className="text-[7px] font-normal leading-4 text-black/35">Ürün seçimi storefront recommendation servisi tarafından read-only hesaplanır; fiyat, indirim ve sepet state'i tema editöründen değiştirilemez.</span>
+                    <span className="text-[7px] font-normal leading-4 text-black/35">Ürün seçimi mağaza tarafından otomatik hesaplanır; fiyat, indirim ve sepet bilgileri burada değiştirilemez.</span>
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                     Ürün limiti
@@ -646,9 +646,9 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
                     Kart yoğunluğu
                     <select value={text(settings.density) || "standard"} onChange={(event) => updateSetting("density", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
-                      <option value="compact">Compact</option>
-                      <option value="standard">Standard</option>
-                      <option value="comfortable">Comfortable</option>
+                      <option value="compact">Sıkı</option>
+                      <option value="standard">Standart</option>
+                      <option value="comfortable">Ferah</option>
                     </select>
                   </label>
                 </>
@@ -662,12 +662,12 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                       <option value="related">Bu ürünü içeren gerçek paketler</option>
                       <option value="all">Tüm aktif paket ürünleri</option>
                     </select>
-                    <span className="text-[7px] font-normal leading-4 text-black/35">Paket ilişkisi katalogdaki is_bundle / product_type / bundle_items alanlarından read-only çözülür. Paket içeriği ve fiyat tema editöründen değiştirilemez.</span>
+                    <span className="text-[7px] font-normal leading-4 text-black/35">Paket ilişkisi mağaza verilerinden otomatik belirlenir. Paket içeriği ve fiyat burada değiştirilemez.</span>
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                     Yerleşim
                     <select value={text(settings.layout) || "grid"} onChange={(event) => updateSetting("layout", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
-                      <option value="grid">Grid</option><option value="slider">Yatay slider</option>
+                      <option value="grid">Izgara</option><option value="slider">Yatay kaydırma</option>
                     </select>
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
@@ -682,9 +682,9 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
                     Geçmiş politikası
                     <div className="flex h-9 items-center rounded-lg border border-black/10 bg-black/[0.025] px-2.5 text-[8px] font-medium text-black/55">
-                      Analytics consent kabul edilirse cihazda local history
+                      İzin verilirse bu cihazda son görüntülenen ürünler tutulur
                     </div>
-                    <span className="text-[7px] font-normal leading-4 text-black/35">Reddedilirse geçmiş tutulmaz ve mevcut local history temizlenir. Bu politika tema editöründen değiştirilemez.</span>
+                    <span className="text-[7px] font-normal leading-4 text-black/35">İzin verilmezse geçmiş tutulmaz ve mevcut kayıt temizlenir. Bu kural burada değiştirilemez.</span>
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                     Ürün limiti
@@ -693,8 +693,8 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                     Yerleşim
                     <select value={text(settings.layout) || "slider"} onChange={(event) => updateSetting("layout", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
-                      <option value="slider">Yatay slider</option>
-                      <option value="grid">Grid</option>
+                      <option value="slider">Yatay kaydırma</option>
+                      <option value="grid">Izgara</option>
                     </select>
                   </label>
                 </>
@@ -705,9 +705,9 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
                     Öneri algoritması
                     <div className="flex h-9 items-center rounded-lg border border-black/10 bg-black/[0.025] px-2.5 text-[8px] font-medium text-black/55">
-                      Related · koleksiyon / kategori / materyal ilişkisi
+                      Koleksiyon, kategori ve ürün özelliklerine göre
                     </div>
-                    <span className="text-[7px] font-normal leading-4 text-black/35">Öneri sıralaması storefront recommendation servisi tarafından read-only hesaplanır.</span>
+                    <span className="text-[7px] font-normal leading-4 text-black/35">Öneri sıralaması mağaza tarafından otomatik hesaplanır.</span>
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                     Ürün limiti
@@ -716,8 +716,8 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                     Yerleşim
                     <select value={text(settings.layout) || "grid"} onChange={(event) => updateSetting("layout", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
-                      <option value="grid">Grid</option>
-                      <option value="slider">Yatay slider</option>
+                      <option value="grid">Izgara</option>
+                      <option value="slider">Yatay kaydırma</option>
                     </select>
                   </label>
                 </>
@@ -748,7 +748,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     Yerleşim
                     <select value={text(settings.layout) || "slider"} onChange={(event) => updateSetting("layout", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                       <option value="slider">Slider</option>
-                      <option value="grid">Grid</option>
+                      <option value="grid">Izgara</option>
                     </select>
                   </label>
                 </>
@@ -826,7 +826,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     Yerleşim
                     <select value={text(settings.layout) || "slider"} onChange={(event) => updateSetting("layout", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                       <option value="slider">Slider</option>
-                      <option value="grid">Grid</option>
+                      <option value="grid">Izgara</option>
                     </select>
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
@@ -1180,7 +1180,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   <select value={text(settings.typography) || "display"} onChange={(event) => updateSetting("typography", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                     <option value="display">Display</option>
                     <option value="editorial">Editorial</option>
-                    <option value="compact">Compact</option>
+                    <option value="compact">Sıkı</option>
                   </select>
                 </label>
               ) : null}
