@@ -2554,7 +2554,7 @@ export function StoreDesignV21() {
               </p>
             ) : null}
 
-            {contextSection && contextSectionTemplate ? (
+            {contextSection && contextSectionTemplate && contextMenu.target.protectedFields.length === 0 ? (
               <section className="border-t border-black/[0.07] pt-3" aria-label="Bölüm işlemleri">
                 <div className="flex items-center justify-between gap-2">
                   <p className="text-[11px] font-semibold text-black/55">Bölüm işlemleri</p>
