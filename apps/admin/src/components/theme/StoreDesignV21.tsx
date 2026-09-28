@@ -1589,6 +1589,71 @@ export function StoreDesignV21() {
                 <>
                   <p className="mt-1.5 text-[12px] font-semibold">{selected.label}</p>
                   <p className="mt-1 text-[8px] text-black/35">{selected.breadcrumb.map((item) => item.label).join(" › ")}</p>
+                  <div className="sd-mobile-peek-summary mt-2 hidden min-w-0 items-center gap-1.5 overflow-x-auto pb-0.5">
+                    <span className="shrink-0 rounded-full border border-black/10 bg-white px-2.5 py-2 text-[10px] font-semibold text-black/50">
+                      {scopeLabel(scope)}
+                    </span>
+                    {selected.controlGroups.includes("layout") ? (
+                      <button
+                        type="button"
+                        onClick={() => applyInspectorPatch("visible", selected.current.visible === false)}
+                        className="shrink-0 rounded-lg border border-black/10 bg-white px-2.5 text-[10px] font-semibold"
+                      >
+                        {selected.current.visible === false ? "Göster" : "Gizle"}
+                      </button>
+                    ) : null}
+                    {selected.type !== "product-card" && selected.controlGroups.includes("media") && selected.current.media ? (
+                      <button
+                        type="button"
+                        onClick={() => applyInspectorPatch("media.objectFit", selected.current.media?.objectFit === "contain" ? "cover" : "contain")}
+                        className="shrink-0 rounded-lg border border-black/10 bg-white px-2.5 text-[10px] font-semibold"
+                      >
+                        {selected.current.media.objectFit === "contain" ? "Kapla" : "Sığdır"}
+                      </button>
+                    ) : null}
+                    {selected.type !== "product-card" && selected.controlGroups.includes("typography") ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const current = selected.current.textAlign || "left";
+                          applyInspectorPatch("textAlign", current === "left" ? "center" : current === "center" ? "right" : "left");
+                        }}
+                        className="shrink-0 rounded-lg border border-black/10 bg-white px-2.5 text-[10px] font-semibold"
+                      >
+                        Hiza: {selected.current.textAlign === "center" ? "Orta" : selected.current.textAlign === "right" ? "Sağ" : "Sol"}
+                      </button>
+                    ) : null}
+                    {selected.type === "product-grid" ? (
+                      <button
+                        type="button"
+                        onClick={() => applyInspectorPatch("grid.columns", (selected.current.grid?.columns ?? 2) === 1 ? 2 : 1)}
+                        className="shrink-0 rounded-lg border border-black/10 bg-white px-2.5 text-[10px] font-semibold"
+                      >
+                        {selected.current.grid?.columns ?? 2} sütun
+                      </button>
+                    ) : null}
+                    {selected.type === "product-card" ? (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => applyInspectorPatch("card.showPrice", selected.current.card?.showPrice === false)}
+                          className="shrink-0 rounded-lg border border-black/10 bg-white px-2.5 text-[10px] font-semibold"
+                        >
+                          {selected.current.card?.showPrice === false ? "Fiyatı göster" : "Fiyatı gizle"}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const ratio = selected.current.card?.imageRatio || "3/4";
+                            applyInspectorPatch("card.imageRatio", ratio === "3/4" ? "4/5" : ratio === "4/5" ? "1/1" : "3/4");
+                          }}
+                          className="shrink-0 rounded-lg border border-black/10 bg-white px-2.5 text-[10px] font-semibold"
+                        >
+                          Oran {selected.current.card?.imageRatio || "3/4"}
+                        </button>
+                      </>
+                    ) : null}
+                  </div>
                   <div className="sd-mobile-sheet-levels mt-3 hidden grid-cols-3 gap-1 rounded-xl bg-black/[0.035] p-1" aria-label="Ayar paneli görünümü">
                     {(["peek", "medium", "full"] as const).map((level) => (
                       <button
