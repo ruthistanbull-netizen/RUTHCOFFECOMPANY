@@ -168,7 +168,7 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
     ? editingPage.route
     : customPageRoute(form.slug || form.name || "sayfa-adi");
   const previewTitle = form.seoTitle.trim() || form.name.trim() || "Sayfa Başlığı";
-  const previewDescription = form.seoDescription.trim() || "Meta açıklama girildiğinde arama sonucu önizlemesi burada görünür.";
+  const previewDescription = form.seoDescription.trim() || "Arama açıklaması girildiğinde arama sonucu önizlemesi burada görünür.";
   const previewOgTitle = form.ogTitle.trim() || previewTitle;
   const previewOgDescription = form.ogDescription.trim() || previewDescription;
   const previewOgImage = form.ogAssetId ? document.media[form.ogAssetId]?.url : undefined;
@@ -182,16 +182,16 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
     const name = form.name.trim();
     const slug = routeLocked && editingPage ? editingPage.slug : normalizePageSlug(form.slug || name);
     if (!name) return toast.error("Sayfa adı boş olamaz.");
-    if (!slug) return toast.error("Geçerli bir slug gir.");
-    if (!routeLocked && isReservedPageSlug(slug)) return toast.error("Bu slug sistem tarafından korunuyor.");
+    if (!slug) return toast.error("Geçerli bir sayfa adresi gir.");
+    if (!routeLocked && isReservedPageSlug(slug)) return toast.error("Bu sayfa adresi sistem tarafından korunuyor.");
 
     const route = routeLocked && editingPage ? editingPage.route : customPageRoute(slug);
     const duplicate = Object.values(document.pages).find((page) => page.route === route && page.id !== editingPage?.id);
-    if (duplicate) return toast.error("Bu URL başka bir sayfa tarafından kullanılıyor.");
+    if (duplicate) return toast.error("Bu adres başka bir sayfa tarafından kullanılıyor.");
 
     const canonical = form.canonical.trim();
     if (canonical && !canonical.startsWith("/") && !/^https:\/\//i.test(canonical)) {
-      return toast.error("Canonical relative path veya https URL olmalı.");
+      return toast.error("Ana adres mağaza içi bir yol veya güvenli internet adresi olmalı.");
     }
 
     setBusy(true);
@@ -356,7 +356,7 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
         <header className="flex h-14 shrink-0 items-center gap-3 border-b border-black/10 px-4">
           <div className="min-w-0 flex-1">
             <p className="text-[12px] font-semibold">{editingPage ? "Sayfa Ayarları" : "Yeni Sayfa"}</p>
-            <p className="mt-0.5 truncate text-[8px] text-black/40">{editingPage?.route || "Yeni storefront sayfası taslağı"}</p>
+            <p className="mt-0.5 truncate text-[8px] text-black/40">{editingPage?.route || "Yeni mağaza sayfası taslağı"}</p>
           </div>
           <button type="button" onClick={requestClose} className="grid h-9 w-9 place-items-center rounded-lg hover:bg-black/[0.04]" aria-label="Kapat">
             <X className="h-4 w-4" />
@@ -373,7 +373,7 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
               Slug / URL
               <div>
                 <input disabled={routeLocked} value={form.slug} onChange={(event) => set("slug", event.target.value)} className="h-10 w-full rounded-lg border border-black/10 px-3 text-[10px] font-medium text-black outline-none focus:border-black/25 disabled:bg-black/[0.03] disabled:text-black/35" placeholder="kahve-rehberi" />
-                <p className="mt-1 text-[8px] font-normal text-black/35">{routeLocked && editingPage ? `${editingPage.route} · Sistem route'u korunuyor` : customPageRoute(form.slug || form.name || "sayfa-adi")}</p>
+                <p className="mt-1 text-[8px] font-normal text-black/35">{routeLocked && editingPage ? `${editingPage.route} · Sistem sayfa adresi korunuyor` : customPageRoute(form.slug || form.name || "sayfa-adi")}</p>
               </div>
             </label>
             <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
@@ -405,17 +405,17 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
           <div className="my-5 border-t border-black/[0.07]" />
 
           <div>
-            <p className="text-[10px] font-semibold">SEO & Paylaşım</p>
-            <p className="mt-1 text-[8px] leading-4 text-black/40">SEO alanları sayfa kaydından ayrı tutulur; boş alanlar storefront fallback politikasını kullanır.</p>
+            <p className="text-[10px] font-semibold">Arama ve Paylaşım</p>
+            <p className="mt-1 text-[8px] leading-4 text-black/40">Arama ve paylaşım alanları boş bırakılırsa mağazanın varsayılan ayarları kullanılır.</p>
           </div>
 
           <div className="mt-3 grid gap-4">
             <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
-              SEO başlık <span className="font-normal text-black/30">{form.seoTitle.length}/180</span>
+              Arama başlığı <span className="font-normal text-black/30">{form.seoTitle.length}/180</span>
               <input value={form.seoTitle} maxLength={180} onChange={(event) => set("seoTitle", event.target.value)} className="h-10 rounded-lg border border-black/10 px-3 text-[10px] font-medium text-black outline-none" />
             </label>
             <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
-              Meta açıklama <span className="font-normal text-black/30">{form.seoDescription.length}/400</span>
+              Arama açıklaması <span className="font-normal text-black/30">{form.seoDescription.length}/400</span>
               <textarea value={form.seoDescription} maxLength={400} onChange={(event) => set("seoDescription", event.target.value)} className="min-h-20 resize-y rounded-lg border border-black/10 p-3 text-[10px] font-medium text-black outline-none" />
             </label>
             <div className="grid gap-4 md:grid-cols-2">
@@ -424,7 +424,7 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
                 <input value={form.ogTitle} onChange={(event) => set("ogTitle", event.target.value)} className="h-10 rounded-lg border border-black/10 px-3 text-[10px] font-medium text-black outline-none" />
               </label>
               <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
-                Robots
+                Arama motoru erişimi
                 <select disabled={robotsLocked} value={form.robots} onChange={(event) => set("robots", event.target.value as SeoDocument["robots"])} className="h-10 rounded-lg border border-black/10 bg-white px-3 text-[10px] font-medium text-black outline-none disabled:bg-black/[0.03] disabled:text-black/35">
                   <option value="index,follow">index,follow</option>
                   <option value="noindex,follow">noindex,follow</option>
@@ -439,7 +439,7 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
             <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
               Open Graph görseli
               <select value={form.ogAssetId} onChange={(event) => set("ogAssetId", event.target.value)} className="h-10 rounded-lg border border-black/10 bg-white px-3 text-[10px] font-medium text-black outline-none">
-                <option value="">SEO görseli yok / fallback</option>
+                <option value="">Özel paylaşım görseli yok</option>
                 {Object.values(document.media).filter((asset) => asset.type === "image").map((asset) => (
                   <option key={asset.assetId} value={asset.assetId}>{asset.assetId} · v{asset.version || 1}</option>
                 ))}
@@ -449,13 +449,13 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
               ) : null}
             </label>
             <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
-              Canonical URL
+              Ana adres URL
               <input value={form.canonical} onChange={(event) => set("canonical", event.target.value)} className="h-10 rounded-lg border border-black/10 px-3 text-[10px] font-medium text-black outline-none" placeholder="Boş = self canonical" />
             </label>
 
             <div className="rounded-xl border border-black/[0.08] bg-[#fafafa] p-3">
               <div className="flex items-center justify-between gap-3">
-                <p className="text-[9px] font-semibold">SEO Önizleme</p>
+                <p className="text-[9px] font-semibold">Arama Sonucu Önizlemesi</p>
                 <span className="rounded-full bg-white px-2 py-1 text-[7px] font-semibold text-black/35">{form.robots}</span>
               </div>
               <div className="mt-3 rounded-xl border border-black/[0.06] bg-white p-3">
@@ -465,7 +465,7 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
               </div>
 
               <div className="mt-3 overflow-hidden rounded-xl border border-black/[0.06] bg-white">
-                {previewOgImage ? <img src={previewOgImage} alt="" className="aspect-[1.91/1] w-full object-cover" /> : <div className="grid aspect-[1.91/1] place-items-center bg-black/[0.03] text-[8px] text-black/25">OG görsel fallback</div>}
+                {previewOgImage ? <img src={previewOgImage} alt="" className="aspect-[1.91/1] w-full object-cover" /> : <div className="grid aspect-[1.91/1] place-items-center bg-black/[0.03] text-[8px] text-black/25">Varsayılan paylaşım görseli</div>}
                 <div className="p-3">
                   <p className="line-clamp-1 text-[10px] font-semibold">{previewOgTitle}</p>
                   <p className="mt-1 line-clamp-2 text-[8px] leading-4 text-black/45">{previewOgDescription}</p>
@@ -477,7 +477,7 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
             {editingPage ? (
               <div className="rounded-xl border border-black/[0.08] p-3">
                 <div className="flex items-center justify-between gap-2">
-                  <p className="text-[9px] font-semibold">URL Geçmişi</p>
+                  <p className="text-[9px] font-semibold">Adres Geçmişi</p>
                   <span className="text-[7px] text-black/30">{document.redirects.filter((item) => item.pageId === editingPage.id).length} kayıt</span>
                 </div>
                 <div className="mt-2 space-y-1.5">
@@ -490,7 +490,7 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
                     </div>
                   ))}
                   {!document.redirects.some((item) => item.pageId === editingPage.id) ? (
-                    <p className="py-2 text-[8px] leading-4 text-black/35">Bu sayfa için henüz slug geçmişi / redirect kaydı yok.</p>
+                    <p className="py-2 text-[8px] leading-4 text-black/35">Bu sayfa için henüz adres geçmişi veya yönlendirme kaydı yok.</p>
                   ) : null}
                 </div>
               </div>
