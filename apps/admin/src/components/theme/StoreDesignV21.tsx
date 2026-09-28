@@ -1431,6 +1431,17 @@ export function StoreDesignV21() {
                       </div>
                     ) : null}
 
+                    {selected.controlGroups.includes("layout") && selected.type !== "consent-banner" ? (
+                      <label className="flex items-center justify-between gap-3 rounded-lg border border-black/[0.08] bg-white p-2.5 text-[8px] font-semibold text-black/50">
+                        Görünür
+                        <input
+                          type="checkbox"
+                          checked={selected.current.visible !== false}
+                          onChange={(event) => applyInspectorPatch("visible", event.target.checked)}
+                        />
+                      </label>
+                    ) : null}
+
                     {(selected.controlGroups.includes("card") || selected.controlGroups.includes("layout")) && selected.type !== "consent-banner" ? (
                       <label className="grid gap-1.5 text-[8px] text-black/45">
                         Köşe yuvarlaklığı
@@ -1647,6 +1658,17 @@ export function StoreDesignV21() {
                       <option value="center">Orta</option>
                       <option value="right">Sağ</option>
                     </select>
+                  </label>
+                ) : null}
+
+                {contextMenu.target.controlGroups.includes("layout") ? (
+                  <label className="flex min-h-10 items-center justify-between gap-3 rounded-xl border border-black/10 bg-white px-3 text-[11px] font-semibold text-black/55">
+                    Görünür
+                    <input
+                      type="checkbox"
+                      checked={selected?.current.visible !== false}
+                      onChange={(event) => applyInspectorPatch("visible", event.target.checked)}
+                    />
                   </label>
                 ) : null}
 
