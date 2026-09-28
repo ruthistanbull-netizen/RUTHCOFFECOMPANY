@@ -1007,3 +1007,25 @@ body {
     background:var(--sd-surface-1);
   }
 }
+
+
+/* Store Design v4.1 — right-click quick edit menu. */
+[data-store-design-v2-admin] .sd-context-menu{
+  background:var(--sd-surface-1)!important;
+  color:var(--sd-text-1)!important;
+  border-color:var(--sd-border)!important;
+  animation:sd-context-menu-in 180ms var(--sd-ease-enter) both;
+  transform-origin:top left;
+}
+[data-store-design-v2-admin] .sd-context-menu > div,
+[data-store-design-v2-admin] .sd-context-menu label{
+  border-color:var(--sd-border)!important;
+}
+[data-store-design-v2-admin] .sd-context-menu button,
+[data-store-design-v2-admin] .sd-context-menu select{
+  font-size:12px!important;
+}
+@keyframes sd-context-menu-in{
+  from{opacity:0;transform:translateY(-4px) scale(.985)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
