@@ -154,8 +154,8 @@ export function StoreDesignRedirectManager({ document, onApply, onClose }: Props
           <div className="hidden items-center justify-center md:flex"><ArrowRight className="h-4 w-4 text-black/25" /></div>
           <input value={target} onChange={(event) => setTarget(event.target.value)} placeholder="/yeni-adres" className="h-10 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-medium outline-none" />
           <select value={status} onChange={(event) => setStatus(Number(event.target.value) === 302 ? 302 : 301)} className="h-10 rounded-lg border border-black/10 bg-white px-2 text-[9px] font-semibold outline-none">
-            <option value={301}>301</option>
-            <option value={302}>302</option>
+            <option value={301}>Kalıcı</option>
+            <option value={302}>Geçici</option>
           </select>
           <button type="button" disabled={busy} onClick={() => void addRedirect()} className="flex h-10 items-center justify-center gap-1.5 rounded-lg bg-[#111] px-3 text-[8px] font-semibold text-white disabled:opacity-40"><Plus className="h-3.5 w-3.5" />Ekle</button>
         </div>
@@ -168,7 +168,7 @@ export function StoreDesignRedirectManager({ document, onApply, onClose }: Props
                 <div key={item.id} className="rounded-xl border border-black/[0.08] p-3">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className={`rounded-full px-2 py-1 text-[7px] font-semibold ${item.active === false ? "bg-black/[0.04] text-black/35" : "bg-emerald-50 text-emerald-700"}`}>{item.active === false ? "PASİF" : "AKTİF"}</span>
-                    <span className="rounded-full bg-black/[0.04] px-2 py-1 text-[7px] font-semibold">{item.status}</span>
+                    <span className="rounded-full bg-black/[0.04] px-2 py-1 text-[7px] font-semibold">{item.status === 302 ? "Geçici" : "Kalıcı"}</span>
                     <span className="rounded-full bg-black/[0.04] px-2 py-1 text-[7px] font-semibold text-black/45">{redirectUsageLabel(item)}</span>
                     <span className="ml-auto text-[7px] text-black/30">{item.createdAt ? new Date(item.createdAt).toLocaleString("tr-TR") : ""}</span>
                   </div>
@@ -190,8 +190,8 @@ export function StoreDesignRedirectManager({ document, onApply, onClose }: Props
                       onChange={(event) => void updateRedirect(item, { status: Number(event.target.value) === 302 ? 302 : 301 })}
                       className="h-8 rounded-lg border border-black/10 bg-white px-2 text-[8px] font-semibold"
                     >
-                      <option value={301}>301 Kalıcı</option>
-                      <option value={302}>302 Geçici</option>
+                      <option value={301}>Kalıcı yönlendirme</option>
+                      <option value={302}>Geçici yönlendirme</option>
                     </select>
                     <button type="button" disabled={busy} onClick={() => void updateRedirect(item, { active: item.active === false })} className="flex h-8 items-center gap-1.5 rounded-lg border border-black/10 bg-white px-2.5 text-[8px] font-semibold disabled:opacity-40">
                       <Power className="h-3 w-3" />{item.active === false ? "Aktifleştir" : "Pasifleştir"}
