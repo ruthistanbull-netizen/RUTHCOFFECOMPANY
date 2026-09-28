@@ -67,7 +67,7 @@ function selectorFor(patch: SemanticRuntimePatch) {
     const attribute = patch.selectorMode === "type" ? "data-editor-type" : "data-editor-id";
     selector = `[${attribute}=${cssString(patch.selectorValue)}]`;
   }
-  if (patch.path === "media.objectFit" || patch.path === "media.objectPosition") return `${selector},${selector} img,${selector} video`;
+  if (patch.path === "media.src" || patch.path === "media.objectFit" || patch.path === "media.objectPosition") return `${selector},${selector} img,${selector} video`;
   return selector;
 }
 
@@ -325,14 +325,85 @@ export function SemanticThemeRuntimeProvider({
     [effectiveDocument, templatePathname],
   );
 
-  const css = useMemo(
+  const mergedPatches = useMemo(
     () => Object.values({ ...initialPatches, ...runtimePatches })
-      .sort((a, b) => a.revision - b.revision)
+      .sort((a, b) => a.revision - b.revision),
+    [initialPatches, runtimePatches],
+  );
+
+  const css = useMemo(
+    () => mergedPatches
       .map(ruleFor)
       .filter(Boolean)
       .join("\n"),
-    [initialPatches, runtimePatches],
+    [mergedPatches],
   );
+
+  useEffect(() => {
+    const sourcePatches = mergedPatches.filter((patch) => patch.path === "media.src" && typeof patch.value === "string" && patch.value);
+    if (!sourcePatches.length) return;
+
+    const originals = new Map<HTMLImageElement | HTMLVideoElement, { src: string | null; srcset?: string | null }>();
+    const mediaQuery = window.matchMedia("(max-width:767px)");
+
+    const restore = () => {
+      for (const [element, original] of originals) {
+        if (!element.isConnected) continue;
+        if (original.src === null) element.removeAttribute("src");
+        else element.setAttribute("src", original.src);
+        if (element instanceof HTMLImageElement) {
+          if (original.srcset === null || original.srcset === undefined) element.removeAttribute("srcset");
+          else element.setAttribute("srcset", original.srcset);
+        } else {
+          element.load();
+        }
+      }
+      originals.clear();
+    };
+
+    const apply = () => {
+      restore();
+      const mobile = mediaQuery.matches;
+      const active = sourcePatches.filter((patch) => patch.device === "desktop" || mobile);
+      for (const patch of active) {
+        const source = String(patch.value || "").trim();
+        if (!source) continue;
+        const selector = selectorFor(patch);
+        let elements: NodeListOf<Element>;
+        try {
+          elements = document.querySelectorAll(selector);
+        } catch {
+          continue;
+        }
+        for (const node of elements) {
+          const candidates = node instanceof HTMLImageElement || node instanceof HTMLVideoElement
+            ? [node]
+            : Array.from(node.querySelectorAll<HTMLImageElement | HTMLVideoElement>("img,video"));
+          for (const element of candidates) {
+            if (!originals.has(element)) {
+              originals.set(element, {
+                src: element.getAttribute("src"),
+                srcset: element instanceof HTMLImageElement ? element.getAttribute("srcset") : undefined,
+              });
+            }
+            element.setAttribute("src", source);
+            if (element instanceof HTMLImageElement) {
+              element.setAttribute("srcset", source);
+            } else {
+              element.load();
+            }
+          }
+        }
+      }
+    };
+
+    apply();
+    mediaQuery.addEventListener("change", apply);
+    return () => {
+      mediaQuery.removeEventListener("change", apply);
+      restore();
+    };
+  }, [mergedPatches]);
 
   return (
     <>
