@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { normalizeThemeDocument, type ThemeDocument } from "@ruth-commerce/commerce-core/store-design-v2";
 import { adminRequest } from "@/lib/adminApi";
 import { useExactToast } from "@/components/base44-exact/primitives";
+import { useStoreDesignDialogExit } from "@/components/theme/useStoreDesignDialogExit";
 
 type SnapshotSummary = {
   key: string;
@@ -26,6 +27,8 @@ type Props = {
 };
 
 export function StoreDesignSnapshotManager({ currentPublishedRevision, onRestore, onClose }: Props) {
+
+  const { closing, requestClose } = useStoreDesignDialogExit(onClose);
   const toast = useExactToast();
   const [snapshots, setSnapshots] = useState<SnapshotSummary[]>([]);
   const [loading, setLoading] = useState(true);
@@ -59,7 +62,7 @@ export function StoreDesignSnapshotManager({ currentPublishedRevision, onRestore
       const document = normalizeThemeDocument(result.document);
       await onRestore(document);
       toast.success(`Revision ${snapshot.revision} taslağa geri yüklendi. Canlı site değişmedi.`);
-      onClose();
+      requestClose();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Snapshot geri yüklenemedi.");
     } finally {
@@ -68,7 +71,7 @@ export function StoreDesignSnapshotManager({ currentPublishedRevision, onRestore
   };
 
   return (
-    <div className="sd-modal-backdrop fixed inset-0 z-[2147483625] grid place-items-center bg-black/35 p-3 backdrop-blur-sm">
+    <div data-closing={closing ? "true" : "false"} className="sd-modal-backdrop fixed inset-0 z-[2147483625] grid place-items-center bg-black/35 p-3 backdrop-blur-sm">
       <div className="sd-modal-card flex h-[min(760px,92dvh)] w-full max-w-[820px] flex-col overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl">
         <header className="flex h-14 shrink-0 items-center gap-3 border-b border-black/10 px-4">
           <div className="min-w-0 flex-1">
@@ -78,7 +81,7 @@ export function StoreDesignSnapshotManager({ currentPublishedRevision, onRestore
           <button type="button" onClick={() => void load()} disabled={loading} className="grid h-9 w-9 place-items-center rounded-lg border border-black/10 hover:bg-black/[0.03] disabled:opacity-40" aria-label="Yenile">
             <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
           </button>
-          <button type="button" onClick={onClose} className="grid h-9 w-9 place-items-center rounded-lg hover:bg-black/[0.04]" aria-label="Kapat"><X className="h-4 w-4" /></button>
+          <button type="button" onClick={requestClose} className="grid h-9 w-9 place-items-center rounded-lg hover:bg-black/[0.04]" aria-label="Kapat"><X className="h-4 w-4" /></button>
         </header>
 
         <div className="min-h-0 flex-1 overflow-y-auto p-3">
