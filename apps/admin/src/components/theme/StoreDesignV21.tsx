@@ -817,6 +817,9 @@ export function StoreDesignV21() {
   const selectedSectionId = selected ? sectionRegistration(selected)?.id || null : null;
   const contextSectionRegistration = contextMenu ? sectionRegistration(contextMenu.target) : null;
   const contextSection = contextSectionRegistration ? document.sections[contextSectionRegistration.id] || null : null;
+  const contextTargetsWholeSection = Boolean(
+    contextSectionRegistration && contextMenu?.target.id === `section:${contextSectionRegistration.id}`,
+  );
   const activeStructureTemplateId = activePage
     ? (managedPage?.templateId || (activePage.template ? (document.templateBindings[activePage.path] || activePage.path) : `route:${activePage.path}`))
     : null;
