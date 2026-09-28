@@ -100,6 +100,8 @@ type QuickMediaEditState = {
   device: Device;
   page: PageItem;
   mediaType: "image" | "video";
+  beforeOverride: unknown;
+  visibleSource: string;
 };
 
 type StoreDesignResponse = {
@@ -1218,12 +1220,16 @@ export function StoreDesignV21() {
 
   const openQuickMediaPicker = () => {
     if (!selected || !activePage || !selected.current.media) return;
+    const responsive = responsiveSettingsFor(document, selected, scope, activePage);
+    const deviceLeaves = new Map(flattenResponsiveLeaves(recordValue(responsive[device])));
     setQuickMediaEdit({
       target: selected,
       scope,
       device,
       page: activePage,
       mediaType: selected.current.media.kind === "video" ? "video" : "image",
+      beforeOverride: deviceLeaves.has("media.src") ? deviceLeaves.get("media.src") : null,
+      visibleSource: selected.current.media.src || "",
     });
     setContextMenu(null);
     setMediaOpen(true);
@@ -1234,8 +1240,7 @@ export function StoreDesignV21() {
     const value = source.trim();
     if (!edit || !value) return;
 
-    const before = snapshotValue(edit.target, "media.src") || "";
-    if (before === value) {
+    if (edit.visibleSource === value) {
       setMediaOpen(false);
       setQuickMediaEdit(null);
       return;
@@ -1262,7 +1267,7 @@ export function StoreDesignV21() {
       scope: edit.scope,
       device: edit.device,
       path: "media.src",
-      before,
+      before: edit.beforeOverride,
       after: value,
     }]);
     setFuture([]);
