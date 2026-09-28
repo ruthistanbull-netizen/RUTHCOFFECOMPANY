@@ -1209,6 +1209,11 @@ export function StoreDesignV21() {
           </aside>
 
         <main className="sd-preview-stage relative flex min-w-0 flex-1 items-center justify-center overflow-auto p-3 md:p-6">
+          {isMobileViewport && interactionMode === "edit" && !leftOpen && !rightOpen ? (
+            <div className="sd-edit-mode-chip pointer-events-none absolute left-1/2 top-3 z-20 -translate-x-1/2 rounded-full px-3 py-2 text-[11px] font-semibold shadow-lg">
+              Düzenleme açık · Bir öğeye dokun
+            </div>
+          ) : null}
           <div className={`sd-preview-shell relative shrink-0 overflow-hidden bg-white shadow-[0_18px_60px_rgba(15,23,42,.14)] transition-[width,height,border-radius] duration-300 ${device === "mobile" ? "h-[780px] w-[390px] rounded-[44px] border-[9px] border-[#111]" : "h-[calc(100dvh-106px)] min-h-[620px] w-[min(1180px,calc(100vw-120px))] rounded-xl border border-black/10"}`}>
             {device === "mobile" ? <div className="sd-device-island pointer-events-none absolute left-1/2 top-3 z-10 h-7 w-28 -translate-x-1/2 rounded-full bg-[#111]" /> : null}
             <iframe
@@ -1656,7 +1661,6 @@ export function StoreDesignV21() {
               type="button"
               onClick={() => {
                 setSelected(contextMenu.target);
-                setScope(contextMenu.target.defaultScope);
                 setContextMenu(null);
                 setLeftOpen(false);
                 setRightOpen(true);
