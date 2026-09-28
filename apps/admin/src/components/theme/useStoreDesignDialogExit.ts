@@ -100,11 +100,22 @@ export function useStoreDesignDialogExit(onClose: () => void, durationMs = 180, 
       }
     };
 
+    const onPointerDown = (event: PointerEvent) => {
+      if (escapeLockedRef.current) return;
+      const dialog = dialogRef.current;
+      if (!dialog || topStoreDesignDialog() !== dialog) return;
+      const backdrop = dialog.parentElement;
+      if (!backdrop?.classList.contains("sd-modal-backdrop") || event.target !== backdrop) return;
+      requestClose();
+    };
+
     document.addEventListener("keydown", onKeyDown, true);
+    document.addEventListener("pointerdown", onPointerDown, true);
 
     return () => {
       window.cancelAnimationFrame(focusFrame);
       document.removeEventListener("keydown", onKeyDown, true);
+      document.removeEventListener("pointerdown", onPointerDown, true);
       if (timerRef.current !== null) window.clearTimeout(timerRef.current);
       timerRef.current = null;
       dialogRef.current = null;
