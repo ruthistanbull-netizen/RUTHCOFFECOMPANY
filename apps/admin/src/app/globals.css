@@ -1068,7 +1068,7 @@ body {
   }
 
   [data-store-design-v2-admin] .sd-inspector[data-sheet-level="peek"]{
-    height:148px!important;
+    height:140px!important;
   }
 
   [data-store-design-v2-admin] .sd-inspector[data-sheet-level="peek"] .sd-inspector-body,
