@@ -53,6 +53,77 @@ type Props = {
   onApply: (next: ThemeDocument, label: string) => Promise<void>;
 };
 
+const SECTION_TYPE_LABELS: Record<string, string> = {
+  "hero": "Ana Görsel",
+  "scroll-story": "Kaydırmalı Hikâye",
+  "featured-products": "Öne Çıkan Ürünler",
+  "product-slider": "Ürün Kaydırıcısı",
+  "product-grid": "Ürün Izgarası",
+  "product-spotlight": "Ürün Vitrini",
+  "featured-collection": "Öne Çıkan Koleksiyon",
+  "category-cards": "Kategori Kartları",
+  "product-comparison": "Ürün Karşılaştırma",
+  "new-arrivals": "Yeni Gelenler",
+  "best-sellers": "Çok Satanlar",
+  "recommendations": "Önerilen Ürünler",
+  "recently-viewed": "Son Görüntülenenler",
+  "bundle": "Ürün Paketi",
+  "cross-sell": "Tamamlayıcı Ürünler",
+  "sale-products": "İndirimli Ürünler",
+  "video-hero": "Video Ana Görsel",
+  "image-banner": "Görsel Afiş",
+  "video-banner": "Video Afiş",
+  "background-media": "Arka Plan Medyası",
+  "rich-text": "Metin Alanı",
+  "brand-story": "Marka Hikâyesi",
+  "collection-cards": "Koleksiyon Kartları",
+  "trust-badges": "Güven Bilgileri",
+  "faq": "Sık Sorulan Sorular",
+  "slideshow": "Görsel Slayt",
+  "gallery-grid": "Galeri Izgarası",
+  "masonry-gallery": "Serbest Galeri",
+  "collage": "Kolaj",
+  "image-text-split": "Görsel ve Metin",
+  "video-text-split": "Video ve Metin",
+  "social-grid": "Sosyal Medya Izgarası",
+  "before-after": "Öncesi ve Sonrası",
+  "hotspot-lookbook": "Etkileşimli Görsel",
+  "logo-cloud": "Logo Listesi",
+  "text-columns": "Metin Sütunları",
+  "stats": "İstatistikler",
+  "timeline": "Zaman Çizelgesi",
+  "feature-grid": "Özellik Izgarası",
+  "testimonials": "Müşteri Yorumları",
+  "review-highlights": "Yorum Öne Çıkanları",
+  "tabs": "Sekmeler",
+  "press-awards": "Basın ve Ödüller",
+  "team": "Ekip",
+  "announcement-bar": "Duyuru Çubuğu",
+  "marquee": "Kayan Yazı",
+  "heading-subtext": "Başlık ve Açıklama",
+  "manifesto": "Marka Bildirisi",
+  "quote": "Alıntı",
+  "promo-banner": "Kampanya Afişi",
+  "countdown": "Geri Sayım",
+  "shipping-returns-cta": "Kargo ve İade Bilgisi",
+  "newsletter": "E-posta Bülteni",
+  "contact-form": "İletişim Formu",
+  "custom-form": "Özel Form",
+  "map-locator": "Konumlar",
+  "rewards-promo": "Avantaj Tanıtımı",
+  "spacer": "Boşluk",
+  "divider": "Ayırıcı",
+  "anchor": "Sayfa Bağlantı Noktası",
+  "breadcrumb": "Sayfa Yolu",
+  "grid-stack-builder": "Izgara Düzeni",
+  "collections": "Koleksiyonlar",
+  "trust": "Güven ve Kargo",
+};
+
+function sectionTypeLabel(type: string, fallback?: string) {
+  return SECTION_TYPE_LABELS[type] || fallback || type.replace(/-/g, " ");
+}
+
 const RENDERABLE_SECTION_TYPES = new Set([
   "hero",
   "scroll-story",
@@ -310,8 +381,8 @@ function ensurePageContext(document: ThemeDocument, activePage: ActivePage, comp
     if (!next.templates[templateId]) {
       next.templates[templateId] = {
         id: templateId,
-        label: activePage.label || "Template",
-        description: `${activePage.label || activePage.path} için storefront template'i`,
+        label: activePage.label || "Şablon",
+        description: `${activePage.label || activePage.path} için mağaza şablonu`,
         pageType: compatibility,
         compatibility: [compatibility],
         sectionIds: [],
@@ -377,12 +448,7 @@ function ensurePageContext(document: ThemeDocument, activePage: ActivePage, comp
 }
 
 function sectionLabel(section: SectionInstance) {
-  const direct = SECTION_LIBRARY_BY_TYPE[section.type]?.label;
-  if (direct) return direct;
-  if (section.type === "scroll-story") return "Kaydırmalı Hikâye";
-  if (section.type === "collections") return "Koleksiyonlar";
-  if (section.type === "trust") return "Güven / Kargo";
-  return section.type.replace(/-/g, " ");
+  return sectionTypeLabel(section.type, SECTION_LIBRARY_BY_TYPE[section.type]?.label);
 }
 
 function canRenderDefinition(definition: SectionDefinition) {
@@ -450,7 +516,7 @@ function SectionPicker({
     if (!definition.compatiblePages.includes(compatibility)) return false;
     if (category !== "all" && definition.category !== category) return false;
     const needle = query.trim().toLocaleLowerCase("tr-TR");
-    return !needle || definition.label.toLocaleLowerCase("tr-TR").includes(needle) || definition.type.includes(needle);
+    return !needle || sectionTypeLabel(definition.type, definition.label).toLocaleLowerCase("tr-TR").includes(needle) || definition.type.includes(needle);
   }), [category, compatibility, query]);
 
   return (
@@ -492,15 +558,17 @@ function SectionPicker({
                   className="sd-library-card min-h-[82px] rounded-xl border border-black/[0.08] p-3 text-left hover:bg-black/[0.02] disabled:cursor-not-allowed disabled:opacity-45"
                 >
                   <div className="flex items-start gap-2">
-                    <span className="min-w-0 flex-1 text-[13px] font-semibold">{definition.label}</span>
+                    <span className="min-w-0 flex-1 text-[13px] font-semibold">{sectionTypeLabel(definition.type, definition.label)}</span>
                     <span className={`rounded px-1.5 py-0.5 text-[7px] font-semibold ${available ? "bg-emerald-50 text-emerald-700" : "bg-black/[0.04] text-black/40"}`}>
                       {available ? "Hazır" : securityLocked ? "Güvenlik kilidi" : "Altyapı bekliyor"}
                     </span>
                   </div>
                   <p className="mt-2 line-clamp-3 text-[11px] leading-4 text-black/38">
                     {available
-                      ? "Bu sayfada kullanıma hazır bölüm."
-                      : (definition.pendingReason || "Bu bölüm mağaza güvenlik kuralları nedeniyle kullanıma kapalı.")}
+                      ? "Bu sayfada kullanıma hazır."
+                      : securityLocked
+                        ? "Bu bölüm güvenlik nedeniyle kullanıma kapalı."
+                        : "Bu bölüm şu anda kullanıma hazır değil."}
                   </p>
                 </button>
               );
@@ -687,7 +755,7 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
       <section className="sd-structure-panel border-b border-black/[0.07] p-3">
         <div className="flex items-center gap-2 text-[13px] font-semibold"><Layers3 className="h-3.5 w-3.5" /> Sayfa Yapısı</div>
         <div className="sd-global-row mt-2 rounded-lg bg-black/[0.025] px-2.5 py-2 text-[12px] font-medium">
-          <div className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-black/30" />Header <span className="ml-auto text-[7px] text-black/30">Global</span></div>
+          <div className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-black/30" />Üst Bilgi <span className="ml-auto text-[10px] text-black/40">Tüm site</span></div>
         </div>
 
         <div className="mt-1.5 space-y-1">
@@ -710,17 +778,17 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
                 disabled={!canEditSection(section.type)}
                 onClick={() => setEditingSectionId(section.id)}
                 className="sd-section-main min-w-0 flex-1 py-2 text-left disabled:cursor-default"
-                title={canEditSection(section.type) ? "Bölüm ayarlarını aç" : "Bu bölümün V2 ayar şeması henüz bağlanmadı"}
+                title={canEditSection(section.type) ? "Bölüm ayarlarını aç" : "Bu bölüm için ayrıntılı ayarlar henüz hazır değil"}
               >
                 <p className={`truncate text-[12px] font-semibold ${section.enabled ? "" : "text-black/35"}`}>{sectionLabel(section)}</p>
-                <p className="mt-0.5 truncate text-[7px] text-black/28">{section.id}</p>
+                <p className="mt-0.5 truncate text-[11px] text-black/40">{section.enabled ? "Görünür" : "Gizli"}</p>
               </button>
               {canEditSection(section.type) ? (
                 <button type="button" disabled={busy} onClick={() => setEditingSectionId(section.id)} className="sd-row-action grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04]" aria-label="Bölüm ayarları">
                   <Settings2 className="h-3 w-3" />
                 </button>
               ) : null}
-              <button type="button" disabled={busy || !SECTION_LIBRARY_BY_TYPE[section.type]?.implemented} onClick={() => void saveSectionPreset(section.id)} className="sd-row-action grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04] disabled:opacity-20" aria-label="Preset olarak kaydet">
+              <button type="button" disabled={busy || !SECTION_LIBRARY_BY_TYPE[section.type]?.implemented} onClick={() => void saveSectionPreset(section.id)} className="sd-row-action grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04] disabled:opacity-20" aria-label="Hazır düzen olarak kaydet">
                 <BookmarkPlus className="h-3 w-3" />
               </button>
               <button type="button" disabled={busy || index === 0} onClick={() => void mutateSection(section.id, "up")} className="sd-row-action grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04] disabled:opacity-20" aria-label="Yukarı taşı"><ArrowUp className="h-3 w-3" /></button>
@@ -733,7 +801,7 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
 
           {!sections.length ? (
             <div className="rounded-lg border border-dashed border-black/10 px-3 py-4 text-center text-[11px] leading-4 text-black/35">
-              Bu şablonda henüz V2 bölüm kaydı yok. Bölüm eklediğinde stable ID ile template ağacına yazılır.
+              Bu sayfada henüz bölüm yok. Başlamak için yeni bir bölüm ekle.
             </div>
           ) : null}
         </div>
@@ -742,19 +810,12 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
           <Plus className="h-3.5 w-3.5" />Bölüm Ekle
         </button>
         <button type="button" disabled={!activePage || busy} onClick={() => setPresetOpen(true)} className="sd-secondary-button mt-1.5 flex h-9 w-full items-center justify-center gap-1.5 rounded-lg border border-black/10 bg-white text-[12px] font-semibold hover:bg-black/[0.03] disabled:opacity-40">
-          <Library className="h-3.5 w-3.5" />Presetler ({Object.keys(document.presets).length})
+          <Library className="h-3.5 w-3.5" />Hazır Düzenler ({Object.keys(document.presets).length})
         </button>
 
         <div className="sd-global-row mt-1.5 rounded-lg bg-black/[0.025] px-2.5 py-2 text-[12px] font-medium">
-          <div className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-black/30" />Footer <span className="ml-auto text-[7px] text-black/30">Global</span></div>
+          <div className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-black/30" />Alt Bilgi <span className="ml-auto text-[10px] text-black/40">Tüm site</span></div>
         </div>
-      </section>
-
-      <section className="p-3">
-        <p className="text-[12px] font-semibold text-black/45">BÖLÜM KÜTÜPHANESİ</p>
-        <p className="mt-1 text-[11px] leading-4 text-black/35">
-          {SECTION_LIBRARY.filter((item) => item.compatiblePages.includes(compatibility)).length} uyumlu registry kaydı var. Kod bileşeni hazır olmayan tipler DOM üretmeden geliştirici etiketiyle tutulur.
-        </p>
       </section>
 
       {pickerOpen ? <SectionPicker compatibility={compatibility} onAdd={(definition) => void addSection(definition)} onClose={() => setPickerOpen(false)} /> : null}
