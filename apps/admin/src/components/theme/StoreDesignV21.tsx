@@ -645,7 +645,7 @@ export function StoreDesignV21() {
 
       const first = focusable[0]!;
       const last = focusable[focusable.length - 1]!;
-      const active = document.activeElement;
+      const active = window.document.activeElement;
       if (event.shiftKey && (active === first || active === contextMenuRef.current)) {
         event.preventDefault();
         last.focus({ preventScroll: true });
