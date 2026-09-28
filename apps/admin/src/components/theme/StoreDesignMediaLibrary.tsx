@@ -23,7 +23,7 @@ type Props = {
   document: ThemeDocument;
   onApply: (next: ThemeDocument, label: string) => Promise<void>;
   onClose: () => void;
-  onSelect?: (assetId: string) => void;
+  onSelect?: (assetId: string, asset?: MediaAsset) => void;
   selectedAssetId?: string;
   mediaType?: "image" | "video" | "any";
 };
@@ -182,7 +182,7 @@ export function StoreDesignMediaLibrary({
       setDetailId(assetId);
       setFocal({ x: 50, y: 50 });
       toast.success("Medya yüklendi.");
-      if (onSelect) onSelect(assetId);
+      if (onSelect) onSelect(assetId, next.media[assetId]);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Medya yüklenemedi.");
     } finally {
@@ -295,7 +295,7 @@ export function StoreDesignMediaLibrary({
                     onClick={() => {
                       setDetailId(asset.assetId);
                       setFocal(asset.focalPoint || { x: 50, y: 50 });
-                      if (onSelect) onSelect(asset.assetId);
+                      if (onSelect) onSelect(asset.assetId, asset);
                     }}
                     className={`sd-media-card overflow-hidden rounded-xl border text-left transition ${active ? "border-black/35 ring-1 ring-black/10" : "border-black/[0.08] hover:border-black/20"}`}
                   >
