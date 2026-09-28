@@ -1576,16 +1576,16 @@ export function StoreDesignV21() {
                           </label>
                           <div className="grid grid-cols-2 gap-2">
                             <label className="grid gap-1.5 text-[8px] text-black/45">
-                              Kabul butonu
+                              Kabul düğmesi
                               <input value={consentSetting("acceptLabel", "Kabul et")} onChange={(event) => applyInspectorPatch("acceptLabel", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none" />
                             </label>
                             <label className="grid gap-1.5 text-[8px] text-black/45">
-                              Red butonu
+                              Ret düğmesi
                               <input value={consentSetting("rejectLabel", "Reddet")} onChange={(event) => applyInspectorPatch("rejectLabel", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none" />
                             </label>
                           </div>
                           <label className="grid gap-1.5 text-[8px] text-black/45">
-                            Gizlilik link metni
+                            Gizlilik bağlantısı metni
                             <input value={consentSetting("privacyLabel", "Gizlilik ve çerezler")} onChange={(event) => applyInspectorPatch("privacyLabel", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none" />
                           </label>
                           <label className="grid gap-1.5 text-[8px] text-black/45">
