@@ -75,9 +75,9 @@ export function ProductBundleSection({ current, settings }: Props) {
         </div>
         <div className="store-design-bundle__list" data-product-browser-ignore>
           {items.map((item) => {
-            const price = Number(item.price || 0);
+            const displayPrice = Number(item.price || 0);
             const compareAt = Number(item.compare_at_price || 0);
-            const hasDiscount = Number.isFinite(compareAt) && compareAt > price && price > 0;
+            const hasDiscount = Number.isFinite(compareAt) && compareAt > displayPrice && displayPrice > 0;
             return (
               <Link
                 key={item.id}
@@ -93,7 +93,7 @@ export function ProductBundleSection({ current, settings }: Props) {
                   <strong>{item.name}</strong>
                   <div className="store-design-bundle__price">
                     {hasDiscount ? <del>{formatPrice(compareAt, item.currency || "TRY")}</del> : null}
-                    <span>{formatPrice(price, item.currency || "TRY")}</span>
+                    <span>{formatPrice(displayPrice, item.currency || "TRY")}</span>
                   </div>
                   <span className="store-design-bundle__cta">{item.stock_status === "out_of_stock" ? "Paketi Gör" : cta}</span>
                 </div>
