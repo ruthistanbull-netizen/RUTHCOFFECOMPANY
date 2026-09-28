@@ -185,6 +185,9 @@ for (const token of ["StoreDesignPresetLibrary", "StoreDesignBlockSectionEditor"
   if (!sectionManager.includes(token)) fail(`Section Manager V2.1 eksik: ${token}`);
 }
 
+const activeThemeViewport = read("apps/admin/src/components/theme/ThemePreviewViewport.tsx");
+if (!activeThemeViewport.includes("StoreDesignV21")) fail("Aktif Mağaza Tasarımı sayfası V2.1 çalışma alanını kullanmıyor.");
+
 const storeDesignShell = read("apps/admin/src/components/theme/StoreDesignV21.tsx");
 for (const token of [
   'selected.type === "consent-banner"',
@@ -973,6 +976,28 @@ for (const token of [
   "@media (min-width:768px) and (max-width:1199px)",
 ]) {
   if (!adminStoreDesignCss.includes(token)) fail(`V4.1 responsive/erişilebilirlik stili eksik: ${token}`);
+}
+
+for (const token of [
+  "contextTargetsWholeSection",
+  "Üst bölüm işlemleri",
+  "Üst bölümü çoğalt",
+  "Üst bölümü kaldır",
+  "Görünürlük değişikliği bağlı olan tüm yerleri etkiler",
+]) {
+  if (!storeDesignShell.includes(token)) fail(`V4.1 sağ tık üst-bölüm güvenliği eksik: ${token}`);
+}
+
+for (const forbidden of [
+  "GLOBAL CONSENT",
+  "Kabul butonu",
+  "Red butonu",
+  "Media Library",
+  "Anchor ID",
+]) {
+  if (storeDesignShell.includes(forbidden) || genericEditor.includes(forbidden)) {
+    fail(`Kullanıcı arayüzünde eski teknik/İngilizce ifade kaldı: ${forbidden}`);
+  }
 }
 
 note("V4.1 mobil kabuk, hızlı düzenleme, erişilebilirlik ve responsive kabul korumaları tarandı.");
