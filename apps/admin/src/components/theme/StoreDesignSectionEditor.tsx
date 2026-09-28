@@ -48,6 +48,14 @@ function booleanValue(value: unknown, fallback: boolean) {
   return typeof value === "boolean" ? value : fallback;
 }
 
+function mediaLabel(asset: ThemeDocument["media"][string]) {
+  const date = asset.createdAt ? new Date(asset.createdAt) : null;
+  const readableDate = date && !Number.isNaN(date.getTime())
+    ? date.toLocaleString("tr-TR", { dateStyle: "short", timeStyle: "short" })
+    : null;
+  return readableDate ? `Görsel · ${readableDate}` : `Görsel · Sürüm ${asset.version || 1}`;
+}
+
 type FaqDraftItem = { id: string; question: string; answer: string };
 
 function uid(prefix: string) {
@@ -301,7 +309,7 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
 
               <div className="grid gap-4 md:grid-cols-2">
                 <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
-                  CTA metni
+                  Düğme metni
                   <input value={textValue(settings.linkLabel)} onChange={(event) => set("linkLabel", event.target.value)} className="h-10 rounded-lg border border-black/10 px-3 text-[10px] outline-none" />
                 </label>
                 <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
@@ -316,9 +324,9 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
                     Afiş medyası
                     <select value={textValue(settings.imageAssetId)} onChange={(event) => set("imageAssetId", event.target.value || undefined)} className="h-10 rounded-lg border border-black/10 bg-white px-3 text-[10px] outline-none">
                       <option value="">Medya seçilmedi</option>
-                      {imageAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.assetId} · v{asset.version || 1}</option>)}
+                      {imageAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{mediaLabel(asset)}</option>)}
                     </select>
-                    <span className="text-[8px] font-normal leading-4 text-black/35">Yeni dosya yüklemek veya mobil varyant/focal point belirlemek için üstteki Medya kütüphanesini kullan.</span>
+                    <span className="text-[8px] font-normal leading-4 text-black/35">Yeni dosya yüklemek veya mobil görsel ve odak noktası belirlemek için Medya Arşivi'ni kullan.</span>
                   </label>
                   {textValue(settings.imageAssetId) && document.media[textValue(settings.imageAssetId)]?.url ? (
                     <img src={document.media[textValue(settings.imageAssetId)]!.url} alt="" className="h-36 w-full rounded-xl border border-black/[0.08] object-cover" />
