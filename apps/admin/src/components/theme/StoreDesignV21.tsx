@@ -910,7 +910,7 @@ export function StoreDesignV21() {
       : [...mobileLeaves.keys()];
 
     if (!paths.length) {
-      toast.error(mode === "copy-desktop" ? "Kopyalanacak masaüstü ayarı yok." : "Kaldırılacak mobil override yok.");
+      toast.error(mode === "copy-desktop" ? "Kopyalanacak masaüstü ayarı yok." : "Kaldırılacak özel mobil ayar yok.");
       return;
     }
 
