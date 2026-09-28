@@ -547,17 +547,17 @@ const block = (
 });
 
 export const BLOCK_LIBRARY: BlockDefinition[] = [
-  block("faq-item", "FAQ Öğesi", ["faq"], ["question", "answer"], true),
+  block("faq-item", "Sık Sorulan Soru", ["faq"], ["question", "answer"], true),
   block("slide", "Slayt", ["slideshow"], ["media", "title", "body", "cta"], true),
-  block("scroll-story-slide", "Scroll Story Slide", ["scroll-story"], ["assetId", "title", "body", "href"], true),
+  block("scroll-story-slide", "Kaydırmalı Hikâye Öğesi", ["scroll-story"], ["assetId", "title", "body", "href"], true),
   block("media", "Medya", ["gallery-grid", "masonry-gallery", "collage"], ["assetId", "alt", "link"], true),
-  block("rich-text", "Metin Bloğu", ["image-text-split", "video-text-split"], ["heading", "body", "cta"], true),
-  block("hotspot", "Hotspot", ["hotspot-lookbook"], ["x", "y", "targetType", "targetId"], true),
+  block("rich-text", "Metin Alanı", ["image-text-split", "video-text-split"], ["heading", "body", "cta"], true),
+  block("hotspot", "Etkileşim Noktası", ["hotspot-lookbook"], ["x", "y", "targetType", "targetId"], true),
   block("logo", "Logo", ["logo-cloud"], ["assetId", "alt", "link"], true),
   block("content", "İçerik", ["background-media", "grid-stack-builder"], ["eyebrow", "heading", "body", "linkLabel", "linkHref", "align", "maxWidth"], true),
-  block("text-column", "Metin Kolonu", ["text-columns"], ["heading", "body"], true),
+  block("text-column", "Metin Sütunu", ["text-columns"], ["heading", "body"], true),
   block("stat", "İstatistik", ["stats"], ["value", "label"], true),
-  block("timeline-item", "Timeline Öğesi", ["timeline"], ["date", "heading", "body"], true),
+  block("timeline-item", "Zaman Çizelgesi Öğesi", ["timeline"], ["date", "heading", "body"], true),
   block("feature", "Özellik", ["feature-grid"], ["icon", "heading", "body"], true),
   block("trust-item", "Güven Öğesi", ["trust-badges"], ["icon", "heading", "body"], true),
   block("testimonial", "Müşteri Yorumu", ["testimonials"], ["quote", "name", "meta"], true),
@@ -565,7 +565,7 @@ export const BLOCK_LIBRARY: BlockDefinition[] = [
   block("award", "Basın / Ödül", ["press-awards"], ["assetId", "label", "link"], true),
   block("member", "Ekip Üyesi", ["team"], ["assetId", "name", "role", "bio"], true),
   block("announcement", "Duyuru", ["announcement-bar"], ["text", "linkLabel", "linkHref"], true),
-  block("ticker-item", "Ticker Öğesi", ["marquee"], ["text", "link"], true),
+  block("ticker-item", "Kayan Yazı Öğesi", ["marquee"], ["text", "link"], true),
   block("field", "Form Alanı", ["custom-form"], ["name", "label", "type", "required", "placeholder", "options"], true),
   block("location", "Mağaza / Konum", ["map-locator"], ["name", "address", "city", "phone", "hours"], true),
 ];
