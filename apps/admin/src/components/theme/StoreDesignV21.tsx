@@ -1973,6 +1973,14 @@ export function StoreDesignV21() {
 
                     {selected.controlGroups.includes("media") && selected.current.media ? (
                       <div className="grid gap-3">
+                        <button
+                          type="button"
+                          onClick={openQuickMediaPicker}
+                          className="sd-secondary-button flex min-h-10 items-center justify-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold"
+                        >
+                          <Images className="h-4 w-4" />
+                          {selected.current.media.kind === "video" ? "Videoyu değiştir" : "Görseli değiştir"}
+                        </button>
                         <label className="grid gap-1.5 text-[8px] text-black/45">
                           Medya sığdırma
                           <select value={selected.current.media.objectFit || "cover"} onChange={(event) => applyInspectorPatch("media.objectFit", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none">
