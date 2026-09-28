@@ -87,8 +87,8 @@ function uniqueSlug(document: ThemeDocument, seed: string, exceptPageId?: string
   return `${base}-${Date.now().toString(36)}`;
 }
 
-function cloneŞablonTree(document: ThemeDocument, sourceŞablonId: string, nextPageId: string) {
-  const source = document.templates[sourceŞablonId];
+function cloneTemplateTree(document: ThemeDocument, sourceTemplateId: string, nextPageId: string) {
+  const source = document.templates[sourceTemplateId];
   const templateId = `page:${nextPageId}`;
   if (!source) {
     return {
@@ -160,7 +160,7 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
   const [form, setForm] = useState<FormState>(() => initialForm(document, editingPage));
   const [busy, setBusy] = useState(false);
 
-  const compatibleŞablons = useMemo(() => (
+  const compatibleTemplates = useMemo(() => (
     Object.values(document.templates).filter((template) => template.compatibility.includes(form.compatibility))
   ), [document.templates, form.compatibility]);
 
@@ -287,7 +287,7 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
       const pageId = id("page");
       const slug = uniqueSlug(next, `${editingPage.slug}-kopya`);
       const route = customPageRoute(slug);
-      const cloned = cloneŞablonTree(next, editingPage.templateId, pageId);
+      const cloned = cloneTemplateTree(next, editingPage.templateId, pageId);
       next.templates = cloned.templates;
       next.sections = cloned.sections;
       next.blocks = cloned.blocks;
@@ -397,7 +397,7 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
               Şablon
               <select value={form.templateId} onChange={(event) => set("templateId", event.target.value)} className="h-10 rounded-lg border border-black/10 bg-white px-3 text-[10px] font-medium text-black outline-none">
                 <option value="__new__">Yeni boş şablon</option>
-                {compatibleŞablons.map((template) => <option key={template.id} value={template.id}>{template.label}</option>)}
+                {compatibleTemplates.map((template) => <option key={template.id} value={template.id}>{template.label}</option>)}
               </select>
             </label>
           </div>
