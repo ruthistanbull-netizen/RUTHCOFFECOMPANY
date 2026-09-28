@@ -669,7 +669,16 @@ export function StoreDesignV21() {
     if (!contextMenu) return;
 
     const focusFrame = window.requestAnimationFrame(() => {
-      contextMenuRef.current?.focus({ preventScroll: true });
+      const menu = contextMenuRef.current;
+      if (!menu) return;
+
+      const bounds = menu.getBoundingClientRect();
+      const nextX = Math.max(12, Math.min(contextMenu.x, window.innerWidth - bounds.width - 12));
+      const nextY = Math.max(68, Math.min(contextMenu.y, window.innerHeight - bounds.height - 12));
+      if (Math.abs(nextX - contextMenu.x) > 0.5 || Math.abs(nextY - contextMenu.y) > 0.5) {
+        setContextMenu((current) => current ? { ...current, x: nextX, y: nextY } : current);
+      }
+      menu.focus({ preventScroll: true });
     });
 
     const close = (event: PointerEvent) => {
