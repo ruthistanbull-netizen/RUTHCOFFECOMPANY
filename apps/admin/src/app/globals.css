@@ -1071,6 +1071,19 @@ body {
     height:140px!important;
   }
 
+  [data-store-design-v2-admin] .sd-inspector[data-sheet-level="peek"] .sd-mobile-peek-summary{
+    display:flex!important;
+    scrollbar-width:none;
+  }
+
+  [data-store-design-v2-admin] .sd-inspector[data-sheet-level="peek"] .sd-mobile-peek-summary::-webkit-scrollbar{
+    display:none;
+  }
+
+  [data-store-design-v2-admin] .sd-inspector[data-sheet-level="peek"] .sd-mobile-sheet-levels{
+    display:none!important;
+  }
+
   [data-store-design-v2-admin] .sd-inspector[data-sheet-level="peek"] .sd-inspector-body,
   [data-store-design-v2-admin] .sd-inspector[data-sheet-level="peek"] .sd-inspector-footer{
     display:none!important;
