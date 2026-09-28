@@ -483,6 +483,21 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
       select(target);
     };
 
+    const onKeyDown = (event: KeyboardEvent) => {
+      const wantsQuickMenu = event.key === "ContextMenu" || (event.shiftKey && event.key === "F10");
+      if (!wantsQuickMenu) return;
+      const target = targetFromEvent(event) || targetFrom(document.activeElement);
+      if (!target) return;
+      event.preventDefault();
+      event.stopPropagation();
+      const rect = target.element.getBoundingClientRect();
+      select(target, {
+        x: Math.max(8, Math.min(window.innerWidth - 8, rect.left + Math.min(rect.width / 2, 48))),
+        y: Math.max(8, Math.min(window.innerHeight - 8, rect.top + Math.min(rect.height / 2, 48))),
+        kind: "mouse",
+      });
+    };
+
     let longPressTimer = 0;
     let suppressClickUntil = 0;
     let pressTarget: SemanticTarget | null = null;
@@ -621,6 +636,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
 
     document.addEventListener("contextmenu", onContextMenu, true);
     document.addEventListener("click", onClick, true);
+    document.addEventListener("keydown", onKeyDown, true);
     document.addEventListener("touchstart", onTouchStart, { capture: true, passive: true });
     document.addEventListener("touchmove", onTouchMove, { capture: true, passive: true });
     document.addEventListener("touchend", onTouchEnd, true);
@@ -636,6 +652,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
       clearPress();
       document.removeEventListener("contextmenu", onContextMenu, true);
       document.removeEventListener("click", onClick, true);
+      document.removeEventListener("keydown", onKeyDown, true);
       document.removeEventListener("touchstart", onTouchStart, true);
       document.removeEventListener("touchmove", onTouchMove, true);
       document.removeEventListener("touchend", onTouchEnd, true);
