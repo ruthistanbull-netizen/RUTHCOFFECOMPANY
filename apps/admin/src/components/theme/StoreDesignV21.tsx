@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Check,
   ChevronDown,
   CircleDot,
   History,
@@ -464,6 +465,7 @@ export function StoreDesignV21() {
   const [connected, setConnected] = useState(false);
   const [lastHeartbeat, setLastHeartbeat] = useState(0);
   const [saving, setSaving] = useState<"draft" | "publish" | null>(null);
+  const [saveFeedback, setSaveFeedback] = useState<"draft" | "publish" | null>(null);
   const [leftOpen, setLeftOpen] = useState(true);
   const [rightOpen, setRightOpen] = useState(true);
   const [pageManagerMode, setPageManagerMode] = useState<"create" | "edit" | null>(null);
@@ -922,6 +924,7 @@ export function StoreDesignV21() {
       return;
     }
 
+    setSaveFeedback(null);
     setSaving(mode);
     try {
       const result = await adminRequest<{ document?: unknown; revalidate?: { ok?: boolean; message?: string } }>("/api/store-design-v2", {
@@ -938,7 +941,12 @@ export function StoreDesignV21() {
         setPublishIssues(null);
       }
       toast.success(mode === "publish" ? "Mağaza tasarımı yayınlandı." : "Taslak kaydedildi.");
+      setSaveFeedback(mode);
+      window.setTimeout(() => {
+        setSaveFeedback((current) => current === mode ? null : current);
+      }, 1_400);
     } catch (error) {
+      setSaveFeedback(null);
       toast.error(error instanceof Error ? error.message : "Mağaza tasarımı kaydedilemedi.");
     } finally {
       setSaving(null);
@@ -1006,11 +1014,13 @@ export function StoreDesignV21() {
         <button type="button" onClick={() => setMediaOpen(true)} className="sd-toolbar-button hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] lg:flex">
           <Images className="h-3.5 w-3.5" />Medya
         </button>
-        <button type="button" disabled={saving !== null} onClick={() => void save("draft")} className="sd-toolbar-button hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] disabled:opacity-50 sm:flex">
-          <Save className="h-3.5 w-3.5" />{saving === "draft" ? "Kaydediliyor…" : "Taslağı Kaydet"}
+        <button type="button" data-save-state={saving === "draft" ? "loading" : saveFeedback === "draft" ? "success" : "idle"} disabled={saving !== null} onClick={() => void save("draft")} className="sd-toolbar-button sd-save-button hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] disabled:opacity-50 sm:flex">
+          {saving === "draft" ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : saveFeedback === "draft" ? <Check className="h-3.5 w-3.5" /> : <Save className="h-3.5 w-3.5" />}
+          <span>{saving === "draft" ? "Kaydediliyor…" : saveFeedback === "draft" ? "Kaydedildi" : "Taslağı Kaydet"}</span>
         </button>
-        <button type="button" disabled={saving !== null} onClick={() => void save("publish")} className="sd-primary-button flex h-9 items-center gap-2 rounded-lg bg-[#111] px-3 text-[9px] font-semibold text-white disabled:opacity-50">
-          <Send className="h-3.5 w-3.5" />{saving === "publish" ? "Yayınlanıyor…" : "Yayınla"}
+        <button type="button" data-save-state={saving === "publish" ? "loading" : saveFeedback === "publish" ? "success" : "idle"} disabled={saving !== null} onClick={() => void save("publish")} className="sd-primary-button sd-save-button flex h-9 items-center gap-2 rounded-lg bg-[#111] px-3 text-[9px] font-semibold text-white disabled:opacity-50">
+          {saving === "publish" ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : saveFeedback === "publish" ? <Check className="h-3.5 w-3.5" /> : <Send className="h-3.5 w-3.5" />}
+          <span>{saving === "publish" ? "Yayınlanıyor…" : saveFeedback === "publish" ? "Yayınlandı" : "Yayınla"}</span>
         </button>
         <button type="button" onClick={() => setRightOpen((value) => !value)} className="sd-icon-button grid h-9 w-9 place-items-center rounded-lg border border-black/10 hover:bg-black/[0.03]" aria-label="Sağ panel">
           <PanelRight className="h-4 w-4" />
@@ -1018,8 +1028,7 @@ export function StoreDesignV21() {
       </header>
 
       <div className="flex min-h-0 flex-1">
-        {leftOpen ? (
-          <aside className="sd-sidebar sd-sidebar-left flex w-[292px] shrink-0 flex-col border-r border-black/10 bg-white max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:top-[58px] max-lg:z-20 max-lg:shadow-2xl">
+        <aside data-open={leftOpen ? "true" : "false"} aria-hidden={!leftOpen} className={`sd-sidebar sd-sidebar-left ${leftOpen ? "is-open" : "is-closed"} flex w-[292px] shrink-0 flex-col border-r border-black/10 bg-white max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:top-[58px] max-lg:z-20 max-lg:shadow-2xl`}>
             <div className="border-b border-black/[0.07] p-3">
               <div className="flex items-center justify-between gap-2">
                 <label className="block text-[9px] font-semibold text-black/45">SAYFA</label>
@@ -1056,7 +1065,6 @@ export function StoreDesignV21() {
               />
             </div>
           </aside>
-        ) : null}
 
         <main className="sd-preview-stage relative flex min-w-0 flex-1 items-center justify-center overflow-auto p-3 md:p-6">
           <div className={`sd-preview-shell relative shrink-0 overflow-hidden bg-white shadow-[0_18px_60px_rgba(15,23,42,.14)] transition-[width,height,border-radius] duration-300 ${device === "mobile" ? "h-[780px] w-[390px] rounded-[44px] border-[9px] border-[#111]" : "h-[calc(100dvh-106px)] min-h-[620px] w-[min(1180px,calc(100vw-120px))] rounded-xl border border-black/10"}`}>
@@ -1074,8 +1082,7 @@ export function StoreDesignV21() {
           </div>
         </main>
 
-        {rightOpen ? (
-          <aside className="sd-sidebar sd-inspector flex w-[320px] shrink-0 flex-col border-l border-black/10 bg-white max-xl:absolute max-xl:bottom-0 max-xl:right-0 max-xl:top-[58px] max-xl:z-20 max-xl:shadow-2xl">
+        <aside data-open={rightOpen ? "true" : "false"} aria-hidden={!rightOpen} className={`sd-sidebar sd-inspector ${rightOpen ? "is-open" : "is-closed"} flex w-[320px] shrink-0 flex-col border-l border-black/10 bg-white max-xl:absolute max-xl:bottom-0 max-xl:right-0 max-xl:top-[58px] max-xl:z-20 max-xl:shadow-2xl`}>
             <div className="border-b border-black/[0.07] p-3">
               <p className="text-[9px] font-semibold text-black/45">SEMANTİK HEDEF</p>
               {selected ? (
@@ -1366,7 +1373,7 @@ export function StoreDesignV21() {
               </p>
             </div>
           </aside>
-        ) : null}
+
       </div>
 
       {publishIssues !== null ? (
