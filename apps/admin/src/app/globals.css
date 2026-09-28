@@ -696,3 +696,21 @@ body {
   from{opacity:0;transform:translateY(8px) scale(.985)}
   to{opacity:1;transform:translateY(0) scale(1)}
 }
+
+
+/* Store Design modal exit motion. */
+[data-store-design-v2-admin] .sd-modal-backdrop[data-closing="true"]{
+  pointer-events:none;
+  animation:sd-backdrop-out 180ms var(--sd-ease-system) both!important;
+}
+[data-store-design-v2-admin] .sd-modal-backdrop[data-closing="true"] .sd-modal-card{
+  animation:sd-dialog-out 180ms var(--sd-ease-system) both!important;
+}
+@keyframes sd-backdrop-out{
+  from{opacity:1}
+  to{opacity:0}
+}
+@keyframes sd-dialog-out{
+  from{opacity:1;transform:translateY(0) scale(1)}
+  to{opacity:0;transform:translateY(6px) scale(.988)}
+}
