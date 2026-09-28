@@ -10,6 +10,7 @@ import {
   type ThemeDocument,
 } from "@ruth-commerce/commerce-core/store-design-v2";
 import { useExactToast } from "@/components/base44-exact/primitives";
+import { useStoreDesignDialogExit } from "@/components/theme/useStoreDesignDialogExit";
 
 type Props = {
   document: ThemeDocument;
@@ -33,6 +34,8 @@ function redirectUsageLabel(item: RedirectRecord) {
 }
 
 export function StoreDesignRedirectManager({ document, onApply, onClose }: Props) {
+
+  const { closing, requestClose } = useStoreDesignDialogExit(onClose);
   const toast = useExactToast();
   const [source, setSource] = useState("");
   const [target, setTarget] = useState("");
@@ -136,14 +139,14 @@ export function StoreDesignRedirectManager({ document, onApply, onClose }: Props
   const flattenedPreview = useMemo(() => flattenThemeRedirects(document.redirects), [document.redirects]);
 
   return (
-    <div className="sd-modal-backdrop fixed inset-0 z-[2147483620] grid place-items-center bg-black/35 p-3 backdrop-blur-sm">
+    <div data-closing={closing ? "true" : "false"} className="sd-modal-backdrop fixed inset-0 z-[2147483620] grid place-items-center bg-black/35 p-3 backdrop-blur-sm">
       <div className="sd-modal-card flex h-[min(820px,94dvh)] w-full max-w-[940px] flex-col overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl">
         <header className="flex h-14 shrink-0 items-center gap-3 border-b border-black/10 px-4">
           <div className="min-w-0 flex-1">
             <p className="text-[12px] font-semibold">URL Yönlendirmeleri</p>
             <p className="mt-0.5 text-[8px] text-black/40">301/302 kayıtları ThemeDocument içinde tutulur; publish sırasında chain flatten edilir.</p>
           </div>
-          <button type="button" onClick={onClose} className="grid h-9 w-9 place-items-center rounded-lg hover:bg-black/[0.04]" aria-label="Kapat"><X className="h-4 w-4" /></button>
+          <button type="button" onClick={requestClose} className="grid h-9 w-9 place-items-center rounded-lg hover:bg-black/[0.04]" aria-label="Kapat"><X className="h-4 w-4" /></button>
         </header>
 
         <div className="grid shrink-0 gap-2 border-b border-black/[0.07] bg-[#fafafa] p-3 md:grid-cols-[1fr_auto_1fr_100px_auto]">
