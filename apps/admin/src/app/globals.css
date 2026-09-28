@@ -1170,3 +1170,39 @@ body {
 [data-store-design-v2-admin] .sd-context-close{
   color:var(--sd-text-2)!important;
 }
+
+
+/* Store Design v4.1 — desktop readability + mobile edit guidance. */
+[data-store-design-v2-admin] .sd-edit-mode-chip{
+  background:color-mix(in srgb,var(--sd-surface-1) 92%,transparent);
+  color:var(--sd-text-1);
+  border:1px solid color-mix(in srgb,var(--sd-accent) 42%,var(--sd-border));
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  animation:sd-context-menu-in var(--sd-motion-fast) var(--sd-ease-enter) both;
+}
+@media (min-width:768px){
+  [data-store-design-v2-admin] .sd-toolbar [class*="text-[8px]"]{font-size:10px!important;line-height:1.35!important}
+  [data-store-design-v2-admin] .sd-toolbar [class*="text-[9px]"]{font-size:11px!important;line-height:1.35!important}
+  [data-store-design-v2-admin] .sd-sidebar-left [class*="text-[8px]"]{font-size:10px!important;line-height:1.4!important}
+  [data-store-design-v2-admin] .sd-sidebar-left [class*="text-[9px]"]{font-size:11px!important;line-height:1.4!important}
+  [data-store-design-v2-admin] .sd-sidebar-left [class*="text-[10px]"]{font-size:11px!important;line-height:1.4!important}
+  [data-store-design-v2-admin] .sd-inspector [class*="text-[7px]"]{font-size:9px!important;line-height:1.4!important}
+  [data-store-design-v2-admin] .sd-inspector [class*="text-[8px]"]{font-size:10px!important;line-height:1.45!important}
+  [data-store-design-v2-admin] .sd-inspector [class*="text-[9px]"]{font-size:11px!important;line-height:1.45!important}
+  [data-store-design-v2-admin] .sd-inspector [class*="text-[10px]"]{font-size:12px!important;line-height:1.45!important}
+  [data-store-design-v2-admin] .sd-inspector input,
+  [data-store-design-v2-admin] .sd-inspector select,
+  [data-store-design-v2-admin] .sd-inspector textarea,
+  [data-store-design-v2-admin] .sd-inspector button{
+    font-size:11px!important;
+  }
+}
+@media (max-width:767px){
+  [data-store-design-v2-admin] .sd-desktop-mode-toggle{display:none!important}
+  [data-store-design-v2-admin] .sd-edit-mode-chip{
+    top:10px!important;
+    max-width:calc(100vw - 32px);
+    white-space:nowrap;
+  }
+}
