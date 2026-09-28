@@ -1216,6 +1216,70 @@ export function StoreDesignV21() {
     applyPatchValue(selected, scope, device, path, value);
   };
 
+  const openQuickMediaPicker = () => {
+    if (!selected || !activePage || !selected.current.media) return;
+    setQuickMediaEdit({
+      target: selected,
+      scope,
+      device,
+      page: activePage,
+      mediaType: selected.current.media.kind === "video" ? "video" : "image",
+    });
+    setContextMenu(null);
+    setMediaOpen(true);
+  };
+
+  const applyQuickMediaSource = (source: string) => {
+    const edit = quickMediaEdit;
+    const value = source.trim();
+    if (!edit || !value) return;
+
+    const before = snapshotValue(edit.target, "media.src") || "";
+    if (before === value) {
+      setMediaOpen(false);
+      setQuickMediaEdit(null);
+      return;
+    }
+
+    const revision = revisionRef.current + 1;
+    revisionRef.current = revision;
+    setDocument((current) => persistSemanticPatch(
+      current,
+      edit.target,
+      edit.scope,
+      edit.device,
+      edit.page,
+      "media.src",
+      value,
+      revision,
+    ));
+    setSelected((current) => current?.id === edit.target.id
+      ? updateTargetSnapshot(current, "media.src", value)
+      : current);
+    setHistory((items) => [...items.slice(-79), {
+      kind: "semantic",
+      target: edit.target,
+      scope: edit.scope,
+      device: edit.device,
+      path: "media.src",
+      before,
+      after: value,
+    }]);
+    setFuture([]);
+    postToPreview({
+      type: STORE_DESIGN_MESSAGES.PATCH,
+      targetId: edit.target.id,
+      path: "media.src",
+      value,
+      revision,
+      scope: edit.scope,
+      device: edit.device,
+    });
+    setMediaOpen(false);
+    setQuickMediaEdit(null);
+    toast.success(edit.mediaType === "video" ? "Video değiştirildi." : "Görsel değiştirildi.");
+  };
+
   const resetQuickOverrides = () => {
     if (!selected || !activePage) return;
 
@@ -1529,7 +1593,7 @@ export function StoreDesignV21() {
         <button type="button" onClick={() => setTemplateManagerOpen(true)} className="sd-toolbar-secondary sd-toolbar-button hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] lg:flex">
           <LayoutTemplate className="h-3.5 w-3.5" />Şablon
         </button>
-        <button type="button" onClick={() => setMediaOpen(true)} className="sd-toolbar-secondary sd-toolbar-button hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] lg:flex">
+        <button type="button" onClick={() => { setQuickMediaEdit(null); setMediaOpen(true); }} className="sd-toolbar-secondary sd-toolbar-button hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] lg:flex">
           <Images className="h-3.5 w-3.5" />Medya
         </button>
         <button type="button" data-save-state={saving === "draft" ? "loading" : saveFeedback === "draft" ? "success" : "idle"} disabled={saving !== null} onClick={() => void save("draft")} className="sd-toolbar-button sd-save-button hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] disabled:opacity-50 sm:flex">
@@ -1550,7 +1614,7 @@ export function StoreDesignV21() {
           </button>
           {mobileMoreOpen ? (
             <div ref={mobileMoreMenuRef} role="menu" aria-label="Diğer araçlar" className="sd-mobile-more-menu absolute right-0 top-12 z-50 w-56 rounded-2xl border border-black/10 bg-white p-2 shadow-2xl">
-              <button role="menuitem" type="button" onClick={() => { setMobileMoreOpen(false); setMediaOpen(true); }} className="sd-mobile-menu-row"><Images className="h-4 w-4" />Medya Arşivi</button>
+              <button role="menuitem" type="button" onClick={() => { setMobileMoreOpen(false); setQuickMediaEdit(null); setMediaOpen(true); }} className="sd-mobile-menu-row"><Images className="h-4 w-4" />Medya Arşivi</button>
               <button role="menuitem" type="button" onClick={() => { setMobileMoreOpen(false); setTemplateManagerOpen(true); }} className="sd-mobile-menu-row"><LayoutTemplate className="h-4 w-4" />Şablonlar</button>
               <button role="menuitem" type="button" onClick={() => { setMobileMoreOpen(false); setRedirectManagerOpen(true); }} className="sd-mobile-menu-row"><Link2 className="h-4 w-4" />Yönlendirmeler</button>
               <button role="menuitem" type="button" onClick={() => { setMobileMoreOpen(false); setSnapshotManagerOpen(true); }} className="sd-mobile-menu-row"><History className="h-4 w-4" />Geçmiş</button>
@@ -2157,6 +2221,14 @@ export function StoreDesignV21() {
 
                 {contextMenu.target.type !== "product-card" && contextMenu.target.controlGroups.includes("media") && selected?.current.media ? (
                   <>
+                    <button
+                      type="button"
+                      onClick={openQuickMediaPicker}
+                      className="sd-secondary-button flex h-10 items-center justify-center gap-2 rounded-xl border border-black/10 bg-white px-3 text-[11px] font-semibold"
+                    >
+                      <Images className="h-4 w-4" />
+                      {selected.current.media.kind === "video" ? "Videoyu değiştir" : "Görseli değiştir"}
+                    </button>
                     <label className="grid gap-1 text-[11px] text-black/50">
                       Görsel yerleşimi
                       <select
@@ -2318,7 +2390,11 @@ export function StoreDesignV21() {
         <StoreDesignMediaLibrary
           document={document}
           onApply={applyMediaDocument}
-          onClose={() => setMediaOpen(false)}
+          onClose={() => { setMediaOpen(false); setQuickMediaEdit(null); }}
+          mediaType={quickMediaEdit?.mediaType || "any"}
+          onSelect={quickMediaEdit ? (_assetId, asset) => {
+            if (asset?.url) applyQuickMediaSource(asset.url);
+          } : undefined}
         />
       ) : null}
 
