@@ -70,7 +70,7 @@ export function StoreDesignPublishReport({ issues, onCancel, onPublish, publishi
         <header className="flex h-14 shrink-0 items-center gap-3 border-b border-black/10 px-4">
           <div className="min-w-0 flex-1">
             <p className="text-[12px] font-semibold">Yayınlama Öncesi Kontrol</p>
-            <p className="mt-0.5 text-[8px] text-black/40">Sayfa, şablon, bölüm, blok, medya ve bağlantılar denetlendi.</p>
+            <p className="mt-0.5 text-[8px] text-black/40">Sayfa, şablon, bölüm, içerik öğesi, medya ve bağlantılar denetlendi.</p>
           </div>
           <button type="button" onClick={requestClose} disabled={publishing} className="grid h-9 w-9 place-items-center rounded-lg hover:bg-black/[0.04] disabled:opacity-40" aria-label="Kapat">
             <X className="h-4 w-4" />
