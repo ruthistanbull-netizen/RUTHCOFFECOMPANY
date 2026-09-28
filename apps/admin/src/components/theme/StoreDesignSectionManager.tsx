@@ -39,6 +39,7 @@ import {
 } from "@/components/theme/StoreDesignSectionEditor";
 import { StoreDesignBlockSectionEditor } from "@/components/theme/StoreDesignBlockSectionEditor";
 import { StoreDesignPresetLibrary } from "@/components/theme/StoreDesignPresetLibrary";
+import { useStoreDesignDialogExit } from "@/components/theme/useStoreDesignDialogExit";
 
 type ActivePage = {
   path: string;
@@ -511,6 +512,7 @@ function SectionPicker({
   onAdd: (definition: SectionDefinition) => void;
   onClose: () => void;
 }) {
+  const { closing, requestClose } = useStoreDesignDialogExit(onClose);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<"all" | SectionDefinition["category"]>("all");
   const definitions = useMemo(() => SECTION_LIBRARY.filter((definition) => {
@@ -521,20 +523,20 @@ function SectionPicker({
   }), [category, compatibility, query]);
 
   return (
-    <div className="sd-modal-backdrop fixed inset-0 z-[2147483590] grid place-items-center bg-black/30 p-3 backdrop-blur-sm">
+    <div data-closing={closing ? "true" : "false"} className="sd-modal-backdrop fixed inset-0 z-[2147483590] grid place-items-center bg-black/30 p-3 backdrop-blur-sm">
       <div className="sd-modal-card flex max-h-[82dvh] w-full max-w-[660px] flex-col overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl">
         <header className="flex h-14 shrink-0 items-center gap-3 border-b border-black/10 px-4">
           <div className="min-w-0 flex-1">
             <p className="text-[12px] font-semibold">Bölüm Ekle</p>
             <p className="mt-0.5 text-[11px] text-black/40">Bu sayfada kullanabileceğin bölümler gösterilir.</p>
           </div>
-          <button type="button" onClick={onClose} className="grid h-9 w-9 place-items-center rounded-lg hover:bg-black/[0.04]" aria-label="Kapat"><X className="h-4 w-4" /></button>
+          <button type="button" onClick={requestClose} className="grid h-9 w-9 place-items-center rounded-lg hover:bg-black/[0.04]" aria-label="Kapat"><X className="h-4 w-4" /></button>
         </header>
 
         <div className="flex shrink-0 gap-2 border-b border-black/[0.07] p-3">
           <label className="relative min-w-0 flex-1">
             <Search className="pointer-events-none absolute left-3 top-2.5 h-3.5 w-3.5 text-black/30" />
-            <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Bölüm ara…" className="sd-field h-9 w-full rounded-lg border border-black/10 pl-9 pr-3 text-[12px] outline-none focus:border-black/25" />
+            <input data-dialog-initial-focus value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Bölüm ara…" className="sd-field h-9 w-full rounded-lg border border-black/10 pl-9 pr-3 text-[12px] outline-none focus:border-black/25" />
           </label>
           <select value={category} onChange={(event) => setCategory(event.target.value as typeof category)} className="sd-field h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[12px] font-medium outline-none">
             <option value="all">Tümü</option>
