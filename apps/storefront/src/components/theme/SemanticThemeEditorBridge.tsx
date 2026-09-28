@@ -374,16 +374,17 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
     const previewScrollbarStyle = document.createElement("style");
     previewScrollbarStyle.dataset.storeDesignV2PreviewScrollbar = "true";
     previewScrollbarStyle.textContent = `
-      html, body {
-        scrollbar-width: none !important;
-        -ms-overflow-style: none !important;
-      }
-      html::-webkit-scrollbar,
-      body::-webkit-scrollbar,
-      *::-webkit-scrollbar {
-        width: 0 !important;
-        height: 0 !important;
-        display: none !important;
+      @media (max-width: 520px) {
+        html, body {
+          scrollbar-width: none !important;
+          -ms-overflow-style: none !important;
+        }
+        html::-webkit-scrollbar,
+        body::-webkit-scrollbar {
+          width: 0 !important;
+          height: 0 !important;
+          display: none !important;
+        }
       }
     `;
     document.head.appendChild(previewScrollbarStyle);
