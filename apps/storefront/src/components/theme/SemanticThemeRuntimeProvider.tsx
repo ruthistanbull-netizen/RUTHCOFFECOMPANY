@@ -3,6 +3,10 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import {
+  STORE_DESIGN_MEDIA_RUNTIME_EVENT,
+  type StoreDesignMediaRuntimeDetail,
+} from "@/components/theme/StoreDesignResponsiveImage";
+import {
   COMPONENT_REGISTRY_BY_TYPE,
   normalizeThemeDocument,
   type EditorScope,
@@ -67,7 +71,7 @@ function selectorFor(patch: SemanticRuntimePatch) {
     const attribute = patch.selectorMode === "type" ? "data-editor-type" : "data-editor-id";
     selector = `[${attribute}=${cssString(patch.selectorValue)}]`;
   }
-  if (patch.path === "media.src" || patch.path === "media.objectFit" || patch.path === "media.objectPosition") return `${selector},${selector} img,${selector} video`;
+  if (patch.path === "media.assetId" || patch.path === "media.src" || patch.path === "media.objectFit" || patch.path === "media.objectPosition") return `${selector},${selector} img,${selector} video`;
   return selector;
 }
 
@@ -240,6 +244,20 @@ export function SemanticThemeRuntimeProvider({
     setTemplatePathname(params.get("storeDesignCartPreview") === "1" ? "/cart" : pathname);
   }, [pathname]);
   const [previewDocument, setPreviewDocument] = useState<ThemeDocument | null>(null);
+  const [runtimeMediaAssets, setRuntimeMediaAssets] = useState<Record<string, StoreDesignMediaRuntimeDetail>>({});
+
+  useEffect(() => {
+    const onMediaAsset = (event: Event) => {
+      const asset = (event as CustomEvent<StoreDesignMediaRuntimeDetail>).detail;
+      if (!asset?.assetId) return;
+      setRuntimeMediaAssets((current) => ({
+        ...current,
+        [asset.assetId]: asset,
+      }));
+    };
+    window.addEventListener(STORE_DESIGN_MEDIA_RUNTIME_EVENT, onMediaAsset as EventListener);
+    return () => window.removeEventListener(STORE_DESIGN_MEDIA_RUNTIME_EVENT, onMediaAsset as EventListener);
+  }, []);
 
   useEffect(() => {
     const token = new URLSearchParams(window.location.search)
@@ -340,7 +358,11 @@ export function SemanticThemeRuntimeProvider({
   );
 
   useEffect(() => {
-    const sourcePatches = mergedPatches.filter((patch) => patch.path === "media.src" && typeof patch.value === "string" && patch.value);
+    const sourcePatches = mergedPatches.filter((patch) => (
+      (patch.path === "media.assetId" || patch.path === "media.src") &&
+      typeof patch.value === "string" &&
+      patch.value
+    ));
     if (!sourcePatches.length) return;
 
     const originals = new Map<HTMLImageElement | HTMLVideoElement, { src: string | null; srcset?: string | null }>();
@@ -368,7 +390,10 @@ export function SemanticThemeRuntimeProvider({
       const mobilePatches = mobile ? sourcePatches.filter((patch) => patch.device === "mobile") : [];
       const active = [...desktopPatches, ...mobilePatches];
       for (const patch of active) {
-        const source = String(patch.value || "").trim();
+        const rawValue = String(patch.value || "").trim();
+        const source = patch.path === "media.assetId"
+          ? runtimeMediaAssets[rawValue]?.url || effectiveDocument?.media[rawValue]?.url || ""
+          : rawValue;
         if (!source) continue;
         const selector = selectorFor(patch);
         let elements: NodeListOf<Element>;
@@ -418,7 +443,7 @@ export function SemanticThemeRuntimeProvider({
       mediaQuery.removeEventListener("change", apply);
       restore();
     };
-  }, [mergedPatches]);
+  }, [effectiveDocument, mergedPatches, runtimeMediaAssets]);
 
   return (
     <>
