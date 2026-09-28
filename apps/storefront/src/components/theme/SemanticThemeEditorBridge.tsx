@@ -577,8 +577,16 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
           selectedRef.current = target;
           positionOverlay();
           window.requestAnimationFrame(() => {
-            if (selectedRef.current?.id === target.id) select(target);
+            positionOverlay();
+            post({
+              type: STORE_DESIGN_MESSAGES.PATCH_APPLIED,
+              targetId: message.targetId,
+              revision: Number(message.revision || 0),
+              ...result,
+              current: snapshot(target),
+            });
           });
+          return;
         }
 
         post({
