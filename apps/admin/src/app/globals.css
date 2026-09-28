@@ -1271,3 +1271,59 @@ body {
   [data-store-design-v2-admin] .sd-section-row > .sd-section-main{padding-right:2px}
   [data-store-design-v2-admin] .sd-section-row > svg:first-child{display:none}
 }
+
+
+/* Store Design v4.1 — mobile media settings sheet. */
+@media (max-width:767px){
+  [data-store-design-v2-admin] .sd-media-details.is-open{
+    position:fixed!important;
+    left:0!important;
+    right:0!important;
+    bottom:0!important;
+    z-index:2147483650!important;
+    display:flex!important;
+    width:100%!important;
+    height:min(68dvh,640px)!important;
+    max-height:calc(100dvh - 56px)!important;
+    border-left:0!important;
+    border-top:1px solid var(--sd-border)!important;
+    border-radius:22px 22px 0 0!important;
+    background:var(--sd-surface-1)!important;
+    box-shadow:0 -20px 60px rgba(0,0,0,.22)!important;
+    animation:sd-media-sheet-in var(--sd-motion-panel) var(--sd-ease-enter) both;
+  }
+  [data-store-design-v2-admin] .sd-media-details.is-open::before{
+    content:"";
+    display:block;
+    width:42px;
+    height:4px;
+    margin:8px auto 0;
+    border-radius:999px;
+    background:color-mix(in srgb,var(--sd-text-2) 48%,transparent);
+    flex:0 0 auto;
+  }
+  [data-store-design-v2-admin] .sd-media-details-close{
+    display:grid!important;
+    flex:0 0 40px;
+    background:var(--sd-surface-2)!important;
+    color:var(--sd-text-1)!important;
+    border-color:var(--sd-border)!important;
+  }
+  [data-store-design-v2-admin] .sd-media-details.is-open > div:last-child{
+    overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior:contain;
+  }
+  [data-store-design-v2-admin] .sd-media-details.is-open [class*="text-[7px]"]{font-size:10px!important;line-height:1.4!important}
+  [data-store-design-v2-admin] .sd-media-details.is-open [class*="text-[8px]"]{font-size:11px!important;line-height:1.45!important}
+  [data-store-design-v2-admin] .sd-media-details.is-open [class*="text-[9px]"]{font-size:12px!important;line-height:1.45!important}
+  [data-store-design-v2-admin] .sd-media-details.is-open button,
+  [data-store-design-v2-admin] .sd-media-details.is-open select,
+  [data-store-design-v2-admin] .sd-media-details.is-open input{
+    min-height:44px;
+  }
+}
+@keyframes sd-media-sheet-in{
+  from{opacity:0;transform:translateY(24px)}
+  to{opacity:1;transform:translateY(0)}
+}
