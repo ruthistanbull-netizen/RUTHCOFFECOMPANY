@@ -10,6 +10,7 @@ import {
   GripVertical,
   Layers3,
   Library,
+  MoreHorizontal,
   Plus,
   Search,
   Settings2,
@@ -588,6 +589,7 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
   const [busy, setBusy] = useState(false);
   const [draggedId, setDraggedId] = useState<string | null>(null);
   const [editingSectionId, setEditingSectionId] = useState<string | null>(null);
+  const [mobileActionsId, setMobileActionsId] = useState<string | null>(null);
 
   useEffect(() => {
     if (openPickerSignal > 0) setPickerOpen(true);
@@ -770,7 +772,7 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
                 event.preventDefault();
                 if (draggedId) void reorderTo(draggedId, section.id);
               }}
-              className={`sd-section-row group flex min-h-10 items-center gap-1 rounded-lg border px-1.5 transition ${draggedId === section.id ? "is-dragging border-black/20 bg-black/[0.04] opacity-60" : "border-black/[0.07] bg-white"}`}
+              className={`sd-section-row group relative flex min-h-10 items-center gap-1 rounded-lg border px-1.5 transition ${draggedId === section.id ? "is-dragging border-black/20 bg-black/[0.04] opacity-60" : "border-black/[0.07] bg-white"}`}
             >
               <GripVertical className="h-3.5 w-3.5 shrink-0 cursor-grab text-black/20" />
               <button
@@ -783,19 +785,47 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
                 <p className={`truncate text-[12px] font-semibold ${section.enabled ? "" : "text-black/35"}`}>{sectionLabel(section)}</p>
                 <p className="mt-0.5 truncate text-[11px] text-black/40">{section.enabled ? "Görünür" : "Gizli"}</p>
               </button>
-              {canEditSection(section.type) ? (
-                <button type="button" disabled={busy} onClick={() => setEditingSectionId(section.id)} className="sd-row-action grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04]" aria-label="Bölüm ayarları">
-                  <Settings2 className="h-3 w-3" />
+              <div className="sd-section-desktop-actions flex items-center gap-1">
+                {canEditSection(section.type) ? (
+                  <button type="button" disabled={busy} onClick={() => setEditingSectionId(section.id)} className="sd-row-action grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04]" aria-label="Bölüm ayarları">
+                    <Settings2 className="h-3 w-3" />
+                  </button>
+                ) : null}
+                <button type="button" disabled={busy || !SECTION_LIBRARY_BY_TYPE[section.type]?.implemented} onClick={() => void saveSectionPreset(section.id)} className="sd-row-action grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04] disabled:opacity-20" aria-label="Hazır düzen olarak kaydet">
+                  <BookmarkPlus className="h-3 w-3" />
                 </button>
-              ) : null}
-              <button type="button" disabled={busy || !SECTION_LIBRARY_BY_TYPE[section.type]?.implemented} onClick={() => void saveSectionPreset(section.id)} className="sd-row-action grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04] disabled:opacity-20" aria-label="Hazır düzen olarak kaydet">
-                <BookmarkPlus className="h-3 w-3" />
-              </button>
-              <button type="button" disabled={busy || index === 0} onClick={() => void mutateSection(section.id, "up")} className="sd-row-action grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04] disabled:opacity-20" aria-label="Yukarı taşı"><ArrowUp className="h-3 w-3" /></button>
-              <button type="button" disabled={busy || index === sections.length - 1} onClick={() => void mutateSection(section.id, "down")} className="sd-row-action grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04] disabled:opacity-20" aria-label="Aşağı taşı"><ArrowDown className="h-3 w-3" /></button>
-              <button type="button" disabled={busy} onClick={() => void mutateSection(section.id, "toggle")} className="sd-row-action grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04]" aria-label={section.enabled ? "Gizle" : "Göster"}>{section.enabled ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}</button>
-              <button type="button" disabled={busy} onClick={() => void mutateSection(section.id, "duplicate")} className="sd-row-action grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04]" aria-label="Çoğalt"><Copy className="h-3 w-3" /></button>
-              <button type="button" disabled={busy} onClick={() => void mutateSection(section.id, "delete")} className="sd-row-action sd-row-action-danger grid h-7 w-7 place-items-center rounded-md text-red-600 hover:bg-red-50" aria-label="Sil"><Trash2 className="h-3 w-3" /></button>
+                <button type="button" disabled={busy || index === 0} onClick={() => void mutateSection(section.id, "up")} className="sd-row-action grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04] disabled:opacity-20" aria-label="Yukarı taşı"><ArrowUp className="h-3 w-3" /></button>
+                <button type="button" disabled={busy || index === sections.length - 1} onClick={() => void mutateSection(section.id, "down")} className="sd-row-action grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04] disabled:opacity-20" aria-label="Aşağı taşı"><ArrowDown className="h-3 w-3" /></button>
+                <button type="button" disabled={busy} onClick={() => void mutateSection(section.id, "toggle")} className="sd-row-action grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04]" aria-label={section.enabled ? "Gizle" : "Göster"}>{section.enabled ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}</button>
+                <button type="button" disabled={busy} onClick={() => void mutateSection(section.id, "duplicate")} className="sd-row-action grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04]" aria-label="Çoğalt"><Copy className="h-3 w-3" /></button>
+                <button type="button" disabled={busy} onClick={() => void mutateSection(section.id, "delete")} className="sd-row-action sd-row-action-danger grid h-7 w-7 place-items-center rounded-md text-red-600 hover:bg-red-50" aria-label="Sil"><Trash2 className="h-3 w-3" /></button>
+              </div>
+
+              <div className="sd-section-mobile-actions hidden">
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => setMobileActionsId((current) => current === section.id ? null : section.id)}
+                  className="sd-row-action grid h-10 w-10 place-items-center rounded-xl"
+                  aria-label="Bölüm işlemleri"
+                  aria-expanded={mobileActionsId === section.id}
+                >
+                  <MoreHorizontal className="h-4 w-4" />
+                </button>
+                {mobileActionsId === section.id ? (
+                  <div className="sd-section-action-menu absolute right-1 top-[calc(100%-2px)] z-30 w-52 rounded-2xl border border-black/10 bg-white p-1.5 shadow-2xl">
+                    {canEditSection(section.type) ? (
+                      <button type="button" onClick={() => { setMobileActionsId(null); setEditingSectionId(section.id); }}><Settings2 className="h-4 w-4" />Ayarları aç</button>
+                    ) : null}
+                    <button type="button" disabled={!SECTION_LIBRARY_BY_TYPE[section.type]?.implemented} onClick={() => { setMobileActionsId(null); void saveSectionPreset(section.id); }}><BookmarkPlus className="h-4 w-4" />Hazır düzen olarak kaydet</button>
+                    <button type="button" disabled={index === 0} onClick={() => { setMobileActionsId(null); void mutateSection(section.id, "up"); }}><ArrowUp className="h-4 w-4" />Yukarı taşı</button>
+                    <button type="button" disabled={index === sections.length - 1} onClick={() => { setMobileActionsId(null); void mutateSection(section.id, "down"); }}><ArrowDown className="h-4 w-4" />Aşağı taşı</button>
+                    <button type="button" onClick={() => { setMobileActionsId(null); void mutateSection(section.id, "toggle"); }}>{section.enabled ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}{section.enabled ? "Gizle" : "Göster"}</button>
+                    <button type="button" onClick={() => { setMobileActionsId(null); void mutateSection(section.id, "duplicate"); }}><Copy className="h-4 w-4" />Çoğalt</button>
+                    <button type="button" className="is-danger" onClick={() => { setMobileActionsId(null); void mutateSection(section.id, "delete"); }}><Trash2 className="h-4 w-4" />Sil</button>
+                  </div>
+                ) : null}
+              </div>
             </div>
           ))}
 
