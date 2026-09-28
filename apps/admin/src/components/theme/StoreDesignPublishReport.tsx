@@ -12,6 +12,51 @@ type Props = {
   publishing: boolean;
 };
 
+function friendlyIssueMessage(issue: ThemeReferenceIssue) {
+  const route = typeof issue.target === "string" && issue.target.startsWith("/") ? issue.target : null;
+  switch (issue.code) {
+    case "missing-page-template":
+      return "Bir sayfanın görünüm şablonu eksik. Sayfa ayarlarından uygun bir şablon seç.";
+    case "missing-page-seo":
+      return "Bir sayfanın arama ve paylaşım ayarları eksik. Sayfa ayarlarından bu alanları tamamla.";
+    case "missing-template-section":
+      return "Bir şablonda bulunamayan bir bölüm var. Bölüm düzenini kontrol edip eksik bölümü kaldır veya yeniden ekle.";
+    case "unknown-section-definition":
+      return "Bir bölüm bu sürümde tanınmıyor. Yayınlamadan önce bölümü değiştir veya kaldır.";
+    case "section-runtime-unavailable":
+      return "Bir bölüm mağazada gösterime hazır değil. Yayınlamadan önce farklı bir bölüm kullan veya bu bölümü kaldır.";
+    case "missing-section-block":
+      return "Bir bölümün içerik öğelerinden biri bulunamadı. Bölüm içeriğini açıp eksik öğeyi düzelt.";
+    case "unknown-block-definition":
+      return "Bir içerik öğesi bu sürümde tanınmıyor. İlgili bölümü açıp öğeyi değiştir veya kaldır.";
+    case "block-runtime-unavailable":
+      return "Bir içerik öğesi mağazada gösterime hazır değil. Yayınlamadan önce öğeyi değiştir veya kaldır.";
+    case "shared-section-reference":
+      return "Aynı bölüm birden fazla yerde kullanılıyor. Bu bölümdeki değişiklikler bağlı olan diğer yerleri de etkiler.";
+    case "shared-block-reference":
+      return "Aynı içerik öğesi birden fazla bölümde kullanılıyor. Değişiklik bağlı bölümleri de etkileyebilir.";
+    case "invalid-preset-reference":
+      return "Kaydedilmiş bir bölüm düzeninde eksik veya artık kullanılamayan içerik var. Hazır düzeni yeniden oluştur.";
+    case "missing-template-binding":
+      return "Bir sayfanın şablon bağlantısı eksik. Sayfaya uygun bir şablon ata.";
+    case "missing-og-media":
+      return "Bir sayfanın paylaşım görseli bulunamadı. Sayfa ayarlarından yeni bir paylaşım görseli seç.";
+    case "broken-merchant-link":
+    case "BROKEN_MANAGED_LINK":
+      return route
+        ? `${route} adresine giden bağlantının hedefi bulunamadı. Bağlantıyı düzelt veya hedef sayfayı oluştur.`
+        : "Bir bağlantının hedef sayfası bulunamadı. Bağlantıyı düzelt veya hedef sayfayı oluştur.";
+    case "link-to-unpublished-page":
+      return route
+        ? `${route} adresindeki sayfa henüz yayınlanmadı. Bağlantıyı kullanmadan önce sayfayı yayınla.`
+        : "Bir bağlantı henüz yayınlanmamış bir sayfaya gidiyor. Hedef sayfayı yayınla veya bağlantıyı değiştir.";
+    case "missing-media-reference":
+      return "Kullanılan bir medya dosyası bulunamadı. İlgili bölüm veya sayfadan yeni bir medya seç.";
+    default:
+      return "Yayınlamayı etkileyen bir düzenleme sorunu bulundu. İlgili sayfa veya bölümü kontrol edip yeniden dene.";
+  }
+}
+
 export function StoreDesignPublishReport({ issues, onCancel, onPublish, publishing }: Props) {
 
   const { closing, requestClose } = useStoreDesignDialogExit(onCancel, 180, publishing);
@@ -66,7 +111,7 @@ export function StoreDesignPublishReport({ issues, onCancel, onPublish, publishi
                       <div className="flex flex-wrap items-center gap-2">
                         <span className={`rounded px-1.5 py-0.5 text-[6px] font-semibold uppercase ${issue.severity === "error" ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-800"}`}>{issue.severity === "error" ? "Hata" : "Uyarı"}</span>
                       </div>
-                      <p className="mt-1.5 text-[8px] leading-4 text-black/65">{issue.message}</p>
+                      <p className="mt-1.5 text-[8px] leading-4 text-black/65">{friendlyIssueMessage(issue)}</p>
                     </div>
                   </div>
                 </div>
