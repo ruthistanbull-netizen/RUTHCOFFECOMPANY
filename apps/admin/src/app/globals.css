@@ -1235,3 +1235,39 @@ body {
     display:none!important;
   }
 }
+
+
+/* Store Design v4.1 — mobile section overflow actions. */
+[data-store-design-v2-admin] .sd-section-action-menu{
+  background:var(--sd-surface-1)!important;
+  color:var(--sd-text-1)!important;
+  border-color:var(--sd-border)!important;
+  animation:sd-context-menu-in var(--sd-motion-fast) var(--sd-ease-enter) both;
+}
+[data-store-design-v2-admin] .sd-section-action-menu > button{
+  width:100%;
+  min-height:42px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:0 10px;
+  border:0;
+  border-radius:10px;
+  background:transparent!important;
+  color:var(--sd-text-1)!important;
+  font-size:12px!important;
+  font-weight:600;
+  text-align:left;
+}
+[data-store-design-v2-admin] .sd-section-action-menu > button:hover:not(:disabled){
+  background:var(--sd-surface-2)!important;
+}
+[data-store-design-v2-admin] .sd-section-action-menu > button.is-danger{
+  color:var(--sd-danger)!important;
+}
+@media (max-width:767px){
+  [data-store-design-v2-admin] .sd-section-desktop-actions{display:none!important}
+  [data-store-design-v2-admin] .sd-section-mobile-actions{display:block!important;position:relative;flex:0 0 auto}
+  [data-store-design-v2-admin] .sd-section-row > .sd-section-main{padding-right:2px}
+  [data-store-design-v2-admin] .sd-section-row > svg:first-child{display:none}
+}
