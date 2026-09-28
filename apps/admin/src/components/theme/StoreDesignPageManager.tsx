@@ -87,8 +87,8 @@ function uniqueSlug(document: ThemeDocument, seed: string, exceptPageId?: string
   return `${base}-${Date.now().toString(36)}`;
 }
 
-function cloneTemplateTree(document: ThemeDocument, sourceTemplateId: string, nextPageId: string) {
-  const source = document.templates[sourceTemplateId];
+function cloneŞablonTree(document: ThemeDocument, sourceŞablonId: string, nextPageId: string) {
+  const source = document.templates[sourceŞablonId];
   const templateId = `page:${nextPageId}`;
   if (!source) {
     return {
@@ -160,7 +160,7 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
   const [form, setForm] = useState<FormState>(() => initialForm(document, editingPage));
   const [busy, setBusy] = useState(false);
 
-  const compatibleTemplates = useMemo(() => (
+  const compatibleŞablons = useMemo(() => (
     Object.values(document.templates).filter((template) => template.compatibility.includes(form.compatibility))
   ), [document.templates, form.compatibility]);
 
@@ -287,7 +287,7 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
       const pageId = id("page");
       const slug = uniqueSlug(next, `${editingPage.slug}-kopya`);
       const route = customPageRoute(slug);
-      const cloned = cloneTemplateTree(next, editingPage.templateId, pageId);
+      const cloned = cloneŞablonTree(next, editingPage.templateId, pageId);
       next.templates = cloned.templates;
       next.sections = cloned.sections;
       next.blocks = cloned.blocks;
@@ -341,7 +341,7 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
       };
       next.revision = Math.max(next.revision, document.revision) + 1;
       await onApply(next, "/");
-      toast.success("Sayfa arşivlendi. Canlı route yalnız yayın sonrası kapanır.");
+      toast.success("Sayfa arşivlendi. Canlı sayfa yalnız yeniden yayınlandığında kapanır.");
       requestClose();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Sayfa arşivlenemedi.");
@@ -370,7 +370,7 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
               <input value={form.name} onChange={(event) => set("name", event.target.value)} className="h-10 rounded-lg border border-black/10 px-3 text-[10px] font-medium text-black outline-none focus:border-black/25" placeholder="Örn. Kahve Rehberi" />
             </label>
             <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
-              Slug / URL
+              Sayfa adresi
               <div>
                 <input disabled={routeLocked} value={form.slug} onChange={(event) => set("slug", event.target.value)} className="h-10 w-full rounded-lg border border-black/10 px-3 text-[10px] font-medium text-black outline-none focus:border-black/25 disabled:bg-black/[0.03] disabled:text-black/35" placeholder="kahve-rehberi" />
                 <p className="mt-1 text-[8px] font-normal text-black/35">{routeLocked && editingPage ? `${editingPage.route} · Sistem sayfa adresi korunuyor` : customPageRoute(form.slug || form.name || "sayfa-adi")}</p>
@@ -380,7 +380,7 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
               Sayfa tipi
               <select disabled={routeLocked} value={form.compatibility} onChange={(event) => set("compatibility", event.target.value as PageCompatibility)} className="h-10 rounded-lg border border-black/10 bg-white px-3 text-[10px] font-medium text-black outline-none disabled:bg-black/[0.03] disabled:text-black/35">
                 <option value="content">İçerik Sayfası</option>
-                <option value="landing">Landing / Kampanya</option>
+                <option value="landing">Kampanya Sayfası</option>
                 <option value="legal">Yasal Sayfa</option>
               </select>
             </label>
@@ -394,10 +394,10 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
               </select>
             </label>
             <label className="grid gap-1.5 text-[9px] font-semibold text-black/50 md:col-span-2">
-              Template
+              Şablon
               <select value={form.templateId} onChange={(event) => set("templateId", event.target.value)} className="h-10 rounded-lg border border-black/10 bg-white px-3 text-[10px] font-medium text-black outline-none">
                 <option value="__new__">Yeni boş şablon</option>
-                {compatibleTemplates.map((template) => <option key={template.id} value={template.id}>{template.label}</option>)}
+                {compatibleŞablons.map((template) => <option key={template.id} value={template.id}>{template.label}</option>)}
               </select>
             </label>
           </div>
@@ -420,24 +420,24 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
             </label>
             <div className="grid gap-4 md:grid-cols-2">
               <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
-                Open Graph başlık
+                Paylaşım başlığı
                 <input value={form.ogTitle} onChange={(event) => set("ogTitle", event.target.value)} className="h-10 rounded-lg border border-black/10 px-3 text-[10px] font-medium text-black outline-none" />
               </label>
               <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
                 Arama motoru erişimi
                 <select disabled={robotsLocked} value={form.robots} onChange={(event) => set("robots", event.target.value as SeoDocument["robots"])} className="h-10 rounded-lg border border-black/10 bg-white px-3 text-[10px] font-medium text-black outline-none disabled:bg-black/[0.03] disabled:text-black/35">
-                  <option value="index,follow">index,follow</option>
-                  <option value="noindex,follow">noindex,follow</option>
-                  <option value="noindex,nofollow">noindex,nofollow</option>
+                  <option value="index,follow">Aramada göster</option>
+                  <option value="noindex,follow">Aramada gösterme, bağlantıları izle</option>
+                  <option value="noindex,nofollow">Aramada gösterme, bağlantıları izleme</option>
                 </select>
               </label>
             </div>
             <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
-              Open Graph açıklama
+              Paylaşım açıklaması
               <textarea value={form.ogDescription} onChange={(event) => set("ogDescription", event.target.value)} className="min-h-16 resize-y rounded-lg border border-black/10 p-3 text-[10px] font-medium text-black outline-none" />
             </label>
             <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
-              Open Graph görseli
+              Paylaşım görseli
               <select value={form.ogAssetId} onChange={(event) => set("ogAssetId", event.target.value)} className="h-10 rounded-lg border border-black/10 bg-white px-3 text-[10px] font-medium text-black outline-none">
                 <option value="">Özel paylaşım görseli yok</option>
                 {Object.values(document.media).filter((asset) => asset.type === "image").map((asset) => (
@@ -449,8 +449,8 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
               ) : null}
             </label>
             <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
-              Ana adres URL
-              <input value={form.canonical} onChange={(event) => set("canonical", event.target.value)} className="h-10 rounded-lg border border-black/10 px-3 text-[10px] font-medium text-black outline-none" placeholder="Boş = self canonical" />
+              Ana sayfa adresi
+              <input value={form.canonical} onChange={(event) => set("canonical", event.target.value)} className="h-10 rounded-lg border border-black/10 px-3 text-[10px] font-medium text-black outline-none" placeholder="Boş bırakırsan bu sayfanın adresi kullanılır" />
             </label>
 
             <div className="rounded-xl border border-black/[0.08] bg-[#fafafa] p-3">
