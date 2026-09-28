@@ -1268,8 +1268,25 @@ body {
 @media (max-width:767px){
   [data-store-design-v2-admin] .sd-section-desktop-actions{display:none!important}
   [data-store-design-v2-admin] .sd-section-mobile-actions{display:block!important;position:relative;flex:0 0 auto}
+  [data-store-design-v2-admin] .sd-section-mobile-drag{
+    display:grid!important;
+    touch-action:none!important;
+    color:var(--sd-text-2)!important;
+    background:transparent!important;
+  }
   [data-store-design-v2-admin] .sd-section-row > .sd-section-main{padding-right:2px}
-  [data-store-design-v2-admin] .sd-section-row > svg:first-child{display:none}
+  [data-store-design-v2-admin] .sd-section-row > .sd-section-desktop-grip{display:none!important}
+  [data-store-design-v2-admin] .sd-section-row.is-touch-dragging{
+    z-index:22;
+    transform:scale(1.012);
+    border-color:var(--sd-accent)!important;
+    background:var(--sd-surface-2)!important;
+    box-shadow:var(--sd-shadow-soft);
+  }
+  [data-store-design-v2-admin] .sd-section-row.is-touch-over{
+    border-color:var(--sd-accent)!important;
+    box-shadow:inset 0 2px 0 var(--sd-accent);
+  }
 }
 
 
