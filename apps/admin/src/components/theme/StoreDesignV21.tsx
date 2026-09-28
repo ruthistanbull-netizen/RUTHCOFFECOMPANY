@@ -842,8 +842,17 @@ export function StoreDesignV21() {
         return;
       }
 
-      if (data.type === STORE_DESIGN_MESSAGES.PATCH_APPLIED && data.ok === false) {
-        toast.error(String(data.error || "Değişiklik önizlemeye uygulanamadı."));
+      if (data.type === STORE_DESIGN_MESSAGES.PATCH_APPLIED) {
+        if (data.ok === false) {
+          toast.error(String(data.error || "Değişiklik önizlemeye uygulanamadı."));
+          return;
+        }
+        if (typeof data.targetId === "string" && data.current && typeof data.current === "object") {
+          setSelected((current) => current?.id === data.targetId
+            ? { ...current, current: data.current as SelectedTarget["current"] }
+            : current);
+        }
+        return;
       }
     };
 
