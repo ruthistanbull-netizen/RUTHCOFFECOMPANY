@@ -102,7 +102,6 @@ export function StoreDesignSnapshotManager({ currentPublishedRevision, onRestore
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
                           <p className="text-[10px] font-semibold">Sürüm {snapshot.revision}</p>
-                          <span className="rounded-full bg-black/[0.04] px-2 py-0.5 text-[7px] font-semibold text-black/45">Teknik sürüm {snapshot.schemaVersion}</span>
                           {current ? <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[7px] font-semibold text-emerald-800">CANLI</span> : null}
                         </div>
                         <p className="mt-1 text-[8px] text-black/35">{snapshot.updatedAt ? new Date(snapshot.updatedAt).toLocaleString("tr-TR") : "Tarih bilinmiyor"}</p>
