@@ -621,11 +621,11 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
       event.stopPropagation();
       setMobileActionsId(null);
     };
-    document.addEventListener("pointerdown", closeOutside, true);
-    document.addEventListener("keydown", closeWithEscape, true);
+    window.document.addEventListener("pointerdown", closeOutside, true);
+    window.document.addEventListener("keydown", closeWithEscape, true);
     return () => {
-      document.removeEventListener("pointerdown", closeOutside, true);
-      document.removeEventListener("keydown", closeWithEscape, true);
+      window.document.removeEventListener("pointerdown", closeOutside, true);
+      window.document.removeEventListener("keydown", closeWithEscape, true);
     };
   }, [mobileActionsId]);
 
@@ -820,14 +820,14 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
     if (!sourceId || !touch) return;
 
     event.preventDefault();
-    const row = document.elementFromPoint(touch.clientX, touch.clientY)?.closest<HTMLElement>("[data-section-id]");
+    const row = window.document.elementFromPoint(touch.clientX, touch.clientY)?.closest<HTMLElement>("[data-section-id]");
     const targetId = row?.dataset.sectionId || null;
     if (targetId && targetId !== touchOverIdRef.current) {
       touchOverIdRef.current = targetId;
       setTouchOverId(targetId);
     }
 
-    const scrollSurface = document.querySelector<HTMLElement>(".sd-structure-scroll");
+    const scrollSurface = window.document.querySelector<HTMLElement>(".sd-structure-scroll");
     if (!scrollSurface) return;
     const bounds = scrollSurface.getBoundingClientRect();
     const edge = 64;
