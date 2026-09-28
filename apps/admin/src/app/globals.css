@@ -1380,3 +1380,50 @@ body {
     -webkit-backdrop-filter:blur(16px);
   }
 }
+
+
+/* Store Design v4.1 — mobile safe-area hardening. */
+@media (max-width:767px){
+  [data-store-design-v2-admin]{
+    --sd-mobile-topbar-height:calc(56px + env(safe-area-inset-top));
+    --sd-mobile-dock-height:calc(64px + env(safe-area-inset-bottom));
+    overscroll-behavior:none;
+  }
+
+  [data-store-design-v2-admin] .sd-toolbar{
+    height:var(--sd-mobile-topbar-height)!important;
+    min-height:var(--sd-mobile-topbar-height)!important;
+    padding:env(safe-area-inset-top) 10px 0!important;
+    box-sizing:border-box;
+  }
+
+  [data-store-design-v2-admin] .sd-preview-stage{
+    inset:var(--sd-mobile-topbar-height) 0 var(--sd-mobile-dock-height) 0!important;
+  }
+
+  [data-store-design-v2-admin] .sd-sidebar-left{
+    inset:var(--sd-mobile-topbar-height) 0 var(--sd-mobile-dock-height) 0!important;
+  }
+
+  [data-store-design-v2-admin] .sd-inspector{
+    bottom:var(--sd-mobile-dock-height)!important;
+  }
+
+  [data-store-design-v2-admin] .sd-inspector[data-sheet-level="full"]{
+    height:calc(100dvh - var(--sd-mobile-topbar-height) - var(--sd-mobile-dock-height))!important;
+  }
+
+  [data-store-design-v2-admin] .sd-mobile-dock{
+    min-height:var(--sd-mobile-dock-height)!important;
+    padding-bottom:max(5px,env(safe-area-inset-bottom))!important;
+  }
+
+  [data-store-design-v2-admin] .sd-preview-frame{
+    touch-action:pan-x pan-y;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  [data-store-design-v2-admin] .sd-mobile-more-menu{
+    top:calc(44px + env(safe-area-inset-top))!important;
+  }
+}
