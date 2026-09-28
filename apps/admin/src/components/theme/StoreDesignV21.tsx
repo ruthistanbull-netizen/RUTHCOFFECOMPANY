@@ -86,6 +86,12 @@ type SelectedTarget = {
   };
 };
 
+type ContextMenuState = {
+  x: number;
+  y: number;
+  target: SelectedTarget;
+};
+
 type StoreDesignResponse = {
   draft?: unknown;
   published?: unknown;
@@ -491,6 +497,7 @@ export function StoreDesignV21() {
   const [isMobileViewport, setIsMobileViewport] = useState(false);
   const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
   const [sectionPickerSignal, setSectionPickerSignal] = useState(0);
+  const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
   const [pageManagerMode, setPageManagerMode] = useState<"create" | "edit" | null>(null);
   const [mediaOpen, setMediaOpen] = useState(false);
   const [templateManagerOpen, setTemplateManagerOpen] = useState(false);
@@ -519,6 +526,25 @@ export function StoreDesignV21() {
     media.addEventListener("change", applyViewport);
     return () => media.removeEventListener("change", applyViewport);
   }, []);
+
+  useEffect(() => {
+    if (!contextMenu) return;
+    const close = (event: PointerEvent) => {
+      const element = event.target instanceof Element ? event.target : null;
+      if (element?.closest("[data-store-design-context-menu]")) return;
+      setContextMenu(null);
+    };
+    const closeWithEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setContextMenu(null);
+    };
+    window.addEventListener("pointerdown", close);
+    window.addEventListener("keydown", closeWithEscape);
+    window.addEventListener("resize", () => setContextMenu(null), { once: true });
+    return () => {
+      window.removeEventListener("pointerdown", close);
+      window.removeEventListener("keydown", closeWithEscape);
+    };
+  }, [contextMenu]);
 
   const hasUnsavedChanges = documentFingerprint(document) !== documentFingerprint(savedDraft);
   const hasUnpublishedChanges = documentFingerprint(savedDraft) !== documentFingerprint(published);
@@ -683,7 +709,27 @@ export function StoreDesignV21() {
         setSelected(target);
         setScope(target.defaultScope);
         setLeftOpen(false);
-        setRightOpen(true);
+
+        const pointer = data.pointer && typeof data.pointer === "object"
+          ? data.pointer as { x?: unknown; y?: unknown; kind?: unknown }
+          : null;
+        if (
+          pointer?.kind === "mouse" &&
+          typeof pointer.x === "number" &&
+          typeof pointer.y === "number" &&
+          iframeRef.current
+        ) {
+          const frame = iframeRef.current.getBoundingClientRect();
+          const menuWidth = 336;
+          const menuHeight = 310;
+          const x = Math.max(12, Math.min(window.innerWidth - menuWidth - 12, frame.left + pointer.x));
+          const y = Math.max(68, Math.min(window.innerHeight - menuHeight - 12, frame.top + pointer.y));
+          setContextMenu({ x, y, target });
+          setRightOpen(false);
+        } else {
+          setContextMenu(null);
+          setRightOpen(true);
+        }
         return;
       }
 
@@ -729,6 +775,7 @@ export function StoreDesignV21() {
     setActivePath(path);
     setLastHeartbeat(Date.now());
     setSelected(null);
+    setContextMenu(null);
     setHistory([]);
     setFuture([]);
     postToPreview({
