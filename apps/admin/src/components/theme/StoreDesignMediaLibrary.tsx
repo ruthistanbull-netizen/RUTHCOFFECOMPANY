@@ -12,7 +12,7 @@ import {
 import { useMemo, useState } from "react";
 import {
   themeMediaUsageCount,
-  type MediaMedya,
+  type MediaAsset,
   type ThemeDocument,
 } from "@ruth-commerce/commerce-core/store-design-v2";
 import { uploadThemeMedia } from "@/lib/themeImageUpload";
@@ -24,7 +24,7 @@ type Props = {
   onApply: (next: ThemeDocument, label: string) => Promise<void>;
   onClose: () => void;
   onSelect?: (assetId: string) => void;
-  selectedMedyaId?: string;
+  selectedAssetId?: string;
   mediaType?: "image" | "video" | "any";
 };
 
@@ -52,8 +52,8 @@ type ClientMediaMetadata = {
 };
 
 async function readClientMetadata(file: File, type: "image" | "video"): Promise<ClientMediaMetadata> {
-  if (typeof Adres === "undefined") return {};
-  const url = Adres.createObjectAdres(file);
+  if (typeof URL === "undefined") return {};
+  const url = URL.createObjectURL(file);
   try {
     if (type === "image") {
       return await new Promise<ClientMediaMetadata>((resolve) => {
@@ -75,7 +75,7 @@ async function readClientMetadata(file: File, type: "image" | "video"): Promise<
       video.src = url;
     });
   } finally {
-    Adres.revokeObjectAdres(url);
+    URL.revokeObjectURL(url);
   }
 }
 
@@ -84,7 +84,7 @@ export function StoreDesignMediaLibrary({
   onApply,
   onClose,
   onSelect,
-  selectedMedyaId,
+  selectedAssetId,
   mediaType = "any",
 }: Props) {
 
@@ -92,7 +92,7 @@ export function StoreDesignMediaLibrary({
   const toast = useExactToast();
   const [query, setQuery] = useState("");
   const [busy, setBusy] = useState(false);
-  const [detailId, setDetailId] = useState<string | null>(selectedMedyaId || null);
+  const [detailId, setDetailId] = useState<string | null>(selectedAssetId || null);
   const [focal, setFocal] = useState<{ x: number; y: number } | null>(null);
 
   const assets = useMemo(() => Object.values(document.media)
@@ -108,7 +108,7 @@ export function StoreDesignMediaLibrary({
   [document.media, mediaType, query]);
 
   const selected = detailId ? document.media[detailId] : null;
-  const imageMedyas = useMemo(() => Object.values(document.media).filter((asset) => asset.type === "image"), [document.media]);
+  const imageAssets = useMemo(() => Object.values(document.media).filter((asset) => asset.type === "image"), [document.media]);
 
   const commit = async (next: ThemeDocument, label: string) => {
     setBusy(true);
@@ -158,7 +158,7 @@ export function StoreDesignMediaLibrary({
     }
   };
 
-  const replaceMedya = async (asset: MediaMedya, file: File) => {
+  const replaceAsset = async (asset: MediaAsset, file: File) => {
     if (busy) return;
     setBusy(true);
     try {
@@ -186,7 +186,7 @@ export function StoreDesignMediaLibrary({
     }
   };
 
-  const removeMedya = async (asset: MediaMedya) => {
+  const removeAsset = async (asset: MediaAsset) => {
     const usage = themeMediaUsageCount(document, asset.assetId);
     if (usage > 0) return toast.error(`Bu medya ${usage} yerde kullanılıyor; önce referansları kaldır.`);
     const next = structuredClone(document) as ThemeDocument;
@@ -196,7 +196,7 @@ export function StoreDesignMediaLibrary({
     toast.success("Medya kaydı kaldırıldı.");
   };
 
-  const saveMedyaSettings = async () => {
+  const saveAssetSettings = async () => {
     if (!selected) return;
     const next = structuredClone(document) as ThemeDocument;
     next.media[selected.assetId] = {
@@ -207,14 +207,14 @@ export function StoreDesignMediaLibrary({
     toast.success("Medya ayarları güncellendi.");
   };
 
-  const setRelation = async (key: "posterMedyaId" | "mobileMedyaId", value: string) => {
+  const setRelation = async (key: "posterAssetId" | "mobileAssetId", value: string) => {
     if (!selected) return;
     const next = structuredClone(document) as ThemeDocument;
     next.media[selected.assetId] = {
       ...selected,
       [key]: value || undefined,
     };
-    await commit(next, key === "posterMedyaId" ? "Video posteri güncellendi" : "Mobil medya varyantı güncellendi");
+    await commit(next, key === "posterAssetId" ? "Video kapak görselii güncellendi" : "Mobil medya varyantı güncellendi");
   };
 
   return (
@@ -223,7 +223,7 @@ export function StoreDesignMediaLibrary({
         <div className="flex min-w-0 flex-1 flex-col">
           <header className="flex h-14 shrink-0 items-center gap-3 border-b border-black/10 px-4">
             <div className="min-w-0 flex-1">
-              <p className="text-[12px] font-semibold">Media Library V2</p>
+              <p className="text-[12px] font-semibold">Medya Arşivi</p>
               <p className="mt-0.5 text-[8px] text-black/40">Fotoğraf ve video kayıtları, sürümleri, kullanımları ve mobil farklılıkları tek yerden yönetilir.</p>
             </div>
             <label className="relative flex h-9 cursor-pointer items-center gap-2 rounded-lg bg-[#111] px-3 text-[9px] font-semibold text-white">
@@ -269,7 +269,7 @@ export function StoreDesignMediaLibrary({
                   >
                     <div className="relative aspect-[4/3] overflow-hidden bg-black/[0.04]">
                       {asset.type === "video" ? (
-                        <video src={asset.url} poster={asset.posterMedyaId ? document.media[asset.posterMedyaId]?.url : undefined} className="h-full w-full object-cover" muted preload="metadata" />
+                        <video src={asset.url} poster={asset.posterAssetId ? document.media[asset.posterAssetId]?.url : undefined} className="h-full w-full object-cover" muted preload="metadata" />
                       ) : (
                         <img src={asset.url} alt="" className="h-full w-full object-cover" loading="lazy" />
                       )}
@@ -280,7 +280,7 @@ export function StoreDesignMediaLibrary({
                     </div>
                     <div className="p-2">
                       <p className="truncate text-[8px] font-semibold">{asset.assetId}</p>
-                      <p className="mt-1 text-[7px] text-black/35">v{asset.version || 1} · {bytesLabel(asset.bytes)} · {usage} kullanım</p>
+                      <p className="mt-1 text-[7px] text-black/35">Sürüm {asset.version || 1} · {bytesLabel(asset.bytes)} · {usage} kullanım</p>
                     </div>
                   </button>
                 );
@@ -291,7 +291,7 @@ export function StoreDesignMediaLibrary({
                 <div>
                   <ImageIcon className="mx-auto h-6 w-6 text-black/20" />
                   <p className="mt-2 text-[9px] font-semibold text-black/45">Henüz medya yok</p>
-                  <p className="mt-1 text-[8px] text-black/30">Yeni yüklemeler ThemeDocument.media kaydına stable asset ID ile eklenir.</p>
+                  <p className="mt-1 text-[8px] text-black/30">Yeni yüklenen dosyalar güvenli ve kalıcı bir medya kaydı olarak saklanır.</p>
                 </div>
               </div>
             ) : null}
@@ -307,7 +307,7 @@ export function StoreDesignMediaLibrary({
               <div className="overflow-hidden rounded-xl border border-black/[0.08] bg-white">
                 <div className="aspect-[4/3] bg-black/[0.04]">
                   {selected.type === "video" ? (
-                    <video src={selected.url} poster={selected.posterMedyaId ? document.media[selected.posterMedyaId]?.url : undefined} className="h-full w-full object-cover" muted controls />
+                    <video src={selected.url} poster={selected.posterAssetId ? document.media[selected.posterAssetId]?.url : undefined} className="h-full w-full object-cover" muted controls />
                   ) : (
                     <img src={selected.url} alt="" className="h-full w-full object-cover" />
                   )}
@@ -322,30 +322,30 @@ export function StoreDesignMediaLibrary({
               </dl>
 
               <div className="mt-4 rounded-xl border border-black/[0.08] bg-white p-3">
-                <p className="text-[9px] font-semibold">Focal point</p>
-                <p className="mt-1 text-[7px] leading-4 text-black/35">Cover/crop kullanılan fotoğraf ve videolarda odak noktasını korur.</p>
+                <p className="text-[9px] font-semibold">Odak noktası</p>
+                <p className="mt-1 text-[7px] leading-4 text-black/35">Kaplama ve kırpma kullanılan görsellerde önemli alanın görünür kalmasını sağlar.</p>
                 <label className="mt-3 grid gap-1 text-[8px] text-black/45">Yatay · {Math.round(focal?.x ?? selected.focalPoint?.x ?? 50)}%
                   <input type="range" min="0" max="100" value={focal?.x ?? selected.focalPoint?.x ?? 50} onChange={(event) => setFocal({ x: Number(event.target.value), y: focal?.y ?? selected.focalPoint?.y ?? 50 })} />
                 </label>
                 <label className="mt-2 grid gap-1 text-[8px] text-black/45">Dikey · {Math.round(focal?.y ?? selected.focalPoint?.y ?? 50)}%
                   <input type="range" min="0" max="100" value={focal?.y ?? selected.focalPoint?.y ?? 50} onChange={(event) => setFocal({ x: focal?.x ?? selected.focalPoint?.x ?? 50, y: Number(event.target.value) })} />
                 </label>
-                <button type="button" disabled={busy} onClick={() => void saveMedyaSettings()} className="mt-3 h-9 w-full rounded-lg bg-[#111] text-[8px] font-semibold text-white disabled:opacity-40">Odak Noktasını Kaydet</button>
+                <button type="button" disabled={busy} onClick={() => void saveAssetSettings()} className="mt-3 h-9 w-full rounded-lg bg-[#111] text-[8px] font-semibold text-white disabled:opacity-40">Odak Noktasını Kaydet</button>
               </div>
 
               {selected.type === "video" ? (
                 <label className="mt-4 grid gap-1.5 text-[8px] font-semibold text-black/45">
-                  Video poster
-                  <select value={selected.posterMedyaId || ""} onChange={(event) => void setRelation("posterMedyaId", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2 text-[8px] font-medium text-black outline-none">
-                    <option value="">Poster yok</option>
-                    {imageMedyas.map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.assetId}</option>)}
+                  Video kapak görseli
+                  <select value={selected.posterAssetId || ""} onChange={(event) => void setRelation("posterAssetId", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2 text-[8px] font-medium text-black outline-none">
+                    <option value="">Kapak görseli yok</option>
+                    {imageAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.assetId}</option>)}
                   </select>
                 </label>
               ) : null}
 
               <label className="mt-4 grid gap-1.5 text-[8px] font-semibold text-black/45">
-                Mobil varyant
-                <select value={selected.mobileMedyaId || ""} onChange={(event) => void setRelation("mobileMedyaId", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2 text-[8px] font-medium text-black outline-none">
+                Mobil görsel
+                <select value={selected.mobileAssetId || ""} onChange={(event) => void setRelation("mobileAssetId", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2 text-[8px] font-medium text-black outline-none">
                   <option value="">Aynı medyayı kullan</option>
                   {Object.values(document.media).filter((asset) => asset.assetId !== selected.assetId && asset.type === selected.type).map((asset) => (
                     <option key={asset.assetId} value={asset.assetId}>{asset.assetId}</option>
@@ -362,13 +362,13 @@ export function StoreDesignMediaLibrary({
                   className="absolute inset-0 cursor-pointer opacity-0"
                   onChange={(event) => {
                     const file = event.currentTarget.files?.[0];
-                    if (file) void replaceMedya(selected, file);
+                    if (file) void replaceAsset(selected, file);
                     event.currentTarget.value = "";
                   }}
                 />
               </label>
 
-              <button type="button" disabled={busy || themeMediaUsageCount(document, selected.assetId) > 0} onClick={() => void removeMedya(selected)} className="mt-2 flex h-9 w-full items-center justify-center gap-2 rounded-lg border border-red-200 bg-white text-[8px] font-semibold text-red-700 disabled:cursor-not-allowed disabled:opacity-40">
+              <button type="button" disabled={busy || themeMediaUsageCount(document, selected.assetId) > 0} onClick={() => void removeAsset(selected)} className="mt-2 flex h-9 w-full items-center justify-center gap-2 rounded-lg border border-red-200 bg-white text-[8px] font-semibold text-red-700 disabled:cursor-not-allowed disabled:opacity-40">
                 <Trash2 className="h-3.5 w-3.5" />Kullanılmayan kaydı kaldır
               </button>
             </div>
