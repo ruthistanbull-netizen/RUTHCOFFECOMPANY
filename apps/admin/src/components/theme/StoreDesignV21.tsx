@@ -498,6 +498,7 @@ export function StoreDesignV21() {
   const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
   const [sectionPickerSignal, setSectionPickerSignal] = useState(0);
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
+  const [mobileSheetLevel, setMobileSheetLevel] = useState<"peek" | "medium" | "full">("peek");
   const [pageManagerMode, setPageManagerMode] = useState<"create" | "edit" | null>(null);
   const [mediaOpen, setMediaOpen] = useState(false);
   const [templateManagerOpen, setTemplateManagerOpen] = useState(false);
@@ -518,6 +519,7 @@ export function StoreDesignV21() {
         setDevice("mobile");
         setLeftOpen(false);
         setRightOpen(false);
+        setMobileSheetLevel("peek");
       } else {
         setMobileMoreOpen(false);
       }
@@ -728,6 +730,7 @@ export function StoreDesignV21() {
           setRightOpen(false);
         } else {
           setContextMenu(null);
+          if (isMobileViewport) setMobileSheetLevel("peek");
           setRightOpen(true);
         }
         return;
@@ -740,7 +743,7 @@ export function StoreDesignV21() {
 
     window.addEventListener("message", listener);
     return () => window.removeEventListener("message", listener);
-  }, [toast]);
+  }, [isMobileViewport, toast]);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -1191,13 +1194,26 @@ export function StoreDesignV21() {
           </div>
         </main>
 
-        <aside data-open={rightOpen ? "true" : "false"} aria-hidden={!rightOpen} className={`sd-sidebar sd-inspector ${rightOpen ? "is-open" : "is-closed"} flex w-[320px] shrink-0 flex-col border-l border-black/10 bg-white max-xl:absolute max-xl:bottom-0 max-xl:right-0 max-xl:top-[58px] max-xl:z-20 max-xl:shadow-2xl`}>
-            <div className="border-b border-black/[0.07] p-3">
+        <aside data-open={rightOpen ? "true" : "false"} data-sheet-level={mobileSheetLevel} aria-hidden={!rightOpen} className={`sd-sidebar sd-inspector ${rightOpen ? "is-open" : "is-closed"} flex w-[320px] shrink-0 flex-col border-l border-black/10 bg-white max-xl:absolute max-xl:bottom-0 max-xl:right-0 max-xl:top-[58px] max-xl:z-20 max-xl:shadow-2xl`}>
+            <div className="sd-inspector-header border-b border-black/[0.07] p-3">
               <p className="text-[9px] font-semibold text-black/45">SEÇİLİ ÖĞE</p>
               {selected ? (
                 <>
                   <p className="mt-1.5 text-[12px] font-semibold">{selected.label}</p>
                   <p className="mt-1 text-[8px] text-black/35">{selected.breadcrumb.map((item) => item.label).join(" › ")}</p>
+                  <div className="sd-mobile-sheet-levels mt-3 hidden grid-cols-3 gap-1 rounded-xl bg-black/[0.035] p-1" aria-label="Ayar paneli yüksekliği">
+                    {(["peek", "medium", "full"] as const).map((level) => (
+                      <button
+                        key={level}
+                        type="button"
+                        aria-pressed={mobileSheetLevel === level}
+                        onClick={() => setMobileSheetLevel(level)}
+                        className={`rounded-lg px-2 py-2 text-[11px] font-semibold ${mobileSheetLevel === level ? "is-active" : ""}`}
+                      >
+                        {level === "peek" ? "Kısa" : level === "medium" ? "Orta" : "Tam"}
+                      </button>
+                    ))}
+                  </div>
                 </>
               ) : (
                 <p className="mt-2 text-[9px] leading-4 text-black/40">Önizlemede düzenlemek istediğin öğeyi seç. Masaüstünde sağ tık, mobilde uzun basma da kullanabilirsin.</p>
@@ -1205,7 +1221,7 @@ export function StoreDesignV21() {
             </div>
 
             {selected ? (
-              <div className="min-h-0 flex-1 overflow-y-auto">
+              <div className="sd-inspector-body min-h-0 flex-1 overflow-y-auto">
                 <section className="border-b border-black/[0.07] p-3">
                   <label className="text-[9px] font-semibold text-black/45">UYGULAMA ALANI</label>
                   <select value={scope} onChange={(event) => setScope(event.target.value as EditorScope)} className="sd-field mt-1.5 h-10 w-full rounded-lg border border-black/10 bg-white px-3 text-[10px] font-medium outline-none">
@@ -1475,7 +1491,7 @@ export function StoreDesignV21() {
               </div>
             )}
 
-            <div className="border-t border-black/[0.07] p-3">
+            <div className="sd-inspector-footer border-t border-black/[0.07] p-3">
               <p className="text-[8px] leading-4 text-black/35">
                 {hasUnsavedChanges
                   ? "Kaydedilmemiş düzenlemeler var."
@@ -1487,6 +1503,141 @@ export function StoreDesignV21() {
           </aside>
 
       </div>
+
+      {contextMenu ? (
+        <div
+          data-store-design-context-menu
+          className="sd-context-menu fixed z-[2147483560] w-[336px] max-w-[calc(100vw-24px)] overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl"
+          style={{ left: contextMenu.x, top: contextMenu.y }}
+          role="dialog"
+          aria-label={`${contextMenu.target.label} hızlı düzenleme`}
+        >
+          <div className="border-b border-black/[0.07] px-4 py-3">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="truncate text-[13px] font-semibold">{contextMenu.target.label}</p>
+                <p className="mt-1 truncate text-[10px] text-black/45">
+                  {contextMenu.target.breadcrumb.map((item) => item.label).join(" › ")}
+                </p>
+              </div>
+              <button type="button" onClick={() => setContextMenu(null)} className="sd-context-close rounded-lg px-2 py-1.5 text-[11px] font-semibold text-black/45 hover:bg-black/[0.04]">
+                Kapat
+              </button>
+            </div>
+          </div>
+
+          <div className="grid max-h-[58vh] gap-3 overflow-y-auto p-3">
+            <label className="grid gap-1.5 text-[11px] font-semibold text-black/55">
+              Uygulama alanı
+              <select
+                value={scope}
+                onChange={(event) => setScope(event.target.value as EditorScope)}
+                className="sd-field h-10 rounded-xl border border-black/10 bg-white px-3 text-[12px] font-medium outline-none"
+              >
+                {contextMenu.target.allowedScopes.map((item) => <option key={item} value={item}>{scopeLabel(item)}</option>)}
+              </select>
+            </label>
+
+            <div>
+              <p className="text-[11px] font-semibold text-black/55">Hızlı ayarlar</p>
+              <div className="mt-2 grid gap-2">
+                {contextMenu.target.controlGroups.includes("typography") ? (
+                  <label className="grid gap-1 text-[11px] text-black/50">
+                    Metin hizası
+                    <select
+                      value={selected?.current.textAlign || "left"}
+                      onChange={(event) => applyInspectorPatch("textAlign", event.target.value)}
+                      className="sd-field h-10 rounded-xl border border-black/10 bg-white px-3 text-[12px] font-medium outline-none"
+                    >
+                      <option value="left">Sol</option>
+                      <option value="center">Orta</option>
+                      <option value="right">Sağ</option>
+                    </select>
+                  </label>
+                ) : null}
+
+                {(contextMenu.target.controlGroups.includes("card") || contextMenu.target.controlGroups.includes("layout")) ? (
+                  <label className="grid gap-1 text-[11px] text-black/50">
+                    Köşe yuvarlaklığı
+                    <select
+                      value={String(Math.round(selected?.current.borderRadius || 0))}
+                      onChange={(event) => applyInspectorPatch("borderRadius", Number(event.target.value))}
+                      className="sd-field h-10 rounded-xl border border-black/10 bg-white px-3 text-[12px] font-medium outline-none"
+                    >
+                      {[0, 4, 8, 12, 16, 24, 32].map((value) => <option key={value} value={value}>{value === 0 ? "Düz" : `${value}px`}</option>)}
+                    </select>
+                  </label>
+                ) : null}
+
+                {contextMenu.target.controlGroups.includes("media") && selected?.current.media ? (
+                  <label className="grid gap-1 text-[11px] text-black/50">
+                    Görsel yerleşimi
+                    <select
+                      value={selected.current.media.objectFit || "cover"}
+                      onChange={(event) => applyInspectorPatch("media.objectFit", event.target.value)}
+                      className="sd-field h-10 rounded-xl border border-black/10 bg-white px-3 text-[12px] font-medium outline-none"
+                    >
+                      <option value="cover">Alanı kapla</option>
+                      <option value="contain">Tamamını göster</option>
+                    </select>
+                  </label>
+                ) : null}
+
+                {contextMenu.target.type === "product-grid" ? (
+                  <label className="grid gap-1 text-[11px] text-black/50">
+                    Sütun sayısı
+                    <select
+                      value={String(selected?.current.grid?.columns ?? (device === "mobile" ? 2 : 3))}
+                      onChange={(event) => applyInspectorPatch("grid.columns", Number(event.target.value))}
+                      className="sd-field h-10 rounded-xl border border-black/10 bg-white px-3 text-[12px] font-medium outline-none"
+                    >
+                      {(device === "mobile" ? [1, 2] : [2, 3, 4, 5, 6]).map((value) => <option key={value} value={value}>{value} sütun</option>)}
+                    </select>
+                  </label>
+                ) : null}
+
+                {!contextMenu.target.controlGroups.includes("typography") &&
+                 !contextMenu.target.controlGroups.includes("card") &&
+                 !contextMenu.target.controlGroups.includes("layout") &&
+                 !(contextMenu.target.controlGroups.includes("media") && selected?.current.media) ? (
+                  <p className="rounded-xl bg-black/[0.035] p-3 text-[11px] leading-5 text-black/50">
+                    Bu öğe için hızlı ayar yok. Tüm kullanılabilir ayarları sağ panelde açabilirsin.
+                  </p>
+                ) : null}
+              </div>
+            </div>
+
+            {contextMenu.target.protectedFields.length ? (
+              <p className="rounded-xl border border-amber-500/20 bg-amber-50 p-3 text-[11px] leading-5 text-amber-900">
+                Bu öğenin bazı işlevsel ayarları korumalıdır. Yalnız güvenli görünüm seçenekleri gösterilir.
+              </p>
+            ) : null}
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 border-t border-black/[0.07] p-3">
+            <button
+              type="button"
+              onClick={() => setContextMenu(null)}
+              className="sd-secondary-button h-10 rounded-xl border border-black/10 bg-white px-3 text-[11px] font-semibold"
+            >
+              Önizlemeye dön
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setSelected(contextMenu.target);
+                setScope(contextMenu.target.defaultScope);
+                setContextMenu(null);
+                setLeftOpen(false);
+                setRightOpen(true);
+              }}
+              className="sd-primary-button h-10 rounded-xl px-3 text-[11px] font-semibold text-white"
+            >
+              Tüm ayarları aç
+            </button>
+          </div>
+        </div>
+      ) : null}
 
       {publishIssues !== null ? (
         <StoreDesignPublishReport
@@ -1561,6 +1712,7 @@ export function StoreDesignV21() {
               return;
             }
             setLeftOpen(false);
+            setMobileSheetLevel("medium");
             setRightOpen(true);
           }}
         >
