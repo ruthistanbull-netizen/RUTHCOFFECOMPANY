@@ -599,6 +599,7 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
   const touchReorderIdRef = useRef<string | null>(null);
   const touchOverIdRef = useRef<string | null>(null);
   const touchReorderTimerRef = useRef<number | null>(null);
+  const touchReorderStartRef = useRef<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     if (openPickerSignal > 0) setPickerOpen(true);
@@ -610,22 +611,50 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
 
   useEffect(() => {
     if (!mobileActionsId) return;
+    const escapedId = CSS.escape(mobileActionsId);
+    const row = window.document.querySelector<HTMLElement>(`[data-section-id="${escapedId}"]`);
+    const menu = row?.querySelector<HTMLElement>(".sd-section-action-menu") || null;
+    const trigger = row?.querySelector<HTMLButtonElement>("[data-section-actions-trigger]") || null;
+
+    const focusFrame = window.requestAnimationFrame(() => {
+      menu?.querySelector<HTMLButtonElement>('button:not([disabled])')?.focus({ preventScroll: true });
+    });
+
     const closeOutside = (event: PointerEvent) => {
       const element = event.target instanceof Element ? event.target : null;
       if (element?.closest(".sd-section-mobile-actions")) return;
       setMobileActionsId(null);
     };
-    const closeWithEscape = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
-      event.preventDefault();
-      event.stopPropagation();
-      setMobileActionsId(null);
+
+    const onMenuKeyDown = (event: KeyboardEvent) => {
+      if (!menu) return;
+      if (event.key === "Escape") {
+        event.preventDefault();
+        event.stopPropagation();
+        setMobileActionsId(null);
+        window.requestAnimationFrame(() => trigger?.focus({ preventScroll: true }));
+        return;
+      }
+
+      const items = Array.from(menu.querySelectorAll<HTMLButtonElement>('button:not([disabled])'));
+      if (!items.length) return;
+      const current = Math.max(0, items.indexOf(window.document.activeElement as HTMLButtonElement));
+      const moveTo = (index: number) => {
+        event.preventDefault();
+        items[(index + items.length) % items.length]?.focus({ preventScroll: true });
+      };
+      if (event.key === "ArrowDown") moveTo(current + 1);
+      else if (event.key === "ArrowUp") moveTo(current - 1);
+      else if (event.key === "Home") moveTo(0);
+      else if (event.key === "End") moveTo(items.length - 1);
     };
+
     window.document.addEventListener("pointerdown", closeOutside, true);
-    window.document.addEventListener("keydown", closeWithEscape, true);
+    window.document.addEventListener("keydown", onMenuKeyDown, true);
     return () => {
+      window.cancelAnimationFrame(focusFrame);
       window.document.removeEventListener("pointerdown", closeOutside, true);
-      window.document.removeEventListener("keydown", closeWithEscape, true);
+      window.document.removeEventListener("keydown", onMenuKeyDown, true);
     };
   }, [mobileActionsId]);
 
@@ -797,13 +826,17 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
     clearTouchReorderTimer();
     touchReorderIdRef.current = null;
     touchOverIdRef.current = null;
+    touchReorderStartRef.current = null;
     setTouchReorderId(null);
     setTouchOverId(null);
   };
 
   const startTouchReorder = (sectionId: string, event: ReactTouchEvent<HTMLButtonElement>) => {
     if (busy || event.touches.length !== 1) return;
+    const touch = event.touches.item(0);
+    if (!touch) return;
     clearTouchReorderTimer();
+    touchReorderStartRef.current = { x: touch.clientX, y: touch.clientY };
     touchReorderTimerRef.current = window.setTimeout(() => {
       touchReorderTimerRef.current = null;
       touchReorderIdRef.current = sectionId;
@@ -817,7 +850,16 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
   const moveTouchReorder = (event: ReactTouchEvent<HTMLButtonElement>) => {
     const sourceId = touchReorderIdRef.current;
     const touch = event.touches.item(0);
-    if (!sourceId || !touch) return;
+    if (!touch) return;
+
+    if (!sourceId) {
+      const start = touchReorderStartRef.current;
+      if (start && Math.hypot(touch.clientX - start.x, touch.clientY - start.y) > 14) {
+        clearTouchReorderTimer();
+        touchReorderStartRef.current = null;
+      }
+      return;
+    }
 
     event.preventDefault();
     const row = window.document.elementFromPoint(touch.clientX, touch.clientY)?.closest<HTMLElement>("[data-section-id]");
@@ -933,8 +975,10 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
                   type="button"
                   disabled={busy}
                   onClick={() => setMobileActionsId((current) => current === section.id ? null : section.id)}
+                  data-section-actions-trigger={section.id}
                   className="sd-row-action grid h-10 w-10 place-items-center rounded-xl"
                   aria-label="Bölüm işlemleri"
+                  aria-haspopup="menu"
                   aria-expanded={mobileActionsId === section.id}
                 >
                   <MoreHorizontal className="h-4 w-4" />
