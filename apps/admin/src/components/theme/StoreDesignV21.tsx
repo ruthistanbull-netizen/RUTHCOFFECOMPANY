@@ -484,6 +484,8 @@ export function StoreDesignV21() {
   const toast = useExactToast();
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const editorShellRef = useRef<HTMLDivElement | null>(null);
+  const mobileMoreButtonRef = useRef<HTMLButtonElement | null>(null);
+  const mobileMoreMenuRef = useRef<HTMLDivElement | null>(null);
   const contextMenuRef = useRef<HTMLDivElement | null>(null);
   const structurePanelRef = useRef<HTMLElement | null>(null);
   const inspectorPanelRef = useRef<HTMLElement | null>(null);
@@ -595,6 +597,54 @@ export function StoreDesignV21() {
     });
     return () => window.cancelAnimationFrame(focusFrame);
   }, [isMobileViewport, leftOpen, rightOpen, selected]);
+
+  useEffect(() => {
+    if (!mobileMoreOpen) return;
+
+    const focusFrame = window.requestAnimationFrame(() => {
+      mobileMoreMenuRef.current?.querySelector<HTMLButtonElement>('button:not([disabled])')?.focus({ preventScroll: true });
+    });
+
+    const closeOutside = (event: PointerEvent) => {
+      const element = event.target instanceof Element ? event.target : null;
+      if (element?.closest(".sd-more-tools")) return;
+      setMobileMoreOpen(false);
+    };
+
+    const onMenuKeyDown = (event: KeyboardEvent) => {
+      const menu = mobileMoreMenuRef.current;
+      if (!menu) return;
+      const items = Array.from(menu.querySelectorAll<HTMLButtonElement>('button:not([disabled])'));
+      if (!items.length) return;
+
+      if (event.key === "Escape") {
+        event.preventDefault();
+        event.stopPropagation();
+        setMobileMoreOpen(false);
+        window.requestAnimationFrame(() => mobileMoreButtonRef.current?.focus({ preventScroll: true }));
+        return;
+      }
+
+      const current = Math.max(0, items.indexOf(window.document.activeElement as HTMLButtonElement));
+      const moveTo = (index: number) => {
+        event.preventDefault();
+        items[(index + items.length) % items.length]?.focus({ preventScroll: true });
+      };
+
+      if (event.key === "ArrowDown") moveTo(current + 1);
+      else if (event.key === "ArrowUp") moveTo(current - 1);
+      else if (event.key === "Home") moveTo(0);
+      else if (event.key === "End") moveTo(items.length - 1);
+    };
+
+    window.addEventListener("pointerdown", closeOutside);
+    window.addEventListener("keydown", onMenuKeyDown);
+    return () => {
+      window.cancelAnimationFrame(focusFrame);
+      window.removeEventListener("pointerdown", closeOutside);
+      window.removeEventListener("keydown", onMenuKeyDown);
+    };
+  }, [mobileMoreOpen]);
 
   useEffect(() => {
     if (!isMobileViewport || (!leftOpen && !rightOpen && !mobileMoreOpen)) return;
@@ -1468,21 +1518,23 @@ export function StoreDesignV21() {
         </button>
         <div className="sd-more-tools relative">
           <button
+            ref={mobileMoreButtonRef}
             type="button"
             onClick={() => setMobileMoreOpen((value) => !value)}
             aria-expanded={mobileMoreOpen}
+            aria-haspopup="menu"
             className="sd-mobile-more-button sd-icon-button grid h-10 w-10 place-items-center rounded-xl border border-black/10 bg-white"
             aria-label="Diğer araçlar"
           >
             <MoreHorizontal className="h-4 w-4" />
           </button>
           {mobileMoreOpen ? (
-            <div className="sd-mobile-more-menu absolute right-0 top-12 z-50 w-56 rounded-2xl border border-black/10 bg-white p-2 shadow-2xl">
-              <button type="button" onClick={() => { setMobileMoreOpen(false); setMediaOpen(true); }} className="sd-mobile-menu-row"><Images className="h-4 w-4" />Medya Arşivi</button>
-              <button type="button" onClick={() => { setMobileMoreOpen(false); setTemplateManagerOpen(true); }} className="sd-mobile-menu-row"><LayoutTemplate className="h-4 w-4" />Şablonlar</button>
-              <button type="button" onClick={() => { setMobileMoreOpen(false); setRedirectManagerOpen(true); }} className="sd-mobile-menu-row"><Link2 className="h-4 w-4" />Yönlendirmeler</button>
-              <button type="button" onClick={() => { setMobileMoreOpen(false); setSnapshotManagerOpen(true); }} className="sd-mobile-menu-row"><History className="h-4 w-4" />Geçmiş</button>
-              <button type="button" onClick={() => { setMobileMoreOpen(false); void save("draft"); }} className="sd-mobile-menu-row"><Save className="h-4 w-4" />Taslağı kaydet</button>
+            <div ref={mobileMoreMenuRef} role="menu" aria-label="Diğer araçlar" className="sd-mobile-more-menu absolute right-0 top-12 z-50 w-56 rounded-2xl border border-black/10 bg-white p-2 shadow-2xl">
+              <button role="menuitem" type="button" onClick={() => { setMobileMoreOpen(false); setMediaOpen(true); }} className="sd-mobile-menu-row"><Images className="h-4 w-4" />Medya Arşivi</button>
+              <button role="menuitem" type="button" onClick={() => { setMobileMoreOpen(false); setTemplateManagerOpen(true); }} className="sd-mobile-menu-row"><LayoutTemplate className="h-4 w-4" />Şablonlar</button>
+              <button role="menuitem" type="button" onClick={() => { setMobileMoreOpen(false); setRedirectManagerOpen(true); }} className="sd-mobile-menu-row"><Link2 className="h-4 w-4" />Yönlendirmeler</button>
+              <button role="menuitem" type="button" onClick={() => { setMobileMoreOpen(false); setSnapshotManagerOpen(true); }} className="sd-mobile-menu-row"><History className="h-4 w-4" />Geçmiş</button>
+              <button role="menuitem" type="button" onClick={() => { setMobileMoreOpen(false); void save("draft"); }} className="sd-mobile-menu-row"><Save className="h-4 w-4" />Taslağı kaydet</button>
             </div>
           ) : null}
         </div>
