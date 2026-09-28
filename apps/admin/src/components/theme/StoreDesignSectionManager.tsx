@@ -53,6 +53,7 @@ type Props = {
   activePage: ActivePage | null;
   compatibility: PageCompatibility;
   openPickerSignal?: number;
+  openPresetSignal?: number;
   selectedSectionId?: string | null;
   onApply: (next: ThemeDocument, label: string) => Promise<void>;
 };
@@ -586,7 +587,7 @@ function SectionPicker({
   );
 }
 
-export function StoreDesignSectionManager({ document, activePage, compatibility, openPickerSignal = 0, selectedSectionId = null, onApply }: Props) {
+export function StoreDesignSectionManager({ document, activePage, compatibility, openPickerSignal = 0, openPresetSignal = 0, selectedSectionId = null, onApply }: Props) {
   const toast = useExactToast();
   const [pickerOpen, setPickerOpen] = useState(false);
   const [presetOpen, setPresetOpen] = useState(false);
@@ -605,6 +606,22 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
   useEffect(() => {
     if (openPickerSignal > 0) setPickerOpen(true);
   }, [openPickerSignal]);
+
+  useEffect(() => {
+    if (openPresetSignal > 0) setPresetOpen(true);
+  }, [openPresetSignal]);
+
+  useEffect(() => {
+    if (!selectedSectionId) return;
+    const frame = window.requestAnimationFrame(() => {
+      const escapedId = CSS.escape(selectedSectionId);
+      const row = window.document.querySelector<HTMLElement>(`[data-section-id="${escapedId}"]`);
+      if (!row) return;
+      row.scrollIntoView({ block: "center", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+      row.querySelector<HTMLButtonElement>(".sd-section-main")?.focus({ preventScroll: true });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [activePage?.path, selectedSectionId]);
 
   useEffect(() => () => {
     if (touchReorderTimerRef.current !== null) window.clearTimeout(touchReorderTimerRef.current);
