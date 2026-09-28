@@ -1217,6 +1217,10 @@ body {
 [data-store-design-v2-admin] .sd-context-menu .sd-field{
   min-height:40px;
 }
+[data-store-design-v2-admin] .sd-context-menu-body{
+  max-height:min(556px,calc(100dvh - 210px));
+  overscroll-behavior:contain;
+}
 [data-store-design-v2-admin] .sd-context-menu button{
   transition:
     background-color var(--sd-motion-micro) var(--sd-ease),
