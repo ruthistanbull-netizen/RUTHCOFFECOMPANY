@@ -457,6 +457,11 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
     };
 
     const onClick = (event: MouseEvent) => {
+      if (Date.now() < suppressClickUntil) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
       if (interactionMode !== "edit") return;
       const target = targetFromEvent(event);
       if (!target) return;
@@ -466,6 +471,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
     };
 
     let longPressTimer = 0;
+    let suppressClickUntil = 0;
     let pressTarget: SemanticTarget | null = null;
     let pressX = 0;
     let pressY = 0;
@@ -489,7 +495,10 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
       pressY = touch.clientY;
       pressTouchId = touch.identifier;
       longPressTimer = window.setTimeout(() => {
-        if (pressTarget) select(pressTarget, { x: pressX, y: pressY, kind: "touch" });
+        if (pressTarget) {
+          suppressClickUntil = Date.now() + 700;
+          select(pressTarget, { x: pressX, y: pressY, kind: "touch" });
+        }
         clearPress();
       }, LONG_PRESS_MS);
     };
