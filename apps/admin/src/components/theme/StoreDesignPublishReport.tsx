@@ -8,23 +8,23 @@ import { useStoreDesignDialogExit } from "@/components/theme/useStoreDesignDialo
 type Props = {
   issues: ThemeReferenceIssue[];
   onCancel: () => void;
-  onYayınla: () => void;
+  onPublish: () => void;
   publishing: boolean;
 };
 
-export function StoreDesignYayınlaReport({ issues, onCancel, onYayınla, publishing }: Props) {
+export function StoreDesignPublishReport({ issues, onCancel, onPublish, publishing }: Props) {
 
   const { closing, requestClose } = useStoreDesignDialogExit(onCancel);
   const errors = issues.filter((issue) => issue.severity === "error");
   const warnings = issues.filter((issue) => issue.severity === "warning");
-  const canYayınla = errors.length === 0;
+  const canPublish = errors.length === 0;
 
   return (
     <div data-closing={closing ? "true" : "false"} className="sd-modal-backdrop fixed inset-0 z-[2147483630] grid place-items-center bg-black/40 p-3 backdrop-blur-sm">
       <div className="sd-modal-card flex max-h-[88dvh] w-full max-w-[760px] flex-col overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl">
         <header className="flex h-14 shrink-0 items-center gap-3 border-b border-black/10 px-4">
           <div className="min-w-0 flex-1">
-            <p className="text-[12px] font-semibold">Yayınla Öncesi Kontrol</p>
+            <p className="text-[12px] font-semibold">Yayınlama Öncesi Kontrol</p>
             <p className="mt-0.5 text-[8px] text-black/40">Sayfa, şablon, bölüm, blok, medya ve bağlantılar denetlendi.</p>
           </div>
           <button type="button" onClick={requestClose} disabled={publishing} className="grid h-9 w-9 place-items-center rounded-lg hover:bg-black/[0.04] disabled:opacity-40" aria-label="Kapat">
@@ -78,10 +78,10 @@ export function StoreDesignYayınlaReport({ issues, onCancel, onYayınla, publis
 
         <footer className="flex shrink-0 items-center gap-2 border-t border-black/10 bg-[#fafafa] p-3">
           <p className="min-w-0 flex-1 text-[8px] leading-4 text-black/35">
-            {canYayınla ? (warnings.length ? "Uyarılar publish'i engellemez; canlı sonucu kontrol ederek devam et." : "Kontrol temiz.") : "Hatalar düzeltilmeden publish engellendi."}
+            {canPublish ? (warnings.length ? "Uyarılar yayınlamayı engellemez; canlı sonucu kontrol ederek devam et." : "Kontrol temiz.") : "Hatalar düzeltilmeden yayınlama yapılamaz."}
           </p>
           <button type="button" onClick={requestClose} disabled={publishing} className="h-10 rounded-lg border border-black/10 bg-white px-4 text-[9px] font-semibold disabled:opacity-40">Vazgeç</button>
-          <button type="button" disabled={!canYayınla || publishing} onClick={onYayınla} className="flex h-10 items-center gap-2 rounded-lg bg-[#111] px-4 text-[9px] font-semibold text-white disabled:opacity-35">
+          <button type="button" disabled={!canPublish || publishing} onClick={onPublish} className="flex h-10 items-center gap-2 rounded-lg bg-[#111] px-4 text-[9px] font-semibold text-white disabled:opacity-35">
             <Send className="h-3.5 w-3.5" />{publishing ? "Yayınlanıyor…" : warnings.length ? "Uyarılara Rağmen Yayınla" : "Yayınla"}
           </button>
         </footer>
