@@ -273,7 +273,7 @@ export function StoreDesignMediaLibrary({
                       setFocal(asset.focalPoint || { x: 50, y: 50 });
                       if (onSelect) onSelect(asset.assetId);
                     }}
-                    className={`overflow-hidden rounded-xl border text-left transition ${active ? "border-black/35 ring-1 ring-black/10" : "border-black/[0.08] hover:border-black/20"}`}
+                    className={`sd-media-card overflow-hidden rounded-xl border text-left transition ${active ? "border-black/35 ring-1 ring-black/10" : "border-black/[0.08] hover:border-black/20"}`}
                   >
                     <div className="relative aspect-[4/3] overflow-hidden bg-black/[0.04]">
                       {asset.type === "video" ? (
