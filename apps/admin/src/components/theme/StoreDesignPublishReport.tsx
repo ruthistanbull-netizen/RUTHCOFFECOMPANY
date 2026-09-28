@@ -9,8 +9,19 @@ type Props = {
   issues: ThemeReferenceIssue[];
   onCancel: () => void;
   onPublish: () => void;
+  onFixIssue: (issue: ThemeReferenceIssue) => void;
   publishing: boolean;
 };
+
+function issueTopic(issue: ThemeReferenceIssue) {
+  if (issue.code.includes("media") || issue.code.includes("og")) return "Medya";
+  if (issue.code.includes("link") || issue.code.includes("redirect")) return "Bağlantılar";
+  if (issue.code.includes("block")) return "İçerik öğeleri";
+  if (issue.code.includes("section") || issue.code.includes("preset")) return "Bölümler";
+  if (issue.code.includes("template")) return "Şablonlar";
+  if (issue.code.includes("seo") || issue.code.includes("page")) return "Sayfalar";
+  return "Diğer";
+}
 
 function friendlyIssueMessage(issue: ThemeReferenceIssue) {
   const route = typeof issue.target === "string" && issue.target.startsWith("/") ? issue.target : null;
@@ -57,12 +68,19 @@ function friendlyIssueMessage(issue: ThemeReferenceIssue) {
   }
 }
 
-export function StoreDesignPublishReport({ issues, onCancel, onPublish, publishing }: Props) {
+export function StoreDesignPublishReport({ issues, onCancel, onPublish, onFixIssue, publishing }: Props) {
 
   const { closing, requestClose } = useStoreDesignDialogExit(onCancel, 180, publishing);
   const errors = issues.filter((issue) => issue.severity === "error");
   const warnings = issues.filter((issue) => issue.severity === "warning");
   const canPublish = errors.length === 0;
+  const groupedIssues = [...issues.reduce((groups, issue) => {
+    const topic = issueTopic(issue);
+    const current = groups.get(topic) || [];
+    current.push(issue);
+    groups.set(topic, current);
+    return groups;
+  }, new Map<string, ThemeReferenceIssue[]>()).entries()];
 
   return (
     <div data-closing={closing ? "true" : "false"} className="sd-modal-backdrop fixed inset-0 z-[2147483630] grid place-items-center bg-black/40 p-3 backdrop-blur-sm">
@@ -102,19 +120,35 @@ export function StoreDesignPublishReport({ issues, onCancel, onPublish, publishi
               </div>
             </div>
           ) : (
-            <div className="mt-4 space-y-2">
-              {issues.map((issue, index) => (
-                <div key={`${issue.code}-${issue.source || "source"}-${index}`} className={`rounded-xl border p-3 ${issue.severity === "error" ? "border-red-200 bg-red-50/40" : "border-amber-200 bg-amber-50/40"}`}>
-                  <div className="flex items-start gap-2">
-                    {issue.severity === "error" ? <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-600" /> : <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-700" />}
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className={`rounded px-1.5 py-0.5 text-[6px] font-semibold uppercase ${issue.severity === "error" ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-800"}`}>{issue.severity === "error" ? "Hata" : "Uyarı"}</span>
-                      </div>
-                      <p className="mt-1.5 text-[8px] leading-4 text-black/65">{friendlyIssueMessage(issue)}</p>
-                    </div>
+            <div className="mt-4 space-y-4">
+              {groupedIssues.map(([topic, topicIssues]) => (
+                <section key={topic} className="space-y-2" aria-label={topic}>
+                  <div className="flex items-center justify-between gap-2 px-1">
+                    <p className="text-[10px] font-semibold text-black/55">{topic}</p>
+                    <span className="rounded-full bg-black/[0.04] px-2 py-0.5 text-[8px] font-semibold text-black/40">{topicIssues.length}</span>
                   </div>
-                </div>
+                  {topicIssues.map((issue, index) => (
+                    <div key={`${issue.code}-${issue.source || "source"}-${index}`} className={`rounded-xl border p-3 ${issue.severity === "error" ? "border-red-200 bg-red-50/40" : "border-amber-200 bg-amber-50/40"}`}>
+                      <div className="flex items-start gap-2">
+                        {issue.severity === "error" ? <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-600" /> : <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-700" />}
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className={`rounded px-1.5 py-0.5 text-[6px] font-semibold uppercase ${issue.severity === "error" ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-800"}`}>{issue.severity === "error" ? "Hata" : "Uyarı"}</span>
+                          </div>
+                          <p className="mt-1.5 text-[8px] leading-4 text-black/65">{friendlyIssueMessage(issue)}</p>
+                          <button
+                            type="button"
+                            disabled={publishing}
+                            onClick={() => onFixIssue(issue)}
+                            className="mt-2 h-9 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold disabled:opacity-40"
+                          >
+                            Düzelt
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </section>
               ))}
             </div>
           )}
