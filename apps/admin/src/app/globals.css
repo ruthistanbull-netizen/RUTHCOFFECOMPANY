@@ -602,3 +602,55 @@ body {
   from{opacity:0;transform:translateY(6px)}
   to{opacity:1;transform:translateY(0)}
 }
+
+
+/* Store Design sidebar exit + save feedback. */
+[data-store-design-v2-admin] .sd-sidebar-left,
+[data-store-design-v2-admin] .sd-inspector{
+  animation:none!important;
+  transition:
+    width var(--sd-motion-panel) var(--sd-ease-enter),
+    opacity var(--sd-motion-fast) var(--sd-ease),
+    transform var(--sd-motion-panel) var(--sd-ease-enter),
+    border-color var(--sd-motion-fast) var(--sd-ease);
+  will-change:width,opacity,transform;
+}
+[data-store-design-v2-admin] .sd-sidebar-left.is-open{width:292px!important;opacity:1;transform:translateX(0);pointer-events:auto}
+[data-store-design-v2-admin] .sd-sidebar-left.is-closed{width:0!important;opacity:0;transform:translateX(-12px);pointer-events:none;border-right-width:0!important}
+[data-store-design-v2-admin] .sd-inspector.is-open{width:320px!important;opacity:1;transform:translateX(0);pointer-events:auto}
+[data-store-design-v2-admin] .sd-inspector.is-closed{width:0!important;opacity:0;transform:translateX(12px);pointer-events:none;border-left-width:0!important}
+[data-store-design-v2-admin] .sd-save-button[data-save-state="loading"]{cursor:progress}
+[data-store-design-v2-admin] .sd-save-button[data-save-state="success"]{
+  background:var(--sd-success)!important;
+  color:#fff!important;
+  border-color:color-mix(in srgb,var(--sd-success) 72%,transparent)!important;
+  box-shadow:0 8px 22px color-mix(in srgb,var(--sd-success) 22%,transparent)!important;
+  animation:sd-save-success 220ms var(--sd-ease-enter) both;
+}
+[data-store-design-v2-admin] .sd-save-button[data-save-state="success"] svg{
+  animation:sd-save-check 240ms var(--sd-ease-enter) both;
+}
+[data-store-design-v2-admin] .sd-field{
+  transition:
+    border-color var(--sd-motion-micro) var(--sd-ease),
+    box-shadow var(--sd-motion-fast) var(--sd-ease),
+    background-color var(--sd-motion-micro) var(--sd-ease),
+    color var(--sd-motion-micro) var(--sd-ease);
+}
+[data-store-design-v2-admin] .sd-field:hover{border-color:color-mix(in srgb,var(--sd-accent) 58%,var(--sd-border))!important}
+[data-store-design-v2-admin] .sd-field:focus{border-color:var(--sd-focus)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--sd-focus) 15%,transparent)}
+@keyframes sd-save-success{
+  0%{transform:scale(.985)}
+  55%{transform:scale(1.025)}
+  100%{transform:scale(1)}
+}
+@keyframes sd-save-check{
+  from{opacity:0;transform:scale(.72) rotate(-8deg)}
+  to{opacity:1;transform:scale(1) rotate(0)}
+}
+@media (max-width:1023px){
+  [data-store-design-v2-admin] .sd-sidebar-left.is-closed{width:292px!important;transform:translateX(calc(-100% - 14px))}
+}
+@media (max-width:1279px){
+  [data-store-design-v2-admin] .sd-inspector.is-closed{width:320px!important;transform:translateX(calc(100% + 14px))}
+}
