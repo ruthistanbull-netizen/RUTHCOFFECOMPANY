@@ -298,9 +298,17 @@ export function StoreDesignMediaLibrary({
           </div>
         </div>
 
-        <aside className="hidden w-[310px] shrink-0 flex-col border-l border-black/10 bg-[#fafafa] md:flex">
-          <div className="border-b border-black/10 p-3">
-            <p className="text-[9px] font-semibold text-black/45">MEDYA AYARLARI</p>
+        <aside className={`sd-media-details ${selected ? "is-open" : ""} hidden w-[310px] shrink-0 flex-col border-l border-black/10 bg-[#fafafa] md:flex`}>
+          <div className="flex items-center gap-2 border-b border-black/10 p-3">
+            <p className="min-w-0 flex-1 text-[9px] font-semibold text-black/45">MEDYA AYARLARI</p>
+            <button
+              type="button"
+              onClick={() => setDetailId(null)}
+              className="sd-media-details-close hidden h-10 w-10 place-items-center rounded-xl border border-black/10"
+              aria-label="Medya ayarlarını kapat"
+            >
+              <X className="h-4 w-4" />
+            </button>
           </div>
           {selected ? (
             <div className="min-h-0 flex-1 overflow-y-auto p-3">
