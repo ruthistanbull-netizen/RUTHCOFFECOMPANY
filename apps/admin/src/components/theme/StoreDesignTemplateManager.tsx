@@ -29,6 +29,21 @@ type Props = {
   onClose: () => void;
 };
 
+function compatibilityLabel(value: PageCompatibility | string) {
+  const labels: Record<string, string> = {
+    content: "İçerik sayfası",
+    product: "Ürün sayfası",
+    collection: "Koleksiyon sayfası",
+    category: "Kategori sayfası",
+    cart: "Sepet",
+    checkout: "Ödeme",
+    account: "Hesap",
+    search: "Arama",
+    utility: "Yardımcı sayfa",
+  };
+  return labels[value] || "Sayfa";
+}
+
 function uid(prefix: string) {
   const random = globalThis.crypto?.randomUUID?.().replace(/-/g, "") || Math.random().toString(36).slice(2);
   return `${prefix}-${random}`.slice(0, 180);
@@ -306,7 +321,7 @@ export function StoreDesignTemplateManager({
                 <Plus className="h-3 w-3" />Yeni
               </button>
             </div>
-            <p className="mt-1 text-[8px] leading-4 text-black/40">{activeLabel} · {compatibility}</p>
+            <p className="mt-1 text-[8px] leading-4 text-black/40">{activeLabel} · {compatibilityLabel(compatibility)}</p>
           </header>
 
           <div className="min-h-0 flex-1 overflow-y-auto p-2">
@@ -342,7 +357,7 @@ export function StoreDesignTemplateManager({
           <header className="flex h-14 shrink-0 items-center gap-3 border-b border-black/10 px-4">
             <div className="min-w-0 flex-1">
               <p className="text-[12px] font-semibold">{creating ? "Yeni Şablon" : selected?.label || "Şablon Seç"}</p>
-              <p className="mt-0.5 truncate text-[8px] text-black/40">{creating ? "Boş şablon oluştur" : selected?.id || "Soldan şablon seç"}</p>
+              <p className="mt-0.5 truncate text-[8px] text-black/40">{creating ? "Boş şablon oluştur" : selected?.description || "Soldan şablon seç"}</p>
             </div>
             <button type="button" onClick={requestClose} className="grid h-9 w-9 place-items-center rounded-lg hover:bg-black/[0.04]" aria-label="Kapat"><X className="h-4 w-4" /></button>
           </header>
@@ -353,15 +368,15 @@ export function StoreDesignTemplateManager({
                 <div className="grid gap-3 sm:grid-cols-3">
                   <div className="rounded-xl border border-black/[0.07] p-3"><p className="text-[7px] text-black/35">Bölüm</p><p className="mt-1 text-[16px] font-semibold">{selected.sectionIds.length}</p></div>
                   <div className="rounded-xl border border-black/[0.07] p-3"><p className="text-[7px] text-black/35">Kullanım</p><p className="mt-1 text-[16px] font-semibold">{selectedUsage.count}</p></div>
-                  <div className="rounded-xl border border-black/[0.07] p-3"><p className="text-[7px] text-black/35">Uyumluluk</p><p className="mt-1 truncate text-[9px] font-semibold">{selected.compatibility.join(", ")}</p></div>
+                  <div className="rounded-xl border border-black/[0.07] p-3"><p className="text-[7px] text-black/35">Sayfa türü</p><p className="mt-1 truncate text-[9px] font-semibold">{compatibilityLabel(selected.compatibility[0] || compatibility)}</p></div>
                 </div>
 
                 {assignmentChanged ? (
                   <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3">
-                    <p className="text-[9px] font-semibold text-amber-950">Atama diff preview</p>
+                    <p className="text-[9px] font-semibold text-amber-950">Değişiklik özeti</p>
                     <p className="mt-1 text-[8px] leading-4 text-amber-900/70">
                       {current?.label || "Mevcut şablon yok"} ({current?.sectionIds.length || 0} bölüm) → {selected.label} ({selected.sectionIds.length} bölüm).
-                      Bu atama section composition ve template-level component ayarlarını birlikte değiştirir.
+                      Bu işlem sayfanın bölüm düzenini ve şablona bağlı görünüm ayarlarını birlikte değiştirir.
                     </p>
                     <button type="button" disabled={busy} onClick={() => void assignSelected()} className="mt-3 h-9 rounded-lg bg-[#111] px-3 text-[8px] font-semibold text-white disabled:opacity-40">Bu Şablonu Kullan</button>
                   </div>
@@ -385,7 +400,7 @@ export function StoreDesignTemplateManager({
                 </div>
 
                 <div className="mt-5 border-t border-black/[0.07] pt-5">
-                  <p className="text-[9px] font-semibold">Kullanım referansları</p>
+                  <p className="text-[9px] font-semibold">Kullanıldığı yerler</p>
                   <div className="mt-2 rounded-xl bg-[#fafafa] p-3 text-[8px] leading-5 text-black/45">
                     {[...selectedUsage.pages.map((item) => `Sayfa · ${item}`), ...selectedUsage.routes.map((item) => `Adres bağlantısı · ${item}`)].join("\n") || "Bu şablon henüz hiçbir sayfa veya adres tarafından kullanılmıyor."}
                   </div>
@@ -406,12 +421,12 @@ export function StoreDesignTemplateManager({
               <div>
                 <div className="rounded-xl border border-black/[0.08] bg-[#fafafa] p-4">
                   <p className="text-[10px] font-semibold">Yeni boş şablon</p>
-                  <p className="mt-1 text-[8px] leading-4 text-black/35">Bu şablon {compatibility} sayfa türüyle uyumlu oluşturulur. Ardından şablonu sayfaya atayıp Bölüm Ekle ile düzeni kurabilirsin.</p>
+                  <p className="mt-1 text-[8px] leading-4 text-black/35">Bu şablon {compatibilityLabel(compatibility)} için oluşturulur. Ardından şablonu sayfaya atayıp Bölüm Ekle ile düzeni kurabilirsin.</p>
                 </div>
                 <div className="mt-4 grid gap-3">
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                    Template adı
-                    <input value={newName} onChange={(event) => setNewName(event.target.value)} placeholder="Örn. Editorial Product" className="h-10 rounded-lg border border-black/10 px-3 text-[9px] font-medium outline-none" />
+                    Şablon adı
+                    <input value={newName} onChange={(event) => setNewName(event.target.value)} placeholder="Örn. Ürün Detay Şablonu" className="h-10 rounded-lg border border-black/10 px-3 text-[9px] font-medium outline-none" />
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                     Açıklama
