@@ -519,3 +519,21 @@ body {
   [data-store-design-v2-admin] button:not(:disabled):hover,[data-store-design-v2-admin] button:not(:disabled):active,
   [data-store-design-v2-admin] .sd-section-row.is-dragging{transform:none!important;}
 }
+
+
+/* Store Design contrast guardrails: keep editor chrome readable in both brand themes. */
+[data-store-design-v2-admin] .text-black{color:var(--sd-text-1)!important}
+[data-store-design-v2-admin] [class*="text-black/"]{color:var(--sd-text-2)!important}
+[data-store-design-v2-admin] [class*="border-black/"]{border-color:var(--sd-border)!important}
+[data-store-design-v2-admin] [class*="bg-[#f7f7f5]"],
+[data-store-design-v2-admin] [class*="bg-[#fafafa]"],
+[data-store-design-v2-admin] [class*="bg-[#f5f5f3]"]{background-color:var(--sd-surface-2)!important}
+[data-store-design-v2-admin] .sd-sidebar,
+[data-store-design-v2-admin] .sd-inspector{scrollbar-color:var(--sd-accent) transparent;scrollbar-width:thin}
+[data-store-design-v2-admin] .sd-sidebar ::-webkit-scrollbar,
+[data-store-design-v2-admin] .sd-inspector ::-webkit-scrollbar{width:7px;height:7px}
+[data-store-design-v2-admin] .sd-sidebar ::-webkit-scrollbar-thumb,
+[data-store-design-v2-admin] .sd-inspector ::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--sd-accent) 58%,transparent);border-radius:999px}
+[data-store-design-v2-admin] .sd-toolbar,
+[data-store-design-v2-admin] .sd-sidebar,
+[data-store-design-v2-admin] .sd-inspector{opacity:1!important;filter:none!important}
