@@ -165,6 +165,7 @@ function scopeLabel(scope: EditorScope) {
 function controlGroupLabel(group: string) {
   const labels: Record<string, string> = {
     content: "İçerik",
+    data: "Veri kaynağı",
     typography: "Yazı",
     media: "Görsel ve medya",
     layout: "Düzen",
@@ -177,6 +178,8 @@ function controlGroupLabel(group: string) {
     spacing: "Boşluk",
     form: "Form",
     seo: "Arama görünümü",
+    accessibility: "Erişilebilirlik",
+    advanced: "Gelişmiş",
   };
   return labels[group] || "Diğer";
 }
