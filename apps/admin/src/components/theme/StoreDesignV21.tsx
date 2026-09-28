@@ -768,6 +768,7 @@ export function StoreDesignV21() {
   const groupedPages = useMemo(() => groupPages(editorPages), [editorPages]);
   const activePage = editorPages.find((item) => item.path === activePath) || editorPages[0] || null;
   const managedPage = document.pages[activePath] || Object.values(document.pages).find((page) => page.route === activePath) || null;
+  const selectedSectionId = selected ? sectionRegistration(selected)?.id || null : null;
   const activeCompatibility: PageCompatibility = (
     managedPage ? document.templates[managedPage.templateId]?.compatibility?.[0] : undefined
   ) || (activePage ? pageCompatibility(activePage) : "content");
@@ -1591,6 +1592,7 @@ export function StoreDesignV21() {
                 activePage={activePage}
                 compatibility={activeCompatibility}
                 openPickerSignal={sectionPickerSignal}
+                selectedSectionId={selectedSectionId}
                 onApply={applyStructureDocument}
               />
             </div>
