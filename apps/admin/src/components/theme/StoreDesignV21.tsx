@@ -521,26 +521,42 @@ export function StoreDesignV21() {
   const revisionRef = useRef(0);
   const lastReconnectRef = useRef(0);
   const mobileSheetTouchStartRef = useRef<number | null>(null);
+  const layoutBandRef = useRef<"mobile" | "tablet" | "compact" | "wide" | null>(null);
 
   useEffect(() => {
-    const media = window.matchMedia("(max-width: 767px)");
     const applyViewport = () => {
-      const mobile = media.matches;
-      setIsMobileViewport(mobile);
-      if (mobile) {
+      const width = window.innerWidth;
+      const band: "mobile" | "tablet" | "compact" | "wide" = width <= 767
+        ? "mobile"
+        : width <= 1199
+          ? "tablet"
+          : width <= 1599
+            ? "compact"
+            : "wide";
+
+      setIsMobileViewport(band === "mobile");
+      if (layoutBandRef.current === band) return;
+      layoutBandRef.current = band;
+
+      if (band === "mobile") {
         setDevice("mobile");
         setInteractionMode("browse");
         setLeftOpen(false);
         setRightOpen(false);
         setMobileSheetLevel("peek");
-      } else {
-        setInteractionMode("edit");
-        setMobileMoreOpen(false);
+        return;
       }
+
+      setDevice("desktop");
+      setInteractionMode("edit");
+      setMobileMoreOpen(false);
+      setLeftOpen(band !== "tablet");
+      setRightOpen(band === "wide");
     };
+
     applyViewport();
-    media.addEventListener("change", applyViewport);
-    return () => media.removeEventListener("change", applyViewport);
+    window.addEventListener("resize", applyViewport);
+    return () => window.removeEventListener("resize", applyViewport);
   }, []);
 
   useEffect(() => {
@@ -1445,7 +1461,7 @@ export function StoreDesignV21() {
           </div>
         </main>
 
-        <aside ref={inspectorPanelRef} tabIndex={-1} aria-label="Düzenleme paneli" data-open={rightOpen ? "true" : "false"} data-sheet-level={mobileSheetLevel} aria-hidden={!rightOpen} className={`sd-sidebar sd-inspector ${rightOpen ? "is-open" : "is-closed"} flex w-[320px] shrink-0 flex-col border-l border-black/10 bg-white max-xl:absolute max-xl:bottom-0 max-xl:right-0 max-xl:top-[58px] max-xl:z-20 max-xl:shadow-2xl`}>
+        <aside ref={inspectorPanelRef} tabIndex={-1} aria-label="Düzenleme paneli" data-open={rightOpen ? "true" : "false"} data-sheet-level={mobileSheetLevel} aria-hidden={!rightOpen} className={`sd-sidebar sd-inspector ${rightOpen ? "is-open" : "is-closed"} flex w-[360px] shrink-0 flex-col border-l border-black/10 bg-white max-xl:absolute max-xl:bottom-0 max-xl:right-0 max-xl:top-[58px] max-xl:z-20 max-xl:shadow-2xl`}>
             <div
               className="sd-inspector-header border-b border-black/[0.07] p-3"
               onTouchStart={(event) => {
