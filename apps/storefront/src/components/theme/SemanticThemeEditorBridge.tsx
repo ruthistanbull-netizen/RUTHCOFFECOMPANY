@@ -371,6 +371,23 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
       window.parent.postMessage(payload, expectedParentOrigin);
     };
 
+    const previewScrollbarStyle = document.createElement("style");
+    previewScrollbarStyle.dataset.storeDesignV2PreviewScrollbar = "true";
+    previewScrollbarStyle.textContent = `
+      html, body {
+        scrollbar-width: none !important;
+        -ms-overflow-style: none !important;
+      }
+      html::-webkit-scrollbar,
+      body::-webkit-scrollbar,
+      *::-webkit-scrollbar {
+        width: 0 !important;
+        height: 0 !important;
+        display: none !important;
+      }
+    `;
+    document.head.appendChild(previewScrollbarStyle);
+
     const overlay = document.createElement("div");
     overlay.dataset.storeDesignV2Ui = "true";
     overlay.style.cssText = [
@@ -589,6 +606,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
       window.removeEventListener("message", onMessage);
       window.removeEventListener("resize", positionOverlay);
       window.removeEventListener("scroll", positionOverlay, true);
+      previewScrollbarStyle.remove();
       overlay.remove();
       selectedRef.current = null;
     };
