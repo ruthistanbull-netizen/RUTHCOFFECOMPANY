@@ -425,22 +425,27 @@ export function SemanticThemeRuntimeProvider({
     };
 
     let applyFrame = 0;
-    const scheduleApply = () => {
-      if (applyFrame) return;
-      applyFrame = window.requestAnimationFrame(() => {
+    let remainingFrames = 0;
+    const applyBurst = () => {
+      if (applyFrame) window.cancelAnimationFrame(applyFrame);
+      remainingFrames = 6;
+      const tick = () => {
         applyFrame = 0;
         apply();
-      });
+        remainingFrames -= 1;
+        if (remainingFrames > 0) applyFrame = window.requestAnimationFrame(tick);
+      };
+      applyFrame = window.requestAnimationFrame(tick);
     };
-    const observer = new MutationObserver(scheduleApply);
 
     apply();
-    observer.observe(document.body, { childList: true, subtree: true });
-    mediaQuery.addEventListener("change", apply);
+    applyBurst();
+    mediaQuery.addEventListener("change", applyBurst);
+    window.addEventListener("pageshow", applyBurst);
     return () => {
       if (applyFrame) window.cancelAnimationFrame(applyFrame);
-      observer.disconnect();
-      mediaQuery.removeEventListener("change", apply);
+      mediaQuery.removeEventListener("change", applyBurst);
+      window.removeEventListener("pageshow", applyBurst);
       restore();
     };
   }, [effectiveDocument, mergedPatches, runtimeMediaAssets]);
