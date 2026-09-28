@@ -45,6 +45,14 @@ function id(prefix: string) {
   return `${prefix}-${random}`.slice(0, 160);
 }
 
+function mediaLabel(asset: ThemeDocument["media"][string]) {
+  const date = asset.createdAt ? new Date(asset.createdAt) : null;
+  const readableDate = date && !Number.isNaN(date.getTime())
+    ? date.toLocaleString("tr-TR", { dateStyle: "short", timeStyle: "short" })
+    : null;
+  return readableDate ? `Görsel · ${readableDate}` : `Görsel · Sürüm ${asset.version || 1}`;
+}
+
 function pageByRoute(document: ThemeDocument, path: string) {
   return document.pages[path] || Object.values(document.pages).find((page) => page.route === path) || null;
 }
@@ -441,7 +449,7 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
               <select value={form.ogAssetId} onChange={(event) => set("ogAssetId", event.target.value)} className="h-10 rounded-lg border border-black/10 bg-white px-3 text-[10px] font-medium text-black outline-none">
                 <option value="">Özel paylaşım görseli yok</option>
                 {Object.values(document.media).filter((asset) => asset.type === "image").map((asset) => (
-                  <option key={asset.assetId} value={asset.assetId}>{asset.assetId} · v{asset.version || 1}</option>
+                  <option key={asset.assetId} value={asset.assetId}>{mediaLabel(asset)}</option>
                 ))}
               </select>
               {form.ogAssetId && document.media[form.ogAssetId]?.url ? (
