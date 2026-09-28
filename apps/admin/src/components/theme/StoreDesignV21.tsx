@@ -1035,9 +1035,9 @@ export function StoreDesignV21() {
     const leaves = new Map(flattenResponsiveLeaves(deviceSettings));
     const candidates = [
       ...(selected.controlGroups.includes("typography") ? ["textAlign"] : []),
-      ...(selected.controlGroups.includes("layout") ? ["visible", "borderRadius"] : []),
-      ...(selected.controlGroups.includes("card") ? ["borderRadius"] : []),
-      ...(selected.controlGroups.includes("media") && selected.current.media ? ["media.objectFit", "media.objectPosition"] : []),
+      ...(selected.controlGroups.includes("layout") ? ["visible"] : []),
+      ...(selected.type !== "product-card" && (selected.controlGroups.includes("card") || selected.controlGroups.includes("layout")) ? ["borderRadius"] : []),
+      ...(selected.type !== "product-card" && selected.controlGroups.includes("media") && selected.current.media ? ["media.objectFit", "media.objectPosition"] : []),
       ...(selected.type === "product-grid" ? ["grid.columns"] : []),
       ...(selected.type === "product-card" ? ["card.density", "card.imageRatio", "card.showPrice"] : []),
     ];
@@ -1823,11 +1823,16 @@ export function StoreDesignV21() {
         >
           <div className="border-b border-black/[0.07] px-4 py-3">
             <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <p className="truncate text-[13px] font-semibold">{contextMenu.target.label}</p>
-                <p className="mt-1 truncate text-[10px] text-black/45">
-                  {contextMenu.target.breadcrumb.map((item) => item.label).join(" › ")}
-                </p>
+              <div className="flex min-w-0 items-start gap-2.5">
+                <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-black/[0.04]" aria-hidden="true">
+                  <SlidersHorizontal className="h-3.5 w-3.5" />
+                </span>
+                <div className="min-w-0">
+                  <p className="truncate text-[13px] font-semibold">{contextMenu.target.label}</p>
+                  <p className="mt-1 truncate text-[10px] text-black/45">
+                    {contextMenu.target.breadcrumb.map((item) => item.label).join(" › ")}
+                  </p>
+                </div>
               </div>
               <button type="button" onClick={() => setContextMenu(null)} className="sd-context-close rounded-lg px-2 py-1.5 text-[11px] font-semibold text-black/45 hover:bg-black/[0.04]">
                 Kapat
@@ -1876,7 +1881,7 @@ export function StoreDesignV21() {
                   </label>
                 ) : null}
 
-                {(contextMenu.target.controlGroups.includes("card") || contextMenu.target.controlGroups.includes("layout")) ? (
+                {contextMenu.target.type !== "product-card" && (contextMenu.target.controlGroups.includes("card") || contextMenu.target.controlGroups.includes("layout")) ? (
                   <label className="grid gap-1 text-[11px] text-black/50">
                     Köşe yuvarlaklığı
                     <select
@@ -1889,7 +1894,7 @@ export function StoreDesignV21() {
                   </label>
                 ) : null}
 
-                {contextMenu.target.controlGroups.includes("media") && selected?.current.media ? (
+                {contextMenu.target.type !== "product-card" && contextMenu.target.controlGroups.includes("media") && selected?.current.media ? (
                   <>
                     <label className="grid gap-1 text-[11px] text-black/50">
                       Görsel yerleşimi
