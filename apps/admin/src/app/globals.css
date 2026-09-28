@@ -1029,3 +1029,11 @@ body {
   from{opacity:0;transform:translateY(-4px) scale(.985)}
   to{opacity:1;transform:translateY(0) scale(1)}
 }
+
+
+/* Store Design v4.1 — progressive toolbar disclosure. */
+[data-store-design-v2-admin] .sd-toolbar-secondary{display:none!important}
+[data-store-design-v2-admin] .sd-more-tools{display:block!important;flex:0 0 auto}
+@media (max-width:767px){
+  [data-store-design-v2-admin] .sd-more-tools{display:block!important}
+}
