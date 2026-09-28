@@ -76,7 +76,7 @@ export function StoreDesignSnapshotManager({ currentPublishedRevision, onRestore
         <header className="flex h-14 shrink-0 items-center gap-3 border-b border-black/10 px-4">
           <div className="min-w-0 flex-1">
             <p className="text-[12px] font-semibold">Yayın Sürümü Geçmişi</p>
-            <p className="mt-0.5 text-[8px] text-black/40">Rollback önce draft’a yüklenir; canlı site yalnız tekrar Publish ile değişir.</p>
+            <p className="mt-0.5 text-[8px] text-black/40">Geri yükleme önce taslağa uygulanır; canlı mağaza yalnız yeniden yayınlandığında değişir.</p>
           </div>
           <button type="button" onClick={() => void load()} disabled={loading} className="grid h-9 w-9 place-items-center rounded-lg border border-black/10 hover:bg-black/[0.03] disabled:opacity-40" aria-label="Yenile">
             <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
@@ -102,7 +102,7 @@ export function StoreDesignSnapshotManager({ currentPublishedRevision, onRestore
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
                           <p className="text-[10px] font-semibold">Sürüm {snapshot.revision}</p>
-                          <span className="rounded-full bg-black/[0.04] px-2 py-0.5 text-[7px] font-semibold text-black/45">Yapı sürümü {snapshot.schemaVersion}</span>
+                          <span className="rounded-full bg-black/[0.04] px-2 py-0.5 text-[7px] font-semibold text-black/45">Teknik sürüm {snapshot.schemaVersion}</span>
                           {current ? <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[7px] font-semibold text-emerald-800">CANLI</span> : null}
                         </div>
                         <p className="mt-1 text-[8px] text-black/35">{snapshot.updatedAt ? new Date(snapshot.updatedAt).toLocaleString("tr-TR") : "Tarih bilinmiyor"}</p>
