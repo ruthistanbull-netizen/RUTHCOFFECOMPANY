@@ -1695,3 +1695,18 @@ body {
   }
 }
 
+/* Store Design v4.1 — selected section uses more than opacity alone. */
+[data-store-design-v2-admin] .sd-section-row.is-selected{
+  border-color:color-mix(in srgb,var(--sd-accent) 72%,var(--sd-border))!important;
+  background:color-mix(in srgb,var(--sd-accent) 10%,var(--sd-surface-1))!important;
+  box-shadow:inset 3px 0 0 var(--sd-accent),0 4px 14px rgba(0,0,0,.08);
+}
+[data-store-design-v2-admin] .sd-section-row.is-selected .sd-section-main > p:first-child{
+  color:var(--sd-text-1)!important;
+  font-weight:700!important;
+}
+[data-store-design-v2-admin] .sd-section-row.is-selected .sd-section-main > p:last-child,
+[data-store-design-v2-admin] .sd-section-row.is-selected .sd-section-expand{
+  color:var(--sd-accent)!important;
+}
+
