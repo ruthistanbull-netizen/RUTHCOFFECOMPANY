@@ -513,7 +513,7 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
               ) : null}
             </>
           ) : (
-            <div className="flex items-center gap-2 text-[8px] text-black/40"><Plus className="h-3.5 w-3.5" />Sayfa önce draft olarak oluşur.</div>
+            <div className="flex items-center gap-2 text-[8px] text-black/40"><Plus className="h-3.5 w-3.5" />Sayfa önce taslak olarak oluşturulur.</div>
           )}
           <div className="flex-1" />
           <button type="button" disabled={busy} onClick={requestClose} className="h-10 rounded-lg border border-black/10 bg-white px-4 text-[9px] font-semibold disabled:opacity-40">Vazgeç</button>
