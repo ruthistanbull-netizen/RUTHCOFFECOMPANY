@@ -18,6 +18,7 @@ import {
   type TemplateRecord,
 } from "@ruth-commerce/commerce-core/store-design-v2";
 import { useExactToast } from "@/components/base44-exact/primitives";
+import { useStoreDesignDialogExit } from "@/components/theme/useStoreDesignDialogExit";
 
 type Props = {
   document: ThemeDocument;
@@ -115,6 +116,8 @@ export function StoreDesignTemplateManager({
   onApply,
   onClose,
 }: Props) {
+
+  const { closing, requestClose } = useStoreDesignDialogExit(onClose);
   const toast = useExactToast();
   const currentTemplateId = activeTemplateId(document, activePath);
   const initialSelected = currentTemplateId || Object.values(document.templates).find((template) => compatible(template, compatibility))?.id || "";
@@ -284,7 +287,7 @@ export function StoreDesignTemplateManager({
   };
 
   return (
-    <div className="sd-modal-backdrop fixed inset-0 z-[2147483615] grid place-items-center bg-black/35 p-3 backdrop-blur-sm">
+    <div data-closing={closing ? "true" : "false"} className="sd-modal-backdrop fixed inset-0 z-[2147483615] grid place-items-center bg-black/35 p-3 backdrop-blur-sm">
       <div className="sd-modal-card flex h-[min(820px,94dvh)] w-full max-w-[980px] overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl">
         <aside className="flex w-[300px] shrink-0 flex-col border-r border-black/10 bg-[#fafafa]">
           <header className="border-b border-black/10 p-4">
@@ -341,7 +344,7 @@ export function StoreDesignTemplateManager({
               <p className="text-[12px] font-semibold">{creating ? "Yeni Template" : selected?.label || "Template Seç"}</p>
               <p className="mt-0.5 truncate text-[8px] text-black/40">{creating ? "Boş template oluştur" : selected?.id || "Soldan template seç"}</p>
             </div>
-            <button type="button" onClick={onClose} className="grid h-9 w-9 place-items-center rounded-lg hover:bg-black/[0.04]" aria-label="Kapat"><X className="h-4 w-4" /></button>
+            <button type="button" onClick={requestClose} className="grid h-9 w-9 place-items-center rounded-lg hover:bg-black/[0.04]" aria-label="Kapat"><X className="h-4 w-4" /></button>
           </header>
 
           <div className="min-h-0 flex-1 overflow-y-auto p-4">
