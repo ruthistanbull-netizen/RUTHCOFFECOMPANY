@@ -14,10 +14,10 @@ type SnapshotSummary = {
   publishedAt?: string | null;
   updatedAt?: string | null;
   pageCount: number;
-  şablonCount: number;
+  templateCount: number;
   sectionCount: number;
   mediaCount: number;
-  yönlendirmeCount: number;
+  redirectCount: number;
 };
 
 type Props = {
