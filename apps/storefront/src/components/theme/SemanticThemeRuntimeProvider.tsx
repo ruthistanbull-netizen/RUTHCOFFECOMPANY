@@ -364,7 +364,9 @@ export function SemanticThemeRuntimeProvider({
     const apply = () => {
       restore();
       const mobile = mediaQuery.matches;
-      const active = sourcePatches.filter((patch) => patch.device === "desktop" || mobile);
+      const desktopPatches = sourcePatches.filter((patch) => patch.device === "desktop");
+      const mobilePatches = mobile ? sourcePatches.filter((patch) => patch.device === "mobile") : [];
+      const active = [...desktopPatches, ...mobilePatches];
       for (const patch of active) {
         const source = String(patch.value || "").trim();
         if (!source) continue;
