@@ -111,7 +111,7 @@ function fieldLabel(key: string) {
     y: "Y konumu (%)",
     targetType: "Hedef tipi",
     targetId: "Hedef",
-    eyebrow: "Eyebrow",
+    eyebrow: "Üst başlık",
     align: "Hizalama",
     maxWidth: "Max genişlik",
     placeholder: "Placeholder",
@@ -258,19 +258,19 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
     if (blocks.length > maxBlocks) return toast.error(`Blok sayısı izin verilen sınırı aşıyor (${maxBlocks}).`);
 
     if (section.type === "product-spotlight" && !text(settings.productId)) {
-      return toast.error("Tek Ürün Spotlight için katalogdan bir ürün seç.");
+      return toast.error("Tek ürün bölümü için katalogdan bir ürün seç.");
     }
     if (section.type === "product-comparison") {
       const productIds = Array.isArray(settings.productIds) ? settings.productIds.filter((item): item is string => typeof item === "string" && Boolean(item)) : [];
       if (productIds.length < 2 || productIds.length > 4) return toast.error("Ürün Karşılaştırma için 2-4 ürün seç.");
     }
     if (section.type === "featured-collection" && !text(settings.collectionId)) {
-      return toast.error("Featured Collection için katalogdan bir koleksiyon seç.");
+      return toast.error("Öne çıkan koleksiyon bölümü için katalogdan bir koleksiyon seç.");
     }
 
     if (section.type === "map-locator") {
       const layout = text(settings.layout) || "cards";
-      if (!["cards", "list"].includes(layout)) return toast.error("Store Locator layout geçersiz.");
+      if (!["cards", "list"].includes(layout)) return toast.error("Mağaza konumları düzeni geçersiz.");
       for (const block of blocks.filter((item) => item.type === "location")) {
         if (!text(block.settings.name).trim()) return toast.error("Konum adı boş olamaz.");
         if (!text(block.settings.address).trim()) return toast.error(`${text(block.settings.name) || "Konum"} için adres gerekli.`);
@@ -278,14 +278,14 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
     }
 
     if (section.type === "newsletter") {
-      if (!text(settings.heading).trim()) return toast.error("Newsletter başlığı boş olamaz.");
-      if (!text(settings.fieldLabel).trim()) return toast.error("Newsletter alan etiketi boş olamaz.");
-      if (!text(settings.consent).trim()) return toast.error("Newsletter consent metni boş olamaz.");
-      if (!text(settings.successCopy).trim()) return toast.error("Newsletter başarı mesajı boş olamaz.");
+      if (!text(settings.heading).trim()) return toast.error("Bülten başlığı boş olamaz.");
+      if (!text(settings.fieldLabel).trim()) return toast.error("Bülten alan etiketi boş olamaz.");
+      if (!text(settings.consent).trim()) return toast.error("Bülten izin metni boş olamaz.");
+      if (!text(settings.successCopy).trim()) return toast.error("Bülten başarı mesajı boş olamaz.");
     }
 
     if (section.type === "custom-form") {
-      if ((text(settings.action) || "store") !== "store") return toast.error("Custom Form action whitelist dışında.");
+      if ((text(settings.action) || "store") !== "store") return toast.error("Özel form için seçilen işlem izin verilen seçenekler dışında.");
       const names = new Set<string>();
       const allowedTypes = new Set(["text", "email", "tel", "textarea", "select", "checkbox"]);
       for (const block of blocks) {
@@ -318,20 +318,20 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
       const asset = mediaId ? document.media[mediaId] : undefined;
       if (!mediaId || !asset) return toast.error("Bu bölüm için Medya Arşivi'den bir medya seç.");
       if ((section.type === "video-hero" || section.type === "video-banner") && asset.type !== "video") {
-        return toast.error("Bu bölüm yalnız video asset kabul eder.");
+        return toast.error("Bu bölümde yalnız video kullanılabilir.");
       }
       const posterId = text(settings.posterAssetId);
-      if (posterId && document.media[posterId]?.type !== "image") return toast.error("Video poster yalnız görsel asset olabilir.");
+      if (posterId && document.media[posterId]?.type !== "image") return toast.error("Video kapak görseli yalnız bir görsel olabilir.");
     }
 
     if (section.type === "anchor") {
       const anchorId = normalizeStoreDesignAnchorId(text(settings.anchorId));
-      if (!anchorId) return toast.error("Anchor ID boş olamaz.");
+      if (!anchorId) return toast.error("Bağlantı noktası adı boş olamaz.");
       const duplicate = Object.values(document.sections).find((item) =>
         item.id !== section.id
         && item.type === "anchor"
         && normalizeStoreDesignAnchorId(text(item.settings?.anchorId)) === anchorId);
-      if (duplicate) return toast.error(`Bu Anchor ID zaten kullanılıyor: ${anchorId}`);
+      if (duplicate) return toast.error(`Bu bağlantı noktası adı zaten kullanılıyor: ${anchorId}`);
       settings.anchorId = anchorId;
     }
 
@@ -374,7 +374,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   };
 
   const hasColumns = ["gallery-grid", "masonry-gallery", "collage", "social-grid", "logo-cloud", "text-columns", "stats", "feature-grid", "trust-badges", "testimonials", "press-awards", "team"].includes(section.type);
-  const hasÖğeler arası boşluk = hasColumns || section.type === "slideshow";
+  const hasGap = hasColumns || section.type === "slideshow";
   const mediaNarrative = ["hero", "video-hero", "video-banner", "background-media"].includes(section.type);
   const brandStory = section.type === "brand-story";
   const productSpotlight = section.type === "product-spotlight";
@@ -400,7 +400,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   const hasAlign = ["hero", "video-hero", "video-banner", "heading-subtext", "manifesto", "quote", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const hasLink = ["hero", "video-hero", "video-banner", "brand-story", "rewards-promo", "promo-banner", "shipping-returns-cta"].includes(section.type);
   const showTitle = !["product-spotlight", "featured-collection", "scroll-story", "background-media", "bundle", "cross-sell", "breadcrumb", "newsletter", "grid-stack-builder", "quote", "spacer", "divider", "anchor"].includes(section.type);
-  const showEyebrow = !genericZeroBlock && !["product-spotlight", "featured-collection", "scroll-story", "background-media"].includes(section.type);
+  const showÜst başlık = !genericZeroBlock && !["product-spotlight", "featured-collection", "scroll-story", "background-media"].includes(section.type);
   const showPadding = !["hero", "scroll-story", "video-hero", "video-banner", "background-media", "bundle", "cross-sell", "breadcrumb", "grid-stack-builder", "spacer", "anchor"].includes(section.type);
   const primaryMedia = mediaNarrative && text(settings.imageAssetId) ? document.media[text(settings.imageAssetId)] : undefined;
   const brandStoryMedia = brandStory && text(settings.imageAssetId) ? document.media[text(settings.imageAssetId)] : undefined;
@@ -426,9 +426,9 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   <input value={text(settings.title)} onChange={(event) => updateSetting("title", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
                 </label>
               ) : null}
-              {showEyebrow ? (
+              {showÜst başlık ? (
                 <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                  Eyebrow
+                  Üst başlık
                   <input value={text(settings.eyebrow)} onChange={(event) => updateSetting("eyebrow", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
                 </label>
               ) : null}
@@ -441,7 +441,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
               {mediaNarrative ? (
                 <>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
-                    {section.type === "background-media" ? "Arka plan medyası" : "Video asset"}
+                    {section.type === "background-media" ? "Arka plan medyası" : "Video medyası"}
                     <div className="flex gap-2">
                       <select
                         value={text(settings.imageAssetId)}
@@ -455,7 +455,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                         <option value="">{section.type === "hero" ? "Mevcut ana görseli kullan" : "Medya seçilmedi"}</option>
                         {mediaAssets
                           .filter((asset) => section.type === "background-media" || section.type === "hero" || asset.type === "video")
-                          .map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.type} · {asset.assetId} · v{asset.version || 1}</option>)}
+                          .map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.type === "video" ? "Video" : "Görsel"} · Sürüm {asset.version || 1}</option>)}
                       </select>
                       <button type="button" onClick={() => setMediaPicker({ target: "section", key: "imageAssetId", mediaType: section.type === "background-media" || section.type === "hero" ? "any" : "video" })} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
                         Medya Arşivi
@@ -463,8 +463,8 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     </div>
                     <span className="text-[7px] font-normal leading-4 text-black/35">
                       {section.type === "hero" && !text(settings.imageAssetId)
-                        ? "Medya seçmezsen mevcut editorial hero korunur. V2 media seçildiğinde mobil varyant ve focal point Medya Arşivi kaydından gelir."
-                        : "Mobil varyant ve focal point seçili asset'in Medya Arşivi kaydından gelir."}
+                        ? "Medya seçmezsen mevcut ana görsel korunur. Yeni medya seçildiğinde mobil görsel ve odak noktası Medya Arşivi kaydından gelir."
+                        : "Mobil görsel ve odak noktası seçili medya kaydından gelir."}
                     </span>
                   </label>
 
@@ -616,7 +616,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     <input type="number" min={0} max={64} value={numberValue(settings.paddingY, 12)} onChange={(event) => updateSetting("paddingY", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
                   </label>
                   <div className="rounded-lg border border-black/10 bg-black/[0.025] p-2.5 text-[7px] leading-4 text-black/45 md:col-span-2">
-                    Breadcrumb yolu route/template tarafından read-only üretilir; tema editörü URL veya path generation mantığını değiştiremez.
+                    Sayfa yolu sistem tarafından otomatik oluşturulur ve buradan değiştirilemez.
                   </div>
                 </>
               ) : null}
@@ -771,7 +771,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     >
                       {catalogProducts.map((product) => <option key={product.id} value={product.id}>{product.name}</option>)}
                     </select>
-                    {catalogError ? <span className="text-[7px] font-normal text-red-600">{catalogError}</span> : <span className="text-[7px] font-normal leading-4 text-black/35">Ctrl/Cmd ile birden fazla ürün seç. Fiyat, stok ve ürün alanları katalogdan read-only gelir.</span>}
+                    {catalogError ? <span className="text-[7px] font-normal text-red-600">{catalogError}</span> : <span className="text-[7px] font-normal leading-4 text-black/35">Ctrl/Cmd ile birden fazla ürün seç. Fiyat, stok ve ürün bilgileri katalogdan gelir ve burada değiştirilemez.</span>}
                   </label>
                   <div className="grid gap-2 rounded-lg border border-black/10 bg-white p-2.5 md:col-span-2">
                     <p className="text-[8px] font-semibold text-black/45">Karşılaştırma alanları</p>
@@ -911,13 +911,13 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     <div className="flex gap-2">
                       <select value={text(settings.imageAssetId)} onChange={(event) => updateSetting("imageAssetId", event.target.value)} className="h-9 min-w-0 flex-1 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                         <option value="">Mevcut marka hikayesi görselini kullan</option>
-                        {mediaAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.type} · {asset.assetId} · v{asset.version || 1}</option>)}
+                        {mediaAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.type === "video" ? "Video" : "Görsel"} · Sürüm {asset.version || 1}</option>)}
                       </select>
                       <button type="button" onClick={() => setMediaPicker({ target: "section", key: "imageAssetId", mediaType: "any" })} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
                         Medya Arşivi
                       </button>
                     </div>
-                    <span className="text-[7px] font-normal leading-4 text-black/35">Responsive varyant ve focal point Medya Arşivi asset kaydından gelir.</span>
+                    <span className="text-[7px] font-normal leading-4 text-black/35">Mobil görsel ve odak noktası Medya Arşivi kaydından gelir.</span>
                   </label>
                   {brandStoryMedia?.type === "video" ? (
                     <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
@@ -954,18 +954,18 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     <div className="flex gap-2">
                       <select value={text(settings.imageAssetId)} onChange={(event) => updateSetting("imageAssetId", event.target.value)} className="h-9 min-w-0 flex-1 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                         <option value="">Medya yok</option>
-                        {mediaAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.type} · {asset.assetId} · v{asset.version || 1}</option>)}
+                        {mediaAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.type === "video" ? "Video" : "Görsel"} · Sürüm {asset.version || 1}</option>)}
                       </select>
                       <button type="button" onClick={() => setMediaPicker({ target: "section", key: "imageAssetId", mediaType: "any" })} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
                         Medya Arşivi
                       </button>
                     </div>
-                    <span className="text-[7px] font-normal leading-4 text-black/35">Responsive varyant ve focal point Medya Arşivi kaydından gelir.</span>
+                    <span className="text-[7px] font-normal leading-4 text-black/35">Mobil görsel ve odak noktası Medya Arşivi kaydından gelir.</span>
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                     Yerleşim
                     <select value={text(settings.layout) || "split"} onChange={(event) => updateSetting("layout", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
-                      <option value="split">Split</option>
+                      <option value="split">Bölünmüş</option>
                       <option value="card">Kart</option>
                     </select>
                   </label>
@@ -978,7 +978,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     <input type="checkbox" checked={settings.showEarnRate !== false} onChange={(event) => updateSetting("showEarnRate", event.target.checked)} />
                   </label>
                   <div className="rounded-lg border border-black/10 bg-black/[0.025] p-2.5 text-[7px] leading-4 text-black/45 md:col-span-2">
-                    Puan miktarları ve kazanma oranı tema ayarı değildir; storefront rewards settings servisinden read-only gelir.
+                    Puan miktarları ve kazanma oranı mağaza sisteminden gelir ve burada değiştirilemez.
                   </div>
                 </>
               ) : null}
@@ -1164,7 +1164,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     </select>
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                    Boyut preset
+                    Boyut
                     <select value={text(settings.size) || "lg"} onChange={(event) => updateSetting("size", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                       <option value="sm">S</option>
                       <option value="md">M</option>
@@ -1176,7 +1176,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
               ) : null}
               {section.type === "manifesto" ? (
                 <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                  Tipografi preset
+                  Yazı biçimi
                   <select value={text(settings.typography) || "display"} onChange={(event) => updateSetting("typography", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                     <option value="display">Display</option>
                     <option value="editorial">Editorial</option>
@@ -1196,7 +1196,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
               ) : null}
               {["heading-subtext", "manifesto"].includes(section.type) ? (
                 <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                  Max genişlik preset
+                  En fazla genişlik
                   <select value={text(settings.maxWidth) || "900px"} onChange={(event) => updateSetting("maxWidth", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                     <option value="640px">Dar · 640</option>
                     <option value="800px">Orta · 800</option>
@@ -1220,13 +1220,13 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
               {section.type === "spacer" ? (
                 <>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                    Masaüstü yükseklik preset
+                    Masaüstü yüksekliği
                     <select value={String(numberValue(settings.desktopHeight, 64))} onChange={(event) => updateSetting("desktopHeight", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                       {[0, 16, 24, 32, 40, 48, 64, 80, 96, 120, 160, 200, 240].map((value) => <option key={value} value={value}>{value}px</option>)}
                     </select>
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                    Mobil yükseklik preset
+                    Mobil yüksekliği
                     <select value={String(numberValue(settings.mobileHeight, 40))} onChange={(event) => updateSetting("mobileHeight", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                       {[0, 16, 24, 32, 40, 48, 64, 80, 96, 120, 160].map((value) => <option key={value} value={value}>{value}px</option>)}
                     </select>
@@ -1236,7 +1236,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
               {section.type === "divider" ? (
                 <>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                    Genişlik preset
+                    Genişlik
                     <select value={text(settings.width) || "100%"} onChange={(event) => updateSetting("width", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                       <option value="25%">25%</option>
                       <option value="50%">50%</option>
@@ -1245,7 +1245,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     </select>
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                    Kalınlık preset
+                    Kalınlık
                     <select value={String(numberValue(settings.thickness, 1))} onChange={(event) => updateSetting("thickness", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                       <option value="1">İnce · 1px</option>
                       <option value="2">Orta · 2px</option>
@@ -1253,7 +1253,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     </select>
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
-                    Renk tokenı
+                    Renk
                     <select value={text(settings.colorToken) || "subtle"} onChange={(event) => updateSetting("colorToken", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                       <option value="subtle">Subtle</option>
                       <option value="muted">Muted</option>
@@ -1322,7 +1322,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                       <option value="">Medya seçilmedi</option>
                       {mediaAssets
                         .filter((asset) => section.type === "video-text-split" ? asset.type === "video" : asset.type === "image")
-                        .map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.type} · {asset.assetId} · v{asset.version || 1}</option>)}
+                        .map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.type === "video" ? "Video" : "Görsel"} · Sürüm {asset.version || 1}</option>)}
                     </select>
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
@@ -1354,7 +1354,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     </select>
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                    Öğeler arası boşluk preset
+                    Öğeler arası boşluk
                     <select value={String(numberValue(settings.gap, 20))} onChange={(event) => updateSetting("gap", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                       <option value="0">Yok · 0px</option>
                       <option value="8">Sıkı · 8px</option>
@@ -1387,7 +1387,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   <input type="number" min={1} max={6} value={numberValue(settings.columns, 3)} onChange={(event) => updateSetting("columns", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
                 </label>
               ) : null}
-              {hasÖğeler arası boşluk ? (
+              {hasGap ? (
                 <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                   Öğeler arası boşluk
                   <input type="number" min={0} max={100} value={numberValue(settings.gap, 20)} onChange={(event) => updateSetting("gap", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
@@ -1508,7 +1508,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                               <div className="flex gap-2">
                                 <select value={text(value)} onChange={(event) => updateBlock(block.id, key, event.target.value)} className="h-9 min-w-0 flex-1 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                                   <option value="">Medya seçilmedi</option>
-                                  {mediaAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.type} · {asset.assetId} · v{asset.version || 1}</option>)}
+                                  {mediaAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.type === "video" ? "Video" : "Görsel"} · Sürüm {asset.version || 1}</option>)}
                                 </select>
                                 <button type="button" onClick={() => setMediaPicker({ target: "block", blockId: block.id, key, mediaType: "any" })} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
                                   Medya Arşivi
