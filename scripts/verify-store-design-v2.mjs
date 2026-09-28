@@ -929,6 +929,54 @@ if (analyzeStart >= 0 && validateStart > analyzeStart && core.slice(analyzeStart
   fail("analyzeThemeDocumentReferences içinde tanımsız errors collector kullanılıyor.");
 }
 
+const adminStoreDesignCss = read("apps/admin/src/app/globals.css");
+for (const token of [
+  "sd-mobile-dock",
+  "Önizleme",
+  "Yapı",
+  "Ekle",
+  "Düzenle",
+  "data-store-design-context-menu",
+  "Hızlı ayarları sıfırla",
+  "window.visualViewport",
+  "connectionStalled",
+  "Yeniden bağlan",
+  "onFixIssue",
+]) {
+  if (!storeDesignShell.includes(token)) fail(`V4.1 editor shell kabul özelliği eksik: ${token}`);
+}
+
+for (const token of [
+  "touchReorderTimerRef",
+  "sectionReferenceCounts",
+  "Sıralamak için basılı tut ve sürükle",
+  "yerde kullanılıyor",
+  "Hazır Düzenler",
+]) {
+  if (!sectionManager.includes(token)) fail(`V4.1 mobil yapı/shared-section davranışı eksik: ${token}`);
+}
+
+for (const token of [
+  "LONG_PRESS_MS",
+  'event.key === "ContextMenu"',
+  'event.shiftKey && event.key === "F10"',
+  "PREVIEW_SCROLL_MESSAGE",
+]) {
+  if (!semanticEditorBridge.includes(token)) fail(`V4.1 semantic seçim/klavye davranışı eksik: ${token}`);
+}
+
+for (const token of [
+  "--sd-visual-height",
+  "prefers-reduced-motion:reduce",
+  "min-width:44px",
+  "data-physical-mobile",
+  "@media (min-width:768px) and (max-width:1199px)",
+]) {
+  if (!adminStoreDesignCss.includes(token)) fail(`V4.1 responsive/erişilebilirlik stili eksik: ${token}`);
+}
+
+note("V4.1 mobil kabuk, hızlı düzenleme, erişilebilirlik ve responsive kabul korumaları tarandı.");
+
 note(`Section library: ${implementedSectionTypes.length} runtime hazır · ${pendingSectionTypes.length} kapalı/pending`);
 
 if (!storefrontData.includes("migrateThemeDocument")) fail("Storefront published/preview theme read migration katmanından geçmiyor.");
