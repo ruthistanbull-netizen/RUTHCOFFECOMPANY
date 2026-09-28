@@ -987,10 +987,10 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
           ) : null}
         </div>
 
-        <button type="button" disabled={!activePage || busy} onClick={() => setPickerOpen(true)} className="sd-secondary-button mt-2 flex h-9 w-full items-center justify-center gap-1.5 rounded-lg border border-black/10 bg-white text-[12px] font-semibold hover:bg-black/[0.03] disabled:opacity-40">
+        <button type="button" disabled={!activePage || busy} onClick={() => setPickerOpen(true)} className="sd-structure-add sd-secondary-button mt-2 flex h-9 w-full items-center justify-center gap-1.5 rounded-lg border border-black/10 bg-white text-[12px] font-semibold hover:bg-black/[0.03] disabled:opacity-40">
           <Plus className="h-3.5 w-3.5" />Bölüm Ekle
         </button>
-        <button type="button" disabled={!activePage || busy} onClick={() => setPresetOpen(true)} className="sd-secondary-button mt-1.5 flex h-9 w-full items-center justify-center gap-1.5 rounded-lg border border-black/10 bg-white text-[12px] font-semibold hover:bg-black/[0.03] disabled:opacity-40">
+        <button type="button" disabled={!activePage || busy} onClick={() => setPresetOpen(true)} className="sd-structure-presets sd-secondary-button mt-1.5 flex h-9 w-full items-center justify-center gap-1.5 rounded-lg border border-black/10 bg-white text-[12px] font-semibold hover:bg-black/[0.03] disabled:opacity-40">
           <Library className="h-3.5 w-3.5" />Hazır Düzenler ({Object.keys(document.presets).length})
         </button>
 
