@@ -154,6 +154,7 @@ function snapshot(target: SemanticTarget) {
     width: Math.round(rect.width),
     height: Math.round(rect.height),
     media: media ? {
+      kind: media instanceof HTMLVideoElement ? "video" : "image",
       src: media.currentSrc || media.getAttribute("src") || "",
       objectFit: computed.objectFit || "cover",
       objectPosition: computed.objectPosition || "50% 50%",
@@ -225,6 +226,18 @@ function validatePatch(target: SemanticTarget, message: ThemePatchMessage) {
       return Number.isFinite(value) && value >= 0 && value <= 120
         ? { ok: true }
         : { ok: false, error: "Köşe değeri izin verilen aralığın dışında." };
+    }
+    case "media.src": {
+      const value = String(message.value || "").trim();
+      if (!value || value.length > 2048) return { ok: false, error: "Geçersiz medya adresi." };
+      try {
+        const url = new URL(value, window.location.origin);
+        return ["http:", "https:"].includes(url.protocol)
+          ? { ok: true }
+          : { ok: false, error: "Medya adresi güvenli bir web adresi olmalı." };
+      } catch {
+        return { ok: false, error: "Geçersiz medya adresi." };
+      }
     }
     case "media.objectFit":
       return ["cover", "contain"].includes(String(message.value))
