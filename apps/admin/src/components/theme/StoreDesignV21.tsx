@@ -486,6 +486,7 @@ export function StoreDesignV21() {
   const [published, setPublished] = useState<ThemeDocument>(createEmptyThemeDocument());
   const [loading, setLoading] = useState(true);
   const [device, setDevice] = useState<Device>("desktop");
+  const [interactionMode, setInteractionMode] = useState<"browse" | "edit">("edit");
   const [selected, setSelected] = useState<SelectedTarget | null>(null);
   const [scope, setScope] = useState<EditorScope>("global");
   const [connected, setConnected] = useState(false);
@@ -517,10 +518,12 @@ export function StoreDesignV21() {
       setIsMobileViewport(mobile);
       if (mobile) {
         setDevice("mobile");
+        setInteractionMode("browse");
         setLeftOpen(false);
         setRightOpen(false);
         setMobileSheetLevel("peek");
       } else {
+        setInteractionMode("edit");
         setMobileMoreOpen(false);
       }
     };
@@ -744,6 +747,14 @@ export function StoreDesignV21() {
     window.addEventListener("message", listener);
     return () => window.removeEventListener("message", listener);
   }, [isMobileViewport, toast]);
+
+  useEffect(() => {
+    if (!iframeRef.current?.contentWindow) return;
+    postToPreview({
+      type: STORE_DESIGN_MESSAGES.INTERACTION_MODE,
+      mode: interactionMode,
+    });
+  }, [interactionMode, postToPreview, connected]);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -1057,7 +1068,7 @@ export function StoreDesignV21() {
   }
 
   return (
-    <div data-store-design-v2-admin data-physical-mobile={isMobileViewport ? "true" : "false"} data-device={device} className="sd-editor-shell flex h-dvh min-h-0 flex-col overflow-hidden bg-[#f5f5f3] text-[#111]">
+    <div data-store-design-v2-admin data-physical-mobile={isMobileViewport ? "true" : "false"} data-device={device} data-interaction-mode={interactionMode} className="sd-editor-shell flex h-dvh min-h-0 flex-col overflow-hidden bg-[#f5f5f3] text-[#111]">
       <header className="sd-toolbar z-20 flex h-[58px] shrink-0 items-center gap-3 border-b border-black/10 bg-white px-3 md:px-4">
         <button type="button" onClick={() => setLeftOpen((value) => !value)} aria-pressed={leftOpen} className="sd-desktop-panel-toggle sd-icon-button grid h-9 w-9 place-items-center rounded-lg border border-black/10 hover:bg-black/[0.03]" aria-label="Sol panel">
           <PanelLeft className="h-4 w-4" />
@@ -1080,6 +1091,25 @@ export function StoreDesignV21() {
           </button>
           <button type="button" onClick={() => setDevice("mobile")} aria-pressed={device === "mobile"} className={`sd-device-button flex h-8 items-center gap-1.5 rounded-md px-2.5 text-[9px] font-medium ${device === "mobile" ? "is-active bg-white shadow-sm" : "text-black/45"}`}>
             <Smartphone className="h-3.5 w-3.5" /><span className="hidden sm:inline">Mobil</span>
+          </button>
+        </div>
+
+        <div className="sd-desktop-mode-toggle sd-device-toggle flex items-center rounded-lg border border-black/10 bg-[#f7f7f5] p-1">
+          <button
+            type="button"
+            onClick={() => { setInteractionMode("browse"); setContextMenu(null); setRightOpen(false); }}
+            aria-pressed={interactionMode === "browse"}
+            className={`sd-device-button flex h-8 items-center gap-1.5 rounded-md px-2.5 text-[9px] font-medium ${interactionMode === "browse" ? "is-active bg-white shadow-sm" : "text-black/45"}`}
+          >
+            <Eye className="h-3.5 w-3.5" /><span className="hidden xl:inline">Önizleme</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setInteractionMode("edit")}
+            aria-pressed={interactionMode === "edit"}
+            className={`sd-device-button flex h-8 items-center gap-1.5 rounded-md px-2.5 text-[9px] font-medium ${interactionMode === "edit" ? "is-active bg-white shadow-sm" : "text-black/45"}`}
+          >
+            <SlidersHorizontal className="h-3.5 w-3.5" /><span className="hidden xl:inline">Düzenle</span>
           </button>
         </div>
 
@@ -1694,26 +1724,28 @@ export function StoreDesignV21() {
       ) : null}
 
       <nav className="sd-mobile-dock hidden" aria-label="Mağaza tasarımı araçları">
-        <button type="button" className={!leftOpen && !rightOpen ? "is-active" : ""} onClick={() => { setLeftOpen(false); setRightOpen(false); }}>
+        <button type="button" className={interactionMode === "browse" && !leftOpen && !rightOpen ? "is-active" : ""} onClick={() => { setInteractionMode("browse"); setContextMenu(null); setLeftOpen(false); setRightOpen(false); }}>
           <Eye className="h-5 w-5" /><span>Önizleme</span>
         </button>
-        <button type="button" className={leftOpen ? "is-active" : ""} onClick={() => { setRightOpen(false); setLeftOpen(true); }}>
+        <button type="button" className={leftOpen ? "is-active" : ""} onClick={() => { setInteractionMode("edit"); setContextMenu(null); setRightOpen(false); setLeftOpen(true); }}>
           <PanelLeft className="h-5 w-5" /><span>Yapı</span>
         </button>
-        <button type="button" onClick={() => { setRightOpen(false); setLeftOpen(true); setSectionPickerSignal((value) => value + 1); }}>
+        <button type="button" onClick={() => { setInteractionMode("edit"); setContextMenu(null); setRightOpen(false); setLeftOpen(true); setSectionPickerSignal((value) => value + 1); }}>
           <Plus className="h-5 w-5" /><span>Ekle</span>
         </button>
         <button
           type="button"
-          className={rightOpen ? "is-active" : ""}
+          className={interactionMode === "edit" ? "is-active" : ""}
           onClick={() => {
-            if (!selected) {
-              toast.error("Önizlemede düzenlemek istediğin öğeyi seç.");
-              return;
-            }
+            setInteractionMode("edit");
+            setContextMenu(null);
             setLeftOpen(false);
-            setMobileSheetLevel("medium");
-            setRightOpen(true);
+            if (selected) {
+              setMobileSheetLevel("medium");
+              setRightOpen(true);
+            } else {
+              setRightOpen(false);
+            }
           }}
         >
           <SlidersHorizontal className="h-5 w-5" /><span>Düzenle</span>
