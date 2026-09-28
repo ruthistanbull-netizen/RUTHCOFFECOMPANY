@@ -1037,3 +1037,136 @@ body {
 @media (max-width:767px){
   [data-store-design-v2-admin] .sd-more-tools{display:block!important}
 }
+
+
+/* Store Design v4.1 — mobile inspector levels + readable structure. */
+@media (max-width:767px){
+  [data-store-design-v2-admin] .sd-mobile-sheet-levels{
+    display:grid!important;
+  }
+
+  [data-store-design-v2-admin] .sd-mobile-sheet-levels button{
+    min-height:36px!important;
+    border:1px solid transparent;
+    color:var(--sd-text-2)!important;
+    background:transparent!important;
+  }
+
+  [data-store-design-v2-admin] .sd-mobile-sheet-levels button.is-active{
+    color:var(--sd-text-1)!important;
+    background:var(--sd-surface-1)!important;
+    border-color:color-mix(in srgb,var(--sd-accent) 45%,var(--sd-border))!important;
+    box-shadow:0 3px 10px rgba(0,0,0,.08);
+  }
+
+  [data-store-design-v2-admin] .sd-inspector{
+    transition:
+      height var(--sd-motion-panel) var(--sd-ease-enter),
+      transform var(--sd-motion-panel) var(--sd-ease-enter),
+      border-color var(--sd-motion-fast) var(--sd-ease),
+      box-shadow var(--sd-motion-base) var(--sd-ease)!important;
+  }
+
+  [data-store-design-v2-admin] .sd-inspector[data-sheet-level="peek"]{
+    height:148px!important;
+  }
+
+  [data-store-design-v2-admin] .sd-inspector[data-sheet-level="peek"] .sd-inspector-body,
+  [data-store-design-v2-admin] .sd-inspector[data-sheet-level="peek"] .sd-inspector-footer{
+    display:none!important;
+  }
+
+  [data-store-design-v2-admin] .sd-inspector[data-sheet-level="medium"]{
+    height:min(55dvh,560px)!important;
+  }
+
+  [data-store-design-v2-admin] .sd-inspector[data-sheet-level="full"]{
+    height:calc(100dvh - 56px - 64px - env(safe-area-inset-bottom))!important;
+    max-height:none!important;
+    border-radius:18px 18px 0 0!important;
+  }
+
+  [data-store-design-v2-admin] .sd-inspector-body{
+    overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  [data-store-design-v2-admin] .sd-inspector-header{
+    flex:0 0 auto;
+    padding:12px 14px 10px!important;
+  }
+
+  [data-store-design-v2-admin] .sd-inspector-header > p:first-child{
+    font-size:10px!important;
+    letter-spacing:.03em;
+  }
+
+  [data-store-design-v2-admin] .sd-structure-panel{
+    padding:14px!important;
+  }
+
+  [data-store-design-v2-admin] .sd-structure-panel > div:first-child p{
+    font-size:12px!important;
+  }
+
+  [data-store-design-v2-admin] .sd-section-row{
+    min-height:52px!important;
+    border-radius:12px!important;
+    padding-left:8px!important;
+    padding-right:8px!important;
+  }
+
+  [data-store-design-v2-admin] .sd-section-main{
+    min-height:48px!important;
+    padding-top:8px!important;
+    padding-bottom:8px!important;
+  }
+
+  [data-store-design-v2-admin] .sd-row-action{
+    min-width:40px!important;
+    width:40px!important;
+    min-height:40px!important;
+    height:40px!important;
+  }
+
+  [data-store-design-v2-admin] .sd-global-row{
+    min-height:46px;
+    display:flex;
+    align-items:center;
+    border:1px solid var(--sd-border)!important;
+    border-radius:12px!important;
+  }
+
+  [data-store-design-v2-admin] .sd-sidebar-left .sd-primary-button,
+  [data-store-design-v2-admin] .sd-sidebar-left .sd-secondary-button{
+    border-radius:12px!important;
+  }
+
+  [data-store-design-v2-admin] .sd-mobile-more-menu{
+    right:-2px!important;
+    width:min(260px,calc(100vw - 20px))!important;
+  }
+}
+
+/* Store Design v4.1 — quick edit menu readability. */
+[data-store-design-v2-admin] .sd-context-menu{
+  max-height:min(680px,calc(100dvh - 84px));
+  overflow:hidden;
+  box-shadow:0 22px 70px rgba(0,0,0,.22)!important;
+}
+[data-store-design-v2-admin] .sd-context-menu .sd-field{
+  min-height:40px;
+}
+[data-store-design-v2-admin] .sd-context-menu button{
+  transition:
+    background-color var(--sd-motion-micro) var(--sd-ease),
+    color var(--sd-motion-micro) var(--sd-ease),
+    border-color var(--sd-motion-micro) var(--sd-ease),
+    transform var(--sd-motion-instant) var(--sd-ease);
+}
+[data-store-design-v2-admin] .sd-context-menu button:not(:disabled):active{
+  transform:scale(.985);
+}
+[data-store-design-v2-admin] .sd-context-close{
+  color:var(--sd-text-2)!important;
+}
