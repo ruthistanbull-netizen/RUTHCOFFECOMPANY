@@ -476,6 +476,16 @@ body {
 [data-store-design-v2-admin] .sd-chip,[data-store-design-v2-admin] .sd-state-card,[data-store-design-v2-admin] .sd-global-row{
   background:var(--sd-surface-2)!important;color:var(--sd-text-1)!important;border-color:var(--sd-border)!important;
 }
+[data-store-design-v2-admin] .sd-responsive-badge{
+  background:var(--sd-surface-2)!important;
+  color:var(--sd-text-2)!important;
+  border-color:var(--sd-border)!important;
+}
+[data-store-design-v2-admin] .sd-responsive-badge.is-override{
+  background:color-mix(in srgb,var(--sd-accent) 18%,var(--sd-surface-1))!important;
+  color:var(--sd-text-1)!important;
+  border-color:var(--sd-accent)!important;
+}
 [data-store-design-v2-admin] .sd-section-row{
   background:var(--sd-surface-1)!important;color:var(--sd-text-1)!important;border-color:var(--sd-border)!important;
   transition:background-color var(--sd-motion-micro) var(--sd-ease),border-color var(--sd-motion-micro) var(--sd-ease),
