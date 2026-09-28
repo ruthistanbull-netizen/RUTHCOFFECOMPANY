@@ -1458,6 +1458,13 @@ export function StoreDesignV21() {
       [template.sectionIds[index + 1], template.sectionIds[index]] = [template.sectionIds[index], template.sectionIds[index + 1]];
       label = "Bölüm aşağı taşındı";
     } else if (action === "toggle") {
+      const referenceCount = Object.values(document.templates).filter((item) => item.sectionIds.includes(registration.id)).length;
+      if (referenceCount > 1) {
+        const confirmed = window.confirm(
+          `Bu bölüm ${referenceCount} yerde kullanılıyor. Görünürlük değişikliği bağlı olan tüm yerleri etkiler. Devam etmek istiyor musun?`,
+        );
+        if (!confirmed) return;
+      }
       next.sections[registration.id] = { ...source, enabled: !source.enabled };
       label = source.enabled ? "Bölüm gizlendi" : "Bölüm gösterildi";
     } else if (action === "duplicate") {
@@ -1474,7 +1481,11 @@ export function StoreDesignV21() {
       template.sectionIds.splice(index + 1, 0, copyId);
       label = "Bölüm çoğaltıldı";
     } else if (action === "delete") {
-      const confirmed = window.confirm("Bu bölümü sayfa yapısından kaldırmak istiyor musun?");
+      const confirmed = window.confirm(
+        contextTargetsWholeSection
+          ? "Bu bölümü sayfa yapısından kaldırmak istiyor musun?"
+          : "Seçili öğenin bulunduğu üst bölümü sayfa yapısından kaldırmak istiyor musun?",
+      );
       if (!confirmed) return;
 
       template.sectionIds.splice(index, 1);
@@ -2590,7 +2601,7 @@ export function StoreDesignV21() {
                     onClick={() => void applyContextSectionAction("duplicate")}
                     className="sd-secondary-button flex min-h-10 items-center justify-center gap-2 rounded-xl border border-black/10 bg-white px-3 text-[11px] font-semibold"
                   >
-                    <Copy className="h-4 w-4" />Çoğalt
+                    <Copy className="h-4 w-4" />{contextTargetsWholeSection ? "Bölümü çoğalt" : "Üst bölümü çoğalt"}
                   </button>
                   <button
                     type="button"
@@ -2614,14 +2625,16 @@ export function StoreDesignV21() {
                     className="sd-secondary-button flex min-h-10 items-center justify-center gap-2 rounded-xl border border-black/10 bg-white px-3 text-[11px] font-semibold"
                   >
                     {contextSection.enabled ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    {contextSection.enabled ? "Gizle" : "Göster"}
+                    {contextTargetsWholeSection
+                      ? (contextSection.enabled ? "Bölümü gizle" : "Bölümü göster")
+                      : (contextSection.enabled ? "Üst bölümü gizle" : "Üst bölümü göster")}
                   </button>
                   <button
                     type="button"
                     onClick={() => void applyContextSectionAction("delete")}
                     className="flex min-h-10 items-center justify-center gap-2 rounded-xl border border-red-500/25 bg-red-500/5 px-3 text-[11px] font-semibold text-red-600"
                   >
-                    <Trash2 className="h-4 w-4" />Kaldır
+                    <Trash2 className="h-4 w-4" />{contextTargetsWholeSection ? "Bölümü kaldır" : "Üst bölümü kaldır"}
                   </button>
                 </div>
                 {contextSectionReferenceCount > 1 ? (
