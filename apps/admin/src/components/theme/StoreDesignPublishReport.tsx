@@ -52,7 +52,7 @@ export function StoreDesignPublishReport({ issues, onCancel, onPublish, publishi
             <div className="mt-4 flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
               <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-700" />
               <div>
-                <p className="text-[10px] font-semibold text-emerald-900">Referans sorunu bulunmadı</p>
+                <p className="text-[10px] font-semibold text-emerald-900">Sorun bulunmadı</p>
                 <p className="mt-1 text-[8px] leading-4 text-emerald-800/70">Yayın sürümü oluşturulabilir.</p>
               </div>
             </div>
@@ -65,7 +65,6 @@ export function StoreDesignPublishReport({ issues, onCancel, onPublish, publishi
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
                         <span className={`rounded px-1.5 py-0.5 text-[6px] font-semibold uppercase ${issue.severity === "error" ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-800"}`}>{issue.severity === "error" ? "Hata" : "Uyarı"}</span>
-                        <code className="text-[7px] text-black/35">{issue.code}</code>
                       </div>
                       <p className="mt-1.5 text-[8px] leading-4 text-black/65">{issue.message}</p>
                     </div>
