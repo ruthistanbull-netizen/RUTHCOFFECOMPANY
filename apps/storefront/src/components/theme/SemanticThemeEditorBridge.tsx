@@ -520,7 +520,6 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
     };
 
     const onContextMenu = (event: MouseEvent) => {
-      if (interactionMode !== "edit") return;
       const target = targetFromEvent(event);
       if (!target) return;
       event.preventDefault();
@@ -544,7 +543,6 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (interactionMode !== "edit") return;
       const wantsQuickMenu = event.key === "ContextMenu" || (event.shiftKey && event.key === "F10");
       if (!wantsQuickMenu) return;
       const target = targetFromEvent(event) || targetFrom(document.activeElement);
@@ -574,7 +572,6 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
     };
 
     const onTouchStart = (event: TouchEvent) => {
-      if (interactionMode !== "edit") return clearPress();
       if (event.touches.length !== 1) return clearPress();
       const touch = event.touches.item(0);
       const target = targetFromEvent(event);
