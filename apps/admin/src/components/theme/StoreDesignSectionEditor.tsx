@@ -236,7 +236,7 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
                 <div className="flex items-center gap-2">
                   <div className="min-w-0 flex-1">
                     <p className="text-[9px] font-semibold">Bloklar</p>
-                    <p className="mt-1 text-[7px] text-black/35">{BLOCK_LIBRARY_BY_TYPE["faq-item"]?.label || "Soru - cevap"} · en fazla {definition?.maxBlocks || 30}</p>
+                    <p className="mt-1 text-[7px] text-black/35">Soru - cevap · en fazla {definition?.maxBlocks || 30}</p>
                   </div>
                   <button
                     type="button"
@@ -275,7 +275,7 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
                       </label>
                     </div>
                   ))}
-                  {!faqItems.length ? <p className="py-4 text-center text-[8px] text-black/35">Henüz blok yok. “Blok Ekle” ile ilk FAQ öğesini oluştur.</p> : null}
+                  {!faqItems.length ? <p className="py-4 text-center text-[8px] text-black/35">Henüz blok yok. “Blok Ekle” ile ilk soru-cevap öğesini oluştur.</p> : null}
                 </div>
               </div>
             </div>
