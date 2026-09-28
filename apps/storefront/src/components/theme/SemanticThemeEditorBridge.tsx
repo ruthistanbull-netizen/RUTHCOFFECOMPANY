@@ -229,6 +229,12 @@ function validatePatch(target: SemanticTarget, message: ThemePatchMessage) {
         ? { ok: true }
         : { ok: false, error: "Köşe değeri izin verilen aralığın dışında." };
     }
+    case "media.assetId": {
+      const value = String(message.value || "").trim();
+      return /^[a-zA-Z0-9_-]{1,160}$/.test(value)
+        ? { ok: true }
+        : { ok: false, error: "Geçersiz medya seçimi." };
+    }
     case "media.src": {
       const value = String(message.value || "").trim();
       if (!value || value.length > 2048) return { ok: false, error: "Geçersiz medya adresi." };
