@@ -26,6 +26,7 @@ export function useStoreDesignDialogExit(onClose: () => void, durationMs = 180, 
   const timerRef = useRef<number | null>(null);
   const onCloseRef = useRef(onClose);
   const escapeLockedRef = useRef(escapeLocked);
+  const dialogRef = useRef<HTMLElement | null>(null);
   const returnFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -51,6 +52,7 @@ export function useStoreDesignDialogExit(onClose: () => void, durationMs = 180, 
     const focusFrame = window.requestAnimationFrame(() => {
       const dialog = topStoreDesignDialog();
       if (!dialog) return;
+      dialogRef.current = dialog;
 
       dialog.setAttribute("role", "dialog");
       dialog.setAttribute("aria-modal", "true");
@@ -66,8 +68,8 @@ export function useStoreDesignDialogExit(onClose: () => void, durationMs = 180, 
     });
 
     const onKeyDown = (event: KeyboardEvent) => {
-      const dialog = topStoreDesignDialog();
-      if (!dialog) return;
+      const dialog = dialogRef.current;
+      if (!dialog || topStoreDesignDialog() !== dialog) return;
 
       if (event.key === "Escape") {
         if (escapeLockedRef.current) return;
@@ -105,6 +107,7 @@ export function useStoreDesignDialogExit(onClose: () => void, durationMs = 180, 
       document.removeEventListener("keydown", onKeyDown, true);
       if (timerRef.current !== null) window.clearTimeout(timerRef.current);
       timerRef.current = null;
+      dialogRef.current = null;
       const returnTarget = returnFocusRef.current;
       if (returnTarget?.isConnected) {
         window.requestAnimationFrame(() => returnTarget.focus({ preventScroll: true }));
