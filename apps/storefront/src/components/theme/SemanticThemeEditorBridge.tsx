@@ -230,6 +230,10 @@ function validatePatch(target: SemanticTarget, message: ThemePatchMessage) {
       return ["cover", "contain"].includes(String(message.value))
         ? { ok: true }
         : { ok: false, error: "Geçersiz medya yerleşimi." };
+    case "media.objectPosition":
+      return ["50% 50%", "50% 0%", "50% 100%", "0% 50%", "100% 50%"].includes(String(message.value))
+        ? { ok: true }
+        : { ok: false, error: "Geçersiz görsel odak konumu." };
     case "title":
     case "acceptLabel":
     case "rejectLabel":
@@ -274,7 +278,7 @@ function validatePatch(target: SemanticTarget, message: ThemePatchMessage) {
       const max = mobile ? 2 : 6;
       return Number.isInteger(value) && value >= min && value <= max
         ? { ok: true }
-        : { ok: false, error: mobile ? "Mobil grid 1-2 kolon olmalı." : "Masaüstü grid 2-6 kolon olmalı." };
+        : { ok: false, error: mobile ? "Mobil ızgara 1-2 sütun olmalı." : "Masaüstü ızgara 2-6 sütun olmalı." };
     }
     case "grid.gapX":
     case "grid.gapY": {
@@ -286,7 +290,7 @@ function validatePatch(target: SemanticTarget, message: ThemePatchMessage) {
     case "grid.maxWidth":
       return ["none", "1200px", "1280px", "1440px", "1600px"].includes(String(message.value))
         ? { ok: true }
-        : { ok: false, error: "Geçersiz grid max-width preset'i." };
+        : { ok: false, error: "Geçersiz en fazla genişlik seçimi." };
     case "card.density":
       return ["s", "m", "l"].includes(String(message.value))
         ? { ok: true }
@@ -307,7 +311,7 @@ function validatePatch(target: SemanticTarget, message: ThemePatchMessage) {
         ? { ok: true }
         : { ok: false, error: "Geçersiz görünürlük değeri." };
     default:
-      return { ok: false, error: "Bu ayar önizlemede henüz desteklenmiyor." };
+      return { ok: false, error: "Bu ayar önizlemede henüz kullanılamıyor." };
   }
 }
 
@@ -570,7 +574,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
 
         const result = target
           ? validatePatch(target, message)
-          : { ok: false, error: "Semantik hedef bulunamadı." };
+          : { ok: false, error: "Seçilen öğe bulunamadı. Öğeyi yeniden seçip tekrar dene." };
 
         if (target && result.ok) {
           dispatchRuntimePatch(target, message);
