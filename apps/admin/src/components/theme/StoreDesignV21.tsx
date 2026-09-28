@@ -69,7 +69,7 @@ type SelectedTarget = {
     visible?: boolean;
     textAlign?: string;
     opacity?: number;
-    borderKöşe biçimi?: number;
+    borderRadius?: number;
     backgroundColor?: string;
     color?: string;
     width?: number;
@@ -300,7 +300,7 @@ function snapshotValue(target: SelectedTarget, path: string) {
   if (path === "card.showPrice") return target.current.card?.showPrice !== false;
   if (path === "card.showQuickAdd") return target.current.card?.showQuickAdd !== false;
   if (path === "textAlign") return target.current.textAlign || "left";
-  if (path === "borderKöşe biçimi") return target.current.borderKöşe biçimi || 0;
+  if (path === "borderRadius") return target.current.borderRadius || 0;
   if (path === "opacity") return target.current.opacity ?? 1;
   if (path === "visible") return target.current.visible !== false;
   return undefined;
@@ -952,11 +952,11 @@ export function StoreDesignV21() {
     setDocument(next);
     setHistory((items) => [...items.slice(-79), {
       kind: "semantic-batch",
-      label: mode === "copy-desktop" ? "Masaüstü ayarları mobile aktarıldı" : "Mobil için farklı'lar inherit'e döndü",
+      label: mode === "copy-desktop" ? "Masaüstü ayarları mobil görünüme aktarıldı" : "Mobil ayarlar masaüstü ayarına döndü",
       patches,
     }]);
     setFuture([]);
-    toast.success(mode === "copy-desktop" ? "Masaüstü ayarları mobile aktarıldı." : "Mobil ayarlar artık masaüstü ayarını kullanacak.");
+    toast.success(mode === "copy-desktop" ? "Masaüstü ayarları mobil görünüme aktarıldı." : "Mobil ayarlar artık masaüstü ayarını kullanacak.");
   };
 
   const undo = async () => {
@@ -1240,7 +1240,7 @@ export function StoreDesignV21() {
                       <div className="sd-state-card rounded-lg bg-[#f7f7f5] p-2"><dt className="text-black/45">Boyut</dt><dd className="mt-1 font-medium">{selected.current.width || 0} × {selected.current.height || 0}</dd></div>
                       <div className="sd-state-card rounded-lg bg-[#f7f7f5] p-2"><dt className="text-black/45">Görünür</dt><dd className="mt-1 font-medium">{selected.current.visible === false ? "Hayır" : "Evet"}</dd></div>
                       <div className="sd-state-card rounded-lg bg-[#f7f7f5] p-2"><dt className="text-black/45">Saydamlık</dt><dd className="mt-1 font-medium">{selected.current.opacity ?? 1}</dd></div>
-                      <div className="sd-state-card rounded-lg bg-[#f7f7f5] p-2"><dt className="text-black/45">Köşe</dt><dd className="mt-1 font-medium">{selected.current.borderKöşe biçimi ?? 0}px</dd></div>
+                      <div className="sd-state-card rounded-lg bg-[#f7f7f5] p-2"><dt className="text-black/45">Köşe</dt><dd className="mt-1 font-medium">{selected.current.borderRadius ?? 0}px</dd></div>
                     </dl>
                   </div>
                 </details>
@@ -1315,7 +1315,7 @@ export function StoreDesignV21() {
                             </label>
                           </div>
                           <p className="rounded-lg border border-black/10 bg-white p-2 text-[7px] leading-4 text-black/42">
-                            Kabul/red state, consent kategorileri ve /privacy-policy hedefi korunur. Burada yalnız policy içindeki copy ve görünüm presetleri değişir.
+                            Kabul ve ret davranışı, çerez kategorileri ve gizlilik sayfası korunur. Burada yalnız metin ve görünüm seçenekleri değişir.
                           </p>
                         </div>
                       </div>
@@ -1324,7 +1324,7 @@ export function StoreDesignV21() {
                     {(selected.controlGroups.includes("card") || selected.controlGroups.includes("layout")) && selected.type !== "consent-banner" ? (
                       <label className="grid gap-1.5 text-[8px] text-black/45">
                         Köşe yuvarlaklığı
-                        <select value={String(Math.round(selected.current.borderKöşe biçimi || 0))} onChange={(event) => applyInspectorPatch("borderKöşe biçimi", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none">
+                        <select value={String(Math.round(selected.current.borderRadius || 0))} onChange={(event) => applyInspectorPatch("borderRadius", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none">
                           {[0, 4, 8, 12, 16, 24, 32].map((value) => <option key={value} value={value}>{value === 0 ? "Düz" : `${value}px`}</option>)}
                         </select>
                       </label>
@@ -1398,7 +1398,7 @@ export function StoreDesignV21() {
                     {selected.type === "product-card" ? (
                       <div className="rounded-xl border border-black/[0.08] bg-[#fafafa] p-3">
                         <div className="flex items-center justify-between gap-2">
-                          <p className="text-[8px] font-semibold text-black/55">Ürün kartı ailesi</p>
+                          <p className="text-[8px] font-semibold text-black/55">Ürün kartı görünümü</p>
                           <span className="rounded-full bg-white px-2 py-1 text-[7px] font-semibold text-black/40">{device === "mobile" ? "Mobil" : "Masaüstü"}</span>
                         </div>
                         <div className="mt-3 grid gap-3">
