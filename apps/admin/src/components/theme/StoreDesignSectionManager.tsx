@@ -597,6 +597,27 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
     if (openPickerSignal > 0) setPickerOpen(true);
   }, [openPickerSignal]);
 
+  useEffect(() => {
+    if (!mobileActionsId) return;
+    const closeOutside = (event: PointerEvent) => {
+      const element = event.target instanceof Element ? event.target : null;
+      if (element?.closest(".sd-section-mobile-actions")) return;
+      setMobileActionsId(null);
+    };
+    const closeWithEscape = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      event.stopPropagation();
+      setMobileActionsId(null);
+    };
+    document.addEventListener("pointerdown", closeOutside, true);
+    document.addEventListener("keydown", closeWithEscape, true);
+    return () => {
+      document.removeEventListener("pointerdown", closeOutside, true);
+      document.removeEventListener("keydown", closeWithEscape, true);
+    };
+  }, [mobileActionsId]);
+
   const page = activePage && !activePage.template ? pageRecord(document, activePage.path) : null;
   const templateId = activePage?.template
     ? (document.templateBindings[activePage.path] || activePage.path)
@@ -815,16 +836,16 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
                   <MoreHorizontal className="h-4 w-4" />
                 </button>
                 {mobileActionsId === section.id ? (
-                  <div className="sd-section-action-menu absolute right-1 top-[calc(100%-2px)] z-30 w-52 rounded-2xl border border-black/10 bg-white p-1.5 shadow-2xl">
+                  <div role="menu" aria-label={`${sectionLabel(section)} işlemleri`} className="sd-section-action-menu absolute right-1 top-[calc(100%-2px)] z-30 w-52 rounded-2xl border border-black/10 bg-white p-1.5 shadow-2xl">
                     {canEditSection(section.type) ? (
-                      <button type="button" onClick={() => { setMobileActionsId(null); setEditingSectionId(section.id); }}><Settings2 className="h-4 w-4" />Ayarları aç</button>
+                      <button role="menuitem" type="button" onClick={() => { setMobileActionsId(null); setEditingSectionId(section.id); }}><Settings2 className="h-4 w-4" />Ayarları aç</button>
                     ) : null}
-                    <button type="button" disabled={!SECTION_LIBRARY_BY_TYPE[section.type]?.implemented} onClick={() => { setMobileActionsId(null); void saveSectionPreset(section.id); }}><BookmarkPlus className="h-4 w-4" />Hazır düzen olarak kaydet</button>
-                    <button type="button" disabled={index === 0} onClick={() => { setMobileActionsId(null); void mutateSection(section.id, "up"); }}><ArrowUp className="h-4 w-4" />Yukarı taşı</button>
-                    <button type="button" disabled={index === sections.length - 1} onClick={() => { setMobileActionsId(null); void mutateSection(section.id, "down"); }}><ArrowDown className="h-4 w-4" />Aşağı taşı</button>
-                    <button type="button" onClick={() => { setMobileActionsId(null); void mutateSection(section.id, "toggle"); }}>{section.enabled ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}{section.enabled ? "Gizle" : "Göster"}</button>
-                    <button type="button" onClick={() => { setMobileActionsId(null); void mutateSection(section.id, "duplicate"); }}><Copy className="h-4 w-4" />Çoğalt</button>
-                    <button type="button" className="is-danger" onClick={() => { setMobileActionsId(null); void mutateSection(section.id, "delete"); }}><Trash2 className="h-4 w-4" />Sil</button>
+                    <button role="menuitem" type="button" disabled={!SECTION_LIBRARY_BY_TYPE[section.type]?.implemented} onClick={() => { setMobileActionsId(null); void saveSectionPreset(section.id); }}><BookmarkPlus className="h-4 w-4" />Hazır düzen olarak kaydet</button>
+                    <button role="menuitem" type="button" disabled={index === 0} onClick={() => { setMobileActionsId(null); void mutateSection(section.id, "up"); }}><ArrowUp className="h-4 w-4" />Yukarı taşı</button>
+                    <button role="menuitem" type="button" disabled={index === sections.length - 1} onClick={() => { setMobileActionsId(null); void mutateSection(section.id, "down"); }}><ArrowDown className="h-4 w-4" />Aşağı taşı</button>
+                    <button role="menuitem" type="button" onClick={() => { setMobileActionsId(null); void mutateSection(section.id, "toggle"); }}>{section.enabled ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}{section.enabled ? "Gizle" : "Göster"}</button>
+                    <button role="menuitem" type="button" onClick={() => { setMobileActionsId(null); void mutateSection(section.id, "duplicate"); }}><Copy className="h-4 w-4" />Çoğalt</button>
+                    <button role="menuitem" type="button" className="is-danger" onClick={() => { setMobileActionsId(null); void mutateSection(section.id, "delete"); }}><Trash2 className="h-4 w-4" />Sil</button>
                   </div>
                 ) : null}
               </div>
