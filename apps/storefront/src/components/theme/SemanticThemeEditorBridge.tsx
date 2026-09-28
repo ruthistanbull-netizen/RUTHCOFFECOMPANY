@@ -158,7 +158,7 @@ function snapshot(target: SemanticTarget) {
     height: Math.round(rect.height),
     media: media ? {
       kind: media instanceof HTMLVideoElement ? "video" : "image",
-      src: media.currentSrc || media.getAttribute("src") || "",
+      src: media.getAttribute("src") || media.currentSrc || "",
       objectFit: mediaComputed?.objectFit || "cover",
       objectPosition: mediaComputed?.objectPosition || "50% 50%",
     } : null,
@@ -423,7 +423,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
 
     let interactionMode: "browse" | "edit" = "edit";
     const originalTabIndex = new Map<HTMLElement, string | null>();
-    const originalMediaSources = new WeakMap<HTMLImageElement | HTMLVideoElement, string | null>();
+    const originalMediaSources = new WeakMap<HTMLImageElement | HTMLVideoElement, { src: string | null; srcset?: string | null }>();
     let keyboardSyncFrame = 0;
 
     const syncKeyboardTargets = () => {
@@ -538,15 +538,24 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
       if (!media) return;
 
       if (!originalMediaSources.has(media)) {
-        originalMediaSources.set(media, media.getAttribute("src"));
+        originalMediaSources.set(media, {
+          src: media.getAttribute("src"),
+          srcset: media instanceof HTMLImageElement ? media.getAttribute("srcset") : undefined,
+        });
       }
 
       if (message.value === null) {
         const original = originalMediaSources.get(media);
-        if (original) media.setAttribute("src", original);
+        if (original?.src) media.setAttribute("src", original.src);
         else media.removeAttribute("src");
+
+        if (media instanceof HTMLImageElement) {
+          if (original?.srcset) media.setAttribute("srcset", original.srcset);
+          else media.removeAttribute("srcset");
+        }
       } else {
         media.setAttribute("src", String(message.value));
+        if (media instanceof HTMLImageElement) media.removeAttribute("srcset");
       }
 
       if (media instanceof HTMLVideoElement) media.load();
