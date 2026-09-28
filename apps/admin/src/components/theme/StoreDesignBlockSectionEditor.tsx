@@ -245,8 +245,8 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
 
   const addBlock = () => {
     const selected = allowedDefinitions.find((item) => item.type === blockType) || allowedDefinitions[0];
-    if (!selected) return toast.error("Bu bölüme eklenebilecek hazır blok yok.");
-    if (blocks.length >= maxBlocks) return toast.error(`Bu bölüm en fazla ${maxBlocks} blok kabul eder.`);
+    if (!selected) return toast.error("Bu bölüme eklenebilecek hazır içerik öğesi yok.");
+    if (blocks.length >= maxBlocks) return toast.error(`Bu bölüm en fazla ${maxBlocks} içerik öğesi kabul eder.`);
     setBlocks((items) => {
       const defaults = blockDefaults(selected.type);
       if (selected.type === "field") {
@@ -264,7 +264,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
 
   const save = async () => {
     if (busy) return;
-    if (blocks.length > maxBlocks) return toast.error(`Blok sayısı izin verilen sınırı aşıyor (${maxBlocks}).`);
+    if (blocks.length > maxBlocks) return toast.error(`İçerik öğesi sayısı izin verilen sınırı aşıyor (${maxBlocks}).`);
 
     if (section.type === "product-spotlight" && !text(settings.productId)) {
       return toast.error("Tek ürün bölümü için katalogdan bir ürün seç.");
@@ -577,7 +577,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     <input value={text(settings.linkLabel) || "Ürünü İncele"} onChange={(event) => updateSetting("linkLabel", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
                   </label>
                   <div className="grid gap-2 rounded-lg border border-black/10 bg-white p-2.5 md:col-span-2">
-                    <p className="text-[8px] font-semibold text-black/45">Bilgi blokları</p>
+                    <p className="text-[8px] font-semibold text-black/45">Bilgi alanları</p>
                     {[
                       ["description", "Açıklama"],
                       ["stock", "Stok durumu"],
@@ -680,7 +680,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     </select>
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                    CTA metni
+                    Düğme metni
                     <input maxLength={80} value={text(settings.cta) || "Paketi İncele"} onChange={(event) => updateSetting("cta", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
                   </label>
                 </>
@@ -828,7 +828,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     <input value={text(settings.heading)} onChange={(event) => updateSetting("heading", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" placeholder="Boşsa koleksiyon adı" />
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                    CTA metni
+                    Düğme metni
                     <input value={text(settings.linkLabel) || "Koleksiyonu Gör"} onChange={(event) => updateSetting("linkLabel", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
@@ -1062,7 +1062,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     <textarea value={text(settings.successCopy) || "Formunuz alındı. Teşekkür ederiz."} onChange={(event) => updateSetting("successCopy", event.target.value)} className="min-h-20 resize-y rounded-lg border border-black/10 bg-white p-2.5 text-[9px] leading-5 outline-none" />
                   </label>
                   <div className="rounded-lg border border-black/10 bg-black/[0.025] p-2.5 text-[7px] leading-4 text-black/45 md:col-span-2">
-                    Form şeması aşağıdaki alan bloklarından üretilir. Raw HTML/JS yoktur; action yalnız whitelist üzerinden çalışır. Anti-spam ve server validation korumalıdır.
+                    Form alanları aşağıdaki içerik öğelerinden oluşturulur. Güvenlik, istenmeyen gönderi koruması ve alan doğrulaması sistem tarafından korunur.
                   </div>
                 </>
               ) : null}
@@ -1087,7 +1087,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     </label>
                   ) : null}
                   <div className="rounded-lg border border-black/10 bg-black/[0.025] p-2.5 text-[7px] leading-4 text-black/45 md:col-span-2">
-                    Store Locator konum bloklarından çalışır. Otomatik geolocation, üçüncü taraf map scripti ve raw embed yüklenmez; “Haritada Aç” bağlantısı yalnız adres metninden güvenli şekilde üretilir.
+                    Konum kartları aşağıdaki adreslerden oluşturulur. “Haritada Aç” bağlantısı girilen adrese göre güvenli biçimde hazırlanır.
                   </div>
                 </>
               ) : null}
@@ -1217,11 +1217,11 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
               {hasLink ? (
                 <>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                    CTA metni
+                    Düğme metni
                     <input value={text(settings.linkLabel)} onChange={(event) => updateSetting("linkLabel", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                    CTA bağlantısı
+                    Düğme bağlantısı
                     <input value={text(settings.linkHref)} onChange={(event) => updateSetting("linkHref", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" placeholder="/pages/..." />
                   </label>
                 </>
@@ -1471,8 +1471,8 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
           <div className="mt-4 rounded-xl border border-black/[0.08]">
             <div className="flex flex-wrap items-center gap-2 border-b border-black/[0.07] bg-[#fafafa] p-3">
               <div className="min-w-0 flex-1">
-                <p className="text-[9px] font-semibold">Bloklar</p>
-                <p className="mt-1 text-[7px] text-black/35">Yalnız bu bölümle uyumlu ve kullanıma hazır bloklar eklenebilir.</p>
+                <p className="text-[9px] font-semibold">İçerik öğeleri</p>
+                <p className="mt-1 text-[7px] text-black/35">Yalnız bu bölümle uyumlu ve kullanıma hazır içerik öğeleri eklenebilir.</p>
               </div>
               {allowedDefinitions.length > 1 ? (
                 <select value={blockType} onChange={(event) => setBlockType(event.target.value)} className="h-8 rounded-lg border border-black/10 bg-white px-2 text-[8px] font-medium outline-none">
@@ -1491,8 +1491,8 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   <div key={block.id} className="rounded-xl border border-black/[0.08] bg-white p-3">
                     <div className="flex items-center gap-1">
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-[8px] font-semibold">{index + 1}. {blockDefinition?.label || block.type}</p>
-                        <p className="mt-0.5 truncate text-[7px] text-black/30">{block.id} · {blockTitle(block)}</p>
+                        <p className="truncate text-[8px] font-semibold">{index + 1}. {blockDefinition?.label || "İçerik öğesi"}</p>
+                        <p className="mt-0.5 truncate text-[7px] text-black/30">{blockTitle(block)}</p>
                       </div>
                       <button type="button" disabled={index === 0} onClick={() => setBlocks((items) => {
                         const next = [...items];
@@ -1619,7 +1619,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   </div>
                 );
               })}
-              {!blocks.length ? <p className="py-7 text-center text-[8px] text-black/35">Henüz blok yok. “Blok Ekle” ile bölüm içeriğini oluştur.</p> : null}
+              {!blocks.length ? <p className="py-7 text-center text-[8px] text-black/35">Henüz içerik öğesi yok. “Öğe Ekle” ile bölüm içeriğini oluştur.</p> : null}
             </div>
           </div>
           ) : null}
@@ -1647,7 +1647,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
         ) : null}
 
         <footer className="flex shrink-0 items-center gap-2 border-t border-black/10 bg-[#fafafa] p-3">
-          <p className="min-w-0 flex-1 truncate text-[8px] text-black/35">En fazla {maxBlocks} blok eklenebilir.</p>
+          <p className="min-w-0 flex-1 truncate text-[8px] text-black/35">En fazla {maxBlocks} içerik öğesi eklenebilir.</p>
           <button type="button" disabled={busy} onClick={requestClose} className="h-10 rounded-lg border border-black/10 bg-white px-4 text-[9px] font-semibold disabled:opacity-40">Vazgeç</button>
           <button type="button" disabled={busy} onClick={() => void save()} className="flex h-10 items-center gap-2 rounded-lg bg-[#111] px-4 text-[9px] font-semibold text-white disabled:opacity-40">
             <Save className="h-3.5 w-3.5" />{busy ? "Uygulanıyor…" : "Uygula"}
