@@ -1218,7 +1218,7 @@ body {
   min-height:40px;
 }
 [data-store-design-v2-admin] .sd-context-menu-body{
-  max-height:min(556px,calc(100dvh - 210px));
+  max-height:max(120px,min(556px,calc(100dvh - 210px)));
   overscroll-behavior:contain;
 }
 [data-store-design-v2-admin] .sd-context-menu button{
