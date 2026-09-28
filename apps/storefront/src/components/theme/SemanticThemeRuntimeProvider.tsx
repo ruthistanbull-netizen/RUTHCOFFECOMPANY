@@ -399,9 +399,22 @@ export function SemanticThemeRuntimeProvider({
       }
     };
 
+    let applyFrame = 0;
+    const scheduleApply = () => {
+      if (applyFrame) return;
+      applyFrame = window.requestAnimationFrame(() => {
+        applyFrame = 0;
+        apply();
+      });
+    };
+    const observer = new MutationObserver(scheduleApply);
+
     apply();
+    observer.observe(document.body, { childList: true, subtree: true });
     mediaQuery.addEventListener("change", apply);
     return () => {
+      if (applyFrame) window.cancelAnimationFrame(applyFrame);
+      observer.disconnect();
       mediaQuery.removeEventListener("change", apply);
       restore();
     };
