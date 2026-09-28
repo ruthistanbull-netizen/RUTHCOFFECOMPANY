@@ -1818,6 +1818,22 @@ body {
 
 /* Store Design v4.1 — tablet/narrow desktop uses one overlay task panel at a time. */
 @media (min-width:768px) and (max-width:1199px){
+  [data-store-design-v2-admin] .sd-section-desktop-actions{
+    display:none!important;
+  }
+
+  [data-store-design-v2-admin] .sd-section-mobile-actions{
+    display:block!important;
+    position:relative;
+    flex:0 0 auto;
+  }
+
+  [data-store-design-v2-admin] .sd-section-mobile-actions .sd-row-action,
+  [data-store-design-v2-admin] .sd-sidebar-left > div:first-child button{
+    min-width:44px!important;
+    min-height:44px!important;
+  }
+
   [data-store-design-v2-admin] .sd-sidebar-left,
   [data-store-design-v2-admin] .sd-inspector{
     position:absolute!important;
