@@ -33,6 +33,7 @@ export function StoreDesignSnapshotManager({ currentPublishedRevision, onRestore
   const [snapshots, setSnapshots] = useState<SnapshotSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [restoring, setRestoring] = useState<string | null>(null);
+  const [confirming, setConfirming] = useState<string | null>(null);
 
   const load = async () => {
     setLoading(true);
@@ -62,6 +63,7 @@ export function StoreDesignSnapshotManager({ currentPublishedRevision, onRestore
       const document = normalizeThemeDocument(result.document);
       await onRestore(document);
       toast.success(`Sürüm ${snapshot.revision} taslağa geri yüklendi. Canlı mağaza değişmedi.`);
+      setConfirming(null);
       requestClose();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Sürüm geri yüklenemedi.");
@@ -116,13 +118,27 @@ export function StoreDesignSnapshotManager({ currentPublishedRevision, onRestore
                       <button
                         type="button"
                         disabled={Boolean(restoring) || current}
-                        onClick={() => void restore(snapshot)}
+                        onClick={() => setConfirming(snapshot.key)}
                         className="flex h-9 items-center gap-1.5 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03] disabled:cursor-not-allowed disabled:opacity-35"
                       >
                         <RotateCcw className="h-3.5 w-3.5" />
                         {restoring === snapshot.key ? "Yükleniyor…" : current ? "Canlı Sürüm" : "Taslağa Yükle"}
                       </button>
                     </div>
+                    {confirming === snapshot.key && !current ? (
+                      <div role="alert" className="mt-3 rounded-xl border border-amber-200 bg-amber-50 p-3">
+                        <p className="text-[9px] font-semibold text-amber-950">Bu sürümü taslağa yüklemek istiyor musun?</p>
+                        <p className="mt-1 text-[8px] leading-4 text-amber-900/75">Mevcut taslak bu sürümle değişir. Canlı mağaza, tekrar yayınlayana kadar değişmez.</p>
+                        <div className="mt-3 flex justify-end gap-2">
+                          <button type="button" disabled={Boolean(restoring)} onClick={() => setConfirming(null)} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold disabled:opacity-40">
+                            Vazgeç
+                          </button>
+                          <button type="button" disabled={Boolean(restoring)} onClick={() => void restore(snapshot)} className="h-9 rounded-lg bg-[#111] px-3 text-[9px] font-semibold text-white disabled:opacity-40">
+                            {restoring === snapshot.key ? "Yükleniyor…" : "Taslağa Yükle"}
+                          </button>
+                        </div>
+                      </div>
+                    ) : null}
                   </div>
                 );
               })}
