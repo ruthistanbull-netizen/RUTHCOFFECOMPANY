@@ -792,6 +792,11 @@ export function StoreDesignV21() {
   const consentDesktopSettings = recordValue(consentResponsive.desktop);
   const consentMobileSettings = recordValue(consentResponsive.mobile);
   const consentDeviceSettings = device === "mobile" ? consentMobileSettings : consentDesktopSettings;
+  const selectedResponsiveSettings = selected && activePage
+    ? responsiveSettingsFor(document, selected, scope, activePage)
+    : {};
+  const selectedMobileLeaves = new Map(flattenResponsiveLeaves(recordValue(selectedResponsiveSettings.mobile)));
+  const hasMobileOverrides = selectedMobileLeaves.size > 0;
   const consentSetting = (key: string, fallback: string) => {
     const direct = consentDeviceSettings[key];
     if (typeof direct === "string" && direct.trim()) return direct;
@@ -1904,11 +1909,16 @@ export function StoreDesignV21() {
 
                 {device === "mobile" && (selected.controlGroups.includes("responsive") || selected.type === "product-card" || selected.type === "product-grid") ? (
                   <section className="border-b border-black/[0.07] p-3">
-                    <p className="text-[9px] font-semibold text-black/45">MOBİL AYARLARI</p>
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-[9px] font-semibold text-black/45">MOBİL AYARLARI</p>
+                      <span className={`rounded-full border px-2 py-1 text-[8px] font-semibold ${hasMobileOverrides ? "sd-responsive-badge is-override" : "sd-responsive-badge"}`}>
+                        {hasMobileOverrides ? "Mobil için farklı" : "Masaüstü ayarını kullanıyor"}
+                      </span>
+                    </div>
                     <p className="mt-1.5 text-[8px] leading-4 text-black/35">Mobil için farklı bir değer seçmezsen masaüstü ayarı kullanılır.</p>
                     <div className="mt-2 grid grid-cols-2 gap-2">
-                      <button type="button" onClick={() => applyMobileResponsiveAction("copy-desktop")} className="sd-secondary-button min-h-9 rounded-lg border border-black/10 bg-white px-2 text-[8px] font-semibold hover:bg-black/[0.03]">Masaüstü ayarlarını kullan</button>
-                      <button type="button" onClick={() => applyMobileResponsiveAction("inherit")} className="sd-secondary-button min-h-9 rounded-lg border border-black/10 bg-white px-2 text-[8px] font-semibold hover:bg-black/[0.03]">Masaüstü ayarına dön</button>
+                      <button type="button" onClick={() => applyMobileResponsiveAction("copy-desktop")} className="sd-secondary-button min-h-9 rounded-lg border border-black/10 bg-white px-2 text-[8px] font-semibold hover:bg-black/[0.03]">Masaüstü değerlerini kopyala</button>
+                      <button type="button" disabled={!hasMobileOverrides} onClick={() => applyMobileResponsiveAction("inherit")} className="sd-secondary-button min-h-9 rounded-lg border border-black/10 bg-white px-2 text-[8px] font-semibold hover:bg-black/[0.03] disabled:opacity-40">Masaüstü ayarını kullan</button>
                     </div>
                   </section>
                 ) : null}
