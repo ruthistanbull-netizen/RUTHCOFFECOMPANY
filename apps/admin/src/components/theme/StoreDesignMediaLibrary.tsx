@@ -255,7 +255,7 @@ export function StoreDesignMediaLibrary({
           <div className="border-b border-black/[0.07] p-3">
             <label className="relative block">
               <Search className="pointer-events-none absolute left-3 top-2.5 h-3.5 w-3.5 text-black/30" />
-              <input data-dialog-initial-focus value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Medya ara…" className="h-9 w-full rounded-lg border border-black/10 pl-9 pr-3 text-[9px] outline-none focus:border-black/25" />
+              <input data-dialog-initial-focus="true" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Medya ara…" className="h-9 w-full rounded-lg border border-black/10 pl-9 pr-3 text-[9px] outline-none focus:border-black/25" />
             </label>
           </div>
 
