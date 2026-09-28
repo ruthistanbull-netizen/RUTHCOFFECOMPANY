@@ -9,6 +9,7 @@ import {
   normalizeStoreDesignAnchorId,
   type BlockDefinition,
   type BlockInstance,
+  type MediaAsset,
   type SectionInstance,
   type ThemeDocument,
 } from "@ruth-commerce/commerce-core/store-design-v2";
@@ -57,6 +58,14 @@ function text(value: unknown) {
 function numberValue(value: unknown, fallback: number) {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function mediaOptionLabel(asset: MediaAsset) {
+  const kind = asset.type === "video" ? "Video" : "Görsel";
+  if (!asset.createdAt) return `${kind} · Sürüm ${asset.version || 1}`;
+  const date = new Date(asset.createdAt);
+  if (Number.isNaN(date.getTime())) return `${kind} · Sürüm ${asset.version || 1}`;
+  return `${kind} · ${date.toLocaleString("tr-TR", { dateStyle: "short", timeStyle: "short" })}`;
 }
 
 function blockDefaults(type: string): Record<string, unknown> {
@@ -475,7 +484,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                         <div className="flex gap-2">
                           <select value={text(settings.posterAssetId)} onChange={(event) => updateSetting("posterAssetId", event.target.value)} className="h-9 min-w-0 flex-1 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                             <option value="">Medyanın kendi kapak görselini kullan</option>
-                            {mediaAssets.filter((asset) => asset.type === "image").map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.assetId} · v{asset.version || 1}</option>)}
+                            {mediaAssets.filter((asset) => asset.type === "image").map((asset) => <option key={asset.assetId} value={asset.assetId}>{mediaOptionLabel(asset)}</option>)}
                           </select>
                           <button type="button" onClick={() => setMediaPicker({ target: "section", key: "posterAssetId", mediaType: "image" })} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
                             Medya Arşivi
@@ -1281,14 +1290,14 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     Önce görseli
                     <select value={text(settings.beforeAssetId)} onChange={(event) => updateSetting("beforeAssetId", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                       <option value="">Medya seçilmedi</option>
-                      {mediaAssets.filter((asset) => asset.type === "image").map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.assetId} · v{asset.version || 1}</option>)}
+                      {mediaAssets.filter((asset) => asset.type === "image").map((asset) => <option key={asset.assetId} value={asset.assetId}>{mediaOptionLabel(asset)}</option>)}
                     </select>
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                     Sonra görseli
                     <select value={text(settings.afterAssetId)} onChange={(event) => updateSetting("afterAssetId", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                       <option value="">Medya seçilmedi</option>
-                      {mediaAssets.filter((asset) => asset.type === "image").map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.assetId} · v{asset.version || 1}</option>)}
+                      {mediaAssets.filter((asset) => asset.type === "image").map((asset) => <option key={asset.assetId} value={asset.assetId}>{mediaOptionLabel(asset)}</option>)}
                     </select>
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
@@ -1310,7 +1319,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   Lookbook görseli
                   <select value={text(settings.imageAssetId)} onChange={(event) => updateSetting("imageAssetId", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                     <option value="">Medya seçilmedi</option>
-                    {mediaAssets.filter((asset) => asset.type === "image").map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.assetId} · v{asset.version || 1}</option>)}
+                    {mediaAssets.filter((asset) => asset.type === "image").map((asset) => <option key={asset.assetId} value={asset.assetId}>{mediaOptionLabel(asset)}</option>)}
                   </select>
                 </label>
               ) : null}
