@@ -402,7 +402,7 @@ for (const token of [
   "Oynatma politikası",
   "Otomatik · sessiz · sürekli",
   "Metin kontrastı",
-  "Katalog · aktif koleksiyonlar",
+  "aktif koleksiyonlar",
   "Kart oranı",
   "Başlık konumu",
   "Marka hikayesi medyası",
