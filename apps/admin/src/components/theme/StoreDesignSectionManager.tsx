@@ -809,11 +809,6 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
                 <p className="mt-0.5 truncate text-[11px] text-black/40">{section.enabled ? "Görünür" : "Gizli"}</p>
               </button>
               <div className="sd-section-desktop-actions flex items-center gap-1">
-                {canEditSection(section.type) ? (
-                  <button type="button" disabled={busy} onClick={() => setEditingSectionId(section.id)} className="sd-row-action grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04]" aria-label="Bölüm ayarları">
-                    <Settings2 className="h-3 w-3" />
-                  </button>
-                ) : null}
                 <button type="button" disabled={busy || !SECTION_LIBRARY_BY_TYPE[section.type]?.implemented} onClick={() => void saveSectionPreset(section.id)} className="sd-row-action grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04] disabled:opacity-20" aria-label="Hazır düzen olarak kaydet">
                   <BookmarkPlus className="h-3 w-3" />
                 </button>
