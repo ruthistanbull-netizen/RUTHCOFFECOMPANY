@@ -128,9 +128,9 @@ export function StoreDesignCrossSell({
       </div>
       <div className="store-design-cross-sell__list">
         {items.map((item) => {
-          const price = Number(item.price || 0);
+          const displayPrice = Number(item.price || 0);
           const compareAt = Number(item.compare_at_price || 0);
-          const hasDiscount = Number.isFinite(compareAt) && compareAt > price && price > 0;
+          const hasDiscount = Number.isFinite(compareAt) && compareAt > displayPrice && displayPrice > 0;
           return (
             <Link key={item.id} href={`/products/${item.slug}`} className="store-design-cross-sell__card">
               <div className="store-design-cross-sell__media">
@@ -140,7 +140,7 @@ export function StoreDesignCrossSell({
                 <strong>{item.name}</strong>
                 <div>
                   {hasDiscount ? <del>{formatPrice(compareAt, item.currency || "TRY")}</del> : null}
-                  <span>{formatPrice(price, item.currency || "TRY")}</span>
+                  <span>{formatPrice(displayPrice, item.currency || "TRY")}</span>
                 </div>
               </div>
             </Link>
