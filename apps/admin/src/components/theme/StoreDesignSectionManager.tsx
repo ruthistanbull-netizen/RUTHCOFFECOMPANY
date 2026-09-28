@@ -4,6 +4,7 @@ import {
   ArrowDown,
   ArrowUp,
   BookmarkPlus,
+  ChevronDown,
   Copy,
   Eye,
   EyeOff,
@@ -592,6 +593,7 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
   const [draggedId, setDraggedId] = useState<string | null>(null);
   const [editingSectionId, setEditingSectionId] = useState<string | null>(null);
   const [mobileActionsId, setMobileActionsId] = useState<string | null>(null);
+  const [expandedSectionIds, setExpandedSectionIds] = useState<Set<string>>(() => new Set());
   const [touchReorderId, setTouchReorderId] = useState<string | null>(null);
   const [touchOverId, setTouchOverId] = useState<string | null>(null);
   const touchReorderIdRef = useRef<string | null>(null);
@@ -843,6 +845,15 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
 
   const cancelTouchReorder = () => resetTouchReorder();
 
+  const toggleSectionChildren = (sectionId: string) => {
+    setExpandedSectionIds((current) => {
+      const next = new Set(current);
+      if (next.has(sectionId)) next.delete(sectionId);
+      else next.add(sectionId);
+      return next;
+    });
+  };
+
   return (
     <>
       <section className="sd-structure-panel border-b border-black/[0.07] p-3">
@@ -852,9 +863,12 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
         </div>
 
         <div className="mt-1.5 space-y-1">
-          {sections.map((section, index) => (
+          {sections.map((section, index) => {
+            const childBlockIds = section.blockIds || [];
+            const childrenOpen = expandedSectionIds.has(section.id);
+            return (
+            <div key={section.id} className="sd-section-tree-item">
             <div
-              key={section.id}
               data-section-id={section.id}
               draggable={!busy}
               onDragStart={() => setDraggedId(section.id)}
@@ -887,8 +901,22 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
                 title={canEditSection(section.type) ? "Bölüm ayarlarını aç" : "Bu bölüm için ayrıntılı ayarlar henüz hazır değil"}
               >
                 <p className={`truncate text-[12px] font-semibold ${section.enabled ? "" : "text-black/35"}`}>{sectionLabel(section)}</p>
-                <p className="mt-0.5 truncate text-[11px] text-black/40">{section.enabled ? "Görünür" : "Gizli"}</p>
+                <p className="mt-0.5 truncate text-[11px] text-black/40">
+                  {section.enabled ? "Görünür" : "Gizli"}{childBlockIds.length ? ` · ${childBlockIds.length} içerik öğesi` : ""}
+                </p>
               </button>
+              {childBlockIds.length ? (
+                <button
+                  type="button"
+                  onClick={() => toggleSectionChildren(section.id)}
+                  className="sd-section-expand grid h-9 w-9 shrink-0 place-items-center rounded-lg hover:bg-black/[0.04]"
+                  aria-expanded={childrenOpen}
+                  aria-controls={`section-children-${section.id}`}
+                  aria-label={childrenOpen ? "İçerik öğelerini gizle" : "İçerik öğelerini göster"}
+                >
+                  <ChevronDown className={`h-3.5 w-3.5 transition-transform ${childrenOpen ? "rotate-180" : ""}`} />
+                </button>
+              ) : null}
               <div className="sd-section-desktop-actions flex items-center gap-1">
                 <button type="button" disabled={busy || !SECTION_LIBRARY_BY_TYPE[section.type]?.implemented} onClick={() => void saveSectionPreset(section.id)} className="sd-row-action grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04] disabled:opacity-20" aria-label="Hazır düzen olarak kaydet">
                   <BookmarkPlus className="h-3 w-3" />
@@ -926,7 +954,31 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
                 ) : null}
               </div>
             </div>
-          ))}
+            {childrenOpen && childBlockIds.length ? (
+              <div id={`section-children-${section.id}`} className="sd-section-children ml-7 mt-1 space-y-1 pb-1">
+                {childBlockIds.map((blockId, blockIndex) => {
+                  const block = document.blocks[blockId];
+                  if (!block) return null;
+                  const blockLabel = BLOCK_LIBRARY_BY_TYPE[block.type]?.label || "İçerik öğesi";
+                  return (
+                    <button
+                      key={blockId}
+                      type="button"
+                      onClick={() => setEditingSectionId(section.id)}
+                      className="sd-block-row flex min-h-12 w-full items-center gap-2 rounded-lg border border-black/[0.06] bg-black/[0.02] px-3 text-left hover:bg-black/[0.035]"
+                      aria-label={`${blockLabel} ayarlarını aç`}
+                    >
+                      <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md bg-black/[0.04] text-[10px] font-semibold text-black/40">{blockIndex + 1}</span>
+                      <span className="min-w-0 flex-1 truncate text-[11px] font-medium">{blockLabel}</span>
+                      <span className="text-[10px] text-black/35">Ayarlar</span>
+                    </button>
+                  );
+                })}
+              </div>
+            ) : null}
+            </div>
+          );
+          })}
 
           {!sections.length ? (
             <div className="rounded-lg border border-dashed border-black/10 px-3 py-4 text-center text-[11px] leading-4 text-black/35">
