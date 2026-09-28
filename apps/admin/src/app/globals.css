@@ -537,3 +537,41 @@ body {
 [data-store-design-v2-admin] .sd-toolbar,
 [data-store-design-v2-admin] .sd-sidebar,
 [data-store-design-v2-admin] .sd-inspector{opacity:1!important;filter:none!important}
+
+
+/* Store Design manager motion coverage — Page/Media/Template/Redirect/History/Preset/Publish/Section editors. */
+[data-store-design-v2-admin] .fixed.inset-0[class*="backdrop-blur"]{
+  animation:sd-backdrop-in var(--sd-motion-fast) var(--sd-ease) both;
+}
+[data-store-design-v2-admin] .fixed.inset-0[class*="backdrop-blur"] > div{
+  animation:sd-dialog-in var(--sd-motion-dialog) var(--sd-ease-enter) both;
+  transform-origin:center center;
+}
+[data-store-design-v2-admin] .fixed.inset-0[class*="backdrop-blur"] button:not(:disabled),
+[data-store-design-v2-admin] .fixed.inset-0[class*="backdrop-blur"] input,
+[data-store-design-v2-admin] .fixed.inset-0[class*="backdrop-blur"] select,
+[data-store-design-v2-admin] .fixed.inset-0[class*="backdrop-blur"] textarea{
+  transition:
+    color var(--sd-motion-micro) var(--sd-ease),
+    background-color var(--sd-motion-micro) var(--sd-ease),
+    border-color var(--sd-motion-micro) var(--sd-ease),
+    box-shadow var(--sd-motion-fast) var(--sd-ease),
+    opacity var(--sd-motion-micro) var(--sd-ease),
+    transform var(--sd-motion-instant) var(--sd-ease);
+}
+[data-store-design-v2-admin] .fixed.inset-0[class*="backdrop-blur"] button:not(:disabled):hover{
+  transform:translateY(-1px);
+}
+[data-store-design-v2-admin] .fixed.inset-0[class*="backdrop-blur"] button:not(:disabled):active{
+  transform:scale(.985);
+}
+[data-store-design-v2-admin] .fixed.inset-0[class*="backdrop-blur"] > div{
+  background-color:var(--sd-surface-1)!important;
+  color:var(--sd-text-1)!important;
+  border-color:var(--sd-border)!important;
+}
+[data-store-design-v2-admin] .fixed.inset-0[class*="backdrop-blur"] header,
+[data-store-design-v2-admin] .fixed.inset-0[class*="backdrop-blur"] aside,
+[data-store-design-v2-admin] .fixed.inset-0[class*="backdrop-blur"] section{
+  border-color:var(--sd-border)!important;
+}
