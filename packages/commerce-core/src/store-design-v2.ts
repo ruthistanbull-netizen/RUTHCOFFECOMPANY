@@ -1927,6 +1927,7 @@ export const STORE_DESIGN_MESSAGES = {
   STRUCTURE_PATCH: "STRUCTURE_PATCH",
   MEDIA_ASSET_READY: "MEDIA_ASSET_READY",
   HEARTBEAT: "HEARTBEAT",
+  INTERACTION_MODE: "EDITOR_INTERACTION_MODE",
 } as const;
 
 export function componentDefinition(type: string) {
