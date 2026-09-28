@@ -2405,7 +2405,7 @@ export function StoreDesignV21() {
             </div>
           </div>
 
-          <div className="grid max-h-[58vh] gap-3 overflow-y-auto p-3">
+          <div className="sd-context-menu-body grid gap-3 overflow-y-auto p-3">
             <label className="grid gap-1.5 text-[11px] font-semibold text-black/55">
               Uygulama alanı
               <select
