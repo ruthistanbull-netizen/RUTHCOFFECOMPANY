@@ -7,6 +7,8 @@ import {
   type SectionPresetRecord,
 } from "@ruth-commerce/commerce-core/store-design-v2";
 
+import { useStoreDesignDialogExit } from "@/components/theme/useStoreDesignDialogExit";
+
 type Props = {
   presets: SectionPresetRecord[];
   compatibility: PageCompatibility;
@@ -16,13 +18,15 @@ type Props = {
 };
 
 export function StoreDesignPresetLibrary({ presets, compatibility, onInsert, onDelete, onClose }: Props) {
+
+  const { closing, requestClose } = useStoreDesignDialogExit(onClose);
   const compatible = presets.filter((preset) => {
     const definition = SECTION_LIBRARY_BY_TYPE[preset.sectionType];
     return Boolean(definition?.implemented && definition.compatiblePages.includes(compatibility));
   });
 
   return (
-    <div className="sd-modal-backdrop fixed inset-0 z-[2147483608] grid place-items-center bg-black/35 p-3 backdrop-blur-sm">
+    <div data-closing={closing ? "true" : "false"} className="sd-modal-backdrop fixed inset-0 z-[2147483608] grid place-items-center bg-black/35 p-3 backdrop-blur-sm">
       <div className="sd-modal-card flex max-h-[82dvh] w-full max-w-[680px] flex-col overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl">
         <header className="flex h-14 shrink-0 items-center gap-3 border-b border-black/10 px-4">
           <div className="grid h-9 w-9 place-items-center rounded-lg bg-black/[0.04]">
@@ -32,7 +36,7 @@ export function StoreDesignPresetLibrary({ presets, compatibility, onInsert, onD
             <p className="text-[12px] font-semibold">Kaydedilmiş Bölümler</p>
             <p className="mt-0.5 text-[8px] text-black/40">Section + block ayarları asset/content referanslarıyla yeniden kullanılabilir.</p>
           </div>
-          <button type="button" onClick={onClose} className="grid h-9 w-9 place-items-center rounded-lg hover:bg-black/[0.04]" aria-label="Kapat"><X className="h-4 w-4" /></button>
+          <button type="button" onClick={requestClose} className="grid h-9 w-9 place-items-center rounded-lg hover:bg-black/[0.04]" aria-label="Kapat"><X className="h-4 w-4" /></button>
         </header>
 
         <div className="min-h-0 flex-1 overflow-y-auto p-3">
