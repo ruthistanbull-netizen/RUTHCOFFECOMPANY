@@ -1565,7 +1565,7 @@ export function StoreDesignV21() {
                 </div>
               </div>
               <div className="sd-select-shell relative mt-1.5">
-                <select value={activePath} onChange={(event) => void changePage(event.target.value)} className="sd-field h-10 w-full appearance-none rounded-lg border border-black/10 bg-white px-3 pr-8 text-[11px] font-medium outline-none hover:border-black/20">
+                <select aria-label="Düzenlenen sayfa" value={activePath} onChange={(event) => void changePage(event.target.value)} className="sd-field h-10 w-full appearance-none rounded-lg border border-black/10 bg-white px-3 pr-8 text-[11px] font-medium outline-none hover:border-black/20">
                   {groupedPages.map(([group, items]) => (
                     <optgroup key={group} label={group}>
                       {items.map((item) => <option key={item.path} value={item.path}>{item.label}</option>)}
@@ -1725,7 +1725,7 @@ export function StoreDesignV21() {
                       </>
                     ) : null}
                   </div>
-                  <div className="sd-mobile-sheet-levels mt-3 hidden grid-cols-3 gap-1 rounded-xl bg-black/[0.035] p-1" aria-label="Ayar paneli görünümü">
+                  <div role="group" className="sd-mobile-sheet-levels mt-3 hidden grid-cols-3 gap-1 rounded-xl bg-black/[0.035] p-1" aria-label="Ayar paneli görünümü">
                     {(["peek", "medium", "full"] as const).map((level) => (
                       <button
                         key={level}
@@ -1748,7 +1748,7 @@ export function StoreDesignV21() {
               <div ref={inspectorBodyRef} className="sd-inspector-body min-h-0 flex-1 overflow-y-auto">
                 <section className="border-b border-black/[0.07] p-3">
                   <label className="text-[9px] font-semibold text-black/45">UYGULAMA ALANI</label>
-                  <select value={scope} onChange={(event) => setScope(event.target.value as EditorScope)} className="sd-field mt-1.5 h-10 w-full rounded-lg border border-black/10 bg-white px-3 text-[10px] font-medium outline-none">
+                  <select aria-label="Uygulama alanı" value={scope} onChange={(event) => setScope(event.target.value as EditorScope)} className="sd-field mt-1.5 h-10 w-full rounded-lg border border-black/10 bg-white px-3 text-[10px] font-medium outline-none">
                     {selected.allowedScopes.map((item) => <option key={item} value={item}>{scopeLabel(item)}</option>)}
                   </select>
                   <p className="mt-1.5 text-[8px] leading-4 text-black/35">Bu değişikliğin nerede geçerli olacağını seç. Önerilen: {scopeLabel(selected.defaultScope)}.</p>
@@ -2312,10 +2312,10 @@ export function StoreDesignV21() {
       ) : null}
 
       <nav className="sd-mobile-dock hidden" aria-label="Mağaza tasarımı araçları">
-        <button type="button" className={interactionMode === "browse" && !leftOpen && !rightOpen ? "is-active" : ""} onClick={() => { setInteractionMode("browse"); setContextMenu(null); setLeftOpen(false); setRightOpen(false); }}>
+        <button type="button" aria-pressed={interactionMode === "browse" && !leftOpen && !rightOpen} className={interactionMode === "browse" && !leftOpen && !rightOpen ? "is-active" : ""} onClick={() => { setInteractionMode("browse"); setContextMenu(null); setLeftOpen(false); setRightOpen(false); }}>
           <Eye className="h-5 w-5" /><span>Önizleme</span>
         </button>
-        <button type="button" className={leftOpen ? "is-active" : ""} onClick={() => { setInteractionMode("edit"); setContextMenu(null); setRightOpen(false); setLeftOpen(true); }}>
+        <button type="button" aria-pressed={leftOpen} className={leftOpen ? "is-active" : ""} onClick={() => { setInteractionMode("edit"); setContextMenu(null); setRightOpen(false); setLeftOpen(true); }}>
           <PanelLeft className="h-5 w-5" /><span>Yapı</span>
         </button>
         <button type="button" onClick={() => { setInteractionMode("edit"); setContextMenu(null); setRightOpen(false); setLeftOpen(true); setSectionPickerSignal((value) => value + 1); }}>
@@ -2323,6 +2323,7 @@ export function StoreDesignV21() {
         </button>
         <button
           type="button"
+          aria-pressed={interactionMode === "edit" && rightOpen && !leftOpen}
           className={interactionMode === "edit" && rightOpen && !leftOpen ? "is-active" : ""}
           onClick={() => {
             setInteractionMode("edit");
