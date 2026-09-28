@@ -375,24 +375,29 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
     overlay.dataset.storeDesignV2Ui = "true";
     overlay.style.cssText = [
       "position:fixed",
-      "display:none",
+      "visibility:hidden",
+      "opacity:0",
       "pointer-events:none",
       "z-index:2147483646",
       "box-sizing:border-box",
-      "border:2px solid #2563eb",
+      "border:2px solid #e07b63",
       "border-radius:6px",
-      "background:rgba(37,99,235,.06)",
+      "background:rgba(224,123,99,.07)",
+      "box-shadow:0 0 0 1px rgba(255,255,255,.72),0 0 0 4px rgba(224,123,99,.14)",
+      "transition:left 140ms cubic-bezier(.25,.1,.25,1),top 140ms cubic-bezier(.25,.1,.25,1),width 140ms cubic-bezier(.25,.1,.25,1),height 140ms cubic-bezier(.25,.1,.25,1),opacity 140ms cubic-bezier(.25,.1,.25,1)",
     ].join(";");
     document.body.appendChild(overlay);
 
     const positionOverlay = () => {
       const selected = selectedRef.current;
       if (!selected || !document.contains(selected.element)) {
-        overlay.style.display = "none";
+        overlay.style.opacity = "0";
+        overlay.style.visibility = "hidden";
         return;
       }
       const rect = selected.element.getBoundingClientRect();
-      overlay.style.display = "block";
+      overlay.style.visibility = "visible";
+      overlay.style.opacity = "1";
       overlay.style.left = `${rect.left}px`;
       overlay.style.top = `${rect.top}px`;
       overlay.style.width = `${rect.width}px`;
