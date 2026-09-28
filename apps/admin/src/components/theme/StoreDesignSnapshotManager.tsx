@@ -14,10 +14,10 @@ type SnapshotSummary = {
   publishedAt?: string | null;
   updatedAt?: string | null;
   pageCount: number;
-  templateCount: number;
+  şablonCount: number;
   sectionCount: number;
   mediaCount: number;
-  redirectCount: number;
+  yönlendirmeCount: number;
 };
 
 type Props = {
@@ -40,7 +40,7 @@ export function StoreDesignSnapshotManager({ currentPublishedRevision, onRestore
       const result = await adminRequest<{ snapshots?: SnapshotSummary[] }>(`/api/store-design-v2/snapshots?t=${Date.now()}`, { force: true });
       setSnapshots(Array.isArray(result.snapshots) ? result.snapshots : []);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Snapshot geçmişi yüklenemedi.");
+      toast.error(error instanceof Error ? error.message : "Sürüm geçmişi yüklenemedi.");
     } finally {
       setLoading(false);
     }
@@ -61,10 +61,10 @@ export function StoreDesignSnapshotManager({ currentPublishedRevision, onRestore
       });
       const document = normalizeThemeDocument(result.document);
       await onRestore(document);
-      toast.success(`Revision ${snapshot.revision} taslağa geri yüklendi. Canlı site değişmedi.`);
+      toast.success(`Sürüm ${snapshot.revision} taslağa geri yüklendi. Canlı mağaza değişmedi.`);
       requestClose();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Snapshot geri yüklenemedi.");
+      toast.error(error instanceof Error ? error.message : "Sürüm geri yüklenemedi.");
     } finally {
       setRestoring(null);
     }
@@ -75,7 +75,7 @@ export function StoreDesignSnapshotManager({ currentPublishedRevision, onRestore
       <div className="sd-modal-card flex h-[min(760px,92dvh)] w-full max-w-[820px] flex-col overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl">
         <header className="flex h-14 shrink-0 items-center gap-3 border-b border-black/10 px-4">
           <div className="min-w-0 flex-1">
-            <p className="text-[12px] font-semibold">Publish Snapshot Geçmişi</p>
+            <p className="text-[12px] font-semibold">Yayın Sürümü Geçmişi</p>
             <p className="mt-0.5 text-[8px] text-black/40">Rollback önce draft’a yüklenir; canlı site yalnız tekrar Publish ile değişir.</p>
           </div>
           <button type="button" onClick={() => void load()} disabled={loading} className="grid h-9 w-9 place-items-center rounded-lg border border-black/10 hover:bg-black/[0.03] disabled:opacity-40" aria-label="Yenile">
@@ -87,7 +87,7 @@ export function StoreDesignSnapshotManager({ currentPublishedRevision, onRestore
         <div className="min-h-0 flex-1 overflow-y-auto p-3">
           {loading && !snapshots.length ? (
             <div className="grid min-h-52 place-items-center text-[9px] text-black/35">
-              <div className="flex items-center gap-2"><RefreshCw className="h-4 w-4 animate-spin" />Snapshot geçmişi okunuyor…</div>
+              <div className="flex items-center gap-2"><RefreshCw className="h-4 w-4 animate-spin" />Sürüm geçmişi yükleniyor…</div>
             </div>
           ) : (
             <div className="space-y-2">
@@ -101,17 +101,17 @@ export function StoreDesignSnapshotManager({ currentPublishedRevision, onRestore
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <p className="text-[10px] font-semibold">Revision {snapshot.revision}</p>
-                          <span className="rounded-full bg-black/[0.04] px-2 py-0.5 text-[7px] font-semibold text-black/45">Schema {snapshot.schemaVersion}</span>
+                          <p className="text-[10px] font-semibold">Sürüm {snapshot.revision}</p>
+                          <span className="rounded-full bg-black/[0.04] px-2 py-0.5 text-[7px] font-semibold text-black/45">Yapı sürümü {snapshot.schemaVersion}</span>
                           {current ? <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[7px] font-semibold text-emerald-800">CANLI</span> : null}
                         </div>
                         <p className="mt-1 text-[8px] text-black/35">{snapshot.updatedAt ? new Date(snapshot.updatedAt).toLocaleString("tr-TR") : "Tarih bilinmiyor"}</p>
                         <div className="mt-2 flex flex-wrap gap-1.5">
                           <span className="rounded bg-black/[0.03] px-1.5 py-1 text-[7px] text-black/45">{snapshot.pageCount} sayfa</span>
-                          <span className="rounded bg-black/[0.03] px-1.5 py-1 text-[7px] text-black/45">{snapshot.templateCount} template</span>
+                          <span className="rounded bg-black/[0.03] px-1.5 py-1 text-[7px] text-black/45">{snapshot.templateCount} şablon</span>
                           <span className="rounded bg-black/[0.03] px-1.5 py-1 text-[7px] text-black/45">{snapshot.sectionCount} bölüm</span>
                           <span className="rounded bg-black/[0.03] px-1.5 py-1 text-[7px] text-black/45">{snapshot.mediaCount} medya</span>
-                          <span className="rounded bg-black/[0.03] px-1.5 py-1 text-[7px] text-black/45">{snapshot.redirectCount} redirect</span>
+                          <span className="rounded bg-black/[0.03] px-1.5 py-1 text-[7px] text-black/45">{snapshot.redirectCount} yönlendirme</span>
                         </div>
                       </div>
                       <button
@@ -134,8 +134,8 @@ export function StoreDesignSnapshotManager({ currentPublishedRevision, onRestore
             <div className="grid min-h-52 place-items-center rounded-xl border border-dashed border-black/10 text-center">
               <div>
                 <Clock3 className="mx-auto h-5 w-5 text-black/20" />
-                <p className="mt-2 text-[9px] font-semibold text-black/45">Henüz publish snapshot yok</p>
-                <p className="mt-1 text-[8px] text-black/30">Bir sonraki Publish ile revision snapshot’ı otomatik oluşturulur.</p>
+                <p className="mt-2 text-[9px] font-semibold text-black/45">Henüz yayın sürümü yok</p>
+                <p className="mt-1 text-[8px] text-black/30">Bir sonraki yayınlamada yeni bir sürüm kaydı otomatik oluşturulur.</p>
               </div>
             </div>
           ) : null}
