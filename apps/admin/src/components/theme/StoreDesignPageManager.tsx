@@ -15,6 +15,7 @@ import {
   type ThemeDocument,
 } from "@ruth-commerce/commerce-core/store-design-v2";
 import { useExactToast } from "@/components/base44-exact/primitives";
+import { useStoreDesignDialogExit } from "@/components/theme/useStoreDesignDialogExit";
 
 type Props = {
   document: ThemeDocument;
@@ -148,6 +149,8 @@ function cloneTemplateTree(document: ThemeDocument, sourceTemplateId: string, ne
 }
 
 export function StoreDesignPageManager({ document, activePath, mode, onClose, onApply }: Props) {
+
+  const { closing, requestClose } = useStoreDesignDialogExit(onClose);
   const toast = useExactToast();
   const editingPage = mode === "edit" ? pageByRoute(document, activePath) : null;
   const routeLocked = Boolean(editingPage?.reserved || editingPage?.kind === "system" || editingPage?.kind === "catalog" || editingPage?.kind === "protected" || editingPage?.kind === "utility");
@@ -267,7 +270,7 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
 
       await onApply(next, route);
       toast.success(editingPage ? "Sayfa ayarları güncellendi." : "Yeni sayfa taslağı oluşturuldu.");
-      onClose();
+      requestClose();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Sayfa kaydedilemedi.");
     } finally {
@@ -317,7 +320,7 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
 
       await onApply(next, route);
       toast.success("Sayfa kopyalandı; yeni kopya taslak olarak açıldı.");
-      onClose();
+      requestClose();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Sayfa kopyalanamadı.");
     } finally {
@@ -339,7 +342,7 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
       next.revision = Math.max(next.revision, document.revision) + 1;
       await onApply(next, "/");
       toast.success("Sayfa arşivlendi. Canlı route yalnız yayın sonrası kapanır.");
-      onClose();
+      requestClose();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Sayfa arşivlenemedi.");
     } finally {
@@ -348,14 +351,14 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
   };
 
   return (
-    <div className="sd-modal-backdrop fixed inset-0 z-[2147483600] grid place-items-center bg-black/35 p-3 backdrop-blur-sm">
+    <div data-closing={closing ? "true" : "false"} className="sd-modal-backdrop fixed inset-0 z-[2147483600] grid place-items-center bg-black/35 p-3 backdrop-blur-sm">
       <div className="sd-modal-card flex max-h-[92dvh] w-full max-w-[720px] flex-col overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl">
         <header className="flex h-14 shrink-0 items-center gap-3 border-b border-black/10 px-4">
           <div className="min-w-0 flex-1">
             <p className="text-[12px] font-semibold">{editingPage ? "Sayfa Ayarları" : "Yeni Sayfa"}</p>
             <p className="mt-0.5 truncate text-[8px] text-black/40">{editingPage?.route || "Yeni storefront sayfası taslağı"}</p>
           </div>
-          <button type="button" onClick={onClose} className="grid h-9 w-9 place-items-center rounded-lg hover:bg-black/[0.04]" aria-label="Kapat">
+          <button type="button" onClick={requestClose} className="grid h-9 w-9 place-items-center rounded-lg hover:bg-black/[0.04]" aria-label="Kapat">
             <X className="h-4 w-4" />
           </button>
         </header>
@@ -513,7 +516,7 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
             <div className="flex items-center gap-2 text-[8px] text-black/40"><Plus className="h-3.5 w-3.5" />Sayfa önce draft olarak oluşur.</div>
           )}
           <div className="flex-1" />
-          <button type="button" disabled={busy} onClick={onClose} className="h-10 rounded-lg border border-black/10 bg-white px-4 text-[9px] font-semibold disabled:opacity-40">Vazgeç</button>
+          <button type="button" disabled={busy} onClick={requestClose} className="h-10 rounded-lg border border-black/10 bg-white px-4 text-[9px] font-semibold disabled:opacity-40">Vazgeç</button>
           <button type="button" disabled={busy} onClick={() => void submit()} className="flex h-10 items-center gap-2 rounded-lg bg-[#111] px-4 text-[9px] font-semibold text-white disabled:opacity-40">
             <Save className="h-3.5 w-3.5" />{busy ? "Kaydediliyor…" : editingPage ? "Değişiklikleri Uygula" : "Sayfayı Oluştur"}
           </button>
