@@ -2501,6 +2501,71 @@ export function StoreDesignV21() {
                 Bu öğenin bazı işlevsel ayarları korumalıdır. Yalnız güvenli görünüm seçenekleri gösterilir.
               </p>
             ) : null}
+
+            {contextSection && contextSectionTemplate ? (
+              <section className="border-t border-black/[0.07] pt-3" aria-label="Bölüm işlemleri">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-[11px] font-semibold text-black/55">Bölüm işlemleri</p>
+                  {contextSectionReferenceCount > 1 ? (
+                    <span className="rounded-full border border-amber-500/20 bg-amber-50 px-2 py-1 text-[9px] font-semibold text-amber-900">
+                      {contextSectionReferenceCount} yerde bağlı
+                    </span>
+                  ) : null}
+                </div>
+                <div className="mt-2 grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => void applyContextSectionAction("focus")}
+                    className="sd-secondary-button flex min-h-10 items-center justify-center gap-2 rounded-xl border border-black/10 bg-white px-3 text-[11px] font-semibold"
+                  >
+                    <PanelLeft className="h-4 w-4" />Yapıda aç
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void applyContextSectionAction("duplicate")}
+                    className="sd-secondary-button flex min-h-10 items-center justify-center gap-2 rounded-xl border border-black/10 bg-white px-3 text-[11px] font-semibold"
+                  >
+                    <Copy className="h-4 w-4" />Çoğalt
+                  </button>
+                  <button
+                    type="button"
+                    disabled={contextSectionIndex <= 0}
+                    onClick={() => void applyContextSectionAction("up")}
+                    className="sd-secondary-button flex min-h-10 items-center justify-center gap-2 rounded-xl border border-black/10 bg-white px-3 text-[11px] font-semibold disabled:opacity-40"
+                  >
+                    <ArrowUp className="h-4 w-4" />Yukarı taşı
+                  </button>
+                  <button
+                    type="button"
+                    disabled={contextSectionIndex < 0 || contextSectionIndex >= contextSectionTemplate.sectionIds.length - 1}
+                    onClick={() => void applyContextSectionAction("down")}
+                    className="sd-secondary-button flex min-h-10 items-center justify-center gap-2 rounded-xl border border-black/10 bg-white px-3 text-[11px] font-semibold disabled:opacity-40"
+                  >
+                    <ArrowDown className="h-4 w-4" />Aşağı taşı
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void applyContextSectionAction("toggle")}
+                    className="sd-secondary-button flex min-h-10 items-center justify-center gap-2 rounded-xl border border-black/10 bg-white px-3 text-[11px] font-semibold"
+                  >
+                    {contextSection.enabled ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {contextSection.enabled ? "Gizle" : "Göster"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void applyContextSectionAction("delete")}
+                    className="flex min-h-10 items-center justify-center gap-2 rounded-xl border border-red-500/25 bg-red-500/5 px-3 text-[11px] font-semibold text-red-600"
+                  >
+                    <Trash2 className="h-4 w-4" />Kaldır
+                  </button>
+                </div>
+                {contextSectionReferenceCount > 1 ? (
+                  <p className="mt-2 text-[10px] leading-4 text-black/40">
+                    Görünürlük değişikliği bu bölümü kullanan diğer bağlı yerleri de etkiler. Kaldırma yalnız bu sayfa yapısındaki bağlantıyı kaldırır.
+                  </p>
+                ) : null}
+              </section>
+            ) : null}
           </div>
 
           <div className="grid grid-cols-2 gap-2 border-t border-black/[0.07] p-3">
