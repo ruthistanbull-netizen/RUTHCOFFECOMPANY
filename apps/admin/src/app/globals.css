@@ -1736,3 +1736,15 @@ body {
   color:var(--sd-accent)!important;
 }
 
+/* Store Design v4.1 — 180ms selection surface feedback. */
+[data-store-design-v2-admin] .sd-device-button,
+[data-store-design-v2-admin] .sd-mobile-dock button,
+[data-store-design-v2-admin] .sd-mobile-sheet-levels button{
+  transition:
+    background-color var(--sd-motion-fast) var(--sd-ease),
+    color var(--sd-motion-fast) var(--sd-ease),
+    border-color var(--sd-motion-fast) var(--sd-ease),
+    box-shadow var(--sd-motion-fast) var(--sd-ease),
+    transform var(--sd-motion-instant) var(--sd-ease)!important;
+}
+
