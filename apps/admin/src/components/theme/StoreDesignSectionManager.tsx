@@ -53,6 +53,7 @@ type Props = {
   activePage: ActivePage | null;
   compatibility: PageCompatibility;
   openPickerSignal?: number;
+  selectedSectionId?: string | null;
   onApply: (next: ThemeDocument, label: string) => Promise<void>;
 };
 
@@ -585,7 +586,7 @@ function SectionPicker({
   );
 }
 
-export function StoreDesignSectionManager({ document, activePage, compatibility, openPickerSignal = 0, onApply }: Props) {
+export function StoreDesignSectionManager({ document, activePage, compatibility, openPickerSignal = 0, selectedSectionId = null, onApply }: Props) {
   const toast = useExactToast();
   const [pickerOpen, setPickerOpen] = useState(false);
   const [presetOpen, setPresetOpen] = useState(false);
@@ -920,7 +921,8 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
                 event.preventDefault();
                 if (draggedId) void reorderTo(draggedId, section.id);
               }}
-              className={`sd-section-row group relative flex min-h-10 items-center gap-1 rounded-lg border px-1.5 transition ${draggedId === section.id ? "is-dragging border-black/20 bg-black/[0.04] opacity-60" : "border-black/[0.07] bg-white"} ${touchReorderId === section.id ? "is-touch-dragging" : ""} ${touchOverId === section.id && touchReorderId !== section.id ? "is-touch-over" : ""}`}
+              data-selected={selectedSectionId === section.id || editingSectionId === section.id ? "true" : "false"}
+              className={`sd-section-row group relative flex min-h-10 items-center gap-1 rounded-lg border px-1.5 transition ${draggedId === section.id ? "is-dragging border-black/20 bg-black/[0.04] opacity-60" : "border-black/[0.07] bg-white"} ${selectedSectionId === section.id || editingSectionId === section.id ? "is-selected" : ""} ${touchReorderId === section.id ? "is-touch-dragging" : ""} ${touchOverId === section.id && touchReorderId !== section.id ? "is-touch-over" : ""}`}
             >
               <GripVertical className="sd-section-desktop-grip h-3.5 w-3.5 shrink-0 cursor-grab text-black/20" />
               <button
@@ -939,6 +941,7 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
                 type="button"
                 disabled={!canEditSection(section.type)}
                 onClick={() => setEditingSectionId(section.id)}
+                aria-current={selectedSectionId === section.id || editingSectionId === section.id ? "true" : undefined}
                 className="sd-section-main min-w-0 flex-1 py-2 text-left disabled:cursor-default"
                 title={canEditSection(section.type) ? "Bölüm ayarlarını aç" : "Bu bölüm için ayrıntılı ayarlar henüz hazır değil"}
               >
