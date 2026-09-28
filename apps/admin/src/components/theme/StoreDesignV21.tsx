@@ -477,6 +477,7 @@ function persistSemanticPatch(
 export function StoreDesignV21() {
   const toast = useExactToast();
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const editorShellRef = useRef<HTMLDivElement | null>(null);
   const contextMenuRef = useRef<HTMLDivElement | null>(null);
   const structurePanelRef = useRef<HTMLElement | null>(null);
   const inspectorPanelRef = useRef<HTMLElement | null>(null);
@@ -537,6 +538,31 @@ export function StoreDesignV21() {
     media.addEventListener("change", applyViewport);
     return () => media.removeEventListener("change", applyViewport);
   }, []);
+
+  useEffect(() => {
+    if (!isMobileViewport) return;
+    const shell = editorShellRef.current;
+    if (!shell) return;
+
+    const viewport = window.visualViewport;
+    const syncVisualViewport = () => {
+      const height = Math.max(320, Math.round(viewport?.height || window.innerHeight));
+      shell.style.setProperty("--sd-visual-height", `${height}px`);
+      shell.style.setProperty("--sd-visual-55", `${Math.round(height * 0.55)}px`);
+    };
+
+    syncVisualViewport();
+    viewport?.addEventListener("resize", syncVisualViewport);
+    viewport?.addEventListener("scroll", syncVisualViewport);
+    window.addEventListener("orientationchange", syncVisualViewport);
+    return () => {
+      viewport?.removeEventListener("resize", syncVisualViewport);
+      viewport?.removeEventListener("scroll", syncVisualViewport);
+      window.removeEventListener("orientationchange", syncVisualViewport);
+      shell.style.removeProperty("--sd-visual-height");
+      shell.style.removeProperty("--sd-visual-55");
+    };
+  }, [isMobileViewport]);
 
   useEffect(() => {
     if (!isMobileViewport) return;
@@ -988,6 +1014,56 @@ export function StoreDesignV21() {
     applyPatchValue(selected, scope, device, path, value);
   };
 
+  const resetQuickOverrides = () => {
+    if (!selected || !activePage) return;
+
+    const responsive = responsiveSettingsFor(document, selected, scope, activePage);
+    const deviceSettings = recordValue(responsive[device]);
+    const leaves = new Map(flattenResponsiveLeaves(deviceSettings));
+    const candidates = [
+      ...(selected.controlGroups.includes("typography") ? ["textAlign"] : []),
+      ...(selected.controlGroups.includes("layout") ? ["visible", "borderRadius"] : []),
+      ...(selected.controlGroups.includes("card") ? ["borderRadius"] : []),
+      ...(selected.controlGroups.includes("media") && selected.current.media ? ["media.objectFit"] : []),
+      ...(selected.type === "product-grid" ? ["grid.columns"] : []),
+    ];
+    const paths = [...new Set(candidates)].filter((path) => leaves.has(path));
+
+    if (!paths.length) {
+      toast.success("Bu uygulama alanında sıfırlanacak özel hızlı ayar yok.");
+      return;
+    }
+
+    let next = document;
+    let revision = revisionRef.current;
+    const patches: SemanticHistoryEntry[] = [];
+
+    for (const path of paths) {
+      const before = leaves.get(path);
+      revision += 1;
+      next = persistSemanticPatch(next, selected, scope, device, activePage, path, null, revision);
+      patches.push({ kind: "semantic", target: selected, scope, device, path, before, after: null });
+      postToPreview({
+        type: STORE_DESIGN_MESSAGES.PATCH,
+        targetId: selected.id,
+        path,
+        value: null,
+        revision,
+        scope,
+        device,
+      });
+    }
+
+    revisionRef.current = revision;
+    setDocument(next);
+    setHistory((items) => [...items.slice(-79), { kind: "semantic-batch", label: "Hızlı ayarlar sıfırlandı", patches }]);
+    setFuture([]);
+    setContextMenu(null);
+    setSelected(null);
+    setRightOpen(false);
+    toast.success("Özel hızlı ayarlar varsayılana döndürüldü.");
+  };
+
   const applyMobileResponsiveAction = (mode: "copy-desktop" | "inherit") => {
     if (!selected || !activePage || device !== "mobile") return;
 
@@ -1138,14 +1214,14 @@ export function StoreDesignV21() {
       <div data-store-design-v2-loading className="sd-loading-screen grid min-h-dvh place-items-center bg-[#f5f5f3]">
         <div className="flex items-center gap-3 rounded-2xl border border-black/10 bg-white px-5 py-4 text-[12px] font-medium shadow-sm">
           <RefreshCw className="h-4 w-4 animate-spin" />
-          Mağaza Tasarımı V2.1 hazırlanıyor…
+          Mağaza Tasarımı hazırlanıyor…
         </div>
       </div>
     );
   }
 
   return (
-    <div data-store-design-v2-admin data-physical-mobile={isMobileViewport ? "true" : "false"} data-device={device} data-interaction-mode={interactionMode} className="sd-editor-shell flex h-dvh min-h-0 flex-col overflow-hidden bg-[#f5f5f3] text-[#111]">
+    <div ref={editorShellRef} data-store-design-v2-admin data-physical-mobile={isMobileViewport ? "true" : "false"} data-device={device} data-interaction-mode={interactionMode} className="sd-editor-shell flex h-dvh min-h-0 flex-col overflow-hidden bg-[#f5f5f3] text-[#111]">
       <header className="sd-toolbar z-20 flex h-[58px] shrink-0 items-center gap-3 border-b border-black/10 bg-white px-3 md:px-4">
         <button type="button" onClick={() => setLeftOpen((value) => !value)} aria-pressed={leftOpen} className="sd-desktop-panel-toggle sd-icon-button grid h-9 w-9 place-items-center rounded-lg border border-black/10 hover:bg-black/[0.03]" aria-label="Sol panel">
           <PanelLeft className="h-4 w-4" />
@@ -1284,7 +1360,6 @@ export function StoreDesignV21() {
                 </select>
                 <ChevronDown className="sd-select-chevron pointer-events-none absolute right-2.5 top-3 h-4 w-4 text-black/35" />
               </div>
-              <p className="mt-2 truncate text-[8px] text-black/35">{activePage?.previewPath || activePage?.path || "/"}</p>
             </div>
 
             <div className="min-h-0 flex-1 overflow-y-auto">
@@ -1299,6 +1374,12 @@ export function StoreDesignV21() {
           </aside>
 
         <main className="sd-preview-stage relative flex min-w-0 flex-1 items-center justify-center overflow-auto p-3 md:p-6">
+          {!connected ? (
+            <div role="status" aria-live="polite" className="sd-preview-connection-chip pointer-events-none absolute left-1/2 top-3 z-30 flex -translate-x-1/2 items-center gap-2 rounded-full px-3 py-2 text-[11px] font-semibold shadow-lg">
+              <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+              Önizlemeye yeniden bağlanılıyor…
+            </div>
+          ) : null}
           {isMobileViewport && interactionMode === "edit" && !leftOpen && !rightOpen ? (
             <div className="sd-edit-mode-chip pointer-events-none absolute left-1/2 top-3 z-20 -translate-x-1/2 rounded-full px-3 py-2 text-[11px] font-semibold shadow-lg">
               Düzenleme açık · Bir öğeye dokun
@@ -1804,10 +1885,10 @@ export function StoreDesignV21() {
           <div className="grid grid-cols-2 gap-2 border-t border-black/[0.07] p-3">
             <button
               type="button"
-              onClick={() => setContextMenu(null)}
+              onClick={resetQuickOverrides}
               className="sd-secondary-button h-10 rounded-xl border border-black/10 bg-white px-3 text-[11px] font-semibold"
             >
-              Önizlemeye dön
+              Hızlı ayarları sıfırla
             </button>
             <button
               type="button"
