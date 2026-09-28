@@ -1388,8 +1388,8 @@ export function StoreDesignV21() {
             </div>
           ) : null}
           {isMobileViewport && interactionMode === "edit" && !leftOpen && !rightOpen ? (
-            <div className="sd-edit-mode-chip pointer-events-none absolute left-1/2 top-3 z-20 -translate-x-1/2 rounded-full px-3 py-2 text-[11px] font-semibold shadow-lg">
-              Düzenleme açık · Bir öğeye dokun
+            <div className="sd-edit-mode-chip pointer-events-none absolute left-1/2 top-3 z-20 max-w-[calc(100vw-28px)] -translate-x-1/2 truncate rounded-full px-3 py-2 text-[11px] font-semibold shadow-lg">
+              {selected ? `Seçili: ${selected.label} · Düzenle'den ayarları aç` : "Düzenleme açık · Bir öğeye dokun"}
             </div>
           ) : null}
           <div className={`sd-preview-shell relative shrink-0 overflow-hidden bg-white shadow-[0_18px_60px_rgba(15,23,42,.14)] transition-[width,height,border-radius] duration-300 ${
