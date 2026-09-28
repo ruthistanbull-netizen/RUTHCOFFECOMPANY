@@ -418,3 +418,104 @@ body {
     outline: 2px solid Highlight !important;
   }
 }
+
+
+/* ==========================================================================
+   Store Design V2.1 — scoped color + motion system
+   Source: Magaza_Tasarimi_V2_1_Referansli_Renk_Animasyon_Sistemi_v3.pdf
+   Scope: ONLY [data-store-design-v2-admin]
+   ========================================================================== */
+[data-store-design-v2-admin]{
+  --sd-editor-bg:#101010;--sd-surface-1:#171717;--sd-surface-2:#22201f;--sd-border:#3a3430;
+  --sd-text-1:#f4efe7;--sd-text-2:#b9aea2;--sd-accent:#b45743;--sd-accent-hover:#c76a55;
+  --sd-accent-press:#8f4334;--sd-focus:#e07b63;--sd-canvas:#f1eee8;--sd-success:#36a269;
+  --sd-warning:#d69b35;--sd-danger:#e25555;
+  --sd-motion-instant:90ms;--sd-motion-micro:140ms;--sd-motion-fast:180ms;--sd-motion-base:220ms;
+  --sd-motion-panel:280ms;--sd-motion-dialog:300ms;--sd-motion-preview:320ms;
+  --sd-ease:cubic-bezier(.25,.1,.25,1);--sd-ease-system:cubic-bezier(.42,0,.58,1);
+  --sd-ease-enter:cubic-bezier(.22,1,.36,1);--sd-shadow-soft:0 10px 30px rgba(0,0,0,.12);
+  --sd-shadow-panel:0 18px 58px rgba(0,0,0,.18);
+  background:var(--sd-editor-bg)!important;color:var(--sd-text-1)!important;isolation:isolate;
+}
+[data-store-design-v2-admin] .sd-toolbar,[data-store-design-v2-admin] .sd-sidebar{
+  background:var(--sd-surface-1)!important;color:var(--sd-text-1)!important;border-color:var(--sd-border)!important;
+}
+[data-store-design-v2-admin] .sd-preview-stage{background:var(--sd-canvas)!important;transition:background-color var(--sd-motion-base) var(--sd-ease);}
+[data-store-design-v2-admin] button,[data-store-design-v2-admin] input,[data-store-design-v2-admin] select,[data-store-design-v2-admin] textarea{
+  transition:color var(--sd-motion-micro) var(--sd-ease),background-color var(--sd-motion-micro) var(--sd-ease),
+  border-color var(--sd-motion-micro) var(--sd-ease),box-shadow var(--sd-motion-fast) var(--sd-ease),
+  opacity var(--sd-motion-micro) var(--sd-ease),transform var(--sd-motion-instant) var(--sd-ease);
+}
+[data-store-design-v2-admin] button:not(:disabled):hover{transform:translateY(-1px);}
+[data-store-design-v2-admin] button:not(:disabled):active{transform:scale(.985);}
+[data-store-design-v2-admin] button:disabled{opacity:.48!important;}
+[data-store-design-v2-admin] button:focus-visible,[data-store-design-v2-admin] input:focus-visible,
+[data-store-design-v2-admin] select:focus-visible,[data-store-design-v2-admin] textarea:focus-visible{
+  outline:2px solid var(--sd-focus)!important;outline-offset:2px;box-shadow:0 0 0 3px color-mix(in srgb,var(--sd-focus) 18%,transparent);
+}
+[data-store-design-v2-admin] .sd-icon-button,[data-store-design-v2-admin] .sd-toolbar-button,[data-store-design-v2-admin] .sd-secondary-button{
+  background:var(--sd-surface-1)!important;color:var(--sd-text-1)!important;border-color:var(--sd-border)!important;
+}
+[data-store-design-v2-admin] .sd-icon-button:hover:not(:disabled),[data-store-design-v2-admin] .sd-toolbar-button:hover:not(:disabled),
+[data-store-design-v2-admin] .sd-secondary-button:hover:not(:disabled){background:var(--sd-surface-2)!important;border-color:var(--sd-accent)!important;}
+[data-store-design-v2-admin] .sd-primary-button{
+  background:var(--sd-accent)!important;color:#fff!important;border-color:transparent!important;
+  box-shadow:0 7px 20px color-mix(in srgb,var(--sd-accent) 22%,transparent);
+}
+[data-store-design-v2-admin] .sd-primary-button:hover:not(:disabled){background:var(--sd-accent-hover)!important;}
+[data-store-design-v2-admin] .sd-primary-button:active:not(:disabled){background:var(--sd-accent-press)!important;}
+[data-store-design-v2-admin] .sd-device-toggle{background:var(--sd-surface-2)!important;border-color:var(--sd-border)!important;}
+[data-store-design-v2-admin] .sd-device-button{color:var(--sd-text-2)!important;border:1px solid transparent;}
+[data-store-design-v2-admin] .sd-device-button.is-active{
+  background:var(--sd-surface-1)!important;color:var(--sd-text-1)!important;border-color:var(--sd-accent)!important;box-shadow:0 3px 14px rgba(0,0,0,.12);
+}
+[data-store-design-v2-admin] .sd-field,[data-store-design-v2-admin] input,[data-store-design-v2-admin] select,[data-store-design-v2-admin] textarea{
+  background:var(--sd-surface-1)!important;color:var(--sd-text-1)!important;border-color:var(--sd-border)!important;
+}
+[data-store-design-v2-admin] input::placeholder,[data-store-design-v2-admin] textarea::placeholder{color:var(--sd-text-2)!important;opacity:.82;}
+[data-store-design-v2-admin] .sd-chip,[data-store-design-v2-admin] .sd-state-card,[data-store-design-v2-admin] .sd-global-row{
+  background:var(--sd-surface-2)!important;color:var(--sd-text-1)!important;border-color:var(--sd-border)!important;
+}
+[data-store-design-v2-admin] .sd-section-row{
+  background:var(--sd-surface-1)!important;color:var(--sd-text-1)!important;border-color:var(--sd-border)!important;
+  transition:background-color var(--sd-motion-micro) var(--sd-ease),border-color var(--sd-motion-micro) var(--sd-ease),
+  box-shadow var(--sd-motion-fast) var(--sd-ease),opacity var(--sd-motion-micro) var(--sd-ease),transform var(--sd-motion-base) var(--sd-ease-enter);
+}
+[data-store-design-v2-admin] .sd-section-row:hover{background:var(--sd-surface-2)!important;border-color:var(--sd-accent)!important;box-shadow:0 6px 18px rgba(0,0,0,.09);}
+[data-store-design-v2-admin] .sd-section-row.is-dragging{opacity:.82!important;transform:scale(1.012);box-shadow:var(--sd-shadow-soft);}
+[data-store-design-v2-admin] .sd-section-row .sd-row-action{color:var(--sd-text-2)!important;opacity:.72;}
+[data-store-design-v2-admin] .sd-section-row:hover .sd-row-action,[data-store-design-v2-admin] .sd-row-action:focus-visible{color:var(--sd-text-1)!important;opacity:1;}
+[data-store-design-v2-admin] .sd-row-action-danger{color:var(--sd-danger)!important;}
+[data-store-design-v2-admin] .sd-library-card{
+  background:var(--sd-surface-1)!important;color:var(--sd-text-1)!important;border-color:var(--sd-border)!important;
+  transition:transform var(--sd-motion-fast) var(--sd-ease-enter),border-color var(--sd-motion-micro) var(--sd-ease),
+  background-color var(--sd-motion-micro) var(--sd-ease),box-shadow var(--sd-motion-fast) var(--sd-ease);
+}
+[data-store-design-v2-admin] .sd-library-card:hover:not(:disabled){background:var(--sd-surface-2)!important;border-color:var(--sd-accent)!important;box-shadow:var(--sd-shadow-soft);}
+[data-store-design-v2-admin] .sd-preview-shell{
+  transition:width var(--sd-motion-preview) var(--sd-ease-enter),height var(--sd-motion-preview) var(--sd-ease-enter),
+  border-radius var(--sd-motion-preview) var(--sd-ease-enter),border-color var(--sd-motion-fast) var(--sd-ease),
+  box-shadow var(--sd-motion-base) var(--sd-ease)!important;will-change:width,height,border-radius;
+}
+[data-store-design-v2-admin] .sd-sidebar-left{animation:sd-panel-in-left var(--sd-motion-panel) var(--sd-ease-enter) both;}
+[data-store-design-v2-admin] .sd-inspector{animation:sd-panel-in-right var(--sd-motion-panel) var(--sd-ease-enter) both;}
+[data-store-design-v2-admin] .sd-modal-backdrop{animation:sd-backdrop-in var(--sd-motion-fast) var(--sd-ease) both;}
+[data-store-design-v2-admin] .sd-modal-card{
+  background:var(--sd-surface-1)!important;color:var(--sd-text-1)!important;border-color:var(--sd-border)!important;
+  animation:sd-dialog-in var(--sd-motion-dialog) var(--sd-ease-enter) both;
+}
+[data-store-design-v2-admin] .text-black\/45,[data-store-design-v2-admin] .text-black\/40,
+[data-store-design-v2-admin] .text-black\/38,[data-store-design-v2-admin] .text-black\/35,
+[data-store-design-v2-admin] .text-black\/30,[data-store-design-v2-admin] .text-black\/28{color:var(--sd-text-2)!important;}
+[data-store-design-v2-admin] .bg-white{background-color:var(--sd-surface-1)!important;}
+@keyframes sd-panel-in-left{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+@keyframes sd-panel-in-right{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:translateX(0)}}
+@keyframes sd-backdrop-in{from{opacity:0}to{opacity:1}}
+@keyframes sd-dialog-in{from{opacity:0;transform:translateY(8px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media (prefers-reduced-motion:reduce){
+  [data-store-design-v2-admin] *,[data-store-design-v2-admin] *::before,[data-store-design-v2-admin] *::after{
+    scroll-behavior:auto!important;animation-duration:1ms!important;animation-iteration-count:1!important;transition-duration:1ms!important;
+  }
+  [data-store-design-v2-admin] button:not(:disabled):hover,[data-store-design-v2-admin] button:not(:disabled):active,
+  [data-store-design-v2-admin] .sd-section-row.is-dragging{transform:none!important;}
+}

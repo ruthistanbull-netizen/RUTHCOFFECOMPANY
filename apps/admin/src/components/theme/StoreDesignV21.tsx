@@ -947,7 +947,7 @@ export function StoreDesignV21() {
 
   if (loading || !initialSrcRef.current) {
     return (
-      <div className="grid min-h-dvh place-items-center bg-[#f5f5f3]">
+      <div data-store-design-v2-loading className="sd-loading-screen grid min-h-dvh place-items-center bg-[#f5f5f3]">
         <div className="flex items-center gap-3 rounded-2xl border border-black/10 bg-white px-5 py-4 text-[12px] font-medium shadow-sm">
           <RefreshCw className="h-4 w-4 animate-spin" />
           Mağaza Tasarımı V2.1 hazırlanıyor…
@@ -957,9 +957,9 @@ export function StoreDesignV21() {
   }
 
   return (
-    <div data-store-design-v2-admin className="flex h-dvh min-h-0 flex-col overflow-hidden bg-[#f5f5f3] text-[#111]">
-      <header className="z-20 flex h-[58px] shrink-0 items-center gap-3 border-b border-black/10 bg-white px-3 md:px-4">
-        <button type="button" onClick={() => setLeftOpen((value) => !value)} className="grid h-9 w-9 place-items-center rounded-lg border border-black/10 hover:bg-black/[0.03]" aria-label="Sol panel">
+    <div data-store-design-v2-admin className="sd-editor-shell flex h-dvh min-h-0 flex-col overflow-hidden bg-[#f5f5f3] text-[#111]">
+      <header className="sd-toolbar z-20 flex h-[58px] shrink-0 items-center gap-3 border-b border-black/10 bg-white px-3 md:px-4">
+        <button type="button" onClick={() => setLeftOpen((value) => !value)} className="sd-icon-button grid h-9 w-9 place-items-center rounded-lg border border-black/10 hover:bg-black/[0.03]" aria-label="Sol panel">
           <PanelLeft className="h-4 w-4" />
         </button>
 
@@ -976,66 +976,66 @@ export function StoreDesignV21() {
           </div>
         </div>
 
-        <div className="flex items-center rounded-lg border border-black/10 bg-[#f7f7f5] p-1">
-          <button type="button" onClick={() => setDevice("desktop")} className={`flex h-8 items-center gap-1.5 rounded-md px-2.5 text-[9px] font-medium ${device === "desktop" ? "bg-white shadow-sm" : "text-black/45"}`}>
+        <div className="sd-device-toggle flex items-center rounded-lg border border-black/10 bg-[#f7f7f5] p-1">
+          <button type="button" onClick={() => setDevice("desktop")} className={`sd-device-button flex h-8 items-center gap-1.5 rounded-md px-2.5 text-[9px] font-medium ${device === "desktop" ? "is-active bg-white shadow-sm" : "text-black/45"}`}>
             <Monitor className="h-3.5 w-3.5" /><span className="hidden sm:inline">Masaüstü</span>
           </button>
-          <button type="button" onClick={() => setDevice("mobile")} className={`flex h-8 items-center gap-1.5 rounded-md px-2.5 text-[9px] font-medium ${device === "mobile" ? "bg-white shadow-sm" : "text-black/45"}`}>
+          <button type="button" onClick={() => setDevice("mobile")} className={`sd-device-button flex h-8 items-center gap-1.5 rounded-md px-2.5 text-[9px] font-medium ${device === "mobile" ? "is-active bg-white shadow-sm" : "text-black/45"}`}>
             <Smartphone className="h-3.5 w-3.5" /><span className="hidden sm:inline">Mobil</span>
           </button>
         </div>
 
         <div className="hidden items-center gap-1 md:flex">
-          <button type="button" disabled={!history.length || saving !== null} onClick={() => void undo()} className="grid h-9 w-9 place-items-center rounded-lg border border-black/10 bg-white hover:bg-black/[0.03] disabled:opacity-30" aria-label="Geri al">
+          <button type="button" disabled={!history.length || saving !== null} onClick={() => void undo()} className="sd-icon-button grid h-9 w-9 place-items-center rounded-lg border border-black/10 bg-white hover:bg-black/[0.03] disabled:opacity-30" aria-label="Geri al">
             <Undo2 className="h-3.5 w-3.5" />
           </button>
-          <button type="button" disabled={!future.length || saving !== null} onClick={() => void redo()} className="grid h-9 w-9 place-items-center rounded-lg border border-black/10 bg-white hover:bg-black/[0.03] disabled:opacity-30" aria-label="Yinele">
+          <button type="button" disabled={!future.length || saving !== null} onClick={() => void redo()} className="sd-icon-button grid h-9 w-9 place-items-center rounded-lg border border-black/10 bg-white hover:bg-black/[0.03] disabled:opacity-30" aria-label="Yinele">
             <Redo2 className="h-3.5 w-3.5" />
           </button>
         </div>
 
-        <button type="button" onClick={() => setSnapshotManagerOpen(true)} className="hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] 2xl:flex">
+        <button type="button" onClick={() => setSnapshotManagerOpen(true)} className="sd-toolbar-button hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] 2xl:flex">
           <History className="h-3.5 w-3.5" />Geçmiş
         </button>
-        <button type="button" onClick={() => setRedirectManagerOpen(true)} className="hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] xl:flex">
+        <button type="button" onClick={() => setRedirectManagerOpen(true)} className="sd-toolbar-button hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] xl:flex">
           <Link2 className="h-3.5 w-3.5" />Redirect
         </button>
-        <button type="button" onClick={() => setTemplateManagerOpen(true)} className="hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] lg:flex">
+        <button type="button" onClick={() => setTemplateManagerOpen(true)} className="sd-toolbar-button hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] lg:flex">
           <LayoutTemplate className="h-3.5 w-3.5" />Template
         </button>
-        <button type="button" onClick={() => setMediaOpen(true)} className="hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] lg:flex">
+        <button type="button" onClick={() => setMediaOpen(true)} className="sd-toolbar-button hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] lg:flex">
           <Images className="h-3.5 w-3.5" />Medya
         </button>
-        <button type="button" disabled={saving !== null} onClick={() => void save("draft")} className="hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] disabled:opacity-50 sm:flex">
+        <button type="button" disabled={saving !== null} onClick={() => void save("draft")} className="sd-toolbar-button hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] disabled:opacity-50 sm:flex">
           <Save className="h-3.5 w-3.5" />{saving === "draft" ? "Kaydediliyor…" : "Taslağı Kaydet"}
         </button>
-        <button type="button" disabled={saving !== null} onClick={() => void save("publish")} className="flex h-9 items-center gap-2 rounded-lg bg-[#111] px-3 text-[9px] font-semibold text-white disabled:opacity-50">
+        <button type="button" disabled={saving !== null} onClick={() => void save("publish")} className="sd-primary-button flex h-9 items-center gap-2 rounded-lg bg-[#111] px-3 text-[9px] font-semibold text-white disabled:opacity-50">
           <Send className="h-3.5 w-3.5" />{saving === "publish" ? "Yayınlanıyor…" : "Yayınla"}
         </button>
-        <button type="button" onClick={() => setRightOpen((value) => !value)} className="grid h-9 w-9 place-items-center rounded-lg border border-black/10 hover:bg-black/[0.03]" aria-label="Sağ panel">
+        <button type="button" onClick={() => setRightOpen((value) => !value)} className="sd-icon-button grid h-9 w-9 place-items-center rounded-lg border border-black/10 hover:bg-black/[0.03]" aria-label="Sağ panel">
           <PanelRight className="h-4 w-4" />
         </button>
       </header>
 
       <div className="flex min-h-0 flex-1">
         {leftOpen ? (
-          <aside className="flex w-[292px] shrink-0 flex-col border-r border-black/10 bg-white max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:top-[58px] max-lg:z-20 max-lg:shadow-2xl">
+          <aside className="sd-sidebar sd-sidebar-left flex w-[292px] shrink-0 flex-col border-r border-black/10 bg-white max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:top-[58px] max-lg:z-20 max-lg:shadow-2xl">
             <div className="border-b border-black/[0.07] p-3">
               <div className="flex items-center justify-between gap-2">
                 <label className="block text-[9px] font-semibold text-black/45">SAYFA</label>
                 <div className="flex items-center gap-1">
                   {managedPage ? (
-                    <button type="button" onClick={() => setPageManagerMode("edit")} className="flex h-7 items-center gap-1 rounded-md border border-black/10 bg-white px-2 text-[8px] font-semibold hover:bg-black/[0.03]">
+                    <button type="button" onClick={() => setPageManagerMode("edit")} className="sd-secondary-button flex h-7 items-center gap-1 rounded-md border border-black/10 bg-white px-2 text-[8px] font-semibold hover:bg-black/[0.03]">
                       <Settings2 className="h-3 w-3" />Ayarlar
                     </button>
                   ) : null}
-                  <button type="button" onClick={() => setPageManagerMode("create")} className="flex h-7 items-center gap-1 rounded-md bg-[#111] px-2 text-[8px] font-semibold text-white">
+                  <button type="button" onClick={() => setPageManagerMode("create")} className="sd-primary-button flex h-7 items-center gap-1 rounded-md bg-[#111] px-2 text-[8px] font-semibold text-white">
                     <Plus className="h-3 w-3" />Yeni Sayfa
                   </button>
                 </div>
               </div>
               <div className="relative mt-1.5">
-                <select value={activePath} onChange={(event) => void changePage(event.target.value)} className="h-10 w-full appearance-none rounded-lg border border-black/10 bg-white px-3 pr-8 text-[11px] font-medium outline-none hover:border-black/20">
+                <select value={activePath} onChange={(event) => void changePage(event.target.value)} className="sd-field h-10 w-full appearance-none rounded-lg border border-black/10 bg-white px-3 pr-8 text-[11px] font-medium outline-none hover:border-black/20">
                   {groupedPages.map(([group, items]) => (
                     <optgroup key={group} label={group}>
                       {items.map((item) => <option key={item.path} value={item.path}>{item.label}</option>)}
@@ -1058,8 +1058,8 @@ export function StoreDesignV21() {
           </aside>
         ) : null}
 
-        <main className="relative flex min-w-0 flex-1 items-center justify-center overflow-auto p-3 md:p-6">
-          <div className={`relative shrink-0 overflow-hidden bg-white shadow-[0_18px_60px_rgba(15,23,42,.14)] transition-[width,height,border-radius] duration-300 ${device === "mobile" ? "h-[780px] w-[390px] rounded-[44px] border-[9px] border-[#111]" : "h-[calc(100dvh-106px)] min-h-[620px] w-[min(1180px,calc(100vw-120px))] rounded-xl border border-black/10"}`}>
+        <main className="sd-preview-stage relative flex min-w-0 flex-1 items-center justify-center overflow-auto p-3 md:p-6">
+          <div className={`sd-preview-shell relative shrink-0 overflow-hidden bg-white shadow-[0_18px_60px_rgba(15,23,42,.14)] transition-[width,height,border-radius] duration-300 ${device === "mobile" ? "h-[780px] w-[390px] rounded-[44px] border-[9px] border-[#111]" : "h-[calc(100dvh-106px)] min-h-[620px] w-[min(1180px,calc(100vw-120px))] rounded-xl border border-black/10"}`}>
             {device === "mobile" ? <div className="pointer-events-none absolute left-1/2 top-3 z-10 h-7 w-28 -translate-x-1/2 rounded-full bg-[#111]" /> : null}
             <iframe
               ref={iframeRef}
@@ -1075,7 +1075,7 @@ export function StoreDesignV21() {
         </main>
 
         {rightOpen ? (
-          <aside className="flex w-[320px] shrink-0 flex-col border-l border-black/10 bg-white max-xl:absolute max-xl:bottom-0 max-xl:right-0 max-xl:top-[58px] max-xl:z-20 max-xl:shadow-2xl">
+          <aside className="sd-sidebar sd-inspector flex w-[320px] shrink-0 flex-col border-l border-black/10 bg-white max-xl:absolute max-xl:bottom-0 max-xl:right-0 max-xl:top-[58px] max-xl:z-20 max-xl:shadow-2xl">
             <div className="border-b border-black/[0.07] p-3">
               <p className="text-[9px] font-semibold text-black/45">SEMANTİK HEDEF</p>
               {selected ? (
@@ -1092,7 +1092,7 @@ export function StoreDesignV21() {
               <div className="min-h-0 flex-1 overflow-y-auto">
                 <section className="border-b border-black/[0.07] p-3">
                   <label className="text-[9px] font-semibold text-black/45">KAPSAM</label>
-                  <select value={scope} onChange={(event) => setScope(event.target.value as EditorScope)} className="mt-1.5 h-10 w-full rounded-lg border border-black/10 bg-white px-3 text-[10px] font-medium outline-none">
+                  <select value={scope} onChange={(event) => setScope(event.target.value as EditorScope)} className="sd-field mt-1.5 h-10 w-full rounded-lg border border-black/10 bg-white px-3 text-[10px] font-medium outline-none">
                     {selected.allowedScopes.map((item) => <option key={item} value={item}>{scopeLabel(item)}</option>)}
                   </select>
                   <p className="mt-1.5 text-[8px] leading-4 text-black/35">Varsayılan: {scopeLabel(selected.defaultScope)}. Dinamik tekrarlar tek karta değil aile/bölüm kapsamına gider.</p>
@@ -1103,8 +1103,8 @@ export function StoreDesignV21() {
                     <p className="text-[9px] font-semibold text-black/45">RESPONSIVE</p>
                     <p className="mt-1.5 text-[8px] leading-4 text-black/35">Mobile yalnız farklı alanları override eder; diğer değerler masaüstü/base ayarından miras alınır.</p>
                     <div className="mt-2 grid grid-cols-2 gap-2">
-                      <button type="button" onClick={() => applyMobileResponsiveAction("copy-desktop")} className="min-h-9 rounded-lg border border-black/10 bg-white px-2 text-[8px] font-semibold hover:bg-black/[0.03]">Masaüstünü Kopyala</button>
-                      <button type="button" onClick={() => applyMobileResponsiveAction("inherit")} className="min-h-9 rounded-lg border border-black/10 bg-white px-2 text-[8px] font-semibold hover:bg-black/[0.03]">Inherit'e Dön</button>
+                      <button type="button" onClick={() => applyMobileResponsiveAction("copy-desktop")} className="sd-secondary-button min-h-9 rounded-lg border border-black/10 bg-white px-2 text-[8px] font-semibold hover:bg-black/[0.03]">Masaüstünü Kopyala</button>
+                      <button type="button" onClick={() => applyMobileResponsiveAction("inherit")} className="sd-secondary-button min-h-9 rounded-lg border border-black/10 bg-white px-2 text-[8px] font-semibold hover:bg-black/[0.03]">Inherit'e Dön</button>
                     </div>
                   </section>
                 ) : null}
@@ -1112,17 +1112,17 @@ export function StoreDesignV21() {
                 <section className="border-b border-black/[0.07] p-3">
                   <p className="text-[9px] font-semibold text-black/45">İZİNLİ KONTROLLER</p>
                   <div className="mt-2 flex flex-wrap gap-1.5">
-                    {selected.controlGroups.map((group) => <span key={group} className="rounded-full border border-black/[0.08] bg-[#f7f7f5] px-2 py-1 text-[8px] font-medium">{group}</span>)}
+                    {selected.controlGroups.map((group) => <span key={group} className="sd-chip rounded-full border border-black/[0.08] bg-[#f7f7f5] px-2 py-1 text-[8px] font-medium">{group}</span>)}
                   </div>
                 </section>
 
                 <section className="border-b border-black/[0.07] p-3">
                   <p className="text-[9px] font-semibold text-black/45">MEVCUT DURUM</p>
                   <dl className="mt-2 grid grid-cols-2 gap-2 text-[8px]">
-                    <div className="rounded-lg bg-[#f7f7f5] p-2"><dt className="text-black/35">Boyut</dt><dd className="mt-1 font-medium">{selected.current.width || 0} × {selected.current.height || 0}</dd></div>
-                    <div className="rounded-lg bg-[#f7f7f5] p-2"><dt className="text-black/35">Görünür</dt><dd className="mt-1 font-medium">{selected.current.visible === false ? "Hayır" : "Evet"}</dd></div>
-                    <div className="rounded-lg bg-[#f7f7f5] p-2"><dt className="text-black/35">Opacity</dt><dd className="mt-1 font-medium">{selected.current.opacity ?? 1}</dd></div>
-                    <div className="rounded-lg bg-[#f7f7f5] p-2"><dt className="text-black/35">Radius</dt><dd className="mt-1 font-medium">{selected.current.borderRadius ?? 0}px</dd></div>
+                    <div className="sd-state-card rounded-lg bg-[#f7f7f5] p-2"><dt className="text-black/35">Boyut</dt><dd className="mt-1 font-medium">{selected.current.width || 0} × {selected.current.height || 0}</dd></div>
+                    <div className="sd-state-card rounded-lg bg-[#f7f7f5] p-2"><dt className="text-black/35">Görünür</dt><dd className="mt-1 font-medium">{selected.current.visible === false ? "Hayır" : "Evet"}</dd></div>
+                    <div className="sd-state-card rounded-lg bg-[#f7f7f5] p-2"><dt className="text-black/35">Opacity</dt><dd className="mt-1 font-medium">{selected.current.opacity ?? 1}</dd></div>
+                    <div className="sd-state-card rounded-lg bg-[#f7f7f5] p-2"><dt className="text-black/35">Radius</dt><dd className="mt-1 font-medium">{selected.current.borderRadius ?? 0}px</dd></div>
                   </dl>
                 </section>
 

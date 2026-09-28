@@ -453,8 +453,8 @@ function SectionPicker({
   }), [category, compatibility, query]);
 
   return (
-    <div className="fixed inset-0 z-[2147483590] grid place-items-center bg-black/30 p-3 backdrop-blur-sm">
-      <div className="flex max-h-[82dvh] w-full max-w-[660px] flex-col overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl">
+    <div className="sd-modal-backdrop fixed inset-0 z-[2147483590] grid place-items-center bg-black/30 p-3 backdrop-blur-sm">
+      <div className="sd-modal-card flex max-h-[82dvh] w-full max-w-[660px] flex-col overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl">
         <header className="flex h-14 shrink-0 items-center gap-3 border-b border-black/10 px-4">
           <div className="min-w-0 flex-1">
             <p className="text-[12px] font-semibold">Bölüm Ekle</p>
@@ -466,9 +466,9 @@ function SectionPicker({
         <div className="flex shrink-0 gap-2 border-b border-black/[0.07] p-3">
           <label className="relative min-w-0 flex-1">
             <Search className="pointer-events-none absolute left-3 top-2.5 h-3.5 w-3.5 text-black/30" />
-            <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Bölüm ara…" className="h-9 w-full rounded-lg border border-black/10 pl-9 pr-3 text-[9px] outline-none focus:border-black/25" />
+            <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Bölüm ara…" className="sd-field h-9 w-full rounded-lg border border-black/10 pl-9 pr-3 text-[9px] outline-none focus:border-black/25" />
           </label>
-          <select value={category} onChange={(event) => setCategory(event.target.value as typeof category)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium outline-none">
+          <select value={category} onChange={(event) => setCategory(event.target.value as typeof category)} className="sd-field h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium outline-none">
             <option value="all">Tümü</option>
             <option value="commerce">Commerce</option>
             <option value="media">Medya</option>
@@ -488,7 +488,7 @@ function SectionPicker({
                   type="button"
                   disabled={!available}
                   onClick={() => onAdd(definition)}
-                  className="min-h-[82px] rounded-xl border border-black/[0.08] p-3 text-left hover:bg-black/[0.02] disabled:cursor-not-allowed disabled:opacity-45"
+                  className="sd-library-card min-h-[82px] rounded-xl border border-black/[0.08] p-3 text-left hover:bg-black/[0.02] disabled:cursor-not-allowed disabled:opacity-45"
                 >
                   <div className="flex items-start gap-2">
                     <span className="min-w-0 flex-1 text-[10px] font-semibold">{definition.label}</span>
@@ -679,9 +679,9 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
 
   return (
     <>
-      <section className="border-b border-black/[0.07] p-3">
+      <section className="sd-structure-panel border-b border-black/[0.07] p-3">
         <div className="flex items-center gap-2 text-[10px] font-semibold"><Layers3 className="h-3.5 w-3.5" /> Sayfa Yapısı</div>
-        <div className="mt-2 rounded-lg bg-black/[0.025] px-2.5 py-2 text-[9px] font-medium">
+        <div className="sd-global-row mt-2 rounded-lg bg-black/[0.025] px-2.5 py-2 text-[9px] font-medium">
           <div className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-black/30" />Header <span className="ml-auto text-[7px] text-black/30">Global</span></div>
         </div>
 
@@ -697,32 +697,32 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
                 event.preventDefault();
                 if (draggedId) void reorderTo(draggedId, section.id);
               }}
-              className={`group flex min-h-10 items-center gap-1 rounded-lg border px-1.5 transition ${draggedId === section.id ? "border-black/20 bg-black/[0.04] opacity-60" : "border-black/[0.07] bg-white"}`}
+              className={`sd-section-row group flex min-h-10 items-center gap-1 rounded-lg border px-1.5 transition ${draggedId === section.id ? "is-dragging border-black/20 bg-black/[0.04] opacity-60" : "border-black/[0.07] bg-white"}`}
             >
               <GripVertical className="h-3.5 w-3.5 shrink-0 cursor-grab text-black/20" />
               <button
                 type="button"
                 disabled={!canEditSection(section.type)}
                 onClick={() => setEditingSectionId(section.id)}
-                className="min-w-0 flex-1 py-2 text-left disabled:cursor-default"
+                className="sd-section-main min-w-0 flex-1 py-2 text-left disabled:cursor-default"
                 title={canEditSection(section.type) ? "Bölüm ayarlarını aç" : "Bu bölümün V2 ayar şeması henüz bağlanmadı"}
               >
                 <p className={`truncate text-[9px] font-semibold ${section.enabled ? "" : "text-black/35"}`}>{sectionLabel(section)}</p>
                 <p className="mt-0.5 truncate text-[7px] text-black/28">{section.id}</p>
               </button>
               {canEditSection(section.type) ? (
-                <button type="button" disabled={busy} onClick={() => setEditingSectionId(section.id)} className="grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04]" aria-label="Bölüm ayarları">
+                <button type="button" disabled={busy} onClick={() => setEditingSectionId(section.id)} className="sd-row-action grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04]" aria-label="Bölüm ayarları">
                   <Settings2 className="h-3 w-3" />
                 </button>
               ) : null}
-              <button type="button" disabled={busy || !SECTION_LIBRARY_BY_TYPE[section.type]?.implemented} onClick={() => void saveSectionPreset(section.id)} className="grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04] disabled:opacity-20" aria-label="Preset olarak kaydet">
+              <button type="button" disabled={busy || !SECTION_LIBRARY_BY_TYPE[section.type]?.implemented} onClick={() => void saveSectionPreset(section.id)} className="sd-row-action grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04] disabled:opacity-20" aria-label="Preset olarak kaydet">
                 <BookmarkPlus className="h-3 w-3" />
               </button>
-              <button type="button" disabled={busy || index === 0} onClick={() => void mutateSection(section.id, "up")} className="grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04] disabled:opacity-20" aria-label="Yukarı taşı"><ArrowUp className="h-3 w-3" /></button>
-              <button type="button" disabled={busy || index === sections.length - 1} onClick={() => void mutateSection(section.id, "down")} className="grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04] disabled:opacity-20" aria-label="Aşağı taşı"><ArrowDown className="h-3 w-3" /></button>
-              <button type="button" disabled={busy} onClick={() => void mutateSection(section.id, "toggle")} className="grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04]" aria-label={section.enabled ? "Gizle" : "Göster"}>{section.enabled ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}</button>
-              <button type="button" disabled={busy} onClick={() => void mutateSection(section.id, "duplicate")} className="grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04]" aria-label="Çoğalt"><Copy className="h-3 w-3" /></button>
-              <button type="button" disabled={busy} onClick={() => void mutateSection(section.id, "delete")} className="grid h-7 w-7 place-items-center rounded-md text-red-600 hover:bg-red-50" aria-label="Sil"><Trash2 className="h-3 w-3" /></button>
+              <button type="button" disabled={busy || index === 0} onClick={() => void mutateSection(section.id, "up")} className="sd-row-action grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04] disabled:opacity-20" aria-label="Yukarı taşı"><ArrowUp className="h-3 w-3" /></button>
+              <button type="button" disabled={busy || index === sections.length - 1} onClick={() => void mutateSection(section.id, "down")} className="sd-row-action grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04] disabled:opacity-20" aria-label="Aşağı taşı"><ArrowDown className="h-3 w-3" /></button>
+              <button type="button" disabled={busy} onClick={() => void mutateSection(section.id, "toggle")} className="sd-row-action grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04]" aria-label={section.enabled ? "Gizle" : "Göster"}>{section.enabled ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}</button>
+              <button type="button" disabled={busy} onClick={() => void mutateSection(section.id, "duplicate")} className="sd-row-action grid h-7 w-7 place-items-center rounded-md hover:bg-black/[0.04]" aria-label="Çoğalt"><Copy className="h-3 w-3" /></button>
+              <button type="button" disabled={busy} onClick={() => void mutateSection(section.id, "delete")} className="sd-row-action sd-row-action-danger grid h-7 w-7 place-items-center rounded-md text-red-600 hover:bg-red-50" aria-label="Sil"><Trash2 className="h-3 w-3" /></button>
             </div>
           ))}
 
@@ -733,14 +733,14 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
           ) : null}
         </div>
 
-        <button type="button" disabled={!activePage || busy} onClick={() => setPickerOpen(true)} className="mt-2 flex h-9 w-full items-center justify-center gap-1.5 rounded-lg border border-black/10 bg-white text-[9px] font-semibold hover:bg-black/[0.03] disabled:opacity-40">
+        <button type="button" disabled={!activePage || busy} onClick={() => setPickerOpen(true)} className="sd-secondary-button mt-2 flex h-9 w-full items-center justify-center gap-1.5 rounded-lg border border-black/10 bg-white text-[9px] font-semibold hover:bg-black/[0.03] disabled:opacity-40">
           <Plus className="h-3.5 w-3.5" />Bölüm Ekle
         </button>
-        <button type="button" disabled={!activePage || busy} onClick={() => setPresetOpen(true)} className="mt-1.5 flex h-9 w-full items-center justify-center gap-1.5 rounded-lg border border-black/10 bg-white text-[9px] font-semibold hover:bg-black/[0.03] disabled:opacity-40">
+        <button type="button" disabled={!activePage || busy} onClick={() => setPresetOpen(true)} className="sd-secondary-button mt-1.5 flex h-9 w-full items-center justify-center gap-1.5 rounded-lg border border-black/10 bg-white text-[9px] font-semibold hover:bg-black/[0.03] disabled:opacity-40">
           <Library className="h-3.5 w-3.5" />Presetler ({Object.keys(document.presets).length})
         </button>
 
-        <div className="mt-1.5 rounded-lg bg-black/[0.025] px-2.5 py-2 text-[9px] font-medium">
+        <div className="sd-global-row mt-1.5 rounded-lg bg-black/[0.025] px-2.5 py-2 text-[9px] font-medium">
           <div className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-black/30" />Footer <span className="ml-auto text-[7px] text-black/30">Global</span></div>
         </div>
       </section>
