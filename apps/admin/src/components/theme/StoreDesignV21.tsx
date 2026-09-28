@@ -76,7 +76,7 @@ type SelectedTarget = {
     color?: string;
     width?: number;
     height?: number;
-    media?: { src?: string; objectFit?: string; objectPosition?: string } | null;
+    media?: { kind?: "image" | "video"; src?: string; objectFit?: string; objectPosition?: string } | null;
     grid?: { columns?: number; gapX?: number; gapY?: number; maxWidth?: string } | null;
     card?: {
       density?: "s" | "m" | "l";
@@ -92,6 +92,14 @@ type ContextMenuState = {
   x: number;
   y: number;
   target: SelectedTarget;
+};
+
+type QuickMediaEditState = {
+  target: SelectedTarget;
+  scope: EditorScope;
+  device: Device;
+  page: PageItem;
+  mediaType: "image" | "video";
 };
 
 type StoreDesignResponse = {
@@ -295,6 +303,7 @@ function responsiveSettingsFor(
 }
 
 function snapshotValue(target: SelectedTarget, path: string) {
+  if (path === "media.src") return target.current.media?.src || "";
   if (path === "media.objectFit") return target.current.media?.objectFit || "cover";
   if (path === "media.objectPosition") return target.current.media?.objectPosition || "50% 50%";
   if (path === "grid.columns") return target.current.grid?.columns ?? 2;
@@ -315,8 +324,8 @@ function snapshotValue(target: SelectedTarget, path: string) {
 
 function updateTargetSnapshot(target: SelectedTarget, path: string, value: unknown): SelectedTarget {
   if (value === null) return target;
-  if (path === "media.objectFit" || path === "media.objectPosition") {
-    const key = path === "media.objectFit" ? "objectFit" : "objectPosition";
+  if (path === "media.src" || path === "media.objectFit" || path === "media.objectPosition") {
+    const key = path === "media.src" ? "src" : path === "media.objectFit" ? "objectFit" : "objectPosition";
     return { ...target, current: { ...target.current, media: { ...(target.current.media || {}), [key]: String(value) } } };
   }
   if (path.startsWith("grid.")) {
@@ -517,6 +526,7 @@ export function StoreDesignV21() {
   const [mobileSheetLevel, setMobileSheetLevel] = useState<"peek" | "medium" | "full">("peek");
   const [pageManagerMode, setPageManagerMode] = useState<"create" | "edit" | null>(null);
   const [mediaOpen, setMediaOpen] = useState(false);
+  const [quickMediaEdit, setQuickMediaEdit] = useState<QuickMediaEditState | null>(null);
   const [templateManagerOpen, setTemplateManagerOpen] = useState(false);
   const [redirectManagerOpen, setRedirectManagerOpen] = useState(false);
   const [snapshotManagerOpen, setSnapshotManagerOpen] = useState(false);
@@ -1114,7 +1124,7 @@ export function StoreDesignV21() {
     await syncPreviewDocument(next, true);
     revisionRef.current = next.revision;
     setDocument(next);
-    setSelected(null);
+    if (reload) setSelected(null);
     setLastHeartbeat(Date.now());
 
     if (reload && iframeRef.current) {
@@ -1216,7 +1226,7 @@ export function StoreDesignV21() {
       ...(selected.controlGroups.includes("typography") ? ["textAlign"] : []),
       ...(selected.controlGroups.includes("layout") ? ["visible"] : []),
       ...(selected.type !== "product-card" && (selected.controlGroups.includes("card") || selected.controlGroups.includes("layout")) ? ["borderRadius"] : []),
-      ...(selected.type !== "product-card" && selected.controlGroups.includes("media") && selected.current.media ? ["media.objectFit", "media.objectPosition"] : []),
+      ...(selected.type !== "product-card" && selected.controlGroups.includes("media") && selected.current.media ? ["media.src", "media.objectFit", "media.objectPosition"] : []),
       ...(selected.type === "product-grid" ? ["grid.columns"] : []),
       ...(selected.type === "product-card" ? ["card.density", "card.imageRatio", "card.showPrice"] : []),
     ];
