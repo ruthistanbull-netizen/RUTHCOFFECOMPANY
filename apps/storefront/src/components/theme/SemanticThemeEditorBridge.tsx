@@ -142,7 +142,9 @@ function snapshot(target: SemanticTarget) {
   const rect = target.element.getBoundingClientRect();
   const media = target.element instanceof HTMLImageElement || target.element instanceof HTMLVideoElement
     ? target.element
-    : null;
+    : target.definition.controlGroups.includes("media")
+      ? target.element.querySelector<HTMLImageElement | HTMLVideoElement>("img,video")
+      : null;
 
   return {
     visible: computed.display !== "none",
