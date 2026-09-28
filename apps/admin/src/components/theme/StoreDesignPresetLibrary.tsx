@@ -34,7 +34,7 @@ export function StoreDesignPresetLibrary({ presets, compatibility, onInsert, onD
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-[12px] font-semibold">Kaydedilmiş Bölümler</p>
-            <p className="mt-0.5 text-[8px] text-black/40">Section + block ayarları asset/content referanslarıyla yeniden kullanılabilir.</p>
+            <p className="mt-0.5 text-[8px] text-black/40">Bölüm ve blok ayarlarını içerik ve medya bağlantılarıyla yeniden kullanabilirsin.</p>
           </div>
           <button type="button" onClick={requestClose} className="grid h-9 w-9 place-items-center rounded-lg hover:bg-black/[0.04]" aria-label="Kapat"><X className="h-4 w-4" /></button>
         </header>
@@ -51,7 +51,7 @@ export function StoreDesignPresetLibrary({ presets, compatibility, onInsert, onD
                         <p className="truncate text-[10px] font-semibold">{preset.label}</p>
                         <span className="rounded-full bg-black/[0.04] px-2 py-0.5 text-[7px] font-semibold text-black/45">{definition?.label || preset.sectionType}</span>
                       </div>
-                      <p className="mt-1 text-[7px] text-black/30">{preset.blocks.length} blok · yapı sürümü {preset.schemaVersion}</p>
+                      <p className="mt-1 text-[7px] text-black/30">{preset.blocks.length} blok{preset.schemaVersion}</p>
                     </div>
                     <button type="button" onClick={() => onInsert(preset.id)} className="flex h-8 items-center gap-1 rounded-lg bg-[#111] px-2.5 text-[8px] font-semibold text-white">
                       <Plus className="h-3 w-3" />Ekle
