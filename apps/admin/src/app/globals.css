@@ -1634,3 +1634,30 @@ body {
   }
 }
 
+/* Store Design v4.1 — mobile structure hierarchy and primary add action. */
+@media (max-width:767px){
+  [data-store-design-v2-admin] .sd-section-children{
+    margin-left:52px!important;
+  }
+
+  [data-store-design-v2-admin] .sd-block-row{
+    min-height:48px!important;
+    font-size:13px!important;
+  }
+
+  [data-store-design-v2-admin] .sd-structure-presets{
+    display:none!important;
+  }
+
+  [data-store-design-v2-admin] .sd-structure-add{
+    position:sticky;
+    bottom:8px;
+    z-index:18;
+    min-height:48px!important;
+    border-color:var(--sd-accent)!important;
+    background:var(--sd-accent)!important;
+    color:#fff!important;
+    box-shadow:0 10px 28px rgba(0,0,0,.18);
+  }
+}
+
