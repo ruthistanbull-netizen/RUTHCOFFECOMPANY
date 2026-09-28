@@ -132,6 +132,7 @@ const STOREFRONT_ORIGIN = (() => {
   try { return new URL(RAW_STOREFRONT_URL).origin; }
   catch { return "https://rostacoffecompany.zeabur.app"; }
 })();
+const PREVIEW_SCROLL_MESSAGE = "store-design-v2:preview-scroll";
 
 function previewUrl(path: string, previewToken: string) {
   const url = new URL(path || "/", STOREFRONT_ORIGIN);
@@ -711,6 +712,11 @@ export function StoreDesignV21() {
         return;
       }
 
+      if (data.type === PREVIEW_SCROLL_MESSAGE) {
+        setContextMenu(null);
+        return;
+      }
+
       if (data.type === STORE_DESIGN_MESSAGES.SELECT && data.target) {
         const target = data.target as SelectedTarget;
         setSelected(target);
@@ -1085,6 +1091,19 @@ export function StoreDesignV21() {
             <CircleDot className={`h-2.5 w-2.5 ${connected ? "text-emerald-600" : "text-amber-500"}`} />
             {connected ? "Önizleme bağlı" : "Önizleme bağlanıyor"}
           </div>
+          <span className="sr-only" role="status" aria-live="polite">
+            {saving === "draft"
+              ? "Taslak kaydediliyor."
+              : saving === "publish"
+                ? "Mağaza tasarımı yayınlanıyor."
+                : saveFeedback === "draft"
+                  ? "Taslak kaydedildi."
+                  : saveFeedback === "publish"
+                    ? "Mağaza tasarımı yayınlandı."
+                    : connected
+                      ? "Önizleme bağlı."
+                      : "Önizleme bağlanıyor."}
+          </span>
         </div>
 
         <div className="sd-desktop-device-toggle sd-device-toggle flex items-center rounded-lg border border-black/10 bg-[#f7f7f5] p-1">
@@ -1216,13 +1235,19 @@ export function StoreDesignV21() {
               Düzenleme açık · Bir öğeye dokun
             </div>
           ) : null}
-          <div className={`sd-preview-shell relative shrink-0 overflow-hidden bg-white shadow-[0_18px_60px_rgba(15,23,42,.14)] transition-[width,height,border-radius] duration-300 ${device === "mobile" ? "h-[780px] w-[390px] rounded-[44px] border-[9px] border-[#111]" : "h-[calc(100dvh-106px)] min-h-[620px] w-[min(1180px,calc(100vw-120px))] rounded-xl border border-black/10"}`}>
-            {device === "mobile" ? <div className="sd-device-island pointer-events-none absolute left-1/2 top-3 z-10 h-7 w-28 -translate-x-1/2 rounded-full bg-[#111]" /> : null}
+          <div className={`sd-preview-shell relative shrink-0 overflow-hidden bg-white shadow-[0_18px_60px_rgba(15,23,42,.14)] transition-[width,height,border-radius] duration-300 ${
+            device === "mobile"
+              ? isMobileViewport
+                ? "h-full w-full rounded-none border-0"
+                : "h-[780px] w-[390px] rounded-[44px] border-[9px] border-[#111]"
+              : "h-[calc(100dvh-106px)] min-h-[620px] w-[min(1180px,calc(100vw-120px))] rounded-xl border border-black/10"
+          }`}>
+            {device === "mobile" && !isMobileViewport ? <div className="sd-device-island pointer-events-none absolute left-1/2 top-3 z-10 h-7 w-28 -translate-x-1/2 rounded-full bg-[#111]" /> : null}
             <iframe
               ref={iframeRef}
               title="Mağaza tasarımı önizlemesi"
               src={initialSrcRef.current}
-              className={`sd-preview-frame h-full w-full bg-white ${device === "mobile" ? "rounded-[34px]" : ""}`}
+              className={`sd-preview-frame h-full w-full bg-white ${device === "mobile" && !isMobileViewport ? "rounded-[34px]" : ""}`}
               onLoad={() => {
                 setConnected(false);
                 setLastHeartbeat(Date.now());
