@@ -478,6 +478,8 @@ export function StoreDesignV21() {
   const toast = useExactToast();
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const contextMenuRef = useRef<HTMLDivElement | null>(null);
+  const structurePanelRef = useRef<HTMLElement | null>(null);
+  const inspectorPanelRef = useRef<HTMLElement | null>(null);
   const initialSrcRef = useRef("");
   const previewTokenRef = useRef("");
   const previewSyncTimerRef = useRef<number | null>(null);
@@ -535,6 +537,34 @@ export function StoreDesignV21() {
     media.addEventListener("change", applyViewport);
     return () => media.removeEventListener("change", applyViewport);
   }, []);
+
+  useEffect(() => {
+    if (!isMobileViewport) return;
+    const focusFrame = window.requestAnimationFrame(() => {
+      if (rightOpen && selected) inspectorPanelRef.current?.focus({ preventScroll: true });
+      else if (leftOpen) structurePanelRef.current?.focus({ preventScroll: true });
+    });
+    return () => window.cancelAnimationFrame(focusFrame);
+  }, [isMobileViewport, leftOpen, rightOpen, selected]);
+
+  useEffect(() => {
+    if (!isMobileViewport || (!leftOpen && !rightOpen && !mobileMoreOpen)) return;
+    const onMobileEscape = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      if (mobileMoreOpen) {
+        setMobileMoreOpen(false);
+        return;
+      }
+      if (rightOpen) {
+        setRightOpen(false);
+        setMobileSheetLevel("peek");
+        return;
+      }
+      if (leftOpen) setLeftOpen(false);
+    };
+    window.addEventListener("keydown", onMobileEscape);
+    return () => window.removeEventListener("keydown", onMobileEscape);
+  }, [isMobileViewport, leftOpen, mobileMoreOpen, rightOpen]);
 
   useEffect(() => {
     if (!contextMenu) return;
@@ -1229,7 +1259,7 @@ export function StoreDesignV21() {
       </header>
 
       <div className="flex min-h-0 flex-1">
-        <aside data-open={leftOpen ? "true" : "false"} aria-hidden={!leftOpen} className={`sd-sidebar sd-sidebar-left ${leftOpen ? "is-open" : "is-closed"} flex w-[292px] shrink-0 flex-col border-r border-black/10 bg-white max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:top-[58px] max-lg:z-20 max-lg:shadow-2xl`}>
+        <aside ref={structurePanelRef} tabIndex={-1} aria-label="Sayfa yapısı" data-open={leftOpen ? "true" : "false"} aria-hidden={!leftOpen} className={`sd-sidebar sd-sidebar-left ${leftOpen ? "is-open" : "is-closed"} flex w-[292px] shrink-0 flex-col border-r border-black/10 bg-white max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:top-[58px] max-lg:z-20 max-lg:shadow-2xl`}>
             <div className="border-b border-black/[0.07] p-3">
               <div className="flex items-center justify-between gap-2">
                 <label className="block text-[9px] font-semibold text-black/45">SAYFA</label>
@@ -1295,7 +1325,7 @@ export function StoreDesignV21() {
           </div>
         </main>
 
-        <aside data-open={rightOpen ? "true" : "false"} data-sheet-level={mobileSheetLevel} aria-hidden={!rightOpen} className={`sd-sidebar sd-inspector ${rightOpen ? "is-open" : "is-closed"} flex w-[320px] shrink-0 flex-col border-l border-black/10 bg-white max-xl:absolute max-xl:bottom-0 max-xl:right-0 max-xl:top-[58px] max-xl:z-20 max-xl:shadow-2xl`}>
+        <aside ref={inspectorPanelRef} tabIndex={-1} aria-label="Düzenleme paneli" data-open={rightOpen ? "true" : "false"} data-sheet-level={mobileSheetLevel} aria-hidden={!rightOpen} className={`sd-sidebar sd-inspector ${rightOpen ? "is-open" : "is-closed"} flex w-[320px] shrink-0 flex-col border-l border-black/10 bg-white max-xl:absolute max-xl:bottom-0 max-xl:right-0 max-xl:top-[58px] max-xl:z-20 max-xl:shadow-2xl`}>
             <div
               className="sd-inspector-header border-b border-black/[0.07] p-3"
               onTouchStart={(event) => {
@@ -1861,7 +1891,7 @@ export function StoreDesignV21() {
         </button>
         <button
           type="button"
-          className={interactionMode === "edit" ? "is-active" : ""}
+          className={interactionMode === "edit" && rightOpen && !leftOpen ? "is-active" : ""}
           onClick={() => {
             setInteractionMode("edit");
             setContextMenu(null);
