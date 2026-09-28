@@ -524,6 +524,8 @@ export function StoreDesignV21() {
   const [isMobileViewport, setIsMobileViewport] = useState(false);
   const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
   const [sectionPickerSignal, setSectionPickerSignal] = useState(0);
+  const [presetPickerSignal, setPresetPickerSignal] = useState(0);
+  const [structureFocusSectionId, setStructureFocusSectionId] = useState<string | null>(null);
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
   const [mobileSheetLevel, setMobileSheetLevel] = useState<"peek" | "medium" | "full">("peek");
   const [pageManagerMode, setPageManagerMode] = useState<"create" | "edit" | null>(null);
@@ -929,6 +931,7 @@ export function StoreDesignV21() {
       if (data.type === STORE_DESIGN_MESSAGES.SELECT && data.target) {
         const target = data.target as SelectedTarget;
         setSelected(target);
+        setStructureFocusSectionId(null);
         setScope(target.defaultScope);
         setLeftOpen(false);
 
@@ -1015,6 +1018,7 @@ export function StoreDesignV21() {
     setActivePath(path);
     setLastHeartbeat(Date.now());
     setSelected(null);
+    setStructureFocusSectionId(null);
     setContextMenu(null);
     setHistory([]);
     setFuture([]);
@@ -1083,9 +1087,40 @@ export function StoreDesignV21() {
     return activePath;
   };
 
+  const sectionIdForIssue = (issue: ThemeReferenceIssue) => {
+    const rawIds = [issue.source, issue.ownerId, issue.target, issue.targetId]
+      .filter((value): value is string => typeof value === "string" && Boolean(value.trim()));
+
+    for (const rawId of rawIds) {
+      const id = rawId.replace(/^(section|block):/, "");
+      if (document.sections[rawId]) return rawId;
+      if (document.sections[id]) return id;
+
+      const blockId = document.blocks[rawId] ? rawId : document.blocks[id] ? id : null;
+      if (!blockId) continue;
+      const ownerSection = Object.values(document.sections).find((section) => section.blockIds?.includes(blockId));
+      if (ownerSection) return ownerSection.id;
+    }
+
+    return null;
+  };
+
   const fixPublishIssue = async (issue: ThemeReferenceIssue) => {
     const path = pagePathForIssue(issue);
+    const sectionId = sectionIdForIssue(issue);
+    const source = typeof issue.source === "string" ? issue.source : "";
+    const target = typeof issue.target === "string" ? issue.target : "";
+
     setPublishIssues(null);
+    setMobileMoreOpen(false);
+    setContextMenu(null);
+    setQuickMediaEdit(null);
+
+    if (issue.code === "link-to-unpublished-page" && target.startsWith("/") && editorPages.some((page) => page.path === target)) {
+      if (target !== activePath) await changePage(target);
+      setPageManagerMode("edit");
+      return;
+    }
 
     if (path && path !== activePath && editorPages.some((page) => page.path === path)) {
       await changePage(path);
@@ -1096,11 +1131,33 @@ export function StoreDesignV21() {
       return;
     }
 
-    if (["missing-template-binding"].includes(issue.code)) {
+    if (["missing-template-binding", "missing-template-section"].includes(issue.code)) {
       setTemplateManagerOpen(true);
       return;
     }
 
+    if (issue.code === "invalid-preset-reference" || source.startsWith("preset:")) {
+      setSelected(null);
+      setStructureFocusSectionId(null);
+      setRightOpen(false);
+      setLeftOpen(true);
+      setPresetPickerSignal((value) => value + 1);
+      return;
+    }
+
+    if (issue.code === "missing-media-reference" && !sectionId) {
+      setQuickMediaEdit(null);
+      setMediaOpen(true);
+      return;
+    }
+
+    if (["broken-merchant-link", "BROKEN_MANAGED_LINK"].includes(issue.code) && !sectionId) {
+      setRedirectManagerOpen(true);
+      return;
+    }
+
+    setSelected(null);
+    setStructureFocusSectionId(sectionId);
     setRightOpen(false);
     setLeftOpen(true);
   };
@@ -1671,7 +1728,8 @@ export function StoreDesignV21() {
                 activePage={activePage}
                 compatibility={activeCompatibility}
                 openPickerSignal={sectionPickerSignal}
-                selectedSectionId={selectedSectionId}
+                openPresetSignal={presetPickerSignal}
+                selectedSectionId={structureFocusSectionId || selectedSectionId}
                 onApply={applyStructureDocument}
               />
             </div>
