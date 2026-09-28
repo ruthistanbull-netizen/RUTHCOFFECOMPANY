@@ -548,13 +548,30 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
       select(target, { x: event.clientX, y: event.clientY, kind: "mouse" });
     };
 
+    let lastEditAction: Element | null = null;
+    let lastEditActionAt = 0;
+
     const onClick = (event: MouseEvent) => {
-      if (Date.now() < suppressClickUntil) {
+      const now = Date.now();
+      if (now < suppressClickUntil) {
         event.preventDefault();
         event.stopPropagation();
         return;
       }
       if (interactionMode !== "edit") return;
+
+      const eventElement = event.target instanceof Element ? event.target : null;
+      const actionable = eventElement?.closest("a[href],button,[role='button']") || null;
+      const doubleAction = Boolean(actionable && actionable === lastEditAction && now - lastEditActionAt <= 360);
+      lastEditAction = actionable;
+      lastEditActionAt = now;
+
+      if (doubleAction) {
+        lastEditAction = null;
+        lastEditActionAt = 0;
+        return;
+      }
+
       const target = targetFromEvent(event);
       if (!target) return;
       event.preventDefault();
