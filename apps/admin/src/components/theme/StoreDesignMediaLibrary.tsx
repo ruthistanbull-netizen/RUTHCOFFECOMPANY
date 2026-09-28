@@ -312,7 +312,7 @@ export function StoreDesignMediaLibrary({
                     </div>
                     <div className="p-2">
                       <p className="truncate text-[8px] font-semibold">{mediaDisplayName(asset)}</p>
-                      <p className="mt-1 text-[7px] text-black/35">Sürüm {asset.version || 1} · {bytesLabel(asset.bytes)} · {usage} kullanım</p>
+                      <p className="mt-1 text-[7px] text-black/35">{bytesLabel(asset.bytes)} · {usage} kullanım</p>
                     </div>
                   </button>
                 );
