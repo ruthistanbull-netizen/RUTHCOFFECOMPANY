@@ -486,7 +486,7 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
                       <code className="min-w-0 flex-1 truncate">{item.from}</code>
                       <span className="text-black/25">→</span>
                       <code className="min-w-0 flex-1 truncate">{item.to}</code>
-                      <span className="rounded bg-white px-1.5 py-0.5 text-[6px] font-semibold">{item.status}</span>
+                      <span className="rounded bg-white px-1.5 py-0.5 text-[6px] font-semibold">{item.status === 302 ? "Geçici" : "Kalıcı"}</span>
                     </div>
                   ))}
                   {!document.redirects.some((item) => item.pageId === editingPage.id) ? (
