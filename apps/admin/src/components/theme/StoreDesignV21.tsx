@@ -21,6 +21,7 @@ import {
   Smartphone,
   Settings2,
   Undo2,
+  X,
   Eye,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -510,6 +511,7 @@ export function StoreDesignV21() {
   const [future, setFuture] = useState<EditorHistoryEntry[]>([]);
   const revisionRef = useRef(0);
   const lastReconnectRef = useRef(0);
+  const mobileSheetTouchStartRef = useRef<number | null>(null);
 
   useEffect(() => {
     const media = window.matchMedia("(max-width: 767px)");
@@ -1230,13 +1232,45 @@ export function StoreDesignV21() {
         </main>
 
         <aside data-open={rightOpen ? "true" : "false"} data-sheet-level={mobileSheetLevel} aria-hidden={!rightOpen} className={`sd-sidebar sd-inspector ${rightOpen ? "is-open" : "is-closed"} flex w-[320px] shrink-0 flex-col border-l border-black/10 bg-white max-xl:absolute max-xl:bottom-0 max-xl:right-0 max-xl:top-[58px] max-xl:z-20 max-xl:shadow-2xl`}>
-            <div className="sd-inspector-header border-b border-black/[0.07] p-3">
-              <p className="text-[9px] font-semibold text-black/45">SEÇİLİ ÖĞE</p>
+            <div
+              className="sd-inspector-header border-b border-black/[0.07] p-3"
+              onTouchStart={(event) => {
+                mobileSheetTouchStartRef.current = event.touches.item(0)?.clientY ?? null;
+              }}
+              onTouchEnd={(event) => {
+                if (!isMobileViewport) return;
+                const start = mobileSheetTouchStartRef.current;
+                const end = event.changedTouches.item(0)?.clientY ?? null;
+                mobileSheetTouchStartRef.current = null;
+                if (start === null || end === null) return;
+                const delta = end - start;
+                if (Math.abs(delta) < 48) return;
+                if (delta > 0) {
+                  if (mobileSheetLevel === "full") setMobileSheetLevel("medium");
+                  else if (mobileSheetLevel === "medium") setMobileSheetLevel("peek");
+                  else setRightOpen(false);
+                } else {
+                  if (mobileSheetLevel === "peek") setMobileSheetLevel("medium");
+                  else if (mobileSheetLevel === "medium") setMobileSheetLevel("full");
+                }
+              }}
+            >
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-[9px] font-semibold text-black/45">SEÇİLİ ÖĞE</p>
+                <button
+                  type="button"
+                  onClick={() => { setRightOpen(false); setMobileSheetLevel("peek"); }}
+                  className="sd-mobile-sheet-close hidden h-10 w-10 place-items-center rounded-xl border border-black/10"
+                  aria-label="Ayarları kapat"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
               {selected ? (
                 <>
                   <p className="mt-1.5 text-[12px] font-semibold">{selected.label}</p>
                   <p className="mt-1 text-[8px] text-black/35">{selected.breadcrumb.map((item) => item.label).join(" › ")}</p>
-                  <div className="sd-mobile-sheet-levels mt-3 hidden grid-cols-3 gap-1 rounded-xl bg-black/[0.035] p-1" aria-label="Ayar paneli yüksekliği">
+                  <div className="sd-mobile-sheet-levels mt-3 hidden grid-cols-3 gap-1 rounded-xl bg-black/[0.035] p-1" aria-label="Ayar paneli görünümü">
                     {(["peek", "medium", "full"] as const).map((level) => (
                       <button
                         key={level}
@@ -1245,7 +1279,7 @@ export function StoreDesignV21() {
                         onClick={() => setMobileSheetLevel(level)}
                         className={`rounded-lg px-2 py-2 text-[11px] font-semibold ${mobileSheetLevel === level ? "is-active" : ""}`}
                       >
-                        {level === "peek" ? "Kısa" : level === "medium" ? "Orta" : "Tam"}
+                        {level === "peek" ? "Özet" : level === "medium" ? "Ayarlar" : "Tam ekran"}
                       </button>
                     ))}
                   </div>
@@ -1304,7 +1338,7 @@ export function StoreDesignV21() {
                         Metin hizası
                         <select value={selected.current.textAlign || "left"} onChange={(event) => applyInspectorPatch("textAlign", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none">
                           <option value="left">Sol</option>
-                          <option value="center">Orta</option>
+                          <option value="center">Ayarlar</option>
                           <option value="right">Sağ</option>
                         </select>
                       </label>
@@ -1361,7 +1395,7 @@ export function StoreDesignV21() {
                               <select value={consentSetting("radiusPreset", "rounded")} onChange={(event) => applyInspectorPatch("radiusPreset", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none">
                                 <option value="soft">Yumuşak</option>
                                 <option value="rounded">Yuvarlak</option>
-                                <option value="pill">Tam yuvarlak</option>
+                                <option value="pill">Tam ekran yuvarlak</option>
                               </select>
                             </label>
                           </div>
@@ -1496,7 +1530,7 @@ export function StoreDesignV21() {
                             />
                           </label>
                           <label className="flex items-center justify-between gap-3 rounded-lg border border-black/[0.08] bg-white p-2.5 text-[8px] font-semibold text-black/50">
-                            Hızlı sepete ekle
+                            Hızlı sepete ekleme
                             <input
                               type="checkbox"
                               checked={selected.current.card?.showQuickAdd !== false}
@@ -1585,7 +1619,7 @@ export function StoreDesignV21() {
                       className="sd-field h-10 rounded-xl border border-black/10 bg-white px-3 text-[12px] font-medium outline-none"
                     >
                       <option value="left">Sol</option>
-                      <option value="center">Orta</option>
+                      <option value="center">Ayarlar</option>
                       <option value="right">Sağ</option>
                     </select>
                   </label>
@@ -1613,7 +1647,7 @@ export function StoreDesignV21() {
                       className="sd-field h-10 rounded-xl border border-black/10 bg-white px-3 text-[12px] font-medium outline-none"
                     >
                       <option value="cover">Alanı kapla</option>
-                      <option value="contain">Tamamını göster</option>
+                      <option value="contain">Tam ekranamını göster</option>
                     </select>
                   </label>
                 ) : null}
