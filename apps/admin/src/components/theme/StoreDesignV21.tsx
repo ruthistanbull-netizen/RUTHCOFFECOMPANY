@@ -477,6 +477,7 @@ function persistSemanticPatch(
 export function StoreDesignV21() {
   const toast = useExactToast();
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const contextMenuRef = useRef<HTMLDivElement | null>(null);
   const initialSrcRef = useRef("");
   const previewTokenRef = useRef("");
   const previewSyncTimerRef = useRef<number | null>(null);
@@ -537,21 +538,54 @@ export function StoreDesignV21() {
 
   useEffect(() => {
     if (!contextMenu) return;
+
+    const focusFrame = window.requestAnimationFrame(() => {
+      contextMenuRef.current?.focus({ preventScroll: true });
+    });
+
     const close = (event: PointerEvent) => {
       const element = event.target instanceof Element ? event.target : null;
       if (element?.closest("[data-store-design-context-menu]")) return;
       setContextMenu(null);
     };
-    const closeWithEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setContextMenu(null);
+    const closeWithKeyboard = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setContextMenu(null);
+        window.requestAnimationFrame(() => iframeRef.current?.focus({ preventScroll: true }));
+        return;
+      }
+      if (event.key !== "Tab" || !contextMenuRef.current) return;
+
+      const focusable = Array.from(contextMenuRef.current.querySelectorAll<HTMLElement>(
+        'button:not([disabled]),select:not([disabled]),input:not([disabled]),textarea:not([disabled]),a[href],[tabindex]:not([tabindex="-1"])',
+      )).filter((element) => element.getClientRects().length > 0);
+
+      if (!focusable.length) {
+        event.preventDefault();
+        contextMenuRef.current.focus({ preventScroll: true });
+        return;
+      }
+
+      const first = focusable[0]!;
+      const last = focusable[focusable.length - 1]!;
+      const active = document.activeElement;
+      if (event.shiftKey && (active === first || active === contextMenuRef.current)) {
+        event.preventDefault();
+        last.focus({ preventScroll: true });
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus({ preventScroll: true });
+      }
     };
     const closeOnResize = () => setContextMenu(null);
     window.addEventListener("pointerdown", close);
-    window.addEventListener("keydown", closeWithEscape);
+    window.addEventListener("keydown", closeWithKeyboard);
     window.addEventListener("resize", closeOnResize, { once: true });
     return () => {
+      window.cancelAnimationFrame(focusFrame);
       window.removeEventListener("pointerdown", close);
-      window.removeEventListener("keydown", closeWithEscape);
+      window.removeEventListener("keydown", closeWithKeyboard);
       window.removeEventListener("resize", closeOnResize);
     };
   }, [contextMenu]);
@@ -1616,7 +1650,9 @@ export function StoreDesignV21() {
 
       {contextMenu ? (
         <div
+          ref={contextMenuRef}
           data-store-design-context-menu
+          tabIndex={-1}
           className="sd-context-menu fixed z-[2147483560] w-[336px] max-w-[calc(100vw-24px)] overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl"
           style={{ left: contextMenu.x, top: contextMenu.y }}
           role="dialog"
