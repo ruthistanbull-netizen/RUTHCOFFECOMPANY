@@ -22,8 +22,8 @@ export function StoreDesignPresetLibrary({ presets, compatibility, onInsert, onD
   });
 
   return (
-    <div className="fixed inset-0 z-[2147483608] grid place-items-center bg-black/35 p-3 backdrop-blur-sm">
-      <div className="flex max-h-[82dvh] w-full max-w-[680px] flex-col overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl">
+    <div className="sd-modal-backdrop fixed inset-0 z-[2147483608] grid place-items-center bg-black/35 p-3 backdrop-blur-sm">
+      <div className="sd-modal-card flex max-h-[82dvh] w-full max-w-[680px] flex-col overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl">
         <header className="flex h-14 shrink-0 items-center gap-3 border-b border-black/10 px-4">
           <div className="grid h-9 w-9 place-items-center rounded-lg bg-black/[0.04]">
             <Layers3 className="h-4 w-4 text-black/50" />
