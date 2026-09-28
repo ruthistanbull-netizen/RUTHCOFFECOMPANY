@@ -145,8 +145,13 @@ export function StoreDesignTemplateManager({
   const templates = useMemo(
     () => Object.values(document.templates)
       .filter((template) => compatible(template, compatibility))
-      .sort((a, b) => a.label.localeCompare(b.label, "tr")),
-    [compatibility, document.templates],
+      .sort((a, b) => {
+        const aAssigned = a.id === currentTemplateId ? 1 : 0;
+        const bAssigned = b.id === currentTemplateId ? 1 : 0;
+        if (aAssigned !== bAssigned) return bAssigned - aAssigned;
+        return a.label.localeCompare(b.label, "tr");
+      }),
+    [compatibility, currentTemplateId, document.templates],
   );
 
   const selected = selectedId ? document.templates[selectedId] : undefined;
