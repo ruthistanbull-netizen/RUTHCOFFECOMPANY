@@ -16,7 +16,7 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   BLOCK_LIBRARY_BY_TYPE,
   SECTION_LIBRARY,
@@ -49,6 +49,7 @@ type Props = {
   document: ThemeDocument;
   activePage: ActivePage | null;
   compatibility: PageCompatibility;
+  openPickerSignal?: number;
   onApply: (next: ThemeDocument, label: string) => Promise<void>;
 };
 
@@ -378,7 +379,7 @@ function ensurePageContext(document: ThemeDocument, activePage: ActivePage, comp
 function sectionLabel(section: SectionInstance) {
   const direct = SECTION_LIBRARY_BY_TYPE[section.type]?.label;
   if (direct) return direct;
-  if (section.type === "scroll-story") return "Scroll Story";
+  if (section.type === "scroll-story") return "Kaydırmalı Hikâye";
   if (section.type === "collections") return "Koleksiyonlar";
   if (section.type === "trust") return "Güven / Kargo";
   return section.type.replace(/-/g, " ");
@@ -458,7 +459,7 @@ function SectionPicker({
         <header className="flex h-14 shrink-0 items-center gap-3 border-b border-black/10 px-4">
           <div className="min-w-0 flex-1">
             <p className="text-[12px] font-semibold">Bölüm Ekle</p>
-            <p className="mt-0.5 text-[8px] text-black/40">Yalnız bu sayfa tipiyle uyumlu registry kayıtları gösterilir.</p>
+            <p className="mt-0.5 text-[11px] text-black/40">Bu sayfada kullanabileceğin bölümler gösterilir.</p>
           </div>
           <button type="button" onClick={onClose} className="grid h-9 w-9 place-items-center rounded-lg hover:bg-black/[0.04]" aria-label="Kapat"><X className="h-4 w-4" /></button>
         </header>
@@ -466,14 +467,14 @@ function SectionPicker({
         <div className="flex shrink-0 gap-2 border-b border-black/[0.07] p-3">
           <label className="relative min-w-0 flex-1">
             <Search className="pointer-events-none absolute left-3 top-2.5 h-3.5 w-3.5 text-black/30" />
-            <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Bölüm ara…" className="sd-field h-9 w-full rounded-lg border border-black/10 pl-9 pr-3 text-[9px] outline-none focus:border-black/25" />
+            <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Bölüm ara…" className="sd-field h-9 w-full rounded-lg border border-black/10 pl-9 pr-3 text-[12px] outline-none focus:border-black/25" />
           </label>
-          <select value={category} onChange={(event) => setCategory(event.target.value as typeof category)} className="sd-field h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium outline-none">
+          <select value={category} onChange={(event) => setCategory(event.target.value as typeof category)} className="sd-field h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[12px] font-medium outline-none">
             <option value="all">Tümü</option>
-            <option value="commerce">Commerce</option>
+            <option value="commerce">Satış</option>
             <option value="media">Medya</option>
             <option value="content">İçerik</option>
-            <option value="marketing">Marketing</option>
+            <option value="marketing">Pazarlama</option>
           </select>
         </div>
 
@@ -491,34 +492,38 @@ function SectionPicker({
                   className="sd-library-card min-h-[82px] rounded-xl border border-black/[0.08] p-3 text-left hover:bg-black/[0.02] disabled:cursor-not-allowed disabled:opacity-45"
                 >
                   <div className="flex items-start gap-2">
-                    <span className="min-w-0 flex-1 text-[10px] font-semibold">{definition.label}</span>
+                    <span className="min-w-0 flex-1 text-[13px] font-semibold">{definition.label}</span>
                     <span className={`rounded px-1.5 py-0.5 text-[7px] font-semibold ${available ? "bg-emerald-50 text-emerald-700" : "bg-black/[0.04] text-black/40"}`}>
                       {available ? "Hazır" : securityLocked ? "Güvenlik kilidi" : "Altyapı bekliyor"}
                     </span>
                   </div>
-                  <p className="mt-2 line-clamp-3 text-[8px] leading-4 text-black/38">
+                  <p className="mt-2 line-clamp-3 text-[11px] leading-4 text-black/38">
                     {available
-                      ? (definition.settings.slice(0, 5).join(" · ") || "Schema kontrollü bölüm")
-                      : (definition.pendingReason || "Bu bölüm storefront güvenlik politikası nedeniyle kapalı.")}
+                      ? "Bu sayfada kullanıma hazır bölüm."
+                      : (definition.pendingReason || "Bu bölüm mağaza güvenlik kuralları nedeniyle kullanıma kapalı.")}
                   </p>
                 </button>
               );
             })}
           </div>
-          {!definitions.length ? <p className="py-8 text-center text-[9px] text-black/35">Bu filtreyle uyumlu bölüm bulunamadı.</p> : null}
+          {!definitions.length ? <p className="py-8 text-center text-[12px] text-black/35">Bu filtreyle uyumlu bölüm bulunamadı.</p> : null}
         </div>
       </div>
     </div>
   );
 }
 
-export function StoreDesignSectionManager({ document, activePage, compatibility, onApply }: Props) {
+export function StoreDesignSectionManager({ document, activePage, compatibility, openPickerSignal = 0, onApply }: Props) {
   const toast = useExactToast();
   const [pickerOpen, setPickerOpen] = useState(false);
   const [presetOpen, setPresetOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [draggedId, setDraggedId] = useState<string | null>(null);
   const [editingSectionId, setEditingSectionId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (openPickerSignal > 0) setPickerOpen(true);
+  }, [openPickerSignal]);
 
   const page = activePage && !activePage.template ? pageRecord(document, activePage.path) : null;
   const templateId = activePage?.template
@@ -680,8 +685,8 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
   return (
     <>
       <section className="sd-structure-panel border-b border-black/[0.07] p-3">
-        <div className="flex items-center gap-2 text-[10px] font-semibold"><Layers3 className="h-3.5 w-3.5" /> Sayfa Yapısı</div>
-        <div className="sd-global-row mt-2 rounded-lg bg-black/[0.025] px-2.5 py-2 text-[9px] font-medium">
+        <div className="flex items-center gap-2 text-[13px] font-semibold"><Layers3 className="h-3.5 w-3.5" /> Sayfa Yapısı</div>
+        <div className="sd-global-row mt-2 rounded-lg bg-black/[0.025] px-2.5 py-2 text-[12px] font-medium">
           <div className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-black/30" />Header <span className="ml-auto text-[7px] text-black/30">Global</span></div>
         </div>
 
@@ -707,7 +712,7 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
                 className="sd-section-main min-w-0 flex-1 py-2 text-left disabled:cursor-default"
                 title={canEditSection(section.type) ? "Bölüm ayarlarını aç" : "Bu bölümün V2 ayar şeması henüz bağlanmadı"}
               >
-                <p className={`truncate text-[9px] font-semibold ${section.enabled ? "" : "text-black/35"}`}>{sectionLabel(section)}</p>
+                <p className={`truncate text-[12px] font-semibold ${section.enabled ? "" : "text-black/35"}`}>{sectionLabel(section)}</p>
                 <p className="mt-0.5 truncate text-[7px] text-black/28">{section.id}</p>
               </button>
               {canEditSection(section.type) ? (
@@ -727,27 +732,27 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
           ))}
 
           {!sections.length ? (
-            <div className="rounded-lg border border-dashed border-black/10 px-3 py-4 text-center text-[8px] leading-4 text-black/35">
+            <div className="rounded-lg border border-dashed border-black/10 px-3 py-4 text-center text-[11px] leading-4 text-black/35">
               Bu şablonda henüz V2 bölüm kaydı yok. Bölüm eklediğinde stable ID ile template ağacına yazılır.
             </div>
           ) : null}
         </div>
 
-        <button type="button" disabled={!activePage || busy} onClick={() => setPickerOpen(true)} className="sd-secondary-button mt-2 flex h-9 w-full items-center justify-center gap-1.5 rounded-lg border border-black/10 bg-white text-[9px] font-semibold hover:bg-black/[0.03] disabled:opacity-40">
+        <button type="button" disabled={!activePage || busy} onClick={() => setPickerOpen(true)} className="sd-secondary-button mt-2 flex h-9 w-full items-center justify-center gap-1.5 rounded-lg border border-black/10 bg-white text-[12px] font-semibold hover:bg-black/[0.03] disabled:opacity-40">
           <Plus className="h-3.5 w-3.5" />Bölüm Ekle
         </button>
-        <button type="button" disabled={!activePage || busy} onClick={() => setPresetOpen(true)} className="sd-secondary-button mt-1.5 flex h-9 w-full items-center justify-center gap-1.5 rounded-lg border border-black/10 bg-white text-[9px] font-semibold hover:bg-black/[0.03] disabled:opacity-40">
+        <button type="button" disabled={!activePage || busy} onClick={() => setPresetOpen(true)} className="sd-secondary-button mt-1.5 flex h-9 w-full items-center justify-center gap-1.5 rounded-lg border border-black/10 bg-white text-[12px] font-semibold hover:bg-black/[0.03] disabled:opacity-40">
           <Library className="h-3.5 w-3.5" />Presetler ({Object.keys(document.presets).length})
         </button>
 
-        <div className="sd-global-row mt-1.5 rounded-lg bg-black/[0.025] px-2.5 py-2 text-[9px] font-medium">
+        <div className="sd-global-row mt-1.5 rounded-lg bg-black/[0.025] px-2.5 py-2 text-[12px] font-medium">
           <div className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-black/30" />Footer <span className="ml-auto text-[7px] text-black/30">Global</span></div>
         </div>
       </section>
 
       <section className="p-3">
-        <p className="text-[9px] font-semibold text-black/45">BÖLÜM KÜTÜPHANESİ</p>
-        <p className="mt-1 text-[8px] leading-4 text-black/35">
+        <p className="text-[12px] font-semibold text-black/45">BÖLÜM KÜTÜPHANESİ</p>
+        <p className="mt-1 text-[11px] leading-4 text-black/35">
           {SECTION_LIBRARY.filter((item) => item.compatiblePages.includes(compatibility)).length} uyumlu registry kaydı var. Kod bileşeni hazır olmayan tipler DOM üretmeden geliştirici etiketiyle tutulur.
         </p>
       </section>
