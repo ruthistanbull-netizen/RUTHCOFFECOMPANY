@@ -654,3 +654,45 @@ body {
 @media (max-width:1279px){
   [data-store-design-v2-admin] .sd-inspector.is-closed{width:320px!important;transform:translateX(calc(100% + 14px))}
 }
+
+
+/* Store Design dropdown / toolbar state polish. */
+[data-store-design-v2-admin] .sd-icon-button[aria-pressed="true"]{
+  background:var(--sd-surface-2)!important;
+  color:var(--sd-text-1)!important;
+  border-color:var(--sd-accent)!important;
+  box-shadow:0 4px 14px color-mix(in srgb,var(--sd-accent) 12%,transparent);
+}
+[data-store-design-v2-admin] .sd-select-chevron{
+  transition:
+    transform var(--sd-motion-fast) var(--sd-ease-enter),
+    color var(--sd-motion-micro) var(--sd-ease);
+  transform-origin:center;
+}
+[data-store-design-v2-admin] .sd-select-shell:focus-within .sd-select-chevron{
+  transform:rotate(180deg);
+  color:var(--sd-accent)!important;
+}
+[data-store-design-v2-admin] .sd-modal-card [class*="grid-cols-"] > button,
+[data-store-design-v2-admin] .sd-modal-card [class*="space-y-"] > button{
+  animation:sd-modal-item-in var(--sd-motion-base) var(--sd-ease-enter) both;
+}
+[data-store-design-v2-admin] .sd-modal-card [class*="grid-cols-"] > button:nth-child(2),
+[data-store-design-v2-admin] .sd-modal-card [class*="space-y-"] > button:nth-child(2){animation-delay:24ms}
+[data-store-design-v2-admin] .sd-modal-card [class*="grid-cols-"] > button:nth-child(3),
+[data-store-design-v2-admin] .sd-modal-card [class*="space-y-"] > button:nth-child(3){animation-delay:48ms}
+[data-store-design-v2-admin] .sd-modal-card [class*="grid-cols-"] > button:nth-child(4),
+[data-store-design-v2-admin] .sd-modal-card [class*="space-y-"] > button:nth-child(4){animation-delay:72ms}
+[data-store-design-v2-admin] .sd-modal-card [class*="grid-cols-"] > button:nth-child(5),
+[data-store-design-v2-admin] .sd-modal-card [class*="space-y-"] > button:nth-child(5){animation-delay:96ms}
+[data-store-design-v2-admin] .sd-loading-screen > div{
+  animation:sd-loading-card-in var(--sd-motion-dialog) var(--sd-ease-enter) both;
+}
+@keyframes sd-modal-item-in{
+  from{opacity:0;transform:translateY(5px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes sd-loading-card-in{
+  from{opacity:0;transform:translateY(8px) scale(.985)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
