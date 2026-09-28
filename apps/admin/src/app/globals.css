@@ -627,7 +627,7 @@ body {
 }
 [data-store-design-v2-admin] .sd-sidebar-left.is-open{width:292px!important;opacity:1;transform:translateX(0);pointer-events:auto}
 [data-store-design-v2-admin] .sd-sidebar-left.is-closed{width:0!important;opacity:0;transform:translateX(-12px);pointer-events:none;border-right-width:0!important}
-[data-store-design-v2-admin] .sd-inspector.is-open{width:320px!important;opacity:1;transform:translateX(0);pointer-events:auto}
+[data-store-design-v2-admin] .sd-inspector.is-open{width:360px!important;opacity:1;transform:translateX(0);pointer-events:auto}
 [data-store-design-v2-admin] .sd-inspector.is-closed{width:0!important;opacity:0;transform:translateX(12px);pointer-events:none;border-left-width:0!important}
 [data-store-design-v2-admin] .sd-save-button[data-save-state="loading"]{cursor:progress}
 [data-store-design-v2-admin] .sd-save-button[data-save-state="success"]{
@@ -662,7 +662,7 @@ body {
   [data-store-design-v2-admin] .sd-sidebar-left.is-closed{width:292px!important;transform:translateX(calc(-100% - 14px))}
 }
 @media (max-width:1279px){
-  [data-store-design-v2-admin] .sd-inspector.is-closed{width:320px!important;transform:translateX(calc(100% + 14px))}
+  [data-store-design-v2-admin] .sd-inspector.is-closed{width:360px!important;transform:translateX(calc(100% + 14px))}
 }
 
 
@@ -1756,5 +1756,57 @@ body {
     border-color var(--sd-motion-fast) var(--sd-ease),
     box-shadow var(--sd-motion-fast) var(--sd-ease),
     transform var(--sd-motion-instant) var(--sd-ease)!important;
+}
+
+/* Store Design v4.1 — tablet/narrow desktop uses one overlay task panel at a time. */
+@media (min-width:768px) and (max-width:1199px){
+  [data-store-design-v2-admin] .sd-sidebar-left,
+  [data-store-design-v2-admin] .sd-inspector{
+    position:absolute!important;
+    top:58px!important;
+    bottom:0!important;
+    z-index:35!important;
+    height:auto!important;
+    max-height:none!important;
+    box-shadow:var(--sd-shadow-panel)!important;
+  }
+
+  [data-store-design-v2-admin] .sd-sidebar-left{
+    left:0!important;
+    right:auto!important;
+  }
+
+  [data-store-design-v2-admin] .sd-sidebar-left.is-open{
+    width:min(320px,calc(100vw - 28px))!important;
+    transform:translateX(0)!important;
+    opacity:1!important;
+    pointer-events:auto!important;
+  }
+
+  [data-store-design-v2-admin] .sd-sidebar-left.is-closed{
+    width:min(320px,calc(100vw - 28px))!important;
+    transform:translateX(calc(-100% - 18px))!important;
+    opacity:0!important;
+    pointer-events:none!important;
+  }
+
+  [data-store-design-v2-admin] .sd-inspector{
+    left:auto!important;
+    right:0!important;
+  }
+
+  [data-store-design-v2-admin] .sd-inspector.is-open{
+    width:min(360px,calc(100vw - 28px))!important;
+    transform:translateX(0)!important;
+    opacity:1!important;
+    pointer-events:auto!important;
+  }
+
+  [data-store-design-v2-admin] .sd-inspector.is-closed{
+    width:min(360px,calc(100vw - 28px))!important;
+    transform:translateX(calc(100% + 18px))!important;
+    opacity:0!important;
+    pointer-events:none!important;
+  }
 }
 
