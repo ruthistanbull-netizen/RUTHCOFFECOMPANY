@@ -91,7 +91,7 @@ function fieldLabel(key: string) {
     linkHref: "Bağlantı",
     href: "Bağlantı",
     linkLabel: "Bağlantı metni",
-    cta: "CTA bağlantısı",
+    cta: "Düğme bağlantısı",
     heading: "Başlık",
     title: "Başlık",
     body: "Metin",
@@ -307,16 +307,16 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
     if (section.type === "hero") {
       const mediaId = text(settings.imageAssetId);
       const asset = mediaId ? document.media[mediaId] : undefined;
-      if (mediaId && !asset) return toast.error("Hero medya referansı bulunamadı.");
+      if (mediaId && !asset) return toast.error("Ana görsel medyası bulunamadı.");
       const posterId = text(settings.posterAssetId);
-      if (posterId && document.media[posterId]?.type !== "image") return toast.error("Hero video poster yalnız görsel asset olabilir.");
-      if (posterId && asset?.type !== "video") return toast.error("Poster override yalnız video hero medyasında kullanılabilir.");
+      if (posterId && document.media[posterId]?.type !== "image") return toast.error("Video kapak görseli yalnız bir görsel olabilir.");
+      if (posterId && asset?.type !== "video") return toast.error("Video kapak görseli yalnız video hero medyasında kullanılabilir.");
     }
 
     if (["video-hero", "video-banner", "background-media"].includes(section.type)) {
       const mediaId = text(settings.imageAssetId);
       const asset = mediaId ? document.media[mediaId] : undefined;
-      if (!mediaId || !asset) return toast.error("Bu bölüm için Media Library'den bir medya seç.");
+      if (!mediaId || !asset) return toast.error("Bu bölüm için Medya Arşivi'den bir medya seç.");
       if ((section.type === "video-hero" || section.type === "video-banner") && asset.type !== "video") {
         return toast.error("Bu bölüm yalnız video asset kabul eder.");
       }
@@ -374,7 +374,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   };
 
   const hasColumns = ["gallery-grid", "masonry-gallery", "collage", "social-grid", "logo-cloud", "text-columns", "stats", "feature-grid", "trust-badges", "testimonials", "press-awards", "team"].includes(section.type);
-  const hasGap = hasColumns || section.type === "slideshow";
+  const hasÖğeler arası boşluk = hasColumns || section.type === "slideshow";
   const mediaNarrative = ["hero", "video-hero", "video-banner", "background-media"].includes(section.type);
   const brandStory = section.type === "brand-story";
   const productSpotlight = section.type === "product-spotlight";
@@ -452,41 +452,41 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                         }}
                         className="h-9 min-w-0 flex-1 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none"
                       >
-                        <option value="">{section.type === "hero" ? "Mevcut editorial hero medyasını kullan" : "Medya seçilmedi"}</option>
+                        <option value="">{section.type === "hero" ? "Mevcut ana görseli kullan" : "Medya seçilmedi"}</option>
                         {mediaAssets
                           .filter((asset) => section.type === "background-media" || section.type === "hero" || asset.type === "video")
                           .map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.type} · {asset.assetId} · v{asset.version || 1}</option>)}
                       </select>
                       <button type="button" onClick={() => setMediaPicker({ target: "section", key: "imageAssetId", mediaType: section.type === "background-media" || section.type === "hero" ? "any" : "video" })} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
-                        Media Library
+                        Medya Arşivi
                       </button>
                     </div>
                     <span className="text-[7px] font-normal leading-4 text-black/35">
                       {section.type === "hero" && !text(settings.imageAssetId)
-                        ? "Medya seçmezsen mevcut editorial hero korunur. V2 media seçildiğinde mobil varyant ve focal point Media Library kaydından gelir."
-                        : "Mobil varyant ve focal point seçili asset'in Media Library kaydından gelir."}
+                        ? "Medya seçmezsen mevcut editorial hero korunur. V2 media seçildiğinde mobil varyant ve focal point Medya Arşivi kaydından gelir."
+                        : "Mobil varyant ve focal point seçili asset'in Medya Arşivi kaydından gelir."}
                     </span>
                   </label>
 
                   {(primaryMedia?.type === "video" || section.type === "video-hero" || section.type === "video-banner") ? (
                     <>
                       <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
-                        Poster override
+                        Video kapak görseli
                         <div className="flex gap-2">
                           <select value={text(settings.posterAssetId)} onChange={(event) => updateSetting("posterAssetId", event.target.value)} className="h-9 min-w-0 flex-1 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
-                            <option value="">Video asset posterini kullan</option>
+                            <option value="">Medyanın kendi kapak görselini kullan</option>
                             {mediaAssets.filter((asset) => asset.type === "image").map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.assetId} · v{asset.version || 1}</option>)}
                           </select>
                           <button type="button" onClick={() => setMediaPicker({ target: "section", key: "posterAssetId", mediaType: "image" })} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
-                            Media Library
+                            Medya Arşivi
                           </button>
                         </div>
                       </label>
                       <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                         Oynatma politikası
                         <select value={text(settings.playbackPreset) || "ambient"} onChange={(event) => updateSetting("playbackPreset", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
-                          <option value="ambient">Autoplay · sessiz · loop</option>
-                          <option value="once">Autoplay · sessiz · tek oynatım</option>
+                          <option value="ambient">Otomatik · sessiz · sürekli</option>
+                          <option value="once">Otomatik · sessiz · bir kez</option>
                           <option value="controls">Kontrollü oynatıcı</option>
                         </select>
                       </label>
@@ -494,16 +494,16 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   ) : null}
 
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                    Media fit
+                    Medya yerleşimi
                     <select value={text(settings.fit) || "cover"} onChange={(event) => updateSetting("fit", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
-                      <option value="cover">Cover</option>
-                      <option value="contain">Contain</option>
+                      <option value="cover">Alanı kapla</option>
+                      <option value="contain">Tamamını göster</option>
                     </select>
                   </label>
 
                   {section.type === "hero" || section.type === "video-hero" ? (
                     <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                      Hero yüksekliği
+                      Ana görsel yüksekliği
                       <select value={text(settings.heightPreset) || "viewport"} onChange={(event) => updateSetting("heightPreset", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                         <option value="medium">Orta · 620px</option>
                         <option value="tall">Uzun · 760px</option>
@@ -512,7 +512,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     </label>
                   ) : section.type === "video-banner" ? (
                     <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                      Banner yüksekliği
+                      Afiş yüksekliği
                       <select value={text(settings.heightPreset) || "medium"} onChange={(event) => updateSetting("heightPreset", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                         <option value="compact">Kompakt · 360px</option>
                         <option value="medium">Orta · 480px</option>
@@ -532,13 +532,13 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   )}
 
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                    Overlay · %{Math.round(numberValue(settings.overlayOpacity, section.type === "background-media" ? 36 : 30))}
+                    Karartma · %{Math.round(numberValue(settings.overlayOpacity, section.type === "background-media" ? 36 : 30))}
                     <input type="range" min={0} max={80} step={4} value={numberValue(settings.overlayOpacity, section.type === "background-media" ? 36 : 30)} onChange={(event) => updateSetting("overlayOpacity", Number(event.target.value))} />
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                     Metin kontrastı
                     <select value={text(settings.contrastMode) || (section.type === "hero" ? "adaptive" : "light")} onChange={(event) => updateSetting("contrastMode", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
-                      {section.type === "hero" ? <option value="adaptive">Adaptive · medyaya göre</option> : null}
+                      {section.type === "hero" ? <option value="adaptive">Medyaya göre otomatik</option> : null}
                       <option value="light">Açık metin</option>
                       <option value="dark">Koyu metin</option>
                     </select>
@@ -554,7 +554,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                       <option value="">{catalogLoading ? "Ürünler yükleniyor…" : "Ürün seç"}</option>
                       {catalogProducts.map((product) => <option key={product.id} value={product.id}>{product.name}</option>)}
                     </select>
-                    {catalogError ? <span className="text-[7px] font-normal text-red-600">{catalogError}</span> : <span className="text-[7px] font-normal leading-4 text-black/35">Fiyat, stok ve ürün metni katalogdan read-only gelir.</span>}
+                    {catalogError ? <span className="text-[7px] font-normal text-red-600">{catalogError}</span> : <span className="text-[7px] font-normal leading-4 text-black/35">Fiyat, stok ve ürün bilgileri mağazadan otomatik gelir.</span>}
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                     Medya konumu
@@ -730,7 +730,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     <div className="flex h-9 items-center rounded-lg border border-black/10 bg-black/[0.025] px-2.5 text-[8px] font-medium text-black/55">
                       Otomatik · ödenmiş sipariş miktarları
                     </div>
-                    <span className="text-[7px] font-normal leading-4 text-black/35">Sipariş/analytics verisi read-only hesaplanır; theme editor satış sırasını değiştiremez.</span>
+                    <span className="text-[7px] font-normal leading-4 text-black/35">Sipariş ve satış verileri mağazadan otomatik gelir; satış sırası burada değiştirilemez.</span>
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                     Tarih penceresi
@@ -747,7 +747,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
                     Yerleşim
                     <select value={text(settings.layout) || "slider"} onChange={(event) => updateSetting("layout", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
-                      <option value="slider">Slider</option>
+                      <option value="slider">Yatay kaydırma</option>
                       <option value="grid">Izgara</option>
                     </select>
                   </label>
@@ -825,7 +825,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                     Yerleşim
                     <select value={text(settings.layout) || "slider"} onChange={(event) => updateSetting("layout", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
-                      <option value="slider">Slider</option>
+                      <option value="slider">Yatay kaydırma</option>
                       <option value="grid">Izgara</option>
                     </select>
                   </label>
@@ -834,7 +834,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     <input type="number" min={1} max={24} value={numberValue(settings.limit, 8)} onChange={(event) => updateSetting("limit", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                    Masaüstü kolon
+                    Masaüstü sütun sayısı
                     <input type="number" min={1} max={6} value={numberValue(settings.desktopColumns, 4)} onChange={(event) => updateSetting("desktopColumns", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
@@ -861,7 +861,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                       Katalog · {categoryCards ? `${catalogCategories.length} aktif kategori` : "aktif koleksiyonlar"}
                     </div>
                     <span className="text-[7px] font-normal leading-4 text-black/35">
-                      {categoryCards ? "Kategori adı/slug/görseli" : "Koleksiyon üyeliği ve isim/slug verisi"} catalog servisinden read-only gelir.
+                      {categoryCards ? "Kategori adı, adresi ve görseli" : "Koleksiyon üyeliği, adı ve adresi"} mağazadan otomatik gelir.
                     </span>
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
@@ -869,7 +869,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     <input type="number" min={1} max={12} value={numberValue(settings.limit, categoryCards ? 6 : 4)} onChange={(event) => updateSetting("limit", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                    Masaüstü kolon
+                    Masaüstü sütun sayısı
                     <select value={String(numberValue(settings.columns, 2))} onChange={(event) => updateSetting("columns", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                       <option value="1">1</option>
                       <option value="2">2</option>
@@ -914,17 +914,17 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                         {mediaAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.type} · {asset.assetId} · v{asset.version || 1}</option>)}
                       </select>
                       <button type="button" onClick={() => setMediaPicker({ target: "section", key: "imageAssetId", mediaType: "any" })} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
-                        Media Library
+                        Medya Arşivi
                       </button>
                     </div>
-                    <span className="text-[7px] font-normal leading-4 text-black/35">Responsive varyant ve focal point Media Library asset kaydından gelir.</span>
+                    <span className="text-[7px] font-normal leading-4 text-black/35">Responsive varyant ve focal point Medya Arşivi asset kaydından gelir.</span>
                   </label>
                   {brandStoryMedia?.type === "video" ? (
                     <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                       Video politikası
                       <select value={text(settings.playbackPreset) || "ambient"} onChange={(event) => updateSetting("playbackPreset", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
-                        <option value="ambient">Autoplay · sessiz · loop</option>
-                        <option value="once">Autoplay · sessiz · tek oynatım</option>
+                        <option value="ambient">Otomatik · sessiz · sürekli</option>
+                        <option value="once">Otomatik · sessiz · bir kez</option>
                         <option value="controls">Kontrollü oynatıcı</option>
                       </select>
                     </label>
@@ -957,10 +957,10 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                         {mediaAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.type} · {asset.assetId} · v{asset.version || 1}</option>)}
                       </select>
                       <button type="button" onClick={() => setMediaPicker({ target: "section", key: "imageAssetId", mediaType: "any" })} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
-                        Media Library
+                        Medya Arşivi
                       </button>
                     </div>
-                    <span className="text-[7px] font-normal leading-4 text-black/35">Responsive varyant ve focal point Media Library kaydından gelir.</span>
+                    <span className="text-[7px] font-normal leading-4 text-black/35">Responsive varyant ve focal point Medya Arşivi kaydından gelir.</span>
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                     Yerleşim
@@ -991,7 +991,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                       <option value="">{catalogLoading ? "Ürünler yükleniyor…" : "Ürün seç"}</option>
                       {catalogProducts.map((product) => <option key={product.id} value={product.id}>{product.name}</option>)}
                     </select>
-                    {catalogError ? <span className="text-[7px] font-normal text-red-600">{catalogError}</span> : <span className="text-[7px] font-normal leading-4 text-black/35">Yalnız onaylı yorumlar storefront review servisinden read-only gelir.</span>}
+                    {catalogError ? <span className="text-[7px] font-normal text-red-600">{catalogError}</span> : <span className="text-[7px] font-normal leading-4 text-black/35">Yalnız onaylı yorumlar mağaza verilerinden otomatik gelir.</span>}
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                     Yorum limiti
@@ -1354,7 +1354,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     </select>
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                    Gap preset
+                    Öğeler arası boşluk preset
                     <select value={String(numberValue(settings.gap, 20))} onChange={(event) => updateSetting("gap", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                       <option value="0">Yok · 0px</option>
                       <option value="8">Sıkı · 8px</option>
@@ -1373,23 +1373,23 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     </select>
                   </label>
                   <label className="flex items-center justify-between gap-3 rounded-lg border border-black/10 bg-white p-2.5 text-[8px] font-semibold text-black/45">
-                    Mobilde tek kolona stack
+                    Mobilde tek sütuna indir
                     <input type="checkbox" checked={settings.responsiveStack !== false} onChange={(event) => updateSetting("responsiveStack", event.target.checked)} />
                   </label>
                   <div className="rounded-lg border border-black/10 bg-black/[0.025] p-2.5 text-[7px] leading-4 text-black/45 md:col-span-2">
-                    Güvenli composition kullanılır: absolute free-canvas, raw CSS ve serbest pixel konumlandırma yoktur.
+                    Güvenli yerleşim kullanılır; öğeler sayfa düzenini bozacak şekilde serbestçe konumlandırılamaz.
                   </div>
                 </>
               ) : null}
               {hasColumns ? (
                 <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                  Masaüstü kolon
+                  Masaüstü sütun sayısı
                   <input type="number" min={1} max={6} value={numberValue(settings.columns, 3)} onChange={(event) => updateSetting("columns", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
                 </label>
               ) : null}
-              {hasGap ? (
+              {hasÖğeler arası boşluk ? (
                 <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                  Gap
+                  Öğeler arası boşluk
                   <input type="number" min={0} max={100} value={numberValue(settings.gap, 20)} onChange={(event) => updateSetting("gap", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
                 </label>
               ) : null}
@@ -1402,22 +1402,22 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
               {section.type === "scroll-story" ? (
                 <>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                    Scroll uzunluğu
+                    Kaydırma uzunluğu
                     <select value={text(settings.scrollLengthPreset) || "standard"} onChange={(event) => updateSetting("scrollLengthPreset", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
-                      <option value="compact">Kompakt · slide başına 75svh</option>
-                      <option value="standard">Standart · slide başına 100svh</option>
-                      <option value="long">Uzun · slide başına 125svh</option>
+                      <option value="compact">Kısa · öğe başına ekranın yaklaşık dörtte üçü</option>
+                      <option value="standard">Standart · öğe başına bir ekran</option>
+                      <option value="long">Uzun · öğe başına bir ekrandan fazla</option>
                     </select>
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                    Geçiş preset
+                    Geçiş biçimi
                     <select value={text(settings.transitionPreset) || "fade-scale"} onChange={(event) => updateSetting("transitionPreset", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
-                      <option value="fade-scale">Fade + Scale</option>
-                      <option value="fade">Sadece Fade</option>
+                      <option value="fade-scale">Belirme + Yakınlaşma</option>
+                      <option value="fade">Sadece Belirme</option>
                     </select>
                   </label>
                   <label className="flex items-center justify-between gap-3 rounded-lg border border-black/10 bg-white p-2.5 text-[8px] font-semibold text-black/45 md:col-span-2">
-                    KAYDIR cue göster
+                    Kaydırma ipucunu göster
                     <input type="checkbox" checked={settings.cueVisibility !== false} onChange={(event) => updateSetting("cueVisibility", event.target.checked)} />
                   </label>
                 </>
@@ -1425,18 +1425,18 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
               {section.type === "slideshow" ? (
                 <>
                   <label className="flex items-center justify-between gap-3 rounded-lg border border-black/10 bg-white p-2.5 text-[8px] font-semibold text-black/45">
-                    Autoplay
+                    Otomatik oynatma
                     <input type="checkbox" checked={settings.autoplay === true} onChange={(event) => updateSetting("autoplay", event.target.checked)} />
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                     Geçiş
                     <select value={text(settings.transition) || "slide"} onChange={(event) => updateSetting("transition", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
-                      <option value="slide">Slide</option>
-                      <option value="fade">Fade</option>
+                      <option value="slide">Kaydırma</option>
+                      <option value="fade">Belirme</option>
                     </select>
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
-                    Autoplay süresi
+                    Otomatik oynatma süresi
                     <select value={String(numberValue(settings.intervalMs, 5000))} onChange={(event) => updateSetting("intervalMs", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                       <option value="3000">3 sn</option>
                       <option value="5000">5 sn</option>
@@ -1463,7 +1463,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
             <div className="flex flex-wrap items-center gap-2 border-b border-black/[0.07] bg-[#fafafa] p-3">
               <div className="min-w-0 flex-1">
                 <p className="text-[9px] font-semibold">Bloklar</p>
-                <p className="mt-1 text-[7px] text-black/35">Yalnız allowedBlocks + implemented=true kayıtları eklenebilir.</p>
+                <p className="mt-1 text-[7px] text-black/35">Yalnız bu bölümle uyumlu ve kullanıma hazır bloklar eklenebilir.</p>
               </div>
               {allowedDefinitions.length > 1 ? (
                 <select value={blockType} onChange={(event) => setBlockType(event.target.value)} className="h-8 rounded-lg border border-black/10 bg-white px-2 text-[8px] font-medium outline-none">
@@ -1511,7 +1511,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                                   {mediaAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.type} · {asset.assetId} · v{asset.version || 1}</option>)}
                                 </select>
                                 <button type="button" onClick={() => setMediaPicker({ target: "block", blockId: block.id, key, mediaType: "any" })} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
-                                  Media Library
+                                  Medya Arşivi
                                 </button>
                               </div>
                             </label>
@@ -1570,7 +1570,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                               {fieldLabel(key)}
                               <select value={text(value) || "link"} onChange={(event) => updateBlock(block.id, key, event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                                 <option value="link">Bağlantı</option>
-                                <option value="product">Ürün / ürün route'u</option>
+                                <option value="product">Ürün</option>
                               </select>
                             </label>
                           );
@@ -1610,7 +1610,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   </div>
                 );
               })}
-              {!blocks.length ? <p className="py-7 text-center text-[8px] text-black/35">Henüz blok yok. “Blok Ekle” ile section içeriğini oluştur.</p> : null}
+              {!blocks.length ? <p className="py-7 text-center text-[8px] text-black/35">Henüz blok yok. “Blok Ekle” ile bölüm içeriğini oluştur.</p> : null}
             </div>
           </div>
           ) : null}
@@ -1638,7 +1638,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
         ) : null}
 
         <footer className="flex shrink-0 items-center gap-2 border-t border-black/10 bg-[#fafafa] p-3">
-          <p className="min-w-0 flex-1 truncate text-[8px] text-black/35">Stable block ID · max {maxBlocks} · schema {STORE_DESIGN_SCHEMA_VERSION}</p>
+          <p className="min-w-0 flex-1 truncate text-[8px] text-black/35">En fazla {maxBlocks} blok eklenebilir.</p>
           <button type="button" disabled={busy} onClick={requestClose} className="h-10 rounded-lg border border-black/10 bg-white px-4 text-[9px] font-semibold disabled:opacity-40">Vazgeç</button>
           <button type="button" disabled={busy} onClick={() => void save()} className="flex h-10 items-center gap-2 rounded-lg bg-[#111] px-4 text-[9px] font-semibold text-white disabled:opacity-40">
             <Save className="h-3.5 w-3.5" />{busy ? "Uygulanıyor…" : "Uygula"}
