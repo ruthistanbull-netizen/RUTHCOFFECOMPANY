@@ -536,7 +536,7 @@ function SectionPicker({
         <div className="flex shrink-0 gap-2 border-b border-black/[0.07] p-3">
           <label className="relative min-w-0 flex-1">
             <Search className="pointer-events-none absolute left-3 top-2.5 h-3.5 w-3.5 text-black/30" />
-            <input data-dialog-initial-focus value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Bölüm ara…" className="sd-field h-9 w-full rounded-lg border border-black/10 pl-9 pr-3 text-[12px] outline-none focus:border-black/25" />
+            <input data-dialog-initial-focus="true" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Bölüm ara…" className="sd-field h-9 w-full rounded-lg border border-black/10 pl-9 pr-3 text-[12px] outline-none focus:border-black/25" />
           </label>
           <select value={category} onChange={(event) => setCategory(event.target.value as typeof category)} className="sd-field h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[12px] font-medium outline-none">
             <option value="all">Tümü</option>
