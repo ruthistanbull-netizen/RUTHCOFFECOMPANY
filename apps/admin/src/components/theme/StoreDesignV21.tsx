@@ -1357,7 +1357,11 @@ export function StoreDesignV21() {
                 </optgroup>
               ))}
             </select>
-            {hasUnsavedChanges ? <span className="sd-dirty-dot h-2 w-2 shrink-0 rounded-full bg-amber-500" aria-label="Kaydedilmemiş değişiklik var" /> : null}
+            <span
+              className={`sd-dirty-dot h-2.5 w-2.5 shrink-0 rounded-full ${saving ? "animate-pulse bg-amber-400" : hasUnsavedChanges ? "bg-amber-500" : "bg-emerald-500"}`}
+              aria-label={saving ? "Kaydediliyor" : hasUnsavedChanges ? "Kaydedilmemiş değişiklik var" : hasUnpublishedChanges ? "Taslak kaydedildi" : "Yayınlanan sürüm güncel"}
+              title={saving ? "Kaydediliyor" : hasUnsavedChanges ? "Kaydedilmemiş değişiklik var" : hasUnpublishedChanges ? "Taslak kaydedildi" : "Yayınlanan sürüm güncel"}
+            />
           </div>
           <div className="sd-desktop-meta mt-0.5 flex items-center gap-1.5 text-[11px] text-black/40">
             <CircleDot className={`h-2.5 w-2.5 ${connected ? "text-emerald-600" : "text-amber-500"}`} />
