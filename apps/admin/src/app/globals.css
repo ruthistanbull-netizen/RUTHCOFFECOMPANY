@@ -1597,7 +1597,8 @@ body {
     width:100%;
     min-width:0;
     height:40px;
-    font-size:12px!important;
+    font-size:15px!important;
+    line-height:1.2!important;
     padding-left:8px;
     padding-right:22px;
   }
@@ -1618,11 +1619,6 @@ body {
 }
 
 @media (max-width:390px){
-  [data-store-design-v2-admin] .sd-mobile-history button{
-    width:40px!important;
-    min-width:40px!important;
-  }
-
   [data-store-design-v2-admin] .sd-mobile-history button,
   [data-store-design-v2-admin] .sd-mobile-back,
   [data-store-design-v2-admin] .sd-mobile-more-button{
