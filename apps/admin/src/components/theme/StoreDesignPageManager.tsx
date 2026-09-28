@@ -50,7 +50,7 @@ function mediaLabel(asset: ThemeDocument["media"][string]) {
   const readableDate = date && !Number.isNaN(date.getTime())
     ? date.toLocaleString("tr-TR", { dateStyle: "short", timeStyle: "short" })
     : null;
-  return readableDate ? `Görsel · ${readableDate}` : `Görsel · Sürüm ${asset.version || 1}`;
+  return readableDate ? `Görsel · ${readableDate}` : "Görsel";
 }
 
 function pageByRoute(document: ThemeDocument, path: string) {
