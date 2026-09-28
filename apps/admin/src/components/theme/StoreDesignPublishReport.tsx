@@ -14,7 +14,7 @@ type Props = {
 
 export function StoreDesignPublishReport({ issues, onCancel, onPublish, publishing }: Props) {
 
-  const { closing, requestClose } = useStoreDesignDialogExit(onCancel);
+  const { closing, requestClose } = useStoreDesignDialogExit(onCancel, 180, publishing);
   const errors = issues.filter((issue) => issue.severity === "error");
   const warnings = issues.filter((issue) => issue.severity === "warning");
   const canPublish = errors.length === 0;
