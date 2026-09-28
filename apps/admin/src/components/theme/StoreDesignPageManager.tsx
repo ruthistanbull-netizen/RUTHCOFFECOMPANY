@@ -464,7 +464,9 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
             <div className="rounded-xl border border-black/[0.08] bg-[#fafafa] p-3">
               <div className="flex items-center justify-between gap-3">
                 <p className="text-[9px] font-semibold">Arama Sonucu Önizlemesi</p>
-                <span className="rounded-full bg-white px-2 py-1 text-[7px] font-semibold text-black/35">{form.robots}</span>
+                <span className="rounded-full bg-white px-2 py-1 text-[7px] font-semibold text-black/35">
+                  {form.robots === "index,follow" ? "Aramada göster" : "Aramada gösterme"}
+                </span>
               </div>
               <div className="mt-3 rounded-xl border border-black/[0.06] bg-white p-3">
                 <p className="truncate text-[8px] text-[#1a0dab]/70">{previewRoute}</p>
