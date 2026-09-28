@@ -1172,6 +1172,16 @@ body {
     padding-bottom:8px!important;
   }
 
+  [data-store-design-v2-admin] .sd-section-main > p:first-child{
+    font-size:13px!important;
+    line-height:1.3!important;
+  }
+
+  [data-store-design-v2-admin] .sd-section-main > p:last-child{
+    font-size:11px!important;
+    line-height:1.35!important;
+  }
+
   [data-store-design-v2-admin] .sd-row-action{
     min-width:40px!important;
     width:40px!important;
