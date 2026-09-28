@@ -424,10 +424,8 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
     let interactionMode: "browse" | "edit" = "edit";
     const originalTabIndex = new Map<HTMLElement, string | null>();
     const originalMediaSources = new WeakMap<HTMLImageElement | HTMLVideoElement, { src: string | null; srcset?: string | null }>();
-    let keyboardSyncFrame = 0;
 
     const syncKeyboardTargets = () => {
-      keyboardSyncFrame = 0;
       const targets = Array.from(document.querySelectorAll<HTMLElement>(TARGET_SELECTOR));
       const activeTargets = new Set(targets);
 
@@ -458,14 +456,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
       }
     };
 
-    const scheduleKeyboardSync = () => {
-      if (keyboardSyncFrame) return;
-      keyboardSyncFrame = window.requestAnimationFrame(syncKeyboardTargets);
-    };
-
     const restoreKeyboardTargets = () => {
-      if (keyboardSyncFrame) window.cancelAnimationFrame(keyboardSyncFrame);
-      keyboardSyncFrame = 0;
       for (const [element, original] of originalTabIndex) {
         if (!document.contains(element)) continue;
         if (original === null) element.removeAttribute("tabindex");
@@ -475,8 +466,6 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
       originalTabIndex.clear();
     };
 
-    const targetObserver = new MutationObserver(scheduleKeyboardSync);
-    targetObserver.observe(document.body, { childList: true, subtree: true });
     syncKeyboardTargets();
 
     const overlay = document.createElement("div");
@@ -625,6 +614,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Tab" && interactionMode === "edit") syncKeyboardTargets();
       const wantsQuickMenu = event.key === "ContextMenu" || (event.shiftKey && event.key === "F10");
       if (!wantsQuickMenu) return;
       const target = targetFromEvent(event) || targetFrom(document.activeElement);
@@ -821,7 +811,6 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
       window.removeEventListener("message", onMessage);
       window.removeEventListener("resize", positionOverlay);
       window.removeEventListener("scroll", onPreviewScroll, true);
-      targetObserver.disconnect();
       restoreKeyboardTargets();
       previewScrollbarStyle.remove();
       overlay.remove();
