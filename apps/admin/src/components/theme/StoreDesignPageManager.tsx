@@ -348,8 +348,8 @@ export function StoreDesignPageManager({ document, activePath, mode, onClose, on
   };
 
   return (
-    <div className="fixed inset-0 z-[2147483600] grid place-items-center bg-black/35 p-3 backdrop-blur-sm">
-      <div className="flex max-h-[92dvh] w-full max-w-[720px] flex-col overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl">
+    <div className="sd-modal-backdrop fixed inset-0 z-[2147483600] grid place-items-center bg-black/35 p-3 backdrop-blur-sm">
+      <div className="sd-modal-card flex max-h-[92dvh] w-full max-w-[720px] flex-col overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl">
         <header className="flex h-14 shrink-0 items-center gap-3 border-b border-black/10 px-4">
           <div className="min-w-0 flex-1">
             <p className="text-[12px] font-semibold">{editingPage ? "Sayfa Ayarları" : "Yeni Sayfa"}</p>
