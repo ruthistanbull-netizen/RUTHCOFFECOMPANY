@@ -811,8 +811,16 @@ export function StoreDesignV21() {
   const selectedSectionId = selected ? sectionRegistration(selected)?.id || null : null;
   const contextSectionRegistration = contextMenu ? sectionRegistration(contextMenu.target) : null;
   const contextSection = contextSectionRegistration ? document.sections[contextSectionRegistration.id] || null : null;
+  const activeStructureTemplateId = activePage
+    ? (managedPage?.templateId || (activePage.template ? (document.templateBindings[activePage.path] || activePage.path) : `route:${activePage.path}`))
+    : null;
+  const activeStructureTemplate = activeStructureTemplateId ? document.templates[activeStructureTemplateId] || null : null;
   const contextSectionTemplate = contextSectionRegistration
-    ? Object.values(document.templates).find((template) => template.sectionIds.includes(contextSectionRegistration.id)) || null
+    ? (
+        activeStructureTemplate?.sectionIds.includes(contextSectionRegistration.id)
+          ? activeStructureTemplate
+          : Object.values(document.templates).find((template) => template.sectionIds.includes(contextSectionRegistration.id)) || null
+      )
     : null;
   const contextSectionIndex = contextSectionRegistration && contextSectionTemplate
     ? contextSectionTemplate.sectionIds.indexOf(contextSectionRegistration.id)
@@ -1398,7 +1406,13 @@ export function StoreDesignV21() {
     }
 
     const source = document.sections[registration.id];
-    const ownerTemplate = Object.values(document.templates).find((template) => template.sectionIds.includes(registration.id));
+    const preferredTemplateId = activePage
+      ? (managedPage?.templateId || (activePage.template ? (document.templateBindings[activePage.path] || activePage.path) : `route:${activePage.path}`))
+      : null;
+    const preferredTemplate = preferredTemplateId ? document.templates[preferredTemplateId] || null : null;
+    const ownerTemplate = preferredTemplate?.sectionIds.includes(registration.id)
+      ? preferredTemplate
+      : Object.values(document.templates).find((template) => template.sectionIds.includes(registration.id));
     if (!source || !ownerTemplate) {
       toast.error("Bu bölümün sayfa yapısı bulunamadı.");
       return;
