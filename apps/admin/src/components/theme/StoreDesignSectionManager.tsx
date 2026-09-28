@@ -17,7 +17,7 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type TouchEvent as ReactTouchEvent } from "react";
 import {
   BLOCK_LIBRARY_BY_TYPE,
   SECTION_LIBRARY,
@@ -592,10 +592,19 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
   const [draggedId, setDraggedId] = useState<string | null>(null);
   const [editingSectionId, setEditingSectionId] = useState<string | null>(null);
   const [mobileActionsId, setMobileActionsId] = useState<string | null>(null);
+  const [touchReorderId, setTouchReorderId] = useState<string | null>(null);
+  const [touchOverId, setTouchOverId] = useState<string | null>(null);
+  const touchReorderIdRef = useRef<string | null>(null);
+  const touchOverIdRef = useRef<string | null>(null);
+  const touchReorderTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (openPickerSignal > 0) setPickerOpen(true);
   }, [openPickerSignal]);
+
+  useEffect(() => () => {
+    if (touchReorderTimerRef.current !== null) window.clearTimeout(touchReorderTimerRef.current);
+  }, []);
 
   useEffect(() => {
     if (!mobileActionsId) return;
@@ -775,6 +784,65 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
     await commit(next, "Bölüm sırası değişti");
   };
 
+  const clearTouchReorderTimer = () => {
+    if (touchReorderTimerRef.current !== null) {
+      window.clearTimeout(touchReorderTimerRef.current);
+      touchReorderTimerRef.current = null;
+    }
+  };
+
+  const resetTouchReorder = () => {
+    clearTouchReorderTimer();
+    touchReorderIdRef.current = null;
+    touchOverIdRef.current = null;
+    setTouchReorderId(null);
+    setTouchOverId(null);
+  };
+
+  const startTouchReorder = (sectionId: string, event: ReactTouchEvent<HTMLButtonElement>) => {
+    if (busy || event.touches.length !== 1) return;
+    clearTouchReorderTimer();
+    touchReorderTimerRef.current = window.setTimeout(() => {
+      touchReorderTimerRef.current = null;
+      touchReorderIdRef.current = sectionId;
+      touchOverIdRef.current = sectionId;
+      setTouchReorderId(sectionId);
+      setTouchOverId(sectionId);
+      setMobileActionsId(null);
+    }, 420);
+  };
+
+  const moveTouchReorder = (event: ReactTouchEvent<HTMLButtonElement>) => {
+    const sourceId = touchReorderIdRef.current;
+    const touch = event.touches.item(0);
+    if (!sourceId || !touch) return;
+
+    event.preventDefault();
+    const row = document.elementFromPoint(touch.clientX, touch.clientY)?.closest<HTMLElement>("[data-section-id]");
+    const targetId = row?.dataset.sectionId || null;
+    if (targetId && targetId !== touchOverIdRef.current) {
+      touchOverIdRef.current = targetId;
+      setTouchOverId(targetId);
+    }
+
+    const scrollSurface = document.querySelector<HTMLElement>(".sd-structure-scroll");
+    if (!scrollSurface) return;
+    const bounds = scrollSurface.getBoundingClientRect();
+    const edge = 64;
+    if (touch.clientY < bounds.top + edge) scrollSurface.scrollBy({ top: -18, behavior: "auto" });
+    else if (touch.clientY > bounds.bottom - edge) scrollSurface.scrollBy({ top: 18, behavior: "auto" });
+  };
+
+  const endTouchReorder = () => {
+    clearTouchReorderTimer();
+    const sourceId = touchReorderIdRef.current;
+    const targetId = touchOverIdRef.current;
+    resetTouchReorder();
+    if (sourceId && targetId && sourceId !== targetId) void reorderTo(sourceId, targetId);
+  };
+
+  const cancelTouchReorder = () => resetTouchReorder();
+
   return (
     <>
       <section className="sd-structure-panel border-b border-black/[0.07] p-3">
@@ -787,6 +855,7 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
           {sections.map((section, index) => (
             <div
               key={section.id}
+              data-section-id={section.id}
               draggable={!busy}
               onDragStart={() => setDraggedId(section.id)}
               onDragEnd={() => setDraggedId(null)}
@@ -795,9 +864,21 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
                 event.preventDefault();
                 if (draggedId) void reorderTo(draggedId, section.id);
               }}
-              className={`sd-section-row group relative flex min-h-10 items-center gap-1 rounded-lg border px-1.5 transition ${draggedId === section.id ? "is-dragging border-black/20 bg-black/[0.04] opacity-60" : "border-black/[0.07] bg-white"}`}
+              className={`sd-section-row group relative flex min-h-10 items-center gap-1 rounded-lg border px-1.5 transition ${draggedId === section.id ? "is-dragging border-black/20 bg-black/[0.04] opacity-60" : "border-black/[0.07] bg-white"} ${touchReorderId === section.id ? "is-touch-dragging" : ""} ${touchOverId === section.id && touchReorderId !== section.id ? "is-touch-over" : ""}`}
             >
-              <GripVertical className="h-3.5 w-3.5 shrink-0 cursor-grab text-black/20" />
+              <GripVertical className="sd-section-desktop-grip h-3.5 w-3.5 shrink-0 cursor-grab text-black/20" />
+              <button
+                type="button"
+                disabled={busy}
+                className="sd-section-mobile-drag hidden h-11 w-11 shrink-0 place-items-center rounded-xl"
+                aria-label="Sıralamak için basılı tut ve sürükle"
+                onTouchStart={(event) => startTouchReorder(section.id, event)}
+                onTouchMove={moveTouchReorder}
+                onTouchEnd={endTouchReorder}
+                onTouchCancel={cancelTouchReorder}
+              >
+                <GripVertical className="h-4 w-4" />
+              </button>
               <button
                 type="button"
                 disabled={!canEditSection(section.type)}
