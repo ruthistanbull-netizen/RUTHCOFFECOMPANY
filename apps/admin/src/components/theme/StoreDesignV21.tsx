@@ -967,7 +967,7 @@ export function StoreDesignV21() {
   return (
     <div data-store-design-v2-admin className="sd-editor-shell flex h-dvh min-h-0 flex-col overflow-hidden bg-[#f5f5f3] text-[#111]">
       <header className="sd-toolbar z-20 flex h-[58px] shrink-0 items-center gap-3 border-b border-black/10 bg-white px-3 md:px-4">
-        <button type="button" onClick={() => setLeftOpen((value) => !value)} className="sd-icon-button grid h-9 w-9 place-items-center rounded-lg border border-black/10 hover:bg-black/[0.03]" aria-label="Sol panel">
+        <button type="button" onClick={() => setLeftOpen((value) => !value)} aria-pressed={leftOpen} className="sd-icon-button grid h-9 w-9 place-items-center rounded-lg border border-black/10 hover:bg-black/[0.03]" aria-label="Sol panel">
           <PanelLeft className="h-4 w-4" />
         </button>
 
@@ -985,10 +985,10 @@ export function StoreDesignV21() {
         </div>
 
         <div className="sd-device-toggle flex items-center rounded-lg border border-black/10 bg-[#f7f7f5] p-1">
-          <button type="button" onClick={() => setDevice("desktop")} className={`sd-device-button flex h-8 items-center gap-1.5 rounded-md px-2.5 text-[9px] font-medium ${device === "desktop" ? "is-active bg-white shadow-sm" : "text-black/45"}`}>
+          <button type="button" onClick={() => setDevice("desktop")} aria-pressed={device === "desktop"} className={`sd-device-button flex h-8 items-center gap-1.5 rounded-md px-2.5 text-[9px] font-medium ${device === "desktop" ? "is-active bg-white shadow-sm" : "text-black/45"}`}>
             <Monitor className="h-3.5 w-3.5" /><span className="hidden sm:inline">Masaüstü</span>
           </button>
-          <button type="button" onClick={() => setDevice("mobile")} className={`sd-device-button flex h-8 items-center gap-1.5 rounded-md px-2.5 text-[9px] font-medium ${device === "mobile" ? "is-active bg-white shadow-sm" : "text-black/45"}`}>
+          <button type="button" onClick={() => setDevice("mobile")} aria-pressed={device === "mobile"} className={`sd-device-button flex h-8 items-center gap-1.5 rounded-md px-2.5 text-[9px] font-medium ${device === "mobile" ? "is-active bg-white shadow-sm" : "text-black/45"}`}>
             <Smartphone className="h-3.5 w-3.5" /><span className="hidden sm:inline">Mobil</span>
           </button>
         </div>
@@ -1022,7 +1022,7 @@ export function StoreDesignV21() {
           {saving === "publish" ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : saveFeedback === "publish" ? <Check className="h-3.5 w-3.5" /> : <Send className="h-3.5 w-3.5" />}
           <span>{saving === "publish" ? "Yayınlanıyor…" : saveFeedback === "publish" ? "Yayınlandı" : "Yayınla"}</span>
         </button>
-        <button type="button" onClick={() => setRightOpen((value) => !value)} className="sd-icon-button grid h-9 w-9 place-items-center rounded-lg border border-black/10 hover:bg-black/[0.03]" aria-label="Sağ panel">
+        <button type="button" onClick={() => setRightOpen((value) => !value)} aria-pressed={rightOpen} className="sd-icon-button grid h-9 w-9 place-items-center rounded-lg border border-black/10 hover:bg-black/[0.03]" aria-label="Sağ panel">
           <PanelRight className="h-4 w-4" />
         </button>
       </header>
@@ -1043,7 +1043,7 @@ export function StoreDesignV21() {
                   </button>
                 </div>
               </div>
-              <div className="relative mt-1.5">
+              <div className="sd-select-shell relative mt-1.5">
                 <select value={activePath} onChange={(event) => void changePage(event.target.value)} className="sd-field h-10 w-full appearance-none rounded-lg border border-black/10 bg-white px-3 pr-8 text-[11px] font-medium outline-none hover:border-black/20">
                   {groupedPages.map(([group, items]) => (
                     <optgroup key={group} label={group}>
@@ -1051,7 +1051,7 @@ export function StoreDesignV21() {
                     </optgroup>
                   ))}
                 </select>
-                <ChevronDown className="pointer-events-none absolute right-2.5 top-3 h-4 w-4 text-black/35" />
+                <ChevronDown className="sd-select-chevron pointer-events-none absolute right-2.5 top-3 h-4 w-4 text-black/35" />
               </div>
               <p className="mt-2 truncate text-[8px] text-black/35">{activePage?.previewPath || activePage?.path || "/"}</p>
             </div>
