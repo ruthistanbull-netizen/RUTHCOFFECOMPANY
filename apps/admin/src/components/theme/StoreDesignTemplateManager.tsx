@@ -60,7 +60,7 @@ function activeTemplateId(document: ThemeDocument, activePath: string) {
 
 function cloneTemplateTree(document: ThemeDocument, sourceId: string, destinationId: string, label: string) {
   const source = document.templates[sourceId];
-  if (!source) throw new Error("Kaynak template bulunamadı.");
+  if (!source) throw new Error("Kaynak şablon bulunamadı.");
 
   const next = structuredClone(document) as ThemeDocument;
   const sectionIds: string[] = [];
@@ -93,7 +93,7 @@ function cloneTemplateTree(document: ThemeDocument, sourceId: string, destinatio
     ...structuredClone(source),
     id: destinationId,
     label,
-    description: source.description ? `${source.description} · Kopya` : "Mevcut template'ten kopyalandı.",
+    description: source.description ? `${source.description} · Kopya` : "Mevcut şablondan kopyalandı.",
     sectionIds,
     componentSettings: structuredClone(source.componentSettings || {}),
     version: 1,
@@ -147,7 +147,7 @@ export function StoreDesignTemplateManager({
 
   const createBlank = async () => {
     const label = newName.trim();
-    if (!label) return toast.error("Template adı boş olamaz.");
+    if (!label) return toast.error("Şablon adı boş olamaz.");
     const slug = normalizePageSlug(label) || "template";
     const id = uid(`template-${slug}`);
     const now = new Date().toISOString();
@@ -168,14 +168,14 @@ export function StoreDesignTemplateManager({
 
     setBusy(true);
     try {
-      await commit(next, `${label} template'i oluşturuldu`);
+      await commit(next, `${label} şablonu oluşturuldu`);
       setSelectedId(id);
       setCreating(false);
       setNewName("");
       setNewDescription("");
-      toast.success("Boş template oluşturuldu.");
+      toast.success("Boş şablon oluşturuldu.");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Template oluşturulamadı.");
+      toast.error(error instanceof Error ? error.message : "Şablon oluşturulamadı.");
     } finally {
       setBusy(false);
     }
@@ -189,11 +189,11 @@ export function StoreDesignTemplateManager({
     try {
       const next = cloneTemplateTree(document, selected.id, id, label);
       next.revision = Math.max(next.revision, document.revision) + 1;
-      await onApply(next, "Template kopyalandı");
+      await onApply(next, "Şablon kopyalandı");
       setSelectedId(id);
-      toast.success("Template ve section/block ağacı kopyalandı.");
+      toast.success("Şablon ve bölüm yapısı kopyalandı.");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Template kopyalanamadı.");
+      toast.error(error instanceof Error ? error.message : "Şablon kopyalanamadı.");
     } finally {
       setBusy(false);
     }
@@ -215,10 +215,10 @@ export function StoreDesignTemplateManager({
 
     setBusy(true);
     try {
-      await commit(next, `${activeLabel} → ${selected.label} template'i atandı`);
-      toast.success("Template ataması güncellendi.");
+      await commit(next, `${activeLabel} → ${selected.label} şablonu atandı`);
+      toast.success("Şablon ataması güncellendi.");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Template atanamadı.");
+      toast.error(error instanceof Error ? error.message : "Şablon atanamadı.");
     } finally {
       setBusy(false);
     }
@@ -239,12 +239,12 @@ export function StoreDesignTemplateManager({
 
     setBusy(true);
     try {
-      await commit(next, "Template bilgileri güncellendi");
+      await commit(next, "Şablon bilgileri güncellendi");
       setNewName("");
       setNewDescription("");
-      toast.success("Template bilgileri güncellendi.");
+      toast.success("Şablon bilgileri güncellendi.");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Template güncellenemedi.");
+      toast.error(error instanceof Error ? error.message : "Şablon güncellenemedi.");
     } finally {
       setBusy(false);
     }
@@ -275,12 +275,12 @@ export function StoreDesignTemplateManager({
 
     setBusy(true);
     try {
-      await commit(next, "Kullanılmayan template silindi");
+      await commit(next, "Kullanılmayan şablon silindi");
       const fallback = templates.find((item) => item.id !== selected.id)?.id || "";
       setSelectedId(fallback);
-      toast.success("Template silindi.");
+      toast.success("Şablon silindi.");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Template silinemedi.");
+      toast.error(error instanceof Error ? error.message : "Şablon silinemedi.");
     } finally {
       setBusy(false);
     }
@@ -293,7 +293,7 @@ export function StoreDesignTemplateManager({
           <header className="border-b border-black/10 p-4">
             <div className="flex items-center gap-2">
               <LayoutTemplate className="h-4 w-4" />
-              <p className="min-w-0 flex-1 text-[11px] font-semibold">Template Manager</p>
+              <p className="min-w-0 flex-1 text-[11px] font-semibold">Şablonlar</p>
               <button
                 type="button"
                 onClick={() => {
@@ -330,19 +330,19 @@ export function StoreDesignTemplateManager({
                     <span className="min-w-0 flex-1 truncate text-[9px] font-semibold">{template.label}</span>
                     {assigned ? <span className="rounded-full bg-black px-1.5 py-0.5 text-[6px] font-semibold text-white">ATANMIŞ</span> : null}
                   </div>
-                  <p className="mt-1 truncate text-[7px] text-black/35">{usage.count} kullanım · {template.sectionIds.length} bölüm · v{template.version || 1}</p>
+                  <p className="mt-1 truncate text-[7px] text-black/35">{usage.count} kullanım · {template.sectionIds.length} bölüm · sürüm {template.version || 1}</p>
                 </button>
               );
             })}
-            {!templates.length ? <p className="p-4 text-center text-[8px] leading-4 text-black/35">Bu page type ile uyumlu template yok.</p> : null}
+            {!templates.length ? <p className="p-4 text-center text-[8px] leading-4 text-black/35">Bu sayfa türüyle uyumlu şablon yok.</p> : null}
           </div>
         </aside>
 
         <div className="flex min-w-0 flex-1 flex-col">
           <header className="flex h-14 shrink-0 items-center gap-3 border-b border-black/10 px-4">
             <div className="min-w-0 flex-1">
-              <p className="text-[12px] font-semibold">{creating ? "Yeni Template" : selected?.label || "Template Seç"}</p>
-              <p className="mt-0.5 truncate text-[8px] text-black/40">{creating ? "Boş template oluştur" : selected?.id || "Soldan template seç"}</p>
+              <p className="text-[12px] font-semibold">{creating ? "Yeni Şablon" : selected?.label || "Şablon Seç"}</p>
+              <p className="mt-0.5 truncate text-[8px] text-black/40">{creating ? "Boş şablon oluştur" : selected?.id || "Soldan şablon seç"}</p>
             </div>
             <button type="button" onClick={requestClose} className="grid h-9 w-9 place-items-center rounded-lg hover:bg-black/[0.04]" aria-label="Kapat"><X className="h-4 w-4" /></button>
           </header>
@@ -360,17 +360,17 @@ export function StoreDesignTemplateManager({
                   <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3">
                     <p className="text-[9px] font-semibold text-amber-950">Atama diff preview</p>
                     <p className="mt-1 text-[8px] leading-4 text-amber-900/70">
-                      {current?.label || "Mevcut template yok"} ({current?.sectionIds.length || 0} bölüm) → {selected.label} ({selected.sectionIds.length} bölüm).
+                      {current?.label || "Mevcut şablon yok"} ({current?.sectionIds.length || 0} bölüm) → {selected.label} ({selected.sectionIds.length} bölüm).
                       Bu atama section composition ve template-level component ayarlarını birlikte değiştirir.
                     </p>
-                    <button type="button" disabled={busy} onClick={() => void assignSelected()} className="mt-3 h-9 rounded-lg bg-[#111] px-3 text-[8px] font-semibold text-white disabled:opacity-40">Bu Template'i Ata</button>
+                    <button type="button" disabled={busy} onClick={() => void assignSelected()} className="mt-3 h-9 rounded-lg bg-[#111] px-3 text-[8px] font-semibold text-white disabled:opacity-40">Bu Şablonu Kullan</button>
                   </div>
                 ) : (
-                  <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-[8px] font-medium text-emerald-900">Bu template şu an {activeLabel} üzerinde aktif.</div>
+                  <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-[8px] font-medium text-emerald-900">Bu şablon şu an {activeLabel} üzerinde aktif.</div>
                 )}
 
                 <div className="mt-5 border-t border-black/[0.07] pt-5">
-                  <p className="text-[9px] font-semibold">Template bilgileri</p>
+                  <p className="text-[9px] font-semibold">Şablon bilgileri</p>
                   <div className="mt-3 grid gap-3">
                     <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                       Ad
@@ -387,15 +387,15 @@ export function StoreDesignTemplateManager({
                 <div className="mt-5 border-t border-black/[0.07] pt-5">
                   <p className="text-[9px] font-semibold">Kullanım referansları</p>
                   <div className="mt-2 rounded-xl bg-[#fafafa] p-3 text-[8px] leading-5 text-black/45">
-                    {[...selectedUsage.pages.map((item) => `Sayfa · ${item}`), ...selectedUsage.routes.map((item) => `Route binding · ${item}`)].join("\n") || "Bu template henüz hiçbir page/route tarafından kullanılmıyor."}
+                    {[...selectedUsage.pages.map((item) => `Sayfa · ${item}`), ...selectedUsage.routes.map((item) => `Adres bağlantısı · ${item}`)].join("\n") || "Bu şablon henüz hiçbir sayfa veya adres tarafından kullanılmıyor."}
                   </div>
                   <div className="mt-3 flex flex-wrap gap-2">
-                    <button type="button" disabled={busy} onClick={() => void duplicateSelected()} className="flex h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold disabled:opacity-40"><Copy className="h-3.5 w-3.5" />Template'i Kopyala</button>
-                    <button type="button" disabled={busy || selectedUsage.count > 0 || protectedTemplate} onClick={() => void deleteSelected()} className="flex h-9 items-center gap-2 rounded-lg border border-red-200 bg-white px-3 text-[8px] font-semibold text-red-700 disabled:cursor-not-allowed disabled:opacity-35"><Trash2 className="h-3.5 w-3.5" />Template'i Sil</button>
+                    <button type="button" disabled={busy} onClick={() => void duplicateSelected()} className="flex h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold disabled:opacity-40"><Copy className="h-3.5 w-3.5" />Şablonu Kopyala</button>
+                    <button type="button" disabled={busy || selectedUsage.count > 0 || protectedTemplate} onClick={() => void deleteSelected()} className="flex h-9 items-center gap-2 rounded-lg border border-red-200 bg-white px-3 text-[8px] font-semibold text-red-700 disabled:cursor-not-allowed disabled:opacity-35"><Trash2 className="h-3.5 w-3.5" />Şablonu Sil</button>
                   </div>
                   {(selectedUsage.count > 0 || protectedTemplate) ? (
                     <p className="mt-2 text-[7px] leading-4 text-black/35">
-                      {protectedTemplate ? "Route/canonical template doğrudan silinmez." : "Template kullanımda; silmeden önce bağlı sayfa/route'ları başka template'e ata."}
+                      {protectedTemplate ? "Sistem adresine bağlı şablon doğrudan silinmez." : "Şablon kullanımda; silmeden önce bağlı sayfaları başka şablona ata."}
                     </p>
                   ) : null}
                 </div>
@@ -405,8 +405,8 @@ export function StoreDesignTemplateManager({
             {creating ? (
               <div>
                 <div className="rounded-xl border border-black/[0.08] bg-[#fafafa] p-4">
-                  <p className="text-[10px] font-semibold">Yeni boş template</p>
-                  <p className="mt-1 text-[8px] leading-4 text-black/35">Bu template {compatibility} page type ile uyumlu oluşturulur. Ardından template'i sayfaya atayıp Bölüm Ekle ile composition kurabilirsin.</p>
+                  <p className="text-[10px] font-semibold">Yeni boş şablon</p>
+                  <p className="mt-1 text-[8px] leading-4 text-black/35">Bu şablon {compatibility} sayfa türüyle uyumlu oluşturulur. Ardından şablonu sayfaya atayıp Bölüm Ekle ile düzeni kurabilirsin.</p>
                 </div>
                 <div className="mt-4 grid gap-3">
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
@@ -415,11 +415,11 @@ export function StoreDesignTemplateManager({
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                     Açıklama
-                    <textarea value={newDescription} onChange={(event) => setNewDescription(event.target.value)} placeholder="Bu template'in kullanım amacı…" className="min-h-20 resize-y rounded-lg border border-black/10 p-3 text-[9px] outline-none" />
+                    <textarea value={newDescription} onChange={(event) => setNewDescription(event.target.value)} placeholder="Bu şablonun kullanım amacı…" className="min-h-20 resize-y rounded-lg border border-black/10 p-3 text-[9px] outline-none" />
                   </label>
                   <div className="flex justify-end gap-2">
                     <button type="button" disabled={busy} onClick={() => setCreating(false)} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold disabled:opacity-40">Vazgeç</button>
-                    <button type="button" disabled={busy || !newName.trim()} onClick={() => void createBlank()} className="flex h-9 items-center gap-2 rounded-lg bg-[#111] px-3 text-[8px] font-semibold text-white disabled:opacity-35"><Plus className="h-3.5 w-3.5" />Boş Template Oluştur</button>
+                    <button type="button" disabled={busy || !newName.trim()} onClick={() => void createBlank()} className="flex h-9 items-center gap-2 rounded-lg bg-[#111] px-3 text-[8px] font-semibold text-white disabled:opacity-35"><Plus className="h-3.5 w-3.5" />Boş Şablon Oluştur</button>
                   </div>
                 </div>
               </div>
