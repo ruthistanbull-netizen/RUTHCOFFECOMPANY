@@ -175,11 +175,11 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
                 </label>
               ) : null}
               <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
-                Masaüstü kolon
+                Masaüstü sütun
                 <input type="number" min={1} max={8} value={numberValue(settings.desktopItems, 4)} onChange={(event) => set("desktopItems", Number(event.target.value))} className="h-10 rounded-lg border border-black/10 px-3 text-[10px] outline-none" />
               </label>
               <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
-                Mobil kolon
+                Mobil sütun
                 <input type="number" min={1} max={4} value={numberValue(settings.mobileItems, 2)} onChange={(event) => set("mobileItems", Number(event.target.value))} className="h-10 rounded-lg border border-black/10 px-3 text-[10px] outline-none" />
               </label>
               <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
@@ -208,7 +208,7 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
               ) : null}
               {section.type === "product-grid" ? (
                 <label className="grid gap-1.5 text-[9px] font-semibold text-black/50 md:col-span-2">
-                  Grid max genişlik
+                  Izgara en fazla genişlik
                   <select value={textValue(settings.maxWidth) || "none"} onChange={(event) => set("maxWidth", event.target.value)} className="h-10 rounded-lg border border-black/10 bg-white px-3 text-[10px] outline-none">
                     <option value="none">Kullanılabilir alanı doldur</option>
                     <option value="1200px">1200px</option>
@@ -252,7 +252,7 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
                   {faqItems.map((item, index) => (
                     <div key={item.id} className="rounded-lg border border-black/[0.08] bg-white p-3">
                       <div className="flex items-center gap-1">
-                        <p className="min-w-0 flex-1 truncate text-[8px] font-semibold">{index + 1}. FAQ Öğesi</p>
+                        <p className="min-w-0 flex-1 truncate text-[8px] font-semibold">{index + 1}. Sık Sorulan Soru</p>
                         <button type="button" disabled={index === 0} onClick={() => setFaqItems((items) => {
                           const next = [...items];
                           [next[index - 1], next[index]] = [next[index]!, next[index - 1]!];
@@ -305,7 +305,7 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
                   <input value={textValue(settings.linkLabel)} onChange={(event) => set("linkLabel", event.target.value)} className="h-10 rounded-lg border border-black/10 px-3 text-[10px] outline-none" />
                 </label>
                 <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
-                  CTA bağlantısı
+                  Düğme bağlantısı
                   <input value={textValue(settings.linkHref)} onChange={(event) => set("linkHref", event.target.value)} className="h-10 rounded-lg border border-black/10 px-3 text-[10px] outline-none" placeholder="/pages/..." />
                 </label>
               </div>
@@ -313,7 +313,7 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
               {imageBanner ? (
                 <>
                   <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
-                    Banner medyası
+                    Afiş medyası
                     <select value={textValue(settings.imageAssetId)} onChange={(event) => set("imageAssetId", event.target.value || undefined)} className="h-10 rounded-lg border border-black/10 bg-white px-3 text-[10px] outline-none">
                       <option value="">Medya seçilmedi</option>
                       {imageAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.assetId} · v{asset.version || 1}</option>)}
