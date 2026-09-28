@@ -51,12 +51,12 @@ export function StoreDesignPresetLibrary({ presets, compatibility, onInsert, onD
                         <p className="truncate text-[10px] font-semibold">{preset.label}</p>
                         <span className="rounded-full bg-black/[0.04] px-2 py-0.5 text-[7px] font-semibold text-black/45">{definition?.label || preset.sectionType}</span>
                       </div>
-                      <p className="mt-1 text-[7px] text-black/30">{preset.blocks.length} block · schema {preset.schemaVersion}</p>
+                      <p className="mt-1 text-[7px] text-black/30">{preset.blocks.length} blok · yapı sürümü {preset.schemaVersion}</p>
                     </div>
                     <button type="button" onClick={() => onInsert(preset.id)} className="flex h-8 items-center gap-1 rounded-lg bg-[#111] px-2.5 text-[8px] font-semibold text-white">
                       <Plus className="h-3 w-3" />Ekle
                     </button>
-                    <button type="button" onClick={() => onDelete(preset.id)} className="grid h-8 w-8 place-items-center rounded-lg border border-red-200 text-red-600 hover:bg-red-50" aria-label="Preset sil">
+                    <button type="button" onClick={() => onDelete(preset.id)} className="grid h-8 w-8 place-items-center rounded-lg border border-red-200 text-red-600 hover:bg-red-50" aria-label="Hazır düzeni sil">
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
                   </div>
@@ -69,8 +69,8 @@ export function StoreDesignPresetLibrary({ presets, compatibility, onInsert, onD
             <div className="grid min-h-48 place-items-center rounded-xl border border-dashed border-black/10 text-center">
               <div>
                 <Layers3 className="mx-auto h-5 w-5 text-black/20" />
-                <p className="mt-2 text-[9px] font-semibold text-black/45">Bu sayfa tipiyle uyumlu preset yok</p>
-                <p className="mt-1 text-[8px] text-black/30">Bir section satırındaki preset kaydet butonuyla oluşturabilirsin.</p>
+                <p className="mt-2 text-[9px] font-semibold text-black/45">Bu sayfa türüyle uyumlu hazır düzen yok</p>
+                <p className="mt-1 text-[8px] text-black/30">Bir bölüm satırındaki hazır düzen olarak kaydet düğmesiyle oluşturabilirsin.</p>
               </div>
             </div>
           ) : null}
