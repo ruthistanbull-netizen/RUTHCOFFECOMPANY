@@ -323,13 +323,15 @@ for (const token of [
   if (!storeDesignV22Css.includes(token)) fail(`V2.2 mobil Base44 sözleşmesi eksik: ${token}`);
 }
 const bottomSheetLockIndex = storeDesignV22Css.lastIndexOf("Base44 mobile bottom sheet lock");
-const lastDesktopInspectorWidthIndex = storeDesignV22Css.lastIndexOf(".sd-inspector.is-open");
-if (bottomSheetLockIndex < 0 || bottomSheetLockIndex > lastDesktopInspectorWidthIndex) {
-  // The last inspector rule must live inside or after the final mobile lock block.
-  const tail = bottomSheetLockIndex >= 0 ? storeDesignV22Css.slice(bottomSheetLockIndex) : "";
-  if (!tail.includes(".sd-inspector.is-open") || !tail.includes("width:100%!important;")) {
-    fail("V2.2 mobil inspector son CSS katmanında bottom sheet olarak kilitli değil.");
-  }
+const bottomSheetTail = bottomSheetLockIndex >= 0 ? storeDesignV22Css.slice(bottomSheetLockIndex) : "";
+if (
+  !bottomSheetTail.includes(".sd-inspector.is-open")
+  || !bottomSheetTail.includes(".sd-inspector.is-closed")
+  || !bottomSheetTail.includes("width:100%!important;")
+  || !bottomSheetTail.includes("transform:translateY(0)!important;")
+  || !bottomSheetTail.includes("position:fixed!important;")
+) {
+  fail("V2.2 mobil inspector son CSS katmanında bottom sheet olarak kilitli değil.");
 }
 
 const legacyIssueCodeAliases = [
