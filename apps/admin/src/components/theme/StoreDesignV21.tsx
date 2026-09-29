@@ -155,6 +155,7 @@ const STOREFRONT_ORIGIN = (() => {
   catch { return "https://rostacoffecompany.zeabur.app"; }
 })();
 const PREVIEW_SCROLL_MESSAGE = "store-design-v2:preview-scroll";
+const PREVIEW_DOCUMENT_MESSAGE = "store-design-v2:document-sync";
 
 function previewUrl(path: string, previewToken: string) {
   const url = new URL(path || "/", STOREFRONT_ORIGIN);
@@ -1064,6 +1065,10 @@ export function StoreDesignV21() {
       confirmation: false,
     });
     lastPreviewJsonRef.current = serialized;
+    iframeRef.current?.contentWindow?.postMessage({
+      type: PREVIEW_DOCUMENT_MESSAGE,
+      document: value,
+    }, STOREFRONT_ORIGIN);
   }, []);
 
   useEffect(() => {
