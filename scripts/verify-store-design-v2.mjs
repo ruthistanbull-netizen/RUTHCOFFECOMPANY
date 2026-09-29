@@ -177,6 +177,10 @@ for (const token of [
   ".sd-toolbar-secondary{display:none!important}",
   ".sd-mobile-dock",
   ".sd-context-menu",
+  ".sd-v22-toolbar",
+  ".sd-v22-structure",
+  ".sd-v22-context-menu",
+  ".sd-v22-inspector-group",
 ]) {
   if (!storeDesignRouteCss.includes(token)) fail(`Mağaza Tasarımı V2 route CSS eksik: ${token}`);
 }
@@ -236,6 +240,60 @@ const activeThemeViewport = read("apps/admin/src/components/theme/ThemePreviewVi
 if (!activeThemeViewport.includes("StoreDesignV21")) fail("Aktif Mağaza Tasarımı sayfası V2.1 çalışma alanını kullanmıyor.");
 
 const storeDesignShell = read("apps/admin/src/components/theme/StoreDesignV21.tsx");
+const storeDesignToolbarV22 = read("apps/admin/src/components/theme/StoreDesignToolbarV22.tsx");
+const storeDesignStructureV22 = read("apps/admin/src/components/theme/StoreDesignStructurePanelV22.tsx");
+const storeDesignContextV22 = read("apps/admin/src/components/theme/StoreDesignContextMenuV22.tsx");
+const storeDesignDestinationV22 = read("apps/admin/src/components/theme/StoreDesignDestinationPicker.tsx");
+const storeDesignAutoTargets = read("apps/storefront/src/components/theme/storeDesignAutoTargets.ts");
+
+for (const token of [
+  "StoreDesignToolbarV22",
+  "StoreDesignStructurePanelV22",
+  "StoreDesignContextMenuV22",
+  "StoreDesignInspectorBodyV22",
+  "StoreDesignDestinationPicker",
+]) {
+  if (!storeDesignShell.includes(token)) fail(`V2.2 gerçek editör shell bağlantısı eksik: ${token}`);
+}
+for (const token of ["Medya", "Sayfalar", "Şablonlar", "Yönlendirmeler", "Geçmiş", "Kaydet", "Yayınla"]) {
+  if (!storeDesignToolbarV22.includes(token)) fail(`V2.2 sade toolbar aracı eksik: ${token}`);
+}
+for (const token of ["Global alanlar", "Üst bilgi", "Menü", "Alt bilgi", "Bölümler"]) {
+  if (!storeDesignStructureV22.includes(token)) fail(`V2.2 yapı paneli hiyerarşisi eksik: ${token}`);
+}
+for (const token of ["Metni düzenle", "Hedefi değiştir", "Görseli değiştir", "Mobil ayarlar", "Tüm ayarları aç"]) {
+  if (!storeDesignContextV22.includes(token)) fail(`V2.2 bağlamsal sağ tık eylemi eksik: ${token}`);
+}
+for (const token of ["İçerik", "Bağlantı", "Medya", "Görünüm", "Düzen", "Mobil", "Gelişmiş"]) {
+  if (!storeDesignInspectorV22.includes(token)) fail(`V2.2 inspector grubu eksik: ${token}`);
+}
+for (const token of ["Sayfa", "Koleksiyon", "Ürün", "Özel URL", "Sayfa içi alan", "Bağlantı yok"]) {
+  if (!storeDesignDestinationV22.includes(token)) fail(`V2.2 hedef seçici türü eksik: ${token}`);
+}
+for (const token of ["text-element", "link-element", "button-element", "image-element", "video-element"]) {
+  if (!registry.has(token)) fail(`Generic doğrudan düzenleme registry tipi eksik: ${token}`);
+}
+for (const token of ["ensureStoreDesignAutoTarget", "decorateStoreDesignAutoTargets", "data-store-design-auto-target"]) {
+  if (!storeDesignAutoTargets.includes(token)) fail(`Gerçek storefront otomatik edit target altyapısı eksik: ${token}`);
+}
+for (const token of [
+  'event.preventDefault();',
+  'targetFrom(document.body)',
+  'store-design-v2:start-inline-edit',
+  'store-design-v2:select-target',
+]) {
+  if (!bridge.includes(token)) fail(`V2.2 preview doğrudan düzenleme köprüsü eksik: ${token}`);
+}
+for (const token of [
+  'patch.path === "content.text"',
+  'patch.path === "link.href"',
+  "decorateStoreDesignAutoTargets",
+  "onSectionAnchorClick",
+]) {
+  if (!runtime.includes(token)) fail(`V2.2 yayınlanmış storefront patch runtime eksik: ${token}`);
+}
+if (storeDesignShell.includes("HIZLI AYARLAR")) fail("Legacy HIZLI AYARLAR inspector V2.2 shell içinde kalmış.");
+if (storeDesignShell.includes("KORUMALI ALAN")) fail("Legacy KORUMALI ALAN paneli V2.2 shell içinde kalmış.");
 
 const legacyIssueCodeAliases = [
   ["PAGE_TEMPLATE_MISSING", "missing-page-template"],
@@ -267,18 +325,21 @@ for (const token of ["issue.ownerId", "issue.targetId"]) {
   if (!storeDesignShell.includes(token)) fail(`Publish düzeltme yönlendirmesi legacy issue alanı fallback'i eksik: ${token}`);
 }
 
+const storeDesignInspectorV22 = read("apps/admin/src/components/theme/StoreDesignInspectorBodyV22.tsx");
 for (const token of [
   'selected.type === "consent-banner"',
-  'document.globals.tokens["consent-banner"]',
-  "ÇEREZ BİLDİRİMİ",
   "Kabul düğmesi",
   "Ret düğmesi",
+  "Gizlilik bağlantısı metni",
   "Konum",
   "widthPreset",
   "radiusPreset",
   "Kabul ve ret davranışı",
 ]) {
-  if (!storeDesignShell.includes(token)) fail(`Global protected consent editor eksik: ${token}`);
+  if (!storeDesignInspectorV22.includes(token)) fail(`Global protected consent editor V2.2 eksik: ${token}`);
+}
+if (!storeDesignShell.includes('document.globals.tokens["consent-banner"]')) {
+  fail("Consent banner gerçek ThemeDocument global token kaynağına bağlı değil.");
 }
 if (!core.includes('component("consent-banner", "Çerez / Onay", "Diğer", "global", globalScopes, ["content", "layout", "card", "responsive"], ["consentSemantics", "categories", "consentState", "privacyUrl"])')) {
   fail("Consent banner global protected registry sözleşmesi eksik.");
