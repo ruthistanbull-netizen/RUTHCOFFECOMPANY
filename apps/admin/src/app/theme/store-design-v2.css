@@ -1682,3 +1682,109 @@
   }
 }
 
+/* ==========================================================================
+   Store Design V2.2 — Base44 shell parity
+   Real StoreDesignV21 data/runtime, Base44 interaction hierarchy.
+   ========================================================================== */
+[data-store-design-v2-admin] .sd-v22-toolbar{
+  background:var(--sd-editor-bg)!important;
+  border-color:var(--sd-border)!important;
+}
+[data-store-design-v2-admin] .sd-v22-toolbar .sd-field,
+[data-store-design-v2-admin] .sd-v22-more-menu{
+  background:var(--sd-surface-1)!important;
+  color:var(--sd-text-1)!important;
+  border-color:var(--sd-border)!important;
+}
+[data-store-design-v2-admin] .sd-v22-toolbar-left,
+[data-store-design-v2-admin] .sd-v22-toolbar-center,
+[data-store-design-v2-admin] .sd-v22-toolbar-right{
+  min-width:0;
+}
+[data-store-design-v2-admin] .sd-v22-more-menu{
+  box-shadow:var(--sd-shadow-panel)!important;
+}
+[data-store-design-v2-admin] .sd-v22-structure{
+  background:var(--sd-surface-1)!important;
+  color:var(--sd-text-1)!important;
+  border-color:var(--sd-border)!important;
+}
+[data-store-design-v2-admin] .sd-v22-structure header,
+[data-store-design-v2-admin] .sd-v22-structure > div{
+  border-color:var(--sd-border)!important;
+}
+[data-store-design-v2-admin] .sd-v22-structure-row{
+  color:var(--sd-text-1)!important;
+  background:transparent!important;
+}
+[data-store-design-v2-admin] .sd-v22-structure-row:hover{
+  background:var(--sd-surface-2)!important;
+}
+[data-store-design-v2-admin] .sd-v22-context-menu{
+  background:var(--sd-surface-1)!important;
+  color:var(--sd-text-1)!important;
+  border-color:var(--sd-border)!important;
+}
+[data-store-design-v2-admin] .sd-v22-context-menu > div,
+[data-store-design-v2-admin] .sd-v22-context-menu .border-t,
+[data-store-design-v2-admin] .sd-v22-context-menu .border-b{
+  border-color:var(--sd-border)!important;
+}
+[data-store-design-v2-admin] .sd-v22-context-row{
+  color:var(--sd-text-1)!important;
+  background:transparent!important;
+}
+[data-store-design-v2-admin] .sd-v22-context-row:hover:not(:disabled){
+  background:var(--sd-surface-2)!important;
+}
+[data-store-design-v2-admin] .sd-v22-context-row.is-primary{
+  background:color-mix(in srgb,var(--sd-accent) 14%,var(--sd-surface-1))!important;
+  color:var(--sd-text-1)!important;
+}
+[data-store-design-v2-admin] .sd-v22-context-row.text-red-600{
+  color:var(--sd-danger)!important;
+}
+[data-store-design-v2-admin] .sd-v22-inspector-group{
+  border-color:var(--sd-border)!important;
+}
+[data-store-design-v2-admin] .sd-v22-inspector-group > button{
+  color:var(--sd-text-1)!important;
+  background:transparent!important;
+}
+[data-store-design-v2-admin] .sd-v22-inspector-group > button:hover{
+  background:var(--sd-surface-2)!important;
+}
+[data-store-design-v2-admin] .sd-v22-inspector-group .sd-field,
+[data-store-design-v2-admin] .sd-v22-inspector-group textarea{
+  background:var(--sd-surface-1)!important;
+  color:var(--sd-text-1)!important;
+  border-color:var(--sd-border)!important;
+}
+[data-store-design-v2-admin] .sd-v22-inspector-group .sd-secondary-button{
+  background:var(--sd-surface-1)!important;
+}
+[data-store-design-v2-admin] .sd-inspector.is-open{
+  width:400px!important;
+}
+[data-store-design-v2-admin] .sd-v22-context-menu{
+  max-height:min(60vh,520px)!important;
+}
+@media(max-width:767px){
+  [data-store-design-v2-admin] .sd-v22-toolbar{
+    grid-template-columns:minmax(0,1fr) auto auto;
+    padding-inline:6px!important;
+  }
+  [data-store-design-v2-admin] .sd-v22-toolbar-left{
+    flex:1 1 auto;
+  }
+  [data-store-design-v2-admin] .sd-v22-toolbar-left select{
+    min-width:104px!important;
+  }
+  [data-store-design-v2-admin] .sd-v22-structure{
+    width:min(88vw,320px)!important;
+  }
+  [data-store-design-v2-admin] .sd-v22-context-menu{
+    width:min(340px,calc(100vw - 16px))!important;
+  }
+}
+
