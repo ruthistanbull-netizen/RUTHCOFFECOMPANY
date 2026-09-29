@@ -244,6 +244,7 @@ const storeDesignToolbarV22 = read("apps/admin/src/components/theme/StoreDesignT
 const storeDesignStructureV22 = read("apps/admin/src/components/theme/StoreDesignStructurePanelV22.tsx");
 const storeDesignContextV22 = read("apps/admin/src/components/theme/StoreDesignContextMenuV22.tsx");
 const storeDesignInspectorV22 = read("apps/admin/src/components/theme/StoreDesignInspectorBodyV22.tsx");
+const storeDesignMobileDockV22 = read("apps/admin/src/components/theme/StoreDesignMobileDockV22.tsx");
 const storeDesignDestinationV22 = read("apps/admin/src/components/theme/StoreDesignDestinationPicker.tsx");
 const storeDesignAutoTargets = read("apps/storefront/src/components/theme/storeDesignAutoTargets.ts");
 
@@ -252,6 +253,7 @@ for (const token of [
   "StoreDesignStructurePanelV22",
   "StoreDesignContextMenuV22",
   "StoreDesignInspectorBodyV22",
+  "StoreDesignMobileDockV22",
   "StoreDesignDestinationPicker",
 ]) {
   if (!storeDesignShell.includes(token)) fail(`V2.2 gerçek editör shell bağlantısı eksik: ${token}`);
@@ -264,6 +266,9 @@ for (const token of ["Global alanlar", "Üst bilgi", "Menü", "Alt bilgi", "Böl
 }
 for (const token of ["Metni düzenle", "Hedefi değiştir", "Görseli değiştir", "Mobil ayarlar", "Tüm ayarları aç"]) {
   if (!storeDesignContextV22.includes(token)) fail(`V2.2 bağlamsal sağ tık eylemi eksik: ${token}`);
+}
+for (const token of ["Önizle", "Yapı", "Ekle", "Düzenle", "Daha", "Medya", "Şablonlar", "Yönlendirmeler", "Sayfalar", "Geçmiş"]) {
+  if (!storeDesignMobileDockV22.includes(token)) fail(`V2.2 mobil görev çubuğu eylemi eksik: ${token}`);
 }
 for (const token of ["İçerik", "Bağlantı", "Medya", "Görünüm", "Düzen", "Mobil", "Gelişmiş"]) {
   if (!storeDesignInspectorV22.includes(token)) fail(`V2.2 inspector grubu eksik: ${token}`);
@@ -295,6 +300,7 @@ for (const token of [
 }
 if (storeDesignShell.includes("HIZLI AYARLAR")) fail("Legacy HIZLI AYARLAR inspector V2.2 shell içinde kalmış.");
 if (storeDesignShell.includes("KORUMALI ALAN")) fail("Legacy KORUMALI ALAN paneli V2.2 shell içinde kalmış.");
+if (storeDesignShell.includes('<nav className="sd-mobile-dock hidden"')) fail("Legacy dört eylemli mobil dock V2.2 shell içinde kalmış.");
 
 const legacyIssueCodeAliases = [
   ["PAGE_TEMPLATE_MISSING", "missing-page-template"],
