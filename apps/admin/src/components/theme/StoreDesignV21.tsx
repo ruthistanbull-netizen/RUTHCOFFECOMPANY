@@ -1897,7 +1897,7 @@ export function StoreDesignV21() {
 
   // Zeabur deployment marker: this admin source change intentionally refreshes the panel service.
   return (
-    <div ref={editorShellRef} data-store-design-v2-admin data-physical-mobile={isMobileViewport ? "true" : "false"} data-device={device} data-interaction-mode={interactionMode} className="sd-editor-shell flex h-dvh min-h-0 flex-col overflow-hidden bg-[#f5f5f3] text-[#111]">
+    <div ref={editorShellRef} data-store-design-v2-admin data-store-design-version="2.2" data-physical-mobile={isMobileViewport ? "true" : "false"} data-device={device} data-interaction-mode={interactionMode} className="sd-editor-shell flex h-dvh min-h-0 flex-col overflow-hidden bg-[#f5f5f3] text-[#111]">
       <header className="sd-toolbar z-30 flex h-14 shrink-0 items-center justify-between gap-2 border-b px-2 sm:px-3">
         <div className="sd-toolbar-left flex min-w-0 items-center gap-1">
           <button type="button" onClick={requestEditorExit} className="sd-icon-button grid h-9 w-9 shrink-0 place-items-center rounded-md border" aria-label="Geri" title="Geri">
