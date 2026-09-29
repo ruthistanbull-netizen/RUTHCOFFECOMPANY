@@ -539,7 +539,9 @@ export function SemanticThemeRuntimeProvider({
             });
           }
           if (patch.path === "link.href") {
-            link.setAttribute("href", String(patch.value || "/"));
+            const href = String(patch.value || "").trim();
+            if (href) link.setAttribute("href", href);
+            else link.removeAttribute("href");
           } else if (String(patch.value) === "_blank") {
             link.setAttribute("target", "_blank");
             link.setAttribute("rel", "noopener noreferrer");
@@ -566,6 +568,27 @@ export function SemanticThemeRuntimeProvider({
       restore();
     };
   }, [mergedPatches]);
+
+  useEffect(() => {
+    const onSectionAnchorClick = (event: MouseEvent) => {
+      const element = event.target instanceof Element ? event.target : null;
+      const link = element?.closest<HTMLAnchorElement>('a[href^="#sd-section:"]');
+      if (!link) return;
+      const raw = link.getAttribute("href")?.slice("#sd-section:".length) || "";
+      let sectionId = raw;
+      try {
+        sectionId = decodeURIComponent(raw);
+      } catch {}
+      if (!sectionId) return;
+      const section = document.querySelector<HTMLElement>(`[data-theme-section-id="${CSS.escape(sectionId)}"]`);
+      if (!section) return;
+      event.preventDefault();
+      section.scrollIntoView({ behavior: "smooth", block: "start" });
+      window.history.replaceState(null, "", `#section-${encodeURIComponent(sectionId)}`);
+    };
+    document.addEventListener("click", onSectionAnchorClick, true);
+    return () => document.removeEventListener("click", onSectionAnchorClick, true);
+  }, []);
 
   return (
     <>
