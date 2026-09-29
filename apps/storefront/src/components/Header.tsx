@@ -149,7 +149,7 @@ function PhotoCollectionsRail({
               draggable={false}
             />
           </span>
-          <span className="ruth-menu-collection-card__label">{collection.name}</span>
+          <span className="ruth-menu-collection-card__label" data-store-design-editable-text="true">{collection.name}</span>
         </Link>
       ))}
       {mediaCards.map((card) => (
@@ -187,7 +187,7 @@ function PhotoCollectionsRail({
               <img src={card.imageSrc} alt={card.label || ""} draggable={false} />
             )}
           </span>
-          {card.label ? <span className="ruth-menu-collection-card__label">{card.label}</span> : null}
+          {card.label ? <span className="ruth-menu-collection-card__label" data-store-design-editable-text="true">{card.label}</span> : null}
         </Link>
       ))}
     </div>
@@ -208,6 +208,11 @@ function MenuLinkPanel({
     <div className="ruth-zara-menu-copy">
       <Link
         href={item.path}
+        data-editor-id={`global.header.menu.link.${item.id}`}
+        data-editor-type="menu-link"
+        data-editor-label={item.label}
+        data-editor-instance={item.id}
+        data-store-design-editable-text="true"
         onClick={closeMenu}
         className="ruth-zara-menu-copy__title"
       >
@@ -224,6 +229,11 @@ function MenuLinkPanel({
               <Link
                 key={child.path}
                 href={child.path}
+                data-editor-id={`global.header.menu.link.${item.id}.${child.path}`}
+                data-editor-type="menu-link"
+                data-editor-label={child.label}
+                data-editor-instance={child.path}
+                data-store-design-editable-text="true"
                 onClick={closeMenu}
                 className="ruth-zara-menu-copy__link"
               >
@@ -233,6 +243,11 @@ function MenuLinkPanel({
           ) : (
             <Link
               href={item.path}
+              data-editor-id={`global.header.menu.link.${item.id}.open`}
+              data-editor-type="menu-link"
+              data-editor-label={`${item.label} bağlantısı`}
+              data-editor-instance={`${item.id}.open`}
+              data-store-design-editable-text="true"
               onClick={closeMenu}
               className="ruth-zara-menu-copy__link"
             >
@@ -271,6 +286,10 @@ function MainMenuTabs({
           <button
             key={item.id}
             type="button"
+            data-editor-id={`global.header.menu.link.${item.id}`}
+            data-editor-type="menu-link"
+            data-editor-label={item.label}
+            data-editor-instance={item.id}
             role="tab"
             aria-selected={active}
             aria-controls={panelId}
@@ -286,7 +305,7 @@ function MainMenuTabs({
                 transition={{ duration: 0.45, ease: [0.76, 0, 0.24, 1] }}
               />
             ) : null}
-            <span>{item.label}</span>
+            <span data-store-design-editable-text="true">{item.label}</span>
           </button>
         );
       })}
@@ -316,6 +335,11 @@ function DesktopMenuAccordion({
             <div className="ruth-zara-desktop-row">
               <Link
                 href={item.path}
+                data-editor-id={`global.header.menu.link.${item.id}`}
+                data-editor-type="menu-link"
+                data-editor-label={item.label}
+                data-editor-instance={item.id}
+                data-store-design-editable-text="true"
                 onClick={closeMenu}
                 className="ruth-zara-desktop-link"
               >
@@ -347,6 +371,11 @@ function DesktopMenuAccordion({
                     <Link
                       key={child.path}
                       href={child.path}
+                      data-editor-id={`global.header.menu.link.${item.id}.${child.path}`}
+                      data-editor-type="menu-link"
+                      data-editor-label={child.label}
+                      data-editor-instance={child.path}
+                      data-store-design-editable-text="true"
                       onClick={closeMenu}
                       className="ruth-zara-desktop-child"
                     >
@@ -917,7 +946,7 @@ export function Header({
                         onClick={() => setSearchOpen(false)}
                         className={`group flex items-center justify-between gap-4 px-5 py-4 text-[10px] uppercase tracking-[0.15em] text-cream transition-colors hover:bg-cream/[0.045] hover:text-brick focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brick sm:px-6 ${index % 2 === 0 ? "sm:border-r sm:border-kraft/20" : ""} ${index < categoryLinks.slice(0, 12).length - 2 ? "border-b border-kraft/20" : ""}`}
                       >
-                        <span>{item.label}</span>
+                        <span data-store-design-editable-text="true">{item.label}</span>
                         <span className="text-cream/30 transition-transform group-hover:translate-x-1 group-hover:text-brick" aria-hidden="true">→</span>
                       </Link>
                     ))}
