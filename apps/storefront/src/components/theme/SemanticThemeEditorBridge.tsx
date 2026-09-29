@@ -449,7 +449,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
           element.setAttribute("tabindex", "0");
           element.setAttribute("data-store-design-v2-keyboard-target", "true");
         } else if (interactionMode === "browse") {
-          if (original === null) element.removeAttribute("tabindex");
+          if (original == null) element.removeAttribute("tabindex");
           else element.setAttribute("tabindex", original);
           element.removeAttribute("data-store-design-v2-keyboard-target");
         }
