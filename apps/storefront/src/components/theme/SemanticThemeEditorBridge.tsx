@@ -85,6 +85,30 @@ function parentOrigin(allowedOrigins: string[]) {
   }
 }
 
+const DATA_BOUND_PROTECTED_FIELD = /(product|price|stock|cart|checkout|payment|auth|customer|order|discount|review|search|tracking|shipping|variant|quantity|address|coupon|reward|catalog|recommendation|subscription|submission|consent|security|transaction)/i;
+
+function targetDefinition(node: HTMLElement, definition: ComponentDefinition) {
+  if (node.dataset.storeDesignAutoTarget !== "true") return definition;
+  const parent = node.parentElement?.closest<HTMLElement>(TARGET_SELECTOR);
+  if (!parent) return definition;
+  const parentType = parent.dataset.editorType?.trim();
+  const parentDefinition = parentType ? componentDefinition(parentType) : null;
+  if (!parentDefinition || !parentDefinition.protectedFields.some((field) => DATA_BOUND_PROTECTED_FIELD.test(field))) {
+    return definition;
+  }
+
+  const protectedFields = new Set(definition.protectedFields);
+  if (definition.semanticType === "text-element") protectedFields.add("content");
+  if (definition.semanticType === "link-element" || definition.semanticType === "button-element") {
+    protectedFields.add("content");
+    protectedFields.add("link");
+  }
+  if (definition.semanticType === "image-element" || definition.semanticType === "video-element") {
+    protectedFields.add("media");
+  }
+  return { ...definition, protectedFields: [...protectedFields] };
+}
+
 function targetFrom(element: Element | null): SemanticTarget | null {
   if (!element) return null;
   const autoTarget = ensureStoreDesignAutoTarget(element);
@@ -94,8 +118,9 @@ function targetFrom(element: Element | null): SemanticTarget | null {
   const id = node.dataset.editorId?.trim();
   const type = node.dataset.editorType?.trim();
   if (!id || !type) return null;
-  const definition = componentDefinition(type);
-  if (!definition) return null;
+  const baseDefinition = componentDefinition(type);
+  if (!baseDefinition) return null;
+  const definition = targetDefinition(node, baseDefinition);
   return {
     id,
     type,
