@@ -163,6 +163,10 @@ function PhotoCollectionsRail({
           className="ruth-menu-collection-card"
           draggable={false}
           data-theme-menu-media-card={card.id}
+          data-editor-id={`global.header.menu.media.${card.id}`}
+          data-editor-type="menu-media-card"
+          data-editor-label={card.label || "Menü medya kartı"}
+          data-editor-instance={card.id}
         >
           <span className="ruth-menu-collection-card__media">
             {card.mediaType === "video" ? (
@@ -373,6 +377,9 @@ function AccountMenu() {
     <div className="relative">
       <button
         type="button"
+        data-editor-id="global.header.account"
+        data-editor-type="account-trigger"
+        data-editor-label="Hesap düğmesi"
         onClick={() => setOpen((value) => !value)}
         className="flex h-10 w-10 items-center justify-center"
         aria-label="Hesap menüsü"
@@ -633,6 +640,9 @@ export function Header({
         <button
           type="button"
           data-theme-editor-ignore="true"
+          data-editor-id="global.header.menu-trigger"
+          data-editor-type="main-menu"
+          data-editor-label="Menü düğmesi"
           onClick={() => setMenuOpen((current) => !current)}
           className={`ruth-zara-menu-button fixed top-0 z-[130] ${contrastHeader ? "ruth-zara-menu-button--contrast" : ""} ${menuOpen ? "ruth-zara-menu-button--menu-open" : ""}`}
           style={menuOpen ? menuToneStyle : undefined}
@@ -671,6 +681,9 @@ export function Header({
           <div className="ruth-zara-header-actions flex items-center justify-end gap-0.5 sm:gap-1">
             <button
               type="button"
+              data-editor-id="global.header.search"
+              data-editor-type="search-trigger"
+              data-editor-label="Arama düğmesi"
               onClick={() => setSearchOpen(true)}
               className="grid h-10 w-10 place-items-center"
               aria-label="Ara"
@@ -680,6 +693,9 @@ export function Header({
             <AccountMenu />
             <button
               type="button"
+              data-editor-id="global.header.cart"
+              data-editor-type="cart-trigger"
+              data-editor-label="Sepet düğmesi"
               onClick={() => setCartOpen(true)}
               className="relative grid h-10 w-10 place-items-center"
               aria-label={`Sepet${count ? `, ${count} ürün` : ""}`}
@@ -699,6 +715,9 @@ export function Header({
         {menuOpen ? (
           <motion.div
             id="ruth-category-menu"
+            data-editor-id="global.header.mega-menu"
+            data-editor-type="mega-menu"
+            data-editor-label="Menü"
             role="dialog"
             aria-modal="true"
             aria-label="Kategori menüsü"
@@ -718,6 +737,9 @@ export function Header({
             >
               <Link
                 href="/"
+                data-editor-id="global.header.menu-logo"
+                data-editor-type="header-logo"
+                data-editor-label="Menü logosu"
                 onClick={closeMenu}
                 className="ruth-zara-menu-logo"
                 aria-label="Rosta Coffee Co menü anasayfa"
@@ -728,13 +750,24 @@ export function Header({
               <div className="ruth-zara-menu-actions">
                 <button
                   type="button"
+                  data-editor-id="global.header.mega-menu.search"
+                  data-editor-type="search-trigger"
+                  data-editor-label="Menü arama düğmesi"
                   onClick={openSearchFromMenu}
                   className="ruth-zara-menu-actions__search"
                 >
                   Ara
                 </button>
                 <div className="ruth-zara-menu-actions__links">
-                  <button type="button" onClick={openCartFromMenu}>Sepet&nbsp; | {count}</button>
+                  <button
+                    type="button"
+                    data-editor-id="global.header.mega-menu.cart"
+                    data-editor-type="cart-trigger"
+                    data-editor-label="Menü sepet düğmesi"
+                    onClick={openCartFromMenu}
+                  >
+                    Sepet&nbsp; | {count}
+                  </button>
                   <Link href={isLoggedIn ? "/account" : "/login"} onClick={closeMenu}>
                     {isLoggedIn ? "Hesabım" : "Giriş Yap"}
                   </Link>
