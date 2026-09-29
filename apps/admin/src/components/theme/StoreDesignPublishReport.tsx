@@ -52,6 +52,8 @@ function friendlyIssueMessage(issue: ThemeReferenceIssue) {
       return "Bir sayfanın arama ve paylaşım ayarları eksik. Sayfa ayarlarından bu alanları tamamla.";
     case "missing-template-section":
       return "Bir şablonda bulunamayan bir bölüm var. Bölüm düzenini kontrol edip eksik bölümü kaldır veya yeniden ekle.";
+    case "missing-template-binding":
+      return "Bir sayfanın şablon bağlantısı eksik veya geçersiz. Şablonlar bölümünden bu sayfaya uygun şablonu yeniden bağla.";
     case "unknown-section-definition":
       return "Bir bölüm bu sürümde tanınmıyor. Yayınlamadan önce bölümü değiştir veya kaldır.";
     case "section-runtime-unavailable":
