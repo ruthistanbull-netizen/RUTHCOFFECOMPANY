@@ -701,6 +701,8 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
       if (doubleAction) {
         lastEditAction = null;
         lastEditActionAt = 0;
+        event.preventDefault();
+        event.stopPropagation();
         return;
       }
 
