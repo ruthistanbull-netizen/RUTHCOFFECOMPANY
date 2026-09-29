@@ -191,6 +191,22 @@ for (const token of [
 const publishReport = read("apps/admin/src/components/theme/StoreDesignPublishReport.tsx");
 if (!publishReport.includes("Yayınlama Öncesi Kontrol")) fail("Yayınlama öncesi kırık referans raporu bağlı değil.");
 
+const referenceAnalyzerStart = core.indexOf("function collectThemeSettingReferences");
+const referenceAnalyzerEnd = core.indexOf("export function validateThemeDocument", referenceAnalyzerStart);
+if (referenceAnalyzerStart < 0 || referenceAnalyzerEnd <= referenceAnalyzerStart) {
+  fail("Publish reference analyzer sınırları bulunamadı.");
+} else {
+  const analyzerIssueCodes = new Set(
+    [...core.slice(referenceAnalyzerStart, referenceAnalyzerEnd).matchAll(/code:\\s*"([^"]+)"/g)].map((match) => match[1]),
+  );
+  const friendlyIssueCases = new Set(
+    [...publishReport.matchAll(/case\\s+"([^"]+)"/g)].map((match) => match[1]),
+  );
+  for (const code of analyzerIssueCodes) {
+    if (!friendlyIssueCases.has(code)) fail(`Publish raporunda kullanıcı açıklaması eksik issue code: ${code}`);
+  }
+}
+
 const sectionManager = read("apps/admin/src/components/theme/StoreDesignSectionManager.tsx");
 for (const token of ["document.templateBindings[activePage.path]", "activePage?.template", "templateId"]) {
   if (!sectionManager.includes(token)) fail(`Dynamic template editor resolver eksik: ${token}`);
