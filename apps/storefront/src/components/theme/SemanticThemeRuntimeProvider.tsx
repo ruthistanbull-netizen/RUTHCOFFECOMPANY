@@ -120,7 +120,9 @@ function markAutomaticSemanticTargets() {
     element.dataset.editorLabel = label;
     element.dataset.editorInstance = id;
     element.dataset.storeDesignAutoTarget = "true";
-    if (type === "text" || type === "link" || type === "button") element.dataset.storeDesignEditableText = "true";
+    if (type === "text" || ((type === "link" || type === "button") && !element.querySelector("img,video,svg"))) {
+      element.dataset.storeDesignEditableText = "true";
+    }
   }
 }
 
@@ -581,9 +583,16 @@ export function SemanticThemeRuntimeProvider({
     };
 
     const textNodeFor = (node: Element) => {
-      if (node.matches('[data-store-design-editable-text="true"]')) return node as HTMLElement;
+      if (node.matches('[data-store-design-editable-text="true"]') && !node.querySelector("img,video,svg")) {
+        return node as HTMLElement;
+      }
       const nested = node.querySelector<HTMLElement>('[data-store-design-editable-text="true"]');
-      if (nested) return nested;
+      if (nested && !nested.querySelector("img,video,svg")) return nested;
+      if (node instanceof HTMLAnchorElement || node instanceof HTMLButtonElement) {
+        const nestedText = Array.from(node.querySelectorAll<HTMLElement>("span,strong,em,small"))
+          .find((element) => !element.querySelector("img,video,svg") && Boolean((element.textContent || "").trim()));
+        if (nestedText) return nestedText;
+      }
       const tag = node.tagName;
       const simple = node instanceof HTMLAnchorElement
         || node instanceof HTMLButtonElement
