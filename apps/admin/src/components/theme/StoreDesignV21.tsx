@@ -3009,13 +3009,14 @@ export function StoreDesignV21() {
           selectedAssetId={typeof document.sections[sectionMediaPicker.sectionId]?.settings?.[sectionMediaPicker.key] === "string"
             ? String(document.sections[sectionMediaPicker.sectionId]?.settings?.[sectionMediaPicker.key])
             : undefined}
-          onSelect={(assetId) => {
+          onSelect={(assetId, asset) => {
             const section = document.sections[sectionMediaPicker.sectionId];
             if (!section) {
               setSectionMediaPicker(null);
               return;
             }
             const next = structuredClone(document) as ThemeDocument;
+            if (asset && !next.media[assetId]) next.media[assetId] = asset;
             next.sections[section.id] = {
               ...section,
               settings: {
