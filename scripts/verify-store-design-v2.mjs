@@ -185,6 +185,8 @@ for (const token of [
 }
 
 const storeDesignV22 = read("apps/admin/src/components/theme/StoreDesignV21.tsx");
+const storeDesignMobileDockV22 = read("apps/admin/src/components/theme/StoreDesignMobileDockV22.tsx");
+const storefrontFooterV22 = read("apps/storefront/src/components/Footer.tsx");
 for (const token of [
   "sd-toolbar-left",
   "sd-save-status",
@@ -194,6 +196,7 @@ for (const token of [
   "Tüm ayarları aç",
   "sd-mobile-peek-actions",
   "<StoreDesignDestinationPicker",
+  "<StoreDesignMobileDockV22",
 ]) {
   if (!storeDesignV22.includes(token)) fail(`Store Design V2.2 shell eksik: ${token}`);
 }
@@ -214,6 +217,30 @@ if (!bridge.includes("ensureAutomaticTarget")) fail("V2.2 exact target çözüml
 if (!bridge.includes('document.addEventListener("contextmenu", onContextMenu, true)')) fail("V2.2 preview sağ tık yakalayıcısı bağlı değil.");
 if (!runtime.includes("markAutomaticSemanticTargets")) fail("V2.2 otomatik hedefler yayınlanan runtime'a taşınmıyor.");
 if (!runtime.includes('patch.path === "content.text"')) fail("V2.2 metin değişiklikleri runtime'da kalıcı değil.");
+
+for (const token of ["Önizle", "Yapı", "Ekle", "Düzenle", "Daha", "Medya", "Şablonlar", "Yönlendirmeler", "Sayfalar", "Geçmiş"]) {
+  if (!storeDesignMobileDockV22.includes(token)) fail(`V2.2 mobil görev çubuğu eylemi eksik: ${token}`);
+}
+for (const token of [
+  "final Base44 mobile task bar + bottom sheet lock",
+  "grid-template-columns:repeat(5,minmax(0,1fr))",
+  '.sd-inspector[data-sheet-level="peek"]',
+  '.sd-inspector[data-sheet-level="medium"]',
+  '.sd-inspector[data-sheet-level="full"]',
+  "position:fixed!important;",
+  "width:100%!important;",
+]) {
+  if (!storeDesignRouteCss.includes(token)) fail(`V2.2 final mobil CSS sözleşmesi eksik: ${token}`);
+}
+for (const token of [
+  'data-editor-type="footer-link"',
+  'data-editor-type="footer-text"',
+  'global.footer.link.${item.id}',
+  'global.footer.group.${id}',
+  'shopping-category-${category.id}',
+]) {
+  if (!storefrontFooterV22.includes(token)) fail(`Footer sabit semantic hedef sözleşmesi eksik: ${token}`);
+}
 
 const requiredV21Files = [
   "apps/admin/src/components/theme/StoreDesignPublishReport.tsx",
@@ -1047,11 +1074,7 @@ if (analyzeStart >= 0 && validateStart > analyzeStart && core.slice(analyzeStart
 
 const adminStoreDesignCss = read("apps/admin/src/app/globals.css");
 for (const token of [
-  "sd-mobile-dock",
-  "Önizleme",
-  "Yapı",
-  "Ekle",
-  "Düzenle",
+  "StoreDesignMobileDockV22",
   "data-store-design-context-menu",
   "Hızlı ayarları sıfırla",
   "window.visualViewport",
@@ -1060,6 +1083,9 @@ for (const token of [
   "onFixIssue",
 ]) {
   if (!storeDesignShell.includes(token)) fail(`V4.1 editor shell kabul özelliği eksik: ${token}`);
+}
+for (const token of ["sd-mobile-dock", "Önizle", "Yapı", "Ekle", "Düzenle", "Daha"]) {
+  if (!storeDesignMobileDockV22.includes(token)) fail(`V4.1 mobil görev çubuğu kabul özelliği eksik: ${token}`);
 }
 
 for (const token of [
