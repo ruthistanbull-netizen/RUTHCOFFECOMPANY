@@ -1179,15 +1179,37 @@ export function StoreDesignV21() {
   const fixPublishIssue = async (issue: ThemeReferenceIssue) => {
     const path = pagePathForIssue(issue);
     const sectionId = sectionIdForIssue(issue);
-    const source = typeof issue.source === "string" ? issue.source : "";
-    const target = typeof issue.target === "string" ? issue.target : "";
+    const codeAliases: Record<string, string> = {
+      PAGE_TEMPLATE_MISSING: "missing-page-template",
+      PAGE_SEO_MISSING: "missing-page-seo",
+      TEMPLATE_SECTION_MISSING: "missing-template-section",
+      SECTION_BLOCK_MISSING: "missing-section-block",
+      SECTION_MEDIA_MISSING: "missing-media-reference",
+      BLOCK_MEDIA_MISSING: "missing-media-reference",
+      SEO_MEDIA_MISSING: "missing-og-media",
+      BROKEN_MANAGED_LINK: "broken-merchant-link",
+      ORPHAN_SECTION: "orphan-section",
+      ORPHAN_BLOCK: "orphan-block",
+      ORPHAN_MEDIA: "orphan-media",
+    };
+    const code = codeAliases[issue.code] || issue.code;
+    const source = typeof issue.source === "string"
+      ? issue.source
+      : typeof issue.ownerId === "string"
+        ? issue.ownerId
+        : "";
+    const target = typeof issue.target === "string"
+      ? issue.target
+      : typeof issue.targetId === "string"
+        ? issue.targetId
+        : "";
 
     setPublishIssues(null);
     setMobileMoreOpen(false);
     setContextMenu(null);
     setQuickMediaEdit(null);
 
-    if (issue.code === "link-to-unpublished-page" && target.startsWith("/") && editorPages.some((page) => page.path === target)) {
+    if (code === "link-to-unpublished-page" && target.startsWith("/") && editorPages.some((page) => page.path === target)) {
       if (target !== activePath) await changePage(target);
       setPageManagerMode("edit");
       return;
@@ -1197,17 +1219,17 @@ export function StoreDesignV21() {
       await changePage(path);
     }
 
-    if (["missing-page-template", "missing-page-seo", "missing-og-media"].includes(issue.code)) {
+    if (["missing-page-template", "missing-page-seo", "missing-og-media"].includes(code)) {
       setPageManagerMode("edit");
       return;
     }
 
-    if (["missing-template-binding", "missing-template-section"].includes(issue.code)) {
+    if (["missing-template-binding", "missing-template-section"].includes(code)) {
       setTemplateManagerOpen(true);
       return;
     }
 
-    if (issue.code === "invalid-preset-reference" || source.startsWith("preset:")) {
+    if (code === "invalid-preset-reference" || source.startsWith("preset:")) {
       setSelected(null);
       setStructureFocusSectionId(null);
       setRightOpen(false);
@@ -1216,14 +1238,27 @@ export function StoreDesignV21() {
       return;
     }
 
-    if (issue.code === "missing-media-reference" && !sectionId) {
+    if (code === "missing-media-reference" && !sectionId) {
       setQuickMediaEdit(null);
       setMediaOpen(true);
       return;
     }
 
-    if (["broken-merchant-link", "BROKEN_MANAGED_LINK"].includes(issue.code) && !sectionId) {
+    if (code === "broken-merchant-link" && !sectionId) {
       setRedirectManagerOpen(true);
+      return;
+    }
+
+    if (code === "orphan-media") {
+      setMediaOpen(true);
+      return;
+    }
+
+    if (code === "orphan-section" || code === "orphan-block") {
+      setSelected(null);
+      setStructureFocusSectionId(sectionId);
+      setRightOpen(false);
+      setLeftOpen(true);
       return;
     }
 
