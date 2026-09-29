@@ -1788,3 +1788,20 @@
   }
 }
 
+[data-store-design-v2-admin] .sd-v22-mobile-more{
+  background:var(--sd-surface-1)!important;
+  color:var(--sd-text-1)!important;
+  border-color:var(--sd-border)!important;
+  box-shadow:var(--sd-shadow-panel)!important;
+}
+[data-store-design-v2-admin] .sd-v22-mobile-add{
+  background:var(--sd-accent)!important;
+  color:#fff!important;
+  box-shadow:0 7px 18px color-mix(in srgb,var(--sd-accent) 24%,transparent);
+}
+@media(max-width:767px){
+  [data-store-design-v2-admin] .sd-v22-mobile-dock{
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  }
+}
+
