@@ -197,10 +197,10 @@ if (referenceAnalyzerStart < 0 || referenceAnalyzerEnd <= referenceAnalyzerStart
   fail("Publish reference analyzer sınırları bulunamadı.");
 } else {
   const analyzerIssueCodes = new Set(
-    [...core.slice(referenceAnalyzerStart, referenceAnalyzerEnd).matchAll(/code:\\s*"([^"]+)"/g)].map((match) => match[1]),
+    [...core.slice(referenceAnalyzerStart, referenceAnalyzerEnd).matchAll(/code:\s*"([^"]+)"/g)].map((match) => match[1]),
   );
   const friendlyIssueCases = new Set(
-    [...publishReport.matchAll(/case\\s+"([^"]+)"/g)].map((match) => match[1]),
+    [...publishReport.matchAll(/case\s+"([^"]+)"/g)].map((match) => match[1]),
   );
   for (const code of analyzerIssueCodes) {
     if (!friendlyIssueCases.has(code)) fail(`Publish raporunda kullanıcı açıklaması eksik issue code: ${code}`);
