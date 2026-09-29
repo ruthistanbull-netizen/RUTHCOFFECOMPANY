@@ -6,6 +6,7 @@ import {
   STORE_DESIGN_MEDIA_RUNTIME_EVENT,
   type StoreDesignMediaRuntimeDetail,
 } from "@/components/theme/StoreDesignResponsiveImage";
+import { decorateStoreDesignAutoTargets } from "@/components/theme/storeDesignAutoTargets";
 import {
   COMPONENT_REGISTRY_BY_TYPE,
   normalizeThemeDocument,
@@ -261,6 +262,19 @@ export function SemanticThemeRuntimeProvider({
   const [runtimeMediaAssets, setRuntimeMediaAssets] = useState<Record<string, StoreDesignMediaRuntimeDetail>>({});
 
   useEffect(() => {
+    const decorate = () => decorateStoreDesignAutoTargets(window.document.body);
+    decorate();
+    const frame = window.requestAnimationFrame(decorate);
+    const timer = window.setTimeout(decorate, 250);
+    window.addEventListener("pageshow", decorate);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.clearTimeout(timer);
+      window.removeEventListener("pageshow", decorate);
+    };
+  }, [pathname, templatePathname, previewDocument]);
+
+  useEffect(() => {
     const onMediaAsset = (event: Event) => {
       const asset = (event as CustomEvent<StoreDesignMediaRuntimeDetail>).detail;
       if (!asset?.assetId) return;
@@ -465,6 +479,7 @@ export function SemanticThemeRuntimeProvider({
   }, [effectiveDocument, mergedPatches, runtimeMediaAssets]);
 
   useEffect(() => {
+    decorateStoreDesignAutoTargets(window.document.body);
     const contentPatches = mergedPatches.filter((patch) => (
       patch.path === "content.text" || patch.path === "link.href" || patch.path === "link.target"
     ));
