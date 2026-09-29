@@ -2353,7 +2353,7 @@ export function StoreDesignV21() {
           </div>
         </aside>
 
-        <main ref={previewStageRef} className="sd-preview-stage relative flex min-w-0 flex-1 items-center justify-center overflow-auto p-3 md:p-6">
+        <main ref={previewStageRef} className="sd-preview-stage relative flex min-w-0 flex-1 items-start justify-center overflow-auto p-2 md:p-3">
           {!connected ? (
             <div role="status" aria-live="polite" className="sd-preview-connection-chip absolute left-1/2 top-3 z-30 flex max-w-[calc(100%_-_24px)] -translate-x-1/2 items-center gap-2 rounded-full px-3 py-2 text-[11px] font-semibold shadow-lg">
               <RefreshCw className={`h-3.5 w-3.5 shrink-0 ${connectionStalled ? "" : "animate-spin"}`} />
