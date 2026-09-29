@@ -959,6 +959,14 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                       <option value="60%">60%</option>
                     </select>
                   </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Metin türü
+                    <select value={text(settings.contentMode) || "both"} onChange={(event) => updateSetting("contentMode", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="both">Başlık + açıklama</option>
+                      <option value="heading">Yalnız başlık</option>
+                      <option value="body">Yalnız açıklama</option>
+                    </select>
+                  </label>
                 </>
               ) : null}
 
