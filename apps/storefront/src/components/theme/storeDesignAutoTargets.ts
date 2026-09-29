@@ -41,68 +41,50 @@ function editableCandidate(element: Element | null) {
   return candidate;
 }
 
-function candidatesInside(parent: HTMLElement, kind: string) {
+function candidatesInside(parent: HTMLElement) {
   return Array.from(parent.querySelectorAll<HTMLElement>(AUTO_CANDIDATE_SELECTOR))
     .filter((candidate) => {
-      if (candidate.matches(STORE_DESIGN_TARGET_SELECTOR)) return false;
       if (candidate.closest('[data-theme-editor-ignore="true"]')) return false;
       const semanticParent = candidate.parentElement?.closest<HTMLElement>(STORE_DESIGN_TARGET_SELECTOR);
       if (semanticParent !== parent) return false;
-      return autoKind(candidate).kind === kind;
+      if (candidate.matches(STORE_DESIGN_TARGET_SELECTOR) && candidate.dataset.storeDesignAutoTarget !== "true") return false;
+      return true;
     });
+}
+
+function decorateParent(parent: HTMLElement) {
+  const parentId = parent.dataset.editorId?.trim();
+  if (!parentId) return;
+
+  const counters = new Map<string, number>();
+  for (const candidate of candidatesInside(parent)) {
+    const { type, kind } = autoKind(candidate);
+    const index = counters.get(kind) || 0;
+    counters.set(kind, index + 1);
+    candidate.dataset.editorId = `${parentId}::auto:${kind}:${index}`;
+    candidate.dataset.editorType = type;
+    candidate.dataset.editorLabel = autoLabel(candidate, type);
+    candidate.dataset.editorInstance = `auto:${kind}:${index}`;
+    candidate.dataset.storeDesignAutoTarget = "true";
+    if (type === "text-element" || type === "link-element" || type === "button-element") {
+      candidate.dataset.storeDesignEditableText = "true";
+    }
+  }
 }
 
 export function ensureStoreDesignAutoTarget(element: Element | null) {
   const candidate = editableCandidate(element);
   if (!candidate) return null;
-  if (candidate.matches(STORE_DESIGN_TARGET_SELECTOR)) return candidate;
+  if (candidate.matches(STORE_DESIGN_TARGET_SELECTOR) && candidate.dataset.storeDesignAutoTarget !== "true") return candidate;
 
   const parent = candidate.parentElement?.closest<HTMLElement>(STORE_DESIGN_TARGET_SELECTOR);
-  const parentId = parent?.dataset.editorId?.trim();
-  if (!parent || !parentId) return null;
-
-  const { type, kind } = autoKind(candidate);
-  const siblings = candidatesInside(parent, kind);
-  const index = Math.max(0, siblings.indexOf(candidate));
-  const id = `${parentId}::auto:${kind}:${index}`;
-
-  candidate.dataset.editorId = id;
-  candidate.dataset.editorType = type;
-  candidate.dataset.editorLabel = autoLabel(candidate, type);
-  candidate.dataset.editorInstance = `auto:${kind}:${index}`;
-  candidate.dataset.storeDesignAutoTarget = "true";
-
-  if (type === "text-element" || type === "link-element" || type === "button-element") {
-    candidate.dataset.storeDesignEditableText = "true";
-  }
-  return candidate;
+  if (!parent) return candidate.matches(STORE_DESIGN_TARGET_SELECTOR) ? candidate : null;
+  decorateParent(parent);
+  return candidate.matches(STORE_DESIGN_TARGET_SELECTOR) ? candidate : null;
 }
 
 export function decorateStoreDesignAutoTargets(root: ParentNode = document) {
-  const parents = Array.from(root.querySelectorAll<HTMLElement>(STORE_DESIGN_TARGET_SELECTOR));
-  for (const parent of parents) {
-    const raw = Array.from(parent.querySelectorAll<HTMLElement>(AUTO_CANDIDATE_SELECTOR))
-      .filter((candidate) => {
-        if (candidate.matches(STORE_DESIGN_TARGET_SELECTOR)) return false;
-        if (candidate.closest('[data-theme-editor-ignore="true"]')) return false;
-        return candidate.parentElement?.closest<HTMLElement>(STORE_DESIGN_TARGET_SELECTOR) === parent;
-      });
-
-    const counters = new Map<string, number>();
-    for (const candidate of raw) {
-      const { type, kind } = autoKind(candidate);
-      const index = counters.get(kind) || 0;
-      counters.set(kind, index + 1);
-      const parentId = parent.dataset.editorId?.trim();
-      if (!parentId) continue;
-      candidate.dataset.editorId = `${parentId}::auto:${kind}:${index}`;
-      candidate.dataset.editorType = type;
-      candidate.dataset.editorLabel = autoLabel(candidate, type);
-      candidate.dataset.editorInstance = `auto:${kind}:${index}`;
-      candidate.dataset.storeDesignAutoTarget = "true";
-      if (type === "text-element" || type === "link-element" || type === "button-element") {
-        candidate.dataset.storeDesignEditableText = "true";
-      }
-    }
-  }
+  const parents = Array.from(root.querySelectorAll<HTMLElement>(STORE_DESIGN_TARGET_SELECTOR))
+    .filter((parent) => parent.dataset.storeDesignAutoTarget !== "true");
+  for (const parent of parents) decorateParent(parent);
 }
