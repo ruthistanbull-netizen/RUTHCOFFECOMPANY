@@ -577,7 +577,7 @@ export function StoreDesignV21() {
   const [lastHeartbeat, setLastHeartbeat] = useState(0);
   const [saving, setSaving] = useState<"draft" | "publish" | null>(null);
   const [saveFeedback, setSaveFeedback] = useState<"draft" | "publish" | null>(null);
-  const [leftOpen, setLeftOpen] = useState(true);
+  const [leftOpen, setLeftOpen] = useState(false);
   const [rightOpen, setRightOpen] = useState(false);
   const [isMobileViewport, setIsMobileViewport] = useState(false);
   const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
@@ -629,7 +629,7 @@ export function StoreDesignV21() {
       setDevice("desktop");
       setInteractionMode("edit");
       setMobileMoreOpen(false);
-      setLeftOpen(band !== "tablet");
+      setLeftOpen(false);
       setRightOpen(false);
     };
 
