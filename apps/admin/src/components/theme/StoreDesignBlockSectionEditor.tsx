@@ -1109,10 +1109,10 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     ["emailLabel", "E-posta etiketi", "E-posta"],
                     ["phoneLabel", "Telefon etiketi", "Telefon"],
                     ["messageLabel", "Mesaj etiketi", "Mesaj"],
-                    ["namePlaceholder", "Ad Soyad placeholder", "Adınız Soyadınız"],
-                    ["emailPlaceholder", "E-posta placeholder", "ornek@mail.com"],
-                    ["phonePlaceholder", "Telefon placeholder", "05xx xxx xx xx"],
-                    ["messagePlaceholder", "Mesaj placeholder", "Mesajınızı yazın."],
+                    ["namePlaceholder", "Ad Soyad örnek metni", "Adınız Soyadınız"],
+                    ["emailPlaceholder", "E-posta örnek metni", "ornek@mail.com"],
+                    ["phonePlaceholder", "Telefon örnek metni", "05xx xxx xx xx"],
+                    ["messagePlaceholder", "Mesaj örnek metni", "Mesajınızı yazın."],
                     ["buttonLabel", "Buton metni", "Mesajı Gönder"],
                   ].map(([key, label, fallback]) => (
                     <label key={key} className="grid gap-1.5 text-[8px] font-semibold text-black/45">
