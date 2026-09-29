@@ -232,6 +232,32 @@ for (const token of [
 ]) {
   if (!storeDesignRouteCss.includes(token)) fail(`V2.2 final mobil CSS sözleşmesi eksik: ${token}`);
 }
+
+for (const token of [
+  "previewStageRef",
+  "desktopPreviewViewport",
+  "new ResizeObserver(syncDesktopViewport)",
+  "window.innerWidth",
+  "window.innerHeight",
+  "data-preview-viewport-width",
+  "sd-desktop-viewport-shell",
+  "sd-desktop-viewport-frame",
+  "transform: `scale(${desktopPreviewViewport.scale})`",
+]) {
+  if (!storeDesignV22.includes(token)) fail(`Gerçek masaüstü viewport önizleme altyapısı eksik: ${token}`);
+}
+for (const token of [
+  "true desktop viewport preview",
+  ".sd-preview-shell.sd-desktop-viewport-shell",
+  ".sd-preview-frame.sd-desktop-viewport-frame",
+  "max-width:none!important;",
+  "transform-origin:top left!important;",
+]) {
+  if (!storeDesignRouteCss.includes(token)) fail(`Gerçek masaüstü viewport CSS sözleşmesi eksik: ${token}`);
+}
+if (storeDesignV22.includes('w-[min(1180px,calc(100vw_-_120px))]')) {
+  fail("Masaüstü önizleme hâlâ 1180px fiziksel iframe genişliğine kilitli.");
+}
 for (const token of [
   'data-editor-type="footer-link"',
   'data-editor-type="footer-text"',
