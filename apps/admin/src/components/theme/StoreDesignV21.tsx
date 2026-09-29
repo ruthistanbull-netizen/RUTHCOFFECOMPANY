@@ -85,7 +85,7 @@ type SelectedTarget = {
     height?: number;
     content?: { text?: string } | null;
     link?: { href?: string; target?: "_self" | "_blank" } | null;
-    media?: { kind?: "image" | "video"; src?: string; objectFit?: string; objectPosition?: string } | null;
+    media?: { kind?: "image" | "video"; src?: string; alt?: string; objectFit?: string; objectPosition?: string } | null;
     grid?: { columns?: number; gapX?: number; gapY?: number; maxWidth?: string } | null;
     card?: {
       density?: "s" | "m" | "l";
@@ -331,6 +331,7 @@ function snapshotValue(target: SelectedTarget, path: string) {
   if (path === "link.href") return target.current.link?.href || "";
   if (path === "link.target") return target.current.link?.target || "_self";
   if (path === "media.src") return target.current.media?.src || "";
+  if (path === "media.alt") return target.current.media?.alt || "";
   if (path === "media.objectFit") return target.current.media?.objectFit || "cover";
   if (path === "media.objectPosition") return target.current.media?.objectPosition || "50% 50%";
   if (path === "grid.columns") return target.current.grid?.columns ?? 2;
@@ -2161,6 +2162,12 @@ export function StoreDesignV21() {
                       <label className="grid gap-1.5 text-[11px] opacity-70">Sığdırma<select value={selected.current.media.objectFit || "cover"} onChange={(event) => applyInspectorPatch("media.objectFit", event.target.value)} className="sd-field h-10 rounded-md border px-2.5 text-[12px] outline-none"><option value="cover">Kapla / kırp</option><option value="contain">Tamamını göster</option></select></label>
                       <label className="grid gap-1.5 text-[11px] opacity-70">Odak<select value={selected.current.media.objectPosition || "50% 50%"} onChange={(event) => applyInspectorPatch("media.objectPosition", event.target.value)} className="sd-field h-10 rounded-md border px-2.5 text-[12px] outline-none"><option value="50% 50%">Orta</option><option value="50% 0%">Üst</option><option value="50% 100%">Alt</option><option value="0% 50%">Sol</option><option value="100% 50%">Sağ</option></select></label>
                     </div>
+                    {selected.current.media.kind === "image" ? (
+                      <label className="grid gap-1.5 text-[11px] opacity-70">
+                        Alternatif metin
+                        <input value={selected.current.media.alt || ""} onChange={(event) => setSelected((current) => current ? updateTargetSnapshot(current, "media.alt", event.target.value) : current)} onBlur={(event) => applyInspectorPatch("media.alt", event.target.value)} className="sd-field h-10 rounded-md border px-3 text-[12px] outline-none" placeholder="Görseli kısaca anlat" />
+                      </label>
+                    ) : null}
                   </div>
                 </section>
               ) : null}
