@@ -2005,3 +2005,70 @@
 [data-store-design-v2-admin] .sd-modal-card button{
   font-size:max(11px,1em);
 }
+
+/* Store Design V2.2 — final Base44 mobile task bar + bottom sheet lock. */
+[data-store-design-v2-admin] .sd-v22-mobile-more{
+  background:var(--sd-surface-1)!important;
+  color:var(--sd-text-1)!important;
+  border-color:var(--sd-border)!important;
+  box-shadow:var(--sd-shadow-panel)!important;
+}
+[data-store-design-v2-admin] .sd-v22-mobile-add{
+  background:var(--sd-accent)!important;
+  color:#fff!important;
+  box-shadow:0 7px 18px color-mix(in srgb,var(--sd-accent) 24%,transparent);
+}
+@media(max-width:767px){
+  [data-store-design-v2-admin] .sd-v22-mobile-dock{
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  }
+
+  [data-store-design-v2-admin] .sd-inspector{
+    position:fixed!important;
+    left:0!important;
+    right:0!important;
+    top:auto!important;
+    bottom:var(--sd-mobile-dock-height,calc(64px + env(safe-area-inset-bottom)))!important;
+    z-index:49!important;
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    height:min(var(--sd-visual-55,55dvh),560px)!important;
+    max-height:calc(var(--sd-visual-height,100dvh) - var(--sd-toolbar-height,56px) - var(--sd-mobile-dock-height,64px))!important;
+    border-left:0!important;
+    border-top:1px solid var(--sd-border)!important;
+    border-radius:22px 22px 0 0!important;
+    box-shadow:0 -20px 60px rgba(0,0,0,.18)!important;
+    overflow:hidden!important;
+    transform:translateY(calc(100% + 24px))!important;
+    opacity:1!important;
+    pointer-events:none!important;
+  }
+
+  [data-store-design-v2-admin] .sd-inspector.is-open{
+    width:100%!important;
+    transform:translateY(0)!important;
+    opacity:1!important;
+    pointer-events:auto!important;
+  }
+
+  [data-store-design-v2-admin] .sd-inspector.is-closed{
+    width:100%!important;
+    transform:translateY(calc(100% + 24px))!important;
+    opacity:1!important;
+    pointer-events:none!important;
+  }
+
+  [data-store-design-v2-admin] .sd-inspector[data-sheet-level="peek"]{
+    height:140px!important;
+  }
+
+  [data-store-design-v2-admin] .sd-inspector[data-sheet-level="medium"]{
+    height:min(var(--sd-visual-55,55dvh),560px)!important;
+  }
+
+  [data-store-design-v2-admin] .sd-inspector[data-sheet-level="full"]{
+    height:calc(var(--sd-visual-height,100dvh) - var(--sd-toolbar-height,56px) - var(--sd-mobile-dock-height,64px))!important;
+    max-height:none!important;
+  }
+}

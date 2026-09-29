@@ -54,6 +54,7 @@ import { StoreDesignRedirectManager } from "@/components/theme/StoreDesignRedire
 import { StoreDesignSnapshotManager } from "@/components/theme/StoreDesignSnapshotManager";
 import { StoreDesignPublishReport } from "@/components/theme/StoreDesignPublishReport";
 import { StoreDesignDestinationPicker } from "@/components/theme/StoreDesignDestinationPicker";
+import { StoreDesignMobileDockV22 } from "@/components/theme/StoreDesignMobileDockV22";
 
 type Device = "desktop" | "mobile";
 type PageItem = {
@@ -2570,32 +2571,45 @@ export function StoreDesignV21() {
         />
       ) : null}
 
-      <nav className="sd-mobile-dock hidden" aria-label="Mağaza tasarımı araçları">
-        <button type="button" aria-pressed={interactionMode === "browse" && !leftOpen && !rightOpen} className={interactionMode === "browse" && !leftOpen && !rightOpen ? "is-active" : ""} onClick={() => { setInteractionMode("browse"); setContextMenu(null); setLeftOpen(false); setRightOpen(false); }}>
-          <Eye className="h-5 w-5" /><span>Önizleme</span>
-        </button>
-        <button ref={mobileStructureButtonRef} type="button" aria-pressed={leftOpen} className={leftOpen ? "is-active" : ""} onClick={() => { setInteractionMode("edit"); setContextMenu(null); setRightOpen(false); setLeftOpen(true); }}>
-          <PanelLeft className="h-5 w-5" /><span>Yapı</span>
-        </button>
-        <button type="button" onClick={() => { setInteractionMode("edit"); setContextMenu(null); setRightOpen(false); setLeftOpen(true); setSectionPickerSignal((value) => value + 1); }}>
-          <Plus className="h-5 w-5" /><span>Ekle</span>
-        </button>
-        <button
-          ref={mobileEditButtonRef}
-          type="button"
-          aria-pressed={interactionMode === "edit" && rightOpen && !leftOpen}
-          className={interactionMode === "edit" && rightOpen && !leftOpen ? "is-active" : ""}
-          onClick={() => {
-            setInteractionMode("edit");
-            setContextMenu(null);
-            setLeftOpen(false);
-            setMobileSheetLevel(selected ? "medium" : "peek");
-            setRightOpen(true);
-          }}
-        >
-          <SlidersHorizontal className="h-5 w-5" /><span>Düzenle</span>
-        </button>
-      </nav>
+      <StoreDesignMobileDockV22
+        mode={interactionMode}
+        structureOpen={leftOpen}
+        inspectorOpen={rightOpen}
+        hasSelection={Boolean(selected)}
+        structureButtonRef={mobileStructureButtonRef}
+        editButtonRef={mobileEditButtonRef}
+        onPreview={() => {
+          setInteractionMode("browse");
+          setContextMenu(null);
+          setLeftOpen(false);
+          setRightOpen(false);
+        }}
+        onStructure={() => {
+          setInteractionMode("edit");
+          setContextMenu(null);
+          setRightOpen(false);
+          setLeftOpen((value) => !value);
+        }}
+        onAdd={() => {
+          setInteractionMode("edit");
+          setContextMenu(null);
+          setRightOpen(false);
+          setLeftOpen(true);
+          setSectionPickerSignal((value) => value + 1);
+        }}
+        onEdit={() => {
+          setInteractionMode("edit");
+          setContextMenu(null);
+          setLeftOpen(false);
+          setMobileSheetLevel(selected ? "medium" : "peek");
+          setRightOpen(true);
+        }}
+        onOpenMedia={() => { setQuickMediaEdit(null); setMediaOpen(true); }}
+        onOpenTemplates={() => setTemplateManagerOpen(true)}
+        onOpenRedirects={() => setRedirectManagerOpen(true)}
+        onOpenPages={() => setPageManagerMode(managedPage ? "edit" : "create")}
+        onOpenHistory={() => setSnapshotManagerOpen(true)}
+      />
     </div>
   );
 }
