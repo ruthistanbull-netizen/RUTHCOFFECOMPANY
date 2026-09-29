@@ -100,9 +100,9 @@ export function StoreDesignContextMenuV22({
   onOpenFull,
   onSectionAction,
 }: Props) {
-  const hasText = Boolean(target.current.content);
-  const hasLink = Boolean(target.current.link);
-  const hasMedia = Boolean(target.current.media);
+  const hasText = Boolean(target.current.content) && !target.protectedFields.includes("content");
+  const hasLink = Boolean(target.current.link) && !target.protectedFields.includes("link");
+  const hasMedia = Boolean(target.current.media) && !target.protectedFields.includes("media");
   const isVideo = target.current.media?.kind === "video";
   const canVisibility = target.controlGroups.includes("layout") || target.type.includes("menu") || hasSection;
 
