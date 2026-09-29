@@ -159,9 +159,9 @@ function editableTextElement(target: SemanticTarget) {
 
 function linkElementForTarget(target: SemanticTarget) {
   if (target.element instanceof HTMLAnchorElement) return target.element;
-  const ancestor = target.element.closest<HTMLAnchorElement>("a[href]");
+  const ancestor = target.element.closest<HTMLAnchorElement>("a");
   if (ancestor) return ancestor;
-  return target.element.querySelector<HTMLAnchorElement>("a[href]");
+  return target.element.querySelector<HTMLAnchorElement>("a");
 }
 
 function snapshot(target: SemanticTarget) {
