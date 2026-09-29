@@ -13,19 +13,39 @@ type Props = {
   publishing: boolean;
 };
 
+const LEGACY_ISSUE_CODE_ALIASES: Record<string, string> = {
+  PAGE_TEMPLATE_MISSING: "missing-page-template",
+  PAGE_SEO_MISSING: "missing-page-seo",
+  TEMPLATE_SECTION_MISSING: "missing-template-section",
+  SECTION_BLOCK_MISSING: "missing-section-block",
+  SECTION_MEDIA_MISSING: "missing-media-reference",
+  BLOCK_MEDIA_MISSING: "missing-media-reference",
+  SEO_MEDIA_MISSING: "missing-og-media",
+  BROKEN_MANAGED_LINK: "broken-merchant-link",
+  ORPHAN_SECTION: "orphan-section",
+  ORPHAN_BLOCK: "orphan-block",
+  ORPHAN_MEDIA: "orphan-media",
+};
+
+function normalizedIssueCode(issue: ThemeReferenceIssue) {
+  return LEGACY_ISSUE_CODE_ALIASES[issue.code] || issue.code;
+}
+
 function issueTopic(issue: ThemeReferenceIssue) {
-  if (issue.code.includes("media") || issue.code.includes("og")) return "Medya";
-  if (issue.code.includes("link") || issue.code.includes("redirect")) return "Bağlantılar";
-  if (issue.code.includes("block")) return "İçerik öğeleri";
-  if (issue.code.includes("section") || issue.code.includes("preset")) return "Bölümler";
-  if (issue.code.includes("template")) return "Şablonlar";
-  if (issue.code.includes("seo") || issue.code.includes("page")) return "Sayfalar";
+  const code = normalizedIssueCode(issue);
+  if (code.includes("media") || code.includes("og")) return "Medya";
+  if (code.includes("link") || code.includes("redirect")) return "Bağlantılar";
+  if (code.includes("block")) return "İçerik öğeleri";
+  if (code.includes("section") || code.includes("preset")) return "Bölümler";
+  if (code.includes("template")) return "Şablonlar";
+  if (code.includes("seo") || code.includes("page")) return "Sayfalar";
   return "Diğer";
 }
 
 function friendlyIssueMessage(issue: ThemeReferenceIssue) {
-  const route = typeof issue.target === "string" && issue.target.startsWith("/") ? issue.target : null;
-  switch (issue.code) {
+  const rawTarget = typeof issue.target === "string" ? issue.target : typeof issue.targetId === "string" ? issue.targetId : "";
+  const route = rawTarget.startsWith("/") ? rawTarget : null;
+  switch (normalizedIssueCode(issue)) {
     case "missing-page-template":
       return "Bir sayfanın görünüm şablonu eksik. Sayfa ayarlarından uygun bir şablon seç.";
     case "missing-page-seo":
@@ -63,6 +83,12 @@ function friendlyIssueMessage(issue: ThemeReferenceIssue) {
         : "Bir bağlantı henüz yayınlanmamış bir sayfaya gidiyor. Hedef sayfayı yayınla veya bağlantıyı değiştir.";
     case "missing-media-reference":
       return "Kullanılan bir medya dosyası bulunamadı. İlgili bölüm veya sayfadan yeni bir medya seç.";
+    case "orphan-section":
+      return "Bir bölüm artık hiçbir sayfada kullanılmıyor. Gerekmiyorsa temizleyebilir veya yeniden bir sayfaya bağlayabilirsin.";
+    case "orphan-block":
+      return "Bir içerik öğesi artık hiçbir bölümde kullanılmıyor. Bağlı olduğu içeriği kontrol et.";
+    case "orphan-media":
+      return "Bir medya dosyası artık hiçbir yerde kullanılmıyor. Gerekmiyorsa Medya Arşivi'nden kaldırabilirsin.";
     default:
       return "Yayınlamayı etkileyen bir düzenleme sorunu bulundu. İlgili sayfa veya bölümü kontrol edip yeniden dene.";
   }
