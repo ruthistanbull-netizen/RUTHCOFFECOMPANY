@@ -308,7 +308,7 @@ export function StoreDesignTemplateManager({
 
   return (
     <div data-closing={closing ? "true" : "false"} className="sd-modal-backdrop fixed inset-0 z-[2147483615] grid place-items-center bg-black/35 p-3 backdrop-blur-sm">
-      <div className="sd-modal-card flex h-[min(820px,94dvh)] w-full max-w-[980px] overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl">
+      <div className="sd-modal-card sd-manager-template flex h-[min(720px,86dvh)] w-full max-w-[760px] overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl">
         <aside className="flex w-[300px] shrink-0 flex-col border-r border-black/10 bg-[#fafafa]">
           <header className="border-b border-black/10 p-4">
             <div className="flex items-center gap-2">
