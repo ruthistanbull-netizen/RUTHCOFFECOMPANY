@@ -1696,6 +1696,18 @@ export function StoreDesignV21() {
     toast.success(label);
   }, [activePath, applyStructureSnapshot, document, toast]);
 
+  const applySelectedSectionSetting = useCallback(async (key: string, value: unknown, label: string) => {
+    if (!selectedSection) return;
+    const next = structuredClone(document) as ThemeDocument;
+    const section = next.sections[selectedSection.id];
+    if (!section) return;
+    section.settings = {
+      ...section.settings,
+      [key]: value,
+    };
+    await applyStructureDocument(next, label);
+  }, [applyStructureDocument, document, selectedSection]);
+
   const applyMediaDocument = useCallback(async (next: ThemeDocument, label: string) => {
     const before = structuredClone(document) as ThemeDocument;
     const after = structuredClone(next) as ThemeDocument;
@@ -2494,6 +2506,47 @@ export function StoreDesignV21() {
                         </span>
                         <span className="shrink-0 text-[10px] font-semibold">Seç / Değiştir</span>
                       </button>
+                    ) : null}
+                    {["image-text-split", "video-text-split"].includes(selectedSection.type) ? (
+                      <>
+                        <div className="grid gap-1.5">
+                          <span className="text-[10px] font-semibold opacity-60">Yerleşim</span>
+                          <div className="grid grid-cols-2 gap-1.5">
+                            <button
+                              type="button"
+                              aria-pressed={(selectedSection.settings.side || "left") === "left"}
+                              onClick={() => void applySelectedSectionSetting("side", "left", "Görsel sola alındı")}
+                              className={(selectedSection.settings.side || "left") === "left"
+                                ? "sd-primary-button h-9 rounded-md px-2 text-[10px] font-semibold"
+                                : "sd-secondary-button h-9 rounded-md border px-2 text-[10px] font-semibold"}
+                            >
+                              Görsel solda
+                            </button>
+                            <button
+                              type="button"
+                              aria-pressed={selectedSection.settings.side === "right"}
+                              onClick={() => void applySelectedSectionSetting("side", "right", "Görsel sağa alındı")}
+                              className={selectedSection.settings.side === "right"
+                                ? "sd-primary-button h-9 rounded-md px-2 text-[10px] font-semibold"
+                                : "sd-secondary-button h-9 rounded-md border px-2 text-[10px] font-semibold"}
+                            >
+                              Görsel sağda
+                            </button>
+                          </div>
+                        </div>
+                        <label className="grid gap-1.5 text-[10px] font-semibold opacity-60">
+                          Metin türü
+                          <select
+                            value={typeof selectedSection.settings.contentMode === "string" ? selectedSection.settings.contentMode : "both"}
+                            onChange={(event) => void applySelectedSectionSetting("contentMode", event.target.value, "Metin türü güncellendi")}
+                            className="sd-field h-10 rounded-md border px-3 text-[12px] font-medium outline-none"
+                          >
+                            <option value="both">Başlık + açıklama</option>
+                            <option value="heading">Yalnız başlık</option>
+                            <option value="body">Yalnız açıklama</option>
+                          </select>
+                        </label>
+                      </>
                     ) : null}
                     <button
                       type="button"
