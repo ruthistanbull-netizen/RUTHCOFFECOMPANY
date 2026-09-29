@@ -53,6 +53,7 @@ import { StoreDesignTemplateManager } from "@/components/theme/StoreDesignTempla
 import { StoreDesignRedirectManager } from "@/components/theme/StoreDesignRedirectManager";
 import { StoreDesignSnapshotManager } from "@/components/theme/StoreDesignSnapshotManager";
 import { StoreDesignPublishReport } from "@/components/theme/StoreDesignPublishReport";
+import { StoreDesignDestinationPicker } from "@/components/theme/StoreDesignDestinationPicker";
 
 type Device = "desktop" | "mobile";
 type PageItem = {
@@ -577,6 +578,7 @@ export function StoreDesignV21() {
   const [presetPickerSignal, setPresetPickerSignal] = useState(0);
   const [structureFocusSectionId, setStructureFocusSectionId] = useState<string | null>(null);
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
+  const [destinationTarget, setDestinationTarget] = useState<SelectedTarget | null>(null);
   const [inlineEditRequest, setInlineEditRequest] = useState<{ targetId: string; value: string } | null>(null);
   const [mobileSheetLevel, setMobileSheetLevel] = useState<"peek" | "medium" | "full">("peek");
   const [pageManagerMode, setPageManagerMode] = useState<"create" | "edit" | null>(null);
@@ -1449,6 +1451,25 @@ export function StoreDesignV21() {
     setFuture([]);
     applyPatchValue(selected, scope, device, "content.text", after);
   }, [inlineEditRequest, selected, activePage, scope, device]);
+
+  const applyDestination = (href: string, linkTarget: "_self" | "_blank") => {
+    const target = destinationTarget;
+    if (!target || !activePage) return;
+    const patchScope = target.allowedScopes.includes(scope) ? scope : target.defaultScope;
+    const beforeHref = snapshotValue(target, "link.href");
+    const beforeTarget = snapshotValue(target, "link.target");
+    const entries: SemanticHistoryEntry[] = [];
+    if (!Object.is(beforeHref, href)) {
+      entries.push({ kind: "semantic", target, scope: patchScope, device, path: "link.href", before: beforeHref, after: href });
+    }
+    if (!Object.is(beforeTarget, linkTarget)) {
+      entries.push({ kind: "semantic", target, scope: patchScope, device, path: "link.target", before: beforeTarget, after: linkTarget });
+    }
+    if (!entries.length) return;
+    setHistory((items) => [...items.slice(-79), { kind: "semantic-batch", label: "Bağlantı hedefi güncellendi", patches: entries }]);
+    setFuture([]);
+    for (const entry of entries) applyPatchValue(target, patchScope, device, entry.path, entry.after);
+  };
 
   const openQuickMediaPicker = () => {
     if (!selected || !activePage || !selected.current.media) return;
