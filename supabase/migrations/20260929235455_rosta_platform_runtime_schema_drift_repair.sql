@@ -233,3 +233,6 @@ end;
 $$;
 revoke all on function public.repair_storefront_product_read_models(integer) from public, anon, authenticated;
 grant execute on function public.repair_storefront_product_read_models(integer) to service_role;
+
+-- Make newly restored RPCs/tables immediately visible to PostgREST.
+select pg_notify('pgrst','reload schema');
