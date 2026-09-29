@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronDown, LayoutTemplate, PanelBottom, PanelTop, Plus, Settings2, X } from "lucide-react";
-import type { ReactNode } from "react";
+import type { ReactNode, RefObject } from "react";
 
 type PageOption = { path: string; label: string; group: string };
 
@@ -17,6 +17,7 @@ type Props = {
   onNewPage: () => void;
   onSelectGlobal: (targetId: string) => void;
   children: ReactNode;
+  panelRef?: RefObject<HTMLElement | null>;
 };
 
 export function StoreDesignStructurePanelV22({
@@ -31,9 +32,12 @@ export function StoreDesignStructurePanelV22({
   onNewPage,
   onSelectGlobal,
   children,
+  panelRef,
 }: Props) {
   return (
     <aside
+      ref={panelRef}
+      tabIndex={-1}
       aria-label="Sayfa yapısı"
       data-open={open ? "true" : "false"}
       aria-hidden={!open}
