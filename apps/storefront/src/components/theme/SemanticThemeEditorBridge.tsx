@@ -269,6 +269,7 @@ function snapshot(target: SemanticTarget) {
     color: computed.color,
     width: Math.round(rect.width),
     height: Math.round(rect.height),
+    order: Number.parseInt(computed.order || "0", 10) || 0,
     content: textElement ? {
       text: (textElement.textContent || "").replace(/\s+/g, " ").trim(),
     } : null,
@@ -318,6 +319,7 @@ function allowedPatch(definition: ComponentDefinition, path: string) {
   if (root === "content") return definition.controlGroups.includes("content");
   if (root === "link") return definition.controlGroups.includes("content") || definition.controlGroups.includes("media");
   if (root === "visible") return definition.controlGroups.includes("layout");
+  if (root === "order") return definition.controlGroups.includes("layout");
   if (root === "textAlign" || root === "color") return definition.controlGroups.includes("typography");
   if (root === "opacity" || root === "borderRadius" || root === "backgroundColor") {
     return definition.controlGroups.includes("layout") || definition.controlGroups.includes("card");
@@ -358,6 +360,12 @@ function validatePatch(target: SemanticTarget, message: ThemePatchMessage) {
       return ["left", "center", "right", "start", "end"].includes(String(message.value))
         ? { ok: true }
         : { ok: false, error: "Geçersiz hizalama." };
+    case "order": {
+      const value = Number(message.value);
+      return Number.isFinite(value) && value >= -100 && value <= 100
+        ? { ok: true }
+        : { ok: false, error: "Sıra değeri geçersiz." };
+    }
     case "opacity": {
       const value = Number(message.value);
       return Number.isFinite(value) && value >= 0 && value <= 1
