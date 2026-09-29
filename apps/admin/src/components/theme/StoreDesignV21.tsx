@@ -2546,350 +2546,183 @@ export function StoreDesignV21() {
           ref={contextMenuRef}
           data-store-design-context-menu
           tabIndex={-1}
-          className="sd-context-menu fixed z-[2147483560] w-[336px] max-w-[calc(100vw_-_24px)] overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl"
+          className="sd-context-menu fixed z-[2147483560] w-[340px] max-w-[calc(100vw_-_24px)] overflow-hidden rounded-xl border shadow-2xl"
           style={{ left: contextMenu.x, top: contextMenu.y }}
           role="dialog"
-          aria-label={`${contextMenu.target.label} hızlı düzenleme`}
+          aria-label={contextMenu.target.label + " hızlı düzenleme"}
         >
-          <div className="border-b border-black/[0.07] px-4 py-3">
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex min-w-0 items-start gap-2.5">
-                <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-black/[0.04]" aria-hidden="true">
-                  <SlidersHorizontal className="h-3.5 w-3.5" />
-                </span>
-                <div className="min-w-0">
-                  <p className="truncate text-[13px] font-semibold">{contextMenu.target.label}</p>
-                  <p className="mt-1 truncate text-[10px] text-black/45">
-                    {contextMenu.target.breadcrumb.map((item) => item.label).join(" › ")}
-                  </p>
-                </div>
-              </div>
-              <button type="button" onClick={() => setContextMenu(null)} className="sd-context-close rounded-lg px-2 py-1.5 text-[11px] font-semibold text-black/45 hover:bg-black/[0.04]">
-                Kapat
-              </button>
+          <header className="sd-context-header flex items-start justify-between gap-3 border-b px-3.5 py-3">
+            <div className="min-w-0">
+              <p className="truncate text-[13px] font-semibold">{contextMenu.target.label}</p>
+              <p className="mt-1 truncate text-[10px] opacity-55">{contextMenu.target.breadcrumb.map((item) => item.label).join(" › ")}</p>
             </div>
-          </div>
+            <button type="button" onClick={() => setContextMenu(null)} className="sd-icon-button grid h-8 w-8 shrink-0 place-items-center rounded-md border" aria-label="Kapat">
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </header>
 
-          <div className="sd-context-menu-body grid gap-3 overflow-y-auto p-3">
+          <div className="sd-context-menu-body max-h-[520px] overflow-y-auto p-2.5">
+            <div className="sd-context-task-list grid gap-1">
+              {contextMenu.target.current.content ? (
+                <button
+                  type="button"
+                  onClick={() => window.requestAnimationFrame(() => contextTextInputRef.current?.focus({ preventScroll: true }))}
+                  className="sd-context-task"
+                >
+                  <span className="sd-context-task-icon"><FileText className="h-4 w-4" /></span>
+                  <span className="min-w-0 flex-1 text-left"><strong>Metni düzenle</strong><small>Görünen yazıyı değiştir</small></span>
+                </button>
+              ) : null}
+              {contextMenu.target.current.link ? (
+                <button
+                  type="button"
+                  onClick={() => { setDestinationTarget(contextMenu.target); setContextMenu(null); }}
+                  className="sd-context-task"
+                >
+                  <span className="sd-context-task-icon"><Link2 className="h-4 w-4" /></span>
+                  <span className="min-w-0 flex-1 text-left"><strong>Hedefi değiştir</strong><small>{contextMenu.target.current.link.href || "Bağlantı yok"}</small></span>
+                </button>
+              ) : null}
+              {contextMenu.target.current.media ? (
+                <button
+                  type="button"
+                  onClick={() => { setSelected(contextMenu.target); setContextMenu(null); window.requestAnimationFrame(openQuickMediaPicker); }}
+                  className="sd-context-task"
+                >
+                  <span className="sd-context-task-icon"><Images className="h-4 w-4" /></span>
+                  <span className="min-w-0 flex-1 text-left"><strong>{contextMenu.target.current.media.kind === "video" ? "Videoyu değiştir" : "Görseli değiştir"}</strong><small>Medya arşivinden seç</small></span>
+                </button>
+              ) : null}
+              {contextMenu.target.controlGroups.includes("layout") ? (
+                <button
+                  type="button"
+                  onClick={() => applyContextPatch(contextMenu.target, "visible", contextMenu.target.current.visible === false)}
+                  className="sd-context-task"
+                >
+                  <span className="sd-context-task-icon">{contextMenu.target.current.visible === false ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}</span>
+                  <span className="min-w-0 flex-1 text-left"><strong>{contextMenu.target.current.visible === false ? "Göster" : "Gizle"}</strong><small>Bu öğenin görünürlüğünü değiştir</small></span>
+                </button>
+              ) : null}
+              {contextMenu.target.controlGroups.includes("responsive") ? (
+                <button
+                  type="button"
+                  onClick={() => { setSelected(contextMenu.target); setDevice("mobile"); setContextMenu(null); setLeftOpen(false); setMobileSheetLevel("medium"); setRightOpen(true); }}
+                  className="sd-context-task"
+                >
+                  <span className="sd-context-task-icon"><Smartphone className="h-4 w-4" /></span>
+                  <span className="min-w-0 flex-1 text-left"><strong>Mobil ayarlar</strong><small>Mobil görünümü ayrı düzenle</small></span>
+                </button>
+              ) : null}
+            </div>
+
             {contextMenu.target.current.content ? (
-              <label className="grid gap-1.5 text-[11px] font-semibold text-black/55">
-                Metin / ad
-                <input
-                  key={`context-text-${contextMenu.target.id}-${contextMenu.target.current.content.text || ""}`}
-                  defaultValue={contextMenu.target.current.content.text || ""}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter") event.currentTarget.blur();
-                  }}
-                  onBlur={(event) => {
-                    const next = event.currentTarget.value;
-                    if (next !== (contextMenu.target.current.content?.text || "")) {
-                      applyPatchValue(contextMenu.target, scope, device, "content.text", next);
-                    }
-                  }}
-                  className="sd-field h-10 rounded-xl border border-black/10 bg-white px-3 text-[12px] font-medium outline-none"
-                  placeholder="Görünen metin"
-                />
-              </label>
+              <section className="sd-context-editor mt-2.5 rounded-lg border p-3">
+                <label className="grid gap-1.5 text-[10px] font-semibold opacity-65">
+                  Metin / ad
+                  <input
+                    ref={contextTextInputRef}
+                    key={contextMenu.target.id + ":" + (contextMenu.target.current.content.text || "")}
+                    defaultValue={contextMenu.target.current.content.text || ""}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") event.currentTarget.blur();
+                      if (event.key === "Escape") {
+                        event.currentTarget.value = contextMenu.target.current.content?.text || "";
+                        event.currentTarget.blur();
+                      }
+                    }}
+                    onBlur={(event) => {
+                      const next = event.currentTarget.value;
+                      if (next !== (contextMenu.target.current.content?.text || "")) applyContextPatch(contextMenu.target, "content.text", next);
+                    }}
+                    className="sd-field h-10 rounded-md border px-3 text-[12px] font-medium outline-none"
+                  />
+                </label>
+              </section>
             ) : null}
 
             {contextMenu.target.current.link ? (
-              <div className="grid gap-2 rounded-xl border border-black/[0.08] p-3">
-                <p className="text-[11px] font-semibold text-black/55">Bağlantı</p>
+              <section className="sd-context-editor mt-2.5 rounded-lg border p-3">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="text-[10px] font-semibold opacity-60">Bağlantı</p>
+                    <p className="mt-1 truncate text-[11px] font-medium">{contextMenu.target.current.link.href || "Bağlantı yok"}</p>
+                  </div>
+                  <button type="button" onClick={() => { setDestinationTarget(contextMenu.target); setContextMenu(null); }} className="sd-secondary-button h-8 shrink-0 rounded-md border px-2.5 text-[10px] font-semibold">Değiştir</button>
+                </div>
                 <button
                   type="button"
-                  onClick={() => {
-                    setDestinationTarget(contextMenu.target);
-                    setContextMenu(null);
-                  }}
-                  className="sd-secondary-button flex h-10 items-center justify-between rounded-xl border px-3 text-[11px] font-semibold"
+                  onClick={() => applyContextPatch(contextMenu.target, "link.target", contextMenu.target.current.link?.target === "_blank" ? "_self" : "_blank")}
+                  className="sd-secondary-button mt-2 flex h-9 w-full items-center justify-between rounded-md border px-3 text-[10px] font-semibold"
                 >
-                  <span className="min-w-0 truncate">{contextMenu.target.current.link.href || "Bağlantı yok"}</span>
-                  <span className="shrink-0 text-[10px] opacity-60">Hedef seç</span>
+                  <span>{contextMenu.target.current.link?.target === "_blank" ? "Yeni sekmede açılıyor" : "Aynı sekmede açılıyor"}</span>
+                  <span className="opacity-55">Değiştir</span>
                 </button>
-                <label className="grid gap-1 text-[10px] text-black/45">
-                  Özel adres
-                  <input
-                    key={`context-link-${contextMenu.target.id}-${contextMenu.target.current.link.href || ""}`}
-                    defaultValue={contextMenu.target.current.link.href || ""}
-                    onKeyDown={(event) => {
-                      if (event.key === "Enter") event.currentTarget.blur();
-                    }}
-                    onBlur={(event) => {
-                      const next = event.currentTarget.value.trim();
-                      if (next && next !== (contextMenu.target.current.link?.href || "")) {
-                        applyPatchValue(contextMenu.target, scope, device, "link.href", next);
-                      }
-                    }}
-                    className="sd-field h-10 rounded-xl border border-black/10 bg-white px-3 text-[12px] font-medium outline-none"
-                    placeholder="/sayfa veya https://..."
-                  />
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => applyPatchValue(contextMenu.target, scope, device, "link.target", "_self")}
-                    className={`sd-secondary-button h-9 rounded-lg border px-2 text-[10px] font-semibold ${contextMenu.target.current.link?.target !== "_blank" ? "is-active" : ""}`}
-                  >
-                    Aynı sekme
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => applyPatchValue(contextMenu.target, scope, device, "link.target", "_blank")}
-                    className={`sd-secondary-button h-9 rounded-lg border px-2 text-[10px] font-semibold ${contextMenu.target.current.link?.target === "_blank" ? "is-active" : ""}`}
-                  >
-                    Yeni sekme
-                  </button>
-                </div>
-              </div>
+              </section>
             ) : null}
 
-            <label className="grid gap-1.5 text-[11px] font-semibold text-black/55">
-              Uygulama alanı
-              <select
-                value={scope}
-                onChange={(event) => setScope(event.target.value as EditorScope)}
-                className="sd-field h-10 rounded-xl border border-black/10 bg-white px-3 text-[12px] font-medium outline-none"
-              >
-                {contextMenu.target.allowedScopes.map((item) => <option key={item} value={item}>{scopeLabel(item)}</option>)}
-              </select>
-            </label>
+            {contextMenu.target.current.media ? (
+              <section className="sd-context-editor mt-2.5 grid gap-2 rounded-lg border p-3">
+                <label className="grid gap-1 text-[10px] opacity-65">
+                  Sığdırma
+                  <select value={contextMenu.target.current.media.objectFit || "cover"} onChange={(event) => applyContextPatch(contextMenu.target, "media.objectFit", event.target.value)} className="sd-field h-9 rounded-md border px-2.5 text-[11px] font-medium outline-none">
+                    <option value="cover">Kapla / kırp</option>
+                    <option value="contain">Tamamını göster</option>
+                  </select>
+                </label>
+                <label className="grid gap-1 text-[10px] opacity-65">
+                  Odak noktası
+                  <select value={contextMenu.target.current.media.objectPosition || "50% 50%"} onChange={(event) => applyContextPatch(contextMenu.target, "media.objectPosition", event.target.value)} className="sd-field h-9 rounded-md border px-2.5 text-[11px] font-medium outline-none">
+                    <option value="50% 50%">Orta</option>
+                    <option value="50% 0%">Üst</option>
+                    <option value="50% 100%">Alt</option>
+                    <option value="0% 50%">Sol</option>
+                    <option value="100% 50%">Sağ</option>
+                  </select>
+                </label>
+              </section>
+            ) : null}
 
-            <div>
-              <p className="text-[11px] font-semibold text-black/55">Hızlı ayarlar</p>
-              <div className="mt-2 grid gap-2">
-                {contextMenu.target.controlGroups.includes("typography") ? (
-                  <label className="grid gap-1 text-[11px] text-black/50">
-                    Metin hizası
-                    <select
-                      value={selected?.current.textAlign || "left"}
-                      onChange={(event) => applyInspectorPatch("textAlign", event.target.value)}
-                      className="sd-field h-10 rounded-xl border border-black/10 bg-white px-3 text-[12px] font-medium outline-none"
-                    >
-                      <option value="left">Sol</option>
-                      <option value="center">Orta</option>
-                      <option value="right">Sağ</option>
-                    </select>
-                  </label>
-                ) : null}
-
-                {contextMenu.target.controlGroups.includes("layout") ? (
-                  <label className="flex min-h-10 items-center justify-between gap-3 rounded-xl border border-black/10 bg-white px-3 text-[11px] font-semibold text-black/55">
-                    Görünür
-                    <input
-                      type="checkbox"
-                      checked={selected?.current.visible !== false}
-                      onChange={(event) => applyInspectorPatch("visible", event.target.checked)}
-                    />
-                  </label>
-                ) : null}
-
-                {contextMenu.target.type !== "product-card" && (contextMenu.target.controlGroups.includes("card") || contextMenu.target.controlGroups.includes("layout")) ? (
-                  <label className="grid gap-1 text-[11px] text-black/50">
-                    Köşe yuvarlaklığı
-                    <select
-                      value={String(Math.round(selected?.current.borderRadius || 0))}
-                      onChange={(event) => applyInspectorPatch("borderRadius", Number(event.target.value))}
-                      className="sd-field h-10 rounded-xl border border-black/10 bg-white px-3 text-[12px] font-medium outline-none"
-                    >
-                      {[0, 4, 8, 12, 16, 24, 32].map((value) => <option key={value} value={value}>{value === 0 ? "Düz" : `${value}px`}</option>)}
-                    </select>
-                  </label>
-                ) : null}
-
-                {contextMenu.target.type !== "product-card" && contextMenu.target.controlGroups.includes("media") && selected?.current.media ? (
-                  <>
-                    <button
-                      type="button"
-                      onClick={openQuickMediaPicker}
-                      className="sd-secondary-button flex h-10 items-center justify-center gap-2 rounded-xl border border-black/10 bg-white px-3 text-[11px] font-semibold"
-                    >
-                      <Images className="h-4 w-4" />
-                      {selected.current.media.kind === "video" ? "Videoyu değiştir" : "Görseli değiştir"}
-                    </button>
-                    <label className="grid gap-1 text-[11px] text-black/50">
-                      Görsel yerleşimi
-                      <select
-                        value={selected.current.media.objectFit || "cover"}
-                        onChange={(event) => applyInspectorPatch("media.objectFit", event.target.value)}
-                        className="sd-field h-10 rounded-xl border border-black/10 bg-white px-3 text-[12px] font-medium outline-none"
-                      >
-                        <option value="cover">Alanı kapla</option>
-                        <option value="contain">Görselin tamamını göster</option>
-                      </select>
-                    </label>
-                    <label className="grid gap-1 text-[11px] text-black/50">
-                      Görsel odağı
-                      <select
-                        value={selected.current.media.objectPosition || "50% 50%"}
-                        onChange={(event) => applyInspectorPatch("media.objectPosition", event.target.value)}
-                        className="sd-field h-10 rounded-xl border border-black/10 bg-white px-3 text-[12px] font-medium outline-none"
-                      >
-                        <option value="50% 50%">Orta</option>
-                        <option value="50% 0%">Üst</option>
-                        <option value="50% 100%">Alt</option>
-                        <option value="0% 50%">Sol</option>
-                        <option value="100% 50%">Sağ</option>
-                      </select>
-                    </label>
-                  </>
-                ) : null}
-
-                {contextMenu.target.type === "product-card" ? (
-                  <>
-                    <label className="grid gap-1 text-[11px] text-black/50">
-                      Kart yoğunluğu
-                      <select
-                        value={selected?.current.card?.density || "m"}
-                        onChange={(event) => applyInspectorPatch("card.density", event.target.value)}
-                        className="sd-field h-10 rounded-xl border border-black/10 bg-white px-3 text-[12px] font-medium outline-none"
-                      >
-                        <option value="s">Sıkı</option>
-                        <option value="m">Standart</option>
-                        <option value="l">Ferah</option>
-                      </select>
-                    </label>
-                    <label className="grid gap-1 text-[11px] text-black/50">
-                      Görsel oranı
-                      <select
-                        value={selected?.current.card?.imageRatio || "3/4"}
-                        onChange={(event) => applyInspectorPatch("card.imageRatio", event.target.value)}
-                        className="sd-field h-10 rounded-xl border border-black/10 bg-white px-3 text-[12px] font-medium outline-none"
-                      >
-                        <option value="3/4">3:4</option>
-                        <option value="4/5">4:5</option>
-                        <option value="1/1">1:1</option>
-                      </select>
-                    </label>
-                    <label className="flex min-h-10 items-center justify-between gap-3 rounded-xl border border-black/10 bg-white px-3 text-[11px] font-semibold text-black/55">
-                      Fiyatı göster
-                      <input
-                        type="checkbox"
-                        checked={selected?.current.card?.showPrice !== false}
-                        onChange={(event) => applyInspectorPatch("card.showPrice", event.target.checked)}
-                      />
-                    </label>
-                  </>
-                ) : null}
-
-                {contextMenu.target.type === "product-grid" ? (
-                  <label className="grid gap-1 text-[11px] text-black/50">
-                    Sütun sayısı
-                    <select
-                      value={String(selected?.current.grid?.columns ?? (device === "mobile" ? 2 : 3))}
-                      onChange={(event) => applyInspectorPatch("grid.columns", Number(event.target.value))}
-                      className="sd-field h-10 rounded-xl border border-black/10 bg-white px-3 text-[12px] font-medium outline-none"
-                    >
-                      {(device === "mobile" ? [1, 2] : [2, 3, 4, 5, 6]).map((value) => <option key={value} value={value}>{value} sütun</option>)}
-                    </select>
-                  </label>
-                ) : null}
-
-                {!contextMenu.target.controlGroups.includes("typography") &&
-                 !contextMenu.target.controlGroups.includes("card") &&
-                 !contextMenu.target.controlGroups.includes("layout") &&
-                 !(contextMenu.target.controlGroups.includes("media") && selected?.current.media) ? (
-                  <p className="rounded-xl bg-black/[0.035] p-3 text-[11px] leading-5 text-black/50">
-                    Bu öğe için hızlı ayar yok. Tüm kullanılabilir ayarları sağ panelde açabilirsin.
-                  </p>
-                ) : null}
-              </div>
-            </div>
-
-            {contextMenu.target.protectedFields.length ? (
-              <p className="rounded-xl border border-amber-500/20 bg-amber-50 p-3 text-[11px] leading-5 text-amber-900">
-                Bu öğenin bazı işlevsel ayarları korumalıdır. Yalnız güvenli görünüm seçenekleri gösterilir.
-              </p>
+            {contextMenu.target.type === "product-card" ? (
+              <section className="sd-context-editor mt-2.5 grid grid-cols-2 gap-2 rounded-lg border p-3">
+                <button type="button" onClick={() => applyContextPatch(contextMenu.target, "card.showPrice", contextMenu.target.current.card?.showPrice === false)} className="sd-secondary-button h-9 rounded-md border px-2 text-[10px] font-semibold">
+                  {contextMenu.target.current.card?.showPrice === false ? "Fiyatı göster" : "Fiyatı gizle"}
+                </button>
+                <button type="button" onClick={() => applyContextPatch(contextMenu.target, "card.showQuickAdd", contextMenu.target.current.card?.showQuickAdd === false)} className="sd-secondary-button h-9 rounded-md border px-2 text-[10px] font-semibold">
+                  {contextMenu.target.current.card?.showQuickAdd === false ? "Hızlı ekleyi aç" : "Hızlı ekleyi kapat"}
+                </button>
+              </section>
             ) : null}
 
             {contextSection && contextSectionTemplate && contextMenu.target.protectedFields.length === 0 ? (
-              <section className="border-t border-black/[0.07] pt-3" aria-label="Bölüm işlemleri">
-                <div className="flex items-center justify-between gap-2">
-                  <p className="text-[11px] font-semibold text-black/55">{contextTargetsWholeSection ? "Bölüm işlemleri" : "Üst bölüm işlemleri"}</p>
-                  {contextSectionReferenceCount > 1 ? (
-                    <span className="rounded-full border border-amber-500/20 bg-amber-50 px-2 py-1 text-[9px] font-semibold text-amber-900">
-                      {contextSectionReferenceCount} yerde bağlı
-                    </span>
-                  ) : null}
+              <section className="mt-2.5 border-t pt-2.5" aria-label="Bölüm işlemleri">
+                <div className="mb-2 flex items-center justify-between gap-2">
+                  <p className="text-[10px] font-semibold opacity-60">{contextTargetsWholeSection ? "Bölüm işlemleri" : "Üst bölüm"}</p>
+                  {contextSectionReferenceCount > 1 ? <span className="sd-warning-chip rounded-full border px-2 py-1 text-[9px] font-semibold">{contextSectionReferenceCount} sayfada</span> : null}
                 </div>
-                <div className="mt-2 grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => void applyContextSectionAction("focus")}
-                    className="sd-secondary-button flex min-h-10 items-center justify-center gap-2 rounded-xl border border-black/10 bg-white px-3 text-[11px] font-semibold"
-                  >
-                    <PanelLeft className="h-4 w-4" />{contextTargetsWholeSection ? "Yapıda aç" : "Üst bölümü aç"}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => void applyContextSectionAction("duplicate")}
-                    className="sd-secondary-button flex min-h-10 items-center justify-center gap-2 rounded-xl border border-black/10 bg-white px-3 text-[11px] font-semibold"
-                  >
-                    <Copy className="h-4 w-4" />{contextTargetsWholeSection ? "Bölümü çoğalt" : "Üst bölümü çoğalt"}
-                  </button>
-                  <button
-                    type="button"
-                    disabled={contextSectionIndex <= 0}
-                    onClick={() => void applyContextSectionAction("up")}
-                    className="sd-secondary-button flex min-h-10 items-center justify-center gap-2 rounded-xl border border-black/10 bg-white px-3 text-[11px] font-semibold disabled:opacity-40"
-                  >
-                    <ArrowUp className="h-4 w-4" />Yukarı taşı
-                  </button>
-                  <button
-                    type="button"
-                    disabled={contextSectionIndex < 0 || contextSectionIndex >= contextSectionTemplate.sectionIds.length - 1}
-                    onClick={() => void applyContextSectionAction("down")}
-                    className="sd-secondary-button flex min-h-10 items-center justify-center gap-2 rounded-xl border border-black/10 bg-white px-3 text-[11px] font-semibold disabled:opacity-40"
-                  >
-                    <ArrowDown className="h-4 w-4" />Aşağı taşı
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => void applyContextSectionAction("toggle")}
-                    className="sd-secondary-button flex min-h-10 items-center justify-center gap-2 rounded-xl border border-black/10 bg-white px-3 text-[11px] font-semibold"
-                  >
-                    {contextSection.enabled ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    {contextTargetsWholeSection
-                      ? (contextSection.enabled ? "Bölümü gizle" : "Bölümü göster")
-                      : (contextSection.enabled ? "Üst bölümü gizle" : "Üst bölümü göster")}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => void applyContextSectionAction("delete")}
-                    className="flex min-h-10 items-center justify-center gap-2 rounded-xl border border-red-500/25 bg-red-500/5 px-3 text-[11px] font-semibold text-red-600"
-                  >
-                    <Trash2 className="h-4 w-4" />{contextTargetsWholeSection ? "Bölümü kaldır" : "Üst bölümü kaldır"}
-                  </button>
+                <div className="grid grid-cols-2 gap-1.5">
+                  <button type="button" disabled={contextSectionIndex <= 0} onClick={() => void applyContextSectionAction("up")} className="sd-secondary-button flex h-9 items-center justify-center gap-1.5 rounded-md border px-2 text-[10px] font-semibold disabled:opacity-35"><ArrowUp className="h-3.5 w-3.5" />Yukarı</button>
+                  <button type="button" disabled={contextSectionIndex < 0 || contextSectionIndex >= contextSectionTemplate.sectionIds.length - 1} onClick={() => void applyContextSectionAction("down")} className="sd-secondary-button flex h-9 items-center justify-center gap-1.5 rounded-md border px-2 text-[10px] font-semibold disabled:opacity-35"><ArrowDown className="h-3.5 w-3.5" />Aşağı</button>
+                  <button type="button" onClick={() => void applyContextSectionAction("duplicate")} className="sd-secondary-button flex h-9 items-center justify-center gap-1.5 rounded-md border px-2 text-[10px] font-semibold"><Copy className="h-3.5 w-3.5" />Çoğalt</button>
+                  <button type="button" onClick={() => void applyContextSectionAction("delete")} className="sd-danger-button flex h-9 items-center justify-center gap-1.5 rounded-md border px-2 text-[10px] font-semibold"><Trash2 className="h-3.5 w-3.5" />Kaldır</button>
                 </div>
-                {contextSectionReferenceCount > 1 ? (
-                  <p className="mt-2 text-[10px] leading-4 text-black/40">
-                    Görünürlük değişikliği bu bölümü kullanan diğer bağlı yerleri de etkiler. Kaldırma yalnız bu sayfa yapısındaki bağlantıyı kaldırır.
-                  </p>
-                ) : null}
+                {contextSectionReferenceCount > 1 ? <p className="mt-2 text-[9px] leading-4 opacity-55">Bu bölüm birden fazla sayfada kullanılıyor. Görünüm değişiklikleri bağlı yerleri etkileyebilir.</p> : null}
               </section>
+            ) : null}
+
+            {contextMenu.target.protectedFields.length ? (
+              <p className="sd-protected-note mt-2.5 rounded-lg border p-3 text-[10px] leading-4">Bu öğenin bazı işlevleri burada değiştirilemez. Güvenli düzenleme seçenekleri gösteriliyor.</p>
             ) : null}
           </div>
 
-          <div className="grid grid-cols-2 gap-2 border-t border-black/[0.07] p-3">
+          <footer className="border-t p-2.5">
             <button
               type="button"
-              onClick={resetQuickOverrides}
-              className="sd-secondary-button h-10 rounded-xl border border-black/10 bg-white px-3 text-[11px] font-semibold"
-            >
-              Hızlı ayarları sıfırla
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setSelected(contextMenu.target);
-                setContextMenu(null);
-                setLeftOpen(false);
-                setRightOpen(true);
-              }}
-              className="sd-primary-button h-10 rounded-xl px-3 text-[11px] font-semibold text-white"
+              onClick={() => { setSelected(contextMenu.target); setContextMenu(null); setLeftOpen(false); setMobileSheetLevel("medium"); setRightOpen(true); }}
+              className="sd-primary-button h-10 w-full rounded-md px-3 text-[11px] font-semibold"
             >
               Tüm ayarları aç
             </button>
-          </div>
+          </footer>
         </div>
       ) : null}
 
