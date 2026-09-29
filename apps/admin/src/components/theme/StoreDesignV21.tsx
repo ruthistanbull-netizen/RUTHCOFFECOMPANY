@@ -2086,13 +2086,29 @@ export function StoreDesignV21() {
               </button>
             </div>
             {selected ? (
-              <div role="group" className="sd-mobile-sheet-levels mt-3 hidden grid-cols-3 gap-1 rounded-lg p-1" aria-label="Ayar paneli görünümü">
-                {(["peek", "medium", "full"] as const).map((level) => (
-                  <button key={level} type="button" aria-pressed={mobileSheetLevel === level} onClick={() => setMobileSheetLevel(level)} className={mobileSheetLevel === level ? "is-active rounded-md px-2 py-2 text-[10px] font-semibold" : "rounded-md px-2 py-2 text-[10px] font-semibold"}>
-                    {level === "peek" ? "Özet" : level === "medium" ? "Ayarlar" : "Tam ekran"}
-                  </button>
-                ))}
-              </div>
+              <>
+                <div role="group" className="sd-mobile-sheet-levels mt-3 hidden grid-cols-3 gap-1 rounded-lg p-1" aria-label="Ayar paneli görünümü">
+                  {(["peek", "medium", "full"] as const).map((level) => (
+                    <button key={level} type="button" aria-pressed={mobileSheetLevel === level} onClick={() => setMobileSheetLevel(level)} className={mobileSheetLevel === level ? "is-active rounded-md px-2 py-2 text-[10px] font-semibold" : "rounded-md px-2 py-2 text-[10px] font-semibold"}>
+                      {level === "peek" ? "Özet" : level === "medium" ? "Ayarlar" : "Tam ekran"}
+                    </button>
+                  ))}
+                </div>
+                <div className="sd-mobile-peek-actions mt-3 hidden grid-cols-4 gap-1.5">
+                  {selected.current.content ? (
+                    <button type="button" onClick={() => setMobileSheetLevel("medium")} className="sd-mobile-quick-action"><FileText className="h-4 w-4" /><span>Düzenle</span></button>
+                  ) : null}
+                  {selected.current.link ? (
+                    <button type="button" onClick={() => setDestinationTarget(selected)} className="sd-mobile-quick-action"><Link2 className="h-4 w-4" /><span>Hedef</span></button>
+                  ) : null}
+                  {selected.current.media ? (
+                    <button type="button" onClick={openQuickMediaPicker} className="sd-mobile-quick-action"><Images className="h-4 w-4" /><span>Medya</span></button>
+                  ) : null}
+                  {selected.controlGroups.includes("layout") ? (
+                    <button type="button" onClick={() => applyInspectorPatch("visible", selected.current.visible === false)} className="sd-mobile-quick-action">{selected.current.visible === false ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}<span>{selected.current.visible === false ? "Göster" : "Gizle"}</span></button>
+                  ) : null}
+                </div>
+              </>
             ) : null}
           </div>
 
