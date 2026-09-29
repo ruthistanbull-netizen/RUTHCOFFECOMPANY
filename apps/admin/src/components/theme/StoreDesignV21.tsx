@@ -1506,21 +1506,28 @@ export function StoreDesignV21() {
     for (const entry of entries) applyPatchValue(target, patchScope, device, entry.path, entry.after);
   };
 
-  const openQuickMediaPicker = () => {
-    if (!selected || !activePage || !selected.current.media) return;
-    const responsive = responsiveSettingsFor(document, selected, scope, activePage);
+  const openQuickMediaPickerForTarget = (target: SelectedTarget) => {
+    if (!activePage || !target.current.media) return;
+    const patchScope = target.allowedScopes.includes(scope) ? scope : target.defaultScope;
+    const responsive = responsiveSettingsFor(document, target, patchScope, activePage);
     const deviceLeaves = new Map(flattenResponsiveLeaves(recordValue(responsive[device])));
+    setSelected(target);
     setQuickMediaEdit({
-      target: selected,
-      scope,
+      target,
+      scope: patchScope,
       device,
       page: activePage,
-      mediaType: selected.current.media.kind === "video" ? "video" : "image",
+      mediaType: target.current.media.kind === "video" ? "video" : "image",
       beforeOverride: deviceLeaves.has("media.src") ? deviceLeaves.get("media.src") : null,
-      visibleSource: selected.current.media.src || "",
+      visibleSource: target.current.media.src || "",
     });
     setContextMenu(null);
     setMediaOpen(true);
+  };
+
+  const openQuickMediaPicker = () => {
+    if (!selected) return;
+    openQuickMediaPickerForTarget(selected);
   };
 
   const applyQuickMediaSource = (source: string) => {
@@ -2325,7 +2332,7 @@ export function StoreDesignV21() {
               {contextMenu.target.current.media ? (
                 <button
                   type="button"
-                  onClick={() => { setSelected(contextMenu.target); setContextMenu(null); window.requestAnimationFrame(openQuickMediaPicker); }}
+                  onClick={() => openQuickMediaPickerForTarget(contextMenu.target)}
                   className="sd-context-task"
                 >
                   <span className="sd-context-task-icon"><Images className="h-4 w-4" /></span>
