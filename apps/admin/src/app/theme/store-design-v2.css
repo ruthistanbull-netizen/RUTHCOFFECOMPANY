@@ -1966,3 +1966,22 @@
   [data-store-design-v2-admin] .sd-context-menu{left:8px!important;width:min(360px,calc(100vw - 16px))!important;max-height:72vh!important}
 }
 
+
+[data-store-design-v2-admin] .sd-mobile-quick-action{
+  display:flex;
+  min-height:50px;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  border:1px solid var(--sd-border)!important;
+  border-radius:9px;
+  background:var(--sd-surface-2)!important;
+  color:var(--sd-text-1)!important;
+  font-size:9px!important;
+  font-weight:650;
+}
+[data-store-design-v2-admin] .sd-mobile-quick-action svg{color:var(--sd-accent)}
+@media(max-width:767px){
+  [data-store-design-v2-admin] .sd-inspector[data-sheet-level="peek"] .sd-mobile-peek-actions{display:grid!important}
+}
