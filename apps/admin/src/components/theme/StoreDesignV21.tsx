@@ -2922,6 +2922,18 @@ export function StoreDesignV21() {
         </div>
       ) : null}
 
+      <StoreDesignDestinationPicker
+        open={Boolean(destinationTarget)}
+        document={document}
+        pages={editorPages}
+        activePath={activePath}
+        targetLabel={destinationTarget?.label || "Bağlantı"}
+        currentHref={destinationTarget?.current.link?.href || ""}
+        currentTarget={destinationTarget?.current.link?.target || "_self"}
+        onApply={(href, target) => applyDestination(href, target)}
+        onClose={() => setDestinationTarget(null)}
+      />
+
       {publishIssues !== null ? (
         <StoreDesignPublishReport
           issues={publishIssues}
