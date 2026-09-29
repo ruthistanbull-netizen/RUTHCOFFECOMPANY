@@ -2472,8 +2472,10 @@ export function StoreDesignV21() {
           onEditText={() => {
             setSelected(contextMenu.target);
             setContextMenu(null);
-            setLeftOpen(false);
-            setRightOpen(true);
+            postToPreview({
+              type: "store-design-v2:start-inline-edit",
+              targetId: contextMenu.target.id,
+            });
           }}
           onChangeDestination={() => {
             setDestinationTarget(contextMenu.target);
