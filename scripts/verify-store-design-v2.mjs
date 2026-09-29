@@ -174,12 +174,46 @@ const storeDesignRouteCss = read("apps/admin/src/app/theme/store-design-v2.css")
 for (const token of [
   "[data-store-design-v2-admin]",
   "--sd-editor-bg",
-  ".sd-toolbar-secondary{display:none!important}",
+  "Store Design V2.2 FINAL SHELL",
   ".sd-mobile-dock",
   ".sd-context-menu",
+  ".sd-context-task",
+  ".sd-inspector-group-title",
+  ".sd-mobile-quick-action",
 ]) {
   if (!storeDesignRouteCss.includes(token)) fail(`Mağaza Tasarımı V2 route CSS eksik: ${token}`);
 }
+
+const storeDesignV22 = read("apps/admin/src/components/theme/StoreDesignV21.tsx");
+for (const token of [
+  "sd-toolbar-left",
+  "sd-save-status",
+  "Global alanlar",
+  "Metni düzenle",
+  "Hedefi değiştir",
+  "Tüm ayarları aç",
+  "sd-mobile-peek-actions",
+  "<StoreDesignDestinationPicker",
+]) {
+  if (!storeDesignV22.includes(token)) fail(`Store Design V2.2 shell eksik: ${token}`);
+}
+for (const staleToken of ["HIZLI AYARLAR", "SEÇİLİ ÖĞE", "sd-toolbar-secondary"]) {
+  if (storeDesignV22.includes(staleToken)) fail(`Store Design V2.2 içinde eski shell kalıntısı: ${staleToken}`);
+}
+
+const destinationPicker = read("apps/admin/src/components/theme/StoreDesignDestinationPicker.tsx");
+for (const token of ["Sayfa", "Koleksiyon", "Ürün", "Özel URL", "Sayfa içi alan", "Bağlantı yok"]) {
+  if (!destinationPicker.includes(token)) fail(`Hedef seçicide eksik seçenek: ${token}`);
+}
+
+for (const type of ["menu-link", "footer-link", "footer-logo", "footer-text", "text", "link", "button", "image", "video"]) {
+  if (!registry.has(type)) fail(`V2.2 doğrudan düzenleme semantic type eksik: ${type}`);
+}
+
+if (!bridge.includes("ensureAutomaticTarget")) fail("V2.2 exact target çözümleyicisi preview bridge'e bağlı değil.");
+if (!bridge.includes('document.addEventListener("contextmenu", onContextMenu, true)')) fail("V2.2 preview sağ tık yakalayıcısı bağlı değil.");
+if (!runtime.includes("markAutomaticSemanticTargets")) fail("V2.2 otomatik hedefler yayınlanan runtime'a taşınmıyor.");
+if (!runtime.includes('patch.path === "content.text"')) fail("V2.2 metin değişiklikleri runtime'da kalıcı değil.");
 
 const requiredV21Files = [
   "apps/admin/src/components/theme/StoreDesignPublishReport.tsx",
