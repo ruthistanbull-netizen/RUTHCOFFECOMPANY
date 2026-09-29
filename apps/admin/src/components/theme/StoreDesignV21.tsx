@@ -530,8 +530,6 @@ export function StoreDesignV21() {
   const toast = useExactToast();
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const editorShellRef = useRef<HTMLDivElement | null>(null);
-  const mobileMoreButtonRef = useRef<HTMLButtonElement | null>(null);
-  const mobileMoreMenuRef = useRef<HTMLDivElement | null>(null);
   const mobileStructureButtonRef = useRef<HTMLButtonElement | null>(null);
   const mobileEditButtonRef = useRef<HTMLButtonElement | null>(null);
   const contextMenuRef = useRef<HTMLDivElement | null>(null);
@@ -560,7 +558,6 @@ export function StoreDesignV21() {
   const [leftOpen, setLeftOpen] = useState(true);
   const [rightOpen, setRightOpen] = useState(false);
   const [isMobileViewport, setIsMobileViewport] = useState(false);
-  const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
   const [sectionPickerSignal, setSectionPickerSignal] = useState(0);
   const [presetPickerSignal, setPresetPickerSignal] = useState(0);
   const [structureFocusSectionId, setStructureFocusSectionId] = useState<string | null>(null);
@@ -607,7 +604,6 @@ export function StoreDesignV21() {
 
       setDevice("desktop");
       setInteractionMode("edit");
-      setMobileMoreOpen(false);
       setLeftOpen(band !== "tablet");
       setRightOpen(false);
     };
@@ -652,61 +648,9 @@ export function StoreDesignV21() {
   }, [isMobileViewport, leftOpen, rightOpen, selected]);
 
   useEffect(() => {
-    if (!mobileMoreOpen) return;
-
-    const focusFrame = window.requestAnimationFrame(() => {
-      mobileMoreMenuRef.current?.querySelector<HTMLButtonElement>('button:not([disabled])')?.focus({ preventScroll: true });
-    });
-
-    const closeOutside = (event: PointerEvent) => {
-      const element = event.target instanceof Element ? event.target : null;
-      if (element?.closest(".sd-more-tools")) return;
-      setMobileMoreOpen(false);
-    };
-
-    const onMenuKeyDown = (event: KeyboardEvent) => {
-      const menu = mobileMoreMenuRef.current;
-      if (!menu) return;
-      const items = Array.from(menu.querySelectorAll<HTMLButtonElement>('button:not([disabled])'));
-      if (!items.length) return;
-
-      if (event.key === "Escape") {
-        event.preventDefault();
-        event.stopPropagation();
-        setMobileMoreOpen(false);
-        window.requestAnimationFrame(() => mobileMoreButtonRef.current?.focus({ preventScroll: true }));
-        return;
-      }
-
-      const current = Math.max(0, items.indexOf(window.document.activeElement as HTMLButtonElement));
-      const moveTo = (index: number) => {
-        event.preventDefault();
-        items[(index + items.length) % items.length]?.focus({ preventScroll: true });
-      };
-
-      if (event.key === "ArrowDown") moveTo(current + 1);
-      else if (event.key === "ArrowUp") moveTo(current - 1);
-      else if (event.key === "Home") moveTo(0);
-      else if (event.key === "End") moveTo(items.length - 1);
-    };
-
-    window.addEventListener("pointerdown", closeOutside);
-    window.addEventListener("keydown", onMenuKeyDown);
-    return () => {
-      window.cancelAnimationFrame(focusFrame);
-      window.removeEventListener("pointerdown", closeOutside);
-      window.removeEventListener("keydown", onMenuKeyDown);
-    };
-  }, [mobileMoreOpen]);
-
-  useEffect(() => {
-    if (!isMobileViewport || (!leftOpen && !rightOpen && !mobileMoreOpen)) return;
+    if (!isMobileViewport || (!leftOpen && !rightOpen)) return;
     const onMobileEscape = (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
-      if (mobileMoreOpen) {
-        setMobileMoreOpen(false);
-        return;
-      }
       if (rightOpen) {
         setRightOpen(false);
         setMobileSheetLevel("peek");
@@ -720,7 +664,7 @@ export function StoreDesignV21() {
     };
     window.addEventListener("keydown", onMobileEscape);
     return () => window.removeEventListener("keydown", onMobileEscape);
-  }, [isMobileViewport, leftOpen, mobileMoreOpen, rightOpen]);
+  }, [isMobileViewport, leftOpen, rightOpen]);
 
   useEffect(() => {
     if (!contextMenu) return;
@@ -805,14 +749,6 @@ export function StoreDesignV21() {
     setLeftOpen((current) => {
       const next = !current;
       if (next && window.innerWidth <= 1199) setRightOpen(false);
-      return next;
-    });
-  };
-
-  const toggleInspectorPanel = () => {
-    setRightOpen((current) => {
-      const next = !current;
-      if (next && window.innerWidth <= 1199) setLeftOpen(false);
       return next;
     });
   };
