@@ -763,6 +763,19 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
       }
     };
 
+    const targetPayload = (target: SemanticTarget) => ({
+      id: target.id,
+      type: target.type,
+      label: target.label,
+      instanceKey: target.instanceKey,
+      defaultScope: target.definition.defaultScope,
+      allowedScopes: target.definition.allowedScopes,
+      controlGroups: target.definition.controlGroups,
+      protectedFields: target.definition.protectedFields,
+      breadcrumb: breadcrumbs(target),
+      current: snapshot(target),
+    });
+
     const select = (target: SemanticTarget, pointer?: { x: number; y: number; kind: "mouse" | "touch" }) => {
       selectedRef.current = target;
       positionOverlay();
@@ -770,18 +783,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
         type: STORE_DESIGN_MESSAGES.SELECT,
         schemaVersion: STORE_DESIGN_SCHEMA_VERSION,
         route: window.location.pathname,
-        target: {
-          id: target.id,
-          type: target.type,
-          label: target.label,
-          instanceKey: target.instanceKey,
-          defaultScope: target.definition.defaultScope,
-          allowedScopes: target.definition.allowedScopes,
-          controlGroups: target.definition.controlGroups,
-          protectedFields: target.definition.protectedFields,
-          breadcrumb: breadcrumbs(target),
-          current: snapshot(target),
-        },
+        target: targetPayload(target),
         pointer,
       });
     };
@@ -837,7 +839,20 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
       const target = targetFromEvent(event);
       if (!target) return;
       const element = editableTextElement(target);
-      if (!element) return;
+      if (!element) {
+        const media = mediaElementForTarget(target);
+        if (!media) return;
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        select(target);
+        post({
+          type: "store-design-v2:quick-action",
+          action: "media",
+          target: targetPayload(target),
+        });
+        return;
+      }
 
       event.preventDefault();
       event.stopPropagation();
