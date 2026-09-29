@@ -137,9 +137,33 @@ function breadcrumbs(target: SemanticTarget) {
   return chain;
 }
 
+function editableTextElement(target: SemanticTarget) {
+  const direct = target.element.matches('[data-store-design-editable-text="true"]')
+    ? target.element
+    : target.element.querySelector<HTMLElement>('[data-store-design-editable-text="true"]');
+  if (direct instanceof HTMLElement) return direct;
+
+  const tag = target.element.tagName;
+  const simpleTextTag = target.element instanceof HTMLAnchorElement
+    || target.element instanceof HTMLButtonElement
+    || /^H[1-6]$/.test(tag)
+    || tag === "P"
+    || tag === "SPAN";
+  if (!simpleTextTag) return null;
+  if (target.element.querySelector("img,video,svg")) return null;
+  return target.element;
+}
+
+function linkElementForTarget(target: SemanticTarget) {
+  if (target.element instanceof HTMLAnchorElement) return target.element;
+  return target.element.querySelector<HTMLAnchorElement>("a[href]");
+}
+
 function snapshot(target: SemanticTarget) {
   const computed = window.getComputedStyle(target.element);
   const rect = target.element.getBoundingClientRect();
+  const textElement = editableTextElement(target);
+  const linkElement = linkElementForTarget(target);
   const media = target.element instanceof HTMLImageElement || target.element instanceof HTMLVideoElement
     ? target.element
     : target.definition.controlGroups.includes("media")
@@ -156,6 +180,13 @@ function snapshot(target: SemanticTarget) {
     color: computed.color,
     width: Math.round(rect.width),
     height: Math.round(rect.height),
+    content: textElement ? {
+      text: (textElement.textContent || "").replace(/\s+/g, " ").trim(),
+    } : null,
+    link: linkElement ? {
+      href: linkElement.getAttribute("href") || "",
+      target: linkElement.getAttribute("target") === "_blank" ? "_blank" : "_self",
+    } : null,
     media: media ? {
       kind: media instanceof HTMLVideoElement ? "video" : "image",
       src: media.getAttribute("src") || media.currentSrc || "",
@@ -194,6 +225,8 @@ function allowedPatch(definition: ComponentDefinition, path: string) {
   if (definition.protectedFields.includes(path) || definition.protectedFields.includes(root)) return false;
   if (definition.semanticType === "consent-banner" && CONSENT_APPEARANCE_PATCHES.has(path)) return true;
 
+  if (root === "content") return definition.controlGroups.includes("content");
+  if (root === "link") return definition.controlGroups.includes("content") || definition.controlGroups.includes("media");
   if (root === "visible") return definition.controlGroups.includes("layout");
   if (root === "textAlign" || root === "color") return definition.controlGroups.includes("typography");
   if (root === "opacity" || root === "borderRadius" || root === "backgroundColor") {
@@ -212,6 +245,22 @@ function validatePatch(target: SemanticTarget, message: ThemePatchMessage) {
   if (message.value === null) return { ok: true };
 
   switch (message.path) {
+    case "content.text": {
+      const value = String(message.value ?? "");
+      return value.length <= 500 && !/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/.test(value)
+        ? { ok: true }
+        : { ok: false, error: "Metin 500 karakterden kısa olmalı." };
+    }
+    case "link.href": {
+      const value = String(message.value || "").trim();
+      if (!value || value.length > 2048) return { ok: false, error: "Geçerli bir bağlantı seç." };
+      if (value.startsWith("/") || value.startsWith("#") || /^(https?:|mailto:|tel:)/i.test(value)) return { ok: true };
+      return { ok: false, error: "Bağlantı / ile başlayan site adresi veya güvenli bir web adresi olmalı." };
+    }
+    case "link.target":
+      return ["_self", "_blank"].includes(String(message.value))
+        ? { ok: true }
+        : { ok: false, error: "Geçersiz sekme seçimi." };
     case "visible":
       return { ok: typeof message.value === "boolean", error: typeof message.value === "boolean" ? undefined : "Geçersiz görünürlük değeri." };
     case "textAlign":
@@ -424,6 +473,8 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
     let interactionMode: "browse" | "edit" = "edit";
     const originalTabIndex = new Map<HTMLElement, string | null>();
     const originalMediaSources = new WeakMap<HTMLImageElement | HTMLVideoElement, { src: string | null; srcset?: string | null }>();
+    const originalTextValues = new WeakMap<HTMLElement, string>();
+    const originalLinkValues = new WeakMap<HTMLAnchorElement, { href: string | null; target: string | null }>();
 
     const syncKeyboardTargets = () => {
       const targets = Array.from(document.querySelectorAll<HTMLElement>(TARGET_SELECTOR));
@@ -548,6 +599,46 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
       }
 
       if (media instanceof HTMLVideoElement) media.load();
+    };
+
+    const applyDirectContentPatch = (target: SemanticTarget, message: ThemePatchMessage) => {
+      if (message.path === "content.text") {
+        const element = editableTextElement(target);
+        if (!element) return;
+        if (!originalTextValues.has(element)) originalTextValues.set(element, element.textContent || "");
+        element.textContent = message.value === null
+          ? originalTextValues.get(element) || ""
+          : String(message.value ?? "");
+        return;
+      }
+
+      if (message.path === "link.href" || message.path === "link.target") {
+        const link = linkElementForTarget(target);
+        if (!link) return;
+        if (!originalLinkValues.has(link)) {
+          originalLinkValues.set(link, {
+            href: link.getAttribute("href"),
+            target: link.getAttribute("target"),
+          });
+        }
+        const original = originalLinkValues.get(link);
+        if (message.path === "link.href") {
+          if (message.value === null) {
+            if (original?.href === null || original?.href === undefined) link.removeAttribute("href");
+            else link.setAttribute("href", original.href);
+          } else {
+            link.setAttribute("href", String(message.value));
+          }
+        } else if (message.value === null) {
+          if (original?.target === null || original?.target === undefined) link.removeAttribute("target");
+          else link.setAttribute("target", original.target);
+        } else if (String(message.value) === "_blank") {
+          link.setAttribute("target", "_blank");
+          link.setAttribute("rel", "noopener noreferrer");
+        } else {
+          link.removeAttribute("target");
+        }
+      }
     };
 
     const select = (target: SemanticTarget, pointer?: { x: number; y: number; kind: "mouse" | "touch" }) => {
@@ -718,6 +809,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
 
         if (target && result.ok) {
           applyDirectMediaPatch(target, message);
+          applyDirectContentPatch(target, message);
           dispatchRuntimePatch(target, message);
           selectedRef.current = target;
           positionOverlay();
