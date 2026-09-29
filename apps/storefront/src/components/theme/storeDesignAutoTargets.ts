@@ -32,6 +32,35 @@ function autoLabel(element: Element, fallback: string) {
   return label.slice(0, 80);
 }
 
+function markEditableText(candidate: HTMLElement, type: string) {
+  candidate.removeAttribute("data-store-design-editable-text");
+  for (const nested of candidate.querySelectorAll<HTMLElement>('[data-store-design-auto-text="true"]')) {
+    nested.removeAttribute("data-store-design-auto-text");
+    nested.removeAttribute("data-store-design-editable-text");
+  }
+
+  if (type === "text-element") {
+    candidate.dataset.storeDesignEditableText = "true";
+    return;
+  }
+  if (type !== "link-element" && type !== "button-element") return;
+
+  if (!candidate.querySelector("img,video,svg")) {
+    candidate.dataset.storeDesignEditableText = "true";
+    return;
+  }
+
+  const textChild = Array.from(candidate.querySelectorAll<HTMLElement>("span,strong,em,b,i"))
+    .find((element) => {
+      if (element.querySelector("img,video,svg")) return false;
+      return Boolean(element.textContent?.replace(/\s+/g, " ").trim());
+    });
+  if (textChild) {
+    textChild.dataset.storeDesignEditableText = "true";
+    textChild.dataset.storeDesignAutoText = "true";
+  }
+}
+
 function editableCandidate(element: Element | null) {
   if (!element) return null;
   const candidate = element.closest<HTMLElement>(AUTO_CANDIDATE_SELECTOR);
@@ -66,9 +95,7 @@ function decorateParent(parent: HTMLElement) {
     candidate.dataset.editorLabel = autoLabel(candidate, type);
     candidate.dataset.editorInstance = `auto:${kind}:${index}`;
     candidate.dataset.storeDesignAutoTarget = "true";
-    if (type === "text-element" || type === "link-element" || type === "button-element") {
-      candidate.dataset.storeDesignEditableText = "true";
-    }
+    markEditableText(candidate, type);
   }
 }
 
