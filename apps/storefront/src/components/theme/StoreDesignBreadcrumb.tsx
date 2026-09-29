@@ -43,8 +43,8 @@ export function StoreDesignBreadcrumb({
       data-theme-section-id={sectionId}
       data-editor-id={`section:${sectionId}`}
       data-editor-type="breadcrumb"
-      data-editor-label="Breadcrumb"
-      aria-label="Breadcrumb"
+      data-editor-label="Sayfa Yolu"
+      aria-label="Sayfa Yolu"
       className={`w-full ${className}`}
       style={{ paddingTop: paddingY, paddingBottom: paddingY }}
     >
