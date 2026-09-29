@@ -15,6 +15,7 @@ import {
   Video,
   X,
 } from "lucide-react";
+import type { RefObject } from "react";
 import type { EditorScope } from "@ruth-commerce/commerce-core/store-design-v2";
 
 type Target = {
@@ -37,7 +38,7 @@ type Props = {
   y: number;
   target: Target;
   scope: EditorScope;
-  contextMenuRef: React.RefObject<HTMLDivElement | null>;
+  contextMenuRef: RefObject<HTMLDivElement | null>;
   hasSection: boolean;
   canMoveSectionUp: boolean;
   canMoveSectionDown: boolean;
