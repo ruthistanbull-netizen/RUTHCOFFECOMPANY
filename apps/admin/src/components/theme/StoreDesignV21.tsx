@@ -83,6 +83,7 @@ type SelectedTarget = {
     color?: string;
     width?: number;
     height?: number;
+    order?: number;
     content?: { text?: string } | null;
     link?: { href?: string; target?: "_self" | "_blank" } | null;
     media?: { kind?: "image" | "video"; src?: string; alt?: string; objectFit?: string; objectPosition?: string } | null;
@@ -327,6 +328,7 @@ function responsiveSettingsFor(
 }
 
 function snapshotValue(target: SelectedTarget, path: string) {
+  if (path === "order") return target.current.order || 0;
   if (path === "content.text") return target.current.content?.text || "";
   if (path === "link.href") return target.current.link?.href || "";
   if (path === "link.target") return target.current.link?.target || "_self";
@@ -352,6 +354,9 @@ function snapshotValue(target: SelectedTarget, path: string) {
 
 function updateTargetSnapshot(target: SelectedTarget, path: string, value: unknown): SelectedTarget {
   if (value === null) return target;
+  if (path === "order") {
+    return { ...target, current: { ...target.current, order: Number(value) || 0 } };
+  }
   if (path === "content.text") {
     return { ...target, current: { ...target.current, content: { ...(target.current.content || {}), text: String(value ?? "") } } };
   }
@@ -2320,6 +2325,16 @@ export function StoreDesignV21() {
                   <span className="sd-context-task-icon">{contextMenu.target.current.visible === false ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}</span>
                   <span className="min-w-0 flex-1 text-left"><strong>{contextMenu.target.current.visible === false ? "Göster" : "Gizle"}</strong><small>Bu öğenin görünürlüğünü değiştir</small></span>
                 </button>
+              ) : null}
+              {contextMenu.target.type === "menu-link" ? (
+                <div className="grid grid-cols-2 gap-1.5">
+                  <button type="button" onClick={() => applyContextPatch(contextMenu.target, "order", (contextMenu.target.current.order || 0) - 1)} className="sd-context-task justify-center">
+                    <ArrowUp className="h-4 w-4" /><strong>Yukarı taşı</strong>
+                  </button>
+                  <button type="button" onClick={() => applyContextPatch(contextMenu.target, "order", (contextMenu.target.current.order || 0) + 1)} className="sd-context-task justify-center">
+                    <ArrowDown className="h-4 w-4" /><strong>Aşağı taşı</strong>
+                  </button>
+                </div>
               ) : null}
               {contextMenu.target.controlGroups.includes("responsive") ? (
                 <button
