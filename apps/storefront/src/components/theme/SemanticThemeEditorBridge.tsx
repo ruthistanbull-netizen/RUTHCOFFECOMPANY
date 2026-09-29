@@ -708,6 +708,69 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
       select(target);
     };
 
+    const onDoubleClick = (event: MouseEvent) => {
+      if (interactionMode !== "edit") return;
+      const target = targetFromEvent(event);
+      if (!target) return;
+      const element = editableTextElement(target);
+      if (!element) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+      select(target);
+
+      const before = (element.textContent || "").replace(/\s+/g, " ").trim();
+      element.setAttribute("contenteditable", "true");
+      element.setAttribute("spellcheck", "false");
+      element.dataset.storeDesignInlineEdit = "true";
+      element.focus({ preventScroll: true });
+
+      const selection = window.getSelection();
+      const range = document.createRange();
+      range.selectNodeContents(element);
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+
+      let cancelled = false;
+      const cleanup = () => {
+        element.removeAttribute("contenteditable");
+        element.removeAttribute("spellcheck");
+        delete element.dataset.storeDesignInlineEdit;
+        element.removeEventListener("keydown", onInlineKeyDown, true);
+        element.removeEventListener("blur", onInlineBlur, true);
+      };
+      const commit = () => {
+        const value = (element.textContent || "").replace(/\s+/g, " ").trim();
+        cleanup();
+        if (!cancelled && value !== before) {
+          post({
+            type: "store-design-v2:inline-edit",
+            targetId: target.id,
+            value,
+          });
+        }
+      };
+      const onInlineBlur = () => commit();
+      const onInlineKeyDown = (keyEvent: KeyboardEvent) => {
+        keyEvent.stopPropagation();
+        if (keyEvent.key === "Escape") {
+          keyEvent.preventDefault();
+          cancelled = true;
+          element.textContent = before;
+          cleanup();
+          element.blur();
+          return;
+        }
+        if (keyEvent.key === "Enter" && !keyEvent.shiftKey) {
+          keyEvent.preventDefault();
+          element.blur();
+        }
+      };
+      element.addEventListener("keydown", onInlineKeyDown, true);
+      element.addEventListener("blur", onInlineBlur, true);
+    };
+
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Tab" && interactionMode === "edit") syncKeyboardTargets();
       const wantsQuickMenu = event.key === "ContextMenu" || (event.shiftKey && event.key === "F10");
@@ -881,6 +944,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
 
     document.addEventListener("contextmenu", onContextMenu, true);
     document.addEventListener("click", onClick, true);
+    document.addEventListener("dblclick", onDoubleClick, true);
     document.addEventListener("keydown", onKeyDown, true);
     document.addEventListener("focusin", onFocusIn, true);
     document.addEventListener("touchstart", onTouchStart, { capture: true, passive: true });
@@ -898,6 +962,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
       clearPress();
       document.removeEventListener("contextmenu", onContextMenu, true);
       document.removeEventListener("click", onClick, true);
+      document.removeEventListener("dblclick", onDoubleClick, true);
       document.removeEventListener("keydown", onKeyDown, true);
       document.removeEventListener("focusin", onFocusIn, true);
       document.removeEventListener("touchstart", onTouchStart, true);
