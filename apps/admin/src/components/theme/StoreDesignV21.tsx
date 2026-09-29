@@ -1,13 +1,7 @@
 "use client";
 
 import {
-  ArrowDown,
-  ArrowUp,
-  Eye,
-  PanelLeft,
-  Plus,
   RefreshCw,
-  SlidersHorizontal,
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
