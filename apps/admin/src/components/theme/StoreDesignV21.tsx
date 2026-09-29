@@ -1026,9 +1026,12 @@ export function StoreDesignV21() {
           return;
         }
         if (typeof data.targetId === "string" && data.current && typeof data.current === "object") {
-          setSelected((current) => current?.id === data.targetId
-            ? { ...current, current: data.current as SelectedTarget["current"] }
-            : current);
+          const targetId = data.targetId;
+          const nextCurrent = data.current as SelectedTarget["current"];
+          setSelected((current) => {
+            if (!current || current.id !== targetId) return current;
+            return { ...current, current: nextCurrent };
+          });
         }
         return;
       }
