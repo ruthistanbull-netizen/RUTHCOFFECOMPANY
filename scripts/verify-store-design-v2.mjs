@@ -242,6 +242,55 @@ for (const token of [
   if (!storefrontFooterV22.includes(token)) fail(`Footer sabit semantic hedef sözleşmesi eksik: ${token}`);
 }
 
+const mobileMenuAccordionV22 = read("apps/storefront/src/components/MobileMenuAccordion.tsx");
+const headerV22 = read("apps/storefront/src/components/Header.tsx");
+for (const token of [
+  "globalInstanceSemanticKey",
+  'replace(/\\./g, "%2E")',
+  "const semantic = recordValue(instance.settings.semantic)",
+  "StableInspectorTextControl",
+  "Yeni menü başlığı ekle",
+  "persistMenuSourcePatch",
+  "PREVIEW_DOCUMENT_MESSAGE",
+]) {
+  if (!storeDesignV22.includes(token)) fail(`Store Design V2.2 kalıcı düzenleme altyapısı eksik: ${token}`);
+}
+for (const unsafeToken of [
+  'id:${encodeURIComponent(target.id)}.${device}.${path}',
+  'semantic.${semanticKey}.${device}.${path}',
+]) {
+  if (storeDesignV22.includes(unsafeToken)) fail(`Noktalı semantic target id güvenli saklanmıyor: ${unsafeToken}`);
+}
+for (const token of [
+  "STORE_DESIGN_PREVIEW_DOCUMENT_EVENT",
+  'patch.path === "content.text"',
+  'node.closest<HTMLAnchorElement>("a[href]")',
+]) {
+  if (!runtime.includes(token)) fail(`Runtime preview persistence sözleşmesi eksik: ${token}`);
+}
+for (const token of [
+  "STORE_DESIGN_PREVIEW_DOCUMENT_EVENT",
+  'event.data.type === "store-design-v2:document-sync"',
+]) {
+  if (!bridge.includes(token)) fail(`Preview bridge document sync sözleşmesi eksik: ${token}`);
+}
+for (const token of [
+  "liveHeaderLinks",
+  "RUTH_THEME_EDITOR_SETTINGS",
+]) {
+  if (!headerV22.includes(token)) fail(`Header canlı menü veri kaynağı eksik: ${token}`);
+  if (!mobileMenuAccordionV22.includes(token)) fail(`Mobil menü canlı veri kaynağı eksik: ${token}`);
+}
+for (const token of [
+  'data-editor-id={`global.header.menu.link.${item.id}`}',
+  'data-editor-type="menu-link"',
+  'data-store-design-editable-text="true"',
+]) {
+  if (!mobileMenuAccordionV22.includes(token)) fail(`Mobil menü stable semantic hedefi eksik: ${token}`);
+}
+if (!storeDesignRouteCss.includes("V2.2 mobile form stability")) fail("iOS input zoom koruması route CSS içinde değil.");
+if (!storeDesignRouteCss.includes("font-size:16px!important;")) fail("Mobil Store Design form alanları iOS için 16px değil.");
+
 const requiredV21Files = [
   "apps/admin/src/components/theme/StoreDesignPublishReport.tsx",
   "apps/admin/src/components/theme/StoreDesignSnapshotManager.tsx",
