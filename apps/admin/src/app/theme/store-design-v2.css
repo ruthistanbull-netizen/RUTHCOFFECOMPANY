@@ -1992,3 +1992,16 @@
   [data-store-design-v2-admin] .sd-inspector[data-sheet-level="peek"] .sd-mobile-sheet-levels{display:none!important}
   [data-store-design-v2-admin] .sd-inspector[data-sheet-level="peek"] .sd-inspector-header{padding-top:8px!important;padding-bottom:8px!important}
 }
+
+/* V2.2 readability floor: important manager UI must not fall back to 7-9px legacy text. */
+[data-store-design-v2-admin] .sd-modal-card [class*="text-[7px]"],
+[data-store-design-v2-admin] .sd-modal-card [class*="text-[8px]"],
+[data-store-design-v2-admin] .sd-modal-card [class*="text-[9px]"]{
+  font-size:11px!important;
+}
+[data-store-design-v2-admin] .sd-modal-card input,
+[data-store-design-v2-admin] .sd-modal-card select,
+[data-store-design-v2-admin] .sd-modal-card textarea,
+[data-store-design-v2-admin] .sd-modal-card button{
+  font-size:max(11px,1em);
+}
