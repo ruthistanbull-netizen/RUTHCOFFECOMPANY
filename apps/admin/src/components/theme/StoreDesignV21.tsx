@@ -45,6 +45,10 @@ import {
 } from "@ruth-commerce/commerce-core/store-design-v2";
 import { normalizeThemeSectionSettings } from "@ruth-commerce/commerce-core/theme-sections";
 import { adminRequest } from "@/lib/adminApi";
+import {
+  normalizeThemeCustomizerSettings,
+  type ThemeCustomizerSettings,
+} from "@/lib/themeCustomizer";
 import { useExactToast } from "@/components/base44-exact/primitives";
 import { StoreDesignPageManager } from "@/components/theme/StoreDesignPageManager";
 import { StoreDesignSectionManager } from "@/components/theme/StoreDesignSectionManager";
@@ -1029,6 +1033,53 @@ export function StoreDesignV21() {
       targetId,
     });
   }, [postToPreview]);
+
+  const addMenuHeading = useCallback(async () => {
+    try {
+      const result = await adminRequest<{ settings?: unknown }>(`/api/theme?t=${Date.now()}`, { force: true });
+      const current = normalizeThemeCustomizerSettings(result.settings);
+      const random = globalThis.crypto?.randomUUID?.().replace(/-/g, "").slice(0, 12)
+        || Math.random().toString(36).slice(2, 14);
+      const id = `menu-custom-${random}`.slice(0, 80);
+      const next: ThemeCustomizerSettings = {
+        ...current,
+        header: {
+          ...current.header,
+          links: [
+            ...current.header.links,
+            { id, label: "Yeni Başlık", path: "/", side: "left", children: [] },
+          ],
+        },
+      };
+
+      const saved = await adminRequest<{ settings?: unknown }>("/api/theme", {
+        method: "PUT",
+        body: JSON.stringify({ settings: next }),
+        confirmation: false,
+      });
+      const persisted = normalizeThemeCustomizerSettings(saved.settings || next);
+
+      iframeRef.current?.contentWindow?.postMessage({
+        type: "RUTH_THEME_EDITOR_SETTINGS",
+        settings: persisted,
+        revision: Date.now(),
+      }, STOREFRONT_ORIGIN);
+
+      setInteractionMode("edit");
+      setContextMenu(null);
+      setLeftOpen(false);
+      setRightOpen(false);
+      window.setTimeout(() => {
+        postToPreview({
+          type: "store-design-v2:select-target",
+          targetId: `global.header.menu.link.${id}`,
+        });
+      }, 180);
+      toast.success("Yeni menü başlığı eklendi.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Yeni menü başlığı eklenemedi.");
+    }
+  }, [postToPreview, toast]);
 
   const postMediaDocumentDiff = useCallback((before: ThemeDocument, after: ThemeDocument) => {
     const ids = new Set([...Object.keys(before.media), ...Object.keys(after.media)]);
@@ -2284,6 +2335,15 @@ export function StoreDesignV21() {
                         <label className="grid gap-1.5 text-[11px] opacity-70">Gizlilik bağlantısı<StableInspectorTextControl key="consent:privacy" value={String(consentSetting("privacyLabel", "Gizlilik ve çerezler"))} onEditingChange={(editing) => { inspectorEditingRef.current = editing; }} onCommit={(value) => applyInspectorPatch("privacyLabel", value)} className="sd-field h-10 rounded-md border px-3 text-[16px] outline-none" maxLength={80} /></label>
                       </>
                     ) : null}
+                    {selected.type === "menu-link" || selected.id.startsWith("global.header.menu.") ? (
+                      <button
+                        type="button"
+                        onClick={() => void addMenuHeading()}
+                        className="sd-secondary-button mt-1 flex h-10 items-center justify-center gap-2 rounded-md border px-3 text-[11px] font-semibold"
+                      >
+                        <Plus className="h-4 w-4" /> Yeni menü başlığı ekle
+                      </button>
+                    ) : null}
                   </div>
                 </section>
               ) : null}
@@ -2701,6 +2761,10 @@ export function StoreDesignV21() {
           setLeftOpen((value) => !value);
         }}
         onAdd={() => {
+          if (selected && (selected.type.includes("menu") || selected.id.startsWith("global.header.menu."))) {
+            void addMenuHeading();
+            return;
+          }
           setInteractionMode("edit");
           setContextMenu(null);
           setRightOpen(false);
