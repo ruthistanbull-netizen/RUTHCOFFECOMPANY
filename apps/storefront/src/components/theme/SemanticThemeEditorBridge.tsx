@@ -84,9 +84,7 @@ function parentOrigin(allowedOrigins: string[]) {
   }
 }
 
-function targetFrom(element: Element | null): SemanticTarget | null {
-  if (!element) return null;
-  const node = element.closest<HTMLElement>(TARGET_SELECTOR);
+function semanticTargetFromNode(node: HTMLElement | null): SemanticTarget | null {
   if (!node) return null;
   const id = node.dataset.editorId?.trim();
   const type = node.dataset.editorType?.trim();
@@ -101,6 +99,95 @@ function targetFrom(element: Element | null): SemanticTarget | null {
     element: node,
     definition,
   };
+}
+
+function automaticTargetType(element: HTMLElement) {
+  if (element instanceof HTMLImageElement) return "image";
+  if (element instanceof HTMLVideoElement) return "video";
+  if (element instanceof HTMLAnchorElement) return "link";
+  if (element instanceof HTMLButtonElement) return "button";
+  return "text";
+}
+
+function automaticTargetLabel(element: HTMLElement, type: string) {
+  const aria = element.getAttribute("aria-label")?.trim();
+  if (aria) return aria;
+  if (type === "image") return (element as HTMLImageElement).alt?.trim() || "Görsel";
+  if (type === "video") return "Video";
+  const text = (element.textContent || "").replace(/\s+/g, " ").trim();
+  return text.slice(0, 72) || (type === "button" ? "Düğme" : type === "link" ? "Bağlantı" : "Metin");
+}
+
+function automaticTargetPath(root: HTMLElement, element: HTMLElement) {
+  const parts: number[] = [];
+  let current: HTMLElement | null = element;
+  while (current && current !== root) {
+    const parent = current.parentElement;
+    if (!parent) break;
+    parts.push(Array.prototype.indexOf.call(parent.children, current));
+    current = parent;
+  }
+  return parts.reverse().join(".");
+}
+
+function ensureAutomaticTarget(element: HTMLElement) {
+  const current = element.closest<HTMLElement>(TARGET_SELECTOR);
+  if (current === element) return semanticTargetFromNode(element);
+
+  const root = current || document.body.closest<HTMLElement>(TARGET_SELECTOR);
+  if (!root) return null;
+
+  if (
+    current &&
+    current !== element &&
+    (current.matches("a,button,img,video") || current.dataset.storeDesignEditableText === "true")
+  ) {
+    return semanticTargetFromNode(current);
+  }
+
+  const rootId = root.dataset.editorId?.trim();
+  if (!rootId) return semanticTargetFromNode(current);
+  const type = automaticTargetType(element);
+  const definition = componentDefinition(type);
+  if (!definition) return semanticTargetFromNode(current);
+
+  const suffix = automaticTargetPath(root, element);
+  const id = `${rootId}::auto::${suffix || "0"}`;
+  element.dataset.editorId = id;
+  element.dataset.editorType = type;
+  element.dataset.editorLabel = automaticTargetLabel(element, type);
+  element.dataset.editorInstance = id;
+  element.dataset.storeDesignAutoTarget = "true";
+  if (type === "text" || type === "link" || type === "button") {
+    element.dataset.storeDesignEditableText = "true";
+  }
+  return semanticTargetFromNode(element);
+}
+
+function targetFrom(element: Element | null): SemanticTarget | null {
+  if (!element) return null;
+  const html = element instanceof HTMLElement ? element : element.parentElement;
+  if (!html) return null;
+
+  const interactive = html.closest<HTMLElement>("a[href],button");
+  if (interactive) {
+    const target = ensureAutomaticTarget(interactive);
+    if (target) return target;
+  }
+
+  const media = html.closest<HTMLElement>("img,video");
+  if (media) {
+    const target = ensureAutomaticTarget(media);
+    if (target) return target;
+  }
+
+  const text = html.closest<HTMLElement>("h1,h2,h3,h4,h5,h6,p,label,li,span,strong,em,small");
+  if (text && !text.querySelector("img,video")) {
+    const target = ensureAutomaticTarget(text);
+    if (target) return target;
+  }
+
+  return semanticTargetFromNode(html.closest<HTMLElement>(TARGET_SELECTOR));
 }
 
 function targetFromEvent(event: Event) {
@@ -156,6 +243,8 @@ function editableTextElement(target: SemanticTarget) {
 
 function linkElementForTarget(target: SemanticTarget) {
   if (target.element instanceof HTMLAnchorElement) return target.element;
+  const parent = target.element.closest<HTMLAnchorElement>("a[href]");
+  if (parent) return parent;
   return target.element.querySelector<HTMLAnchorElement>("a[href]");
 }
 
@@ -190,6 +279,7 @@ function snapshot(target: SemanticTarget) {
     media: media ? {
       kind: media instanceof HTMLVideoElement ? "video" : "image",
       src: media.getAttribute("src") || media.currentSrc || "",
+      alt: media instanceof HTMLImageElement ? media.getAttribute("alt") || "" : "",
       objectFit: mediaComputed?.objectFit || "cover",
       objectPosition: mediaComputed?.objectPosition || "50% 50%",
     } : null,
@@ -227,6 +317,7 @@ function allowedPatch(definition: ComponentDefinition, path: string) {
 
   if (root === "content") return definition.controlGroups.includes("content");
   if (root === "link") return definition.controlGroups.includes("content") || definition.controlGroups.includes("media");
+  if (root === "media" && message.path === "media.alt") return definition.controlGroups.includes("media");
   if (root === "visible") return definition.controlGroups.includes("layout");
   if (root === "textAlign" || root === "color") return definition.controlGroups.includes("typography");
   if (root === "opacity" || root === "borderRadius" || root === "backgroundColor") {
@@ -285,6 +376,12 @@ function validatePatch(target: SemanticTarget, message: ThemePatchMessage) {
       return /^[a-zA-Z0-9_-]{1,160}$/.test(value)
         ? { ok: true }
         : { ok: false, error: "Geçersiz medya seçimi." };
+    }
+    case "media.alt": {
+      const value = String(message.value ?? "");
+      return value.length <= 240
+        ? { ok: true }
+        : { ok: false, error: "Alternatif metin 240 karakterden kısa olmalı." };
     }
     case "media.src": {
       const value = String(message.value || "").trim();
@@ -574,9 +671,13 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
     );
 
     const applyDirectMediaPatch = (target: SemanticTarget, message: ThemePatchMessage) => {
-      if (message.path !== "media.src") return;
       const media = mediaElementForTarget(target);
       if (!media) return;
+      if (message.path === "media.alt") {
+        if (media instanceof HTMLImageElement) media.setAttribute("alt", String(message.value ?? ""));
+        return;
+      }
+      if (message.path !== "media.src") return;
 
       if (!originalMediaSources.has(media)) {
         originalMediaSources.set(media, {
