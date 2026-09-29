@@ -299,7 +299,7 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
             <div className="grid gap-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
-                  Eyebrow
+                  Üst başlık
                   <input value={textValue(settings.eyebrow)} onChange={(event) => set("eyebrow", event.target.value)} className="h-10 rounded-lg border border-black/10 px-3 text-[10px] outline-none" />
                 </label>
                 <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
