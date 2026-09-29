@@ -236,9 +236,10 @@ for (const token of [
 for (const token of [
   "previewStageRef",
   "desktopPreviewViewport",
-  "new ResizeObserver(syncDesktopViewport)",
   "window.innerWidth",
   "window.innerHeight",
+  "availableWidth / viewportWidth",
+  "Math.max(0.48, scale)",
   "data-preview-viewport-width",
   "sd-desktop-viewport-shell",
   "sd-desktop-viewport-frame",
@@ -257,6 +258,47 @@ for (const token of [
 }
 if (storeDesignV22.includes('w-[min(1180px,calc(100vw_-_120px))]')) {
   fail("Masaüstü önizleme hâlâ 1180px fiziksel iframe genişliğine kilitli.");
+}
+if (storeDesignV22.includes("new ResizeObserver(syncDesktopViewport)")) {
+  fail("Masaüstü preview ResizeObserver döngüsüne geri dönmüş.");
+}
+if (storeDesignV22.includes("availableHeight / viewportHeight")) {
+  fail("Masaüstü preview yüksekliğe göre küçültülüyor; yalnız genişlik ölçeği kullanılmalı.");
+}
+
+const blockSectionEditor = read("apps/admin/src/components/theme/StoreDesignBlockSectionEditor.tsx");
+for (const token of [
+  'section.type === "video-text-split"',
+  'key: "imageAssetId"',
+  "Medya Arşivi",
+  "Görsel solda",
+  "Görsel sağda",
+  "Metin türü",
+  'value="heading"',
+  'value="body"',
+  'value="both"',
+]) {
+  const source = token === "Görsel solda" || token === "Görsel sağda"
+    ? storeDesignV22
+    : blockSectionEditor;
+  if (!source.includes(token)) fail(`Görsel + Metin bölüm ayarı eksik: ${token}`);
+}
+for (const token of [
+  'section("image-text-split"',
+  '"imageAssetId"',
+  '"contentMode"',
+  '"ratio"',
+  '"fit"',
+]) {
+  if (!core.includes(token)) fail(`Görsel + Metin section schema eksik: ${token}`);
+}
+for (const token of [
+  'contentMode !== "body"',
+  'contentMode !== "heading"',
+  'aspectRatio: ratio.replace("/", " / ")',
+  "objectFit: fit",
+]) {
+  if (!blockRenderer.includes(token)) fail(`Görsel + Metin storefront runtime ayarı eksik: ${token}`);
 }
 for (const token of [
   'data-editor-type="footer-link"',
