@@ -749,6 +749,7 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
     const side = text(settings.side) === "right" ? "right" : "left";
     const contentWidth = ["40%", "50%", "60%"].includes(text(settings.contentWidth)) ? text(settings.contentWidth) : "50%";
     const mediaWidth = contentWidth === "40%" ? "60%" : contentWidth === "60%" ? "40%" : "50%";
+    const contentMode = ["heading", "body", "both"].includes(text(settings.contentMode)) ? text(settings.contentMode) : "both";
     const ratio = ["1/1", "4/5", "3/4", "16/9", "auto"].includes(text(settings.ratio)) ? text(settings.ratio) : "4/5";
     const fit = text(settings.fit) === "contain" ? "contain" : "cover";
     const playback = ["ambient", "once", "controls"].includes(text(settings.playbackPreset)) ? text(settings.playbackPreset) : "ambient";
@@ -796,8 +797,8 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
           </div>
           <div className={`flex flex-1 items-center p-7 md:p-12 ${side === "right" ? "md:order-1" : ""}`} style={{ ["--split-content-width" as string]: contentWidth, flexBasis: "var(--split-content-width)" }}>
             <div>
-              {heading ? <h2 className="font-heading text-[clamp(1.7rem,3vw,3rem)] leading-tight">{heading}</h2> : null}
-              {body ? <p className="mt-4 whitespace-pre-wrap text-sm leading-7 opacity-70">{body}</p> : null}
+              {contentMode !== "body" && heading ? <h2 className="font-heading text-[clamp(1.7rem,3vw,3rem)] leading-tight">{heading}</h2> : null}
+              {contentMode !== "heading" && body ? <p className="mt-4 whitespace-pre-wrap text-sm leading-7 opacity-70">{body}</p> : null}
               {href(ctaHref) ? <Link href={href(ctaHref)} className="mt-6 inline-flex rounded-full border border-current px-5 py-3 text-[10px] uppercase tracking-[0.12em]">{ctaLabel}</Link> : null}
             </div>
           </div>
