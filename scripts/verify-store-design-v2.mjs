@@ -248,6 +248,7 @@ const storeDesignMobileDockV22 = read("apps/admin/src/components/theme/StoreDesi
 const storeDesignDestinationV22 = read("apps/admin/src/components/theme/StoreDesignDestinationPicker.tsx");
 const storeDesignAutoTargets = read("apps/storefront/src/components/theme/storeDesignAutoTargets.ts");
 const storefrontFooterV22 = read("apps/storefront/src/components/Footer.tsx");
+const storeDesignV22Css = read("apps/admin/src/app/theme/store-design-v2.css");
 
 for (const token of [
   "StoreDesignToolbarV22",
@@ -310,6 +311,25 @@ for (const token of [
   'global.footer.group.${id}',
 ]) {
   if (!storefrontFooterV22.includes(token)) fail(`Footer sabit semantic target altyapısı eksik: ${token}`);
+}
+for (const token of [
+  "Base44 mobile bottom sheet lock",
+  "position:fixed!important;",
+  '.sd-inspector[data-sheet-level="peek"]',
+  '.sd-inspector[data-sheet-level="medium"]',
+  '.sd-inspector[data-sheet-level="full"]',
+  "grid-template-columns:repeat(5,minmax(0,1fr))",
+]) {
+  if (!storeDesignV22Css.includes(token)) fail(`V2.2 mobil Base44 sözleşmesi eksik: ${token}`);
+}
+const bottomSheetLockIndex = storeDesignV22Css.lastIndexOf("Base44 mobile bottom sheet lock");
+const lastDesktopInspectorWidthIndex = storeDesignV22Css.lastIndexOf(".sd-inspector.is-open");
+if (bottomSheetLockIndex < 0 || bottomSheetLockIndex > lastDesktopInspectorWidthIndex) {
+  // The last inspector rule must live inside or after the final mobile lock block.
+  const tail = bottomSheetLockIndex >= 0 ? storeDesignV22Css.slice(bottomSheetLockIndex) : "";
+  if (!tail.includes(".sd-inspector.is-open") || !tail.includes("width:100%!important;")) {
+    fail("V2.2 mobil inspector son CSS katmanında bottom sheet olarak kilitli değil.");
+  }
 }
 
 const legacyIssueCodeAliases = [
