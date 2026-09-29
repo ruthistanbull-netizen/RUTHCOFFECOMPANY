@@ -1682,3 +1682,287 @@
   }
 }
 
+/* ==========================================================================
+   Store Design V2.2 FINAL SHELL
+   Ported from the Base44 UX reference while keeping the real StoreDesignV21
+   document/runtime/publish architecture.
+   ========================================================================== */
+[data-store-design-v2-admin]{
+  --sd-editor-bg:#111111;--sd-surface-1:#1A1A1A;--sd-surface-2:#242424;--sd-border:#333333;
+  --sd-text-1:#FBF3E6;--sd-text-2:#AFA396;--sd-accent:#C94A40;--sd-accent-hover:#D55B50;
+  --sd-accent-press:#A93D35;--sd-focus:#C94A40;--sd-canvas:#F1EEE8;
+  --sd-toolbar-height:56px;
+  --sd-structure-width:288px;
+  --sd-inspector-width:400px;
+}
+
+[data-store-design-v2-admin] .sd-toolbar{
+  height:var(--sd-toolbar-height)!important;
+  min-height:var(--sd-toolbar-height)!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)!important;
+  align-items:center!important;
+  gap:10px!important;
+  padding:0 10px!important;
+  background:var(--sd-editor-bg)!important;
+  border-color:var(--sd-border)!important;
+}
+[data-store-design-v2-admin] .sd-toolbar-left{justify-self:start;min-width:0}
+[data-store-design-v2-admin] .sd-toolbar-center{justify-self:center}
+[data-store-design-v2-admin] .sd-toolbar-right{justify-self:end;min-width:0}
+[data-store-design-v2-admin] .sd-toolbar-divider{background:var(--sd-border)}
+[data-store-design-v2-admin] .sd-page-switcher-shell{width:min(240px,28vw)}
+[data-store-design-v2-admin] .sd-page-switcher{
+  width:100%;
+  background:var(--sd-surface-1)!important;
+  color:var(--sd-text-1)!important;
+  border-color:var(--sd-border)!important;
+}
+[data-store-design-v2-admin] .sd-save-status{
+  display:inline-flex;
+  align-items:center;
+  min-height:30px;
+  border:1px solid var(--sd-border);
+  border-radius:999px;
+  padding:0 10px;
+  font-size:10px;
+  font-weight:700;
+  white-space:nowrap;
+  color:var(--sd-text-2);
+  background:var(--sd-surface-1);
+}
+[data-store-design-v2-admin] .sd-save-status::before{
+  content:"";
+  width:7px;height:7px;border-radius:999px;margin-right:7px;background:var(--sd-text-2);
+}
+[data-store-design-v2-admin] .sd-save-status.is-dirty::before{background:var(--sd-warning)}
+[data-store-design-v2-admin] .sd-save-status.is-draft::before{background:var(--sd-accent)}
+[data-store-design-v2-admin] .sd-save-status.is-live::before{background:var(--sd-success)}
+[data-store-design-v2-admin] .sd-save-status.is-saving::before{background:var(--sd-warning);animation:sd-v22-pulse 1s infinite}
+@keyframes sd-v22-pulse{50%{opacity:.35}}
+
+[data-store-design-v2-admin] .sd-mobile-more-menu{
+  background:var(--sd-surface-1)!important;
+  color:var(--sd-text-1)!important;
+  border-color:var(--sd-border)!important;
+}
+[data-store-design-v2-admin] .sd-mobile-menu-row{
+  display:flex!important;
+  width:100%;
+  align-items:center;
+  gap:10px;
+  min-height:40px;
+  border-radius:7px;
+  padding:0 10px;
+  font-size:12px!important;
+  font-weight:600;
+  color:var(--sd-text-1)!important;
+}
+[data-store-design-v2-admin] .sd-mobile-menu-row:hover{background:var(--sd-surface-2)!important}
+
+[data-store-design-v2-admin] .sd-sidebar-left.is-open{
+  width:var(--sd-structure-width)!important;
+  min-width:var(--sd-structure-width)!important;
+  background:var(--sd-surface-1)!important;
+}
+[data-store-design-v2-admin] .sd-inspector.is-open{
+  width:var(--sd-inspector-width)!important;
+  min-width:var(--sd-inspector-width)!important;
+  background:var(--sd-surface-1)!important;
+}
+[data-store-design-v2-admin] .sd-sidebar-left.is-closed,
+[data-store-design-v2-admin] .sd-inspector.is-closed{
+  width:0!important;
+  min-width:0!important;
+  opacity:0!important;
+  pointer-events:none!important;
+  border-width:0!important;
+  overflow:hidden!important;
+}
+[data-store-design-v2-admin] .sd-structure-header,
+[data-store-design-v2-admin] .sd-structure-footer,
+[data-store-design-v2-admin] .sd-inspector-header,
+[data-store-design-v2-admin] .sd-inspector-footer{
+  border-color:var(--sd-border)!important;
+}
+[data-store-design-v2-admin] .sd-global-row{
+  background:transparent!important;
+  border-color:transparent!important;
+}
+[data-store-design-v2-admin] .sd-global-row:hover{
+  background:var(--sd-surface-2)!important;
+  border-color:var(--sd-border)!important;
+}
+[data-store-design-v2-admin] .sd-preview-stage{
+  align-items:flex-start!important;
+  justify-content:center!important;
+  padding:18px!important;
+}
+[data-store-design-v2-admin] .sd-preview-shell{
+  max-width:1220px!important;
+  box-shadow:0 18px 60px rgba(0,0,0,.14)!important;
+}
+
+[data-store-design-v2-admin] .sd-inspector-group{border-color:var(--sd-border)!important}
+[data-store-design-v2-admin] .sd-inspector-group-title{
+  font-size:12px;
+  line-height:1.2;
+  font-weight:750;
+  color:var(--sd-text-1);
+}
+[data-store-design-v2-admin] .sd-scope-chip,
+[data-store-design-v2-admin] .sd-responsive-badge{
+  background:var(--sd-surface-2)!important;
+  color:var(--sd-text-2)!important;
+  border-color:var(--sd-border)!important;
+}
+[data-store-design-v2-admin] .sd-responsive-badge.is-override{
+  color:var(--sd-text-1)!important;
+  border-color:var(--sd-accent)!important;
+  background:color-mix(in srgb,var(--sd-accent) 14%,var(--sd-surface-1))!important;
+}
+[data-store-design-v2-admin] .sd-destination-summary,
+[data-store-design-v2-admin] .sd-toggle-row,
+[data-store-design-v2-admin] .sd-context-editor,
+[data-store-design-v2-admin] .sd-state-card{
+  background:var(--sd-surface-2)!important;
+  color:var(--sd-text-1)!important;
+  border-color:var(--sd-border)!important;
+}
+[data-store-design-v2-admin] .sd-destination-summary:hover{border-color:var(--sd-accent)!important}
+
+[data-store-design-v2-admin] .sd-context-menu{
+  width:340px!important;
+  max-width:calc(100vw - 24px)!important;
+  max-height:620px!important;
+  background:var(--sd-surface-1)!important;
+  color:var(--sd-text-1)!important;
+  border-color:var(--sd-border)!important;
+  border-radius:10px!important;
+  box-shadow:0 22px 58px rgba(0,0,0,.24)!important;
+}
+[data-store-design-v2-admin] .sd-context-header,
+[data-store-design-v2-admin] .sd-context-menu footer,
+[data-store-design-v2-admin] .sd-context-menu section{border-color:var(--sd-border)!important}
+[data-store-design-v2-admin] .sd-context-task{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  width:100%;
+  min-height:48px;
+  border:0;
+  border-radius:8px;
+  padding:8px 10px;
+  background:transparent!important;
+  color:var(--sd-text-1)!important;
+}
+[data-store-design-v2-admin] .sd-context-task:hover{background:var(--sd-surface-2)!important}
+[data-store-design-v2-admin] .sd-context-task-icon{
+  display:grid;place-items:center;
+  width:30px;height:30px;flex:0 0 30px;
+  border-radius:7px;
+  background:var(--sd-surface-2);
+  color:var(--sd-accent);
+}
+[data-store-design-v2-admin] .sd-context-task strong{display:block;font-size:12px;line-height:1.2}
+[data-store-design-v2-admin] .sd-context-task small{
+  display:block;
+  max-width:235px;
+  margin-top:3px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:10px;
+  font-weight:500;
+  color:var(--sd-text-2);
+}
+[data-store-design-v2-admin] .sd-warning-chip{
+  background:color-mix(in srgb,var(--sd-warning) 12%,var(--sd-surface-1))!important;
+  color:var(--sd-text-1)!important;
+  border-color:color-mix(in srgb,var(--sd-warning) 45%,var(--sd-border))!important;
+}
+[data-store-design-v2-admin] .sd-danger-button{
+  color:var(--sd-danger)!important;
+  border-color:color-mix(in srgb,var(--sd-danger) 36%,var(--sd-border))!important;
+  background:color-mix(in srgb,var(--sd-danger) 6%,var(--sd-surface-1))!important;
+}
+[data-store-design-v2-admin] .sd-protected-note{
+  color:var(--sd-text-2)!important;
+  background:var(--sd-surface-2)!important;
+  border-color:var(--sd-border)!important;
+}
+
+[data-store-design-v2-admin] .sd-modal-card{
+  width:min(100%,780px)!important;
+  max-height:84dvh!important;
+  border-radius:12px!important;
+}
+[data-store-design-v2-admin] .sd-manager-redirect{max-width:720px!important}
+[data-store-design-v2-admin] .sd-manager-media{max-width:760px!important}
+[data-store-design-v2-admin] .sd-manager-template{max-width:780px!important}
+[data-store-design-v2-admin] .sd-manager-history{max-width:420px!important}
+[data-store-design-v2-admin] .sd-mobile-sheet-handle{background:var(--sd-border)}
+
+@media (max-width:1199px){
+  [data-store-design-v2-admin] .sd-save-status{display:none}
+  [data-store-design-v2-admin] .sd-page-switcher-shell{width:min(210px,30vw)}
+}
+@media (max-width:900px){
+  [data-store-design-v2-admin] .sd-toolbar-center{display:none!important}
+  [data-store-design-v2-admin] .sd-toolbar{
+    grid-template-columns:minmax(0,1fr) auto!important;
+  }
+  [data-store-design-v2-admin] .sd-toolbar-right{grid-column:2}
+  [data-store-design-v2-admin] .sd-save-draft{display:none!important}
+}
+@media (max-width:767px){
+  [data-store-design-v2-admin]{
+    --sd-toolbar-height:56px;
+    --sd-inspector-width:100vw;
+  }
+  [data-store-design-v2-admin] .sd-toolbar{
+    padding:0 6px!important;
+    gap:4px!important;
+  }
+  [data-store-design-v2-admin] .sd-toolbar-left > button[title="Yapı"],
+  [data-store-design-v2-admin] .sd-toolbar-divider{display:none!important}
+  [data-store-design-v2-admin] .sd-page-switcher-shell{width:min(52vw,230px)}
+  [data-store-design-v2-admin] .sd-toolbar-right > button[aria-label="Geri al"],
+  [data-store-design-v2-admin] .sd-toolbar-right > button[aria-label="Yinele"]{display:none!important}
+  [data-store-design-v2-admin] .sd-save-button span{display:none}
+  [data-store-design-v2-admin] .sd-save-button{width:38px!important;padding:0!important;justify-content:center!important}
+  [data-store-design-v2-admin] .sd-preview-stage{padding:0!important}
+  [data-store-design-v2-admin] .sd-preview-shell{border:0!important;border-radius:0!important;box-shadow:none!important}
+  [data-store-design-v2-admin] .sd-sidebar-left{
+    position:absolute!important;
+    z-index:45!important;
+    top:var(--sd-toolbar-height)!important;
+    bottom:var(--sd-mobile-dock-height,64px)!important;
+    left:0!important;
+    width:min(88vw,320px)!important;
+    min-width:0!important;
+    box-shadow:18px 0 48px rgba(0,0,0,.18)!important;
+  }
+  [data-store-design-v2-admin] .sd-sidebar-left.is-closed{transform:translateX(-105%)!important;width:min(88vw,320px)!important}
+  [data-store-design-v2-admin] .sd-inspector{
+    position:absolute!important;
+    z-index:46!important;
+    left:0!important;right:0!important;top:auto!important;bottom:var(--sd-mobile-dock-height,64px)!important;
+    width:100vw!important;min-width:0!important;
+    border-left:0!important;border-radius:18px 18px 0 0!important;
+    box-shadow:0 -18px 48px rgba(0,0,0,.2)!important;
+    transition:height 280ms var(--sd-ease-enter),transform 280ms var(--sd-ease-enter),opacity 180ms var(--sd-ease)!important;
+  }
+  [data-store-design-v2-admin] .sd-inspector.is-closed{transform:translateY(105%)!important;width:100vw!important}
+  [data-store-design-v2-admin] .sd-inspector[data-sheet-level="peek"]{height:140px!important}
+  [data-store-design-v2-admin] .sd-inspector[data-sheet-level="medium"]{height:min(55vh,var(--sd-visual-55,55vh))!important}
+  [data-store-design-v2-admin] .sd-inspector[data-sheet-level="full"]{height:calc(var(--sd-visual-height,100dvh) - var(--sd-toolbar-height) - var(--sd-mobile-dock-height,64px))!important}
+  [data-store-design-v2-admin] .sd-mobile-sheet-handle,
+  [data-store-design-v2-admin] .sd-mobile-sheet-levels{display:grid!important}
+  [data-store-design-v2-admin] .sd-inspector[data-sheet-level="peek"] .sd-inspector-body,
+  [data-store-design-v2-admin] .sd-inspector[data-sheet-level="peek"] .sd-inspector-footer{display:none!important}
+  [data-store-design-v2-admin] .sd-modal-backdrop{align-items:end!important;padding:0!important}
+  [data-store-design-v2-admin] .sd-modal-card{width:100%!important;max-width:none!important;max-height:92dvh!important;border-radius:18px 18px 0 0!important}
+  [data-store-design-v2-admin] .sd-context-menu{left:8px!important;width:min(360px,calc(100vw - 16px))!important;max-height:72vh!important}
+}
+
