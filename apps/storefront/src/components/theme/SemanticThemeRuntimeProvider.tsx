@@ -521,7 +521,7 @@ export function SemanticThemeRuntimeProvider({
     const linkNodeFor = (node: Element) => (
       node instanceof HTMLAnchorElement
         ? node
-        : node.closest<HTMLAnchorElement>("a[href]") || node.querySelector<HTMLAnchorElement>("a[href]")
+        : node.closest<HTMLAnchorElement>("a") || node.querySelector<HTMLAnchorElement>("a")
     );
 
     const apply = () => {
