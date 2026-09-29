@@ -305,7 +305,7 @@ function responsiveSettingsFor(
   }
 
   if (scope === "instance" && target.id.startsWith("global.")) {
-    return recordValue(globalContainer[`id:${target.id}`]);
+    return recordValue(globalContainer[`id:${encodeURIComponent(target.id)}`]);
   }
 
   if (scope === "family") return recordValue(document.globals.componentFamilies[target.type]);
@@ -492,7 +492,7 @@ function persistSemanticPatch(
   }
 
   if (scope === "instance" && target.id.startsWith("global.")) {
-    writeNested(globalContainer, `id:${target.id}.${device}.${path}`, value);
+    writeNested(globalContainer, `id:${encodeURIComponent(target.id)}.${device}.${path}`, value);
     return next;
   }
 
