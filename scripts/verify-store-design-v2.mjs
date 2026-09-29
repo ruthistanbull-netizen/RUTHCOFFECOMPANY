@@ -227,8 +227,10 @@ for (const [legacyCode, normalizedCode] of legacyIssueCodeAliases) {
   }
 }
 
+if (!publishReport.includes("issue.targetId")) {
+  fail("Publish raporu legacy issue target fallback'i eksik: issue.targetId");
+}
 for (const token of ["issue.ownerId", "issue.targetId"]) {
-  if (!publishReport.includes(token)) fail(`Publish raporu legacy issue alanı fallback'i eksik: ${token}`);
   if (!storeDesignShell.includes(token)) fail(`Publish düzeltme yönlendirmesi legacy issue alanı fallback'i eksik: ${token}`);
 }
 
