@@ -122,9 +122,9 @@ export function StoreDesignInspectorBodyV22({
   onCopyDesktop,
   onUseDesktop,
 }: Props) {
-  const hasContent = Boolean(selected.current.content) || selected.type === "consent-banner";
-  const hasLink = Boolean(selected.current.link);
-  const hasMedia = Boolean(selected.current.media);
+  const hasContent = (Boolean(selected.current.content) && !selected.protectedFields.includes("content")) || selected.type === "consent-banner";
+  const hasLink = Boolean(selected.current.link) && !selected.protectedFields.includes("link");
+  const hasMedia = Boolean(selected.current.media) && !selected.protectedFields.includes("media");
   const hasAppearance = selected.controlGroups.includes("typography")
     || selected.controlGroups.includes("card")
     || selected.type === "product-card";
