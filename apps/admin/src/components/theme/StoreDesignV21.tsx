@@ -35,6 +35,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } f
 import {
   STORE_DESIGN_MESSAGES,
   STORE_DESIGN_SCHEMA_VERSION,
+  SECTION_LIBRARY_BY_TYPE,
   analyzeThemeDocumentReferences,
   createEmptyThemeDocument,
   normalizeThemeDocument,
@@ -709,6 +710,13 @@ export function StoreDesignV21() {
   const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
   const [sectionPickerSignal, setSectionPickerSignal] = useState(0);
   const [presetPickerSignal, setPresetPickerSignal] = useState(0);
+  const [sectionEditorSignal, setSectionEditorSignal] = useState(0);
+  const [sectionEditorTargetId, setSectionEditorTargetId] = useState<string | null>(null);
+  const [sectionMediaPicker, setSectionMediaPicker] = useState<{
+    sectionId: string;
+    key: string;
+    mediaType: "image" | "video" | "any";
+  } | null>(null);
   const [structureFocusSectionId, setStructureFocusSectionId] = useState<string | null>(null);
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
   const [destinationTarget, setDestinationTarget] = useState<SelectedTarget | null>(null);
@@ -1041,6 +1049,24 @@ export function StoreDesignV21() {
   const activePage = editorPages.find((item) => item.path === activePath) || editorPages[0] || null;
   const managedPage = document.pages[activePath] || Object.values(document.pages).find((page) => page.route === activePath) || null;
   const selectedSectionId = selected ? sectionRegistration(selected)?.id || null : null;
+  const selectedSection = selectedSectionId ? document.sections[selectedSectionId] || null : null;
+  const selectedSectionDefinition = selectedSection ? SECTION_LIBRARY_BY_TYPE[selectedSection.type] || null : null;
+  const selectedSectionMediaKey = selectedSection
+    ? (
+        ["image-text-split", "video-text-split", "hero", "video-hero", "video-banner", "background-media", "brand-story", "rewards-promo", "hotspot-lookbook"].includes(selectedSection.type)
+          ? "imageAssetId"
+          : selectedSection.type === "before-after"
+            ? "beforeAssetId"
+            : null
+      )
+    : null;
+  const selectedSectionMediaType: "image" | "video" | "any" = selectedSection?.type === "video-text-split"
+    || selectedSection?.type === "video-hero"
+    || selectedSection?.type === "video-banner"
+      ? "video"
+      : selectedSection?.type === "background-media" || selectedSection?.type === "hero"
+        ? "any"
+        : "image";
   const contextSectionRegistration = contextMenu ? sectionRegistration(contextMenu.target) : null;
   const contextSection = contextSectionRegistration ? document.sections[contextSectionRegistration.id] || null : null;
   const contextTargetsWholeSection = Boolean(
@@ -2299,6 +2325,8 @@ export function StoreDesignV21() {
               openPickerSignal={sectionPickerSignal}
               openPresetSignal={presetPickerSignal}
               selectedSectionId={structureFocusSectionId || selectedSectionId}
+              openEditorSectionId={sectionEditorTargetId}
+              openEditorSignal={sectionEditorSignal}
               onApply={applyStructureDocument}
             />
           </div>
@@ -2434,6 +2462,48 @@ export function StoreDesignV21() {
 
           {selected ? (
             <div ref={inspectorBodyRef} className="sd-inspector-body min-h-0 flex-1 overflow-y-auto">
+              {selectedSection && selectedSectionDefinition ? (
+                <section className="sd-inspector-group border-b px-4 py-4">
+                  <h3 className="sd-inspector-group-title">Bölüm ayarları</h3>
+                  <p className="mt-1 text-[10px] leading-4 opacity-55">
+                    {selectedSectionDefinition.label} için gerçek bölüm ayarları.
+                  </p>
+                  <div className="mt-3 grid gap-2">
+                    {selectedSectionMediaKey ? (
+                      <button
+                        type="button"
+                        onClick={() => setSectionMediaPicker({
+                          sectionId: selectedSection.id,
+                          key: selectedSectionMediaKey,
+                          mediaType: selectedSectionMediaType,
+                        })}
+                        className="sd-secondary-button flex min-h-11 items-center justify-between gap-3 rounded-lg border px-3 text-left"
+                      >
+                        <span className="min-w-0">
+                          <small className="block text-[10px] opacity-55">Bölüm medyası</small>
+                          <strong className="mt-1 block truncate text-[11px]">
+                            {typeof selectedSection.settings[selectedSectionMediaKey] === "string" && selectedSection.settings[selectedSectionMediaKey]
+                              ? "Medya seçildi · değiştirmek için tıkla"
+                              : "Medya seçilmedi"}
+                          </strong>
+                        </span>
+                        <span className="shrink-0 text-[10px] font-semibold">Seç / Değiştir</span>
+                      </button>
+                    ) : null}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSectionEditorTargetId(selectedSection.id);
+                        setSectionEditorSignal((value) => value + 1);
+                      }}
+                      className="sd-primary-button flex h-10 items-center justify-center gap-2 rounded-md px-3 text-[11px] font-semibold"
+                    >
+                      <SlidersHorizontal className="h-4 w-4" />
+                      Tüm bölüm ayarlarını aç
+                    </button>
+                  </div>
+                </section>
+              ) : null}
               {selected.current.content || selected.type === "consent-banner" ? (
                 <section className="sd-inspector-group border-b px-4 py-4">
                   <h3 className="sd-inspector-group-title">İçerik</h3>
@@ -2790,7 +2860,19 @@ export function StoreDesignV21() {
           <footer className="border-t p-2.5">
             <button
               type="button"
-              onClick={() => { setSelected(contextMenu.target); setContextMenu(null); setLeftOpen(false); setMobileSheetLevel("medium"); setRightOpen(true); }}
+              onClick={() => {
+                if (contextSectionRegistration) {
+                  setSectionEditorTargetId(contextSectionRegistration.id);
+                  setSectionEditorSignal((value) => value + 1);
+                  setContextMenu(null);
+                  return;
+                }
+                setSelected(contextMenu.target);
+                setContextMenu(null);
+                setLeftOpen(false);
+                setMobileSheetLevel("medium");
+                setRightOpen(true);
+              }}
               className="sd-primary-button h-10 w-full rounded-md px-3 text-[11px] font-semibold"
             >
               Tüm ayarları aç
@@ -2857,6 +2939,36 @@ export function StoreDesignV21() {
           onSelect={quickMediaEdit ? (_assetId, asset) => {
             if (asset?.url) applyQuickMediaSource(asset.url);
           } : undefined}
+        />
+      ) : null}
+
+      {sectionMediaPicker ? (
+        <StoreDesignMediaLibrary
+          document={document}
+          onApply={applyMediaDocument}
+          onClose={() => setSectionMediaPicker(null)}
+          mediaType={sectionMediaPicker.mediaType}
+          selectedAssetId={typeof document.sections[sectionMediaPicker.sectionId]?.settings?.[sectionMediaPicker.key] === "string"
+            ? String(document.sections[sectionMediaPicker.sectionId]?.settings?.[sectionMediaPicker.key])
+            : undefined}
+          onSelect={(assetId) => {
+            const section = document.sections[sectionMediaPicker.sectionId];
+            if (!section) {
+              setSectionMediaPicker(null);
+              return;
+            }
+            const next = structuredClone(document) as ThemeDocument;
+            next.sections[section.id] = {
+              ...section,
+              settings: {
+                ...section.settings,
+                [sectionMediaPicker.key]: assetId,
+              },
+            };
+            const label = SECTION_LIBRARY_BY_TYPE[section.type]?.label || "Bölüm";
+            setSectionMediaPicker(null);
+            void applyStructureDocument(next, `${label} medyası güncellendi`);
+          }}
         />
       ) : null}
 
