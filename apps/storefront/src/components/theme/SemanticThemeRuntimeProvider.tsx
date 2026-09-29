@@ -35,6 +35,7 @@ function cssString(value: string) {
 
 function declaration(path: string, value: unknown) {
   if (path === "visible") return value === false ? "display:none!important;" : "";
+  if (path === "order") return `order:${Math.max(-100, Math.min(100, Math.round(Number(value))))}!important;`;
   if (path === "textAlign") return `text-align:${String(value)}!important;`;
   if (path === "opacity") return `opacity:${Number(value)}!important;`;
   if (path === "borderRadius") return `border-radius:${Number(value)}px!important;`;
