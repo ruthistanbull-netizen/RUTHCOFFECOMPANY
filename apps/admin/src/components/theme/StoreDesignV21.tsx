@@ -2200,7 +2200,7 @@ export function StoreDesignV21() {
         onOpenRedirects={() => setRedirectManagerOpen(true)}
         onOpenPages={() => setPageManagerMode(managedPage ? "edit" : "create")}
         onOpenHistory={() => setSnapshotManagerOpen(true)}
-      /></nav>
+      />
     </div>
   );
 }
