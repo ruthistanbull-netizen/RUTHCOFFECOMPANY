@@ -749,10 +749,30 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
     const side = text(settings.side) === "right" ? "right" : "left";
     const contentWidth = ["40%", "50%", "60%"].includes(text(settings.contentWidth)) ? text(settings.contentWidth) : "50%";
     const mediaWidth = contentWidth === "40%" ? "60%" : contentWidth === "60%" ? "40%" : "50%";
+    const contentMode = ["heading", "body", "both"].includes(text(settings.contentMode)) ? text(settings.contentMode) : "both";
+    const ratio = ["1/1", "4/5", "3/4", "16/9", "auto"].includes(text(settings.ratio)) ? text(settings.ratio) : "4/5";
+    const fit = text(settings.fit) === "contain" ? "contain" : "cover";
+    const playback = ["ambient", "once", "controls"].includes(text(settings.playbackPreset)) ? text(settings.playbackPreset) : "ambient";
+    const mediaStyle: CSSProperties = {
+      objectFit: fit,
+      objectPosition: section.imageObjectPosition || "50% 50%",
+    };
     const mediaNode = section.imageSrc
       ? section.v2MediaType === "video"
-        ? <video src={section.imageSrc} poster={section.v2PosterUrl} className="h-full w-full object-cover" muted playsInline loop autoPlay />
-        : <img src={section.imageSrc} alt={heading} className="h-full w-full object-cover" />
+        ? (
+            <video
+              src={section.imageSrc}
+              poster={section.v2PosterUrl}
+              className="h-full w-full"
+              style={mediaStyle}
+              muted={playback !== "controls"}
+              playsInline
+              loop={playback === "ambient"}
+              autoPlay={playback !== "controls"}
+              controls={playback === "controls"}
+            />
+          )
+        : <img src={section.imageSrc} alt={heading} className="h-full w-full" style={mediaStyle} />
       : <div className="grid min-h-64 place-items-center bg-black/[0.04] text-[10px] opacity-40">Medya seçilmedi</div>;
 
     return (
@@ -765,11 +785,20 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
         style={style}
       >
         <div className="mx-auto flex max-w-[1440px] flex-col overflow-hidden rounded-2xl border border-current/10 md:flex-row">
-          <div className={side === "right" ? "md:order-2" : ""} style={{ ["--split-media-width" as string]: mediaWidth, flexBasis: "var(--split-media-width)" }}>{mediaNode}</div>
+          <div
+            className={side === "right" ? "md:order-2" : ""}
+            style={{
+              ["--split-media-width" as string]: mediaWidth,
+              flexBasis: "var(--split-media-width)",
+              ...(ratio === "auto" ? {} : { aspectRatio: ratio.replace("/", " / ") }),
+            }}
+          >
+            {mediaNode}
+          </div>
           <div className={`flex flex-1 items-center p-7 md:p-12 ${side === "right" ? "md:order-1" : ""}`} style={{ ["--split-content-width" as string]: contentWidth, flexBasis: "var(--split-content-width)" }}>
             <div>
-              {heading ? <h2 className="font-heading text-[clamp(1.7rem,3vw,3rem)] leading-tight">{heading}</h2> : null}
-              {body ? <p className="mt-4 whitespace-pre-wrap text-sm leading-7 opacity-70">{body}</p> : null}
+              {contentMode !== "body" && heading ? <h2 className="font-heading text-[clamp(1.7rem,3vw,3rem)] leading-tight">{heading}</h2> : null}
+              {contentMode !== "heading" && body ? <p className="mt-4 whitespace-pre-wrap text-sm leading-7 opacity-70">{body}</p> : null}
               {href(ctaHref) ? <Link href={href(ctaHref)} className="mt-6 inline-flex rounded-full border border-current px-5 py-3 text-[10px] uppercase tracking-[0.12em]">{ctaLabel}</Link> : null}
             </div>
           </div>

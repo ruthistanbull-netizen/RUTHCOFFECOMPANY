@@ -55,6 +55,8 @@ type Props = {
   openPickerSignal?: number;
   openPresetSignal?: number;
   selectedSectionId?: string | null;
+  openEditorSectionId?: string | null;
+  openEditorSignal?: number;
   onApply: (next: ThemeDocument, label: string) => Promise<void>;
 };
 
@@ -587,7 +589,17 @@ function SectionPicker({
   );
 }
 
-export function StoreDesignSectionManager({ document, activePage, compatibility, openPickerSignal = 0, openPresetSignal = 0, selectedSectionId = null, onApply }: Props) {
+export function StoreDesignSectionManager({
+  document,
+  activePage,
+  compatibility,
+  openPickerSignal = 0,
+  openPresetSignal = 0,
+  selectedSectionId = null,
+  openEditorSectionId = null,
+  openEditorSignal = 0,
+  onApply,
+}: Props) {
   const toast = useExactToast();
   const [pickerOpen, setPickerOpen] = useState(false);
   const [presetOpen, setPresetOpen] = useState(false);
@@ -610,6 +622,13 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
   useEffect(() => {
     if (openPresetSignal > 0) setPresetOpen(true);
   }, [openPresetSignal]);
+
+  useEffect(() => {
+    if (openEditorSignal <= 0 || !openEditorSectionId) return;
+    const section = document.sections[openEditorSectionId];
+    if (!section || !canEditSection(section.type)) return;
+    setEditingSectionId(openEditorSectionId);
+  }, [document.sections, openEditorSectionId, openEditorSignal]);
 
   useEffect(() => {
     if (!selectedSectionId) return;

@@ -12,6 +12,7 @@ import {
 } from "@ruth-commerce/commerce-core/store-design-v2";
 import { useExactToast } from "@/components/base44-exact/primitives";
 import { useStoreDesignDialogExit } from "@/components/theme/useStoreDesignDialogExit";
+import { StoreDesignMediaLibrary } from "@/components/theme/StoreDesignMediaLibrary";
 
 type Props = {
   document: ThemeDocument;
@@ -78,6 +79,7 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
       answer: textValue(block.settings.answer),
     })));
   const [busy, setBusy] = useState(false);
+  const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
 
   const imageAssets = useMemo(
     () => Object.values(document.media).filter((asset) => asset.type === "image"),
@@ -328,10 +330,15 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
                 <>
                   <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
                     Afiş medyası
-                    <select value={textValue(settings.imageAssetId)} onChange={(event) => set("imageAssetId", event.target.value || undefined)} className="h-10 rounded-lg border border-black/10 bg-white px-3 text-[10px] outline-none">
-                      <option value="">Medya seçilmedi</option>
-                      {imageAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{mediaLabel(asset)}</option>)}
-                    </select>
+                    <div className="flex gap-2">
+                      <select value={textValue(settings.imageAssetId)} onChange={(event) => set("imageAssetId", event.target.value || undefined)} className="h-10 min-w-0 flex-1 rounded-lg border border-black/10 bg-white px-3 text-[10px] outline-none">
+                        <option value="">Medya seçilmedi</option>
+                        {imageAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{mediaLabel(asset)}</option>)}
+                      </select>
+                      <button type="button" onClick={() => setMediaPickerOpen(true)} className="h-10 shrink-0 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03]">
+                        Medya Arşivi
+                      </button>
+                    </div>
                     <span className="text-[8px] font-normal leading-4 text-black/35">Yeni dosya yüklemek veya mobil görsel ve odak noktası belirlemek için Medya Arşivi'ni kullan.</span>
                   </label>
                   {textValue(settings.imageAssetId) && document.media[textValue(settings.imageAssetId)]?.url ? (
@@ -361,6 +368,20 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
             </div>
           ) : null}
         </div>
+
+        {mediaPickerOpen ? (
+          <StoreDesignMediaLibrary
+            document={document}
+            onApply={onApply}
+            onClose={() => setMediaPickerOpen(false)}
+            onSelect={(assetId) => {
+              set("imageAssetId", assetId);
+              setMediaPickerOpen(false);
+            }}
+            selectedAssetId={textValue(settings.imageAssetId) || undefined}
+            mediaType="image"
+          />
+        ) : null}
 
         <footer className="flex shrink-0 items-center gap-2 border-t border-black/10 bg-[#fafafa] p-3">
           <p className="min-w-0 flex-1 truncate text-[8px] text-black/35">

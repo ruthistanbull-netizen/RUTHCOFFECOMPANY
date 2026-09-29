@@ -113,6 +113,8 @@ export function storeDesignSectionsForPage(document: ThemeDocument, page: PageRe
     const imageAssetId = typeof settings.imageAssetId === "string" ? settings.imageAssetId : "";
     const desktopAsset = imageAssetId ? document.media[imageAssetId] : undefined;
     const mobileAsset = desktopAsset?.mobileAssetId ? document.media[desktopAsset.mobileAssetId] : undefined;
+    const explicitPosterAssetId = typeof settings.posterAssetId === "string" ? settings.posterAssetId : "";
+    const explicitPosterAsset = explicitPosterAssetId ? document.media[explicitPosterAssetId] : undefined;
 
     const faqItems = section.type === "faq"
       ? (section.blockIds || [])
@@ -187,8 +189,9 @@ export function storeDesignSectionsForPage(document: ThemeDocument, page: PageRe
       v2Type: v2BlockSection ? section.type : undefined,
       v2Settings: semanticV2Section ? settings : undefined,
       v2MediaType: semanticV2Section ? desktopAsset?.type : undefined,
-      v2PosterUrl: semanticV2Section && desktopAsset?.posterAssetId
-        ? versionedMediaUrl(document.media[desktopAsset.posterAssetId])
+      v2PosterUrl: semanticV2Section
+        ? versionedMediaUrl(explicitPosterAsset)
+          || (desktopAsset?.posterAssetId ? versionedMediaUrl(document.media[desktopAsset.posterAssetId]) : undefined)
         : undefined,
       v2Assets,
       v2Blocks,

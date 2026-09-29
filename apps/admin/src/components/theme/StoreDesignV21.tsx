@@ -35,6 +35,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } f
 import {
   STORE_DESIGN_MESSAGES,
   STORE_DESIGN_SCHEMA_VERSION,
+  SECTION_LIBRARY_BY_TYPE,
   analyzeThemeDocumentReferences,
   createEmptyThemeDocument,
   normalizeThemeDocument,
@@ -709,6 +710,13 @@ export function StoreDesignV21() {
   const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
   const [sectionPickerSignal, setSectionPickerSignal] = useState(0);
   const [presetPickerSignal, setPresetPickerSignal] = useState(0);
+  const [sectionEditorSignal, setSectionEditorSignal] = useState(0);
+  const [sectionEditorTargetId, setSectionEditorTargetId] = useState<string | null>(null);
+  const [sectionMediaPicker, setSectionMediaPicker] = useState<{
+    sectionId: string;
+    key: string;
+    mediaType: "image" | "video" | "any";
+  } | null>(null);
   const [structureFocusSectionId, setStructureFocusSectionId] = useState<string | null>(null);
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
   const [destinationTarget, setDestinationTarget] = useState<SelectedTarget | null>(null);
@@ -770,51 +778,56 @@ export function StoreDesignV21() {
 
   useEffect(() => {
     const stage = previewStageRef.current;
-    if (!stage || isMobileViewport) return;
+    if (!stage || isMobileViewport || device !== "desktop") return;
+
+    let frame = 0;
+    let settleTimer = 0;
 
     const syncDesktopViewport = () => {
-      const viewportWidth = Math.max(1024, Math.round(window.innerWidth));
-      const viewportHeight = Math.max(640, Math.round(window.innerHeight));
-      const rect = stage.getBoundingClientRect();
-      const horizontalGutter = 36;
-      const verticalGutter = 36;
-      const availableWidth = Math.max(320, rect.width - horizontalGutter);
-      const availableHeight = Math.max(320, rect.height - verticalGutter);
-      const scale = Math.min(
-        1,
-        availableWidth / viewportWidth,
-        availableHeight / viewportHeight,
-      );
+      if (frame) window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => {
+        frame = 0;
+        const viewportWidth = Math.max(1024, Math.round(window.innerWidth));
+        const viewportHeight = Math.max(640, Math.round(window.innerHeight));
+        const rect = stage.getBoundingClientRect();
+        const horizontalGutter = 20;
+        const availableWidth = Math.max(520, rect.width - horizontalGutter);
 
-      setDesktopPreviewViewport((current) => {
-        const next = {
-          width: viewportWidth,
-          height: viewportHeight,
-          scale: Math.max(0.2, scale),
-        };
-        if (
-          current.width === next.width
-          && current.height === next.height
-          && Math.abs(current.scale - next.scale) < 0.001
-        ) {
-          return current;
-        }
-        return next;
+        // Keep the storefront's real desktop viewport. Only scale it visually
+        // by width so the editor never shrinks it because of panel/toolbar height.
+        const scale = Math.min(1, availableWidth / viewportWidth);
+
+        setDesktopPreviewViewport((current) => {
+          const next = {
+            width: viewportWidth,
+            height: viewportHeight,
+            scale: Math.max(0.48, scale),
+          };
+          if (
+            current.width === next.width
+            && current.height === next.height
+            && Math.abs(current.scale - next.scale) < 0.001
+          ) {
+            return current;
+          }
+          return next;
+        });
       });
     };
 
     syncDesktopViewport();
-    const resizeObserver = new ResizeObserver(syncDesktopViewport);
-    resizeObserver.observe(stage);
+    // Side panels animate; take one settled measurement after that transition.
+    settleTimer = window.setTimeout(syncDesktopViewport, 340);
     window.addEventListener("resize", syncDesktopViewport);
     window.visualViewport?.addEventListener("resize", syncDesktopViewport);
 
     return () => {
-      resizeObserver.disconnect();
+      if (frame) window.cancelAnimationFrame(frame);
+      if (settleTimer) window.clearTimeout(settleTimer);
       window.removeEventListener("resize", syncDesktopViewport);
       window.visualViewport?.removeEventListener("resize", syncDesktopViewport);
     };
-  }, [isMobileViewport]);
+  }, [device, isMobileViewport, leftOpen, rightOpen]);
 
   useEffect(() => {
     if (!isMobileViewport) return;
@@ -1041,6 +1054,24 @@ export function StoreDesignV21() {
   const activePage = editorPages.find((item) => item.path === activePath) || editorPages[0] || null;
   const managedPage = document.pages[activePath] || Object.values(document.pages).find((page) => page.route === activePath) || null;
   const selectedSectionId = selected ? sectionRegistration(selected)?.id || null : null;
+  const selectedSection = selectedSectionId ? document.sections[selectedSectionId] || null : null;
+  const selectedSectionDefinition = selectedSection ? SECTION_LIBRARY_BY_TYPE[selectedSection.type] || null : null;
+  const selectedSectionMediaKey = selectedSection
+    ? (
+        ["image-text-split", "video-text-split", "hero", "video-hero", "video-banner", "background-media", "brand-story", "rewards-promo", "hotspot-lookbook"].includes(selectedSection.type)
+          ? "imageAssetId"
+          : selectedSection.type === "before-after"
+            ? "beforeAssetId"
+            : null
+      )
+    : null;
+  const selectedSectionMediaType: "image" | "video" | "any" = selectedSection?.type === "video-text-split"
+    || selectedSection?.type === "video-hero"
+    || selectedSection?.type === "video-banner"
+      ? "video"
+      : selectedSection?.type === "background-media" || selectedSection?.type === "hero"
+        ? "any"
+        : "image";
   const contextSectionRegistration = contextMenu ? sectionRegistration(contextMenu.target) : null;
   const contextSection = contextSectionRegistration ? document.sections[contextSectionRegistration.id] || null : null;
   const contextTargetsWholeSection = Boolean(
@@ -1664,6 +1695,18 @@ export function StoreDesignV21() {
     setFuture([]);
     toast.success(label);
   }, [activePath, applyStructureSnapshot, document, toast]);
+
+  const applySelectedSectionSetting = useCallback(async (key: string, value: unknown, label: string) => {
+    if (!selectedSection) return;
+    const next = structuredClone(document) as ThemeDocument;
+    const section = next.sections[selectedSection.id];
+    if (!section) return;
+    section.settings = {
+      ...section.settings,
+      [key]: value,
+    };
+    await applyStructureDocument(next, label);
+  }, [applyStructureDocument, document, selectedSection]);
 
   const applyMediaDocument = useCallback(async (next: ThemeDocument, label: string) => {
     const before = structuredClone(document) as ThemeDocument;
@@ -2299,6 +2342,8 @@ export function StoreDesignV21() {
               openPickerSignal={sectionPickerSignal}
               openPresetSignal={presetPickerSignal}
               selectedSectionId={structureFocusSectionId || selectedSectionId}
+              openEditorSectionId={sectionEditorTargetId}
+              openEditorSignal={sectionEditorSignal}
               onApply={applyStructureDocument}
             />
           </div>
@@ -2308,7 +2353,7 @@ export function StoreDesignV21() {
           </div>
         </aside>
 
-        <main ref={previewStageRef} className="sd-preview-stage relative flex min-w-0 flex-1 items-center justify-center overflow-auto p-3 md:p-6">
+        <main ref={previewStageRef} className="sd-preview-stage relative flex min-w-0 flex-1 items-start justify-center overflow-auto p-2 md:p-3">
           {!connected ? (
             <div role="status" aria-live="polite" className="sd-preview-connection-chip absolute left-1/2 top-3 z-30 flex max-w-[calc(100%_-_24px)] -translate-x-1/2 items-center gap-2 rounded-full px-3 py-2 text-[11px] font-semibold shadow-lg">
               <RefreshCw className={`h-3.5 w-3.5 shrink-0 ${connectionStalled ? "" : "animate-spin"}`} />
@@ -2434,6 +2479,89 @@ export function StoreDesignV21() {
 
           {selected ? (
             <div ref={inspectorBodyRef} className="sd-inspector-body min-h-0 flex-1 overflow-y-auto">
+              {selectedSection && selectedSectionDefinition ? (
+                <section className="sd-inspector-group border-b px-4 py-4">
+                  <h3 className="sd-inspector-group-title">Bölüm ayarları</h3>
+                  <p className="mt-1 text-[10px] leading-4 opacity-55">
+                    {selectedSectionDefinition.label} için gerçek bölüm ayarları.
+                  </p>
+                  <div className="mt-3 grid gap-2">
+                    {selectedSectionMediaKey ? (
+                      <button
+                        type="button"
+                        onClick={() => setSectionMediaPicker({
+                          sectionId: selectedSection.id,
+                          key: selectedSectionMediaKey,
+                          mediaType: selectedSectionMediaType,
+                        })}
+                        className="sd-secondary-button flex min-h-11 items-center justify-between gap-3 rounded-lg border px-3 text-left"
+                      >
+                        <span className="min-w-0">
+                          <small className="block text-[10px] opacity-55">Bölüm medyası</small>
+                          <strong className="mt-1 block truncate text-[11px]">
+                            {typeof selectedSection.settings[selectedSectionMediaKey] === "string" && selectedSection.settings[selectedSectionMediaKey]
+                              ? "Medya seçildi · değiştirmek için tıkla"
+                              : "Medya seçilmedi"}
+                          </strong>
+                        </span>
+                        <span className="shrink-0 text-[10px] font-semibold">Seç / Değiştir</span>
+                      </button>
+                    ) : null}
+                    {["image-text-split", "video-text-split"].includes(selectedSection.type) ? (
+                      <>
+                        <div className="grid gap-1.5">
+                          <span className="text-[10px] font-semibold opacity-60">Yerleşim</span>
+                          <div className="grid grid-cols-2 gap-1.5">
+                            <button
+                              type="button"
+                              aria-pressed={(selectedSection.settings.side || "left") === "left"}
+                              onClick={() => void applySelectedSectionSetting("side", "left", "Görsel sola alındı")}
+                              className={(selectedSection.settings.side || "left") === "left"
+                                ? "sd-primary-button h-9 rounded-md px-2 text-[10px] font-semibold"
+                                : "sd-secondary-button h-9 rounded-md border px-2 text-[10px] font-semibold"}
+                            >
+                              Görsel solda
+                            </button>
+                            <button
+                              type="button"
+                              aria-pressed={selectedSection.settings.side === "right"}
+                              onClick={() => void applySelectedSectionSetting("side", "right", "Görsel sağa alındı")}
+                              className={selectedSection.settings.side === "right"
+                                ? "sd-primary-button h-9 rounded-md px-2 text-[10px] font-semibold"
+                                : "sd-secondary-button h-9 rounded-md border px-2 text-[10px] font-semibold"}
+                            >
+                              Görsel sağda
+                            </button>
+                          </div>
+                        </div>
+                        <label className="grid gap-1.5 text-[10px] font-semibold opacity-60">
+                          Metin türü
+                          <select
+                            value={typeof selectedSection.settings.contentMode === "string" ? selectedSection.settings.contentMode : "both"}
+                            onChange={(event) => void applySelectedSectionSetting("contentMode", event.target.value, "Metin türü güncellendi")}
+                            className="sd-field h-10 rounded-md border px-3 text-[12px] font-medium outline-none"
+                          >
+                            <option value="both">Başlık + açıklama</option>
+                            <option value="heading">Yalnız başlık</option>
+                            <option value="body">Yalnız açıklama</option>
+                          </select>
+                        </label>
+                      </>
+                    ) : null}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSectionEditorTargetId(selectedSection.id);
+                        setSectionEditorSignal((value) => value + 1);
+                      }}
+                      className="sd-primary-button flex h-10 items-center justify-center gap-2 rounded-md px-3 text-[11px] font-semibold"
+                    >
+                      <SlidersHorizontal className="h-4 w-4" />
+                      Tüm bölüm ayarlarını aç
+                    </button>
+                  </div>
+                </section>
+              ) : null}
               {selected.current.content || selected.type === "consent-banner" ? (
                 <section className="sd-inspector-group border-b px-4 py-4">
                   <h3 className="sd-inspector-group-title">İçerik</h3>
@@ -2790,7 +2918,19 @@ export function StoreDesignV21() {
           <footer className="border-t p-2.5">
             <button
               type="button"
-              onClick={() => { setSelected(contextMenu.target); setContextMenu(null); setLeftOpen(false); setMobileSheetLevel("medium"); setRightOpen(true); }}
+              onClick={() => {
+                if (contextSectionRegistration) {
+                  setSectionEditorTargetId(contextSectionRegistration.id);
+                  setSectionEditorSignal((value) => value + 1);
+                  setContextMenu(null);
+                  return;
+                }
+                setSelected(contextMenu.target);
+                setContextMenu(null);
+                setLeftOpen(false);
+                setMobileSheetLevel("medium");
+                setRightOpen(true);
+              }}
               className="sd-primary-button h-10 w-full rounded-md px-3 text-[11px] font-semibold"
             >
               Tüm ayarları aç
@@ -2857,6 +2997,37 @@ export function StoreDesignV21() {
           onSelect={quickMediaEdit ? (_assetId, asset) => {
             if (asset?.url) applyQuickMediaSource(asset.url);
           } : undefined}
+        />
+      ) : null}
+
+      {sectionMediaPicker ? (
+        <StoreDesignMediaLibrary
+          document={document}
+          onApply={applyMediaDocument}
+          onClose={() => setSectionMediaPicker(null)}
+          mediaType={sectionMediaPicker.mediaType}
+          selectedAssetId={typeof document.sections[sectionMediaPicker.sectionId]?.settings?.[sectionMediaPicker.key] === "string"
+            ? String(document.sections[sectionMediaPicker.sectionId]?.settings?.[sectionMediaPicker.key])
+            : undefined}
+          onSelect={(assetId, asset) => {
+            const section = document.sections[sectionMediaPicker.sectionId];
+            if (!section) {
+              setSectionMediaPicker(null);
+              return;
+            }
+            const next = structuredClone(document) as ThemeDocument;
+            if (asset && !next.media[assetId]) next.media[assetId] = asset;
+            next.sections[section.id] = {
+              ...section,
+              settings: {
+                ...section.settings,
+                [sectionMediaPicker.key]: assetId,
+              },
+            };
+            const label = SECTION_LIBRARY_BY_TYPE[section.type]?.label || "Bölüm";
+            setSectionMediaPicker(null);
+            void applyStructureDocument(next, `${label} medyası güncellendi`);
+          }}
         />
       ) : null}
 

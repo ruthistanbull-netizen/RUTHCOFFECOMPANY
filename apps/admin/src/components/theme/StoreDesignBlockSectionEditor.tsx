@@ -168,7 +168,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   const [catalogLoading, setCatalogLoading] = useState(false);
   const [catalogError, setCatalogError] = useState("");
   const [mediaPicker, setMediaPicker] = useState<
-    | { target: "section"; key: "imageAssetId" | "posterAssetId"; mediaType: "image" | "video" | "any" }
+    | { target: "section"; key: string; mediaType: "image" | "video" | "any" }
     | { target: "block"; blockId: string; key: string; mediaType: "image" | "video" | "any" }
     | null
   >(null);
@@ -959,6 +959,14 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                       <option value="60%">60%</option>
                     </select>
                   </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Metin türü
+                    <select value={text(settings.contentMode) || "both"} onChange={(event) => updateSetting("contentMode", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="both">Başlık + açıklama</option>
+                      <option value="heading">Yalnız başlık</option>
+                      <option value="body">Yalnız açıklama</option>
+                    </select>
+                  </label>
                 </>
               ) : null}
 
@@ -1333,13 +1341,40 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                 <>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
                     Bölüm medyası
-                    <select value={text(settings.imageAssetId)} onChange={(event) => updateSetting("imageAssetId", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
-                      <option value="">Medya seçilmedi</option>
-                      {mediaAssets
-                        .filter((asset) => section.type === "video-text-split" ? asset.type === "video" : asset.type === "image")
-                        .map((asset) => <option key={asset.assetId} value={asset.assetId}>{mediaOptionLabel(asset)}</option>)}
-                    </select>
+                    <div className="flex gap-2">
+                      <select value={text(settings.imageAssetId)} onChange={(event) => updateSetting("imageAssetId", event.target.value)} className="h-9 min-w-0 flex-1 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                        <option value="">Medya seçilmedi</option>
+                        {mediaAssets
+                          .filter((asset) => section.type === "video-text-split" ? asset.type === "video" : asset.type === "image")
+                          .map((asset) => <option key={asset.assetId} value={asset.assetId}>{mediaOptionLabel(asset)}</option>)}
+                      </select>
+                      <button
+                        type="button"
+                        onClick={() => setMediaPicker({
+                          target: "section",
+                          key: "imageAssetId",
+                          mediaType: section.type === "video-text-split" ? "video" : "image",
+                        })}
+                        className="h-9 shrink-0 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]"
+                      >
+                        Medya Arşivi
+                      </button>
+                    </div>
                   </label>
+                  {section.type === "video-text-split" ? (
+                    <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                      Video kapak görseli
+                      <div className="flex gap-2">
+                        <select value={text(settings.posterAssetId)} onChange={(event) => updateSetting("posterAssetId", event.target.value)} className="h-9 min-w-0 flex-1 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                          <option value="">Kapak görseli yok</option>
+                          {mediaAssets.filter((asset) => asset.type === "image").map((asset) => <option key={asset.assetId} value={asset.assetId}>{mediaOptionLabel(asset)}</option>)}
+                        </select>
+                        <button type="button" onClick={() => setMediaPicker({ target: "section", key: "posterAssetId", mediaType: "image" })} className="h-9 shrink-0 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
+                          Medya Arşivi
+                        </button>
+                      </div>
+                    </label>
+                  ) : null}
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                     Medya konumu
                     <select value={text(settings.side) || "left"} onChange={(event) => updateSetting("side", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
@@ -1355,6 +1390,33 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                       <option value="60%">60%</option>
                     </select>
                   </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Medya oranı
+                    <select value={text(settings.ratio) || "4/5"} onChange={(event) => updateSetting("ratio", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="1/1">Kare · 1:1</option>
+                      <option value="4/5">Dikey · 4:5</option>
+                      <option value="3/4">Dikey · 3:4</option>
+                      <option value="16/9">Yatay · 16:9</option>
+                      <option value="auto">Otomatik</option>
+                    </select>
+                  </label>
+                  <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
+                    Görsel yerleşimi
+                    <select value={text(settings.fit) || "cover"} onChange={(event) => updateSetting("fit", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                      <option value="cover">Kapla / kırp</option>
+                      <option value="contain">Tamamını göster</option>
+                    </select>
+                  </label>
+                  {section.type === "video-text-split" ? (
+                    <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
+                      Video oynatma
+                      <select value={text(settings.playbackPreset) || "ambient"} onChange={(event) => updateSetting("playbackPreset", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
+                        <option value="ambient">Otomatik · sessiz · döngü</option>
+                        <option value="once">Bir kez oynat</option>
+                        <option value="controls">Kontrolleri göster</option>
+                      </select>
+                    </label>
+                  ) : null}
                 </>
               ) : null}
               {gridStack ? (
