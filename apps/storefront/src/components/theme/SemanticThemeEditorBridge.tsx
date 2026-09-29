@@ -716,16 +716,9 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
       select(target);
     };
 
-    const onDoubleClick = (event: MouseEvent) => {
-      if (interactionMode !== "edit") return;
-      const target = targetFromEvent(event);
-      if (!target) return;
+    const beginInlineEdit = (target: SemanticTarget) => {
       const element = editableTextElement(target);
-      if (!element) return;
-
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation();
+      if (!element) return false;
       select(target);
 
       const before = (element.textContent || "").replace(/\s+/g, " ").trim();
@@ -777,6 +770,17 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
       };
       element.addEventListener("keydown", onInlineKeyDown, true);
       element.addEventListener("blur", onInlineBlur, true);
+      return true;
+    };
+
+    const onDoubleClick = (event: MouseEvent) => {
+      if (interactionMode !== "edit") return;
+      const target = targetFromEvent(event);
+      if (!target) return;
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+      beginInlineEdit(target);
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
@@ -864,6 +868,15 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
           positionOverlay();
         }
         syncKeyboardTargets();
+        return;
+      }
+
+      if (event.data.type === "store-design-v2:start-inline-edit") {
+        const targetId = typeof event.data.targetId === "string" ? event.data.targetId : "";
+        const target = targetId
+          ? targetFrom(document.querySelector(`[data-editor-id="${CSS.escape(targetId)}"]`))
+          : null;
+        if (target) beginInlineEdit(target);
         return;
       }
 
