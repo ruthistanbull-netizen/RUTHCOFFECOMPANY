@@ -137,6 +137,10 @@ function PhotoCollectionsRail({
           }}
           className="ruth-menu-collection-card"
           draggable={false}
+          data-editor-id={`global.header.menu.collection.${collection.id}`}
+          data-editor-type="menu-media-card"
+          data-editor-label={collection.name}
+          data-editor-instance={collection.id}
         >
           <span className="ruth-menu-collection-card__media">
             <img
