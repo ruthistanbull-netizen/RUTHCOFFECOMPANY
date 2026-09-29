@@ -577,6 +577,7 @@ export function StoreDesignV21() {
   const [presetPickerSignal, setPresetPickerSignal] = useState(0);
   const [structureFocusSectionId, setStructureFocusSectionId] = useState<string | null>(null);
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
+  const [inlineEditRequest, setInlineEditRequest] = useState<{ targetId: string; value: string } | null>(null);
   const [mobileSheetLevel, setMobileSheetLevel] = useState<"peek" | "medium" | "full">("peek");
   const [pageManagerMode, setPageManagerMode] = useState<"create" | "edit" | null>(null);
   const [mediaOpen, setMediaOpen] = useState(false);
@@ -1057,6 +1058,15 @@ export function StoreDesignV21() {
         return;
       }
 
+      if (
+        data.type === "store-design-v2:inline-edit"
+        && typeof data.targetId === "string"
+        && typeof data.value === "string"
+      ) {
+        setInlineEditRequest({ targetId: data.targetId, value: data.value });
+        return;
+      }
+
       if (data.type === STORE_DESIGN_MESSAGES.PATCH_APPLIED) {
         if (data.ok === false) {
           toast.error(String(data.error || "Değişiklik önizlemeye uygulanamadı."));
@@ -1420,6 +1430,25 @@ export function StoreDesignV21() {
     setFuture([]);
     applyPatchValue(selected, scope, device, path, value);
   };
+
+  useEffect(() => {
+    if (!inlineEditRequest || !selected || selected.id !== inlineEditRequest.targetId || !activePage) return;
+    const before = snapshotValue(selected, "content.text");
+    const after = inlineEditRequest.value;
+    setInlineEditRequest(null);
+    if (Object.is(before, after)) return;
+    setHistory((items) => [...items.slice(-79), {
+      kind: "semantic",
+      target: selected,
+      scope,
+      device,
+      path: "content.text",
+      before,
+      after,
+    }]);
+    setFuture([]);
+    applyPatchValue(selected, scope, device, "content.text", after);
+  }, [inlineEditRequest, selected, activePage, scope, device]);
 
   const openQuickMediaPicker = () => {
     if (!selected || !activePage || !selected.current.media) return;
