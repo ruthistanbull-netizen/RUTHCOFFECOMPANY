@@ -45,6 +45,20 @@ for (const type of registryMatches) {
   }
 }
 
+const sectionRegistryMatches = [...core.matchAll(/^\\s*section\\("([^"]+)"/gm)].map((match) => match[1]);
+const blockRegistryMatches = [...core.matchAll(/^\\s*block\\("([^"]+)"/gm)].map((match) => match[1]);
+
+for (const [registryName, values] of [
+  ["section", sectionRegistryMatches],
+  ["block", blockRegistryMatches],
+]) {
+  const seen = new Set();
+  for (const type of values) {
+    if (seen.has(type)) fail(`Duplicate ${registryName} registry type: ${type}`);
+    seen.add(type);
+  }
+}
+
 const sourceFiles = walk("apps/storefront/src");
 const semanticTypes = new Map();
 
@@ -189,6 +203,35 @@ const activeThemeViewport = read("apps/admin/src/components/theme/ThemePreviewVi
 if (!activeThemeViewport.includes("StoreDesignV21")) fail("Aktif Mağaza Tasarımı sayfası V2.1 çalışma alanını kullanmıyor.");
 
 const storeDesignShell = read("apps/admin/src/components/theme/StoreDesignV21.tsx");
+
+const legacyIssueCodeAliases = [
+  ["PAGE_TEMPLATE_MISSING", "missing-page-template"],
+  ["PAGE_SEO_MISSING", "missing-page-seo"],
+  ["TEMPLATE_SECTION_MISSING", "missing-template-section"],
+  ["SECTION_BLOCK_MISSING", "missing-section-block"],
+  ["SECTION_MEDIA_MISSING", "missing-media-reference"],
+  ["BLOCK_MEDIA_MISSING", "missing-media-reference"],
+  ["SEO_MEDIA_MISSING", "missing-og-media"],
+  ["BROKEN_MANAGED_LINK", "broken-merchant-link"],
+  ["ORPHAN_SECTION", "orphan-section"],
+  ["ORPHAN_BLOCK", "orphan-block"],
+  ["ORPHAN_MEDIA", "orphan-media"],
+];
+
+for (const [legacyCode, normalizedCode] of legacyIssueCodeAliases) {
+  if (!publishReport.includes(legacyCode) || !publishReport.includes(normalizedCode)) {
+    fail(`Publish raporu legacy issue alias kapsamı eksik: ${legacyCode}`);
+  }
+  if (!storeDesignShell.includes(legacyCode) || !storeDesignShell.includes(normalizedCode)) {
+    fail(`Publish düzeltme yönlendirmesi legacy issue alias kapsamı eksik: ${legacyCode}`);
+  }
+}
+
+for (const token of ["issue.ownerId", "issue.targetId"]) {
+  if (!publishReport.includes(token)) fail(`Publish raporu legacy issue alanı fallback'i eksik: ${token}`);
+  if (!storeDesignShell.includes(token)) fail(`Publish düzeltme yönlendirmesi legacy issue alanı fallback'i eksik: ${token}`);
+}
+
 for (const token of [
   'selected.type === "consent-banner"',
   'document.globals.tokens["consent-banner"]',
