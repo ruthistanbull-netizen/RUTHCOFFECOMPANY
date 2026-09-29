@@ -253,7 +253,8 @@ function validatePatch(target: SemanticTarget, message: ThemePatchMessage) {
     }
     case "link.href": {
       const value = String(message.value || "").trim();
-      if (!value || value.length > 2048) return { ok: false, error: "Geçerli bir bağlantı seç." };
+      if (!value) return { ok: true };
+      if (value.length > 2048) return { ok: false, error: "Bağlantı çok uzun." };
       if (value.startsWith("/") || value.startsWith("#") || /^(https?:|mailto:|tel:)/i.test(value)) return { ok: true };
       return { ok: false, error: "Bağlantı / ile başlayan site adresi veya güvenli bir web adresi olmalı." };
     }
@@ -626,8 +627,10 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
           if (message.value === null) {
             if (original?.href === null || original?.href === undefined) link.removeAttribute("href");
             else link.setAttribute("href", original.href);
+          } else if (String(message.value).trim()) {
+            link.setAttribute("href", String(message.value).trim());
           } else {
-            link.setAttribute("href", String(message.value));
+            link.removeAttribute("href");
           }
         } else if (message.value === null) {
           if (original?.target === null || original?.target === undefined) link.removeAttribute("target");
