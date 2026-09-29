@@ -63,6 +63,66 @@ function declaration(path: string, value: unknown) {
   return "";
 }
 
+const AUTOMATIC_TARGET_SELECTOR = "a[href],button,img,video,h1,h2,h3,h4,h5,h6,p,label,li,span,strong,em,small";
+
+function automaticTargetType(element: HTMLElement) {
+  if (element instanceof HTMLImageElement) return "image";
+  if (element instanceof HTMLVideoElement) return "video";
+  if (element instanceof HTMLAnchorElement) return "link";
+  if (element instanceof HTMLButtonElement) return "button";
+  return "text";
+}
+
+function automaticTargetPath(root: HTMLElement, element: HTMLElement) {
+  const parts: number[] = [];
+  let current: HTMLElement | null = element;
+  while (current && current !== root) {
+    const parent = current.parentElement;
+    if (!parent) break;
+    parts.push(Array.prototype.indexOf.call(parent.children, current));
+    current = parent;
+  }
+  return parts.reverse().join(".");
+}
+
+function markAutomaticSemanticTargets() {
+  const candidates = Array.from(document.querySelectorAll<HTMLElement>(AUTOMATIC_TARGET_SELECTOR));
+  for (const element of candidates) {
+    if (element.dataset.editorId && element.dataset.editorType) continue;
+
+    const existing = element.closest<HTMLElement>("[data-editor-id][data-editor-type]");
+    if (
+      existing &&
+      existing !== element &&
+      (existing.matches("a,button,img,video") || existing.dataset.storeDesignEditableText === "true")
+    ) {
+      continue;
+    }
+
+    const root = existing || document.body.closest<HTMLElement>("[data-editor-id][data-editor-type]");
+    const rootId = root?.dataset.editorId?.trim();
+    if (!root || !rootId) continue;
+
+    const type = automaticTargetType(element);
+    if (!COMPONENT_REGISTRY_BY_TYPE[type]) continue;
+    const suffix = automaticTargetPath(root, element);
+    const id = `${rootId}::auto::${suffix || "0"}`;
+    const aria = element.getAttribute("aria-label")?.trim();
+    const text = (element.textContent || "").replace(/\s+/g, " ").trim();
+    const label = aria
+      || (element instanceof HTMLImageElement ? element.alt?.trim() : "")
+      || text.slice(0, 72)
+      || (type === "image" ? "Görsel" : type === "video" ? "Video" : type === "button" ? "Düğme" : type === "link" ? "Bağlantı" : "Metin");
+
+    element.dataset.editorId = id;
+    element.dataset.editorType = type;
+    element.dataset.editorLabel = label;
+    element.dataset.editorInstance = id;
+    element.dataset.storeDesignAutoTarget = "true";
+    if (type === "text" || type === "link" || type === "button") element.dataset.storeDesignEditableText = "true";
+  }
+}
+
 function selectorFor(patch: SemanticRuntimePatch) {
   let selector = "";
   if (patch.selectorMode === "sectionType" && patch.targetType) {
@@ -71,7 +131,7 @@ function selectorFor(patch: SemanticRuntimePatch) {
     const attribute = patch.selectorMode === "type" ? "data-editor-type" : "data-editor-id";
     selector = `[${attribute}=${cssString(patch.selectorValue)}]`;
   }
-  if (patch.path === "media.assetId" || patch.path === "media.src" || patch.path === "media.objectFit" || patch.path === "media.objectPosition") return `${selector},${selector} img,${selector} video`;
+  if (patch.path === "media.assetId" || patch.path === "media.src" || patch.path === "media.objectFit" || patch.path === "media.objectPosition" || patch.path === "media.alt") return `${selector},${selector} img,${selector} video`;
   return selector;
 }
 
@@ -372,6 +432,29 @@ export function SemanticThemeRuntimeProvider({
   );
 
   useEffect(() => {
+    let frame = 0;
+    let remaining = 5;
+    const refresh = () => {
+      if (frame) window.cancelAnimationFrame(frame);
+      remaining = 5;
+      const tick = () => {
+        frame = 0;
+        markAutomaticSemanticTargets();
+        remaining -= 1;
+        if (remaining > 0) frame = window.requestAnimationFrame(tick);
+      };
+      frame = window.requestAnimationFrame(tick);
+    };
+    markAutomaticSemanticTargets();
+    refresh();
+    window.addEventListener("pageshow", refresh);
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame);
+      window.removeEventListener("pageshow", refresh);
+    };
+  }, [templatePathname, effectiveDocument]);
+
+  useEffect(() => {
     const sourcePatches = mergedPatches.filter((patch) => (
       (patch.path === "media.assetId" || patch.path === "media.src") &&
       typeof patch.value === "string" &&
@@ -466,17 +549,24 @@ export function SemanticThemeRuntimeProvider({
 
   useEffect(() => {
     const contentPatches = mergedPatches.filter((patch) => (
-      patch.path === "content.text" || patch.path === "link.href" || patch.path === "link.target"
+      patch.path === "content.text"
+      || patch.path === "link.href"
+      || patch.path === "link.target"
+      || patch.path === "media.alt"
     ));
     if (!contentPatches.length) return;
 
     const mediaQuery = window.matchMedia("(max-width:767px)");
-    const originals = new Map<Element, { text?: string; href?: string | null; target?: string | null; rel?: string | null }>();
+    const originals = new Map<Element, { text?: string; href?: string | null; target?: string | null; rel?: string | null; alt?: string | null }>();
 
     const restore = () => {
       for (const [element, original] of originals) {
         if (!element.isConnected) continue;
         if (original.text !== undefined) element.textContent = original.text;
+        if (element instanceof HTMLImageElement && original.alt !== undefined) {
+          if (original.alt === null) element.removeAttribute("alt");
+          else element.setAttribute("alt", original.alt);
+        }
         if (element instanceof HTMLAnchorElement) {
           if (original.href === null || original.href === undefined) element.removeAttribute("href");
           else element.setAttribute("href", original.href);
@@ -521,6 +611,14 @@ export function SemanticThemeRuntimeProvider({
         }
 
         for (const node of nodes) {
+          if (patch.path === "media.alt") {
+            const image = node instanceof HTMLImageElement ? node : node.querySelector<HTMLImageElement>("img");
+            if (!image) continue;
+            if (!originals.has(image)) originals.set(image, { alt: image.getAttribute("alt") });
+            image.setAttribute("alt", String(patch.value ?? ""));
+            continue;
+          }
+
           if (patch.path === "content.text") {
             const element = textNodeFor(node);
             if (!element) continue;
