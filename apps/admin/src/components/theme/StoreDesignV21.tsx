@@ -54,6 +54,7 @@ import { StoreDesignRedirectManager } from "@/components/theme/StoreDesignRedire
 import { StoreDesignSnapshotManager } from "@/components/theme/StoreDesignSnapshotManager";
 import { StoreDesignPublishReport } from "@/components/theme/StoreDesignPublishReport";
 import { StoreDesignDestinationPicker } from "@/components/theme/StoreDesignDestinationPicker";
+import { StoreDesignToolbarV22 } from "@/components/theme/StoreDesignToolbarV22";
 
 type Device = "desktop" | "mobile";
 type PageItem = {
@@ -1839,151 +1840,36 @@ export function StoreDesignV21() {
   // Zeabur deployment marker: this admin source change intentionally refreshes the panel service.
   return (
     <div ref={editorShellRef} data-store-design-v2-admin data-physical-mobile={isMobileViewport ? "true" : "false"} data-device={device} data-interaction-mode={interactionMode} className="sd-editor-shell flex h-dvh min-h-0 flex-col overflow-hidden bg-[#f5f5f3] text-[#111]">
-      <header className="sd-toolbar z-20 flex h-[58px] shrink-0 items-center gap-3 border-b border-black/10 bg-white px-3 md:px-4">
-        <button type="button" onClick={requestEditorExit} className="sd-mobile-back sd-icon-button hidden h-10 w-10 shrink-0 place-items-center rounded-xl border border-black/10" aria-label="Geri">
-          <ArrowLeft className="h-4 w-4" />
-        </button>
-        <button type="button" onClick={toggleStructurePanel} aria-pressed={leftOpen} className="sd-desktop-panel-toggle sd-icon-button grid h-9 w-9 place-items-center rounded-lg border border-black/10 hover:bg-black/[0.03]" aria-label="Sayfa yapısını aç veya kapat">
-          <PanelLeft className="h-4 w-4" />
-        </button>
-
-        <div className="sd-title-block min-w-0 flex-1">
-          <div className="sd-desktop-title-row flex items-center gap-2">
-            <p className="truncate text-[13px] font-semibold">{isMobileViewport ? (activePage?.label || "Mağaza Tasarımı") : "Mağaza Tasarımı"}</p>
-            {hasUnsavedChanges ? <span className="sd-dirty-dot h-2 w-2 rounded-full bg-amber-500" aria-label="Kaydedilmemiş değişiklik var" /> : null}
-          </div>
-          <div className="sd-mobile-page-picker hidden min-w-0 items-center gap-1.5">
-            <select
-              aria-label="Düzenlenen sayfa"
-              value={activePath}
-              onChange={(event) => void changePage(event.target.value)}
-              className="sd-field min-w-0 flex-1 truncate rounded-lg border border-black/10 bg-white px-2 font-semibold outline-none"
-            >
-              {groupedPages.map(([group, items]) => (
-                <optgroup key={group} label={group}>
-                  {items.map((item) => <option key={item.path} value={item.path}>{item.label}</option>)}
-                </optgroup>
-              ))}
-            </select>
-            <span
-              className={`sd-dirty-dot h-2.5 w-2.5 shrink-0 rounded-full ${saving ? "animate-pulse bg-amber-400" : hasUnsavedChanges ? "bg-amber-500" : "bg-emerald-500"}`}
-              aria-label={saving ? "Kaydediliyor" : hasUnsavedChanges ? "Kaydedilmemiş değişiklik var" : hasUnpublishedChanges ? "Taslak kaydedildi" : "Yayınlanan sürüm güncel"}
-              title={saving ? "Kaydediliyor" : hasUnsavedChanges ? "Kaydedilmemiş değişiklik var" : hasUnpublishedChanges ? "Taslak kaydedildi" : "Yayınlanan sürüm güncel"}
-            />
-          </div>
-          <div className="sd-desktop-meta mt-0.5 flex items-center gap-1.5 text-[11px] text-black/40">
-            <CircleDot className={`h-2.5 w-2.5 ${connected ? "text-emerald-600" : "text-amber-500"}`} />
-            {connected ? "Önizleme bağlı" : "Önizleme bağlanıyor"}
-          </div>
-          <span className="sr-only" role="status" aria-live="polite">
-            {saving === "draft"
-              ? "Taslak kaydediliyor."
-              : saving === "publish"
-                ? "Mağaza tasarımı yayınlanıyor."
-                : saveFeedback === "draft"
-                  ? "Taslak kaydedildi."
-                  : saveFeedback === "publish"
-                    ? "Mağaza tasarımı yayınlandı."
-                    : connected
-                      ? "Önizleme bağlı."
-                      : "Önizleme bağlanıyor."}
-          </span>
-        </div>
-
-        <div className="sd-desktop-device-toggle sd-device-toggle flex items-center rounded-lg border border-black/10 bg-[#f7f7f5] p-1">
-          <button type="button" onClick={() => setDevice("desktop")} aria-pressed={device === "desktop"} className={`sd-device-button flex h-8 items-center gap-1.5 rounded-md px-2.5 text-[9px] font-medium ${device === "desktop" ? "is-active bg-white shadow-sm" : "text-black/45"}`}>
-            <Monitor className="h-3.5 w-3.5" /><span className="hidden sm:inline">Masaüstü</span>
-          </button>
-          <button type="button" onClick={() => setDevice("mobile")} aria-pressed={device === "mobile"} className={`sd-device-button flex h-8 items-center gap-1.5 rounded-md px-2.5 text-[9px] font-medium ${device === "mobile" ? "is-active bg-white shadow-sm" : "text-black/45"}`}>
-            <Smartphone className="h-3.5 w-3.5" /><span className="hidden sm:inline">Mobil</span>
-          </button>
-        </div>
-
-        <div className="sd-desktop-mode-toggle sd-device-toggle flex items-center rounded-lg border border-black/10 bg-[#f7f7f5] p-1">
-          <button
-            type="button"
-            onClick={() => { setInteractionMode("browse"); setContextMenu(null); setRightOpen(false); }}
-            aria-pressed={interactionMode === "browse"}
-            className={`sd-device-button flex h-8 items-center gap-1.5 rounded-md px-2.5 text-[9px] font-medium ${interactionMode === "browse" ? "is-active bg-white shadow-sm" : "text-black/45"}`}
-          >
-            <Eye className="h-3.5 w-3.5" /><span className="hidden xl:inline">Önizleme</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setInteractionMode("edit")}
-            aria-pressed={interactionMode === "edit"}
-            className={`sd-device-button flex h-8 items-center gap-1.5 rounded-md px-2.5 text-[9px] font-medium ${interactionMode === "edit" ? "is-active bg-white shadow-sm" : "text-black/45"}`}
-          >
-            <SlidersHorizontal className="h-3.5 w-3.5" /><span className="hidden xl:inline">Düzenle</span>
-          </button>
-        </div>
-
-        <div className="sd-mobile-history hidden shrink-0 items-center">
-          <button type="button" disabled={!history.length || saving !== null} onClick={() => void undo()} className="sd-icon-button grid h-10 w-10 place-items-center rounded-xl border border-black/10 bg-white disabled:opacity-30" aria-label="Geri al">
-            <Undo2 className="h-3.5 w-3.5" />
-          </button>
-          <button type="button" disabled={!future.length || saving !== null} onClick={() => void redo()} className="sd-icon-button grid h-10 w-10 place-items-center rounded-xl border border-black/10 bg-white disabled:opacity-30" aria-label="Yinele">
-            <Redo2 className="h-3.5 w-3.5" />
-          </button>
-        </div>
-
-        <div className="hidden items-center gap-1 md:flex">
-          <button type="button" disabled={!history.length || saving !== null} onClick={() => void undo()} className="sd-icon-button grid h-9 w-9 place-items-center rounded-lg border border-black/10 bg-white hover:bg-black/[0.03] disabled:opacity-30" aria-label="Geri al">
-            <Undo2 className="h-3.5 w-3.5" />
-          </button>
-          <button type="button" disabled={!future.length || saving !== null} onClick={() => void redo()} className="sd-icon-button grid h-9 w-9 place-items-center rounded-lg border border-black/10 bg-white hover:bg-black/[0.03] disabled:opacity-30" aria-label="Yinele">
-            <Redo2 className="h-3.5 w-3.5" />
-          </button>
-        </div>
-
-        <button type="button" onClick={() => setSnapshotManagerOpen(true)} className="sd-toolbar-secondary sd-toolbar-button hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] 2xl:flex">
-          <History className="h-3.5 w-3.5" />Geçmiş
-        </button>
-        <button type="button" onClick={() => setRedirectManagerOpen(true)} className="sd-toolbar-secondary sd-toolbar-button hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] xl:flex">
-          <Link2 className="h-3.5 w-3.5" />Yönlendirmeler
-        </button>
-        <button type="button" onClick={() => setTemplateManagerOpen(true)} className="sd-toolbar-secondary sd-toolbar-button hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] lg:flex">
-          <LayoutTemplate className="h-3.5 w-3.5" />Şablon
-        </button>
-        <button type="button" onClick={() => { setQuickMediaEdit(null); setMediaOpen(true); }} className="sd-toolbar-secondary sd-toolbar-button hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] lg:flex">
-          <Images className="h-3.5 w-3.5" />Medya
-        </button>
-        <button type="button" data-save-state={saving === "draft" ? "loading" : saveFeedback === "draft" ? "success" : "idle"} disabled={saving !== null} onClick={() => void save("draft")} className="sd-toolbar-button sd-save-button hidden h-9 items-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03] disabled:opacity-50 sm:flex">
-          {saving === "draft" ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : saveFeedback === "draft" ? <Check className="h-3.5 w-3.5" /> : <Save className="h-3.5 w-3.5" />}
-          <span>{saving === "draft" ? "Kaydediliyor…" : saveFeedback === "draft" ? "Kaydedildi" : "Taslağı Kaydet"}</span>
-        </button>
-        <div className="sd-more-tools relative">
-          <button
-            ref={mobileMoreButtonRef}
-            type="button"
-            onClick={() => setMobileMoreOpen((value) => !value)}
-            aria-expanded={mobileMoreOpen}
-            aria-haspopup="menu"
-            className="sd-mobile-more-button sd-icon-button grid h-10 w-10 place-items-center rounded-xl border border-black/10 bg-white"
-            aria-label="Diğer araçlar"
-          >
-            <MoreHorizontal className="h-4 w-4" />
-          </button>
-          {mobileMoreOpen ? (
-            <div ref={mobileMoreMenuRef} role="menu" aria-label="Diğer araçlar" className="sd-mobile-more-menu absolute right-0 top-12 z-50 w-56 rounded-2xl border border-black/10 bg-white p-2 shadow-2xl">
-              <button role="menuitem" type="button" onClick={() => { setMobileMoreOpen(false); setQuickMediaEdit(null); setMediaOpen(true); }} className="sd-mobile-menu-row"><Images className="h-4 w-4" />Medya</button>
-              <button role="menuitem" type="button" onClick={() => { setMobileMoreOpen(false); setPageManagerMode(managedPage ? "edit" : "create"); }} className="sd-mobile-menu-row"><FileText className="h-4 w-4" />Sayfalar</button>
-              <button role="menuitem" type="button" onClick={() => { setMobileMoreOpen(false); setTemplateManagerOpen(true); }} className="sd-mobile-menu-row"><LayoutTemplate className="h-4 w-4" />Şablonlar</button>
-              <button role="menuitem" type="button" onClick={() => { setMobileMoreOpen(false); setRedirectManagerOpen(true); }} className="sd-mobile-menu-row"><Link2 className="h-4 w-4" />Yönlendirmeler</button>
-              <button role="menuitem" type="button" onClick={() => { setMobileMoreOpen(false); setSnapshotManagerOpen(true); }} className="sd-mobile-menu-row"><History className="h-4 w-4" />Geçmiş</button>
-              <button role="menuitem" type="button" onClick={() => { setMobileMoreOpen(false); void save("draft"); }} className="sd-mobile-menu-row"><Save className="h-4 w-4" />Taslağı kaydet</button>
-            </div>
-          ) : null}
-        </div>
-
-        <button type="button" data-save-state={saving === "publish" ? "loading" : saveFeedback === "publish" ? "success" : "idle"} disabled={saving !== null} onClick={() => void save("publish")} className="sd-primary-button sd-save-button flex h-9 items-center gap-2 rounded-lg bg-[#111] px-3 text-[9px] font-semibold text-white disabled:opacity-50">
-          {saving === "publish" ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : saveFeedback === "publish" ? <Check className="h-3.5 w-3.5" /> : <Send className="h-3.5 w-3.5" />}
-          <span>{saving === "publish" ? "Yayınlanıyor…" : saveFeedback === "publish" ? "Yayınlandı" : "Yayınla"}</span>
-        </button>
-        <button type="button" onClick={toggleInspectorPanel} aria-pressed={rightOpen} className="sd-desktop-panel-toggle sd-icon-button grid h-9 w-9 place-items-center rounded-lg border border-black/10 hover:bg-black/[0.03]" aria-label="Düzenleme panelini aç veya kapat">
-          <PanelRight className="h-4 w-4" />
-        </button>
-      </header>
+      <StoreDesignToolbarV22
+        groupedPages={groupedPages}
+        activePath={activePath}
+        device={device}
+        interactionMode={interactionMode}
+        leftOpen={leftOpen}
+        hasUnsavedChanges={hasUnsavedChanges}
+        saving={saving}
+        saveFeedback={saveFeedback}
+        canUndo={history.length > 0}
+        canRedo={future.length > 0}
+        onBack={requestEditorExit}
+        onToggleStructure={toggleStructurePanel}
+        onChangePage={(path) => void changePage(path)}
+        onDeviceChange={setDevice}
+        onModeChange={(mode) => {
+          setInteractionMode(mode);
+          setContextMenu(null);
+          if (mode === "browse") setRightOpen(false);
+        }}
+        onUndo={() => void undo()}
+        onRedo={() => void redo()}
+        onSaveDraft={() => void save("draft")}
+        onPublish={() => void save("publish")}
+        onOpenMedia={() => { setQuickMediaEdit(null); setMediaOpen(true); }}
+        onOpenPages={() => setPageManagerMode(managedPage ? "edit" : "create")}
+        onOpenTemplates={() => setTemplateManagerOpen(true)}
+        onOpenRedirects={() => setRedirectManagerOpen(true)}
+        onOpenHistory={() => setSnapshotManagerOpen(true)}
+      />
 
       <div className="flex min-h-0 flex-1">
         <aside ref={structurePanelRef} tabIndex={-1} aria-label="Sayfa yapısı" data-open={leftOpen ? "true" : "false"} aria-hidden={!leftOpen} className={`sd-sidebar sd-sidebar-left ${leftOpen ? "is-open" : "is-closed"} flex w-[292px] shrink-0 flex-col border-r border-black/10 bg-white max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:top-[58px] max-lg:z-20 max-lg:shadow-2xl`}>
