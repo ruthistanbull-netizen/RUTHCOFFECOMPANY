@@ -851,6 +851,20 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
       if (event.source !== window.parent || !event.data || typeof event.data !== "object") return;
       if (expectedParentOrigin && event.origin !== expectedParentOrigin) return;
 
+      if (event.data.type === "store-design-v2:select-target") {
+        const requestedId = typeof event.data.targetId === "string" ? event.data.targetId.trim() : "";
+        if (!requestedId) return;
+        let element = document.querySelector(`[data-editor-id="${CSS.escape(requestedId)}"]`);
+        if (!element && requestedId === "global.header.mega-menu") {
+          element = document.querySelector('[data-editor-id="global.header.menu-trigger"]');
+        }
+        const target = targetFrom(element) || targetFrom(document.body);
+        if (!target) return;
+        target.element.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+        select(target);
+        return;
+      }
+
       if (event.data.type === STORE_DESIGN_MESSAGES.INTERACTION_MODE) {
         interactionMode = event.data.mode === "browse" ? "browse" : "edit";
         if (interactionMode === "browse") {
