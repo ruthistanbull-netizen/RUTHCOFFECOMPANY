@@ -216,6 +216,9 @@ export default async function RootLayout({
         lang="tr"
         className="site-app-shell"
         data-ruth-typography="storefront"
+        data-editor-id="global.site"
+        data-editor-type="global-theme-tokens"
+        data-editor-label="Site geneli"
         style={themeStyle}
       >
         <script
