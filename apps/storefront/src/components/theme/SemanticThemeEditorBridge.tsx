@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { SEMANTIC_RUNTIME_PATCH_EVENT } from "@/components/theme/SemanticThemeRuntimeProvider";
+import {
+  SEMANTIC_RUNTIME_PATCH_EVENT,
+  STORE_DESIGN_PREVIEW_DOCUMENT_EVENT,
+} from "@/components/theme/SemanticThemeRuntimeProvider";
 import {
   STORE_DESIGN_MEDIA_RUNTIME_EVENT,
   type StoreDesignMediaRuntimeDetail,
@@ -996,6 +999,13 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
         if (!target) return;
         target.element.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
         select(target);
+        return;
+      }
+
+      if (event.data.type === "store-design-v2:document-sync") {
+        window.dispatchEvent(new CustomEvent(STORE_DESIGN_PREVIEW_DOCUMENT_EVENT, {
+          detail: { document: event.data.document },
+        }));
         return;
       }
 
