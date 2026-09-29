@@ -254,6 +254,10 @@ function recordValue(value: unknown): Record<string, unknown> {
   return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {};
 }
 
+function globalInstanceSemanticKey(targetId: string) {
+  return `id:${encodeURIComponent(targetId).replace(/\./g, "%2E")}`;
+}
+
 function flattenResponsiveLeaves(value: unknown, prefix = ""): Array<[string, unknown]> {
   if (value == null || typeof value !== "object" || Array.isArray(value)) return prefix ? [[prefix, value]] : [];
   const output: Array<[string, unknown]> = [];
@@ -289,7 +293,7 @@ function responsiveSettingsFor(
   }
 
   if (scope === "instance" && target.id.startsWith("global.")) {
-    return recordValue(globalContainer[`id:${encodeURIComponent(target.id)}`]);
+    return recordValue(globalContainer[globalInstanceSemanticKey(target.id)]);
   }
 
   if (scope === "family") return recordValue(document.globals.componentFamilies[target.type]);
@@ -476,7 +480,7 @@ function persistSemanticPatch(
   }
 
   if (scope === "instance" && target.id.startsWith("global.")) {
-    writeNested(globalContainer, `id:${encodeURIComponent(target.id)}.${device}.${path}`, value);
+    writeNested(globalContainer, `${globalInstanceSemanticKey(target.id)}.${device}.${path}`, value);
     return next;
   }
 
