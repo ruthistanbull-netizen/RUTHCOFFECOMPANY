@@ -871,6 +871,15 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
         return;
       }
 
+      if (event.data.type === "store-design-v2:select-target") {
+        const targetId = typeof event.data.targetId === "string" ? event.data.targetId : "";
+        const target = targetId
+          ? targetFrom(document.querySelector(`[data-editor-id="${CSS.escape(targetId)}"]`))
+          : null;
+        if (target) select(target);
+        return;
+      }
+
       if (event.data.type === "store-design-v2:start-inline-edit") {
         const targetId = typeof event.data.targetId === "string" ? event.data.targetId : "";
         const target = targetId
