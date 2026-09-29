@@ -176,6 +176,16 @@ function patchesFromDocument(document: ThemeDocument, pathname: string) {
 
   for (const container of [document.globals.header, document.globals.footer, document.globals.tokens]) {
     for (const [semanticType, responsive] of Object.entries(container)) {
+      if (semanticType.startsWith("id:")) {
+        addResponsive(output, {
+          scope: "instance",
+          selectorMode: "id",
+          selectorValue: semanticType.slice(3),
+          responsive,
+          revision,
+        });
+        continue;
+      }
       if (!COMPONENT_REGISTRY_BY_TYPE[semanticType]) continue;
       addResponsive(output, {
         scope: "global",
@@ -449,6 +459,109 @@ export function SemanticThemeRuntimeProvider({
       restore();
     };
   }, [effectiveDocument, mergedPatches, runtimeMediaAssets]);
+
+  useEffect(() => {
+    const contentPatches = mergedPatches.filter((patch) => (
+      patch.path === "content.text" || patch.path === "link.href" || patch.path === "link.target"
+    ));
+    if (!contentPatches.length) return;
+
+    const mediaQuery = window.matchMedia("(max-width:767px)");
+    const originals = new Map<Element, { text?: string; href?: string | null; target?: string | null; rel?: string | null }>();
+
+    const restore = () => {
+      for (const [element, original] of originals) {
+        if (!element.isConnected) continue;
+        if (original.text !== undefined) element.textContent = original.text;
+        if (element instanceof HTMLAnchorElement) {
+          if (original.href === null || original.href === undefined) element.removeAttribute("href");
+          else element.setAttribute("href", original.href);
+          if (original.target === null || original.target === undefined) element.removeAttribute("target");
+          else element.setAttribute("target", original.target);
+          if (original.rel === null || original.rel === undefined) element.removeAttribute("rel");
+          else element.setAttribute("rel", original.rel);
+        }
+      }
+      originals.clear();
+    };
+
+    const textNodeFor = (node: Element) => {
+      if (node.matches('[data-store-design-editable-text="true"]')) return node as HTMLElement;
+      const nested = node.querySelector<HTMLElement>('[data-store-design-editable-text="true"]');
+      if (nested) return nested;
+      const tag = node.tagName;
+      const simple = node instanceof HTMLAnchorElement
+        || node instanceof HTMLButtonElement
+        || /^H[1-6]$/.test(tag)
+        || tag === "P"
+        || tag === "SPAN";
+      if (!simple || node.querySelector("img,video,svg")) return null;
+      return node as HTMLElement;
+    };
+
+    const linkNodeFor = (node: Element) => (
+      node instanceof HTMLAnchorElement ? node : node.querySelector<HTMLAnchorElement>("a[href]")
+    );
+
+    const apply = () => {
+      restore();
+      const mobile = mediaQuery.matches;
+      const desktopPatches = contentPatches.filter((patch) => patch.device === "desktop");
+      const mobilePatches = mobile ? contentPatches.filter((patch) => patch.device === "mobile") : [];
+      for (const patch of [...desktopPatches, ...mobilePatches]) {
+        let nodes: NodeListOf<Element>;
+        try {
+          nodes = document.querySelectorAll(selectorFor(patch));
+        } catch {
+          continue;
+        }
+
+        for (const node of nodes) {
+          if (patch.path === "content.text") {
+            const element = textNodeFor(node);
+            if (!element) continue;
+            if (!originals.has(element)) originals.set(element, { text: element.textContent || "" });
+            element.textContent = String(patch.value ?? "");
+            continue;
+          }
+
+          const link = linkNodeFor(node);
+          if (!link) continue;
+          if (!originals.has(link)) {
+            originals.set(link, {
+              href: link.getAttribute("href"),
+              target: link.getAttribute("target"),
+              rel: link.getAttribute("rel"),
+            });
+          }
+          if (patch.path === "link.href") {
+            link.setAttribute("href", String(patch.value || "/"));
+          } else if (String(patch.value) === "_blank") {
+            link.setAttribute("target", "_blank");
+            link.setAttribute("rel", "noopener noreferrer");
+          } else {
+            link.removeAttribute("target");
+          }
+        }
+      }
+    };
+
+    let frame = 0;
+    const refresh = () => {
+      if (frame) window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(apply);
+    };
+    apply();
+    refresh();
+    mediaQuery.addEventListener("change", refresh);
+    window.addEventListener("pageshow", refresh);
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame);
+      mediaQuery.removeEventListener("change", refresh);
+      window.removeEventListener("pageshow", refresh);
+      restore();
+    };
+  }, [mergedPatches]);
 
   return (
     <>
