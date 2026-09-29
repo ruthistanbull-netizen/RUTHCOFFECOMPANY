@@ -2040,504 +2040,215 @@ export function StoreDesignV21() {
           </div>
         </main>
 
-        <aside ref={inspectorPanelRef} tabIndex={-1} aria-label="Düzenleme paneli" data-open={rightOpen ? "true" : "false"} data-sheet-level={mobileSheetLevel} aria-hidden={!rightOpen} className={`sd-sidebar sd-inspector ${rightOpen ? "is-open" : "is-closed"} flex w-[360px] shrink-0 flex-col border-l border-black/10 bg-white max-xl:absolute max-xl:bottom-0 max-xl:right-0 max-xl:top-[58px] max-xl:z-20 max-xl:shadow-2xl`}>
-            <div
-              className="sd-inspector-header border-b border-black/[0.07] p-3"
-              onTouchStart={(event) => {
-                mobileSheetTouchStartRef.current = event.touches.item(0)?.clientY ?? null;
-              }}
-              onTouchEnd={(event) => {
-                if (!isMobileViewport) return;
-                const start = mobileSheetTouchStartRef.current;
-                const end = event.changedTouches.item(0)?.clientY ?? null;
-                mobileSheetTouchStartRef.current = null;
-                if (start === null || end === null) return;
-                const delta = end - start;
-                if (Math.abs(delta) < 48) return;
-                if (delta > 0) {
-                  if ((inspectorBodyRef.current?.scrollTop || 0) > 1) return;
-                  if (mobileSheetLevel === "full") setMobileSheetLevel("medium");
-                  else if (mobileSheetLevel === "medium") setMobileSheetLevel("peek");
-                  else setRightOpen(false);
-                } else {
-                  if (mobileSheetLevel === "peek") setMobileSheetLevel("medium");
-                  else if (mobileSheetLevel === "medium") setMobileSheetLevel("full");
-                }
-              }}
-            >
-              <div className="flex items-center justify-between gap-3">
-                <p className="text-[9px] font-semibold text-black/45">SEÇİLİ ÖĞE</p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setRightOpen(false);
-                    setMobileSheetLevel("peek");
-                    window.requestAnimationFrame(() => mobileEditButtonRef.current?.focus({ preventScroll: true }));
-                  }}
-                  className="sd-mobile-sheet-close hidden h-10 w-10 place-items-center rounded-xl border border-black/10"
-                  aria-label="Ayarları kapat"
-                >
-                  <X className="h-4 w-4" />
-                </button>
+        <aside ref={inspectorPanelRef} tabIndex={-1} aria-label="Düzenleme paneli" data-open={rightOpen ? "true" : "false"} data-sheet-level={mobileSheetLevel} aria-hidden={!rightOpen} className={rightOpen ? "sd-sidebar sd-inspector is-open flex w-[400px] shrink-0 flex-col border-l" : "sd-sidebar sd-inspector is-closed flex w-[400px] shrink-0 flex-col border-l"}>
+          <div
+            className="sd-inspector-header border-b px-4 py-3"
+            onTouchStart={(event) => { mobileSheetTouchStartRef.current = event.touches.item(0)?.clientY ?? null; }}
+            onTouchEnd={(event) => {
+              if (!isMobileViewport) return;
+              const start = mobileSheetTouchStartRef.current;
+              const end = event.changedTouches.item(0)?.clientY ?? null;
+              mobileSheetTouchStartRef.current = null;
+              if (start === null || end === null) return;
+              const delta = end - start;
+              if (Math.abs(delta) < 48) return;
+              if (delta > 0) {
+                if ((inspectorBodyRef.current?.scrollTop || 0) > 1) return;
+                if (mobileSheetLevel === "full") setMobileSheetLevel("medium");
+                else if (mobileSheetLevel === "medium") setMobileSheetLevel("peek");
+                else setRightOpen(false);
+              } else {
+                if (mobileSheetLevel === "peek") setMobileSheetLevel("medium");
+                else if (mobileSheetLevel === "medium") setMobileSheetLevel("full");
+              }
+            }}
+          >
+            <div className="sd-mobile-sheet-handle mx-auto mb-2 hidden h-1 w-10 rounded-full" />
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.12em] opacity-55">Düzenlenen öğe</p>
+                {selected ? (
+                  <>
+                    <p className="mt-1 truncate text-[14px] font-semibold">{selected.label}</p>
+                    <p className="mt-1 truncate text-[10px] opacity-55">{selected.breadcrumb.map((item) => item.label).join(" › ")}</p>
+                    <span className="sd-scope-chip mt-2 inline-flex rounded-full border px-2.5 py-1 text-[10px] font-semibold">{scopeLabel(scope)}</span>
+                  </>
+                ) : <p className="mt-1 text-[12px] opacity-55">Önizlemeden bir öğe seç</p>}
               </div>
-              {selected ? (
-                <>
-                  <p className="mt-1.5 text-[12px] font-semibold">{selected.label}</p>
-                  <p className="mt-1 text-[8px] text-black/35">{selected.breadcrumb.map((item) => item.label).join(" › ")}</p>
-                  <div className="sd-mobile-peek-summary mt-2 hidden min-w-0 items-center gap-1.5 overflow-x-auto pb-0.5">
-                    <span className="shrink-0 rounded-full border border-black/10 bg-white px-2.5 py-2 text-[10px] font-semibold text-black/50">
-                      {scopeLabel(scope)}
-                    </span>
-                    {selected.controlGroups.includes("layout") ? (
-                      <button
-                        type="button"
-                        onClick={() => applyInspectorPatch("visible", selected.current.visible === false)}
-                        className="shrink-0 rounded-lg border border-black/10 bg-white px-2.5 text-[10px] font-semibold"
-                      >
-                        {selected.current.visible === false ? "Göster" : "Gizle"}
-                      </button>
+              <button type="button" onClick={() => { setRightOpen(false); setMobileSheetLevel("peek"); }} className="sd-icon-button grid h-9 w-9 shrink-0 place-items-center rounded-md border" aria-label="Ayarları kapat">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            {selected ? (
+              <div role="group" className="sd-mobile-sheet-levels mt-3 hidden grid-cols-3 gap-1 rounded-lg p-1" aria-label="Ayar paneli görünümü">
+                {(["peek", "medium", "full"] as const).map((level) => (
+                  <button key={level} type="button" aria-pressed={mobileSheetLevel === level} onClick={() => setMobileSheetLevel(level)} className={mobileSheetLevel === level ? "is-active rounded-md px-2 py-2 text-[10px] font-semibold" : "rounded-md px-2 py-2 text-[10px] font-semibold"}>
+                    {level === "peek" ? "Özet" : level === "medium" ? "Ayarlar" : "Tam ekran"}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </div>
+
+          {selected ? (
+            <div ref={inspectorBodyRef} className="sd-inspector-body min-h-0 flex-1 overflow-y-auto">
+              {selected.current.content || selected.type === "consent-banner" ? (
+                <section className="sd-inspector-group border-b px-4 py-4">
+                  <h3 className="sd-inspector-group-title">İçerik</h3>
+                  <div className="mt-3 grid gap-3">
+                    {selected.current.content ? (
+                      <label className="grid gap-1.5 text-[11px] opacity-70">
+                        Metin / ad
+                        {(selected.current.content.text || "").length > 100 || (selected.current.content.text || "").includes("\n") ? (
+                          <textarea
+                            value={selected.current.content.text || ""}
+                            onChange={(event) => setSelected((current) => current ? updateTargetSnapshot(current, "content.text", event.target.value) : current)}
+                            onBlur={(event) => applyInspectorPatch("content.text", event.target.value)}
+                            className="sd-field min-h-24 resize-y rounded-md border p-3 text-[13px] leading-5 outline-none"
+                          />
+                        ) : (
+                          <input
+                            value={selected.current.content.text || ""}
+                            onChange={(event) => setSelected((current) => current ? updateTargetSnapshot(current, "content.text", event.target.value) : current)}
+                            onBlur={(event) => applyInspectorPatch("content.text", event.target.value)}
+                            className="sd-field h-10 rounded-md border px-3 text-[13px] outline-none"
+                          />
+                        )}
+                      </label>
                     ) : null}
-                    {selected.type !== "product-card" && selected.controlGroups.includes("media") && selected.current.media ? (
-                      <button
-                        type="button"
-                        onClick={() => applyInspectorPatch("media.objectFit", selected.current.media?.objectFit === "contain" ? "cover" : "contain")}
-                        className="shrink-0 rounded-lg border border-black/10 bg-white px-2.5 text-[10px] font-semibold"
-                      >
-                        {selected.current.media.objectFit === "contain" ? "Kapla" : "Sığdır"}
-                      </button>
-                    ) : null}
-                    {selected.type !== "product-card" && selected.controlGroups.includes("typography") ? (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const current = selected.current.textAlign || "left";
-                          applyInspectorPatch("textAlign", current === "left" ? "center" : current === "center" ? "right" : "left");
-                        }}
-                        className="shrink-0 rounded-lg border border-black/10 bg-white px-2.5 text-[10px] font-semibold"
-                      >
-                        Hiza: {selected.current.textAlign === "center" ? "Orta" : selected.current.textAlign === "right" ? "Sağ" : "Sol"}
-                      </button>
-                    ) : null}
-                    {selected.type === "product-grid" ? (
-                      <button
-                        type="button"
-                        onClick={() => applyInspectorPatch("grid.columns", (selected.current.grid?.columns ?? 2) === 1 ? 2 : 1)}
-                        className="shrink-0 rounded-lg border border-black/10 bg-white px-2.5 text-[10px] font-semibold"
-                      >
-                        {selected.current.grid?.columns ?? 2} sütun
-                      </button>
-                    ) : null}
-                    {selected.type === "product-card" ? (
+                    {selected.type === "consent-banner" ? (
                       <>
-                        <button
-                          type="button"
-                          onClick={() => applyInspectorPatch("card.showPrice", selected.current.card?.showPrice === false)}
-                          className="shrink-0 rounded-lg border border-black/10 bg-white px-2.5 text-[10px] font-semibold"
-                        >
-                          {selected.current.card?.showPrice === false ? "Fiyatı göster" : "Fiyatı gizle"}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const ratio = selected.current.card?.imageRatio || "3/4";
-                            applyInspectorPatch("card.imageRatio", ratio === "3/4" ? "4/5" : ratio === "4/5" ? "1/1" : "3/4");
-                          }}
-                          className="shrink-0 rounded-lg border border-black/10 bg-white px-2.5 text-[10px] font-semibold"
-                        >
-                          Oran {selected.current.card?.imageRatio || "3/4"}
-                        </button>
+                        <label className="grid gap-1.5 text-[11px] opacity-70">Başlık<input value={consentSetting("title", "Çerezler")} onChange={(event) => applyInspectorPatch("title", event.target.value)} className="sd-field h-10 rounded-md border px-3 text-[13px] outline-none" /></label>
+                        <label className="grid gap-1.5 text-[11px] opacity-70">Açıklama<textarea value={consentSetting("intro", "Deneyiminizi iyileştirmek ve site kullanımını anlamak için çerezlerden yararlanıyoruz.")} onChange={(event) => applyInspectorPatch("intro", event.target.value)} className="sd-field min-h-24 resize-y rounded-md border p-3 text-[12px] leading-5 outline-none" /></label>
+                        <div className="grid grid-cols-2 gap-2">
+                          <label className="grid gap-1.5 text-[11px] opacity-70">Kabul düğmesi<input value={consentSetting("acceptLabel", "Kabul et")} onChange={(event) => applyInspectorPatch("acceptLabel", event.target.value)} className="sd-field h-10 rounded-md border px-3 text-[12px] outline-none" /></label>
+                          <label className="grid gap-1.5 text-[11px] opacity-70">Ret düğmesi<input value={consentSetting("rejectLabel", "Reddet")} onChange={(event) => applyInspectorPatch("rejectLabel", event.target.value)} className="sd-field h-10 rounded-md border px-3 text-[12px] outline-none" /></label>
+                        </div>
+                        <label className="grid gap-1.5 text-[11px] opacity-70">Gizlilik bağlantısı<input value={consentSetting("privacyLabel", "Gizlilik ve çerezler")} onChange={(event) => applyInspectorPatch("privacyLabel", event.target.value)} className="sd-field h-10 rounded-md border px-3 text-[12px] outline-none" /></label>
                       </>
                     ) : null}
                   </div>
-                  <div role="group" className="sd-mobile-sheet-levels mt-3 hidden grid-cols-3 gap-1 rounded-xl bg-black/[0.035] p-1" aria-label="Ayar paneli görünümü">
-                    {(["peek", "medium", "full"] as const).map((level) => (
-                      <button
-                        key={level}
-                        type="button"
-                        aria-pressed={mobileSheetLevel === level}
-                        onClick={() => setMobileSheetLevel(level)}
-                        className={`rounded-lg px-2 py-2 text-[11px] font-semibold ${mobileSheetLevel === level ? "is-active" : ""}`}
-                      >
-                        {level === "peek" ? "Özet" : level === "medium" ? "Ayarlar" : "Tam ekran"}
-                      </button>
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <p className="mt-2 text-[9px] leading-4 text-black/40">Önizlemede düzenlemek istediğin öğeyi seç. Masaüstünde sağ tık, mobilde uzun basma da kullanabilirsin.</p>
-              )}
-            </div>
-
-            {selected ? (
-              <div ref={inspectorBodyRef} className="sd-inspector-body min-h-0 flex-1 overflow-y-auto">
-                <section className="border-b border-black/[0.07] p-3">
-                  <label className="text-[9px] font-semibold text-black/45">UYGULAMA ALANI</label>
-                  <select aria-label="Uygulama alanı" value={scope} onChange={(event) => setScope(event.target.value as EditorScope)} className="sd-field mt-1.5 h-10 w-full rounded-lg border border-black/10 bg-white px-3 text-[10px] font-medium outline-none">
-                    {selected.allowedScopes.map((item) => <option key={item} value={item}>{scopeLabel(item)}</option>)}
-                  </select>
-                  <p className="mt-1.5 text-[8px] leading-4 text-black/35">Bu değişikliğin nerede geçerli olacağını seç. Önerilen: {scopeLabel(selected.defaultScope)}.</p>
                 </section>
+              ) : null}
 
-                {device === "mobile" && (selected.controlGroups.includes("responsive") || selected.type === "product-card" || selected.type === "product-grid") ? (
-                  <section className="border-b border-black/[0.07] p-3">
-                    <div className="flex items-center justify-between gap-2">
-                      <p className="text-[9px] font-semibold text-black/45">MOBİL AYARLARI</p>
-                      <span className={`rounded-full border px-2 py-1 text-[8px] font-semibold ${hasMobileOverrides ? "sd-responsive-badge is-override" : "sd-responsive-badge"}`}>
-                        {hasMobileOverrides ? "Mobil için farklı" : "Masaüstü ayarını kullanıyor"}
-                      </span>
-                    </div>
-                    <p className="mt-1.5 text-[8px] leading-4 text-black/35">Mobil için farklı bir değer seçmezsen masaüstü ayarı kullanılır.</p>
-                    <div className="mt-2 grid grid-cols-2 gap-2">
-                      <button type="button" onClick={() => applyMobileResponsiveAction("copy-desktop")} className="sd-secondary-button min-h-9 rounded-lg border border-black/10 bg-white px-2 text-[8px] font-semibold hover:bg-black/[0.03]">Masaüstü değerlerini kopyala</button>
-                      <button type="button" disabled={!hasMobileOverrides} onClick={() => applyMobileResponsiveAction("inherit")} className="sd-secondary-button min-h-9 rounded-lg border border-black/10 bg-white px-2 text-[8px] font-semibold hover:bg-black/[0.03] disabled:opacity-40">Masaüstü ayarını kullan</button>
-                    </div>
-                  </section>
-                ) : null}
-
-                <details className="sd-advanced-details border-b border-black/[0.07]">
-                  <summary className="cursor-pointer list-none px-3 py-3 text-[11px] font-semibold">
-                    Gelişmiş bilgiler
-                  </summary>
-                  <div className="grid gap-3 px-3 pb-3">
-                    <div>
-                      <p className="text-[11px] font-semibold text-black/55">Kullanılabilir ayarlar</p>
-                      <div className="mt-2 flex flex-wrap gap-1.5">
-                        {selected.controlGroups.map((group) => <span key={group} className="sd-chip rounded-full border border-black/[0.08] bg-[#f7f7f5] px-2 py-1 text-[10px] font-medium">{controlGroupLabel(group)}</span>)}
-                      </div>
-                    </div>
-                    <dl className="grid grid-cols-2 gap-2 text-[10px]">
-                      <div className="sd-state-card rounded-lg bg-[#f7f7f5] p-2"><dt className="text-black/45">Boyut</dt><dd className="mt-1 font-medium">{selected.current.width || 0} × {selected.current.height || 0}</dd></div>
-                      <div className="sd-state-card rounded-lg bg-[#f7f7f5] p-2"><dt className="text-black/45">Görünür</dt><dd className="mt-1 font-medium">{selected.current.visible === false ? "Hayır" : "Evet"}</dd></div>
-                      <div className="sd-state-card rounded-lg bg-[#f7f7f5] p-2"><dt className="text-black/45">Saydamlık</dt><dd className="mt-1 font-medium">{selected.current.opacity ?? 1}</dd></div>
-                      <div className="sd-state-card rounded-lg bg-[#f7f7f5] p-2"><dt className="text-black/45">Köşe</dt><dd className="mt-1 font-medium">{selected.current.borderRadius ?? 0}px</dd></div>
-                    </dl>
+              {selected.current.link ? (
+                <section className="sd-inspector-group border-b px-4 py-4">
+                  <h3 className="sd-inspector-group-title">Bağlantı</h3>
+                  <div className="mt-3 grid gap-3">
+                    <button type="button" onClick={() => setDestinationTarget(selected)} className="sd-destination-summary flex min-h-12 items-center justify-between gap-3 rounded-lg border px-3 text-left">
+                      <span className="min-w-0"><small className="block text-[10px] opacity-55">Gidilecek yer</small><strong className="mt-1 block truncate text-[12px]">{selected.current.link.href || "Bağlantı yok"}</strong></span>
+                      <span className="shrink-0 text-[10px] font-semibold">Değiştir</span>
+                    </button>
+                    <label className="grid gap-1.5 text-[11px] opacity-70">
+                      Açılış
+                      <select value={selected.current.link.target || "_self"} onChange={(event) => applyInspectorPatch("link.target", event.target.value)} className="sd-field h-10 rounded-md border px-3 text-[12px] font-medium outline-none">
+                        <option value="_self">Aynı sekme</option>
+                        <option value="_blank">Yeni sekme</option>
+                      </select>
+                    </label>
                   </div>
-                </details>
+                </section>
+              ) : null}
 
-                <section className="border-b border-black/[0.07] p-3">
-                  <p className="text-[9px] font-semibold text-black/45">HIZLI AYARLAR</p>
-                  <div className="mt-2 space-y-3">
-                    {selected.current.content ? (
-                      <label className="grid gap-1.5 text-[10px] text-black/45">
-                        Metin / ad
-                        <input
-                          value={selected.current.content.text || ""}
-                          onChange={(event) => {
-                            setSelected((current) => current ? updateTargetSnapshot(current, "content.text", event.target.value) : current);
-                          }}
-                          onBlur={(event) => applyInspectorPatch("content.text", event.target.value)}
-                          className="sd-field h-10 rounded-lg border border-black/10 bg-white px-3 text-[12px] font-medium text-black outline-none"
-                        />
-                      </label>
-                    ) : null}
+              {selected.current.media ? (
+                <section className="sd-inspector-group border-b px-4 py-4">
+                  <h3 className="sd-inspector-group-title">Medya</h3>
+                  <div className="mt-3 grid gap-3">
+                    <button type="button" onClick={openQuickMediaPicker} className="sd-primary-button flex h-10 items-center justify-center gap-2 rounded-md px-3 text-[11px] font-semibold">
+                      <Images className="h-4 w-4" />{selected.current.media.kind === "video" ? "Videoyu değiştir" : "Görseli değiştir"}
+                    </button>
+                    <div className="grid grid-cols-2 gap-2">
+                      <label className="grid gap-1.5 text-[11px] opacity-70">Sığdırma<select value={selected.current.media.objectFit || "cover"} onChange={(event) => applyInspectorPatch("media.objectFit", event.target.value)} className="sd-field h-10 rounded-md border px-2.5 text-[12px] outline-none"><option value="cover">Kapla / kırp</option><option value="contain">Tamamını göster</option></select></label>
+                      <label className="grid gap-1.5 text-[11px] opacity-70">Odak<select value={selected.current.media.objectPosition || "50% 50%"} onChange={(event) => applyInspectorPatch("media.objectPosition", event.target.value)} className="sd-field h-10 rounded-md border px-2.5 text-[12px] outline-none"><option value="50% 50%">Orta</option><option value="50% 0%">Üst</option><option value="50% 100%">Alt</option><option value="0% 50%">Sol</option><option value="100% 50%">Sağ</option></select></label>
+                    </div>
+                  </div>
+                </section>
+              ) : null}
 
-                    {selected.current.link ? (
-                      <div className="grid gap-2 rounded-xl border border-black/[0.08] p-3">
-                        <p className="text-[10px] font-semibold text-black/55">BAĞLANTI</p>
-                        <button
-                          type="button"
-                          onClick={() => setDestinationTarget(selected)}
-                          className="sd-secondary-button flex h-10 items-center justify-between rounded-lg border px-3 text-[11px] font-semibold"
-                        >
-                          <span className="min-w-0 truncate">{selected.current.link.href || "Bağlantı yok"}</span>
-                          <span className="shrink-0 text-[10px] opacity-60">Hedef seç</span>
-                        </button>
-                        <label className="grid gap-1.5 text-[10px] text-black/45">
-                          Özel adres
-                          <input
-                            value={selected.current.link.href || ""}
-                            onChange={(event) => {
-                              setSelected((current) => current ? updateTargetSnapshot(current, "link.href", event.target.value) : current);
-                            }}
-                            onBlur={(event) => {
-                              const value = event.target.value.trim();
-                              if (value) applyInspectorPatch("link.href", value);
-                            }}
-                            className="sd-field h-10 rounded-lg border border-black/10 bg-white px-3 text-[12px] font-medium text-black outline-none"
-                          />
-                        </label>
-                        <label className="grid gap-1.5 text-[10px] text-black/45">
-                          Açılış
-                          <select
-                            value={selected.current.link.target || "_self"}
-                            onChange={(event) => applyInspectorPatch("link.target", event.target.value)}
-                            className="sd-field h-10 rounded-lg border border-black/10 bg-white px-3 text-[12px] font-medium text-black outline-none"
-                          >
-                            <option value="_self">Aynı sekme</option>
-                            <option value="_blank">Yeni sekme</option>
-                          </select>
-                        </label>
-                      </div>
-                    ) : null}
-
+              {selected.controlGroups.includes("typography") || selected.controlGroups.includes("layout") || selected.controlGroups.includes("card") || selected.type === "consent-banner" ? (
+                <section className="sd-inspector-group border-b px-4 py-4">
+                  <h3 className="sd-inspector-group-title">Görünüm</h3>
+                  <div className="mt-3 grid gap-3">
                     {selected.controlGroups.includes("typography") ? (
-                      <label className="grid gap-1.5 text-[8px] text-black/45">
-                        Metin hizası
-                        <select value={selected.current.textAlign || "left"} onChange={(event) => applyInspectorPatch("textAlign", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none">
-                          <option value="left">Sol</option>
-                          <option value="center">Orta</option>
-                          <option value="right">Sağ</option>
-                        </select>
-                      </label>
+                      <label className="grid gap-1.5 text-[11px] opacity-70">Hizalama<select value={selected.current.textAlign || "left"} onChange={(event) => applyInspectorPatch("textAlign", event.target.value)} className="sd-field h-10 rounded-md border px-3 text-[12px] outline-none"><option value="left">Sol</option><option value="center">Orta</option><option value="right">Sağ</option></select></label>
                     ) : null}
-
-                    {selected.type === "consent-banner" ? (
-                      <div className="rounded-xl border border-black/[0.08] bg-[#fafafa] p-3">
-                        <div className="flex items-center justify-between gap-2">
-                          <p className="text-[8px] font-semibold text-black/55">ÇEREZ BİLDİRİMİ</p>
-                          <span className="rounded-full bg-white px-2 py-1 text-[7px] font-semibold text-black/40">{device === "mobile" ? "Mobil için farklı" : "Masaüstü ayarı"}</span>
-                        </div>
-                        <div className="mt-3 grid gap-3">
-                          <label className="grid gap-1.5 text-[8px] text-black/45">
-                            Başlık
-                            <input value={consentSetting("title", "Çerezler")} onChange={(event) => applyInspectorPatch("title", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none" />
-                          </label>
-                          <label className="grid gap-1.5 text-[8px] text-black/45">
-                            Açıklama
-                            <textarea value={consentSetting("intro", "Deneyiminizi iyileştirmek ve site kullanımını anlamak için çerezlerden yararlanıyoruz.")} onChange={(event) => applyInspectorPatch("intro", event.target.value)} className="min-h-20 resize-y rounded-lg border border-black/10 bg-white p-2.5 text-[9px] leading-5 text-black outline-none" />
-                          </label>
-                          <div className="grid grid-cols-2 gap-2">
-                            <label className="grid gap-1.5 text-[8px] text-black/45">
-                              Kabul düğmesi
-                              <input value={consentSetting("acceptLabel", "Kabul et")} onChange={(event) => applyInspectorPatch("acceptLabel", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none" />
-                            </label>
-                            <label className="grid gap-1.5 text-[8px] text-black/45">
-                              Ret düğmesi
-                              <input value={consentSetting("rejectLabel", "Reddet")} onChange={(event) => applyInspectorPatch("rejectLabel", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none" />
-                            </label>
-                          </div>
-                          <label className="grid gap-1.5 text-[8px] text-black/45">
-                            Gizlilik bağlantısı metni
-                            <input value={consentSetting("privacyLabel", "Gizlilik ve çerezler")} onChange={(event) => applyInspectorPatch("privacyLabel", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none" />
-                          </label>
-                          <label className="grid gap-1.5 text-[8px] text-black/45">
-                            Konum
-                            <select value={consentSetting("position", "bottom-center")} onChange={(event) => applyInspectorPatch("position", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none">
-                              <option value="bottom-center">Alt orta</option>
-                              <option value="bottom-left">Alt sol</option>
-                              <option value="bottom-right">Alt sağ</option>
-                            </select>
-                          </label>
-                          <div className="grid grid-cols-2 gap-2">
-                            <label className="grid gap-1.5 text-[8px] text-black/45">
-                              Genişlik
-                              <select value={consentSetting("widthPreset", "standard")} onChange={(event) => applyInspectorPatch("widthPreset", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none">
-                                <option value="compact">Dar</option>
-                                <option value="standard">Standart</option>
-                                <option value="wide">Geniş</option>
-                              </select>
-                            </label>
-                            <label className="grid gap-1.5 text-[8px] text-black/45">
-                              Köşe biçimi
-                              <select value={consentSetting("radiusPreset", "rounded")} onChange={(event) => applyInspectorPatch("radiusPreset", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none">
-                                <option value="soft">Yumuşak</option>
-                                <option value="rounded">Yuvarlak</option>
-                                <option value="pill">Tam yuvarlak</option>
-                              </select>
-                            </label>
-                          </div>
-                          <p className="rounded-lg border border-black/10 bg-white p-2 text-[7px] leading-4 text-black/42">
-                            Kabul ve ret davranışı, çerez kategorileri ve gizlilik sayfası korunur. Burada yalnız metin ve görünüm seçenekleri değişir.
-                          </p>
-                        </div>
-                      </div>
-                    ) : null}
-
                     {selected.controlGroups.includes("layout") && selected.type !== "consent-banner" ? (
-                      <label className="flex items-center justify-between gap-3 rounded-lg border border-black/[0.08] bg-white p-2.5 text-[8px] font-semibold text-black/50">
-                        Görünür
-                        <input
-                          type="checkbox"
-                          checked={selected.current.visible !== false}
-                          onChange={(event) => applyInspectorPatch("visible", event.target.checked)}
-                        />
-                      </label>
+                      <label className="sd-toggle-row flex min-h-11 items-center justify-between gap-3 rounded-lg border px-3 text-[12px] font-medium"><span>Görünür</span><input type="checkbox" checked={selected.current.visible !== false} onChange={(event) => applyInspectorPatch("visible", event.target.checked)} /></label>
                     ) : null}
-
-                    {(selected.controlGroups.includes("card") || selected.controlGroups.includes("layout")) && selected.type !== "consent-banner" ? (
-                      <label className="grid gap-1.5 text-[8px] text-black/45">
-                        Köşe yuvarlaklığı
-                        <select value={String(Math.round(selected.current.borderRadius || 0))} onChange={(event) => applyInspectorPatch("borderRadius", Number(event.target.value))} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none">
-                          {[0, 4, 8, 12, 16, 24, 32].map((value) => <option key={value} value={value}>{value === 0 ? "Düz" : `${value}px`}</option>)}
-                        </select>
-                      </label>
+                    {(selected.controlGroups.includes("card") || selected.controlGroups.includes("layout")) && selected.type !== "consent-banner" && selected.type !== "product-card" ? (
+                      <label className="grid gap-1.5 text-[11px] opacity-70">Köşe yuvarlaklığı<select value={String(Math.round(selected.current.borderRadius || 0))} onChange={(event) => applyInspectorPatch("borderRadius", Number(event.target.value))} className="sd-field h-10 rounded-md border px-3 text-[12px] outline-none">{[0,4,8,12,16,24,32].map((value) => <option key={value} value={value}>{value === 0 ? "Düz" : value + "px"}</option>)}</select></label>
                     ) : null}
-
-                    {selected.controlGroups.includes("media") && selected.current.media ? (
-                      <div className="grid gap-3">
-                        <button
-                          type="button"
-                          onClick={openQuickMediaPicker}
-                          className="sd-secondary-button flex min-h-10 items-center justify-center gap-2 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold"
-                        >
-                          <Images className="h-4 w-4" />
-                          {selected.current.media.kind === "video" ? "Videoyu değiştir" : "Görseli değiştir"}
-                        </button>
-                        <label className="grid gap-1.5 text-[8px] text-black/45">
-                          Medya sığdırma
-                          <select value={selected.current.media.objectFit || "cover"} onChange={(event) => applyInspectorPatch("media.objectFit", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none">
-                            <option value="cover">Kapla</option>
-                            <option value="contain">Sığdır</option>
-                          </select>
-                        </label>
-                        <label className="grid gap-1.5 text-[8px] text-black/45">
-                          Görsel odağı
-                          <select value={selected.current.media.objectPosition || "50% 50%"} onChange={(event) => applyInspectorPatch("media.objectPosition", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none">
-                            <option value="50% 50%">Orta</option>
-                            <option value="50% 0%">Üst</option>
-                            <option value="50% 100%">Alt</option>
-                            <option value="0% 50%">Sol</option>
-                            <option value="100% 50%">Sağ</option>
-                          </select>
-                        </label>
-                      </div>
-                    ) : null}
-
-                    {selected.type === "product-grid" ? (
-                      <div className="rounded-xl border border-black/[0.08] bg-[#fafafa] p-3">
-                        <div className="flex items-center justify-between gap-2">
-                          <p className="text-[8px] font-semibold text-black/55">Ürün düzeni</p>
-                          <span className="rounded-full bg-white px-2 py-1 text-[7px] font-semibold text-black/40">{device === "mobile" ? "Mobil" : "Masaüstü"}</span>
-                        </div>
-                        <div className="mt-3 grid gap-3">
-                          <label className="grid gap-1.5 text-[8px] text-black/45">
-                            Sütun sayısı
-                            <select
-                              value={String(selected.current.grid?.columns ?? (device === "mobile" ? 2 : 3))}
-                              onChange={(event) => applyInspectorPatch("grid.columns", Number(event.target.value))}
-                              className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none"
-                            >
-                              {(device === "mobile" ? [1, 2] : [2, 3, 4, 5, 6]).map((value) => <option key={value} value={value}>{value} sütun</option>)}
-                            </select>
-                          </label>
-                          <label className="grid gap-1.5 text-[8px] text-black/45">
-                            Yatay kart aralığı
-                            <select
-                              value={String(Math.round(selected.current.grid?.gapX ?? (device === "mobile" ? 16 : 20)))}
-                              onChange={(event) => applyInspectorPatch("grid.gapX", Number(event.target.value))}
-                              className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none"
-                            >
-                              {[0, 8, 12, 16, 20, 24, 32, 40, 48, 64].map((value) => <option key={value} value={value}>{value}px</option>)}
-                            </select>
-                          </label>
-                          <label className="grid gap-1.5 text-[8px] text-black/45">
-                            Dikey kart aralığı
-                            <select
-                              value={String(Math.round(selected.current.grid?.gapY ?? (device === "mobile" ? 32 : 48)))}
-                              onChange={(event) => applyInspectorPatch("grid.gapY", Number(event.target.value))}
-                              className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none"
-                            >
-                              {[0, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96].map((value) => <option key={value} value={value}>{value}px</option>)}
-                            </select>
-                          </label>
-                          <label className="grid gap-1.5 text-[8px] text-black/45">
-                            En fazla genişlik
-                            <select
-                              value={selected.current.grid?.maxWidth || "none"}
-                              onChange={(event) => applyInspectorPatch("grid.maxWidth", event.target.value)}
-                              className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none"
-                            >
-                              <option value="none">Kullanılabilir alanı doldur</option>
-                              <option value="1200px">1200px</option>
-                              <option value="1280px">1280px</option>
-                              <option value="1440px">1440px</option>
-                              <option value="1600px">1600px</option>
-                            </select>
-                          </label>
-                        </div>
-                      </div>
-                    ) : null}
-
                     {selected.type === "product-card" ? (
-                      <div className="rounded-xl border border-black/[0.08] bg-[#fafafa] p-3">
-                        <div className="flex items-center justify-between gap-2">
-                          <p className="text-[8px] font-semibold text-black/55">Ürün kartı görünümü</p>
-                          <span className="rounded-full bg-white px-2 py-1 text-[7px] font-semibold text-black/40">{device === "mobile" ? "Mobil" : "Masaüstü"}</span>
+                      <>
+                        <label className="grid gap-1.5 text-[11px] opacity-70">Yoğunluk<select value={selected.current.card?.density || "m"} onChange={(event) => applyInspectorPatch("card.density", event.target.value)} className="sd-field h-10 rounded-md border px-3 text-[12px] outline-none"><option value="s">Kompakt</option><option value="m">Dengeli</option><option value="l">Ferah</option></select></label>
+                        <label className="grid gap-1.5 text-[11px] opacity-70">Görsel oranı<select value={selected.current.card?.imageRatio || "3/4"} onChange={(event) => applyInspectorPatch("card.imageRatio", event.target.value)} className="sd-field h-10 rounded-md border px-3 text-[12px] outline-none"><option value="1/1">1:1</option><option value="4/5">4:5</option><option value="3/4">3:4</option></select></label>
+                        <div className="grid grid-cols-2 gap-2">
+                          <label className="sd-toggle-row flex min-h-11 items-center justify-between gap-2 rounded-lg border px-3 text-[11px] font-medium"><span>Fiyat</span><input type="checkbox" checked={selected.current.card?.showPrice !== false} onChange={(event) => applyInspectorPatch("card.showPrice", event.target.checked)} /></label>
+                          <label className="sd-toggle-row flex min-h-11 items-center justify-between gap-2 rounded-lg border px-3 text-[11px] font-medium"><span>Hızlı ekle</span><input type="checkbox" checked={selected.current.card?.showQuickAdd !== false} onChange={(event) => applyInspectorPatch("card.showQuickAdd", event.target.checked)} /></label>
                         </div>
-                        <div className="mt-3 grid gap-3">
-                          <label className="grid gap-1.5 text-[8px] text-black/45">
-                            Yoğunluk
-                            <select
-                              value={selected.current.card?.density || "m"}
-                              onChange={(event) => applyInspectorPatch("card.density", event.target.value)}
-                              className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none"
-                            >
-                              <option value="s">S · Kompakt</option>
-                              <option value="m">M · Dengeli</option>
-                              <option value="l">L · Ferah</option>
-                            </select>
-                          </label>
-                          <label className="grid gap-1.5 text-[8px] text-black/45">
-                            Görsel oranı
-                            <select
-                              value={selected.current.card?.imageRatio || "3/4"}
-                              onChange={(event) => applyInspectorPatch("card.imageRatio", event.target.value)}
-                              className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none"
-                            >
-                              <option value="1/1">1:1</option>
-                              <option value="4/5">4:5</option>
-                              <option value="3/4">3:4</option>
-                            </select>
-                          </label>
-                          <label className="grid gap-1.5 text-[8px] text-black/45">
-                            Başlık satırı
-                            <select
-                              value={String(selected.current.card?.titleLines ?? 2)}
-                              onChange={(event) => applyInspectorPatch("card.titleLines", Number(event.target.value))}
-                              className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] font-medium text-black outline-none"
-                            >
-                              {[1, 2, 3].map((value) => <option key={value} value={value}>{value} satır</option>)}
-                            </select>
-                          </label>
-                          <label className="flex items-center justify-between gap-3 rounded-lg border border-black/[0.08] bg-white p-2.5 text-[8px] font-semibold text-black/50">
-                            Fiyatı göster
-                            <input
-                              type="checkbox"
-                              checked={selected.current.card?.showPrice !== false}
-                              onChange={(event) => applyInspectorPatch("card.showPrice", event.target.checked)}
-                            />
-                          </label>
-                          <label className="flex items-center justify-between gap-3 rounded-lg border border-black/[0.08] bg-white p-2.5 text-[8px] font-semibold text-black/50">
-                            Hızlı sepete ekleme
-                            <input
-                              type="checkbox"
-                              checked={selected.current.card?.showQuickAdd !== false}
-                              onChange={(event) => applyInspectorPatch("card.showQuickAdd", event.target.checked)}
-                            />
-                          </label>
-                        </div>
-                      </div>
+                      </>
                     ) : null}
-
-                    {!selected.controlGroups.includes("typography") && !selected.controlGroups.includes("card") && !selected.controlGroups.includes("layout") && !(selected.controlGroups.includes("media") && selected.current.media) ? (
-                      <p className="text-[8px] leading-4 text-black/35">Bu öğe için ek hızlı ayar yok. Kullanılabilir seçenekler seçtiğin öğeye göre gösterilir.</p>
+                    {selected.type === "consent-banner" ? (
+                      <div className="grid grid-cols-2 gap-2">
+                        <label className="grid gap-1.5 text-[11px] opacity-70">Konum<select value={consentSetting("position", "bottom-center")} onChange={(event) => applyInspectorPatch("position", event.target.value)} className="sd-field h-10 rounded-md border px-2 text-[11px] outline-none"><option value="bottom-center">Alt orta</option><option value="bottom-left">Alt sol</option><option value="bottom-right">Alt sağ</option></select></label>
+                        <label className="grid gap-1.5 text-[11px] opacity-70">Genişlik<select value={consentSetting("widthPreset", "standard")} onChange={(event) => applyInspectorPatch("widthPreset", event.target.value)} className="sd-field h-10 rounded-md border px-2 text-[11px] outline-none"><option value="compact">Dar</option><option value="standard">Standart</option><option value="wide">Geniş</option></select></label>
+                      </div>
                     ) : null}
                   </div>
                 </section>
+              ) : null}
 
-                {selected.protectedFields.length ? (
-                  <section className="p-3">
-                    <p className="text-[9px] font-semibold text-black/45">KORUMALI ALAN</p>
-                    <p className="mt-1.5 text-[8px] leading-4 text-black/38">Bu öğenin bazı işlevsel ayarları güvenlik nedeniyle burada değiştirilemez.</p>
-                  </section>
-                ) : null}
-              </div>
-            ) : (
-              <div className="grid flex-1 place-items-center p-6 text-center text-[9px] leading-5 text-black/35">
-                Önizlemede düzenlemek istediğin öğeyi seç. Yalnız bu öğe için kullanılabilen ayarlar gösterilir.
-              </div>
-            )}
+              {selected.type === "product-grid" ? (
+                <section className="sd-inspector-group border-b px-4 py-4">
+                  <h3 className="sd-inspector-group-title">Düzen</h3>
+                  <div className="mt-3 grid gap-3">
+                    <label className="grid gap-1.5 text-[11px] opacity-70">Sütun sayısı<select value={String(selected.current.grid?.columns ?? (device === "mobile" ? 2 : 3))} onChange={(event) => applyInspectorPatch("grid.columns", Number(event.target.value))} className="sd-field h-10 rounded-md border px-3 text-[12px] outline-none">{(device === "mobile" ? [1,2] : [2,3,4,5,6]).map((value) => <option key={value} value={value}>{value} sütun</option>)}</select></label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <label className="grid gap-1.5 text-[11px] opacity-70">Yatay aralık<select value={String(Math.round(selected.current.grid?.gapX ?? 20))} onChange={(event) => applyInspectorPatch("grid.gapX", Number(event.target.value))} className="sd-field h-10 rounded-md border px-2 text-[11px] outline-none">{[0,8,12,16,20,24,32,40,48,64].map((value) => <option key={value} value={value}>{value}px</option>)}</select></label>
+                      <label className="grid gap-1.5 text-[11px] opacity-70">Dikey aralık<select value={String(Math.round(selected.current.grid?.gapY ?? 48))} onChange={(event) => applyInspectorPatch("grid.gapY", Number(event.target.value))} className="sd-field h-10 rounded-md border px-2 text-[11px] outline-none">{[0,8,12,16,20,24,32,40,48,64,80,96].map((value) => <option key={value} value={value}>{value}px</option>)}</select></label>
+                    </div>
+                    <label className="grid gap-1.5 text-[11px] opacity-70">En fazla genişlik<select value={selected.current.grid?.maxWidth || "none"} onChange={(event) => applyInspectorPatch("grid.maxWidth", event.target.value)} className="sd-field h-10 rounded-md border px-3 text-[12px] outline-none"><option value="none">Kullanılabilir alanı doldur</option><option value="1200px">1200px</option><option value="1280px">1280px</option><option value="1440px">1440px</option><option value="1600px">1600px</option></select></label>
+                  </div>
+                </section>
+              ) : null}
 
-            <div className="sd-inspector-footer border-t border-black/[0.07] p-3">
-              <p className="text-[8px] leading-4 text-black/35">
-                {hasUnsavedChanges
-                  ? "Kaydedilmemiş düzenlemeler var."
-                  : hasUnpublishedChanges
-                    ? "Taslak kaydedildi; yayınlanan sürümden farklı."
-                    : "Taslak ve yayınlanan sürüm eşleşiyor."}
-              </p>
+              {selected.controlGroups.includes("responsive") || selected.type === "product-card" || selected.type === "product-grid" ? (
+                <section className="sd-inspector-group border-b px-4 py-4">
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="sd-inspector-group-title">Mobil</h3>
+                    <span className={hasMobileOverrides ? "sd-responsive-badge is-override rounded-full border px-2 py-1 text-[9px] font-semibold" : "sd-responsive-badge rounded-full border px-2 py-1 text-[9px] font-semibold"}>{hasMobileOverrides ? "Mobil için farklı" : "Masaüstü ayarı"}</span>
+                  </div>
+                  <p className="mt-2 text-[10px] leading-4 opacity-55">Mobil için farklı bir değer seçmezsen masaüstü ayarı kullanılır.</p>
+                  <div className="mt-3 grid grid-cols-2 gap-2">
+                    <button type="button" onClick={() => applyMobileResponsiveAction("copy-desktop")} className="sd-secondary-button min-h-10 rounded-md border px-2 text-[10px] font-semibold">Masaüstünü kopyala</button>
+                    <button type="button" disabled={!hasMobileOverrides} onClick={() => applyMobileResponsiveAction("inherit")} className="sd-secondary-button min-h-10 rounded-md border px-2 text-[10px] font-semibold disabled:opacity-35">Masaüstünü kullan</button>
+                  </div>
+                </section>
+              ) : null}
+
+              <details className="sd-inspector-group sd-advanced-details border-b">
+                <summary className="cursor-pointer list-none px-4 py-4 text-[12px] font-semibold">Gelişmiş</summary>
+                <div className="grid gap-3 px-4 pb-4">
+                  <label className="grid gap-1.5 text-[11px] opacity-70">
+                    Uygulama alanı
+                    <select aria-label="Uygulama alanı" value={scope} onChange={(event) => setScope(event.target.value as EditorScope)} className="sd-field h-10 rounded-md border px-3 text-[12px] font-medium outline-none">
+                      {selected.allowedScopes.map((item) => <option key={item} value={item}>{scopeLabel(item)}</option>)}
+                    </select>
+                  </label>
+                  <div className="grid grid-cols-2 gap-2 text-[10px]">
+                    <div className="sd-state-card rounded-lg border p-2.5"><span className="opacity-55">Boyut</span><strong className="mt-1 block">{selected.current.width || 0} × {selected.current.height || 0}</strong></div>
+                    <div className="sd-state-card rounded-lg border p-2.5"><span className="opacity-55">Saydamlık</span><strong className="mt-1 block">{selected.current.opacity ?? 1}</strong></div>
+                  </div>
+                  {selected.protectedFields.length ? <p className="sd-protected-note rounded-lg border p-3 text-[10px] leading-4">Bu öğenin bazı işlevleri burada değiştirilemez.</p> : null}
+                </div>
+              </details>
             </div>
-          </aside>
+          ) : null}
+
+          <footer className="sd-inspector-footer border-t px-4 py-3">
+            <p className="text-[10px] opacity-55">{hasUnsavedChanges ? "Kaydedilmemiş değişiklikler var." : hasUnpublishedChanges ? "Taslak kaydedildi; henüz yayınlanmadı." : "Yayınlanan sürüm güncel."}</p>
+          </footer>
+        </aside>
 
       </div>
 
