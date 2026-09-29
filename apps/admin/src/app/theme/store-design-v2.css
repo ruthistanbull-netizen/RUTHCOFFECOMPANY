@@ -1985,3 +1985,10 @@
 @media(max-width:767px){
   [data-store-design-v2-admin] .sd-inspector[data-sheet-level="peek"] .sd-mobile-peek-actions{display:grid!important}
 }
+
+@media(max-width:767px){
+  [data-store-design-v2-admin] .sd-inspector[data-sheet-level="peek"] .sd-inspector-breadcrumb,
+  [data-store-design-v2-admin] .sd-inspector[data-sheet-level="peek"] .sd-scope-chip,
+  [data-store-design-v2-admin] .sd-inspector[data-sheet-level="peek"] .sd-mobile-sheet-levels{display:none!important}
+  [data-store-design-v2-admin] .sd-inspector[data-sheet-level="peek"] .sd-inspector-header{padding-top:8px!important;padding-bottom:8px!important}
+}
