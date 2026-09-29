@@ -74,7 +74,7 @@ export function StoreDesignSnapshotManager({ currentPublishedRevision, onRestore
 
   return (
     <div data-closing={closing ? "true" : "false"} className="sd-modal-backdrop fixed inset-0 z-[2147483625] grid place-items-center bg-black/35 p-3 backdrop-blur-sm">
-      <div className="sd-modal-card flex h-[min(760px,92dvh)] w-full max-w-[820px] flex-col overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl">
+      <div className="sd-modal-card sd-manager-history flex h-[min(700px,86dvh)] w-full max-w-[720px] flex-col overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl">
         <header className="flex h-14 shrink-0 items-center gap-3 border-b border-black/10 px-4">
           <div className="min-w-0 flex-1">
             <p className="text-[12px] font-semibold">Yayın Sürümü Geçmişi</p>
@@ -88,7 +88,7 @@ export function StoreDesignSnapshotManager({ currentPublishedRevision, onRestore
 
         <div className="min-h-0 flex-1 overflow-y-auto p-3">
           {loading && !snapshots.length ? (
-            <div className="grid min-h-52 place-items-center text-[9px] text-black/35">
+            <div className="grid min-h-36 place-items-center text-[9px] text-black/35">
               <div className="flex items-center gap-2"><RefreshCw className="h-4 w-4 animate-spin" />Sürüm geçmişi yükleniyor…</div>
             </div>
           ) : (
@@ -146,7 +146,7 @@ export function StoreDesignSnapshotManager({ currentPublishedRevision, onRestore
           )}
 
           {!loading && !snapshots.length ? (
-            <div className="grid min-h-52 place-items-center rounded-xl border border-dashed border-black/10 text-center">
+            <div className="grid min-h-36 place-items-center rounded-xl border border-dashed border-black/10 text-center">
               <div>
                 <Clock3 className="mx-auto h-5 w-5 text-black/20" />
                 <p className="mt-2 text-[9px] font-semibold text-black/45">Henüz yayın sürümü yok</p>
