@@ -88,6 +88,8 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
   component("main-menu", "Ana Menü", "Global", "global", globalScopes, ["content", "layout", "responsive"], ["rawChildResize"]),
   component("mega-menu", "Geniş Menü", "Global", "global", globalScopes, ["content", "layout", "media", "responsive"], ["rawCss"]),
   component("menu-media-card", "Menü Medya Kartı", "Global", "instance", ["instance", "global"], ["content", "media", "card", "responsive"], ["arbitrarySize"]),
+  component("menu-link", "Menü Bağlantısı", "Global", "instance", ["instance", "global"], ["content", "layout", "responsive"], []),
+  component("footer-link", "Alt Bilgi Bağlantısı", "Global", "instance", ["instance", "global"], ["content", "layout", "responsive"], []),
   component("search-trigger", "Arama Düğmesi", "Global", "global", globalScopes, ["layout"], ["searchLogic"]),
   component("account-trigger", "Hesap Düğmesi", "Global", "global", globalScopes, ["layout"], ["authLogic"]),
   component("cart-trigger", "Sepet Düğmesi", "Global", "global", globalScopes, ["layout"], ["cartState"]),
