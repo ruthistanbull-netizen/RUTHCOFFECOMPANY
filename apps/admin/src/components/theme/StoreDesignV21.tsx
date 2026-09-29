@@ -56,6 +56,7 @@ import { StoreDesignPublishReport } from "@/components/theme/StoreDesignPublishR
 import { StoreDesignDestinationPicker } from "@/components/theme/StoreDesignDestinationPicker";
 import { StoreDesignToolbarV22 } from "@/components/theme/StoreDesignToolbarV22";
 import { StoreDesignContextMenuV22 } from "@/components/theme/StoreDesignContextMenuV22";
+import { StoreDesignStructurePanelV22 } from "@/components/theme/StoreDesignStructurePanelV22";
 
 type Device = "desktop" | "mobile";
 type PageItem = {
@@ -1036,7 +1037,7 @@ export function StoreDesignV21() {
         setSelected(target);
         setStructureFocusSectionId(null);
         setScope(target.defaultScope);
-        setLeftOpen(false);
+        if (isMobileViewport) setLeftOpen(false);
 
         const pointer = data.pointer && typeof data.pointer === "object"
           ? data.pointer as { x?: unknown; y?: unknown; kind?: unknown }
@@ -1892,45 +1893,32 @@ export function StoreDesignV21() {
       />
 
       <div className="flex min-h-0 flex-1">
-        <aside ref={structurePanelRef} tabIndex={-1} aria-label="Sayfa yapısı" data-open={leftOpen ? "true" : "false"} aria-hidden={!leftOpen} className={`sd-sidebar sd-sidebar-left ${leftOpen ? "is-open" : "is-closed"} flex w-[292px] shrink-0 flex-col border-r border-black/10 bg-white max-lg:absolute max-lg:bottom-0 max-lg:left-0 max-lg:top-[58px] max-lg:z-20 max-lg:shadow-2xl`}>
-            <div className="border-b border-black/[0.07] p-3">
-              <div className="flex items-center justify-between gap-2">
-                <label className="block text-[9px] font-semibold text-black/45">SAYFA</label>
-                <div className="flex items-center gap-1">
-                  {managedPage ? (
-                    <button type="button" onClick={() => setPageManagerMode("edit")} className="sd-secondary-button flex h-7 items-center gap-1 rounded-md border border-black/10 bg-white px-2 text-[8px] font-semibold hover:bg-black/[0.03]">
-                      <Settings2 className="h-3 w-3" />Ayarlar
-                    </button>
-                  ) : null}
-                  <button type="button" onClick={() => setPageManagerMode("create")} className="sd-primary-button flex h-7 items-center gap-1 rounded-md bg-[#111] px-2 text-[8px] font-semibold text-white">
-                    <Plus className="h-3 w-3" />Yeni Sayfa
-                  </button>
-                </div>
-              </div>
-              <div className="sd-select-shell relative mt-1.5">
-                <select aria-label="Düzenlenen sayfa" value={activePath} onChange={(event) => void changePage(event.target.value)} className="sd-field h-10 w-full appearance-none rounded-lg border border-black/10 bg-white px-3 pr-8 text-[11px] font-medium outline-none hover:border-black/20">
-                  {groupedPages.map(([group, items]) => (
-                    <optgroup key={group} label={group}>
-                      {items.map((item) => <option key={item.path} value={item.path}>{item.label}</option>)}
-                    </optgroup>
-                  ))}
-                </select>
-                <ChevronDown className="sd-select-chevron pointer-events-none absolute right-2.5 top-3 h-4 w-4 text-black/35" />
-              </div>
-            </div>
-
-            <div className="sd-structure-scroll min-h-0 flex-1 overflow-y-auto">
-              <StoreDesignSectionManager
-                document={document}
-                activePage={activePage}
-                compatibility={activeCompatibility}
-                openPickerSignal={sectionPickerSignal}
-                openPresetSignal={presetPickerSignal}
-                selectedSectionId={structureFocusSectionId || selectedSectionId}
-                onApply={applyStructureDocument}
-              />
-            </div>
-          </aside>
+        <StoreDesignStructurePanelV22
+          panelRef={structurePanelRef}
+          open={leftOpen}
+          groupedPages={groupedPages}
+          activePath={activePath}
+          activeLabel={activePage?.label || "Mağaza Tasarımı"}
+          managedPage={Boolean(managedPage)}
+          onHide={() => setLeftOpen(false)}
+          onChangePage={(path) => void changePage(path)}
+          onEditPage={() => setPageManagerMode("edit")}
+          onNewPage={() => setPageManagerMode("create")}
+          onSelectGlobal={(targetId) => {
+            setInteractionMode("edit");
+            postToPreview({ type: "store-design-v2:select-target", targetId });
+          }}
+        >
+          <StoreDesignSectionManager
+            document={document}
+            activePage={activePage}
+            compatibility={activeCompatibility}
+            openPickerSignal={sectionPickerSignal}
+            openPresetSignal={presetPickerSignal}
+            selectedSectionId={structureFocusSectionId || selectedSectionId}
+            onApply={applyStructureDocument}
+          />
+        </StoreDesignStructurePanelV22>
 
         <main className="sd-preview-stage relative flex min-w-0 flex-1 items-center justify-center overflow-auto p-3 md:p-6">
           {!connected ? (
