@@ -778,51 +778,56 @@ export function StoreDesignV21() {
 
   useEffect(() => {
     const stage = previewStageRef.current;
-    if (!stage || isMobileViewport) return;
+    if (!stage || isMobileViewport || device !== "desktop") return;
+
+    let frame = 0;
+    let settleTimer = 0;
 
     const syncDesktopViewport = () => {
-      const viewportWidth = Math.max(1024, Math.round(window.innerWidth));
-      const viewportHeight = Math.max(640, Math.round(window.innerHeight));
-      const rect = stage.getBoundingClientRect();
-      const horizontalGutter = 36;
-      const verticalGutter = 36;
-      const availableWidth = Math.max(320, rect.width - horizontalGutter);
-      const availableHeight = Math.max(320, rect.height - verticalGutter);
-      const scale = Math.min(
-        1,
-        availableWidth / viewportWidth,
-        availableHeight / viewportHeight,
-      );
+      if (frame) window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => {
+        frame = 0;
+        const viewportWidth = Math.max(1024, Math.round(window.innerWidth));
+        const viewportHeight = Math.max(640, Math.round(window.innerHeight));
+        const rect = stage.getBoundingClientRect();
+        const horizontalGutter = 20;
+        const availableWidth = Math.max(520, rect.width - horizontalGutter);
 
-      setDesktopPreviewViewport((current) => {
-        const next = {
-          width: viewportWidth,
-          height: viewportHeight,
-          scale: Math.max(0.2, scale),
-        };
-        if (
-          current.width === next.width
-          && current.height === next.height
-          && Math.abs(current.scale - next.scale) < 0.001
-        ) {
-          return current;
-        }
-        return next;
+        // Keep the storefront's real desktop viewport. Only scale it visually
+        // by width so the editor never shrinks it because of panel/toolbar height.
+        const scale = Math.min(1, availableWidth / viewportWidth);
+
+        setDesktopPreviewViewport((current) => {
+          const next = {
+            width: viewportWidth,
+            height: viewportHeight,
+            scale: Math.max(0.48, scale),
+          };
+          if (
+            current.width === next.width
+            && current.height === next.height
+            && Math.abs(current.scale - next.scale) < 0.001
+          ) {
+            return current;
+          }
+          return next;
+        });
       });
     };
 
     syncDesktopViewport();
-    const resizeObserver = new ResizeObserver(syncDesktopViewport);
-    resizeObserver.observe(stage);
+    // Side panels animate; take one settled measurement after that transition.
+    settleTimer = window.setTimeout(syncDesktopViewport, 340);
     window.addEventListener("resize", syncDesktopViewport);
     window.visualViewport?.addEventListener("resize", syncDesktopViewport);
 
     return () => {
-      resizeObserver.disconnect();
+      if (frame) window.cancelAnimationFrame(frame);
+      if (settleTimer) window.clearTimeout(settleTimer);
       window.removeEventListener("resize", syncDesktopViewport);
       window.visualViewport?.removeEventListener("resize", syncDesktopViewport);
     };
-  }, [isMobileViewport]);
+  }, [device, isMobileViewport, leftOpen, rightOpen]);
 
   useEffect(() => {
     if (!isMobileViewport) return;
