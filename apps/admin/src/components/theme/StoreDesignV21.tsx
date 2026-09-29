@@ -273,6 +273,10 @@ function recordValue(value: unknown): Record<string, unknown> {
   return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {};
 }
 
+function globalInstanceSemanticKey(targetId: string) {
+  return `id:${encodeURIComponent(targetId).replace(/\./g, "%2E")}`;
+}
+
 function flattenResponsiveLeaves(value: unknown, prefix = ""): Array<[string, unknown]> {
   if (value == null || typeof value !== "object" || Array.isArray(value)) return prefix ? [[prefix, value]] : [];
   const output: Array<[string, unknown]> = [];
@@ -308,7 +312,7 @@ function responsiveSettingsFor(
   }
 
   if (scope === "instance" && target.id.startsWith("global.")) {
-    return recordValue(globalContainer[`id:${encodeURIComponent(target.id)}`]);
+    return recordValue(globalContainer[globalInstanceSemanticKey(target.id)]);
   }
 
   if (scope === "family") return recordValue(document.globals.componentFamilies[target.type]);
@@ -374,8 +378,8 @@ function updateTargetSnapshot(target: SelectedTarget, path: string, value: unkno
       },
     };
   }
-  if (path === "media.src" || path === "media.objectFit" || path === "media.objectPosition") {
-    const key = path === "media.src" ? "src" : path === "media.objectFit" ? "objectFit" : "objectPosition";
+  if (path === "media.src" || path === "media.alt" || path === "media.objectFit" || path === "media.objectPosition") {
+    const key = path === "media.src" ? "src" : path === "media.alt" ? "alt" : path === "media.objectFit" ? "objectFit" : "objectPosition";
     return { ...target, current: { ...target.current, media: { ...(target.current.media || {}), [key]: String(value) } } };
   }
   if (path.startsWith("grid.")) {
@@ -500,7 +504,12 @@ function persistSemanticPatch(
   }
 
   if (scope === "instance" && target.id.startsWith("global.")) {
-    writeNested(globalContainer, `id:${encodeURIComponent(target.id)}.${device}.${path}`, value);
+    const semanticKey = globalInstanceSemanticKey(target.id);
+    const responsive = recordValue(globalContainer[semanticKey]);
+    const deviceSettings = recordValue(responsive[device]);
+    writeNested(deviceSettings, path, value);
+    responsive[device] = deviceSettings;
+    globalContainer[semanticKey] = responsive;
     return next;
   }
 
@@ -522,7 +531,13 @@ function persistSemanticPatch(
       blockIds: [],
     };
     const semanticKey = scope === "section" ? target.type : target.id;
-    writeNested(instance.settings, `semantic.${semanticKey}.${device}.${path}`, value);
+    const semantic = recordValue(instance.settings.semantic);
+    const responsive = recordValue(semantic[semanticKey]);
+    const deviceSettings = recordValue(responsive[device]);
+    writeNested(deviceSettings, path, value);
+    responsive[device] = deviceSettings;
+    semantic[semanticKey] = responsive;
+    instance.settings = { ...instance.settings, semantic };
     next.sections[section.id] = instance;
     return next;
   }
