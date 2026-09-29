@@ -31,7 +31,7 @@ import {
   FileText,
   Trash2,
 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import {
   STORE_DESIGN_MESSAGES,
   STORE_DESIGN_SCHEMA_VERSION,
@@ -612,7 +612,7 @@ function StableInspectorTextControl({
 
   const common = {
     value: draft,
-    onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => updateDraft(event.target.value),
+    onChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => updateDraft(event.target.value),
     onFocus: beginEditing,
     onBlur: finishEditing,
     placeholder,
