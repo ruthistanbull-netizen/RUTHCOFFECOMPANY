@@ -574,11 +574,15 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
     };
 
     const onContextMenu = (event: MouseEvent) => {
-      const target = targetFromEvent(event);
-      if (!target) return;
+      // Store Design V2 owns right click across the whole preview. Never let the
+      // browser context menu cover the editor, even if a future DOM node is not
+      // yet registered as a specific semantic target.
       event.preventDefault();
       event.stopPropagation();
       event.stopImmediatePropagation();
+
+      const target = targetFromEvent(event) || targetFrom(document.body);
+      if (!target) return;
       select(target, { x: event.clientX, y: event.clientY, kind: "mouse" });
     };
 
