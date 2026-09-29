@@ -995,7 +995,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
         if (!element && requestedId === "global.header.mega-menu") {
           element = document.querySelector('[data-editor-id="global.header.menu-trigger"]');
         }
-        const target = targetFrom(element) || targetFrom(document.body);
+        const target = targetFrom(element);
         if (!target) return;
         target.element.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
         select(target);
