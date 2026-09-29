@@ -337,6 +337,16 @@ function responsiveSettingsFor(
   return recordValue(template?.componentSettings?.[semanticKey]);
 }
 
+function topLevelMenuSourceId(target: SelectedTarget) {
+  if (target.type !== "menu-link") return null;
+  const prefix = "global.header.menu.link.";
+  if (!target.id.startsWith(prefix)) return null;
+  const suffix = target.id.slice(prefix.length);
+  const instanceKey = target.instanceKey?.trim() || "";
+  if (!suffix || !instanceKey || suffix !== instanceKey) return null;
+  return instanceKey;
+}
+
 function snapshotValue(target: SelectedTarget, path: string) {
   if (path === "order") return target.current.order || 0;
   if (path === "content.text") return target.current.content?.text || "";
@@ -1081,6 +1091,53 @@ export function StoreDesignV21() {
     }
   }, [postToPreview, toast]);
 
+  const persistMenuSourcePatch = useCallback(async (
+    target: SelectedTarget,
+    path: string,
+    value: unknown,
+  ) => {
+    const itemId = topLevelMenuSourceId(target);
+    if (!itemId || (path !== "content.text" && path !== "link.href")) return;
+
+    try {
+      const result = await adminRequest<{ settings?: unknown }>(`/api/theme?t=${Date.now()}`, { force: true });
+      const current = normalizeThemeCustomizerSettings(result.settings);
+      let changed = false;
+      const links = current.header.links.map((item) => {
+        if (item.id !== itemId) return item;
+        if (path === "content.text") {
+          const label = String(value ?? "").trim().slice(0, 80);
+          if (!label || label === item.label) return item;
+          changed = true;
+          return { ...item, label };
+        }
+        const href = String(value ?? "").trim() || "/";
+        if (href === item.path) return item;
+        changed = true;
+        return { ...item, path: href };
+      });
+      if (!changed) return;
+
+      const next: ThemeCustomizerSettings = {
+        ...current,
+        header: { ...current.header, links },
+      };
+      const saved = await adminRequest<{ settings?: unknown }>("/api/theme", {
+        method: "PUT",
+        body: JSON.stringify({ settings: next }),
+        confirmation: false,
+      });
+      const persisted = normalizeThemeCustomizerSettings(saved.settings || next);
+      iframeRef.current?.contentWindow?.postMessage({
+        type: "RUTH_THEME_EDITOR_SETTINGS",
+        settings: persisted,
+        revision: Date.now(),
+      }, STOREFRONT_ORIGIN);
+    } catch (error) {
+      console.warn("Menü kaynağı Store Design değişikliğiyle eşitlenemedi:", error);
+    }
+  }, []);
+
   const postMediaDocumentDiff = useCallback((before: ThemeDocument, after: ThemeDocument) => {
     const ids = new Set([...Object.keys(before.media), ...Object.keys(after.media)]);
     for (const assetId of ids) {
@@ -1608,6 +1665,9 @@ export function StoreDesignV21() {
       scope: patchScope,
       device: patchDevice,
     });
+    if (path === "content.text" || path === "link.href") {
+      void persistMenuSourcePatch(target, path, value);
+    }
   };
 
   const applyInspectorPatch = (path: string, value: unknown) => {
