@@ -317,7 +317,6 @@ function allowedPatch(definition: ComponentDefinition, path: string) {
 
   if (root === "content") return definition.controlGroups.includes("content");
   if (root === "link") return definition.controlGroups.includes("content") || definition.controlGroups.includes("media");
-  if (root === "media" && message.path === "media.alt") return definition.controlGroups.includes("media");
   if (root === "visible") return definition.controlGroups.includes("layout");
   if (root === "textAlign" || root === "color") return definition.controlGroups.includes("typography");
   if (root === "opacity" || root === "borderRadius" || root === "backgroundColor") {
