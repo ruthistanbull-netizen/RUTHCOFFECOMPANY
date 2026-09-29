@@ -13,6 +13,12 @@ type SocialLink = {
   icon: ReactElement;
 };
 
+type FooterLink = {
+  id: string;
+  label: string;
+  href: string;
+};
+
 const SOCIAL_LINKS: SocialLink[] = [
   ...(process.env.NEXT_PUBLIC_ROSTA_WHATSAPP_URL
     ? [{ label: "WhatsApp", href: process.env.NEXT_PUBLIC_ROSTA_WHATSAPP_URL, icon: <WhatsAppIcon /> }]
@@ -45,12 +51,32 @@ function WhatsAppIcon() {
   return <img src="/whatsapp-icon-black.png" alt="" aria-hidden="true" className="h-8 w-8 object-contain brightness-0 invert" loading="lazy" />;
 }
 
-function FooterColumn({ title, links }: { title: string; links: Array<{ label: string; href: string }> }) {
+function FooterColumn({ id, title, links }: { id: string; title: string; links: FooterLink[] }) {
   return (
-    <div className="min-w-0">
-      <h4 className="mb-3 text-[8px] uppercase leading-tight tracking-[0.14em] sm:text-[9px]" style={{ color: "var(--rosta-brick-b)" }}>{title}</h4>
+    <div
+      className="min-w-0"
+      data-editor-id={`global.footer.group.${id}`}
+      data-editor-type="footer-group"
+      data-editor-label={`${title} grubu`}
+      data-editor-instance={id}
+    >
+      <h4 data-store-design-editable-text="true" className="mb-3 text-[8px] uppercase leading-tight tracking-[0.14em] sm:text-[9px]" style={{ color: "var(--rosta-brick-b)" }}>{title}</h4>
       <ul className="space-y-2 text-[9px] leading-[1.45] sm:text-[10px] md:text-[11px]" style={{ color: "var(--ruth-color-text-muted)" }}>
-        {links.map((item) => <li key={`${title}-${item.href}`}><Link href={item.href} className="break-words transition focus-visible:text-cream focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick">{item.label}</Link></li>)}
+        {links.map((item) => (
+          <li key={item.id}>
+            <Link
+              href={item.href}
+              data-editor-id={`global.footer.link.${item.id}`}
+              data-editor-type="footer-link"
+              data-editor-label={item.label}
+              data-editor-instance={item.id}
+              data-store-design-editable-text="true"
+              className="break-words transition focus-visible:text-cream focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"
+            >
+              {item.label}
+            </Link>
+          </li>
+        ))}
       </ul>
     </div>
   );
@@ -59,21 +85,21 @@ function FooterColumn({ title, links }: { title: string; links: Array<{ label: s
 export async function Footer({ categories = [], collections = [], themeSettings }: { categories?: Category[]; collections?: Collection[]; themeSettings?: ThemeCustomizerSettings }) {
   const resolvedThemeSettings = themeSettings || await getThemeCustomizerSettings();
   const shoppingLinks = [
-    { label: "Yeni Gelenler", href: "/category/new-arrivals" },
-    ...categories.map((category) => ({ label: category.name, href: categoryHref(category.public_slug || category.slug) })),
-    ...(collections.length ? [{ label: "Koleksiyonlar", href: "/collections" }] : []),
+    { id: "shopping-new-arrivals", label: "Yeni Gelenler", href: "/category/new-arrivals" },
+    ...categories.map((category) => ({ id: `shopping-category-${encodeURIComponent(category.public_slug || category.slug)}`, label: category.name, href: categoryHref(category.public_slug || category.slug) })),
+    ...(collections.length ? [{ id: "shopping-collections", label: "Koleksiyonlar", href: "/collections" }] : []),
   ];
   const supportLinks = [
-    { label: "İletişim", href: "/contact" },
-    { label: "S.S.S.", href: "/faq" },
-    { label: "Kargo, İade ve Değişim", href: "/shipping-returns" },
-    { label: "Garanti ve Kullanım Talimatları", href: "/warranty-care" },
+    { id: "support-contact", label: "İletişim", href: "/contact" },
+    { id: "support-faq", label: "S.S.S.", href: "/faq" },
+    { id: "support-shipping-returns", label: "Kargo, İade ve Değişim", href: "/shipping-returns" },
+    { id: "support-warranty-care", label: "Garanti ve Kullanım Talimatları", href: "/warranty-care" },
   ];
   const legalLinks = [
-    { label: "Gizlilik Politikası", href: "/privacy-policy" },
-    { label: "Kullanım Şartları", href: "/terms" },
-    { label: "KVKK Aydınlatma Metni", href: "/kvkk" },
-    { label: "Elektronik Ticari İleti Onayı", href: "/commercial-communication-consent" },
+    { id: "legal-privacy-policy", label: "Gizlilik Politikası", href: "/privacy-policy" },
+    { id: "legal-terms", label: "Kullanım Şartları", href: "/terms" },
+    { id: "legal-kvkk", label: "KVKK Aydınlatma Metni", href: "/kvkk" },
+    { id: "legal-commercial-consent", label: "Elektronik Ticari İleti Onayı", href: "/commercial-communication-consent" },
   ];
 
   return (
@@ -84,12 +110,12 @@ export async function Footer({ categories = [], collections = [], themeSettings 
             <Link href="/" aria-label="Rosta Coffee Co anasayfa" className="mb-4 inline-flex"><img src={ROSTA_WORDMARK_SRC} alt="" className="h-auto w-[190px] object-contain brightness-0 invert sm:w-[220px]" /></Link>
             <p className="max-w-sm text-xs leading-relaxed sm:text-sm" style={{ color: "var(--muted-foreground)" }}>Kahve, danışmanlık ve tedarik için sade, güvenilir çözümler.</p>
             <div className="mt-5 flex justify-center gap-3">
-              {SOCIAL_LINKS.map((social) => <a key={social.label} href={social.href} target="_blank" rel="noreferrer" aria-label={social.label} className="flex h-10 w-10 items-center justify-center rounded-full border border-kraft/40 text-cream transition-colors active:bg-carbon-soft focus-visible:border-brick focus-visible:bg-carbon-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick">{social.icon}</a>)}
-              <Link href="/contact#contact-form" aria-label="Bizimle iletişime geç" className="flex h-10 w-10 items-center justify-center rounded-full border border-kraft/40 text-cream transition-colors active:bg-carbon-soft focus-visible:border-brick focus-visible:bg-carbon-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"><Mail size={18} strokeWidth={1.65} /></Link>
+              {SOCIAL_LINKS.map((social) => <a key={social.label} href={social.href} data-editor-id={`global.footer.link.social.${social.label.toLowerCase()}`} data-editor-type="footer-link" data-editor-label={social.label} data-editor-instance={`social-${social.label.toLowerCase()}`} target="_blank" rel="noreferrer" aria-label={social.label} className="flex h-10 w-10 items-center justify-center rounded-full border border-kraft/40 text-cream transition-colors active:bg-carbon-soft focus-visible:border-brick focus-visible:bg-carbon-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick">{social.icon}</a>)}
+              <Link href="/contact#contact-form" data-editor-id="global.footer.link.contact-form" data-editor-type="footer-link" data-editor-label="Bizimle iletişime geç" data-editor-instance="contact-form" aria-label="Bizimle iletişime geç" className="flex h-10 w-10 items-center justify-center rounded-full border border-kraft/40 text-cream transition-colors active:bg-carbon-soft focus-visible:border-brick focus-visible:bg-carbon-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"><Mail size={18} strokeWidth={1.65} /></Link>
             </div>
           </div>
           <div className="mb-10 grid grid-cols-3 gap-x-3 sm:gap-x-8 md:mx-auto md:max-w-4xl md:gap-x-16">
-            <FooterColumn title="Alışveriş" links={shoppingLinks} /><FooterColumn title="Müşteri Hizmetleri" links={supportLinks} /><FooterColumn title="Yasal" links={legalLinks} />
+            <FooterColumn id="shopping" title="Alışveriş" links={shoppingLinks} /><FooterColumn id="support" title="Müşteri Hizmetleri" links={supportLinks} /><FooterColumn id="legal" title="Yasal" links={legalLinks} />
           </div>
           <div className="mb-7 flex flex-col gap-4 rounded-[1.25rem] border border-kraft/35 bg-carbon-soft p-4 md:flex-row md:items-center md:justify-between">
             <div><p className="text-[9px] uppercase tracking-wide-luxe text-brick">Güvenli Ödeme</p><p className="mt-1.5 text-[10px] text-cream/70 sm:text-xs">PAYTR ile Güvenli Ödeme.</p></div>
