@@ -720,7 +720,7 @@ for (const token of [
 const breadcrumbRuntime = read("apps/storefront/src/components/theme/StoreDesignBreadcrumb.tsx");
 for (const token of [
   'data-editor-type="breadcrumb"',
-  'aria-label="Breadcrumb"',
+  'aria-label="Sayfa Yolu"',
   'separatorPreset === "slash"',
   'separatorPreset === "dot"',
   "items.length < 2",
