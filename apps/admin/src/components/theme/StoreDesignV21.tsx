@@ -667,6 +667,7 @@ export function StoreDesignV21() {
   const toast = useExactToast();
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const editorShellRef = useRef<HTMLDivElement | null>(null);
+  const previewStageRef = useRef<HTMLElement | null>(null);
   const mobileMoreButtonRef = useRef<HTMLButtonElement | null>(null);
   const mobileMoreMenuRef = useRef<HTMLDivElement | null>(null);
   const mobileStructureButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -700,6 +701,11 @@ export function StoreDesignV21() {
   const [leftOpen, setLeftOpen] = useState(false);
   const [rightOpen, setRightOpen] = useState(false);
   const [isMobileViewport, setIsMobileViewport] = useState(false);
+  const [desktopPreviewViewport, setDesktopPreviewViewport] = useState({
+    width: 1440,
+    height: 900,
+    scale: 0.75,
+  });
   const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
   const [sectionPickerSignal, setSectionPickerSignal] = useState(0);
   const [presetPickerSignal, setPresetPickerSignal] = useState(0);
@@ -761,6 +767,54 @@ export function StoreDesignV21() {
   useEffect(() => {
     selectedIdRef.current = selected?.id || null;
   }, [selected?.id]);
+
+  useEffect(() => {
+    const stage = previewStageRef.current;
+    if (!stage || isMobileViewport) return;
+
+    const syncDesktopViewport = () => {
+      const viewportWidth = Math.max(1024, Math.round(window.innerWidth));
+      const viewportHeight = Math.max(640, Math.round(window.innerHeight));
+      const rect = stage.getBoundingClientRect();
+      const horizontalGutter = 36;
+      const verticalGutter = 36;
+      const availableWidth = Math.max(320, rect.width - horizontalGutter);
+      const availableHeight = Math.max(320, rect.height - verticalGutter);
+      const scale = Math.min(
+        1,
+        availableWidth / viewportWidth,
+        availableHeight / viewportHeight,
+      );
+
+      setDesktopPreviewViewport((current) => {
+        const next = {
+          width: viewportWidth,
+          height: viewportHeight,
+          scale: Math.max(0.2, scale),
+        };
+        if (
+          current.width === next.width
+          && current.height === next.height
+          && Math.abs(current.scale - next.scale) < 0.001
+        ) {
+          return current;
+        }
+        return next;
+      });
+    };
+
+    syncDesktopViewport();
+    const resizeObserver = new ResizeObserver(syncDesktopViewport);
+    resizeObserver.observe(stage);
+    window.addEventListener("resize", syncDesktopViewport);
+    window.visualViewport?.addEventListener("resize", syncDesktopViewport);
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", syncDesktopViewport);
+      window.visualViewport?.removeEventListener("resize", syncDesktopViewport);
+    };
+  }, [isMobileViewport]);
 
   useEffect(() => {
     if (!isMobileViewport) return;
@@ -2254,7 +2308,7 @@ export function StoreDesignV21() {
           </div>
         </aside>
 
-        <main className="sd-preview-stage relative flex min-w-0 flex-1 items-center justify-center overflow-auto p-3 md:p-6">
+        <main ref={previewStageRef} className="sd-preview-stage relative flex min-w-0 flex-1 items-center justify-center overflow-auto p-3 md:p-6">
           {!connected ? (
             <div role="status" aria-live="polite" className="sd-preview-connection-chip absolute left-1/2 top-3 z-30 flex max-w-[calc(100%_-_24px)] -translate-x-1/2 items-center gap-2 rounded-full px-3 py-2 text-[11px] font-semibold shadow-lg">
               <RefreshCw className={`h-3.5 w-3.5 shrink-0 ${connectionStalled ? "" : "animate-spin"}`} />
@@ -2275,19 +2329,34 @@ export function StoreDesignV21() {
               {selected ? `Seçili: ${selected.label} · Düzenle'den ayarları aç` : "Düzenleme açık · Bir öğeye dokun"}
             </div>
           ) : null}
-          <div className={`sd-preview-shell relative shrink-0 overflow-hidden bg-white shadow-[0_18px_60px_rgba(15,23,42,.14)] transition-[width,height,border-radius] duration-300 ${
-            device === "mobile"
-              ? isMobileViewport
-                ? "h-full w-full rounded-none border-0"
-                : "h-[780px] w-[390px] rounded-[44px] border-[9px] border-[#111]"
-              : "h-[calc(100dvh_-_106px)] min-h-[620px] w-[min(1180px,calc(100vw_-_120px))] rounded-xl border border-black/10"
-          }`}>
+          <div
+            data-preview-viewport-width={device === "desktop" ? desktopPreviewViewport.width : undefined}
+            data-preview-viewport-height={device === "desktop" ? desktopPreviewViewport.height : undefined}
+            data-preview-scale={device === "desktop" ? desktopPreviewViewport.scale.toFixed(4) : undefined}
+            className={`sd-preview-shell relative shrink-0 overflow-hidden bg-white shadow-[0_18px_60px_rgba(15,23,42,.14)] transition-[width,height,border-radius] duration-300 ${
+              device === "mobile"
+                ? isMobileViewport
+                  ? "h-full w-full rounded-none border-0"
+                  : "h-[780px] w-[390px] rounded-[44px] border-[9px] border-[#111]"
+                : "sd-desktop-viewport-shell rounded-xl border border-black/10"
+            }`}
+            style={device === "desktop" && !isMobileViewport ? {
+              width: `${Math.round(desktopPreviewViewport.width * desktopPreviewViewport.scale)}px`,
+              height: `${Math.round(desktopPreviewViewport.height * desktopPreviewViewport.scale)}px`,
+            } : undefined}
+          >
             {device === "mobile" && !isMobileViewport ? <div className="sd-device-island pointer-events-none absolute left-1/2 top-3 z-10 h-7 w-28 -translate-x-1/2 rounded-full bg-[#111]" /> : null}
             <iframe
               ref={iframeRef}
               title="Mağaza tasarımı önizlemesi"
               src={initialSrcRef.current}
-              className={`sd-preview-frame h-full w-full bg-white ${device === "mobile" && !isMobileViewport ? "rounded-[34px]" : ""}`}
+              className={`sd-preview-frame bg-white ${device === "mobile" && !isMobileViewport ? "h-full w-full rounded-[34px]" : device === "mobile" ? "h-full w-full" : "sd-desktop-viewport-frame"}`}
+              style={device === "desktop" && !isMobileViewport ? {
+                width: `${desktopPreviewViewport.width}px`,
+                height: `${desktopPreviewViewport.height}px`,
+                transform: `scale(${desktopPreviewViewport.scale})`,
+                transformOrigin: "top left",
+              } : undefined}
               onLoad={() => {
                 setConnected(false);
                 setConnectionStalled(false);
