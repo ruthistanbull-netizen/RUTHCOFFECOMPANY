@@ -247,6 +247,7 @@ const storeDesignInspectorV22 = read("apps/admin/src/components/theme/StoreDesig
 const storeDesignMobileDockV22 = read("apps/admin/src/components/theme/StoreDesignMobileDockV22.tsx");
 const storeDesignDestinationV22 = read("apps/admin/src/components/theme/StoreDesignDestinationPicker.tsx");
 const storeDesignAutoTargets = read("apps/storefront/src/components/theme/storeDesignAutoTargets.ts");
+const storefrontFooterV22 = read("apps/storefront/src/components/Footer.tsx");
 
 for (const token of [
   "StoreDesignToolbarV22",
@@ -301,6 +302,15 @@ for (const token of [
 if (storeDesignShell.includes("HIZLI AYARLAR")) fail("Legacy HIZLI AYARLAR inspector V2.2 shell içinde kalmış.");
 if (storeDesignShell.includes("KORUMALI ALAN")) fail("Legacy KORUMALI ALAN paneli V2.2 shell içinde kalmış.");
 if (storeDesignShell.includes('<nav className="sd-mobile-dock hidden"')) fail("Legacy dört eylemli mobil dock V2.2 shell içinde kalmış.");
+if (storeDesignShell.includes("/></nav>")) fail("V2.2 mobil görev çubuğu arkasında eşleşmeyen nav kapanışı var.");
+for (const token of [
+  'data-editor-type="footer-link"',
+  'data-editor-type="footer-group"',
+  'global.footer.link.${item.id}',
+  'global.footer.group.${id}',
+]) {
+  if (!storefrontFooterV22.includes(token)) fail(`Footer sabit semantic target altyapısı eksik: ${token}`);
+}
 
 const legacyIssueCodeAliases = [
   ["PAGE_TEMPLATE_MISSING", "missing-page-template"],
