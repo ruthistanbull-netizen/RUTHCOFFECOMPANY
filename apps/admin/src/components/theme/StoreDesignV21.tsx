@@ -1916,7 +1916,7 @@ export function StoreDesignV21() {
             </div>
           ) : null}
           {isMobileViewport && interactionMode === "edit" && !leftOpen && !rightOpen ? (
-            <div className="sd-edit-mode-chip pointer-events-none absolute left-1/2 top-3 z-20 max-w-[calc(100vw-28px)] -translate-x-1/2 truncate rounded-full px-3 py-2 text-[11px] font-semibold shadow-lg">
+            <div className="sd-edit-mode-chip pointer-events-none absolute left-1/2 top-3 z-20 max-w-[calc(100vw_-_28px)] -translate-x-1/2 truncate rounded-full px-3 py-2 text-[11px] font-semibold shadow-lg">
               {selected ? `Seçili: ${selected.label} · Düzenle'den ayarları aç` : "Düzenleme açık · Bir öğeye dokun"}
             </div>
           ) : null}
@@ -1925,7 +1925,7 @@ export function StoreDesignV21() {
               ? isMobileViewport
                 ? "h-full w-full rounded-none border-0"
                 : "h-[780px] w-[390px] rounded-[44px] border-[9px] border-[#111]"
-              : "h-[calc(100dvh-106px)] min-h-[620px] w-[min(1180px,calc(100vw-120px))] rounded-xl border border-black/10"
+              : "h-[calc(100dvh_-_106px)] min-h-[620px] w-[min(1180px,calc(100vw_-_120px))] rounded-xl border border-black/10"
           }`}>
             {device === "mobile" && !isMobileViewport ? <div className="sd-device-island pointer-events-none absolute left-1/2 top-3 z-10 h-7 w-28 -translate-x-1/2 rounded-full bg-[#111]" /> : null}
             <iframe
@@ -2395,7 +2395,7 @@ export function StoreDesignV21() {
           ref={contextMenuRef}
           data-store-design-context-menu
           tabIndex={-1}
-          className="sd-context-menu fixed z-[2147483560] w-[336px] max-w-[calc(100vw-24px)] overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl"
+          className="sd-context-menu fixed z-[2147483560] w-[336px] max-w-[calc(100vw_-_24px)] overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl"
           style={{ left: contextMenu.x, top: contextMenu.y }}
           role="dialog"
           aria-label={`${contextMenu.target.label} hızlı düzenleme`}
