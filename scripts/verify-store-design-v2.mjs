@@ -45,8 +45,8 @@ for (const type of registryMatches) {
   }
 }
 
-const sectionRegistryMatches = [...core.matchAll(/^\\s*section\\("([^"]+)"/gm)].map((match) => match[1]);
-const blockRegistryMatches = [...core.matchAll(/^\\s*block\\("([^"]+)"/gm)].map((match) => match[1]);
+const sectionRegistryMatches = [...core.matchAll(/^\s*section\("([^"]+)"/gm)].map((match) => match[1]);
+const blockRegistryMatches = [...core.matchAll(/^\s*block\("([^"]+)"/gm)].map((match) => match[1]);
 
 for (const [registryName, values] of [
   ["section", sectionRegistryMatches],
