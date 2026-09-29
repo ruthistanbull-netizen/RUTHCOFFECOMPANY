@@ -561,6 +561,93 @@ function persistSemanticPatch(
   return next;
 }
 
+function StableInspectorTextControl({
+  value,
+  onCommit,
+  onEditingChange,
+  multiline = false,
+  className,
+  placeholder,
+  maxLength,
+}: {
+  value: string;
+  onCommit: (value: string) => void;
+  onEditingChange: (editing: boolean) => void;
+  multiline?: boolean;
+  className: string;
+  placeholder?: string;
+  maxLength?: number;
+}) {
+  const [draft, setDraft] = useState(value);
+  const draftRef = useRef(value);
+  const focusedRef = useRef(false);
+
+  useEffect(() => {
+    if (focusedRef.current) return;
+    draftRef.current = value;
+    setDraft(value);
+  }, [value]);
+
+  const updateDraft = (next: string) => {
+    draftRef.current = next;
+    setDraft(next);
+  };
+
+  const beginEditing = () => {
+    focusedRef.current = true;
+    onEditingChange(true);
+  };
+
+  const finishEditing = () => {
+    focusedRef.current = false;
+    onEditingChange(false);
+    const next = draftRef.current;
+    if (next !== value) onCommit(next);
+  };
+
+  const common = {
+    value: draft,
+    onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => updateDraft(event.target.value),
+    onFocus: beginEditing,
+    onBlur: finishEditing,
+    placeholder,
+    maxLength,
+    className,
+  };
+
+  if (multiline) {
+    return (
+      <textarea
+        {...common}
+        onKeyDown={(event) => {
+          if (event.key === "Escape") {
+            event.preventDefault();
+            updateDraft(value);
+            event.currentTarget.blur();
+          }
+        }}
+      />
+    );
+  }
+
+  return (
+    <input
+      {...common}
+      onKeyDown={(event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          event.currentTarget.blur();
+        }
+        if (event.key === "Escape") {
+          event.preventDefault();
+          updateDraft(value);
+          event.currentTarget.blur();
+        }
+      }}
+    />
+  );
+}
+
 export function StoreDesignV21() {
   const toast = useExactToast();
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
@@ -574,6 +661,8 @@ export function StoreDesignV21() {
   const structurePanelRef = useRef<HTMLElement | null>(null);
   const inspectorPanelRef = useRef<HTMLElement | null>(null);
   const inspectorBodyRef = useRef<HTMLDivElement | null>(null);
+  const inspectorEditingRef = useRef(false);
+  const selectedIdRef = useRef<string | null>(null);
   const initialSrcRef = useRef("");
   const previewTokenRef = useRef("");
   const previewSyncTimerRef = useRef<number | null>(null);
@@ -653,6 +742,10 @@ export function StoreDesignV21() {
     window.addEventListener("resize", applyViewport);
     return () => window.removeEventListener("resize", applyViewport);
   }, []);
+
+  useEffect(() => {
+    selectedIdRef.current = selected?.id || null;
+  }, [selected?.id]);
 
   useEffect(() => {
     if (!isMobileViewport) return;
@@ -1065,6 +1158,8 @@ export function StoreDesignV21() {
 
       if (data.type === STORE_DESIGN_MESSAGES.SELECT && data.target) {
         const target = data.target as SelectedTarget;
+        const sameTarget = selectedIdRef.current === target.id;
+        if (inspectorEditingRef.current && sameTarget) return;
         setSelected(target);
         setStructureFocusSectionId(null);
         setScope(target.defaultScope);
@@ -1088,7 +1183,7 @@ export function StoreDesignV21() {
           setRightOpen(false);
         } else {
           setContextMenu(null);
-          if (isMobileViewport) setMobileSheetLevel("peek");
+          if (isMobileViewport && !inspectorEditingRef.current) setMobileSheetLevel("peek");
           setRightOpen(true);
         }
         return;
@@ -2161,32 +2256,27 @@ export function StoreDesignV21() {
                     {selected.current.content ? (
                       <label className="grid gap-1.5 text-[11px] opacity-70">
                         Metin / ad
-                        {(selected.current.content.text || "").length > 100 || (selected.current.content.text || "").includes("\n") ? (
-                          <textarea
-                            value={selected.current.content.text || ""}
-                            onChange={(event) => setSelected((current) => current ? updateTargetSnapshot(current, "content.text", event.target.value) : current)}
-                            onBlur={(event) => applyInspectorPatch("content.text", event.target.value)}
-                            className="sd-field min-h-24 resize-y rounded-md border p-3 text-[13px] leading-5 outline-none"
-                          />
-                        ) : (
-                          <input
-                            value={selected.current.content.text || ""}
-                            onChange={(event) => setSelected((current) => current ? updateTargetSnapshot(current, "content.text", event.target.value) : current)}
-                            onBlur={(event) => applyInspectorPatch("content.text", event.target.value)}
-                            className="sd-field h-10 rounded-md border px-3 text-[13px] outline-none"
-                          />
-                        )}
+                        <StableInspectorTextControl
+                          key={`${selected.id}:content.text`}
+                          value={selected.current.content.text || ""}
+                          multiline={(selected.current.content.text || "").length > 100 || (selected.current.content.text || "").includes("\n")}
+                          onEditingChange={(editing) => { inspectorEditingRef.current = editing; }}
+                          onCommit={(value) => applyInspectorPatch("content.text", value)}
+                          className={(selected.current.content.text || "").length > 100 || (selected.current.content.text || "").includes("\n")
+                            ? "sd-field min-h-24 resize-y rounded-md border p-3 text-[16px] leading-5 outline-none"
+                            : "sd-field h-10 rounded-md border px-3 text-[16px] outline-none"}
+                        />
                       </label>
                     ) : null}
                     {selected.type === "consent-banner" ? (
                       <>
-                        <label className="grid gap-1.5 text-[11px] opacity-70">Başlık<input value={consentSetting("title", "Çerezler")} onChange={(event) => applyInspectorPatch("title", event.target.value)} className="sd-field h-10 rounded-md border px-3 text-[13px] outline-none" /></label>
-                        <label className="grid gap-1.5 text-[11px] opacity-70">Açıklama<textarea value={consentSetting("intro", "Deneyiminizi iyileştirmek ve site kullanımını anlamak için çerezlerden yararlanıyoruz.")} onChange={(event) => applyInspectorPatch("intro", event.target.value)} className="sd-field min-h-24 resize-y rounded-md border p-3 text-[12px] leading-5 outline-none" /></label>
+                        <label className="grid gap-1.5 text-[11px] opacity-70">Başlık<StableInspectorTextControl key="consent:title" value={String(consentSetting("title", "Çerezler"))} onEditingChange={(editing) => { inspectorEditingRef.current = editing; }} onCommit={(value) => applyInspectorPatch("title", value)} className="sd-field h-10 rounded-md border px-3 text-[16px] outline-none" maxLength={80} /></label>
+                        <label className="grid gap-1.5 text-[11px] opacity-70">Açıklama<StableInspectorTextControl key="consent:intro" value={String(consentSetting("intro", "Deneyiminizi iyileştirmek ve site kullanımını anlamak için çerezlerden yararlanıyoruz."))} multiline onEditingChange={(editing) => { inspectorEditingRef.current = editing; }} onCommit={(value) => applyInspectorPatch("intro", value)} className="sd-field min-h-24 resize-y rounded-md border p-3 text-[16px] leading-5 outline-none" maxLength={360} /></label>
                         <div className="grid grid-cols-2 gap-2">
-                          <label className="grid gap-1.5 text-[11px] opacity-70">Kabul düğmesi<input value={consentSetting("acceptLabel", "Kabul et")} onChange={(event) => applyInspectorPatch("acceptLabel", event.target.value)} className="sd-field h-10 rounded-md border px-3 text-[12px] outline-none" /></label>
-                          <label className="grid gap-1.5 text-[11px] opacity-70">Ret düğmesi<input value={consentSetting("rejectLabel", "Reddet")} onChange={(event) => applyInspectorPatch("rejectLabel", event.target.value)} className="sd-field h-10 rounded-md border px-3 text-[12px] outline-none" /></label>
+                          <label className="grid gap-1.5 text-[11px] opacity-70">Kabul düğmesi<StableInspectorTextControl key="consent:accept" value={String(consentSetting("acceptLabel", "Kabul et"))} onEditingChange={(editing) => { inspectorEditingRef.current = editing; }} onCommit={(value) => applyInspectorPatch("acceptLabel", value)} className="sd-field h-10 rounded-md border px-3 text-[16px] outline-none" maxLength={40} /></label>
+                          <label className="grid gap-1.5 text-[11px] opacity-70">Ret düğmesi<StableInspectorTextControl key="consent:reject" value={String(consentSetting("rejectLabel", "Reddet"))} onEditingChange={(editing) => { inspectorEditingRef.current = editing; }} onCommit={(value) => applyInspectorPatch("rejectLabel", value)} className="sd-field h-10 rounded-md border px-3 text-[16px] outline-none" maxLength={40} /></label>
                         </div>
-                        <label className="grid gap-1.5 text-[11px] opacity-70">Gizlilik bağlantısı<input value={consentSetting("privacyLabel", "Gizlilik ve çerezler")} onChange={(event) => applyInspectorPatch("privacyLabel", event.target.value)} className="sd-field h-10 rounded-md border px-3 text-[12px] outline-none" /></label>
+                        <label className="grid gap-1.5 text-[11px] opacity-70">Gizlilik bağlantısı<StableInspectorTextControl key="consent:privacy" value={String(consentSetting("privacyLabel", "Gizlilik ve çerezler"))} onEditingChange={(editing) => { inspectorEditingRef.current = editing; }} onCommit={(value) => applyInspectorPatch("privacyLabel", value)} className="sd-field h-10 rounded-md border px-3 text-[16px] outline-none" maxLength={80} /></label>
                       </>
                     ) : null}
                   </div>
@@ -2226,7 +2316,7 @@ export function StoreDesignV21() {
                     {selected.current.media.kind === "image" ? (
                       <label className="grid gap-1.5 text-[11px] opacity-70">
                         Alternatif metin
-                        <input value={selected.current.media.alt || ""} onChange={(event) => setSelected((current) => current ? updateTargetSnapshot(current, "media.alt", event.target.value) : current)} onBlur={(event) => applyInspectorPatch("media.alt", event.target.value)} className="sd-field h-10 rounded-md border px-3 text-[12px] outline-none" placeholder="Görseli kısaca anlat" />
+                        <StableInspectorTextControl key={`${selected.id}:media.alt`} value={selected.current.media.alt || ""} onEditingChange={(editing) => { inspectorEditingRef.current = editing; }} onCommit={(value) => applyInspectorPatch("media.alt", value)} className="sd-field h-10 rounded-md border px-3 text-[16px] outline-none" placeholder="Görseli kısaca anlat" maxLength={240} />
                       </label>
                     ) : null}
                   </div>
