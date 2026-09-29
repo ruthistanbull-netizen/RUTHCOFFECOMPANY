@@ -926,7 +926,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     <div className="flex gap-2">
                       <select value={text(settings.imageAssetId)} onChange={(event) => updateSetting("imageAssetId", event.target.value)} className="h-9 min-w-0 flex-1 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                         <option value="">Mevcut marka hikayesi görselini kullan</option>
-                        {mediaAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.type === "video" ? "Video" : "Görsel"} · Sürüm {asset.version || 1}</option>)}
+                        {mediaAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{mediaOptionLabel(asset)}</option>)}
                       </select>
                       <button type="button" onClick={() => setMediaPicker({ target: "section", key: "imageAssetId", mediaType: "any" })} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
                         Medya Arşivi
@@ -965,11 +965,11 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
               {rewardsPromo ? (
                 <>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
-                    Promo medyası
+                    Kampanya medyası
                     <div className="flex gap-2">
                       <select value={text(settings.imageAssetId)} onChange={(event) => updateSetting("imageAssetId", event.target.value)} className="h-9 min-w-0 flex-1 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                         <option value="">Medya yok</option>
-                        {mediaAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.type === "video" ? "Video" : "Görsel"} · Sürüm {asset.version || 1}</option>)}
+                        {mediaAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{mediaOptionLabel(asset)}</option>)}
                       </select>
                       <button type="button" onClick={() => setMediaPicker({ target: "section", key: "imageAssetId", mediaType: "any" })} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
                         Medya Arşivi
@@ -1022,7 +1022,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
               {newsletter ? (
                 <>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
-                    Newsletter başlığı
+                    Bülten başlığı
                     <input value={text(settings.heading)} onChange={(event) => updateSetting("heading", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
@@ -1038,7 +1038,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     <input value={text(settings.buttonLabel) || "Kaydol"} onChange={(event) => updateSetting("buttonLabel", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none" />
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
-                    Consent metni
+                    İzin metni
                     <textarea value={text(settings.consent)} onChange={(event) => updateSetting("consent", event.target.value)} className="min-h-20 resize-y rounded-lg border border-black/10 bg-white p-2.5 text-[9px] leading-5 outline-none" />
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
@@ -1337,7 +1337,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                       <option value="">Medya seçilmedi</option>
                       {mediaAssets
                         .filter((asset) => section.type === "video-text-split" ? asset.type === "video" : asset.type === "image")
-                        .map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.type === "video" ? "Video" : "Görsel"} · Sürüm {asset.version || 1}</option>)}
+                        .map((asset) => <option key={asset.assetId} value={asset.assetId}>{mediaOptionLabel(asset)}</option>)}
                     </select>
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
@@ -1523,7 +1523,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                               <div className="flex gap-2">
                                 <select value={text(value)} onChange={(event) => updateBlock(block.id, key, event.target.value)} className="h-9 min-w-0 flex-1 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                                   <option value="">Medya seçilmedi</option>
-                                  {mediaAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.type === "video" ? "Video" : "Görsel"} · Sürüm {asset.version || 1}</option>)}
+                                  {mediaAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{mediaOptionLabel(asset)}</option>)}
                                 </select>
                                 <button type="button" onClick={() => setMediaPicker({ target: "block", blockId: block.id, key, mediaType: "any" })} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
                                   Medya Arşivi
