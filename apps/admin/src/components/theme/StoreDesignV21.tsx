@@ -81,6 +81,8 @@ type SelectedTarget = {
     color?: string;
     width?: number;
     height?: number;
+    content?: { text?: string } | null;
+    link?: { href?: string; target?: "_self" | "_blank" } | null;
     media?: { kind?: "image" | "video"; src?: string; objectFit?: string; objectPosition?: string } | null;
     grid?: { columns?: number; gapX?: number; gapY?: number; maxWidth?: string } | null;
     card?: {
@@ -288,13 +290,21 @@ function responsiveSettingsFor(
   scope: EditorScope,
   page: PageItem,
 ) {
-  if (scope === "global") {
-    const container = target.type.startsWith("header") || target.type.includes("menu") || target.type.includes("nav")
+  const globalContainer = target.type.startsWith("header")
+    || target.type.includes("menu")
+    || target.type.includes("nav")
+    || target.id.startsWith("global.header")
       ? document.globals.header
-      : target.type.startsWith("footer") || target.type === "social-links"
+      : target.type.startsWith("footer") || target.type === "social-links" || target.id.startsWith("global.footer")
         ? document.globals.footer
         : document.globals.tokens;
-    return recordValue(container[target.type]);
+
+  if (scope === "global") {
+    return recordValue(globalContainer[target.type]);
+  }
+
+  if (scope === "instance" && target.id.startsWith("global.")) {
+    return recordValue(globalContainer[`id:${target.id}`]);
   }
 
   if (scope === "family") return recordValue(document.globals.componentFamilies[target.type]);
@@ -315,6 +325,9 @@ function responsiveSettingsFor(
 }
 
 function snapshotValue(target: SelectedTarget, path: string) {
+  if (path === "content.text") return target.current.content?.text || "";
+  if (path === "link.href") return target.current.link?.href || "";
+  if (path === "link.target") return target.current.link?.target || "_self";
   if (path === "media.src") return target.current.media?.src || "";
   if (path === "media.objectFit") return target.current.media?.objectFit || "cover";
   if (path === "media.objectPosition") return target.current.media?.objectPosition || "50% 50%";
@@ -336,6 +349,22 @@ function snapshotValue(target: SelectedTarget, path: string) {
 
 function updateTargetSnapshot(target: SelectedTarget, path: string, value: unknown): SelectedTarget {
   if (value === null) return target;
+  if (path === "content.text") {
+    return { ...target, current: { ...target.current, content: { ...(target.current.content || {}), text: String(value ?? "") } } };
+  }
+  if (path === "link.href" || path === "link.target") {
+    const key = path === "link.href" ? "href" : "target";
+    return {
+      ...target,
+      current: {
+        ...target.current,
+        link: {
+          ...(target.current.link || {}),
+          [key]: key === "target" ? (String(value) === "_blank" ? "_blank" : "_self") : String(value || ""),
+        },
+      },
+    };
+  }
   if (path === "media.src" || path === "media.objectFit" || path === "media.objectPosition") {
     const key = path === "media.src" ? "src" : path === "media.objectFit" ? "objectFit" : "objectPosition";
     return { ...target, current: { ...target.current, media: { ...(target.current.media || {}), [key]: String(value) } } };
@@ -447,15 +476,22 @@ function persistSemanticPatch(
   const next = structuredClone(current) as ThemeDocument;
   next.revision = revision;
 
+  const globalContainer = target.type.startsWith("header")
+    || target.type.includes("menu")
+    || target.type.includes("nav")
+    || target.id.startsWith("global.header")
+      ? next.globals.header
+      : target.type.startsWith("footer") || target.type === "social-links" || target.id.startsWith("global.footer")
+        ? next.globals.footer
+        : next.globals.tokens;
+
   if (scope === "global") {
-    const globalPath = `${target.type}.${device}.${path}`;
-    if (target.type.startsWith("header") || target.type.includes("menu") || target.type.includes("nav")) {
-      writeNested(next.globals.header, globalPath, value);
-    } else if (target.type.startsWith("footer") || target.type === "social-links") {
-      writeNested(next.globals.footer, globalPath, value);
-    } else {
-      writeNested(next.globals.tokens, globalPath, value);
-    }
+    writeNested(globalContainer, `${target.type}.${device}.${path}`, value);
+    return next;
+  }
+
+  if (scope === "instance" && target.id.startsWith("global.")) {
+    writeNested(globalContainer, `id:${target.id}.${device}.${path}`, value);
     return next;
   }
 
@@ -533,7 +569,7 @@ export function StoreDesignV21() {
   const [saving, setSaving] = useState<"draft" | "publish" | null>(null);
   const [saveFeedback, setSaveFeedback] = useState<"draft" | "publish" | null>(null);
   const [leftOpen, setLeftOpen] = useState(true);
-  const [rightOpen, setRightOpen] = useState(true);
+  const [rightOpen, setRightOpen] = useState(false);
   const [isMobileViewport, setIsMobileViewport] = useState(false);
   const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
   const [sectionPickerSignal, setSectionPickerSignal] = useState(0);
@@ -582,7 +618,7 @@ export function StoreDesignV21() {
       setInteractionMode("edit");
       setMobileMoreOpen(false);
       setLeftOpen(band !== "tablet");
-      setRightOpen(band === "wide");
+      setRightOpen(false);
     };
 
     applyViewport();
@@ -1879,7 +1915,8 @@ export function StoreDesignV21() {
           </button>
           {mobileMoreOpen ? (
             <div ref={mobileMoreMenuRef} role="menu" aria-label="Diğer araçlar" className="sd-mobile-more-menu absolute right-0 top-12 z-50 w-56 rounded-2xl border border-black/10 bg-white p-2 shadow-2xl">
-              <button role="menuitem" type="button" onClick={() => { setMobileMoreOpen(false); setQuickMediaEdit(null); setMediaOpen(true); }} className="sd-mobile-menu-row"><Images className="h-4 w-4" />Medya Arşivi</button>
+              <button role="menuitem" type="button" onClick={() => { setMobileMoreOpen(false); setQuickMediaEdit(null); setMediaOpen(true); }} className="sd-mobile-menu-row"><Images className="h-4 w-4" />Medya</button>
+              <button role="menuitem" type="button" onClick={() => { setMobileMoreOpen(false); setPageManagerMode(managedPage ? "edit" : "create"); }} className="sd-mobile-menu-row"><FileText className="h-4 w-4" />Sayfalar</button>
               <button role="menuitem" type="button" onClick={() => { setMobileMoreOpen(false); setTemplateManagerOpen(true); }} className="sd-mobile-menu-row"><LayoutTemplate className="h-4 w-4" />Şablonlar</button>
               <button role="menuitem" type="button" onClick={() => { setMobileMoreOpen(false); setRedirectManagerOpen(true); }} className="sd-mobile-menu-row"><Link2 className="h-4 w-4" />Yönlendirmeler</button>
               <button role="menuitem" type="button" onClick={() => { setMobileMoreOpen(false); setSnapshotManagerOpen(true); }} className="sd-mobile-menu-row"><History className="h-4 w-4" />Geçmiş</button>
@@ -2158,6 +2195,51 @@ export function StoreDesignV21() {
                 <section className="border-b border-black/[0.07] p-3">
                   <p className="text-[9px] font-semibold text-black/45">HIZLI AYARLAR</p>
                   <div className="mt-2 space-y-3">
+                    {selected.current.content ? (
+                      <label className="grid gap-1.5 text-[10px] text-black/45">
+                        Metin / ad
+                        <input
+                          value={selected.current.content.text || ""}
+                          onChange={(event) => {
+                            setSelected((current) => current ? updateTargetSnapshot(current, "content.text", event.target.value) : current);
+                          }}
+                          onBlur={(event) => applyInspectorPatch("content.text", event.target.value)}
+                          className="sd-field h-10 rounded-lg border border-black/10 bg-white px-3 text-[12px] font-medium text-black outline-none"
+                        />
+                      </label>
+                    ) : null}
+
+                    {selected.current.link ? (
+                      <div className="grid gap-2 rounded-xl border border-black/[0.08] p-3">
+                        <p className="text-[10px] font-semibold text-black/55">BAĞLANTI</p>
+                        <label className="grid gap-1.5 text-[10px] text-black/45">
+                          Gidilecek yer
+                          <input
+                            value={selected.current.link.href || ""}
+                            onChange={(event) => {
+                              setSelected((current) => current ? updateTargetSnapshot(current, "link.href", event.target.value) : current);
+                            }}
+                            onBlur={(event) => {
+                              const value = event.target.value.trim();
+                              if (value) applyInspectorPatch("link.href", value);
+                            }}
+                            className="sd-field h-10 rounded-lg border border-black/10 bg-white px-3 text-[12px] font-medium text-black outline-none"
+                          />
+                        </label>
+                        <label className="grid gap-1.5 text-[10px] text-black/45">
+                          Açılış
+                          <select
+                            value={selected.current.link.target || "_self"}
+                            onChange={(event) => applyInspectorPatch("link.target", event.target.value)}
+                            className="sd-field h-10 rounded-lg border border-black/10 bg-white px-3 text-[12px] font-medium text-black outline-none"
+                          >
+                            <option value="_self">Aynı sekme</option>
+                            <option value="_blank">Yeni sekme</option>
+                          </select>
+                        </label>
+                      </div>
+                    ) : null}
+
                     {selected.controlGroups.includes("typography") ? (
                       <label className="grid gap-1.5 text-[8px] text-black/45">
                         Metin hizası
@@ -2459,6 +2541,67 @@ export function StoreDesignV21() {
           </div>
 
           <div className="sd-context-menu-body grid gap-3 overflow-y-auto p-3">
+            {contextMenu.target.current.content ? (
+              <label className="grid gap-1.5 text-[11px] font-semibold text-black/55">
+                Metin / ad
+                <input
+                  key={`context-text-${contextMenu.target.id}-${contextMenu.target.current.content.text || ""}`}
+                  defaultValue={contextMenu.target.current.content.text || ""}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") event.currentTarget.blur();
+                  }}
+                  onBlur={(event) => {
+                    const next = event.currentTarget.value;
+                    if (next !== (contextMenu.target.current.content?.text || "")) {
+                      applyPatchValue(contextMenu.target, scope, device, "content.text", next);
+                    }
+                  }}
+                  className="sd-field h-10 rounded-xl border border-black/10 bg-white px-3 text-[12px] font-medium outline-none"
+                  placeholder="Görünen metin"
+                />
+              </label>
+            ) : null}
+
+            {contextMenu.target.current.link ? (
+              <div className="grid gap-2 rounded-xl border border-black/[0.08] p-3">
+                <p className="text-[11px] font-semibold text-black/55">Bağlantı</p>
+                <label className="grid gap-1 text-[10px] text-black/45">
+                  Gidilecek yer
+                  <input
+                    key={`context-link-${contextMenu.target.id}-${contextMenu.target.current.link.href || ""}`}
+                    defaultValue={contextMenu.target.current.link.href || ""}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") event.currentTarget.blur();
+                    }}
+                    onBlur={(event) => {
+                      const next = event.currentTarget.value.trim();
+                      if (next && next !== (contextMenu.target.current.link?.href || "")) {
+                        applyPatchValue(contextMenu.target, scope, device, "link.href", next);
+                      }
+                    }}
+                    className="sd-field h-10 rounded-xl border border-black/10 bg-white px-3 text-[12px] font-medium outline-none"
+                    placeholder="/sayfa veya https://..."
+                  />
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => applyPatchValue(contextMenu.target, scope, device, "link.target", "_self")}
+                    className={`sd-secondary-button h-9 rounded-lg border px-2 text-[10px] font-semibold ${contextMenu.target.current.link?.target !== "_blank" ? "is-active" : ""}`}
+                  >
+                    Aynı sekme
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => applyPatchValue(contextMenu.target, scope, device, "link.target", "_blank")}
+                    className={`sd-secondary-button h-9 rounded-lg border px-2 text-[10px] font-semibold ${contextMenu.target.current.link?.target === "_blank" ? "is-active" : ""}`}
+                  >
+                    Yeni sekme
+                  </button>
+                </div>
+              </div>
+            ) : null}
+
             <label className="grid gap-1.5 text-[11px] font-semibold text-black/55">
               Uygulama alanı
               <select
