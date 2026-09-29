@@ -243,6 +243,7 @@ const storeDesignShell = read("apps/admin/src/components/theme/StoreDesignV21.ts
 const storeDesignToolbarV22 = read("apps/admin/src/components/theme/StoreDesignToolbarV22.tsx");
 const storeDesignStructureV22 = read("apps/admin/src/components/theme/StoreDesignStructurePanelV22.tsx");
 const storeDesignContextV22 = read("apps/admin/src/components/theme/StoreDesignContextMenuV22.tsx");
+const storeDesignInspectorV22 = read("apps/admin/src/components/theme/StoreDesignInspectorBodyV22.tsx");
 const storeDesignDestinationV22 = read("apps/admin/src/components/theme/StoreDesignDestinationPicker.tsx");
 const storeDesignAutoTargets = read("apps/storefront/src/components/theme/storeDesignAutoTargets.ts");
 
@@ -325,7 +326,6 @@ for (const token of ["issue.ownerId", "issue.targetId"]) {
   if (!storeDesignShell.includes(token)) fail(`Publish düzeltme yönlendirmesi legacy issue alanı fallback'i eksik: ${token}`);
 }
 
-const storeDesignInspectorV22 = read("apps/admin/src/components/theme/StoreDesignInspectorBodyV22.tsx");
 for (const token of [
   'selected.type === "consent-banner"',
   "Kabul düğmesi",
