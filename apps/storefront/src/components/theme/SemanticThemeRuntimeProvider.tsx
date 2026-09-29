@@ -177,10 +177,14 @@ function patchesFromDocument(document: ThemeDocument, pathname: string) {
   for (const container of [document.globals.header, document.globals.footer, document.globals.tokens]) {
     for (const [semanticType, responsive] of Object.entries(container)) {
       if (semanticType.startsWith("id:")) {
+        let selectorValue = semanticType.slice(3);
+        try {
+          selectorValue = decodeURIComponent(selectorValue);
+        } catch {}
         addResponsive(output, {
           scope: "instance",
           selectorMode: "id",
-          selectorValue: semanticType.slice(3),
+          selectorValue,
           responsive,
           revision,
         });
