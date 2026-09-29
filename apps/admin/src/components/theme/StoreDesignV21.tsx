@@ -1444,6 +1444,24 @@ export function StoreDesignV21() {
     applyPatchValue(selected, scope, device, path, value);
   };
 
+  const applyContextPatch = (target: SelectedTarget, path: string, value: unknown) => {
+    if (!activePage) return;
+    const patchScope = target.allowedScopes.includes(scope) ? scope : target.defaultScope;
+    const before = snapshotValue(target, path);
+    if (Object.is(before, value)) return;
+    setHistory((items) => [...items.slice(-79), {
+      kind: "semantic",
+      target,
+      scope: patchScope,
+      device,
+      path,
+      before,
+      after: value,
+    }]);
+    setFuture([]);
+    applyPatchValue(target, patchScope, device, path, value);
+  };
+
   useEffect(() => {
     if (!inlineEditRequest || !selected || selected.id !== inlineEditRequest.targetId || !activePage) return;
     const before = snapshotValue(selected, "content.text");
