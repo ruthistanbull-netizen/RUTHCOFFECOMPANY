@@ -251,7 +251,7 @@ export function StoreDesignMediaLibrary({
 
   return (
     <div data-closing={closing ? "true" : "false"} className="sd-modal-backdrop fixed inset-0 z-[2147483610] grid place-items-center bg-black/35 p-3 backdrop-blur-sm">
-      <div className="sd-modal-card flex h-[min(880px,94dvh)] w-full max-w-[1120px] overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl">
+      <div className="sd-modal-card sd-manager-media flex h-[min(760px,86dvh)] w-full max-w-[780px] overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl">
         <div className="flex min-w-0 flex-1 flex-col">
           <header className="flex h-14 shrink-0 items-center gap-3 border-b border-black/10 px-4">
             <div className="min-w-0 flex-1">
@@ -319,7 +319,7 @@ export function StoreDesignMediaLibrary({
               })}
             </div>
             {!assets.length ? (
-              <div className="grid min-h-56 place-items-center rounded-xl border border-dashed border-black/10 text-center">
+              <div className="grid min-h-40 place-items-center rounded-xl border border-dashed border-black/10 text-center">
                 <div>
                   <ImageIcon className="mx-auto h-6 w-6 text-black/20" />
                   <p className="mt-2 text-[9px] font-semibold text-black/45">Henüz medya yok</p>
