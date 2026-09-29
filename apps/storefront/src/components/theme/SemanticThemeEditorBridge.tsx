@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { SEMANTIC_RUNTIME_PATCH_EVENT } from "@/components/theme/SemanticThemeRuntimeProvider";
+import { ensureStoreDesignAutoTarget } from "@/components/theme/storeDesignAutoTargets";
 import {
   STORE_DESIGN_MEDIA_RUNTIME_EVENT,
   type StoreDesignMediaRuntimeDetail,
@@ -86,7 +87,9 @@ function parentOrigin(allowedOrigins: string[]) {
 
 function targetFrom(element: Element | null): SemanticTarget | null {
   if (!element) return null;
-  const node = element.closest<HTMLElement>(TARGET_SELECTOR);
+  const autoTarget = ensureStoreDesignAutoTarget(element);
+  const node = autoTarget?.closest<HTMLElement>(TARGET_SELECTOR)
+    || element.closest<HTMLElement>(TARGET_SELECTOR);
   if (!node) return null;
   const id = node.dataset.editorId?.trim();
   const type = node.dataset.editorType?.trim();
