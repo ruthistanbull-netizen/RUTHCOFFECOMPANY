@@ -166,6 +166,21 @@ for (const relativePath of allSourceFiles) {
 // Repo genelindeki bağımsız legacy/yardımcı etkileşim katmanlarını yanlış pozitif olarak engelleme.
 
 
+const themeRouteLayout = read("apps/admin/src/app/theme/layout.tsx");
+if (!themeRouteLayout.includes('import "./store-design-v2.css"')) {
+  fail("Mağaza Tasarımı V2 görsel sistemi theme route'a bağlı değil.");
+}
+const storeDesignRouteCss = read("apps/admin/src/app/theme/store-design-v2.css");
+for (const token of [
+  "[data-store-design-v2-admin]",
+  "--sd-editor-bg",
+  ".sd-toolbar-secondary{display:none!important}",
+  ".sd-mobile-dock",
+  ".sd-context-menu",
+]) {
+  if (!storeDesignRouteCss.includes(token)) fail(`Mağaza Tasarımı V2 route CSS eksik: ${token}`);
+}
+
 const requiredV21Files = [
   "apps/admin/src/components/theme/StoreDesignPublishReport.tsx",
   "apps/admin/src/components/theme/StoreDesignSnapshotManager.tsx",
