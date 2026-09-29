@@ -587,6 +587,7 @@ export function StoreDesignV21() {
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
   const [destinationTarget, setDestinationTarget] = useState<SelectedTarget | null>(null);
   const [inlineEditRequest, setInlineEditRequest] = useState<{ targetId: string; value: string } | null>(null);
+  const [quickActionRequest, setQuickActionRequest] = useState<{ action: "media"; target: SelectedTarget } | null>(null);
   const [mobileSheetLevel, setMobileSheetLevel] = useState<"peek" | "medium" | "full">("peek");
   const [pageManagerMode, setPageManagerMode] = useState<"create" | "edit" | null>(null);
   const [mediaOpen, setMediaOpen] = useState(false);
@@ -1078,6 +1079,16 @@ export function StoreDesignV21() {
       }
 
       if (
+        data.type === "store-design-v2:quick-action"
+        && data.action === "media"
+        && data.target
+        && typeof data.target === "object"
+      ) {
+        setQuickActionRequest({ action: "media", target: data.target as SelectedTarget });
+        return;
+      }
+
+      if (
         data.type === "store-design-v2:inline-edit"
         && typeof data.targetId === "string"
         && typeof data.value === "string"
@@ -1506,7 +1517,7 @@ export function StoreDesignV21() {
     for (const entry of entries) applyPatchValue(target, patchScope, device, entry.path, entry.after);
   };
 
-  const openQuickMediaPickerForTarget = (target: SelectedTarget) => {
+  const openQuickMediaPickerForTarget = useCallback((target: SelectedTarget) => {
     if (!activePage || !target.current.media) return;
     const patchScope = target.allowedScopes.includes(scope) ? scope : target.defaultScope;
     const responsive = responsiveSettingsFor(document, target, patchScope, activePage);
@@ -1523,12 +1534,18 @@ export function StoreDesignV21() {
     });
     setContextMenu(null);
     setMediaOpen(true);
-  };
+  }, [activePage, document, scope, device]);
 
   const openQuickMediaPicker = () => {
     if (!selected) return;
     openQuickMediaPickerForTarget(selected);
   };
+
+  useEffect(() => {
+    if (!quickActionRequest) return;
+    openQuickMediaPickerForTarget(quickActionRequest.target);
+    setQuickActionRequest(null);
+  }, [quickActionRequest, openQuickMediaPickerForTarget]);
 
   const applyQuickMediaSource = (source: string) => {
     const edit = quickMediaEdit;
