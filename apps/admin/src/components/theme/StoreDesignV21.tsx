@@ -2616,8 +2616,19 @@ export function StoreDesignV21() {
             {contextMenu.target.current.link ? (
               <div className="grid gap-2 rounded-xl border border-black/[0.08] p-3">
                 <p className="text-[11px] font-semibold text-black/55">Bağlantı</p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDestinationTarget(contextMenu.target);
+                    setContextMenu(null);
+                  }}
+                  className="sd-secondary-button flex h-10 items-center justify-between rounded-xl border px-3 text-[11px] font-semibold"
+                >
+                  <span className="min-w-0 truncate">{contextMenu.target.current.link.href || "Bağlantı yok"}</span>
+                  <span className="shrink-0 text-[10px] opacity-60">Hedef seç</span>
+                </button>
                 <label className="grid gap-1 text-[10px] text-black/45">
-                  Gidilecek yer
+                  Özel adres
                   <input
                     key={`context-link-${contextMenu.target.id}-${contextMenu.target.current.link.href || ""}`}
                     defaultValue={contextMenu.target.current.link.href || ""}
