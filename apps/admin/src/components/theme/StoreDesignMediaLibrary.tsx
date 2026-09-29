@@ -135,10 +135,10 @@ export function StoreDesignMediaLibrary({
       setDetailId(null);
     };
 
-    document.addEventListener("keydown", closeDetailsWithEscape, true);
+    window.document.addEventListener("keydown", closeDetailsWithEscape, true);
     return () => {
       window.cancelAnimationFrame(focusFrame);
-      document.removeEventListener("keydown", closeDetailsWithEscape, true);
+      window.document.removeEventListener("keydown", closeDetailsWithEscape, true);
     };
   }, [detailId]);
 
