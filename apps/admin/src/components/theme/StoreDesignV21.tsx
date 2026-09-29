@@ -2076,7 +2076,7 @@ export function StoreDesignV21() {
                 {selected ? (
                   <>
                     <p className="mt-1 truncate text-[14px] font-semibold">{selected.label}</p>
-                    <p className="mt-1 truncate text-[10px] opacity-55">{selected.breadcrumb.map((item) => item.label).join(" › ")}</p>
+                    <p className="sd-inspector-breadcrumb mt-1 truncate text-[10px] opacity-55">{selected.breadcrumb.map((item) => item.label).join(" › ")}</p>
                     <span className="sd-scope-chip mt-2 inline-flex rounded-full border px-2.5 py-1 text-[10px] font-semibold">{scopeLabel(scope)}</span>
                   </>
                 ) : <p className="mt-1 text-[12px] opacity-55">Önizlemeden bir öğe seç</p>}
