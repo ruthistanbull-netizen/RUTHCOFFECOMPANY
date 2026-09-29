@@ -614,8 +614,8 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45">
                     Ayırıcı
                     <select value={text(settings.separator) || "chevron"} onChange={(event) => updateSetting("separator", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
-                      <option value="chevron">Chevron · ›</option>
-                      <option value="slash">Slash · /</option>
+                      <option value="chevron">Sağ ok · ›</option>
+                      <option value="slash">Eğik çizgi · /</option>
                       <option value="dot">Nokta · ·</option>
                     </select>
                   </label>
@@ -623,7 +623,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                     Tipografi
                     <select value={text(settings.typography) || "compact"} onChange={(event) => updateSetting("typography", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                       <option value="compact">Sıkı</option>
-                      <option value="default">Default</option>
+                      <option value="default">Varsayılan</option>
                     </select>
                   </label>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
