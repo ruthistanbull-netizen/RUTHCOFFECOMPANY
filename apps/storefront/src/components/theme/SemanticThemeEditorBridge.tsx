@@ -158,7 +158,7 @@ function ensureAutomaticTarget(element: HTMLElement) {
   element.dataset.editorLabel = automaticTargetLabel(element, type);
   element.dataset.editorInstance = id;
   element.dataset.storeDesignAutoTarget = "true";
-  if (type === "text" || type === "link" || type === "button") {
+  if (type === "text" || ((type === "link" || type === "button") && !element.querySelector("img,video,svg"))) {
     element.dataset.storeDesignEditableText = "true";
   }
   return semanticTargetFromNode(element);
@@ -225,10 +225,21 @@ function breadcrumbs(target: SemanticTarget) {
 }
 
 function editableTextElement(target: SemanticTarget) {
-  const direct = target.element.matches('[data-store-design-editable-text="true"]')
-    ? target.element
-    : target.element.querySelector<HTMLElement>('[data-store-design-editable-text="true"]');
-  if (direct instanceof HTMLElement) return direct;
+  if (
+    target.element.matches('[data-store-design-editable-text="true"]')
+    && !target.element.querySelector("img,video,svg")
+  ) {
+    return target.element;
+  }
+
+  const nestedExplicit = target.element.querySelector<HTMLElement>('[data-store-design-editable-text="true"]');
+  if (nestedExplicit && !nestedExplicit.querySelector("img,video,svg")) return nestedExplicit;
+
+  if (target.element instanceof HTMLAnchorElement || target.element instanceof HTMLButtonElement) {
+    const nestedText = Array.from(target.element.querySelectorAll<HTMLElement>("span,strong,em,small"))
+      .find((element) => !element.querySelector("img,video,svg") && Boolean((element.textContent || "").trim()));
+    if (nestedText) return nestedText;
+  }
 
   const tag = target.element.tagName;
   const simpleTextTag = target.element instanceof HTMLAnchorElement
