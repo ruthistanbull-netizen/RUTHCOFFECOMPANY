@@ -2072,3 +2072,16 @@
     max-height:none!important;
   }
 }
+
+/* V2.2 mobile form stability: iOS Safari zooms focused controls below 16px. */
+@media(max-width:767px){
+  [data-store-design-v2-admin] input:not([type="checkbox"]):not([type="radio"]),
+  [data-store-design-v2-admin] textarea,
+  [data-store-design-v2-admin] select,
+  [data-store-design-context-menu] input,
+  [data-store-design-context-menu] textarea,
+  [data-store-design-context-menu] select{
+    font-size:16px!important;
+    line-height:1.3!important;
+  }
+}

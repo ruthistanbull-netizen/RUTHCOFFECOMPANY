@@ -42,6 +42,9 @@ export function MobileMenuAccordion({
   const pathname = usePathname();
   const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [liveHeaderLinks, setLiveHeaderLinks] = useState<ThemeNavItem[]>(
+    themeSettings.header.links.length ? themeSettings.header.links : defaultThemeCustomizerSettings.header.links,
+  );
   const [liveMenuMediaCards, setLiveMenuMediaCards] = useState<ThemeMenuMediaCard[]>(themeSettings.header.mediaCards || []);
 
   const orderedCollectionItems = useMemo(
@@ -63,8 +66,8 @@ export function MobileMenuAccordion({
       label: collection.name,
       path: `/collections/${collection.slug}`,
     }));
-    const links = themeSettings.header.links.length
-      ? themeSettings.header.links
+    const links = liveHeaderLinks.length
+      ? liveHeaderLinks
       : defaultThemeCustomizerSettings.header.links;
 
     return links.map((item) => {
@@ -85,7 +88,7 @@ export function MobileMenuAccordion({
       }
       return item;
     });
-  }, [categories, orderedCollectionItems, themeSettings.header.links]);
+  }, [categories, orderedCollectionItems, liveHeaderLinks]);
 
   useEffect(() => {
     const sync = () => {
@@ -110,14 +113,20 @@ export function MobileMenuAccordion({
   }, [pathname]);
 
   useEffect(() => {
+    setLiveHeaderLinks(
+      themeSettings.header.links.length ? themeSettings.header.links : defaultThemeCustomizerSettings.header.links,
+    );
     setLiveMenuMediaCards(themeSettings.header.mediaCards || []);
-  }, [themeSettings.header.mediaCards]);
+  }, [themeSettings.header.links, themeSettings.header.mediaCards]);
 
   useEffect(() => {
     const onThemeMessage = (event: MessageEvent) => {
       if (event.source !== window.parent || !event.data || typeof event.data !== "object") return;
       if (event.data.type !== "RUTH_THEME_EDITOR_SETTINGS" || !event.data.settings) return;
       const next = event.data.settings as ThemeCustomizerSettings;
+      setLiveHeaderLinks(
+        next.header?.links?.length ? next.header.links : defaultThemeCustomizerSettings.header.links,
+      );
       setLiveMenuMediaCards(next.header?.mediaCards || []);
     };
     window.addEventListener("message", onThemeMessage);
@@ -311,7 +320,15 @@ export function MobileMenuAccordion({
           return (
             <section key={item.id} className="ruth-mobile-link-accordion__item">
               <div className="ruth-mobile-link-accordion__row">
-                <Link href={item.path} className="ruth-mobile-link-accordion__title">
+                <Link
+                  href={item.path}
+                  data-editor-id={`global.header.menu.link.${item.id}`}
+                  data-editor-type="menu-link"
+                  data-editor-label={item.label}
+                  data-editor-instance={item.id}
+                  data-store-design-editable-text="true"
+                  className="ruth-mobile-link-accordion__title"
+                >
                   {item.label}
                 </Link>
                 {children.length ? (
@@ -343,6 +360,11 @@ export function MobileMenuAccordion({
                       <Link
                         key={child.path}
                         href={child.path}
+                        data-editor-id={`global.header.menu.link.${item.id}.child.${encodeURIComponent(child.path)}`}
+                        data-editor-type="menu-link"
+                        data-editor-label={child.label}
+                        data-editor-instance={`${item.id}:${child.path}`}
+                        data-store-design-editable-text="true"
                         className="ruth-mobile-link-accordion__child"
                       >
                         {child.label}
@@ -362,6 +384,10 @@ export function MobileMenuAccordion({
             <Link
               key={collection.id}
               href={`/collections/${collection.slug}`}
+              data-editor-id={`global.header.menu.collection.${collection.id}`}
+              data-editor-type="menu-media-card"
+              data-editor-label={collection.name}
+              data-editor-instance={collection.id}
               className="ruth-mobile-photo-collection-card"
             >
               <span className="ruth-mobile-photo-collection-card__media">
@@ -382,6 +408,10 @@ export function MobileMenuAccordion({
             <Link
               key={card.id}
               href={card.href || "/collections"}
+              data-editor-id={`global.header.menu.media.${card.id}`}
+              data-editor-type="menu-media-card"
+              data-editor-label={card.label || "Menü medya kartı"}
+              data-editor-instance={card.id}
               className="ruth-mobile-photo-collection-card"
               data-theme-menu-media-card={card.id}
             >

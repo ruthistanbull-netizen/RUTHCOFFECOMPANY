@@ -14,6 +14,7 @@ import {
 } from "@ruth-commerce/commerce-core/store-design-v2";
 
 export const SEMANTIC_RUNTIME_PATCH_EVENT = "store-design-v2:runtime-patch";
+export const STORE_DESIGN_PREVIEW_DOCUMENT_EVENT = "store-design-v2:preview-document-runtime";
 export const STORE_DESIGN_CONSENT_SETTINGS_EVENT = "store-design-v2:consent-settings";
 export const STORE_DESIGN_CROSS_SELL_SETTINGS_EVENT = "store-design-v2:cross-sell-settings";
 
@@ -324,6 +325,16 @@ export function SemanticThemeRuntimeProvider({
   const [runtimeMediaAssets, setRuntimeMediaAssets] = useState<Record<string, StoreDesignMediaRuntimeDetail>>({});
 
   useEffect(() => {
+    const onPreviewDocument = (event: Event) => {
+      const detail = (event as CustomEvent<{ document?: unknown }>).detail;
+      if (!detail?.document) return;
+      setPreviewDocument(normalizeThemeDocument(detail.document));
+    };
+    window.addEventListener(STORE_DESIGN_PREVIEW_DOCUMENT_EVENT, onPreviewDocument as EventListener);
+    return () => window.removeEventListener(STORE_DESIGN_PREVIEW_DOCUMENT_EVENT, onPreviewDocument as EventListener);
+  }, []);
+
+  useEffect(() => {
     const onMediaAsset = (event: Event) => {
       const asset = (event as CustomEvent<StoreDesignMediaRuntimeDetail>).detail;
       if (!asset?.assetId) return;
@@ -604,7 +615,9 @@ export function SemanticThemeRuntimeProvider({
     };
 
     const linkNodeFor = (node: Element) => (
-      node instanceof HTMLAnchorElement ? node : node.querySelector<HTMLAnchorElement>("a[href]")
+      node instanceof HTMLAnchorElement
+        ? node
+        : node.closest<HTMLAnchorElement>("a[href]") || node.querySelector<HTMLAnchorElement>("a[href]")
     );
 
     const apply = () => {

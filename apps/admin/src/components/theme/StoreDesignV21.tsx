@@ -31,7 +31,7 @@ import {
   FileText,
   Trash2,
 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import {
   STORE_DESIGN_MESSAGES,
   STORE_DESIGN_SCHEMA_VERSION,
@@ -45,6 +45,10 @@ import {
 } from "@ruth-commerce/commerce-core/store-design-v2";
 import { normalizeThemeSectionSettings } from "@ruth-commerce/commerce-core/theme-sections";
 import { adminRequest } from "@/lib/adminApi";
+import {
+  normalizeThemeCustomizerSettings,
+  type ThemeCustomizerSettings,
+} from "@/lib/themeCustomizer";
 import { useExactToast } from "@/components/base44-exact/primitives";
 import { StoreDesignPageManager } from "@/components/theme/StoreDesignPageManager";
 import { StoreDesignSectionManager } from "@/components/theme/StoreDesignSectionManager";
@@ -155,6 +159,7 @@ const STOREFRONT_ORIGIN = (() => {
   catch { return "https://rostacoffecompany.zeabur.app"; }
 })();
 const PREVIEW_SCROLL_MESSAGE = "store-design-v2:preview-scroll";
+const PREVIEW_DOCUMENT_MESSAGE = "store-design-v2:document-sync";
 
 function previewUrl(path: string, previewToken: string) {
   const url = new URL(path || "/", STOREFRONT_ORIGIN);
@@ -273,6 +278,10 @@ function recordValue(value: unknown): Record<string, unknown> {
   return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {};
 }
 
+function globalInstanceSemanticKey(targetId: string) {
+  return `id:${encodeURIComponent(targetId).replace(/\./g, "%2E")}`;
+}
+
 function flattenResponsiveLeaves(value: unknown, prefix = ""): Array<[string, unknown]> {
   if (value == null || typeof value !== "object" || Array.isArray(value)) return prefix ? [[prefix, value]] : [];
   const output: Array<[string, unknown]> = [];
@@ -308,7 +317,7 @@ function responsiveSettingsFor(
   }
 
   if (scope === "instance" && target.id.startsWith("global.")) {
-    return recordValue(globalContainer[`id:${encodeURIComponent(target.id)}`]);
+    return recordValue(globalContainer[globalInstanceSemanticKey(target.id)]);
   }
 
   if (scope === "family") return recordValue(document.globals.componentFamilies[target.type]);
@@ -326,6 +335,16 @@ function responsiveSettingsFor(
   const template = document.templates[templateId];
   const semanticKey = scope === "instance" ? target.id : target.type;
   return recordValue(template?.componentSettings?.[semanticKey]);
+}
+
+function topLevelMenuSourceId(target: SelectedTarget) {
+  if (target.type !== "menu-link") return null;
+  const prefix = "global.header.menu.link.";
+  if (!target.id.startsWith(prefix)) return null;
+  const suffix = target.id.slice(prefix.length);
+  const instanceKey = target.instanceKey?.trim() || "";
+  if (!suffix || !instanceKey || suffix !== instanceKey) return null;
+  return instanceKey;
 }
 
 function snapshotValue(target: SelectedTarget, path: string) {
@@ -374,8 +393,8 @@ function updateTargetSnapshot(target: SelectedTarget, path: string, value: unkno
       },
     };
   }
-  if (path === "media.src" || path === "media.objectFit" || path === "media.objectPosition") {
-    const key = path === "media.src" ? "src" : path === "media.objectFit" ? "objectFit" : "objectPosition";
+  if (path === "media.src" || path === "media.alt" || path === "media.objectFit" || path === "media.objectPosition") {
+    const key = path === "media.src" ? "src" : path === "media.alt" ? "alt" : path === "media.objectFit" ? "objectFit" : "objectPosition";
     return { ...target, current: { ...target.current, media: { ...(target.current.media || {}), [key]: String(value) } } };
   }
   if (path.startsWith("grid.")) {
@@ -500,7 +519,12 @@ function persistSemanticPatch(
   }
 
   if (scope === "instance" && target.id.startsWith("global.")) {
-    writeNested(globalContainer, `id:${encodeURIComponent(target.id)}.${device}.${path}`, value);
+    const semanticKey = globalInstanceSemanticKey(target.id);
+    const responsive = recordValue(globalContainer[semanticKey]);
+    const deviceSettings = recordValue(responsive[device]);
+    writeNested(deviceSettings, path, value);
+    responsive[device] = deviceSettings;
+    globalContainer[semanticKey] = responsive;
     return next;
   }
 
@@ -522,7 +546,13 @@ function persistSemanticPatch(
       blockIds: [],
     };
     const semanticKey = scope === "section" ? target.type : target.id;
-    writeNested(instance.settings, `semantic.${semanticKey}.${device}.${path}`, value);
+    const semantic = recordValue(instance.settings.semantic);
+    const responsive = recordValue(semantic[semanticKey]);
+    const deviceSettings = recordValue(responsive[device]);
+    writeNested(deviceSettings, path, value);
+    responsive[device] = deviceSettings;
+    semantic[semanticKey] = responsive;
+    instance.settings = { ...instance.settings, semantic };
     next.sections[section.id] = instance;
     return next;
   }
@@ -546,6 +576,93 @@ function persistSemanticPatch(
   return next;
 }
 
+function StableInspectorTextControl({
+  value,
+  onCommit,
+  onEditingChange,
+  multiline = false,
+  className,
+  placeholder,
+  maxLength,
+}: {
+  value: string;
+  onCommit: (value: string) => void;
+  onEditingChange: (editing: boolean) => void;
+  multiline?: boolean;
+  className: string;
+  placeholder?: string;
+  maxLength?: number;
+}) {
+  const [draft, setDraft] = useState(value);
+  const draftRef = useRef(value);
+  const focusedRef = useRef(false);
+
+  useEffect(() => {
+    if (focusedRef.current) return;
+    draftRef.current = value;
+    setDraft(value);
+  }, [value]);
+
+  const updateDraft = (next: string) => {
+    draftRef.current = next;
+    setDraft(next);
+  };
+
+  const beginEditing = () => {
+    focusedRef.current = true;
+    onEditingChange(true);
+  };
+
+  const finishEditing = () => {
+    focusedRef.current = false;
+    onEditingChange(false);
+    const next = draftRef.current;
+    if (next !== value) onCommit(next);
+  };
+
+  const common = {
+    value: draft,
+    onChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => updateDraft(event.target.value),
+    onFocus: beginEditing,
+    onBlur: finishEditing,
+    placeholder,
+    maxLength,
+    className,
+  };
+
+  if (multiline) {
+    return (
+      <textarea
+        {...common}
+        onKeyDown={(event) => {
+          if (event.key === "Escape") {
+            event.preventDefault();
+            updateDraft(value);
+            event.currentTarget.blur();
+          }
+        }}
+      />
+    );
+  }
+
+  return (
+    <input
+      {...common}
+      onKeyDown={(event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          event.currentTarget.blur();
+        }
+        if (event.key === "Escape") {
+          event.preventDefault();
+          updateDraft(value);
+          event.currentTarget.blur();
+        }
+      }}
+    />
+  );
+}
+
 export function StoreDesignV21() {
   const toast = useExactToast();
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
@@ -559,6 +676,8 @@ export function StoreDesignV21() {
   const structurePanelRef = useRef<HTMLElement | null>(null);
   const inspectorPanelRef = useRef<HTMLElement | null>(null);
   const inspectorBodyRef = useRef<HTMLDivElement | null>(null);
+  const inspectorEditingRef = useRef(false);
+  const selectedIdRef = useRef<string | null>(null);
   const initialSrcRef = useRef("");
   const previewTokenRef = useRef("");
   const previewSyncTimerRef = useRef<number | null>(null);
@@ -638,6 +757,10 @@ export function StoreDesignV21() {
     window.addEventListener("resize", applyViewport);
     return () => window.removeEventListener("resize", applyViewport);
   }, []);
+
+  useEffect(() => {
+    selectedIdRef.current = selected?.id || null;
+  }, [selected?.id]);
 
   useEffect(() => {
     if (!isMobileViewport) return;
@@ -921,6 +1044,100 @@ export function StoreDesignV21() {
     });
   }, [postToPreview]);
 
+  const addMenuHeading = useCallback(async () => {
+    try {
+      const result = await adminRequest<{ settings?: unknown }>(`/api/theme?t=${Date.now()}`, { force: true });
+      const current = normalizeThemeCustomizerSettings(result.settings);
+      const random = globalThis.crypto?.randomUUID?.().replace(/-/g, "").slice(0, 12)
+        || Math.random().toString(36).slice(2, 14);
+      const id = `menu-custom-${random}`.slice(0, 80);
+      const next: ThemeCustomizerSettings = {
+        ...current,
+        header: {
+          ...current.header,
+          links: [
+            ...current.header.links,
+            { id, label: "Yeni Başlık", path: "/", side: "left", children: [] },
+          ],
+        },
+      };
+
+      const saved = await adminRequest<{ settings?: unknown }>("/api/theme", {
+        method: "PUT",
+        body: JSON.stringify({ settings: next }),
+        confirmation: false,
+      });
+      const persisted = normalizeThemeCustomizerSettings(saved.settings || next);
+
+      iframeRef.current?.contentWindow?.postMessage({
+        type: "RUTH_THEME_EDITOR_SETTINGS",
+        settings: persisted,
+        revision: Date.now(),
+      }, STOREFRONT_ORIGIN);
+
+      setInteractionMode("edit");
+      setContextMenu(null);
+      setLeftOpen(false);
+      setRightOpen(false);
+      window.setTimeout(() => {
+        postToPreview({
+          type: "store-design-v2:select-target",
+          targetId: `global.header.menu.link.${id}`,
+        });
+      }, 180);
+      toast.success("Yeni menü başlığı eklendi.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Yeni menü başlığı eklenemedi.");
+    }
+  }, [postToPreview, toast]);
+
+  const persistMenuSourcePatch = useCallback(async (
+    target: SelectedTarget,
+    path: string,
+    value: unknown,
+  ) => {
+    const itemId = topLevelMenuSourceId(target);
+    if (!itemId || (path !== "content.text" && path !== "link.href")) return;
+
+    try {
+      const result = await adminRequest<{ settings?: unknown }>(`/api/theme?t=${Date.now()}`, { force: true });
+      const current = normalizeThemeCustomizerSettings(result.settings);
+      let changed = false;
+      const links = current.header.links.map((item) => {
+        if (item.id !== itemId) return item;
+        if (path === "content.text") {
+          const label = String(value ?? "").trim().slice(0, 80);
+          if (!label || label === item.label) return item;
+          changed = true;
+          return { ...item, label };
+        }
+        const href = String(value ?? "").trim() || "/";
+        if (href === item.path) return item;
+        changed = true;
+        return { ...item, path: href };
+      });
+      if (!changed) return;
+
+      const next: ThemeCustomizerSettings = {
+        ...current,
+        header: { ...current.header, links },
+      };
+      const saved = await adminRequest<{ settings?: unknown }>("/api/theme", {
+        method: "PUT",
+        body: JSON.stringify({ settings: next }),
+        confirmation: false,
+      });
+      const persisted = normalizeThemeCustomizerSettings(saved.settings || next);
+      iframeRef.current?.contentWindow?.postMessage({
+        type: "RUTH_THEME_EDITOR_SETTINGS",
+        settings: persisted,
+        revision: Date.now(),
+      }, STOREFRONT_ORIGIN);
+    } catch (error) {
+      console.warn("Menü kaynağı Store Design değişikliğiyle eşitlenemedi:", error);
+    }
+  }, []);
+
   const postMediaDocumentDiff = useCallback((before: ThemeDocument, after: ThemeDocument) => {
     const ids = new Set([...Object.keys(before.media), ...Object.keys(after.media)]);
     for (const assetId of ids) {
@@ -956,6 +1173,10 @@ export function StoreDesignV21() {
       confirmation: false,
     });
     lastPreviewJsonRef.current = serialized;
+    iframeRef.current?.contentWindow?.postMessage({
+      type: PREVIEW_DOCUMENT_MESSAGE,
+      document: value,
+    }, STOREFRONT_ORIGIN);
   }, []);
 
   useEffect(() => {
@@ -1050,6 +1271,8 @@ export function StoreDesignV21() {
 
       if (data.type === STORE_DESIGN_MESSAGES.SELECT && data.target) {
         const target = data.target as SelectedTarget;
+        const sameTarget = selectedIdRef.current === target.id;
+        if (inspectorEditingRef.current && sameTarget) return;
         setSelected(target);
         setStructureFocusSectionId(null);
         setScope(target.defaultScope);
@@ -1073,7 +1296,7 @@ export function StoreDesignV21() {
           setRightOpen(false);
         } else {
           setContextMenu(null);
-          if (isMobileViewport) setMobileSheetLevel("peek");
+          if (isMobileViewport && !inspectorEditingRef.current) setMobileSheetLevel("peek");
           setRightOpen(true);
         }
         return;
@@ -1442,6 +1665,9 @@ export function StoreDesignV21() {
       scope: patchScope,
       device: patchDevice,
     });
+    if (path === "content.text" || path === "link.href") {
+      void persistMenuSourcePatch(target, path, value);
+    }
   };
 
   const applyInspectorPatch = (path: string, value: unknown) => {
@@ -2146,33 +2372,37 @@ export function StoreDesignV21() {
                     {selected.current.content ? (
                       <label className="grid gap-1.5 text-[11px] opacity-70">
                         Metin / ad
-                        {(selected.current.content.text || "").length > 100 || (selected.current.content.text || "").includes("\n") ? (
-                          <textarea
-                            value={selected.current.content.text || ""}
-                            onChange={(event) => setSelected((current) => current ? updateTargetSnapshot(current, "content.text", event.target.value) : current)}
-                            onBlur={(event) => applyInspectorPatch("content.text", event.target.value)}
-                            className="sd-field min-h-24 resize-y rounded-md border p-3 text-[13px] leading-5 outline-none"
-                          />
-                        ) : (
-                          <input
-                            value={selected.current.content.text || ""}
-                            onChange={(event) => setSelected((current) => current ? updateTargetSnapshot(current, "content.text", event.target.value) : current)}
-                            onBlur={(event) => applyInspectorPatch("content.text", event.target.value)}
-                            className="sd-field h-10 rounded-md border px-3 text-[13px] outline-none"
-                          />
-                        )}
+                        <StableInspectorTextControl
+                          key={`${selected.id}:content.text`}
+                          value={selected.current.content.text || ""}
+                          multiline={(selected.current.content.text || "").length > 100 || (selected.current.content.text || "").includes("\n")}
+                          onEditingChange={(editing) => { inspectorEditingRef.current = editing; }}
+                          onCommit={(value) => applyInspectorPatch("content.text", value)}
+                          className={(selected.current.content.text || "").length > 100 || (selected.current.content.text || "").includes("\n")
+                            ? "sd-field min-h-24 resize-y rounded-md border p-3 text-[16px] leading-5 outline-none"
+                            : "sd-field h-10 rounded-md border px-3 text-[16px] outline-none"}
+                        />
                       </label>
                     ) : null}
                     {selected.type === "consent-banner" ? (
                       <>
-                        <label className="grid gap-1.5 text-[11px] opacity-70">Başlık<input value={consentSetting("title", "Çerezler")} onChange={(event) => applyInspectorPatch("title", event.target.value)} className="sd-field h-10 rounded-md border px-3 text-[13px] outline-none" /></label>
-                        <label className="grid gap-1.5 text-[11px] opacity-70">Açıklama<textarea value={consentSetting("intro", "Deneyiminizi iyileştirmek ve site kullanımını anlamak için çerezlerden yararlanıyoruz.")} onChange={(event) => applyInspectorPatch("intro", event.target.value)} className="sd-field min-h-24 resize-y rounded-md border p-3 text-[12px] leading-5 outline-none" /></label>
+                        <label className="grid gap-1.5 text-[11px] opacity-70">Başlık<StableInspectorTextControl key="consent:title" value={String(consentSetting("title", "Çerezler"))} onEditingChange={(editing) => { inspectorEditingRef.current = editing; }} onCommit={(value) => applyInspectorPatch("title", value)} className="sd-field h-10 rounded-md border px-3 text-[16px] outline-none" maxLength={80} /></label>
+                        <label className="grid gap-1.5 text-[11px] opacity-70">Açıklama<StableInspectorTextControl key="consent:intro" value={String(consentSetting("intro", "Deneyiminizi iyileştirmek ve site kullanımını anlamak için çerezlerden yararlanıyoruz."))} multiline onEditingChange={(editing) => { inspectorEditingRef.current = editing; }} onCommit={(value) => applyInspectorPatch("intro", value)} className="sd-field min-h-24 resize-y rounded-md border p-3 text-[16px] leading-5 outline-none" maxLength={360} /></label>
                         <div className="grid grid-cols-2 gap-2">
-                          <label className="grid gap-1.5 text-[11px] opacity-70">Kabul düğmesi<input value={consentSetting("acceptLabel", "Kabul et")} onChange={(event) => applyInspectorPatch("acceptLabel", event.target.value)} className="sd-field h-10 rounded-md border px-3 text-[12px] outline-none" /></label>
-                          <label className="grid gap-1.5 text-[11px] opacity-70">Ret düğmesi<input value={consentSetting("rejectLabel", "Reddet")} onChange={(event) => applyInspectorPatch("rejectLabel", event.target.value)} className="sd-field h-10 rounded-md border px-3 text-[12px] outline-none" /></label>
+                          <label className="grid gap-1.5 text-[11px] opacity-70">Kabul düğmesi<StableInspectorTextControl key="consent:accept" value={String(consentSetting("acceptLabel", "Kabul et"))} onEditingChange={(editing) => { inspectorEditingRef.current = editing; }} onCommit={(value) => applyInspectorPatch("acceptLabel", value)} className="sd-field h-10 rounded-md border px-3 text-[16px] outline-none" maxLength={40} /></label>
+                          <label className="grid gap-1.5 text-[11px] opacity-70">Ret düğmesi<StableInspectorTextControl key="consent:reject" value={String(consentSetting("rejectLabel", "Reddet"))} onEditingChange={(editing) => { inspectorEditingRef.current = editing; }} onCommit={(value) => applyInspectorPatch("rejectLabel", value)} className="sd-field h-10 rounded-md border px-3 text-[16px] outline-none" maxLength={40} /></label>
                         </div>
-                        <label className="grid gap-1.5 text-[11px] opacity-70">Gizlilik bağlantısı<input value={consentSetting("privacyLabel", "Gizlilik ve çerezler")} onChange={(event) => applyInspectorPatch("privacyLabel", event.target.value)} className="sd-field h-10 rounded-md border px-3 text-[12px] outline-none" /></label>
+                        <label className="grid gap-1.5 text-[11px] opacity-70">Gizlilik bağlantısı<StableInspectorTextControl key="consent:privacy" value={String(consentSetting("privacyLabel", "Gizlilik ve çerezler"))} onEditingChange={(editing) => { inspectorEditingRef.current = editing; }} onCommit={(value) => applyInspectorPatch("privacyLabel", value)} className="sd-field h-10 rounded-md border px-3 text-[16px] outline-none" maxLength={80} /></label>
                       </>
+                    ) : null}
+                    {selected.type === "menu-link" || selected.id.startsWith("global.header.menu.") ? (
+                      <button
+                        type="button"
+                        onClick={() => void addMenuHeading()}
+                        className="sd-secondary-button mt-1 flex h-10 items-center justify-center gap-2 rounded-md border px-3 text-[11px] font-semibold"
+                      >
+                        <Plus className="h-4 w-4" /> Yeni menü başlığı ekle
+                      </button>
                     ) : null}
                   </div>
                 </section>
@@ -2211,7 +2441,7 @@ export function StoreDesignV21() {
                     {selected.current.media.kind === "image" ? (
                       <label className="grid gap-1.5 text-[11px] opacity-70">
                         Alternatif metin
-                        <input value={selected.current.media.alt || ""} onChange={(event) => setSelected((current) => current ? updateTargetSnapshot(current, "media.alt", event.target.value) : current)} onBlur={(event) => applyInspectorPatch("media.alt", event.target.value)} className="sd-field h-10 rounded-md border px-3 text-[12px] outline-none" placeholder="Görseli kısaca anlat" />
+                        <StableInspectorTextControl key={`${selected.id}:media.alt`} value={selected.current.media.alt || ""} onEditingChange={(editing) => { inspectorEditingRef.current = editing; }} onCommit={(value) => applyInspectorPatch("media.alt", value)} className="sd-field h-10 rounded-md border px-3 text-[16px] outline-none" placeholder="Görseli kısaca anlat" maxLength={240} />
                       </label>
                     ) : null}
                   </div>
@@ -2591,6 +2821,10 @@ export function StoreDesignV21() {
           setLeftOpen((value) => !value);
         }}
         onAdd={() => {
+          if (selected && (selected.type.includes("menu") || selected.id.startsWith("global.header.menu."))) {
+            void addMenuHeading();
+            return;
+          }
           setInteractionMode("edit");
           setContextMenu(null);
           setRightOpen(false);

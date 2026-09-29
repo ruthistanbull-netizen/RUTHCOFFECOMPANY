@@ -485,6 +485,9 @@ export function Header({
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [desktopOpenMenuId, setDesktopOpenMenuId] = useState<string | null>(null);
   const [overHomeEditorial, setOverHomeEditorial] = useState(() => pathname === "/");
+  const [liveHeaderLinks, setLiveHeaderLinks] = useState<ThemeNavItem[]>(
+    themeSettings.header.links.length ? themeSettings.header.links : defaultThemeCustomizerSettings.header.links,
+  );
   const [liveMenuMediaCards, setLiveMenuMediaCards] = useState<ThemeMenuMediaCard[]>(themeSettings.header.mediaCards || []);
 
   const productPage = pathname.startsWith("/products/");
@@ -513,8 +516,8 @@ export function Header({
     [collections],
   );
   const menuItems = useMemo<NavItem[]>(() => {
-    const links = themeSettings.header.links.length
-      ? themeSettings.header.links
+    const links = liveHeaderLinks.length
+      ? liveHeaderLinks
       : defaultThemeCustomizerSettings.header.links;
     return links.map((item) => {
       const key = `${item.id} ${item.path} ${item.label}`.toLocaleLowerCase("tr-TR");
@@ -530,7 +533,7 @@ export function Header({
       ) return { ...item, children: uniqueChildren(collectionLinks) };
       return item;
     });
-  }, [categoryLinks, collectionLinks, themeSettings.header.links]);
+  }, [categoryLinks, collectionLinks, liveHeaderLinks]);
 
   const activeItem =
     menuItems.find((item) => item.id === activeMenuId) ||
@@ -568,14 +571,20 @@ export function Header({
   }, [pathname]);
 
   useEffect(() => {
+    setLiveHeaderLinks(
+      themeSettings.header.links.length ? themeSettings.header.links : defaultThemeCustomizerSettings.header.links,
+    );
     setLiveMenuMediaCards(themeSettings.header.mediaCards || []);
-  }, [themeSettings.header.mediaCards]);
+  }, [themeSettings.header.links, themeSettings.header.mediaCards]);
 
   useEffect(() => {
     const onThemeMessage = (event: MessageEvent) => {
       if (event.source !== window.parent || !event.data || typeof event.data !== "object") return;
       if (event.data.type !== "RUTH_THEME_EDITOR_SETTINGS" || !event.data.settings) return;
       const next = event.data.settings as ThemeCustomizerSettings;
+      setLiveHeaderLinks(
+        next.header?.links?.length ? next.header.links : defaultThemeCustomizerSettings.header.links,
+      );
       setLiveMenuMediaCards(next.header?.mediaCards || []);
     };
     window.addEventListener("message", onThemeMessage);
