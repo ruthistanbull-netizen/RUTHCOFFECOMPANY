@@ -2085,3 +2085,24 @@
     line-height:1.3!important;
   }
 }
+
+/* Store Design V2.2 — true desktop viewport preview.
+   The iframe keeps the real browser viewport size and is only visually scaled
+   to fit the editor canvas. This keeps storefront breakpoints/layout identical. */
+@media(min-width:768px){
+  [data-store-design-v2-admin] .sd-preview-shell.sd-desktop-viewport-shell{
+    max-width:none!important;
+    min-width:0!important;
+    min-height:0!important;
+    flex:none!important;
+    overflow:hidden!important;
+  }
+
+  [data-store-design-v2-admin] .sd-preview-frame.sd-desktop-viewport-frame{
+    display:block!important;
+    max-width:none!important;
+    min-width:0!important;
+    border:0!important;
+    transform-origin:top left!important;
+  }
+}
