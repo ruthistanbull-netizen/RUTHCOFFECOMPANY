@@ -175,6 +175,9 @@ export function StoreDesignInspectorBodyV22({
                   <input value={consentSetting("rejectLabel", "Reddet")} onChange={(event) => onPatch("rejectLabel", event.target.value)} className={fieldClass} />
                 </Field>
               </div>
+              <Field label="Gizlilik bağlantısı metni">
+                <input value={consentSetting("privacyLabel", "Gizlilik ve çerezler")} onChange={(event) => onPatch("privacyLabel", event.target.value)} className={fieldClass} />
+              </Field>
             </>
           ) : null}
         </Group>
@@ -262,6 +265,11 @@ export function StoreDesignInspectorBodyV22({
                   <option value="1/1">1:1</option>
                 </select>
               </Field>
+              <Field label="Başlık satırı">
+                <select value={String(selected.current.card?.titleLines ?? 2)} onChange={(event) => onPatch("card.titleLines", Number(event.target.value))} className={fieldClass}>
+                  {[1, 2, 3].map((value) => <option key={value} value={value}>{value} satır</option>)}
+                </select>
+              </Field>
               <label className="flex min-h-10 items-center justify-between gap-3 text-[12px]">
                 <span>Fiyatı göster</span>
                 <input type="checkbox" checked={selected.current.card?.showPrice !== false} onChange={(event) => onPatch("card.showPrice", event.target.checked)} />
@@ -309,6 +317,15 @@ export function StoreDesignInspectorBodyV22({
                   {[0, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96].map((value) => <option key={value} value={value}>{value}px</option>)}
                 </select>
               </Field>
+              <Field label="En fazla genişlik">
+                <select value={selected.current.grid?.maxWidth || "none"} onChange={(event) => onPatch("grid.maxWidth", event.target.value)} className={fieldClass}>
+                  <option value="none">Kullanılabilir alanı doldur</option>
+                  <option value="1200px">1200px</option>
+                  <option value="1280px">1280px</option>
+                  <option value="1440px">1440px</option>
+                  <option value="1600px">1600px</option>
+                </select>
+              </Field>
             </>
           ) : null}
 
@@ -328,6 +345,16 @@ export function StoreDesignInspectorBodyV22({
                   <option value="wide">Geniş</option>
                 </select>
               </Field>
+              <Field label="Köşe biçimi">
+                <select value={consentSetting("radiusPreset", "rounded")} onChange={(event) => onPatch("radiusPreset", event.target.value)} className={fieldClass}>
+                  <option value="soft">Yumuşak</option>
+                  <option value="rounded">Yuvarlak</option>
+                  <option value="pill">Tam yuvarlak</option>
+                </select>
+              </Field>
+              <p className="rounded-md border p-3 text-[10px] leading-4 opacity-60">
+                Kabul ve ret davranışı, çerez kategorileri ve gizlilik sayfası korunur. Burada yalnız metin ve görünüm seçenekleri değişir.
+              </p>
             </>
           ) : null}
         </Group>
