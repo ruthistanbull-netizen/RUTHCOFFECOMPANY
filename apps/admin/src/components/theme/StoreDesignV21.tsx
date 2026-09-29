@@ -1473,6 +1473,25 @@ export function StoreDesignV21() {
     for (const entry of entries) applyPatchValue(target, patchScope, device, entry.path, entry.after);
   };
 
+  const openMediaPickerForTarget = (target: SelectedTarget) => {
+    if (!activePage || !target.current.media) return;
+    const patchScope = target.allowedScopes.includes(scope) ? scope : target.defaultScope;
+    const responsive = responsiveSettingsFor(document, target, patchScope, activePage);
+    const deviceLeaves = new Map(flattenResponsiveLeaves(recordValue(responsive[device])));
+    setSelected(target);
+    setQuickMediaEdit({
+      target,
+      scope: patchScope,
+      device,
+      page: activePage,
+      mediaType: target.current.media.kind === "video" ? "video" : "image",
+      beforeOverride: deviceLeaves.has("media.src") ? deviceLeaves.get("media.src") : null,
+      visibleSource: target.current.media.src || "",
+    });
+    setContextMenu(null);
+    setMediaOpen(true);
+  };
+
   const openQuickMediaPicker = () => {
     if (!selected || !activePage || !selected.current.media) return;
     const responsive = responsiveSettingsFor(document, selected, scope, activePage);
@@ -2481,12 +2500,7 @@ export function StoreDesignV21() {
             setDestinationTarget(contextMenu.target);
             setContextMenu(null);
           }}
-          onChangeMedia={() => {
-            setSelected(contextMenu.target);
-            setContextMenu(null);
-            setLeftOpen(false);
-            setRightOpen(true);
-          }}
+          onChangeMedia={() => openMediaPickerForTarget(contextMenu.target)}
           onToggleVisibility={() => applyInspectorPatch("visible", contextMenu.target.current.visible === false)}
           onMobileSettings={() => {
             setSelected(contextMenu.target);
