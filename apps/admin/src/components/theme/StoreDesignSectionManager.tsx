@@ -1035,7 +1035,7 @@ export function StoreDesignSectionManager({ document, activePage, compatibility,
                   <MoreHorizontal className="h-4 w-4" />
                 </button>
                 {mobileActionsId === section.id ? (
-                  <div role="menu" aria-label={`${sectionLabel(section)} işlemleri`} className="sd-section-action-menu absolute right-1 top-[calc(100%-2px)] z-30 w-52 rounded-2xl border border-black/10 bg-white p-1.5 shadow-2xl">
+                  <div role="menu" aria-label={`${sectionLabel(section)} işlemleri`} className="sd-section-action-menu absolute right-1 top-[calc(100%_-_2px)] z-30 w-52 rounded-2xl border border-black/10 bg-white p-1.5 shadow-2xl">
                     {canEditSection(section.type) ? (
                       <button role="menuitem" type="button" onClick={() => { setMobileActionsId(null); setEditingSectionId(section.id); }}><Settings2 className="h-4 w-4" />Ayarları aç</button>
                     ) : null}
