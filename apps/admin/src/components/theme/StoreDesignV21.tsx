@@ -2263,8 +2263,16 @@ export function StoreDesignV21() {
                     {selected.current.link ? (
                       <div className="grid gap-2 rounded-xl border border-black/[0.08] p-3">
                         <p className="text-[10px] font-semibold text-black/55">BAĞLANTI</p>
+                        <button
+                          type="button"
+                          onClick={() => setDestinationTarget(selected)}
+                          className="sd-secondary-button flex h-10 items-center justify-between rounded-lg border px-3 text-[11px] font-semibold"
+                        >
+                          <span className="min-w-0 truncate">{selected.current.link.href || "Bağlantı yok"}</span>
+                          <span className="shrink-0 text-[10px] opacity-60">Hedef seç</span>
+                        </button>
                         <label className="grid gap-1.5 text-[10px] text-black/45">
-                          Gidilecek yer
+                          Özel adres
                           <input
                             value={selected.current.link.href || ""}
                             onChange={(event) => {
