@@ -1,13 +1,11 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   AnimatePresence,
   motion,
   useScroll,
-  useSpring,
   useTransform,
-  useVelocity,
 } from "framer-motion";
 
 const C = {
@@ -129,15 +127,15 @@ function Nav() {
   );
 }
 
-function Hero() {
+function Hero({ isMobile }: { isMobile: boolean }) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
   });
 
-  const rostaX = useTransform(scrollYProgress, [0, 1], ["0vw", "-65vw"]);
-  const studioX = useTransform(scrollYProgress, [0, 1], ["0vw", "65vw"]);
+  const rostaX = useTransform(scrollYProgress, [0, 1], ["0vw", isMobile ? "-28vw" : "-65vw"]);
+  const studioX = useTransform(scrollYProgress, [0, 1], ["0vw", isMobile ? "28vw" : "65vw"]);
   const fade = useTransform(scrollYProgress, [0, 0.55], [1, 0]);
   const lineScale = useTransform(scrollYProgress, [0, 1], [1, 0]);
 
@@ -149,7 +147,7 @@ function Hero() {
   };
 
   return (
-    <section id="hero" ref={ref} className="relative h-[150vh] bg-[#111111]">
+    <section id="hero" ref={ref} className="relative h-[122svh] sm:h-[150vh] bg-[#111111]">
       <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center grain">
         <div
           className="absolute top-24 left-5 sm:left-8 right-5 sm:right-8 flex items-center justify-between font-mono-tech text-[10px] uppercase tracking-[0.25em]"
@@ -206,32 +204,22 @@ function Hero() {
 }
 
 function MarqueeRow({ items, direction = -1, speed = 1, className = "" }) {
-  const ref = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"],
-  });
-  const rawVelocity = useVelocity(scrollYProgress);
-  const smoothVel = useSpring(rawVelocity, { stiffness: 80, damping: 20 });
-  const skew = useTransform(smoothVel, [-2, 2], [5, -5]);
   const row = [...items, ...items];
   const duration = `${24 / speed}s`;
   const animName = direction === -1 ? "rosta-marquee-left" : "rosta-marquee-right";
 
   return (
-    <div ref={ref} className={`overflow-hidden whitespace-nowrap ${className}`}>
-      <motion.div style={{ skew }}>
-        <div
-          className="rosta-marquee inline-flex"
-          style={{ animation: `${animName} ${duration} linear infinite` }}
-        >
-          {row.map((it, i) => (
-            <span key={i} className="mx-5 sm:mx-8">
-              {it}
-            </span>
-          ))}
-        </div>
-      </motion.div>
+    <div className={`overflow-hidden whitespace-nowrap ${className}`}>
+      <div
+        className="rosta-marquee inline-flex"
+        style={{ animation: `${animName} ${duration} linear infinite` }}
+      >
+        {row.map((it, i) => (
+          <span key={i} className="mx-5 sm:mx-8">
+            {it}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
@@ -269,14 +257,14 @@ function MarqueeOne() {
   );
 }
 
-function WhoWeAre() {
+function WhoWeAre({ isMobile }: { isMobile: boolean }) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"],
   });
-  const leftX = useTransform(scrollYProgress, [0, 0.45], ["-110%", "0%"]);
-  const rightX = useTransform(scrollYProgress, [0.1, 0.55], ["110%", "0%"]);
+  const leftX = useTransform(scrollYProgress, [0, 0.45], [isMobile ? "-18vw" : "-110%", "0%"]);
+  const rightX = useTransform(scrollYProgress, [0.1, 0.55], [isMobile ? "18vw" : "110%", "0%"]);
   const words = ["BAR.", "ÜRÜN.", "MARKA.", "DENEYİM."];
 
   return (
@@ -325,19 +313,19 @@ function WhoWeAre() {
   );
 }
 
-function ServiceBlock({ index, title, subline, description, image, side = "left" }) {
+function ServiceBlock({ index, title, subline, description, image, side = "left", isMobile }) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"],
   });
 
-  const imgScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.6, 1, 1.05]);
+  const imgScale = useTransform(scrollYProgress, [0, 0.5, 1], isMobile ? [0.94, 1, 1.015] : [0.6, 1, 1.05]);
   const imgWidth = useTransform(scrollYProgress, [0, 0.5], ["60%", "100%"]);
   const titleX = useTransform(
     scrollYProgress,
     [0, 0.5],
-    [side === "left" ? "-60vw" : "60vw", "0vw"],
+    [side === "left" ? (isMobile ? "-18vw" : "-60vw") : (isMobile ? "18vw" : "60vw"), "0vw"],
   );
   const numOpacity = useTransform(scrollYProgress, [0, 0.3, 0.8, 1], [0.2, 1, 1, 0.3]);
   const num = `0${index}`;
@@ -351,7 +339,7 @@ function ServiceBlock({ index, title, subline, description, image, side = "left"
         <span style={{ color: C.kraft }}>HİZMET / {num}</span>
       </motion.div>
 
-      <div className="relative h-[130vh]">
+      <div className="relative h-[108svh] sm:h-[130vh]">
         <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden">
           <div className="absolute top-1/2 -translate-y-1/2 left-5 sm:left-8 pointer-events-none">
             <span
@@ -363,7 +351,7 @@ function ServiceBlock({ index, title, subline, description, image, side = "left"
           </div>
 
           <motion.div
-            style={{ width: imgWidth, scale: imgScale }}
+            style={{ width: isMobile ? "calc(100% - 32px)" : imgWidth, scale: imgScale }}
             className="relative h-[42vh] sm:h-[60vh] mx-auto overflow-hidden self-center"
           >
             <StudioImage src={image} alt="" className="w-full h-full" />
@@ -393,7 +381,7 @@ function ServiceBlock({ index, title, subline, description, image, side = "left"
   );
 }
 
-function Services() {
+function Services({ isMobile }: { isMobile: boolean }) {
   return (
     <section id="services" className="relative bg-[#111111] grain">
       <div className="px-5 sm:px-8 py-7 flex items-center justify-between font-mono-tech text-[10px] uppercase tracking-[0.25em]" style={{ color: C.kraft }}>
@@ -407,6 +395,7 @@ function Services() {
         title={<>BAR<br />KURULUMU</>}
         subline="AKIŞ / EKİPMAN / ÇALIŞMA ALANI"
         description="Bar akışını, ekipmanı ve çalışma düzenini işletmenin gerçek ihtiyaçlarına göre oluşturuyoruz."
+        isMobile={isMobile}
         image="https://media.base44.com/images/public/6abc5148a8d8f7bdd9a2ee6f/70c0e45c9_generated_e8a15d6f.jpg"
       />
       <ServiceBlock
@@ -415,6 +404,7 @@ function Services() {
         title={<>REÇETE &<br />ÜRÜN GELİŞTİRME</>}
         subline="KAHVE / İÇECEK / MENÜ"
         description="Menüyü doldurmak yerine markanın karakterini taşıyan ürünler geliştiriyoruz."
+        isMobile={isMobile}
         image="https://media.base44.com/images/public/6abc5148a8d8f7bdd9a2ee6f/87ba1f368_generated_5cb9b9d2.jpg"
       />
       <ServiceBlock
@@ -423,22 +413,23 @@ function Services() {
         title={<>MARKA &<br />KONSEPT</>}
         subline="KİMLİK / MEKÂN / DENEYİM"
         description="İsimden görsel dile, menüden müşterinin mekânda hissettiği deneyime kadar bütün yapıyı birlikte tasarlıyoruz."
+        isMobile={isMobile}
         image="https://media.base44.com/images/public/6abc5148a8d8f7bdd9a2ee6f/e11718cca_generated_42ef871f.jpg"
       />
     </section>
   );
 }
 
-function StreetText() {
+function StreetText({ isMobile }: { isMobile: boolean }) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"],
   });
 
-  const leftX = useTransform(scrollYProgress, [0, 1], ["10vw", "-25vw"]);
-  const rightX = useTransform(scrollYProgress, [0, 1], ["-10vw", "20vw"]);
-  const midX = useTransform(scrollYProgress, [0, 1], ["-8vw", "12vw"]);
+  const leftX = useTransform(scrollYProgress, [0, 1], isMobile ? ["4vw", "-9vw"] : ["10vw", "-25vw"]);
+  const rightX = useTransform(scrollYProgress, [0, 1], isMobile ? ["-4vw", "8vw"] : ["-10vw", "20vw"]);
+  const midX = useTransform(scrollYProgress, [0, 1], isMobile ? ["-3vw", "6vw"] : ["-8vw", "12vw"]);
   const line = "font-display uppercase font-bold leading-[0.82] tracking-[-0.04em]";
   const size = { fontSize: "clamp(3rem, 13vw, 13rem)", color: C.cream };
 
@@ -470,13 +461,13 @@ const stages = [
   { n: "04", t: "UYGULAMA", d: "Sahada kurar, ekibi eğitir ve açılıştan sonra deneyimi ayakta tutarız.", side: "right" },
 ];
 
-function Stage({ n, t, d, side }) {
+function Stage({ n, t, d, side, isMobile }) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"],
   });
-  const x = useTransform(scrollYProgress, [0, 0.5], [side === "left" ? "-40vw" : "40vw", "0vw"]);
+  const x = useTransform(scrollYProgress, [0, 0.5], [side === "left" ? (isMobile ? "-16vw" : "-40vw") : (isMobile ? "16vw" : "40vw"), "0vw"]);
   const opacity = useTransform(scrollYProgress, [0, 0.35, 0.75, 1], [0.2, 1, 1, 0.3]);
 
   return (
@@ -496,7 +487,7 @@ function Stage({ n, t, d, side }) {
   );
 }
 
-function Process() {
+function Process({ isMobile }: { isMobile: boolean }) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -520,28 +511,28 @@ function Process() {
           <motion.div style={{ scaleY: lineScaleY, transformOrigin: "top", background: C.brick }} className="w-full h-full" />
         </div>
         <div className="flex flex-col">
-          {stages.map((s) => <Stage key={s.n} {...s} />)}
+          {stages.map((s) => <Stage key={s.n} {...s} isMobile={isMobile} />)}
         </div>
       </div>
     </section>
   );
 }
 
-function BigImage() {
+function BigImage({ isMobile }: { isMobile: boolean }) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"],
   });
   const width = useTransform(scrollYProgress, [0.1, 0.5], ["60%", "100%"]);
-  const scale = useTransform(scrollYProgress, [0.1, 0.5], [1, 1.08]);
+  const scale = useTransform(scrollYProgress, [0.1, 0.5], isMobile ? [1, 1.02] : [1, 1.08]);
   const cornerOpacity = useTransform(scrollYProgress, [0.4, 0.6], [0, 1]);
   const corner = "absolute font-mono-tech text-[10px] uppercase tracking-[0.25em]";
 
   return (
-    <section ref={ref} className="relative h-[150vh] bg-[#111111]">
+    <section ref={ref} className="relative h-[116svh] sm:h-[150vh] bg-[#111111]">
       <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden grain">
-        <motion.div style={{ width, scale }} className="relative h-[62vh] sm:h-[82vh] overflow-hidden">
+        <motion.div style={{ width: isMobile ? "100%" : width, scale }} className="relative h-[62svh] sm:h-[82vh] overflow-hidden">
           <StudioImage
             src="https://media.base44.com/images/public/6abc5148a8d8f7bdd9a2ee6f/ee0e38c8f_generated_5fe6b1a5.jpg"
             alt="ROSTA.Studio kahve barı çalışma akışı"
@@ -566,17 +557,17 @@ const phrases = [
   { word: "SADE.", sub: "Gereksiz hiçbir şey sahnede kalmaz.", side: "left" },
 ];
 
-function Phrase({ word, sub, side, index }) {
+function Phrase({ word, sub, side, index, isMobile }) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"],
   });
-  const x = useTransform(scrollYProgress, [0, 0.5], [side === "left" ? "-70vw" : "70vw", "0vw"]);
+  const x = useTransform(scrollYProgress, [0, 0.5], [side === "left" ? (isMobile ? "-18vw" : "-70vw") : (isMobile ? "18vw" : "70vw"), "0vw"]);
   const opacity = useTransform(scrollYProgress, [0, 0.4, 0.7, 1], [0, 1, 1, 0]);
 
   return (
-    <div ref={ref} className="relative h-[65vh] sm:h-[72vh] flex items-center overflow-hidden">
+    <div ref={ref} className="relative h-[50svh] sm:h-[72vh] flex items-center overflow-hidden">
       <motion.div style={{ x, opacity }} className="px-5 sm:px-8 w-full">
         <div className="font-mono-tech text-[10px] uppercase tracking-[0.25em] mb-3" style={{ color: C.brick }}>
           İLKE / 0{index + 1}
@@ -595,14 +586,14 @@ function Phrase({ word, sub, side, index }) {
   );
 }
 
-function Principles() {
+function Principles({ isMobile }: { isMobile: boolean }) {
   return (
     <section className="relative bg-[#111111] grain">
       <div className="px-5 sm:px-8 py-7 flex items-center justify-between font-mono-tech text-[10px] uppercase tracking-[0.25em]" style={{ color: C.kraft }}>
         <span>BÖLÜM / 08</span>
         <span>ROSTA İLKELERİ</span>
       </div>
-      {phrases.map((p, i) => <Phrase key={p.word} {...p} index={i} />)}
+      {phrases.map((p, i) => <Phrase key={p.word} {...p} index={i} isMobile={isMobile} />)}
     </section>
   );
 }
@@ -631,7 +622,7 @@ function MarqueeTwo() {
   );
 }
 
-function FinalCTA() {
+function FinalCTA({ isMobile }: { isMobile: boolean }) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -645,26 +636,26 @@ function FinalCTA() {
   const big = { fontSize: "clamp(3rem, 13vw, 13rem)", color: C.cream };
 
   return (
-    <section id="contact" ref={ref} className="relative bg-[#C94A40] min-h-[125svh] sm:min-h-[150svh] flex flex-col justify-center overflow-x-hidden overflow-y-visible grain py-16 sm:py-24">
+    <section id="contact" ref={ref} className="relative bg-[#C94A40] min-h-0 sm:min-h-[150svh] flex flex-col justify-start sm:justify-center overflow-x-hidden overflow-y-visible grain pt-20 pb-28 sm:py-24">
       <div className="px-5 sm:px-8 py-7 flex items-center justify-between font-mono-tech text-[10px] uppercase tracking-[0.25em]" style={{ color: "rgba(251,243,230,0.7)" }}>
         <span>BÖLÜM / 10</span>
         <span>İLETİŞİM</span>
       </div>
 
       <div className="px-5 sm:px-8">
-        <motion.div style={{ y: line1Y }}>
+        <motion.div style={{ y: isMobile ? 0 : line1Y }}>
           <h2 className={head} style={big}>BİR KAHVE</h2>
           <h2 className={head} style={big}>İŞLETMESİ</h2>
           <h2 className={head} style={big}>KURUYORSUN?</h2>
         </motion.div>
 
-        <motion.div style={{ opacity: line2Opacity, y: line2Y }} className="mt-6 sm:mt-8">
+        <motion.div style={{ opacity: isMobile ? 1 : line2Opacity, y: isMobile ? 0 : line2Y }} className="mt-6 sm:mt-8">
           <h2 className={head} style={big}>VAR OLANI</h2>
           <h2 className={head} style={big}>DAHA İYİ</h2>
           <h2 className={head} style={big}>HALE GETİRELİM.</h2>
         </motion.div>
 
-        <motion.div style={{ opacity: ctaOpacity }} className="mt-10 sm:mt-14">
+        <motion.div style={{ opacity: isMobile ? 1 : ctaOpacity }} className="mt-10 sm:mt-14">
           <div className="font-mono-tech text-[11px] uppercase tracking-[0.22em] mb-3" style={{ color: "rgba(251,243,230,0.7)" }}>
             ROSTA.Studio
           </div>
@@ -692,19 +683,29 @@ function FinalCTA() {
 }
 
 export function RostaStudioClient() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 767px)");
+    const sync = () => setIsMobile(media.matches);
+    sync();
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
+  }, []);
+
   return (
     <main className="rosta-studio-exact bg-[#111111]">
       <Nav />
-      <Hero />
+      <Hero isMobile={isMobile} />
       <MarqueeOne />
-      <WhoWeAre />
-      <Services />
-      <StreetText />
-      <Process />
-      <BigImage />
-      <Principles />
+      <WhoWeAre isMobile={isMobile} />
+      <Services isMobile={isMobile} />
+      <StreetText isMobile={isMobile} />
+      <Process isMobile={isMobile} />
+      <BigImage isMobile={isMobile} />
+      <Principles isMobile={isMobile} />
       <MarqueeTwo />
-      <FinalCTA />
+      <FinalCTA isMobile={isMobile} />
     </main>
   );
 }
