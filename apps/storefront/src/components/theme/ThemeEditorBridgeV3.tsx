@@ -388,8 +388,6 @@ function applyGlobal(settings: ThemeCustomizerSettings) {
   const whatsapp = document.querySelector(".whatsapp-floating-bubble") as HTMLAnchorElement | null;
   if (whatsapp) {
     whatsapp.style.display = settings.whatsapp.enabled ? "" : "none";
-    const phone = String(settings.whatsapp.phone || "").replace(/\D/g, "");
-    if (phone) whatsapp.href = `https://wa.me/${phone}?text=${encodeURIComponent("Merhaba, ROSTA Coffee destek ekibinden yardım almak istiyorum.")}`;
     const label = whatsapp.querySelector("span:last-child");
     if (label) label.textContent = settings.whatsapp.label || "WhatsApp";
   }
