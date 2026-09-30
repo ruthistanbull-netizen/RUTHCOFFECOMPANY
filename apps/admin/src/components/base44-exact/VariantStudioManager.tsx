@@ -330,7 +330,7 @@ export function VariantStudioManager({ variants, setVariants, productPhotos, bas
                     ) : (
                       <ImagePlus className="absolute inset-0 m-auto h-8 w-8 text-subtle" />
                     )}
-                    <span className="ruth-type-caption absolute left-3 top-3 rounded-full bg-black/55 px-2.5 py-1 font-semibold text-white backdrop-blur-sm">Ana varyant görseli</span>
+                    <span className="ruth-type-caption absolute left-3 top-3 rounded-full bg-black/55 px-2.5 py-1 font-semibold text-white backdrop-blur-sm">Ana seçenek görseli</span>
                   </div>
 
                   <Reorder.Group axis="y" values={mediaOrder} onReorder={setMediaOrder} className="max-h-[64dvh] space-y-2 overflow-y-auto pr-0.5 no-scrollbar">
