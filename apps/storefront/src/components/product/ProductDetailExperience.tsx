@@ -355,17 +355,18 @@ export function ProductDetailExperience({
   }, []);
 
   const fetchWindow = useCallback(
-    (slug: string, signal?: AbortSignal) => {
-      const cached = materializeWindow(slug);
+    (slug: string, signal?: AbortSignal, fresh = false) => {
+      const cached = fresh ? null : materializeWindow(slug);
       if (cached && linkCacheRef.current.has(slug)) return Promise.resolve(cached);
-      const pending = pendingWindowRef.current.get(slug);
+      const pendingKey = fresh ? `fresh:${slug}` : slug;
+      const pending = pendingWindowRef.current.get(pendingKey);
       if (pending) return pending;
 
       const request = fetch(
         `/api/products/${encodeURIComponent(slug)}/browser-window`,
         {
           credentials: "same-origin",
-          cache: "force-cache",
+          cache: "no-store",
           signal,
           headers: { Accept: "application/json" },
         },
@@ -383,9 +384,9 @@ export function ProductDetailExperience({
           if (error instanceof DOMException && error.name === "AbortError") return null;
           return null;
         })
-        .finally(() => pendingWindowRef.current.delete(slug));
+        .finally(() => pendingWindowRef.current.delete(pendingKey));
 
-      pendingWindowRef.current.set(slug, request);
+      pendingWindowRef.current.set(pendingKey, request);
       return request;
     },
     [materializeWindow, rememberWindow],
@@ -396,6 +397,34 @@ export function ProductDetailExperience({
     rememberWindow(browserWindow);
     document.title = `${browserWindow.current.name} | ROSTA Coffee`;
   }, [browserWindow, rememberWindow]);
+
+  useEffect(() => {
+    let lastRefreshAt = 0;
+    let controller: AbortController | null = null;
+
+    const refreshCurrentProduct = () => {
+      if (document.visibilityState === "hidden") return;
+      const now = Date.now();
+      if (now - lastRefreshAt < 2_500) return;
+      lastRefreshAt = now;
+      controller?.abort();
+      controller = new AbortController();
+      const slug = browserWindowRef.current.current.slug;
+      void fetchWindow(slug, controller.signal, true).then((freshWindow) => {
+        if (!freshWindow?.current) return;
+        if (browserWindowRef.current.current.slug !== slug) return;
+        setBrowserWindow(freshWindow);
+      });
+    };
+
+    window.addEventListener("focus", refreshCurrentProduct);
+    document.addEventListener("visibilitychange", refreshCurrentProduct);
+    return () => {
+      controller?.abort();
+      window.removeEventListener("focus", refreshCurrentProduct);
+      document.removeEventListener("visibilitychange", refreshCurrentProduct);
+    };
+  }, [fetchWindow]);
 
   useEffect(() => {
     if (
