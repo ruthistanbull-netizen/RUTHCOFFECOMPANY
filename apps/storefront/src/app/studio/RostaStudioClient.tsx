@@ -1,635 +1,715 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
+import React, { useEffect, useRef, useState } from "react";
 import {
+  AnimatePresence,
   motion,
-  useReducedMotion,
   useScroll,
   useSpring,
   useTransform,
+  useVelocity,
 } from "framer-motion";
-import { useRef } from "react";
-import styles from "./studio.module.css";
 
-const EASE = [0.22, 1, 0.36, 1] as const;
+const C = {
+  carbon: "#111111",
+  cream: "#FBF3E6",
+  brick: "#C94A40",
+  kraft: "#C8A77D",
+};
 
-function TechLabel({
-  children,
-  className = "",
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return <span className={`${styles.tech} ${className}`}>{children}</span>;
+function StudioImage({ src, alt = "", className = "" }) {
+  return (
+    <img
+      src={src}
+      alt={typeof alt === "string" ? alt : ""}
+      className={`${className} object-cover`}
+      loading="lazy"
+      decoding="async"
+    />
+  );
+}
+
+const navLinks = [
+  { label: "STÜDYO", href: "#hero" },
+  { label: "HİZMETLER", href: "#services" },
+  { label: "SÜREÇ", href: "#process" },
+  { label: "İLETİŞİM", href: "#contact" },
+];
+
+function Nav() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <header
+        className="fixed top-0 left-0 right-0 z-50"
+        style={{ mixBlendMode: "difference" }}
+      >
+        <div className="flex items-center justify-between px-5 sm:px-8 py-5">
+          <a
+            href="#hero"
+            className="font-display font-bold uppercase tracking-tight text-lg sm:text-xl leading-none"
+            style={{ color: C.cream }}
+          >
+            ROSTA<span className="text-[0.7em] align-top">.</span>Studio
+          </a>
+
+          <nav className="hidden md:flex items-center gap-7">
+            {navLinks.map((l) => (
+              <a
+                key={l.label}
+                href={l.href}
+                className="font-mono-tech text-[11px] uppercase tracking-[0.18em] hover:opacity-60 transition-opacity"
+                style={{ color: C.cream }}
+              >
+                {l.label}
+              </a>
+            ))}
+          </nav>
+
+          <button
+            type="button"
+            aria-label="Menü"
+            onClick={() => setOpen(true)}
+            className="md:hidden flex flex-col gap-[5px] p-1"
+          >
+            <span className="block w-6 h-[2px]" style={{ background: C.cream }} />
+            <span className="block w-6 h-[2px]" style={{ background: C.cream }} />
+            <span className="block w-4 h-[2px] ml-auto" style={{ background: C.cream }} />
+          </button>
+        </div>
+      </header>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "tween", duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed inset-0 z-[160] bg-[#111111] flex flex-col md:hidden"
+          >
+            <div className="flex items-center justify-between px-5 py-5">
+              <span className="font-display font-bold uppercase text-lg" style={{ color: C.cream }}>
+                ROSTA.Studio
+              </span>
+              <button type="button" aria-label="Kapat" onClick={() => setOpen(false)} className="p-2">
+                <span className="block w-7 h-[2px] rotate-45" style={{ background: C.cream }} />
+                <span className="block w-7 h-[2px] -rotate-45 -mt-[2px]" style={{ background: C.cream }} />
+              </button>
+            </div>
+
+            <nav className="flex flex-col px-5 mt-10 gap-1">
+              {navLinks.map((l, i) => (
+                <a
+                  key={l.label}
+                  href={l.href}
+                  onClick={() => setOpen(false)}
+                  className="font-display uppercase text-6xl font-bold leading-[1.05] tracking-tight"
+                  style={{ color: C.cream }}
+                >
+                  <span className="font-mono-tech text-xs mr-3 align-middle" style={{ color: C.brick }}>
+                    0{i + 1}
+                  </span>
+                  {l.label}
+                </a>
+              ))}
+            </nav>
+
+            <div className="mt-auto px-5 pb-8 font-mono-tech text-[10px] uppercase tracking-[0.2em]" style={{ color: C.kraft }}>
+              İST/TR · KAHVE SİSTEMİ · KUR. 2026
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
 }
 
 function Hero() {
-  const ref = useRef<HTMLElement>(null);
-  const reducedMotion = useReducedMotion();
+  const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
   });
-  const rostaX = useTransform(scrollYProgress, [0, 1], ["0vw", "-15vw"]);
-  const studioX = useTransform(scrollYProgress, [0, 1], ["0vw", "15vw"]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.78, 1], [1, 0.88, 0]);
+
+  const rostaX = useTransform(scrollYProgress, [0, 1], ["0vw", "-65vw"]);
+  const studioX = useTransform(scrollYProgress, [0, 1], ["0vw", "65vw"]);
+  const fade = useTransform(scrollYProgress, [0, 0.55], [1, 0]);
+  const lineScale = useTransform(scrollYProgress, [0, 1], [1, 0]);
+
+  const headStyle = {
+    color: C.cream,
+    fontSize: "clamp(4.5rem, 21vw, 21rem)",
+    lineHeight: 0.82,
+    letterSpacing: "-0.04em",
+  };
 
   return (
-    <section ref={ref} className={styles.hero} id="studio">
-      <div className={styles.heroMeta}>
-        <TechLabel>ROSTA / STUDIO</TechLabel>
-        <TechLabel>KAHVE SİSTEMİ</TechLabel>
-        <TechLabel>KUR. 2026</TechLabel>
-      </div>
-
-      <motion.div
-        className={styles.heroType}
-        style={{ opacity: reducedMotion ? 1 : heroOpacity }}
-      >
-        <motion.div
-          className={`${styles.heroWord} ${styles.display}`}
-          initial={reducedMotion ? false : { x: "-12vw", opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 1, ease: EASE }}
-          style={{ x: reducedMotion ? 0 : rostaX }}
+    <section id="hero" ref={ref} className="relative h-[150vh] bg-[#111111]">
+      <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center grain">
+        <div
+          className="absolute top-24 left-5 sm:left-8 right-5 sm:right-8 flex items-center justify-between font-mono-tech text-[10px] uppercase tracking-[0.25em]"
+          style={{ color: C.kraft }}
         >
-          ROSTA.
-        </motion.div>
-        <motion.div
-          className={`${styles.heroWord} ${styles.heroWordRight} ${styles.display}`}
-          initial={reducedMotion ? false : { x: "12vw", opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 1, delay: 0.08, ease: EASE }}
-          style={{ x: reducedMotion ? 0 : studioX }}
-        >
-          STUDIO
-        </motion.div>
-      </motion.div>
-
-      <div className={styles.heroBottom}>
-        <div>
-          <TechLabel>KAHVE / İŞLETME / DENEYİM</TechLabel>
-          <motion.p
-            className={styles.heroCopy}
-            initial={reducedMotion ? false : { y: 24, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.42, ease: EASE }}
-          >
-            Kahve işletmelerini fikirden gerçek deneyime dönüştürüyoruz.
-          </motion.p>
+          <span>ROSTA / STUDIO</span>
+          <span className="hidden sm:inline">KAHVE SİSTEMİ</span>
+          <span>KUR. 2026</span>
         </div>
-        <a href="#hizmetler" className={styles.heroCta}>
-          BİRLİKTE ÇALIŞALIM <span aria-hidden="true">↘</span>
-        </a>
-      </div>
 
-      <a href="#yaklasim" className={styles.scrollCue} aria-label="Aşağı kaydır">
-        <span />
-      </a>
+        <div className="relative w-full px-5 sm:px-8">
+          <div className="overflow-hidden">
+            <motion.div
+              style={{ x: rostaX, ...headStyle }}
+              className="font-display font-bold uppercase select-none"
+            >
+              ROSTA.
+            </motion.div>
+          </div>
+          <div className="overflow-hidden -mt-[1.2vw]">
+            <motion.div
+              style={{ x: studioX, ...headStyle }}
+              className="font-display font-bold uppercase select-none"
+            >
+              STUDIO
+            </motion.div>
+          </div>
+        </div>
+
+        <motion.div
+          style={{ opacity: fade }}
+          className="absolute bottom-28 left-5 sm:left-8 right-5 sm:right-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6"
+        >
+          <div className="font-mono-tech text-[11px] sm:text-xs uppercase tracking-[0.22em]" style={{ color: "rgba(251,243,230,0.8)" }}>
+            KAHVE <span style={{ color: C.brick }}>/</span> İŞLETME <span style={{ color: C.brick }}>/</span> DENEYİM
+          </div>
+          <p className="max-w-md font-body text-sm sm:text-base leading-relaxed" style={{ color: "rgba(251,243,230,0.7)" }}>
+            Kahve işletmelerini fikirden gerçek deneyime dönüştürüyoruz.
+          </p>
+        </motion.div>
+
+        <motion.div style={{ opacity: fade }} className="absolute bottom-10 left-5 sm:left-8 right-5 sm:right-8 flex items-end justify-between">
+          <a href="#contact" className="group font-display uppercase text-lg sm:text-xl tracking-tight" style={{ color: C.cream }}>
+            BİRLİKTE ÇALIŞALIM{" "}
+            <span className="inline-block group-hover:translate-x-1 group-hover:-translate-y-[2px] transition-transform" style={{ color: C.brick }}>↘</span>
+          </a>
+          <div className="hidden sm:block w-24 h-[2px] overflow-hidden" style={{ background: "rgba(251,243,230,0.2)" }}>
+            <motion.div style={{ scaleX: lineScale, transformOrigin: "left", background: C.brick }} className="w-full h-full" />
+          </div>
+        </motion.div>
+      </div>
     </section>
   );
 }
 
-function MarqueeRow({
-  text,
-  direction,
-  accent,
-  speed = 1,
-}: {
-  text: string;
-  direction: "left" | "right";
-  accent?: string;
-  speed?: number;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const reducedMotion = useReducedMotion();
+function MarqueeRow({ items, direction = -1, speed = 1, className = "" }) {
+  const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"],
   });
-  const distance = direction === "left" ? -12 * speed : 12 * speed;
-  const x = useTransform(
-    scrollYProgress,
-    [0, 1],
-    direction === "left" ? ["4%", `${distance}%`] : ["-10%", `${distance - 2}%`],
-  );
-
-  const chunks = Array.from({ length: 3 }, (_, index) => (
-    <span key={index}>
-      {accent && text.includes(accent) ? (
-        <>
-          {text.split(accent)[0]}
-          <em>{accent}</em>
-          {text.split(accent).slice(1).join(accent)}
-        </>
-      ) : (
-        text
-      )}
-      <span className={styles.marqueeGap} aria-hidden="true"> — </span>
-    </span>
-  ));
+  const rawVelocity = useVelocity(scrollYProgress);
+  const smoothVel = useSpring(rawVelocity, { stiffness: 80, damping: 20 });
+  const skew = useTransform(smoothVel, [-2, 2], [5, -5]);
+  const row = [...items, ...items];
+  const duration = `${24 / speed}s`;
+  const animName = direction === -1 ? "rosta-marquee-left" : "rosta-marquee-right";
 
   return (
-    <div ref={ref} className={styles.marqueeViewport} aria-hidden="true">
-      <motion.div
-        className={`${styles.marqueeTrack} ${styles.display}`}
-        style={{ x: reducedMotion ? 0 : x }}
-      >
-        {chunks}
+    <div ref={ref} className={`overflow-hidden whitespace-nowrap ${className}`}>
+      <motion.div style={{ skew }}>
+        <div
+          className="rosta-marquee inline-flex"
+          style={{ animation: `${animName} ${duration} linear infinite` }}
+        >
+          {row.map((it, i) => (
+            <span key={i} className="mx-5 sm:mx-8">
+              {it}
+            </span>
+          ))}
+        </div>
       </motion.div>
     </div>
   );
 }
 
+const Brick = ({ children }) => <span style={{ color: C.brick }}>{children}</span>;
+
 function MarqueeOne() {
+  const head = "font-display uppercase font-bold leading-[0.9] tracking-[-0.03em]";
+  const size = "text-[12vw] sm:text-[10vw]";
+
   return (
-    <section className={styles.marqueeSection} aria-label="ROSTA Studio hizmetleri">
-      <MarqueeRow
-        text="BAR KURULUMU"
-        direction="left"
-        speed={1.05}
-      />
-      <MarqueeRow
-        text="REÇETE / ÜRÜN / MENÜ / DENEYİM"
-        direction="right"
-        accent="ÜRÜN"
-        speed={0.9}
-      />
-      <MarqueeRow
-        text="MARKA / KONSEPT / KAHVE / MEKÂN"
-        direction="left"
-        accent="KONSEPT"
-        speed={1.15}
-      />
+    <section className="relative bg-[#111111] py-14 sm:py-20 grain">
+      <div className="px-5 sm:px-8 mb-7 flex items-center justify-between font-mono-tech text-[10px] uppercase tracking-[0.25em]" style={{ color: C.kraft }}>
+        <span>BÖLÜM / 02</span>
+        <span>ROSTA.STUDIO</span>
+      </div>
+      <div className="flex flex-col gap-3 sm:gap-5" style={{ color: C.cream }}>
+        <MarqueeRow
+          direction={-1}
+          className={`${head} ${size}`}
+          items={[<>BAR KURULUMU</>, <Brick key="b1">—</Brick>, "BAR KURULUMU", <Brick key="b2">—</Brick>, "BAR KURULUMU", <Brick key="b3">—</Brick>]}
+        />
+        <MarqueeRow
+          direction={1}
+          className={`${head} ${size}`}
+          items={["REÇETE", <Brick key="u1">ÜRÜN</Brick>, "MENÜ", <Brick key="d1">DENEYİM</Brick>, "REÇETE", <Brick key="u2">ÜRÜN</Brick>]}
+        />
+        <MarqueeRow
+          direction={-1}
+          className={`${head} ${size}`}
+          items={[<Brick key="m1">MARKA</Brick>, "KONSEPT", "KAHVE", "MEKAN", <Brick key="m2">MARKA</Brick>]}
+        />
+      </div>
     </section>
   );
 }
 
 function WhoWeAre() {
-  const reducedMotion = useReducedMotion();
-  const words = ["BAR.", "ÜRÜN.", "MARKA.", "DENEYİM."];
-
-  return (
-    <section className={styles.who} id="yaklasim">
-      <div className={styles.sectionMeta}>
-        <TechLabel>ROSTA / STUDIO</TechLabel>
-        <TechLabel>YAKLAŞIM / 001</TechLabel>
-      </div>
-
-      <div className={styles.whoStatement}>
-        <motion.p
-          className={`${styles.whoLine} ${styles.display}`}
-          initial={reducedMotion ? false : { x: "-10vw", opacity: 0 }}
-          whileInView={{ x: 0, opacity: 1 }}
-          viewport={{ once: true, amount: 0.35 }}
-          transition={{ duration: 0.8, ease: EASE }}
-        >
-          KAHVEYİ SADECE SERVİS EDİLEN
-        </motion.p>
-        <motion.p
-          className={`${styles.whoLine} ${styles.whoLineRight} ${styles.display}`}
-          initial={reducedMotion ? false : { x: "10vw", opacity: 0 }}
-          whileInView={{ x: 0, opacity: 1 }}
-          viewport={{ once: true, amount: 0.35 }}
-          transition={{ duration: 0.8, ease: EASE }}
-        >
-          BİR ÜRÜN OLARAK GÖRMÜYORUZ.
-        </motion.p>
-      </div>
-
-      <div className={styles.whoWords}>
-        {words.map((word, index) => (
-          <motion.span
-            key={word}
-            className={`${styles.whoWord} ${styles.display}`}
-            initial={
-              reducedMotion
-                ? false
-                : { x: index % 2 === 0 ? "-8vw" : "8vw", opacity: 0 }
-            }
-            whileInView={{ x: 0, opacity: 1 }}
-            viewport={{ once: true, amount: 0.55 }}
-            transition={{ duration: 0.72, ease: EASE }}
-          >
-            {word}
-          </motion.span>
-        ))}
-      </div>
-
-      <p className={styles.whoCopy}>
-        ROSTA.Studio; kahve işletmelerinin ürününden servis akışına, marka
-        dilinden bar sistemine kadar bütün deneyimini birlikte kurar.
-      </p>
-    </section>
-  );
-}
-
-const services = [
-  {
-    number: "01",
-    title: ["BAR", "KURULUMU"],
-    label: "AKIŞ / EKİPMAN / ÇALIŞMA ALANI",
-    copy:
-      "Bar akışını, ekipmanı ve çalışma düzenini işletmenin gerçek ihtiyaçlarına göre oluşturuyoruz.",
-    image: "/home/rosta-espresso.webp",
-    alt: "ROSTA Studio bar kurulumu",
-    direction: "left" as const,
-    tone: "dark" as const,
-  },
-  {
-    number: "02",
-    title: ["REÇETE &", "ÜRÜN GELİŞTİRME"],
-    label: "KAHVE / İÇECEK / MENÜ",
-    copy:
-      "Menüyü doldurmak yerine markanın karakterini taşıyan ürünler geliştiriyoruz.",
-    image: "/home/rosta-under-hero-photo.jpg",
-    alt: "ROSTA Studio reçete ve ürün geliştirme",
-    direction: "right" as const,
-    tone: "light" as const,
-  },
-  {
-    number: "03",
-    title: ["MARKA &", "KONSEPT"],
-    label: "KİMLİK / MEKÂN / DENEYİM",
-    copy:
-      "İsimden görsel dile, menüden müşterinin mekânda hissettiği deneyime kadar bütün yapıyı birlikte tasarlıyoruz.",
-    image: "/home/rosta-under-hero-v4.jpg",
-    alt: "ROSTA Studio marka ve konsept geliştirme",
-    direction: "left" as const,
-    tone: "dark" as const,
-  },
-];
-
-function ServiceBlock({
-  service,
-}: {
-  service: (typeof services)[number];
-}) {
-  const ref = useRef<HTMLElement>(null);
-  const reducedMotion = useReducedMotion();
+  const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"],
   });
-  const titleX = useTransform(
-    scrollYProgress,
-    [0.12, 0.48, 0.86],
-    service.direction === "left"
-      ? ["-12vw", "0vw", "4vw"]
-      : ["12vw", "0vw", "-4vw"],
-  );
-  const imageScale = useTransform(scrollYProgress, [0.1, 0.82], [0.94, 1.06]);
+  const leftX = useTransform(scrollYProgress, [0, 0.45], ["-110%", "0%"]);
+  const rightX = useTransform(scrollYProgress, [0.1, 0.55], ["110%", "0%"]);
+  const words = ["BAR.", "ÜRÜN.", "MARKA.", "DENEYİM."];
 
   return (
-    <section
-      ref={ref}
-      className={`${styles.service} ${
-        service.tone === "light" ? styles.serviceLight : styles.serviceDark
-      }`}
-    >
-      <div className={styles.serviceSticky}>
-        <div className={styles.serviceMeta}>
-          <TechLabel>ROSTA/STUDIO HİZMET</TechLabel>
-          <TechLabel>{service.number} / 03</TechLabel>
+    <section ref={ref} className="relative bg-[#FBF3E6] py-20 sm:py-28 overflow-hidden">
+      <div className="px-5 sm:px-8 mb-10 flex items-center justify-between font-mono-tech text-[10px] uppercase tracking-[0.25em]" style={{ color: C.kraft }}>
+        <span>BÖLÜM / 03</span>
+        <span>BİZ KİMİZ</span>
+      </div>
+      <div className="px-5 sm:px-8">
+        <div className="overflow-hidden">
+          <motion.h2 style={{ x: leftX }}>
+            <span style={{ color: C.carbon, fontSize: "clamp(2rem, 6.4vw, 6.5rem)" }} className="font-display uppercase font-bold leading-[0.95] block">
+              KAHVEYİ SADECE SERVİS EDİLEN
+            </span>
+          </motion.h2>
+        </div>
+        <div className="overflow-hidden">
+          <motion.h2 style={{ x: rightX }}>
+            <span style={{ color: C.carbon, fontSize: "clamp(2rem, 6.4vw, 6.5rem)" }} className="font-display uppercase font-bold leading-[0.95] block">
+              BİR ÜRÜN OLARAK <span style={{ color: C.brick }}>GÖRMÜYORUZ.</span>
+            </span>
+          </motion.h2>
         </div>
 
-        <motion.div
-          className={styles.serviceImage}
-          style={{ scale: reducedMotion ? 1 : imageScale }}
-        >
-          <Image
-            src={service.image}
-            alt={service.alt}
-            fill
-            sizes="(max-width: 768px) 92vw, 62vw"
-            className={styles.coverImage}
-          />
-          <div className={styles.imageShade} />
-        </motion.div>
-
-        <motion.div
-          className={styles.serviceTitleWrap}
-          style={{ x: reducedMotion ? 0 : titleX }}
-        >
-          <div className={`${styles.serviceNumber} ${styles.tech}`}>
-            {service.number}
-          </div>
-          <h2 className={`${styles.serviceTitle} ${styles.display}`}>
-            {service.title.map((line) => (
-              <span key={line}>{line}</span>
-            ))}
-          </h2>
-        </motion.div>
-
-        <div className={styles.serviceCopyWrap}>
-          <TechLabel>{service.label}</TechLabel>
-          <p>{service.copy}</p>
+        <div className="mt-10 sm:mt-16 grid grid-cols-2 sm:grid-cols-4 gap-y-8 gap-x-4">
+          {words.map((w, i) => (
+            <motion.div
+              key={w}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ delay: i * 0.08, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="font-display uppercase font-bold leading-none tracking-[-0.03em]"
+              style={{ color: C.carbon, fontSize: "clamp(2.5rem, 7vw, 6rem)" }}
+            >
+              {w}
+            </motion.div>
+          ))}
         </div>
+
+        <p className="mt-10 sm:mt-16 max-w-2xl font-body text-base sm:text-lg leading-relaxed" style={{ color: C.carbon }}>
+          ROSTA.Studio; kahve işletmelerinin ürününden servis akışına, marka dilinden bar sistemine kadar bütün deneyimini birlikte kurar.
+        </p>
       </div>
     </section>
+  );
+}
+
+function ServiceBlock({ index, title, subline, description, image, side = "left" }) {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+
+  const imgScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.6, 1, 1.05]);
+  const imgWidth = useTransform(scrollYProgress, [0, 0.5], ["60%", "100%"]);
+  const titleX = useTransform(
+    scrollYProgress,
+    [0, 0.5],
+    [side === "left" ? "-60vw" : "60vw", "0vw"],
+  );
+  const numOpacity = useTransform(scrollYProgress, [0, 0.3, 0.8, 1], [0.2, 1, 1, 0.3]);
+  const num = `0${index}`;
+
+  return (
+    <div ref={ref} className="relative">
+      <motion.div
+        style={{ opacity: numOpacity }}
+        className="absolute top-6 left-5 sm:left-8 font-mono-tech text-[10px] uppercase tracking-[0.25em] z-20"
+      >
+        <span style={{ color: C.kraft }}>HİZMET / {num}</span>
+      </motion.div>
+
+      <div className="relative h-[130vh]">
+        <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden">
+          <div className="absolute top-1/2 -translate-y-1/2 left-5 sm:left-8 pointer-events-none">
+            <span
+              className="font-display font-bold leading-none"
+              style={{ color: "rgba(201,74,64,0.14)", fontSize: "clamp(12rem, 40vw, 38rem)" }}
+            >
+              {num}
+            </span>
+          </div>
+
+          <motion.div
+            style={{ width: imgWidth, scale: imgScale }}
+            className="relative h-[42vh] sm:h-[60vh] mx-auto overflow-hidden self-center"
+          >
+            <StudioImage src={image} alt="" className="w-full h-full" />
+            <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(17,17,17,0.15), rgba(17,17,17,0.55))" }} />
+          </motion.div>
+
+          <motion.div style={{ x: titleX }} className="px-5 sm:px-8 mt-6 sm:mt-8">
+            <h3
+              className="font-display uppercase font-bold leading-[0.86] tracking-[-0.04em]"
+              style={{ color: C.cream, fontSize: "clamp(2.8rem, 11vw, 11rem)" }}
+            >
+              {title}
+            </h3>
+          </motion.div>
+
+          <div className="px-5 sm:px-8 mt-4 flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-3 max-w-5xl">
+            <div className="font-mono-tech text-[11px] uppercase tracking-[0.22em]" style={{ color: C.brick }}>
+              {subline}
+            </div>
+            <p className="max-w-md font-body text-sm sm:text-base leading-relaxed" style={{ color: "rgba(251,243,230,0.75)" }}>
+              {description}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
 function Services() {
   return (
-    <div id="hizmetler">
-      {services.map((service) => (
-        <ServiceBlock key={service.number} service={service} />
-      ))}
-    </div>
+    <section id="services" className="relative bg-[#111111] grain">
+      <div className="px-5 sm:px-8 py-7 flex items-center justify-between font-mono-tech text-[10px] uppercase tracking-[0.25em]" style={{ color: C.kraft }}>
+        <span>BÖLÜM / 04</span>
+        <span>HİZMETLER</span>
+      </div>
+
+      <ServiceBlock
+        index={1}
+        side="left"
+        title={<>BAR<br />KURULUMU</>}
+        subline="AKIŞ / EKİPMAN / ÇALIŞMA ALANI"
+        description="Bar akışını, ekipmanı ve çalışma düzenini işletmenin gerçek ihtiyaçlarına göre oluşturuyoruz."
+        image="https://media.base44.com/images/public/6abc5148a8d8f7bdd9a2ee6f/70c0e45c9_generated_e8a15d6f.jpg"
+      />
+      <ServiceBlock
+        index={2}
+        side="right"
+        title={<>REÇETE &<br />ÜRÜN GELİŞTİRME</>}
+        subline="KAHVE / İÇECEK / MENÜ"
+        description="Menüyü doldurmak yerine markanın karakterini taşıyan ürünler geliştiriyoruz."
+        image="https://media.base44.com/images/public/6abc5148a8d8f7bdd9a2ee6f/87ba1f368_generated_5cb9b9d2.jpg"
+      />
+      <ServiceBlock
+        index={3}
+        side="left"
+        title={<>MARKA &<br />KONSEPT</>}
+        subline="KİMLİK / MEKÂN / DENEYİM"
+        description="İsimden görsel dile, menüden müşterinin mekânda hissettiği deneyime kadar bütün yapıyı birlikte tasarlıyoruz."
+        image="https://media.base44.com/images/public/6abc5148a8d8f7bdd9a2ee6f/e11718cca_generated_42ef871f.jpg"
+      />
+    </section>
   );
 }
 
 function StreetText() {
-  const ref = useRef<HTMLElement>(null);
-  const reducedMotion = useReducedMotion();
+  const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"],
   });
-  const left = useTransform(scrollYProgress, [0, 1], ["-5vw", "7vw"]);
-  const right = useTransform(scrollYProgress, [0, 1], ["7vw", "-7vw"]);
+
+  const leftX = useTransform(scrollYProgress, [0, 1], ["10vw", "-25vw"]);
+  const rightX = useTransform(scrollYProgress, [0, 1], ["-10vw", "20vw"]);
+  const midX = useTransform(scrollYProgress, [0, 1], ["-8vw", "12vw"]);
+  const line = "font-display uppercase font-bold leading-[0.82] tracking-[-0.04em]";
+  const size = { fontSize: "clamp(3rem, 13vw, 13rem)", color: C.cream };
 
   return (
-    <section ref={ref} className={styles.streetText}>
-      <motion.div
-        className={`${styles.streetLine} ${styles.display}`}
-        style={{ x: reducedMotion ? 0 : left }}
-      >
-        İYİ KAHVE
-      </motion.div>
-      <motion.div
-        className={`${styles.streetLine} ${styles.streetLineRight} ${styles.display}`}
-        style={{ x: reducedMotion ? 0 : right }}
-      >
-        SADECE
-      </motion.div>
-      <motion.div
-        className={`${styles.streetLine} ${styles.streetAccent} ${styles.display}`}
-        style={{ x: reducedMotion ? 0 : left }}
-      >
-        BAŞLANGIÇ.
-      </motion.div>
-    </section>
-  );
-}
-
-const processStages = [
-  {
-    number: "01",
-    title: "KEŞİF",
-    copy:
-      "İşletmenin hikâyesi, ihtiyacı ve potansiyelini anlamak için başlangıçta dinler, gözlemler ve yerinde inceleriz.",
-  },
-  {
-    number: "02",
-    title: "YÖN",
-    copy:
-      "Doğru bar, ürün ve marka stratejisini birlikte netleştiririz. Nereye gideceğimizi belirleriz.",
-  },
-  {
-    number: "03",
-    title: "GELİŞTİRME",
-    copy:
-      "Reçeteler, menü, görsel dil ve bar düzeni üzerinde çalışır, prototipleri test ederiz.",
-  },
-  {
-    number: "04",
-    title: "UYGULAMA",
-    copy:
-      "Sahada kurar, ekibi eğitir ve açılıştan sonra deneyimi ayakta tutarız.",
-  },
-];
-
-function Process() {
-  const ref = useRef<HTMLElement>(null);
-  const reducedMotion = useReducedMotion();
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start 70%", "end 60%"],
-  });
-  const progress = useSpring(scrollYProgress, {
-    stiffness: 90,
-    damping: 28,
-    mass: 0.4,
-  });
-
-  return (
-    <section ref={ref} className={styles.process} id="surec">
-      <div className={styles.sectionMeta}>
-        <TechLabel>SÜREÇ / 001</TechLabel>
-        <TechLabel>ROSTA.STUDIO</TechLabel>
+    <section ref={ref} className="relative bg-[#111111] py-20 sm:py-28 overflow-hidden grain">
+      <div className="px-5 sm:px-8 mb-8 flex items-center justify-between font-mono-tech text-[10px] uppercase tracking-[0.25em]" style={{ color: C.kraft }}>
+        <span>BÖLÜM / 05</span>
+        <span>ROSTA / MANİFESTO</span>
       </div>
-
-      <h2 className={`${styles.processHeading} ${styles.display}`}>
-        <span>BİZ NASIL</span>
-        <span>ÇALIŞIYORUZ?</span>
-      </h2>
-
-      <div className={styles.processList}>
-        <motion.div
-          className={styles.processRail}
-          style={{ scaleY: reducedMotion ? 1 : progress }}
-        />
-        {processStages.map((stage, index) => (
-          <motion.article
-            key={stage.number}
-            className={styles.processStage}
-            initial={
-              reducedMotion
-                ? false
-                : { x: index % 2 === 0 ? "-7vw" : "7vw", opacity: 0 }
-            }
-            whileInView={{ x: 0, opacity: 1 }}
-            viewport={{ once: true, amount: 0.48 }}
-            transition={{ duration: 0.72, ease: EASE }}
-          >
-            <div className={`${styles.processNumber} ${styles.tech}`}>
-              {stage.number}
-            </div>
-            <h3 className={`${styles.processTitle} ${styles.display}`}>
-              {stage.title}
-            </h3>
-            <p>{stage.copy}</p>
-          </motion.article>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function BigMedia() {
-  const ref = useRef<HTMLElement>(null);
-  const reducedMotion = useReducedMotion();
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end end"],
-  });
-  const width = useTransform(scrollYProgress, [0, 0.82], ["62%", "100%"]);
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.06]);
-  const radius = useTransform(scrollYProgress, [0, 0.72], [18, 0]);
-
-  return (
-    <section ref={ref} className={styles.bigMedia}>
-      <div className={styles.bigMediaSticky}>
-        <motion.div
-          className={styles.bigMediaFrame}
-          style={{
-            width: reducedMotion ? "100%" : width,
-            scale: reducedMotion ? 1 : scale,
-            borderRadius: reducedMotion ? 0 : radius,
-          }}
-        >
-          <video
-            className={styles.bigMediaVideo}
-            src="/home/rosta-under-hero-video.mp4"
-            poster="/home/rosta-under-hero-photo.jpg"
-            autoPlay={reducedMotion !== true}
-            muted
-            loop={reducedMotion !== true}
-            playsInline
-            preload="metadata"
-            aria-label="ROSTA Studio kahve barı görüntüsü"
-          />
-          <div className={styles.imageShade} />
-          <div className={styles.bigMediaCorners}>
-            <TechLabel>ROSTA.STUDIO</TechLabel>
-            <TechLabel>İSTANBUL</TechLabel>
-            <TechLabel>KAHVE / MARKA / İŞLETME</TechLabel>
-            <TechLabel>KUR. 2026</TechLabel>
-          </div>
+      <div className="pl-[6vw]">
+        <motion.div style={{ x: leftX }} className={line}>
+          <span style={size}>İYİ KAHVE</span>
+        </motion.div>
+        <motion.div style={{ x: rightX }} className={`${line} pl-[18vw]`}>
+          <span style={size}>SADECE</span>
+        </motion.div>
+        <motion.div style={{ x: midX }} className={`${line} pl-[4vw]`}>
+          <span style={size}><span style={{ color: C.brick }}>BAŞLANGIÇ.</span></span>
         </motion.div>
       </div>
     </section>
   );
 }
 
-const principles = [
-  ["İŞLEVSEL.", "Her karar çalışmayı kolaylaştırmak için alınır."],
-  ["KARAKTERLİ.", "Marka, tekrar edilebilir bir karaktere sahip olmalı."],
-  ["SADE.", "Gereksiz hiçbir şey sahnede kalmaz."],
-] as const;
+const stages = [
+  { n: "01", t: "KEŞİF", d: "İşletmenin hikâyesi, ihtiyacı ve potansiyelini anlamak için başlangıçta dinler, gözlemler ve yerinde inceleriz.", side: "left" },
+  { n: "02", t: "YÖN", d: "Doğru bar, ürün ve marka stratejisini birlikte netleştiririz. Nereye gideceğimizi belirleriz.", side: "right" },
+  { n: "03", t: "GELİŞTİRME", d: "Reçeteler, menü, görsel dil ve bar düzeni üzerinde çalışır, prototipleri test ederiz.", side: "left" },
+  { n: "04", t: "UYGULAMA", d: "Sahada kurar, ekibi eğitir ve açılıştan sonra deneyimi ayakta tutarız.", side: "right" },
+];
 
-function Principles() {
-  const reducedMotion = useReducedMotion();
+function Stage({ n, t, d, side }) {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+  const x = useTransform(scrollYProgress, [0, 0.5], [side === "left" ? "-40vw" : "40vw", "0vw"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.35, 0.75, 1], [0.2, 1, 1, 0.3]);
 
   return (
-    <section className={styles.principles}>
-      <div className={styles.sectionMeta}>
-        <TechLabel>ROSTA / İLKELER</TechLabel>
-        <TechLabel>03 MADDE</TechLabel>
-      </div>
+    <div ref={ref} className="relative min-h-[52vh] sm:min-h-[58vh] flex items-center">
+      <motion.div style={{ x, opacity }} className={`px-5 sm:px-8 w-full ${side === "right" ? "sm:pl-[40vw]" : "sm:pr-[40vw]"}`}>
+        <div className="flex items-baseline gap-5 sm:gap-8">
+          <span className="font-display font-bold leading-none" style={{ color: C.brick, fontSize: "clamp(3rem, 8vw, 7rem)" }}>{n}</span>
+          <h3 className="font-display uppercase font-bold leading-[0.9] tracking-[-0.03em]" style={{ color: C.cream, fontSize: "clamp(2.4rem, 9vw, 9rem)" }}>
+            {t}
+          </h3>
+        </div>
+        <p className={`mt-4 max-w-md font-body text-sm sm:text-base leading-relaxed ${side === "right" ? "sm:ml-auto" : ""}`} style={{ color: "rgba(251,243,230,0.7)" }}>
+          {d}
+        </p>
+      </motion.div>
+    </div>
+  );
+}
 
-      {principles.map(([title, copy], index) => (
-        <motion.article
-          key={title}
-          className={styles.principle}
-          initial={
-            reducedMotion
-              ? false
-              : { x: index % 2 === 0 ? "-9vw" : "9vw", opacity: 0 }
-          }
-          whileInView={{ x: 0, opacity: 1 }}
-          viewport={{ once: true, amount: 0.5 }}
-          transition={{ duration: 0.78, ease: EASE }}
+function Process() {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end end"],
+  });
+  const lineScaleY = useTransform(scrollYProgress, [0, 1], [0, 1]);
+
+  return (
+    <section id="process" ref={ref} className="relative bg-[#111111] py-20 sm:py-24 overflow-hidden grain">
+      <div className="px-5 sm:px-8 mb-10 flex items-center justify-between font-mono-tech text-[10px] uppercase tracking-[0.25em]" style={{ color: C.kraft }}>
+        <span>BÖLÜM / 06</span>
+        <span>SÜREÇ</span>
+      </div>
+      <div className="px-5 sm:px-8 mb-14 sm:mb-16">
+        <h2 className="font-display uppercase font-bold leading-[0.86] tracking-[-0.04em]" style={{ color: C.cream, fontSize: "clamp(2.6rem, 10vw, 10rem)" }}>
+          BİZ NASIL<br />ÇALIŞIYORUZ?
+        </h2>
+      </div>
+      <div className="relative">
+        <div className="absolute left-1/2 top-0 bottom-0 w-[2px] -translate-x-1/2" style={{ background: "rgba(201,74,64,0.15)" }}>
+          <motion.div style={{ scaleY: lineScaleY, transformOrigin: "top", background: C.brick }} className="w-full h-full" />
+        </div>
+        <div className="flex flex-col">
+          {stages.map((s) => <Stage key={s.n} {...s} />)}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function BigImage() {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+  const width = useTransform(scrollYProgress, [0.1, 0.5], ["60%", "100%"]);
+  const scale = useTransform(scrollYProgress, [0.1, 0.5], [1, 1.08]);
+  const cornerOpacity = useTransform(scrollYProgress, [0.4, 0.6], [0, 1]);
+  const corner = "absolute font-mono-tech text-[10px] uppercase tracking-[0.25em]";
+
+  return (
+    <section ref={ref} className="relative h-[150vh] bg-[#111111]">
+      <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden grain">
+        <motion.div style={{ width, scale }} className="relative h-[62vh] sm:h-[82vh] overflow-hidden">
+          <StudioImage
+            src="https://media.base44.com/images/public/6abc5148a8d8f7bdd9a2ee6f/ee0e38c8f_generated_5fe6b1a5.jpg"
+            alt="ROSTA.Studio kahve barı çalışma akışı"
+            className="w-full h-full"
+          />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(17,17,17,0.25), rgba(17,17,17,0.45))" }} />
+          <motion.div style={{ opacity: cornerOpacity }}>
+            <div className={corner} style={{ color: C.cream, top: "1.2rem", left: "1.2rem" }}>ROSTA.STUDIO</div>
+            <div className={corner} style={{ color: C.cream, top: "1.2rem", right: "1.2rem" }}>İSTANBUL</div>
+            <div className={corner} style={{ color: C.cream, bottom: "1.2rem", left: "1.2rem" }}>KAHVE / MARKA / İŞLETME</div>
+            <div className={corner} style={{ color: C.cream, bottom: "1.2rem", right: "1.2rem" }}>KUR. 2026</div>
+          </motion.div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+const phrases = [
+  { word: "İŞLEVSEL.", sub: "Her karar çalışmayı kolaylaştırmak için alınır.", side: "left" },
+  { word: "KARAKTERLİ.", sub: "Marka, tekrar edilebilir bir karaktere sahip olmalı.", side: "right" },
+  { word: "SADE.", sub: "Gereksiz hiçbir şey sahnede kalmaz.", side: "left" },
+];
+
+function Phrase({ word, sub, side, index }) {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+  const x = useTransform(scrollYProgress, [0, 0.5], [side === "left" ? "-70vw" : "70vw", "0vw"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.4, 0.7, 1], [0, 1, 1, 0]);
+
+  return (
+    <div ref={ref} className="relative h-[65vh] sm:h-[72vh] flex items-center overflow-hidden">
+      <motion.div style={{ x, opacity }} className="px-5 sm:px-8 w-full">
+        <div className="font-mono-tech text-[10px] uppercase tracking-[0.25em] mb-3" style={{ color: C.brick }}>
+          İLKE / 0{index + 1}
+        </div>
+        <h2
+          className="font-display uppercase font-bold leading-[0.84] tracking-[-0.04em]"
+          style={{ color: C.cream, fontSize: "clamp(3.5rem, 18vw, 18rem)" }}
         >
-          <h2 className={`${styles.principleTitle} ${styles.display}`}>
-            {title}
-          </h2>
-          <p>{copy}</p>
-        </motion.article>
-      ))}
+          {word}
+        </h2>
+        <p className="mt-4 max-w-sm font-body text-sm sm:text-base" style={{ color: "rgba(251,243,230,0.65)" }}>
+          {sub}
+        </p>
+      </motion.div>
+    </div>
+  );
+}
+
+function Principles() {
+  return (
+    <section className="relative bg-[#111111] grain">
+      <div className="px-5 sm:px-8 py-7 flex items-center justify-between font-mono-tech text-[10px] uppercase tracking-[0.25em]" style={{ color: C.kraft }}>
+        <span>BÖLÜM / 08</span>
+        <span>ROSTA İLKELERİ</span>
+      </div>
+      {phrases.map((p, i) => <Phrase key={p.word} {...p} index={i} />)}
     </section>
   );
 }
 
 function MarqueeTwo() {
+  const head = "font-display uppercase font-bold leading-[0.9] tracking-[-0.03em]";
+  const size = "text-[7vw] sm:text-[6vw]";
+
   return (
-    <section className={`${styles.marqueeSection} ${styles.marqueeSectionCompact}`}>
-      <MarqueeRow
-        text="KAHVE / İŞLETME / MARKA / BAR / MENÜ / DENEYİM /"
-        direction="left"
-        speed={1.25}
-      />
-      <MarqueeRow
-        text="ROSTA.STUDIO — İSTANBUL — ROSTA.STUDIO — İSTANBUL"
-        direction="right"
-        accent="ROSTA.STUDIO"
-        speed={1.15}
-      />
+    <section className="relative bg-[#111111] py-12 sm:py-16 grain border-y" style={{ borderColor: "rgba(251,243,230,0.08)" }}>
+      <div className="flex flex-col gap-2 sm:gap-3" style={{ color: C.cream }}>
+        <MarqueeRow
+          direction={-1}
+          speed={1.6}
+          className={`${head} ${size}`}
+          items={["KAHVE", <Brick key="s1">/</Brick>, "İŞLETME", <Brick key="s2">/</Brick>, "MARKA", <Brick key="s3">/</Brick>, "BAR", <Brick key="s4">/</Brick>, "MENÜ", <Brick key="s5">/</Brick>, "DENEYİM", <Brick key="s6">/</Brick>]}
+        />
+        <MarqueeRow
+          direction={1}
+          speed={1.6}
+          className={`${head} ${size}`}
+          items={["ROSTA.STUDIO", <Brick key="t1">—</Brick>, "İSTANBUL", <Brick key="t2">—</Brick>, "ROSTA.STUDIO", <Brick key="t3">—</Brick>, "İSTANBUL", <Brick key="t4">—</Brick>]}
+        />
+      </div>
     </section>
   );
 }
 
 function FinalCTA() {
-  const reducedMotion = useReducedMotion();
-  const lines = [
-    "BİR KAHVE",
-    "İŞLETMESİ",
-    "KURUYORSUN?",
-    "VAR OLANI",
-    "DAHA İYİ",
-    "HALE GETİRELİM.",
-  ];
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end end"],
+  });
+  const line1Y = useTransform(scrollYProgress, [0, 0.4], ["40%", "0%"]);
+  const line2Opacity = useTransform(scrollYProgress, [0.3, 0.6], [0, 1]);
+  const line2Y = useTransform(scrollYProgress, [0.3, 0.6], ["30%", "0%"]);
+  const ctaOpacity = useTransform(scrollYProgress, [0.55, 0.85], [0, 1]);
+  const head = "font-display uppercase font-bold leading-[0.84] tracking-[-0.04em]";
+  const big = { fontSize: "clamp(3rem, 13vw, 13rem)", color: C.cream };
 
   return (
-    <section className={styles.finalCta} id="iletisim">
-      <div className={styles.finalCopy}>
-        {lines.map((line, index) => (
-          <motion.span
-            key={line}
-            className={`${styles.finalLine} ${styles.display} ${
-              index === 5 ? styles.finalAccent : ""
-            }`}
-            initial={
-              reducedMotion
-                ? false
-                : { x: index % 2 === 0 ? "-9vw" : "9vw", opacity: 0 }
-            }
-            whileInView={{ x: 0, opacity: 1 }}
-            viewport={{ once: true, amount: 0.65 }}
-            transition={{ duration: 0.68, ease: EASE }}
+    <section id="contact" ref={ref} className="relative bg-[#C94A40] min-h-screen flex flex-col justify-center overflow-hidden grain">
+      <div className="px-5 sm:px-8 py-7 flex items-center justify-between font-mono-tech text-[10px] uppercase tracking-[0.25em]" style={{ color: "rgba(251,243,230,0.7)" }}>
+        <span>BÖLÜM / 10</span>
+        <span>İLETİŞİM</span>
+      </div>
+
+      <div className="px-5 sm:px-8">
+        <motion.div style={{ y: line1Y }}>
+          <h2 className={head} style={big}>BİR KAHVE</h2>
+          <h2 className={head} style={big}>İŞLETMESİ</h2>
+          <h2 className={head} style={big}>KURUYORSUN?</h2>
+        </motion.div>
+
+        <motion.div style={{ opacity: line2Opacity, y: line2Y }} className="mt-6 sm:mt-8">
+          <h2 className={head} style={big}>VAR OLANI</h2>
+          <h2 className={head} style={big}>DAHA İYİ</h2>
+          <h2 className={head} style={big}>HALE GETİRELİM.</h2>
+        </motion.div>
+
+        <motion.div style={{ opacity: ctaOpacity }} className="mt-10 sm:mt-14">
+          <div className="font-mono-tech text-[11px] uppercase tracking-[0.22em] mb-3" style={{ color: "rgba(251,243,230,0.7)" }}>
+            ROSTA.Studio
+          </div>
+          <a
+            href="mailto:studio@rosta.coffee"
+            className="group inline-block font-display uppercase font-bold leading-[0.9] tracking-[-0.03em] relative"
+            style={{ fontSize: "clamp(2.4rem, 9vw, 9rem)", color: C.cream }}
           >
-            {line}
-          </motion.span>
-        ))}
-      </div>
+            PROJENİ ANLAT{" "}
+            <span className="inline-block transition-transform duration-300 group-hover:translate-x-2 group-hover:-translate-y-2">↗</span>
+            <span className="absolute left-0 -bottom-2 h-[3px] w-full origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out" style={{ background: C.cream }} />
+          </a>
 
-      <div className={styles.finalAction}>
-        <div>
-          <TechLabel>ROSTA.STUDIO</TechLabel>
-          <p>Kahve işletmeleri için.</p>
-        </div>
-        <Link href="/contact" className={styles.projectLink}>
-          PROJENİ ANLAT <span aria-hidden="true">↗</span>
-        </Link>
-      </div>
-
-      <div className={styles.finalMeta}>
-        <TechLabel>ROSTA / STUDIO</TechLabel>
-        <TechLabel>İST / TR</TechLabel>
-        <TechLabel>KAHVE SİSTEMİ</TechLabel>
-        <TechLabel>PROJE 001</TechLabel>
-        <TechLabel>KUR. 2026</TechLabel>
+          <div className="mt-10 sm:mt-16 flex flex-col sm:flex-row gap-4 sm:gap-10 font-mono-tech text-[10px] uppercase tracking-[0.22em]" style={{ color: "rgba(251,243,230,0.7)" }}>
+            <span>ROSTA / STUDIO</span>
+            <span>İST / TR</span>
+            <span>KAHVE SİSTEMİ</span>
+            <span>PROJE 001</span>
+            <span>KUR. 2026</span>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
 }
 
 export function RostaStudioClient() {
+  useEffect(() => {
+    const previous = document.documentElement.style.scrollBehavior;
+    document.documentElement.style.scrollBehavior = "smooth";
+    return () => {
+      document.documentElement.style.scrollBehavior = previous;
+    };
+  }, []);
+
   return (
-    <div className={styles.studioPage}>
+    <main className="rosta-studio-exact bg-[#111111]">
+      <Nav />
       <Hero />
       <MarqueeOne />
       <WhoWeAre />
       <Services />
       <StreetText />
       <Process />
-      <BigMedia />
+      <BigImage />
       <Principles />
       <MarqueeTwo />
       <FinalCTA />
-    </div>
+    </main>
   );
 }
