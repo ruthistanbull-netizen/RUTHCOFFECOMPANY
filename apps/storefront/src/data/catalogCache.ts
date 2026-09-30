@@ -12,7 +12,7 @@ import type { Category, Collection, Product, SiteSetting } from "@/types/site";
 const USE_SUPABASE_CATALOG =
   process.env.NEXT_PUBLIC_USE_SUPABASE_CATALOG !== "false";
 const CACHE_REVALIDATE_SECONDS = Number(
-  process.env.NEXT_PUBLIC_CATALOG_REVALIDATE_SECONDS || 600,
+  process.env.NEXT_PUBLIC_CATALOG_REVALIDATE_SECONDS || 60,
 );
 
 function getCatalogClient() {
