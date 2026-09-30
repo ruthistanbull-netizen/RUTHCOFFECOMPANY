@@ -19,7 +19,7 @@ function unique(values: Array<string | null | undefined>) {
   return [...new Set(values.filter((value): value is string => Boolean(value)))];
 }
 
-const FALLBACK_VARIANT_OPTION = "Varyant";
+const FALLBACK_VARIANT_OPTION = "Seçenek";
 
 function variantOptionValue(variant: ProductVariant, name: string) {
   const explicit = variant.options?.[name];
@@ -234,7 +234,7 @@ export function ProductPurchasePanel({
       setCartOpen(true);
       return;
     }
-    if (hasSelectableVariants && !selectedVariant) {
+    if (hasSelectableVariants) {
       setPickerOpen(true);
       return;
     }
@@ -248,7 +248,7 @@ export function ProductPurchasePanel({
       : cartState === "continue"
         ? "Sepeti Gör · Devam"
         : hasSelectableVariants && !selectedVariant
-          ? "Varyant Seçin"
+          ? "Seçenekleri Seç"
           : "Sepete Ekle";
 
   const actionIcon =
@@ -278,41 +278,6 @@ export function ProductPurchasePanel({
     </>
   );
 
-  const renderInlineVariants = (surface: "desktop" | "mobile") => {
-    if (!hasSelectableVariants) return null;
-    return (
-      <div
-        className={`product-inline-variants product-inline-variants--${surface}`}
-        data-editor-id={`variant-picker:inline:${surface}:${product.id}`}
-        data-editor-type="variant-picker"
-        data-editor-label={surface === "desktop" ? "Masaüstü Varyant Seçici" : "Mobil Varyant Seçici"}
-      >
-        {names.map((name) => (
-          <fieldset key={name} className="product-inline-variant-group">
-            <legend>{name}</legend>
-            <div className="product-inline-variant-options">
-              {optionValues(name).map((value) => {
-                const active = selectedOptions[name] === value;
-                const possible = optionPossible(name, value);
-                return (
-                  <button
-                    key={value}
-                    type="button"
-                    disabled={!possible}
-                    aria-pressed={active}
-                    onClick={() => selectOption(name, value)}
-                    className={active ? "is-active" : ""}
-                  >
-                    {value}
-                  </button>
-                );
-              })}
-            </div>
-          </fieldset>
-        ))}
-      </div>
-    );
-  };
 
   return (
     <>
@@ -367,7 +332,6 @@ export function ProductPurchasePanel({
             );
           })}
         </div>
-        {renderInlineVariants("desktop")}
         <button
           data-editor-id={`add-to-cart:desktop:${product.id}`}
           data-editor-type="add-to-cart"
@@ -442,7 +406,6 @@ export function ProductPurchasePanel({
           <h1>{product.name}</h1>
           <div className="product-mobile-price">{salePrice}</div>
         </div>
-        {renderInlineVariants("mobile")}
         <button
           data-editor-id={`add-to-cart:mobile:${product.id}`}
           data-editor-type="add-to-cart"
@@ -470,7 +433,7 @@ export function ProductPurchasePanel({
             <motion.div
               data-editor-id={`variant-picker:${product.id}`}
               data-editor-type="variant-picker"
-              data-editor-label="Varyant Seçici"
+              data-editor-label="Seçenek Seçici"
               className="product-variant-sheet w-full overflow-y-auto px-5 pb-[calc(24px+env(safe-area-inset-bottom))] pt-5 text-cream sm:px-7 sm:pb-8 sm:pt-7"
               initial={desktopPicker ? { x: "100%" } : { y: "100%" }}
               animate={{ x: 0, y: 0 }}
@@ -530,7 +493,7 @@ export function ProductPurchasePanel({
               <button
                 data-editor-id={`add-to-cart:variant:${product.id}`}
                 data-editor-type="add-to-cart"
-                data-editor-label="Varyant Sepete Ekle"
+                data-editor-label="Seçenekleri Seçip Sepete Ekle"
                 type="button"
                 disabled={!allOptionsSelected || !selectedVariant || cartState === "succeeded"}
                 onClick={completeAdd}

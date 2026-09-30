@@ -129,6 +129,7 @@ function productPersistenceMismatches(
   const textFields = [
     "name",
     "slug",
+    "product_code",
     "material",
     "finish_color",
     "stock_status",

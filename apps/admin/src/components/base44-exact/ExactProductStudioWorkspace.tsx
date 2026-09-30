@@ -46,6 +46,7 @@ type Product = {
   id: string;
   name: string;
   slug: string;
+  product_code?: string | null;
   price: number;
   compare_at_price: number | null;
   currency: string;
@@ -72,6 +73,7 @@ type ProductForm = {
   productType: "single" | "bundle";
   name: string;
   slug: string;
+  product_code: string;
   price: string;
   compare_at_price: string;
   material: string;
@@ -93,7 +95,7 @@ type ProductStudioDraft = {
   bundleItems: Array<{ product_id: string; quantity: number }>;
 };
 type SaveResponse = {
-  product?: { id?: string } | null;
+  product?: { id?: string; product_code?: string | null } | null;
   warning?: string;
   variantMediaHandled?: boolean;
   durationMs?: number;
@@ -120,6 +122,7 @@ const emptyForm: ProductForm = {
   productType: "single",
   name: "",
   slug: "",
+  product_code: "",
   price: "",
   compare_at_price: "",
   material: "Arabica",
@@ -228,6 +231,7 @@ function productDraft(product: Product, materials: string[]): ProductStudioDraft
       productType: isBundle(product) ? "bundle" : "single",
       name: product.name || "",
       slug: product.slug || "",
+      product_code: product.product_code || "",
       price: String(product.price ?? ""),
       compare_at_price: product.compare_at_price == null ? "" : String(product.compare_at_price),
       material: product.material || materials[0] || "",
@@ -505,7 +509,7 @@ export function ExactProductStudioWorkspace({
 
   const visible = useMemo(() => {
     const needle = query.trim().toLocaleLowerCase("tr-TR");
-    return products.filter((product) => !needle || `${product.name} ${product.slug} ${product.material || ""} ${product.finish_color || ""}`.toLocaleLowerCase("tr-TR").includes(needle));
+    return products.filter((product) => !needle || `${product.name} ${product.slug} ${product.product_code || ""} ${product.material || ""} ${product.finish_color || ""}`.toLocaleLowerCase("tr-TR").includes(needle));
   }, [products, query]);
 
   const toggleGroup = (field: "collection_ids" | "category_ids", id: string) => {
@@ -592,6 +596,7 @@ export function ExactProductStudioWorkspace({
           id: savedProductId,
           name: form.name.trim(),
           slug: String(payload.slug),
+          product_code: String(result.product?.product_code ?? form.product_code ?? "") || null,
           price: Number(form.price),
           compare_at_price: form.compare_at_price ? Number(form.compare_at_price) : null,
           material: form.material || null,
@@ -627,7 +632,7 @@ export function ExactProductStudioWorkspace({
       }
 
       toast.success(result.warning || (selected
-        ? "Ürün, varyant, medya ve katalog bilgileri güncellendi."
+        ? "Ürün, seçenek, medya ve katalog bilgileri güncellendi."
         : "Ürün oluşturuldu ve düzenleme modunda açık bırakıldı."));
 
       // The durable mutation already succeeded. Refreshing the full catalogue is
@@ -740,7 +745,7 @@ export function ExactProductStudioWorkspace({
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="ruth-type-card-title truncate text-main">{product.name}</p>
-                        <p className="ruth-type-caption truncate text-muted">{product.material || "Kahve türü yok"} · {product.product_variants?.length || 0} varyant</p>
+                        <p className="ruth-type-caption truncate text-muted">{product.material || "Kahve türü yok"} · {product.product_variants?.length || 0} seçenek</p>
                         <p className="ruth-type-price mt-1 text-main">{money(product.price)}</p>
                       </div>
                       <ExactStatusBadge status={product.status} label={product.status === "active" ? "Aktif" : product.status === "archived" ? "Arşiv" : "Taslak"} size="sm" />
@@ -770,6 +775,7 @@ export function ExactProductStudioWorkspace({
               <div className="grid gap-3 md:grid-cols-2">
                 <ExactField label="Ürün adı" required><input value={form.name} onChange={(event) => updateForm({ name: event.target.value, slug: form.slug || slugify(event.target.value) })} className={exactFormInputClass} /></ExactField>
                 <ExactField label="Slug"><input value={form.slug} onChange={(event) => updateForm({ slug: event.target.value })} className={exactFormInputClass} /></ExactField>
+                <ExactField label="Ürün Kodu"><input value={form.product_code} onChange={(event) => updateForm({ product_code: event.target.value })} className={exactFormInputClass} placeholder="Boş bırakırsan otomatik 4 haneli kod oluşur" /></ExactField>
                 <ExactField label="Satış fiyatı" required><input type="number" min="0" step="0.01" value={form.price} onChange={(event) => updateForm({ price: event.target.value })} className={exactFormInputClass} /></ExactField>
                 <ExactField label="Karşılaştırma fiyatı"><input type="number" min="0" step="0.01" value={form.compare_at_price} onChange={(event) => updateForm({ compare_at_price: event.target.value })} className={exactFormInputClass} /></ExactField>
                 <ExactField label="Kahve türü"><select value={form.material} onChange={(event) => updateForm({ material: event.target.value })} className={exactFormInputClass}>{materials.map((item) => <option key={item} value={item}>{item}</option>)}</select></ExactField>

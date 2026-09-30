@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { socialProfileUrls } from "@ruth-commerce/contracts/social-media";
 import "@ruth-commerce/ui/styles.css";
 import "@ruth-commerce/ui/interaction.css";
 import "@ruth-commerce/ui/feedback.css";
@@ -39,7 +40,7 @@ import { SemanticThemeEditorBridge } from "@/components/theme/SemanticThemeEdito
 import { SemanticThemeRuntimeProvider } from "@/components/theme/SemanticThemeRuntimeProvider";
 import { ThemeEditorEnhancements } from "@/components/theme/ThemeEditorEnhancements";
 import { ThemeEditorNativeNavigation } from "@/components/theme/ThemeEditorNativeNavigation";
-import { getStoreDesignV2Published, getThemeCustomizerSettings } from "@/data/site";
+import { getSocialMediaSettings, getStoreDesignV2Published, getThemeCustomizerSettings } from "@/data/site";
 import { getCachedCategories, getCachedCollections } from "@/data/catalogCache";
 import { storeDesignSectionsForTemplatePath } from "@/lib/storeDesignV2Sections";
 import {
@@ -50,7 +51,6 @@ import {
   jsonLd,
   SITE_NAME,
   SITE_URL,
-  SOCIAL_PROFILES,
 } from "@/lib/seo";
 
 export const revalidate = 10;
@@ -122,11 +122,12 @@ export const metadata: Metadata = {
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const [themeSettings, storeDesignV2, categories, collections] = await Promise.all([
+  const [themeSettings, storeDesignV2, categories, collections, socialSettings] = await Promise.all([
     getThemeCustomizerSettings(),
     getStoreDesignV2Published(),
     getCachedCategories(),
     getCachedCollections(),
+    getSocialMediaSettings(),
   ]);
 
   const consentResponsive = recordValue(storeDesignV2.globals.tokens["consent-banner"]);
@@ -197,7 +198,7 @@ export default async function RootLayout({
         name: SITE_NAME,
         url: SITE_URL,
         logo: absoluteUrl(themeSettings.logo.src || "/rosta-coffee-co-v4.webp"),
-        sameAs: [...SOCIAL_PROFILES],
+        sameAs: socialProfileUrls(socialSettings),
       },
       {
         "@type": "WebSite",
@@ -346,10 +347,10 @@ export default async function RootLayout({
               <main id="main-content" className="site-content">
                 {children}
               </main>
-              <Footer />
+              <Footer socialSettings={socialSettings} />
               <CartDrawer crossSellConfig={cartCrossSellConfig} />
               <RostaPointsWidget themeSettings={themeSettings} />
-              <FloatingWhatsApp settings={themeSettings.whatsapp} />
+              <FloatingWhatsApp settings={themeSettings.whatsapp} socialHref={socialSettings.whatsapp} />
             </CartProvider>
           </AuthProvider>
           </StorefrontMotionProvider>

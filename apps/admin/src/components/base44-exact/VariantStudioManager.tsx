@@ -43,6 +43,20 @@ function displayFor(variant: StudioVariant) {
   return variant.variant_display_type || variant.options?.__displayType || "list";
 }
 
+function userOptionEntries(variant: StudioVariant) {
+  return Object.entries(variant.options || {})
+    .filter(([name, value]) => !name.startsWith("__") && String(value || "").trim())
+    .map(([name, value]) => [name, String(value).trim()] as const);
+}
+
+function summaryFromOptions(options: Record<string, string>, fallback = "Standart") {
+  const summary = Object.entries(options)
+    .filter(([name, value]) => !name.startsWith("__") && String(value || "").trim())
+    .map(([name, value]) => `${name}: ${String(value).trim()}`)
+    .join(" · ");
+  return summary || fallback;
+}
+
 function fullscreenMotion() {
   return {
     initial: { opacity: 0, y: 12 },
@@ -54,7 +68,7 @@ function fullscreenMotion() {
 
 export function VariantStudioManager({ variants, setVariants, productPhotos, basePrice }: Props) {
   const [addOpen, setAddOpen] = useState(false);
-  const [optionName, setOptionName] = useState("Renk");
+  const [optionName, setOptionName] = useState("Seçenek");
   const [displayType, setDisplayType] = useState<"list" | "color">("list");
   const [addOptions, setAddOptions] = useState<AddOption[]>([
     { id: crypto.randomUUID(), label: "", color: "#111111" },
@@ -65,6 +79,16 @@ export function VariantStudioManager({ variants, setVariants, productPhotos, bas
   const mediaVariant = mediaIndex == null ? null : variants[mediaIndex];
   const allProductPhotos = useMemo(() => unique(productPhotos), [productPhotos]);
   const portalTarget = typeof document === "undefined" ? null : document.body;
+  const optionGroups = useMemo(() => {
+    const groups = new Map<string, Set<string>>();
+    for (const variant of variants) {
+      for (const [name, value] of userOptionEntries(variant)) {
+        if (!groups.has(name)) groups.set(name, new Set());
+        groups.get(name)!.add(value);
+      }
+    }
+    return [...groups.entries()].map(([name, values]) => ({ name, values: [...values] }));
+  }, [variants]);
 
   useEffect(() => {
     if (!addOpen && mediaIndex == null) return;
@@ -103,36 +127,104 @@ export function VariantStudioManager({ variants, setVariants, productPhotos, bas
   };
 
   const resetAdd = () => {
-    setOptionName("Renk");
+    setOptionName("Seçenek");
     setDisplayType("list");
     setAddOptions([{ id: crypto.randomUUID(), label: "", color: "#111111" }]);
   };
 
+  const deleteOptionGroup = (groupName: string) => {
+    setVariants((current) => {
+      const seen = new Set<string>();
+      return current.flatMap((variant) => {
+        const nextOptions = { ...(variant.options || {}) };
+        delete nextOptions[groupName];
+        const remaining = Object.fromEntries(
+          Object.entries(nextOptions).filter(([name, value]) => name.startsWith("__") || String(value || "").trim()),
+        ) as Record<string, string>;
+        const userEntries = Object.entries(remaining).filter(([name, value]) => !name.startsWith("__") && String(value || "").trim());
+        if (!userEntries.length) return [];
+
+        const key = JSON.stringify(userEntries.sort(([a], [b]) => a.localeCompare(b)));
+        if (seen.has(key)) return [];
+        seen.add(key);
+        return [{
+          ...variant,
+          id: undefined,
+          options: remaining,
+          option_summary: summaryFromOptions(remaining, variant.option_summary),
+        }];
+      });
+    });
+  };
+
   const saveNewVariants = () => {
     const cleanOptions = addOptions.filter((option) => option.label.trim());
+    const groupName = optionName.trim() || "Seçenek";
     if (!cleanOptions.length) return;
-    setVariants((current) => [
-      ...current,
-      ...cleanOptions.map((option) => {
-        const label = option.label.trim();
-        const options: Record<string, string> = {
-          [optionName.trim() || "Seçenek"]: label,
-          __displayType: displayType,
-          __colorValue: displayType === "color" ? option.color : "",
-        };
-        return {
-          option_summary: `${optionName.trim() || "Seçenek"}: ${label}`,
-          price: basePrice || "",
-          stock: 0,
-          stock_status: "in_stock",
-          image_url: allProductPhotos[0] || null,
-          image_urls: allProductPhotos[0] ? [allProductPhotos[0]] : [],
-          options,
-          variant_display_type: displayType,
-          color_value: displayType === "color" ? option.color : "",
-        } satisfies StudioVariant;
-      }),
-    ]);
+
+    setVariants((current) => {
+      const existingValues = new Set(
+        current.map((variant) => String(variant.options?.[groupName] || "").trim()).filter(Boolean),
+      );
+      const newOptions = cleanOptions.filter((option) => !existingValues.has(option.label.trim()));
+      if (!newOptions.length) return current;
+
+      const currentWithOptions = current.filter((variant) => userOptionEntries(variant).length > 0);
+      const source = currentWithOptions.length
+        ? currentWithOptions
+        : [current[0] || {
+            option_summary: "Standart",
+            price: basePrice || "",
+            stock: 0,
+            stock_status: "in_stock",
+            image_url: allProductPhotos[0] || null,
+            image_urls: allProductPhotos[0] ? [allProductPhotos[0]] : [],
+            options: {},
+          }];
+
+      const groupExists = currentWithOptions.some((variant) => Boolean(variant.options?.[groupName]));
+      const baseMap = new Map<string, StudioVariant>();
+
+      for (const variant of source) {
+        const options = { ...(variant.options || {}) };
+        delete options[groupName];
+        const key = JSON.stringify(
+          Object.entries(options)
+            .filter(([name, value]) => !name.startsWith("__") && String(value || "").trim())
+            .sort(([a], [b]) => a.localeCompare(b)),
+        );
+        if (!baseMap.has(key)) baseMap.set(key, { ...variant, options });
+      }
+
+      const additions = [...baseMap.values()].flatMap((base) =>
+        newOptions.map((option) => {
+          const label = option.label.trim();
+          const options: Record<string, string> = {
+            ...(base.options || {}),
+            [groupName]: label,
+            __displayType: displayType,
+            __colorValue: displayType === "color" ? option.color : "",
+          };
+          return {
+            ...base,
+            id: undefined,
+            option_summary: summaryFromOptions(options, `${groupName}: ${label}`),
+            price: base.price || basePrice || "",
+            stock: groupExists ? 0 : Number(base.stock || 0),
+            stock_status: base.stock_status || "in_stock",
+            image_url: base.image_url || allProductPhotos[0] || null,
+            image_urls: unique([...(base.image_urls || []), base.image_url || allProductPhotos[0]]),
+            options,
+            variant_display_type: displayType,
+            color_value: displayType === "color" ? option.color : "",
+          } satisfies StudioVariant;
+        }),
+      );
+
+      if (!currentWithOptions.length) return additions;
+      return [...current, ...additions];
+    });
+
     setAddOpen(false);
     resetAdd();
   };
@@ -146,12 +238,12 @@ export function VariantStudioManager({ variants, setVariants, productPhotos, bas
             className="fixed inset-0 z-[2147483600] flex h-[100dvh] w-screen flex-col overflow-hidden bg-surface-primary"
             role="dialog"
             aria-modal="true"
-            aria-label="Yeni varyant ekle"
+            aria-label="Yeni ana seçenek ekle"
           >
             <header className="shrink-0 border-b border-border-subtle bg-surface-primary px-4 pb-3 pt-[max(1rem,env(safe-area-inset-top))] sm:px-6 sm:pb-4">
               <div className="mx-auto flex w-full max-w-2xl items-start gap-3">
                 <div className="min-w-0 flex-1">
-                  <h3 className="ruth-type-section-title text-main">Yeni varyant ekle</h3>
+                  <h3 className="ruth-type-section-title text-main">Yeni ana seçenek ekle</h3>
                   <p className="ruth-type-caption mt-1 text-muted">Seçenek adını, görünümünü ve değerlerini belirle.</p>
                 </div>
                 <ExactIconButton icon={X} label="Kapat" variant="ghost" size="icon-sm" onClick={() => setAddOpen(false)} />
@@ -203,7 +295,7 @@ export function VariantStudioManager({ variants, setVariants, productPhotos, bas
             <footer className="shrink-0 border-t border-border-subtle bg-surface-primary px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 sm:px-6 sm:pt-4">
               <div className="mx-auto grid w-full max-w-2xl grid-cols-2 gap-2">
                 <ExactButton variant="secondary" onClick={() => setAddOpen(false)}>Vazgeç</ExactButton>
-                <ExactButton onClick={saveNewVariants}>Varyantları ekle</ExactButton>
+                <ExactButton onClick={saveNewVariants}>Seçenekleri oluştur</ExactButton>
               </div>
             </footer>
           </motion.section>
@@ -217,12 +309,12 @@ export function VariantStudioManager({ variants, setVariants, productPhotos, bas
             className="fixed inset-0 z-[2147483610] flex h-[100dvh] w-screen flex-col overflow-hidden bg-surface-primary"
             role="dialog"
             aria-modal="true"
-            aria-label="Varyant görselleri"
+            aria-label="Seçenek görselleri"
           >
             <header className="shrink-0 border-b border-border-subtle bg-surface-primary px-4 pb-3 pt-[max(1rem,env(safe-area-inset-top))] sm:px-6 sm:pb-4">
               <div className="mx-auto flex w-full max-w-6xl items-start gap-3">
                 <div className="min-w-0 flex-1">
-                  <h3 className="ruth-type-section-title text-main">Varyant görselleri</h3>
+                  <h3 className="ruth-type-section-title text-main">Seçenek görselleri</h3>
                   <p className="ruth-type-caption mt-1 truncate text-muted">{mediaVariant.option_summary}</p>
                 </div>
                 <ExactIconButton icon={X} label="Kapat" variant="ghost" size="icon-sm" onClick={() => setMediaIndex(null)} />
@@ -238,7 +330,7 @@ export function VariantStudioManager({ variants, setVariants, productPhotos, bas
                     ) : (
                       <ImagePlus className="absolute inset-0 m-auto h-8 w-8 text-subtle" />
                     )}
-                    <span className="ruth-type-caption absolute left-3 top-3 rounded-full bg-black/55 px-2.5 py-1 font-semibold text-white backdrop-blur-sm">Ana varyant görseli</span>
+                    <span className="ruth-type-caption absolute left-3 top-3 rounded-full bg-black/55 px-2.5 py-1 font-semibold text-white backdrop-blur-sm">Ana seçenek görseli</span>
                   </div>
 
                   <Reorder.Group axis="y" values={mediaOrder} onReorder={setMediaOrder} className="max-h-[64dvh] space-y-2 overflow-y-auto pr-0.5 no-scrollbar">
@@ -260,7 +352,7 @@ export function VariantStudioManager({ variants, setVariants, productPhotos, bas
                 <div className="mt-6">
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <p className="ruth-type-card-title text-main">Üründeki bütün görseller</p>
-                    <p className="ruth-type-caption text-subtle">Dokunarak varyanta ekle</p>
+                    <p className="ruth-type-caption text-subtle">Dokunarak seçeneğe ekle</p>
                   </div>
                   <div className="grid grid-cols-4 gap-2 sm:grid-cols-6 lg:grid-cols-8">
                     {allProductPhotos.map((photo) => {
@@ -293,13 +385,32 @@ export function VariantStudioManager({ variants, setVariants, productPhotos, bas
   return (
     <>
       <ExactDataCard
-        title="Varyantlar"
+        title="Ürün Seçenekleri"
         action={
           <ExactButton variant="secondary" size="sm" onClick={() => setAddOpen(true)}>
-            <Plus className="h-4 w-4" /> Varyant ekle
+            <Plus className="h-4 w-4" /> Ana seçenek ekle
           </ExactButton>
         }
       >
+        <div className="mb-4 rounded-[16px] border border-border-subtle bg-surface-secondary p-3">
+          <div className="mb-2 flex items-center justify-between gap-3">
+            <p className="ruth-type-label text-muted">Ana seçenekler</p>
+            <span className="ruth-type-caption text-subtle">{optionGroups.length} grup</span>
+          </div>
+          {optionGroups.length ? (
+            <div className="flex flex-wrap gap-2">
+              {optionGroups.map((group) => (
+                <div key={group.name} className="inline-flex items-center gap-1 rounded-full border border-border-subtle bg-surface-primary pl-3 pr-1 py-1">
+                  <span className="text-[11px] font-semibold text-main">{group.name}</span>
+                  <span className="text-[9px] text-subtle">{group.values.length}</span>
+                  <ExactIconButton icon={Trash2} label={`${group.name} ana seçeneğini sil`} variant="ghost" size="icon-sm" onClick={() => deleteOptionGroup(group.name)} />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="ruth-type-caption text-subtle">Henüz ana seçenek yok. “Ana seçenek ekle” ile oluşturabilirsin.</p>
+          )}
+        </div>
         <div className="space-y-2.5">
           {variants.map((variant, index) => {
             const image = variant.image_url || variant.image_urls?.[0] || allProductPhotos[0] || "";
@@ -316,7 +427,7 @@ export function VariantStudioManager({ variants, setVariants, productPhotos, bas
                   pressStrength="standard"
                   onClick={() => openMedia(index)}
                   className="group relative h-[92px] w-full overflow-hidden rounded-[14px] bg-surface-tertiary ring-1 ring-border-subtle md:h-[86px]"
-                  aria-label="Varyant görsellerini düzenle"
+                  aria-label="Seçenek görsellerini düzenle"
                 >
                   {image ? <img src={image} alt="" className="h-full w-full object-cover" /> : <ImagePlus className="absolute inset-0 m-auto h-5 w-5 text-subtle" />}
                   <span className="ruth-type-caption absolute inset-x-1.5 bottom-1.5 rounded-full bg-black/55 px-1.5 py-1 text-center font-semibold text-white opacity-90 backdrop-blur-sm">Görseller</span>
@@ -325,10 +436,10 @@ export function VariantStudioManager({ variants, setVariants, productPhotos, bas
                 <div className="min-w-0">
                   <div className="mb-2 flex items-center gap-2">
                     {display === "color" && color ? <span className="h-3.5 w-3.5 shrink-0 rounded-full border border-black/10" style={{ background: color }} /> : null}
-                    <p className="ruth-type-card-title min-w-0 flex-1 truncate text-main">{variant.option_summary || `Varyant ${index + 1}`}</p>
+                    <p className="ruth-type-card-title min-w-0 flex-1 truncate text-main">{variant.option_summary || `Seçenek ${index + 1}`}</p>
                     <ExactIconButton
                       icon={Trash2}
-                      label="Varyantı sil"
+                      label="Seçeneği sil"
                       variant="ghost"
                       size="icon-sm"
                       onClick={() => setVariants((current) => current.filter((_, itemIndex) => itemIndex !== index))}
@@ -337,7 +448,7 @@ export function VariantStudioManager({ variants, setVariants, productPhotos, bas
 
                   <div className="grid grid-cols-2 gap-2 lg:grid-cols-[minmax(150px,1.35fr)_0.75fr_0.55fr_0.85fr]">
                     <label className="min-w-0">
-                      <span className="ruth-type-label mb-1 block text-subtle">Varyant</span>
+                      <span className="ruth-type-label mb-1 block text-subtle">Seçenek</span>
                       <input value={variant.option_summary} onChange={(event) => updateVariant(index, { option_summary: event.target.value })} className={`${exactFormInputClass} h-9`} />
                     </label>
                     <label>
@@ -361,7 +472,7 @@ export function VariantStudioManager({ variants, setVariants, productPhotos, bas
               </motion.div>
             );
           })}
-          {!variants.length ? <ExactEmptyState compact icon={ImagePlus} title="Varyant yok" description="Varyant ekle butonuyla seçeneklerini oluşturabilirsin." /> : null}
+          {!variants.length ? <ExactEmptyState compact icon={ImagePlus} title="Seçenek yok" description="Ana seçenek ekleyerek Gramaj, Öğütme, Renk veya Beden gibi seçenek grupları oluşturabilirsin." /> : null}
         </div>
       </ExactDataCard>
 

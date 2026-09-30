@@ -29,6 +29,7 @@ import {
   Plug,
   RotateCcw,
   Settings2,
+  Share2,
   Shield,
   ShoppingBag,
   ShoppingCart,
@@ -118,7 +119,10 @@ export const exactNavStructure: ExactNavGroup[] = [
   },
   {
     label: "MAĞAZA",
-    items: [{ label: "Mağaza Tasarımı", path: "/theme", icon: Palette, aliases: ["/storefront"] }],
+    items: [
+      { label: "Mağaza Tasarımı", path: "/theme", icon: Palette, aliases: ["/storefront"] },
+      { label: "Sosyal Medya", path: "/social-media", icon: Share2, exact: true },
+    ],
   },
   {
     label: "RAPORLAMA",
