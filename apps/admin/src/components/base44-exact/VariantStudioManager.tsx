@@ -388,7 +388,7 @@ export function VariantStudioManager({ variants, setVariants, productPhotos, bas
         title="Ürün Seçenekleri"
         action={
           <ExactButton variant="secondary" size="sm" onClick={() => setAddOpen(true)}>
-            <Plus className="h-4 w-4" /> Varyant ekle
+            <Plus className="h-4 w-4" /> Ana seçenek ekle
           </ExactButton>
         }
       >
