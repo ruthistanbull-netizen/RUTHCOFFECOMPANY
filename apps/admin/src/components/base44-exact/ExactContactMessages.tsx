@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { ArrowLeft, CheckCircle2, Mail, MessageSquareText, RefreshCw, Reply, Search, Send } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { adminRequest } from "@/lib/adminApi";
@@ -48,8 +47,7 @@ function label(value: ContactStatus) {
 
 export function ExactContactMessages() {
   const toast = useExactToast();
-  const searchParams = useSearchParams();
-  const requestedMessageId = searchParams.get("message_id")?.trim() || "";
+  const [requestedMessageId, setRequestedMessageId] = useState("");
   const openedFromQueryRef = useRef<string | null>(null);
   const [messages, setMessages] = useState<ContactMessage[]>([]);
   const [filter, setFilter] = useState<"all" | ContactStatus>("all");
@@ -63,6 +61,11 @@ export function ExactContactMessages() {
   const [syncing, setSyncing] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
+
+  useEffect(() => {
+    const messageId = new URLSearchParams(window.location.search).get("message_id")?.trim() || "";
+    setRequestedMessageId(messageId);
+  }, []);
 
   const setLocalStatus = useCallback((messageId: string, status: ContactStatus) => {
     setMessages((current) => current.map((item) => item.id === messageId ? { ...item, status } : item));
