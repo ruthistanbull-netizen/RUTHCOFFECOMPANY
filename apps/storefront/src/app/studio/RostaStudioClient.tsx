@@ -46,13 +46,26 @@ function Nav() {
         style={{ mixBlendMode: "difference" }}
       >
         <div className="flex items-center justify-between px-5 sm:px-8 py-5">
-          <a
-            href="#hero"
-            className="font-display font-bold uppercase tracking-tight text-lg sm:text-xl leading-none"
-            style={{ color: C.cream }}
-          >
-            ROSTA<span className="text-[0.7em] align-top">.</span>Studio
-          </a>
+          <div className="flex items-center gap-4 sm:gap-5">
+            <button
+              type="button"
+              aria-label="Menü"
+              aria-expanded={open}
+              onClick={() => setOpen(true)}
+              className="flex h-8 w-10 flex-col justify-center gap-[7px] p-0"
+            >
+              <span className="block h-px w-10" style={{ background: C.cream }} />
+              <span className="block h-px w-10" style={{ background: C.cream }} />
+            </button>
+
+            <a
+              href="#hero"
+              className="font-display font-bold uppercase tracking-tight text-lg sm:text-xl leading-none"
+              style={{ color: C.cream }}
+            >
+              ROSTA<span className="text-[0.7em] align-top">.</span>Studio
+            </a>
+          </div>
 
           <nav className="hidden md:flex items-center gap-7">
             {navLinks.map((l) => (
@@ -67,16 +80,6 @@ function Nav() {
             ))}
           </nav>
 
-          <button
-            type="button"
-            aria-label="Menü"
-            onClick={() => setOpen(true)}
-            className="md:hidden flex flex-col gap-[5px] p-1"
-          >
-            <span className="block w-6 h-[2px]" style={{ background: C.cream }} />
-            <span className="block w-6 h-[2px]" style={{ background: C.cream }} />
-            <span className="block w-4 h-[2px] ml-auto" style={{ background: C.cream }} />
-          </button>
         </div>
       </header>
 
@@ -87,7 +90,7 @@ function Nav() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "tween", duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed inset-0 z-[160] bg-[#111111] flex flex-col md:hidden"
+            className="fixed inset-0 z-[160] bg-[#111111] flex flex-col"
           >
             <div className="flex items-center justify-between px-5 py-5">
               <span className="font-display font-bold uppercase text-lg" style={{ color: C.cream }}>
