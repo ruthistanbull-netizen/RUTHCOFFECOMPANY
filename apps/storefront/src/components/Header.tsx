@@ -492,9 +492,11 @@ export function Header({
 
   const productPage = pathname.startsWith("/products/");
   const homePage = pathname === "/";
+  const studioPage = pathname === "/studio";
   const transparentProductHeader = productPage && !scrolled && !menuOpen && !searchOpen;
   const transparentHomeHeader = homePage && !menuOpen && !searchOpen;
-  const contrastHeader = transparentProductHeader || transparentHomeHeader;
+  const transparentStudioHeader = studioPage && !scrolled && !menuOpen && !searchOpen;
+  const contrastHeader = transparentProductHeader || transparentHomeHeader || transparentStudioHeader;
   const menuControlColor = "#FBF3E6";
   const menuToneStyle = {
     "--ruth-menu-control-color": menuControlColor,
