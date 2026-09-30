@@ -816,8 +816,9 @@ export function StoreDesignV21() {
     };
 
     syncDesktopViewport();
-    // Side panels animate; take one settled measurement after that transition.
-    settleTimer = window.setTimeout(syncDesktopViewport, 340);
+    // Side panels are desktop overlays; opening/closing them must never resize
+    // or rescale the storefront preview. Only the real browser viewport may.
+    settleTimer = window.setTimeout(syncDesktopViewport, 120);
     window.addEventListener("resize", syncDesktopViewport);
     window.visualViewport?.addEventListener("resize", syncDesktopViewport);
 
@@ -827,7 +828,7 @@ export function StoreDesignV21() {
       window.removeEventListener("resize", syncDesktopViewport);
       window.visualViewport?.removeEventListener("resize", syncDesktopViewport);
     };
-  }, [device, isMobileViewport, leftOpen, rightOpen]);
+  }, [device, isMobileViewport]);
 
   useEffect(() => {
     if (!isMobileViewport) return;
@@ -2303,7 +2304,7 @@ export function StoreDesignV21() {
         </div>
       </header>
 
-      <div className="flex min-h-0 flex-1">
+      <div className="sd-editor-workspace relative flex min-h-0 flex-1">
         <aside ref={structurePanelRef} tabIndex={-1} aria-label="Yapı" data-open={leftOpen ? "true" : "false"} aria-hidden={!leftOpen} className={leftOpen ? "sd-sidebar sd-sidebar-left is-open flex w-72 shrink-0 flex-col border-r" : "sd-sidebar sd-sidebar-left is-closed flex w-72 shrink-0 flex-col border-r"}>
           <header className="sd-structure-header flex items-center justify-between border-b px-4 py-3">
             <div className="min-w-0">
