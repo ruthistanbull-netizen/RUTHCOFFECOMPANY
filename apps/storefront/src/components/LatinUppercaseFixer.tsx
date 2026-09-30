@@ -87,7 +87,8 @@ export function LatinUppercaseFixer() {
   const pathname = usePathname();
 
   useEffect(() => {
-    if (pathname.startsWith("/products/")) return;
+    // Studio preserves the reference's Turkish lettering and owns its typography.
+    if (pathname === "/studio" || pathname.startsWith("/studio/") || pathname.startsWith("/products/")) return;
 
     const pending = new Set<ParentNode>([document]);
     let idleId = 0;
