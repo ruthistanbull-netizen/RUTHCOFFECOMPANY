@@ -1,3 +1,4 @@
+import "./studio.css";
 import { Archivo, Oswald, Space_Mono } from "next/font/google";
 
 const archivo = Archivo({
