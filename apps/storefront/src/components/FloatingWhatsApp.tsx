@@ -21,20 +21,33 @@ import type { ThemeCustomizerSettings } from "@/lib/themeCustomizer";
 
 export function FloatingWhatsApp({
   settings,
+  socialHref,
 }: {
   settings: ThemeCustomizerSettings["whatsapp"];
+  socialHref?: string;
 }) {
   const [editorMode, setEditorMode] = useState(false);
-  const phone = String(settings.phone || "").replace(/[^0-9]/g, "");
-  const message = encodeURIComponent(
+  const socialTarget = String(socialHref || "").trim();
+  const message = (
     "Merhaba, Rosta Coffee Co ekibinden yardım almak istiyorum.",
   );
+
+  const targetHref = (() => {
+    if (!socialTarget) return "";
+    try {
+      const url = new URL(socialTarget);
+      if (!url.searchParams.has("text")) url.searchParams.set("text", message);
+      return url.toString();
+    } catch {
+      return socialTarget;
+    }
+  })();
 
   useEffect(() => {
     setEditorMode(new URLSearchParams(window.location.search).get("themeEditor") === "1");
   }, []);
 
-  const shouldMount = Boolean(phone) && (settings.enabled || editorMode);
+  const shouldMount = Boolean(targetHref) && (settings.enabled || editorMode);
 
   return (
     <>
@@ -56,7 +69,7 @@ export function FloatingWhatsApp({
       <StorefrontLightboxCloseTone />
       {shouldMount ? (
         <a
-          href={`https://wa.me/${phone}?text=${message}`}
+          href={targetHref}
           target="_blank"
           rel="noreferrer"
           aria-label="WhatsApp destek"
