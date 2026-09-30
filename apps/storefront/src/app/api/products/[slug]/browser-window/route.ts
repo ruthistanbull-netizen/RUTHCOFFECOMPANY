@@ -2,7 +2,8 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { getProductPageWindowForSource } from "@/data/productNavigationContext";
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function GET(
   _request: Request,
@@ -21,7 +22,7 @@ export async function GET(
   }
 
   const response = NextResponse.json({ ok: true, window });
-  response.headers.set("Cache-Control", "private, max-age=60");
+  response.headers.set("Cache-Control", "private, no-store, no-cache, must-revalidate, max-age=0");
   response.headers.set("Vary", "Cookie");
   return response;
 }
