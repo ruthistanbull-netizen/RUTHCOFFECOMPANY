@@ -37,10 +37,10 @@ function optionNames(variants: ProductVariant[]) {
   const names: string[] = [];
   for (const variant of variants) {
     for (const name of Object.keys(variant.options || {})) {
-      if (!name.startsWith("__") && !names.includes(name)) names.push(name);
+      if (!name.startsWith("__") && variant.options?.[name]?.trim() && !names.includes(name)) names.push(name);
     }
   }
-  if (!names.length && variants.length > 1) names.push(FALLBACK_VARIANT_OPTION);
+  if (!names.length && variants.some(variant => variant.option_summary?.trim() || variant.sku?.trim())) names.push(FALLBACK_VARIANT_OPTION);
   return names;
 }
 
@@ -76,9 +76,9 @@ export function ProductPurchasePanel({
     () => variants.filter(isAvailable),
     [variants],
   );
-  const visibleVariants = availableVariants.length ? availableVariants : variants;
+  const visibleVariants = variants;
   const names = useMemo(() => optionNames(visibleVariants), [visibleVariants]);
-  const hasSelectableVariants = names.length > 0 && visibleVariants.length > 1;
+  const hasSelectableVariants = names.length > 0 && visibleVariants.length > 0;
   const firstDetailId = details[0]?.id || "";
   const { addItem, setIsOpen: setCartOpen } = useCart();
 
@@ -176,7 +176,7 @@ export function ProductPurchasePanel({
       names.every((name) => {
         if (name === optionName) return true;
         const selected = selectedOptions[name];
-        return !selected || variant.options?.[name] === selected;
+        return !selected || variantOptionValue(variant, name) === selected;
       }),
     );
     return unique(matching.map((variant) => variantOptionValue(variant, optionName)));

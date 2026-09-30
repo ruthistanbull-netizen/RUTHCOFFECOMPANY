@@ -201,7 +201,7 @@ export function Hero({
   const headStyle = {
     color: C.cream,
     fontSize: "clamp(4.5rem, 21vw, 21rem)",
-    lineHeight: 0.82,
+    lineHeight: 1.0,
     letterSpacing: "-0.04em",
   };
 
@@ -227,7 +227,7 @@ export function Hero({
               {words[0]}
             </motion.div>
           </div>
-          <div className="overflow-hidden -mt-[1.2vw]">
+          <div className="overflow-hidden">
             <motion.div
               style={{ x: reduceMotion ? 0 : studioX, ...headStyle }}
               className="font-display font-bold uppercase select-none"
@@ -338,14 +338,14 @@ export function WhoWeAre({
       <div className="px-5 sm:px-8">
         <div className="overflow-hidden">
           <motion.h2 style={{ x: reduceMotion ? 0 : leftX }}>
-            <span style={{ color: C.carbon, fontSize: "clamp(2rem, 6.4vw, 6.5rem)" }} className="font-display uppercase font-bold leading-[0.95] block">
+            <span style={{ color: C.carbon, fontSize: "clamp(2rem, 6.4vw, 6.5rem)" }} className="font-display uppercase font-bold leading-[1.36] block">
               {firstLine}
             </span>
           </motion.h2>
         </div>
         <div className="overflow-hidden">
           <motion.h2 style={{ x: reduceMotion ? 0 : rightX }}>
-            <span style={{ color: C.carbon, fontSize: "clamp(2rem, 6.4vw, 6.5rem)" }} className="font-display uppercase font-bold leading-[0.95] block">
+            <span style={{ color: C.carbon, fontSize: "clamp(2rem, 6.4vw, 6.5rem)" }} className="font-display uppercase font-bold leading-[1.36] block">
               {secondLine}
             </span>
           </motion.h2>
@@ -433,7 +433,7 @@ export function ServiceBlock({ index, title, subline, description, image, imageA
               style={{ x: reduceMotion ? 0 : numberX, y: "-50%", opacity: reduceMotion ? 1 : numberOpacity, color: "rgba(201,74,64,0.14)", fontSize: "clamp(12rem, 40vw, 38rem)" }}
             >{num}</motion.span>
             <motion.h3
-              className="relative z-10 font-display uppercase font-bold leading-[0.86] tracking-[-0.04em]"
+              className="relative z-10 font-display uppercase font-bold leading-[1.36] tracking-[-0.04em]"
               style={{ x: reduceMotion ? 0 : titleX, color: C.cream, fontSize: "clamp(2.8rem, 11vw, 11rem)" }}
             >
               {title}
@@ -477,7 +477,7 @@ function Stage({ n, t, d, side, reduceMotion }: EditorialStage & { reduceMotion:
       <motion.div style={{ x: reduceMotion ? 0 : x, opacity: reduceMotion ? 1 : opacity }} className={`px-5 sm:px-8 w-full ${side === "right" ? "sm:pl-[40vw]" : "sm:pr-[40vw]"}`}>
         <div className="flex items-baseline gap-5 sm:gap-8">
           <span className="font-display font-bold leading-none" style={{ color: C.brick, fontSize: "clamp(3rem, 8vw, 7rem)" }}>{n}</span>
-          <h3 className="font-display uppercase font-bold leading-[0.9] tracking-[-0.03em]" style={{ color: C.cream, fontSize: "clamp(2.4rem, 9vw, 9rem)" }}>
+          <h3 className="font-display uppercase font-bold leading-[1.36] tracking-[-0.03em]" style={{ color: C.cream, fontSize: "clamp(2.4rem, 9vw, 9rem)" }}>
             {t}
           </h3>
         </div>
@@ -516,7 +516,7 @@ export function Process({
         <span>{label}</span>
       </div>
       <div className="px-5 sm:px-8 mb-24">
-        <h2 className="font-display uppercase font-bold leading-[0.86] tracking-[-0.04em]" style={{ color: C.cream, fontSize: "clamp(2.6rem, 10vw, 10rem)" }}>
+        <h2 className="font-display uppercase font-bold leading-[1.36] tracking-[-0.04em]" style={{ color: C.cream, fontSize: "clamp(2.6rem, 10vw, 10rem)" }}>
           {heading}
         </h2>
       </div>
@@ -569,7 +569,7 @@ export function FinalCTA({
   const line2Opacity = useTransform(scrollYProgress, [0, 0.3, 0.6, 1], [0, 0, 1, 1]);
   const line2Y = useTransform(scrollYProgress, [0, 0.3, 0.6, 1], ["30%", "30%", "0%", "0%"]);
   const ctaOpacity = useTransform(scrollYProgress, [0, 0.55, 0.85, 1], [0, 0, 1, 1]);
-  const head = "font-display uppercase font-bold leading-[0.84] tracking-[-0.04em]";
+  const head = "font-display uppercase font-bold leading-[1.36] tracking-[-0.04em]";
   const big = { fontSize: "clamp(3rem, 13vw, 13rem)", color: C.cream };
 
   return (
