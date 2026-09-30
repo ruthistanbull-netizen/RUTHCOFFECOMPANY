@@ -64,6 +64,7 @@ export function ProductPurchasePanel({
   const visibleVariants = availableVariants.length ? availableVariants : variants;
   const names = useMemo(() => optionNames(visibleVariants), [visibleVariants]);
   const hasSelectableVariants = names.length > 0 && visibleVariants.length > 1;
+  const firstDetailId = details[0]?.id || "";
   const { addItem, setIsOpen: setCartOpen } = useCart();
 
   const [quantity, setQuantity] = useState(1);
@@ -104,11 +105,11 @@ export function ProductPurchasePanel({
     setQuantity(1);
     setSelectedOptions({});
     setPickerOpen(false);
-    setDesktopDetail(details[0]?.id || "");
-    setActiveDetail(details[0]?.id || "");
+    setDesktopDetail(firstDetailId);
+    setActiveDetail(firstDetailId);
     setDetailExpanded(true);
     setCartState("ready");
-  }, [details, product.id]);
+  }, [firstDetailId, product.id]);
 
   useEffect(() => () => clearTimers(), []);
 
