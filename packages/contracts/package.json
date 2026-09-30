@@ -9,7 +9,8 @@
     ".": "./src/index.ts",
     "./customer": "./src/customer.ts",
     "./ruthie": "./src/ruthie.ts",
-    "./status-display": "./src/status-display.ts"
+    "./status-display": "./src/status-display.ts",
+    "./social-media": "./src/social-media.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
