@@ -64,9 +64,3 @@
 .rosta-studio-exact :where(a,button,span,div).font-mono-tech {
   font-family: var(--studio-font-mono), "Space Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .rosta-studio-exact .rosta-marquee {
-    animation-play-state: paused !important;
-  }
-}
