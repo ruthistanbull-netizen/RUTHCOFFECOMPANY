@@ -74,6 +74,31 @@ function uniqueStrings(values: unknown[]) {
   return [...new Set(values.map(clean).filter(Boolean))];
 }
 
+async function productCodeExists(supabase: any, code: string, excludeProductId = "") {
+  let query = supabase.from("products").select("id").eq("product_code", code).limit(1);
+  if (excludeProductId) query = query.neq("id", excludeProductId);
+  const { data, error } = await query;
+  if (error) throw new Error(`Ürün kodu kontrol edilemedi: ${error.message}`);
+  return Boolean(data?.length);
+}
+
+async function resolveProductCode(supabase: any, requested: unknown, excludeProductId = "") {
+  const manual = clean(requested);
+  if (manual) {
+    if (await productCodeExists(supabase, manual, excludeProductId)) {
+      throw new Error("Bu ürün kodu başka bir üründe kullanılıyor.");
+    }
+    return manual;
+  }
+
+  for (let attempt = 0; attempt < 40; attempt += 1) {
+    const code = String(1000 + Math.floor(Math.random() * 9000));
+    if (!(await productCodeExists(supabase, code, excludeProductId))) return code;
+  }
+
+  throw new Error("Benzersiz 4 haneli ürün kodu üretilemedi. Lütfen ürün kodunu elle girin.");
+}
+
 async function rollbackCreatedProduct(supabase: any, productId: string) {
   // Şema üzerinde cascade olmasa bile yarım ürün bırakmamak için çocuk kayıtları açıkça temizle.
   await supabase.from("product_images").delete().eq("product_id", productId);
@@ -190,6 +215,7 @@ export async function GET(request: Request) {
       id,
       name,
       slug,
+      product_code,
       price,
       compare_at_price,
       currency,
@@ -265,7 +291,7 @@ export async function GET(request: Request) {
         )
       : Promise.resolve([] as any[]),
     directCollectionIds.length > 0
-      ? safeSelect<any>(supabase.from("collections").select("id, name, slug").in("id", directCollectionIds))
+      ? safeSelect<any>(supabase.from("collections").select("id, name, slug, product_code").in("id", directCollectionIds))
       : Promise.resolve([] as any[]),
   ]);
 
@@ -365,6 +391,12 @@ export async function POST(request: Request) {
   const now = new Date().toISOString();
 
   const slug = clean(body.slug) || slugify(name) || `urun-${Date.now()}`;
+  let productCode = "";
+  try {
+    productCode = await resolveProductCode(supabase, body.product_code);
+  } catch (error) {
+    return apiError(error instanceof Error ? error.message : "Ürün kodu oluşturulamadı.");
+  }
 
   const rawCollectionIds = Array.isArray(body.collection_ids)
     ? body.collection_ids.map(clean).filter(Boolean)
@@ -386,6 +418,7 @@ export async function POST(request: Request) {
   const payload: Record<string, unknown> = {
     name,
     slug,
+    product_code: productCode,
     price,
     compare_at_price: body.compare_at_price ? toNumber(body.compare_at_price) : null,
     currency: "TRY",
@@ -526,6 +559,14 @@ export async function updateProductWithAuth(request: Request, auth: any) {
     if (field in body) update[field] = body[field] === "" ? null : body[field];
   }
 
+  if ("product_code" in body) {
+    try {
+      update.product_code = await resolveProductCode(supabase, body.product_code, id);
+    } catch (error) {
+      return apiError(error instanceof Error ? error.message : "Ürün kodu güncellenemedi.");
+    }
+  }
+
   if ("price" in body) update.price = toNumber(body.price);
   if ("compare_at_price" in body) update.compare_at_price = body.compare_at_price === "" || body.compare_at_price === null ? null : toNumber(body.compare_at_price);
   if ("is_featured" in body) update.is_featured = Boolean(body.is_featured);
@@ -547,7 +588,7 @@ export async function updateProductWithAuth(request: Request, auth: any) {
     .from("products")
     .update(update)
     .eq("id", id)
-    .select("id, name, slug, price, compare_at_price, material, finish_color, status, stock_status, short_description, description, size_usage, care_advice, main_image_url, product_type, is_bundle, bundle_items")
+    .select("id, name, slug, product_code, price, compare_at_price, material, finish_color, status, stock_status, short_description, description, size_usage, care_advice, main_image_url, product_type, is_bundle, bundle_items")
     .single();
 
   if (productError) return NextResponse.json({ ok: false, error: productError.message }, { status: 400 });
