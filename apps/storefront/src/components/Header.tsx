@@ -644,6 +644,8 @@ export function Header({
     router.push(`/products?search=${encodeURIComponent(query)}`);
   };
 
+  if (studioPage) return null;
+
   return (
     <>
       <style>{`
