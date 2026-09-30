@@ -29,6 +29,10 @@ import {
   normalizeThemeDocument,
   type ThemeDocument,
 } from "@ruth-commerce/commerce-core/store-design-v2";
+import {
+  normalizeSocialMediaSettings,
+  type SocialMediaSettings,
+} from "@ruth-commerce/contracts/social-media";
 import { applyRostaStorefrontDesignSystem } from "@/lib/rostaDesignSystem";
 // ROSTA never falls back to any copied legacy static catalog.
 // If ROSTA Supabase is unavailable, serving an empty/last-known-good catalog
