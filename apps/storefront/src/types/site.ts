@@ -66,6 +66,7 @@ export type Product = {
   material_note: string | null;
   size_usage?: string | null;
   care_advice?: string | null;
+  information_sections?: import("@ruth-commerce/commerce-core/product-information").ProductInformation[];
   finish_color: string | null;
   is_adjustable: boolean | null;
   ikas_url: string | null;

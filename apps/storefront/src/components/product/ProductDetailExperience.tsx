@@ -24,6 +24,7 @@ import {
 } from "@/lib/productDisplay";
 import { productPrimaryDetailImageSrc } from "@/lib/productDisplayImage";
 import type { Product } from "@/types/site";
+import { normalizeProductInformation } from "@ruth-commerce/commerce-core/product-information";
 
 export type ProductBrowserWindow = {
   previous: Product | null;
@@ -117,9 +118,10 @@ function productDetails(product: Product): ProductDetailItem[] {
     cleanLine(cleanedProductDescription(product)) ||
     "ROSTA Coffee Co. ürünü.";
   const careDetails = cleanLine(product.care_advice || productCareDetails(product));
-  const packageUsage = cleanLine(product.size_usage);
+  const information = normalizeProductInformation(product.information_sections);
+  const extra = (section: string) => information.filter(item => item.section === section).map(item => `${item.label}\n${item.value}`).join("\n\n");
 
-  return [
+  const details = [
     { id: "description", label: "Açıklama", content: description },
     {
       id: "material",
@@ -136,9 +138,6 @@ function productDetails(product: Product): ProductDetailItem[] {
       id: "size-usage",
       label: "Paket / Kullanım",
       content: [
-        packageUsage ? "PAKET / GRAMAJ" : null,
-        packageUsage || null,
-        packageUsage && careDetails ? "" : null,
         careDetails ? "SAKLAMA / KULLANIM" : null,
         careDetails || null,
       ].filter((value): value is string => Boolean(value)).join("\n") ||
@@ -150,7 +149,9 @@ function productDetails(product: Product): ProductDetailItem[] {
       content:
         "Teslimat ve iade koşulları sipariş ve ürün tipine göre uygulanır. Güncel detaylar için kargo ve iade sayfasını inceleyebilirsiniz.",
     },
-  ];}
+  ];
+  return details.map(detail => ({ ...detail, content: extra(detail.id) || detail.content }));
+}
 
 function prefersReducedPreload() {
   if (typeof navigator === "undefined") return false;

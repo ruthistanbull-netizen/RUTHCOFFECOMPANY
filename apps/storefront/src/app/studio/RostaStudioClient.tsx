@@ -56,14 +56,14 @@ const services = [
     description: "Reçete ve porsiyon maliyetlerini hesaplıyor, fireyi görünür kılıyor ve işletmenin hedefleriyle uyumlu, sürdürülebilir satış fiyatları oluşturuyoruz.",
   },
   {
-    title: <>BAR & MUTFAK<br />KURULUMU</>,
+    title: <>BAR<br />KURULUMU</>,
     subline: "YERLEŞİM / EKİPMAN / ALTYAPI",
-    description: "Bar ve mutfağın yerleşimini, ekipmanını ve çalışma alanlarını birlikte planlıyor; üretimden servise hızlı, güvenli ve verimli bir düzen kuruyoruz.",
+    description: "Barın yerleşimini, ekipmanını ve çalışma alanlarını birlikte planlıyor; hazırlıktan servise hızlı, güvenli ve verimli bir düzen kuruyoruz.",
   },
   {
     title: <>KAHVE<br />PROGRAMI</>,
     subline: "ÇEKİRDEK / DEMLEME / KALİTE",
-    description: "Çekirdek seçiminden espresso ve demleme reçetelerine, ekipman ayarından kalite takibine kadar işletmeye özel bir kahve programı oluşturuyoruz.",
+    description: "Cupping yaparak işletmenin konseptine ve lezzet beklentisine uygun çekirdekleri birlikte seçiyoruz. Espresso ve demleme reçetelerinden ekipman ayarına ve kalite takibine kadar işletmeye özel bir kahve programı oluşturuyoruz.",
   },
   {
     title: <>OPERASYON &<br />İŞ AKIŞI</>,
@@ -76,9 +76,9 @@ const services = [
     description: "Ekibi kahve, ürün hazırlama, hijyen ve servis konusunda sahada eğitiyor; bilgiyi günlük pratiğe taşıyan ortak bir çalışma dili oluşturuyoruz.",
   },
   {
-    title: <>TEDARİK & EKİPMAN<br />DANIŞMANLIĞI</>,
-    subline: "İHTİYAÇ / SEÇİM / TEDARİK",
-    description: "İşletmenin kapasitesine ve bütçesine uygun ürün, ekipman ve tedarikçileri değerlendiriyor; satın alma ve tedarik kararlarını gerçek ihtiyaçlarla eşleştiriyoruz.",
+    title: <>EKİPMAN<br />DANIŞMANLIĞI</>,
+    subline: "İHTİYAÇ / SEÇİM / EKİPMAN",
+    description: "İşletmenin kapasitesine, iş akışına ve bütçesine uygun ekipmanları değerlendiriyor; makine, değirmen ve bar ekipmanı seçimlerini gerçek ihtiyaçlarla eşleştiriyoruz.",
   },
   {
     title: <>MARKA & KONSEPT<br />GELİŞTİRME</>,
