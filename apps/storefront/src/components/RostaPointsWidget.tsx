@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   Cake,
@@ -81,6 +82,7 @@ function CoffeeBeanMark({ size = 18 }: { size?: number }) {
 }
 
 export function RostaPointsWidget({ themeSettings }: { themeSettings: ThemeCustomizerSettings }) {
+  const pathname = usePathname();
   const { isLoggedIn, isLoading, session } = useAuth();
   const { isOpen: isCartOpen } = useCart();
   const reduceMotion = useReducedMotion();
@@ -305,6 +307,8 @@ export function RostaPointsWidget({ themeSettings }: { themeSettings: ThemeCusto
   const sheetTransition = reduceMotion
     ? { duration: 0.01 }
     : { duration: 0.48, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] };
+
+  if (pathname === "/studio") return null;
 
   return (
     <>
