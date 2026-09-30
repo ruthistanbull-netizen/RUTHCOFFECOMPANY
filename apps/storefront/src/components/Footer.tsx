@@ -1,30 +1,16 @@
 import Link from "next/link";
-import type { ReactElement } from "react";
 import { Mail } from "lucide-react";
+import {
+  activeSocialMediaLinks,
+  type SocialMediaSettings,
+} from "@ruth-commerce/contracts/social-media";
 import { categoryHref } from "@/lib/catalogCategories";
 import type { Category, Collection } from "@/types/site";
 import type { ThemeCustomizerSettings } from "@/lib/themeCustomizer";
-import { getThemeCustomizerSettings } from "@/data/site";
+import { getSocialMediaSettings, getThemeCustomizerSettings } from "@/data/site";
 import { ROSTA_WORDMARK_SRC } from "@/components/brand/rostaWordmark";
 import { FooterRouteVisibility } from "@/components/FooterRouteVisibility";
-
-type SocialLink = {
-  label: string;
-  href: string;
-  icon: ReactElement;
-};
-
-const SOCIAL_LINKS: SocialLink[] = [
-  ...(process.env.NEXT_PUBLIC_ROSTA_WHATSAPP_URL
-    ? [{ label: "WhatsApp", href: process.env.NEXT_PUBLIC_ROSTA_WHATSAPP_URL, icon: <WhatsAppIcon /> }]
-    : []),
-  ...(process.env.NEXT_PUBLIC_ROSTA_INSTAGRAM_URL
-    ? [{ label: "Instagram", href: process.env.NEXT_PUBLIC_ROSTA_INSTAGRAM_URL, icon: <InstagramIcon /> }]
-    : []),
-  ...(process.env.NEXT_PUBLIC_ROSTA_TIKTOK_URL
-    ? [{ label: "TikTok", href: process.env.NEXT_PUBLIC_ROSTA_TIKTOK_URL, icon: <TikTokIcon /> }]
-    : []),
-];
+import { SocialMediaIcon } from "@/components/social/SocialMediaIcon";
 
 const PAYMENT_LOGOS = [
   { label: "Visa", src: "/payments/visa.png" },
@@ -33,18 +19,6 @@ const PAYMENT_LOGOS = [
   { label: "American Express", src: "/payments/amex.png" },
   { label: "TROY", src: "/payments/troy.png" },
 ];
-
-function InstagramIcon() {
-  return <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none" /></svg>;
-}
-
-function TikTokIcon() {
-  return <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="M14 4v10.2a4.2 4.2 0 1 1-3.3-4.1" /><path d="M14 4c.7 3 2.6 4.8 5.4 5.2" /></svg>;
-}
-
-function WhatsAppIcon() {
-  return <img src="/whatsapp-icon-black.png" alt="" aria-hidden="true" className="h-8 w-8 object-contain brightness-0 invert" loading="lazy" />;
-}
 
 function FooterColumn({ id, title, links }: { id: string; title: string; links: Array<{ id: string; label: string; href: string }> }) {
   return (
@@ -57,8 +31,12 @@ function FooterColumn({ id, title, links }: { id: string; title: string; links: 
   );
 }
 
-export async function Footer({ categories = [], collections = [], themeSettings }: { categories?: Category[]; collections?: Collection[]; themeSettings?: ThemeCustomizerSettings }) {
-  const resolvedThemeSettings = themeSettings || await getThemeCustomizerSettings();
+export async function Footer({ categories = [], collections = [], themeSettings, socialSettings }: { categories?: Category[]; collections?: Collection[]; themeSettings?: ThemeCustomizerSettings; socialSettings?: SocialMediaSettings }) {
+  const [resolvedThemeSettings, resolvedSocialSettings] = await Promise.all([
+    themeSettings ? Promise.resolve(themeSettings) : getThemeCustomizerSettings(),
+    socialSettings ? Promise.resolve(socialSettings) : getSocialMediaSettings(),
+  ]);
+  const socialLinks = activeSocialMediaLinks(resolvedSocialSettings);
   const shoppingLinks = [
     { id: "shopping-new-arrivals", label: "Yeni Gelenler", href: "/category/new-arrivals" },
     ...categories.map((category) => ({ id: `shopping-category-${category.id}`, label: category.name, href: categoryHref(category.public_slug || category.slug) })),
@@ -85,7 +63,7 @@ export async function Footer({ categories = [], collections = [], themeSettings 
             <Link href="/" data-editor-id="global.footer.logo" data-editor-type="footer-logo" data-editor-label="Alt bilgi logosu" data-editor-instance="footer-logo" aria-label="Rosta Coffee Co anasayfa" className="mb-4 inline-flex"><img src={ROSTA_WORDMARK_SRC} alt="" className="h-auto w-[190px] object-contain brightness-0 invert sm:w-[220px]" /></Link>
             <p data-editor-id="global.footer.description" data-editor-type="footer-text" data-editor-label="Alt bilgi açıklaması" data-editor-instance="footer-description" data-store-design-editable-text="true" className="max-w-sm text-xs leading-relaxed sm:text-sm" style={{ color: "var(--muted-foreground)" }}>Kahve, danışmanlık ve tedarik için sade, güvenilir çözümler.</p>
             <div className="mt-5 flex justify-center gap-3">
-              {SOCIAL_LINKS.map((social) => <a key={social.label} href={social.href} data-editor-id={`global.footer.social.${social.label}`} data-editor-type="footer-link" data-editor-label={social.label} data-editor-instance={`social.${social.label}`} target="_blank" rel="noreferrer" aria-label={social.label} className="flex h-10 w-10 items-center justify-center rounded-full border border-kraft/40 text-cream transition-colors active:bg-carbon-soft focus-visible:border-brick focus-visible:bg-carbon-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick">{social.icon}</a>)}
+              {socialLinks.map((social) => <a key={social.platform} href={social.href} data-editor-id={`global.footer.social.${social.platform}`} data-editor-type="footer-link" data-editor-label={social.label} data-editor-instance={`social.${social.platform}`} target="_blank" rel="noreferrer" aria-label={social.label} className="flex h-10 w-10 items-center justify-center rounded-full border border-kraft/40 text-cream transition-colors active:bg-carbon-soft focus-visible:border-brick focus-visible:bg-carbon-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"><SocialMediaIcon platform={social.platform} /></a>)}
               <Link href="/contact#contact-form" data-editor-id="global.footer.contact" data-editor-type="footer-link" data-editor-label="İletişim bağlantısı" data-editor-instance="footer-contact" aria-label="Bizimle iletişime geç" className="flex h-10 w-10 items-center justify-center rounded-full border border-kraft/40 text-cream transition-colors active:bg-carbon-soft focus-visible:border-brick focus-visible:bg-carbon-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"><Mail size={18} strokeWidth={1.65} /></Link>
             </div>
           </div>
