@@ -11,7 +11,7 @@ import type { Product } from "@/types/site";
 const READ_MODEL_TIMEOUT_MS = 1_800;
 const PROJECTION_TABLE_TIMEOUT_MS = 2_500;
 const DIRECT_LIVE_TIMEOUT_MS = 6_000;
-const CACHE_REVALIDATE_SECONDS = 600;
+const CACHE_REVALIDATE_SECONDS = 60;
 const EMPTY_DISCOUNTS: DiscountCampaignSettings = { discounts: [], coupons: [], campaigns: [] };
 let liveCatalogPromise: Promise<Product[]> | null = null;
 let lastKnownGoodCatalog: Product[] | null = null;
