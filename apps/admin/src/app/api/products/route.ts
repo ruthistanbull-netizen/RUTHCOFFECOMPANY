@@ -340,7 +340,7 @@ export async function GET(request: Request) {
       .filter(Boolean)
       .filter((collection, index, array) => array.findIndex((item) => String(item.id) === String(collection.id)) === index);
 
-    const variants = (product.product_variants || []).map((variant: any) => ({
+    const variants = (product.product_variants || []).filter((variant: any) => variant.is_active !== false).map((variant: any) => ({
       ...variant,
       image_url: variant.image_url || imageByVariant.get(String(variant.id)) || mainImage,
       variant_display_type: variant.options?.__displayType || "list",
