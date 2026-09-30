@@ -537,9 +537,23 @@ export async function PATCH(request: Request) {
     );
   }
 
+  let readModelWarning: string | null = null;
+  try {
+    // Make the product read-model reflect the verified write before we expire
+    // storefront caches. Otherwise the first fresh request can re-cache stale data.
+    await syncProductRelationReadModel(auth.supabase, id);
+  } catch (error) {
+    readModelWarning = error instanceof Error ? error.message : "Ürün read-model eşitlemesi gecikti.";
+    console.warn("[product-save] pre-revalidate read-model sync failed", {
+      productId: id,
+      message: readModelWarning,
+    });
+  }
+
   const revalidate = await revalidateWebsite({
     source: "admin-catalog.product_updated",
     productIds: [id],
+    immediate: true,
   });
 
   if (checkpoint) {
@@ -571,6 +585,7 @@ export async function PATCH(request: Request) {
       correlationId: checkpoint?.correlationId || null,
       durationMs,
       warning: warningText(
+        readModelWarning,
         safetyWarning,
         result.warning,
         revalidate.ok ? null : revalidate.message || "Site önbelleği yenilenemedi.",
@@ -630,6 +645,7 @@ export async function DELETE(request: Request) {
   const revalidate = await revalidateWebsite({
     source: "admin-catalog.product_archived",
     productIds: [id],
+    immediate: true,
   });
   scheduleRevisionFinish({
     supabase: auth.supabase,
@@ -722,6 +738,7 @@ export async function POST(request: Request) {
   const revalidate = await revalidateWebsite({
     source: "admin-catalog.product_restored",
     productIds: [id],
+    immediate: true,
   });
   scheduleRevisionFinish({
     supabase: auth.supabase,
