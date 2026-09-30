@@ -125,6 +125,7 @@ export {
   Toast,
   overlayDismissalCapabilities,
   useOverlayBehavior,
+  usePrefersReducedMotion,
 } from "./overlays";
 export type {
   DrawerProps,

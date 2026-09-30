@@ -36,10 +36,6 @@
   font-weight: inherit !important;
 }
 
-.rosta-studio-exact .grain {
-  position: relative;
-}
-
 .rosta-studio-exact .grain::after {
   content: "";
   position: absolute;
@@ -60,23 +56,49 @@
   to { transform: translate3d(0, 0, 0); }
 }
 
-.rosta-studio-exact .rosta-marquee {
-  will-change: transform;
-  backface-visibility: hidden;
-  transform: translateZ(0);
+/* Width changes stay within fixed media slots instead of relaying out the page. */
+.rosta-studio-exact .studio-media-slot {
+  contain: layout;
 }
+
+.rosta-studio-exact .studio-media-frame {
+  contain: layout paint;
+}
+
+.rosta-studio-exact .studio-drawer {
+  max-height: 100dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-bottom: var(--ruth-cookie-consent-height, 0px);
+}
+
+.rosta-studio-exact .studio-contact {
+  padding-bottom: max(
+    calc(5rem + env(safe-area-inset-bottom)),
+    calc(var(--ruth-cookie-consent-height, 0px) + max(12px, env(safe-area-inset-bottom)) + 1rem)
+  );
+}
+
+.rosta-studio-exact .studio-hero-arrow { transition-duration: 150ms !important; }
+.rosta-studio-exact .studio-contact-arrow { transition-duration: 300ms !important; }
+.rosta-studio-exact .studio-contact-underline { transition-duration: 500ms !important; }
 
 @media (max-width: 767px) {
   .rosta-studio-exact .grain::after {
     display: none;
   }
+}
 
-  .rosta-studio-exact .rosta-marquee {
-    contain: paint;
+@media (max-width: 359px) {
+  .rosta-studio-exact .studio-service h3 {
+    font-size: clamp(2.4rem, 11vw, 11rem) !important;
   }
+}
 
-  .rosta-studio-exact img {
-    transform: translateZ(0);
-    backface-visibility: hidden;
+@media (prefers-reduced-motion: reduce) {
+  html:has(.rosta-studio-exact) { scroll-behavior: auto; }
+  .rosta-studio-exact .rosta-marquee { animation: none !important; }
+  .rosta-studio-exact :is(.studio-hero-arrow, .studio-contact-arrow, .studio-contact-underline) {
+    transition-duration: 0ms !important;
   }
 }

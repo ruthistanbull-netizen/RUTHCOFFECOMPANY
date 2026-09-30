@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { SiteAnalytics } from "@/components/analytics/SiteAnalytics";
 import {
@@ -43,6 +43,7 @@ export function AnalyticsConsentGate({
   const [mobileViewport, setMobileViewport] = useState(false);
   const [runtimeDesktop, setRuntimeDesktop] = useState<ConsentBannerSettings>({});
   const [runtimeMobile, setRuntimeMobile] = useState<ConsentBannerSettings>({});
+  const bannerRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     try {
@@ -65,9 +66,31 @@ export function AnalyticsConsentGate({
   }, []);
 
   useEffect(() => {
+    const root = document.documentElement;
     const open = ready && (consent === null || editorPreview);
-    document.documentElement.classList.toggle("ruth-cookie-consent-open", open);
-    return () => document.documentElement.classList.remove("ruth-cookie-consent-open");
+    root.classList.toggle("ruth-cookie-consent-open", open);
+
+    let observer: ResizeObserver | undefined;
+    const banner = bannerRef.current;
+    if (open && banner) {
+      // Pages can reserve space for the owned banner without scanning its DOM.
+      const publishHeight = () => {
+        root.style.setProperty("--ruth-cookie-consent-height", `${Math.ceil(banner.getBoundingClientRect().height)}px`);
+      };
+      publishHeight();
+      if (typeof ResizeObserver !== "undefined") {
+        observer = new ResizeObserver(publishHeight);
+        observer.observe(banner);
+      }
+    } else {
+      root.style.removeProperty("--ruth-cookie-consent-height");
+    }
+
+    return () => {
+      observer?.disconnect();
+      root.classList.remove("ruth-cookie-consent-open");
+      root.style.removeProperty("--ruth-cookie-consent-height");
+    };
   }, [consent, editorPreview, ready]);
 
   useEffect(() => {
@@ -162,6 +185,7 @@ export function AnalyticsConsentGate({
     ready && (consent === null || editorPreview) && typeof document !== "undefined"
       ? createPortal(
           <aside
+            ref={bannerRef}
             data-editor-id="consent-banner"
             data-editor-type="consent-banner"
             data-editor-label="Çerez / Onay"

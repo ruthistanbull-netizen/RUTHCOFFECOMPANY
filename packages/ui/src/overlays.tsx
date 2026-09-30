@@ -197,7 +197,7 @@ export function useOverlayBehavior({
   };
 }
 
-function usePrefersReducedMotion() {
+export function usePrefersReducedMotion() {
   const [reduced, setReduced] = React.useState(false);
 
   React.useEffect(() => {
