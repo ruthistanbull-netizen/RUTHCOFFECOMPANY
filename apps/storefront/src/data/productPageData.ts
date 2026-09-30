@@ -163,11 +163,28 @@ export async function getProductPageWindow(slug: string): Promise<ProductPageWin
   if (!normalizedSlug) return { previous: null, current: null, next: null, source: "static" };
 
   try {
-    const rawWindow = await withTimeout(
-      cachedProductWindow(normalizedSlug),
-      WINDOW_BUDGET_MS,
-      "Ürün sayfası cache/read-model penceresi",
-    );
+    // Product detail is a read-your-writes surface: prefer the live projection on
+    // every request. The Next cache remains a resilience fallback, not the primary
+    // source, so panel edits appear immediately even if external revalidation is late.
+    let rawWindow: ProductPageWindow;
+    try {
+      rawWindow = await withTimeout(
+        fetchProductWindowReadModel(normalizedSlug),
+        READ_MODEL_TIMEOUT_MS,
+        "Ürün sayfası canlı read-model penceresi",
+      );
+    } catch (liveError) {
+      console.warn("Ürün sayfası canlı read-model sorgusu gecikti; cache fallback deneniyor.", {
+        slug: normalizedSlug,
+        error: liveError instanceof Error ? liveError.message : String(liveError),
+      });
+      rawWindow = await withTimeout(
+        cachedProductWindow(normalizedSlug),
+        WINDOW_BUDGET_MS,
+        "Ürün sayfası cache/read-model penceresi",
+      );
+    }
+
     const settings = await getCachedDiscountSettings();
     return {
       previous: applyDiscount(rawWindow.previous, settings),
