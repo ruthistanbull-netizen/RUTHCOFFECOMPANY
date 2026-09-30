@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
-import { revalidateStorefront } from "@/lib/storefront";
+import { revalidateWebsite } from "@/lib/websiteRevalidate";
+import { syncProductRelationReadModel } from "@/lib/productRevision";
 
 export const dynamic="force-dynamic";
 export const revalidate=0;
@@ -74,6 +75,17 @@ export async function PUT(request:Request){
   }).eq("id",productId);
   if(updateError) return NextResponse.json({ok:false,error:updateError.message},{status:400});
 
-  const storefront=await revalidateStorefront("rosta-admin-product-detail-update","catalog");
-  return NextResponse.json({ok:true,storefront});
+  let readModelWarning:string|null=null;
+  try{
+    await syncProductRelationReadModel(auth.supabase,productId);
+  }catch(error){
+    readModelWarning=error instanceof Error?error.message:"Ürün read-model eşitlemesi gecikti.";
+  }
+  const storefront=await revalidateWebsite({
+    source:"rosta-admin-product-detail-update",
+    scope:"catalog",
+    productIds:[productId],
+    immediate:true,
+  });
+  return NextResponse.json({ok:true,storefront,warning:readModelWarning});
 }
