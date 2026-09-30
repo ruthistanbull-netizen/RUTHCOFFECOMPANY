@@ -154,6 +154,7 @@ export async function POST(request: Request) {
   const revalidate = await revalidateWebsite({
     source: "admin-product-variant-media",
     productIds: [productId],
+    immediate: true,
   });
 
   return NextResponse.json(
