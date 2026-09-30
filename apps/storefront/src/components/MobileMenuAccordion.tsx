@@ -6,6 +6,7 @@ import { Plus } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { categoryHref } from "@/lib/catalogCategories";
+import { BusinessMenuLinks, partitionMenuLinks } from "@/components/navigation/BusinessMenuLinks";
 import {
   defaultThemeCustomizerSettings,
   type ThemeCustomizerSettings,
@@ -90,6 +91,8 @@ export function MobileMenuAccordion({
     });
   }, [categories, orderedCollectionItems, liveHeaderLinks]);
 
+  const { primary: primaryItems, business: businessItems } = partitionMenuLinks(items);
+
   useEffect(() => {
     const sync = () => {
       const target = document.querySelector<HTMLElement>(".ruth-zara-menu-surface");
@@ -166,7 +169,7 @@ export function MobileMenuAccordion({
             z-index:2;
             overflow-x:hidden;
             overflow-y:auto;
-            padding:0 0 calc(42px + env(safe-area-inset-bottom));
+            padding:0 0 calc(max(42px,var(--ruth-cookie-consent-height,0px) + 28px) + env(safe-area-inset-bottom));
             background:var(--rosta-carbon)!important;
             color:var(--ruth-color-text-primary);
             -webkit-overflow-scrolling:touch;
@@ -313,7 +316,7 @@ export function MobileMenuAccordion({
       `}</style>
 
       <div className="ruth-mobile-link-accordion__links">
-        {items.map((item) => {
+        {primaryItems.map((item) => {
           const children = item.children || [];
           const open = Boolean(expanded[item.id]);
           const panelId = `ruth-mobile-submenu-${item.id}`;
@@ -377,6 +380,12 @@ export function MobileMenuAccordion({
           );
         })}
       </div>
+
+      <BusinessMenuLinks
+        items={businessItems}
+        className="ruth-menu-business--mobile"
+        linkClassName="ruth-mobile-link-accordion__title"
+      />
 
       {photoCollections.length || liveMenuMediaCards.length ? (
         <div className="ruth-mobile-photo-collections" aria-label="Menü medyaları">

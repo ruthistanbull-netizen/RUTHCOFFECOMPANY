@@ -20,6 +20,7 @@ import {
   type ThemeNavItem,
 } from "@/lib/themeCustomizer";
 import { categoryHref } from "@/lib/catalogCategories";
+import { BusinessMenuLinks, partitionMenuLinks } from "@/components/navigation/BusinessMenuLinks";
 import type { Category, Collection } from "@/types/site";
 
 type NavChild = { label: string; path: string };
@@ -315,17 +316,20 @@ function MainMenuTabs({
 
 function DesktopMenuAccordion({
   items,
+  businessItems,
   openId,
   setOpenId,
   closeMenu,
 }: {
   items: NavItem[];
+  businessItems: NavItem[];
   openId: string | null;
   setOpenId: (id: string | null) => void;
   closeMenu: () => void;
 }) {
   return (
     <nav className="ruth-zara-desktop-accordion" aria-label="Ana menü">
+      <div className="ruth-zara-desktop-primary">
       {items.map((item) => {
         const children = item.children || [];
         const expanded = children.length > 0 && item.id === openId;
@@ -388,6 +392,13 @@ function DesktopMenuAccordion({
           </div>
         );
       })}
+      </div>
+      <BusinessMenuLinks
+        items={businessItems}
+        onNavigate={closeMenu}
+        linkClassName="ruth-zara-desktop-link"
+        className="ruth-menu-business--desktop"
+      />
     </nav>
   );
 }
@@ -537,10 +548,15 @@ export function Header({
     });
   }, [categoryLinks, collectionLinks, liveHeaderLinks]);
 
+  const { primary: primaryMenuItems, business: businessMenuItems } = useMemo(
+    () => partitionMenuLinks(menuItems),
+    [menuItems],
+  );
+
   const activeItem =
-    menuItems.find((item) => item.id === activeMenuId) ||
-    menuItems.find((item) => item.children?.length) ||
-    menuItems[0] ||
+    primaryMenuItems.find((item) => item.id === activeMenuId) ||
+    primaryMenuItems.find((item) => item.children?.length) ||
+    primaryMenuItems[0] ||
     null;
 
   useEffect(() => {
@@ -598,11 +614,13 @@ export function Header({
       setDesktopOpenMenuId(null);
       return;
     }
-    const firstWithChildren = menuItems.find((item) => item.children?.length);
+    const firstWithChildren = primaryMenuItems.find((item) => item.children?.length);
     setActiveMenuId(
-      (current) => current || firstWithChildren?.id || menuItems[0]?.id || null,
+      (current) => primaryMenuItems.some((item) => item.id === current)
+        ? current
+        : firstWithChildren?.id || primaryMenuItems[0]?.id || null,
     );
-  }, [menuItems, menuOpen]);
+  }, [primaryMenuItems, menuOpen]);
 
   useEffect(() => {
     if (!menuOpen && !searchOpen) return;
@@ -652,10 +670,16 @@ export function Header({
         .site-app-shell{--announcement-height:0px!important}.has-announcement-bar{padding-top:0!important}.ruth-zara-header{height:64px;color:var(--rosta-cream);background:var(--rosta-carbon);border-bottom:1px solid color-mix(in srgb,var(--rosta-kraft) 24%,transparent);transition:background-color 450ms ease-in-out,border-color 450ms ease-in-out,box-shadow 450ms ease-in-out,backdrop-filter 450ms ease-in-out}.ruth-zara-header.is-scrolled{background:color-mix(in srgb,var(--rosta-carbon) 96%,transparent);border-color:color-mix(in srgb,var(--rosta-kraft) 42%,transparent);box-shadow:0 2px 18px color-mix(in srgb,var(--rosta-carbon) 44%,transparent);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}.ruth-zara-header.is-contrast{background:transparent;border-color:transparent;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}.ruth-zara-header.is-home{background:transparent!important;border-color:transparent!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}.ruth-zara-header.is-contrast .ruth-zara-header-inner{color:var(--ruth-home-header-ink,var(--rosta-cream));mix-blend-mode:normal}.ruth-zara-header.is-contrast .header-wordmark{filter:brightness(0) invert(var(--ruth-home-header-invert,1))}.ruth-zara-header-inner{height:64px;padding-inline:16px}.ruth-zara-header-inner :where(button,a){color:inherit}.ruth-zara-header:not(.is-contrast) .ruth-zara-header-actions,.ruth-zara-header:not(.is-contrast) .ruth-zara-header-actions :where(button,a,svg){color:var(--rosta-cream)!important;stroke:currentColor!important;opacity:1!important}.ruth-zara-header.is-contrast .ruth-zara-header-actions button[aria-label="Ara"],.ruth-zara-header.is-contrast .ruth-zara-header-actions button[aria-label="Ara"] svg{color:var(--ruth-home-header-search-ink,var(--rosta-cream))!important;stroke:currentColor!important;opacity:1!important}.ruth-zara-header.is-contrast .ruth-zara-header-actions button[aria-label="Hesap menüsü"],.ruth-zara-header.is-contrast .ruth-zara-header-actions button[aria-label="Hesap menüsü"] svg{color:var(--ruth-home-header-account-ink,var(--rosta-cream))!important;stroke:currentColor!important;opacity:1!important}.ruth-zara-header.is-contrast .ruth-zara-header-actions button[aria-label^="Sepet"],.ruth-zara-header.is-contrast .ruth-zara-header-actions button[aria-label^="Sepet"] svg{color:var(--ruth-home-header-cart-ink,var(--rosta-cream))!important;stroke:currentColor!important;opacity:1!important}.header-wordmark-link{align-items:center}.header-wordmark{display:block;width:110px;height:auto;max-height:54px;filter:brightness(0) invert(1)}.ruth-zara-menu-slot{display:block;width:48px;height:64px}.ruth-zara-menu-button{display:flex;width:48px;height:64px;align-items:center;justify-content:flex-start;color:var(--rosta-cream);-webkit-tap-highlight-color:transparent}.ruth-zara-menu-button--contrast{color:var(--ruth-home-header-menu-ink,var(--ruth-home-header-ink,var(--rosta-cream)));mix-blend-mode:normal}.ruth-zara-menu-button--menu-open{color:var(--ruth-menu-control-color)!important;mix-blend-mode:normal!important}.ruth-zara-hamburger{position:relative;display:flex;width:32px;height:12px;flex-direction:column;justify-content:space-between}.site-app-shell .ruth-zara-menu-button .ruth-zara-hamburger>span{display:block!important}.site-app-shell .ruth-zara-menu-button .ruth-zara-hamburger::before,.site-app-shell .ruth-zara-menu-button .ruth-zara-hamburger::after{content:none!important;display:none!important}.ruth-zara-hamburger__line{display:block;width:100%;height:1px;background:currentColor;transform-origin:center;transition:transform 500ms ease-in-out}.ruth-zara-hamburger[data-open=true] .ruth-zara-hamburger__line--top{transform:translateY(5.5px) rotate(45deg)}.ruth-zara-hamburger[data-open=true] .ruth-zara-hamburger__line--bottom{transform:translateY(-5.5px) rotate(-45deg)}
         @media(min-width:1024px){.ruth-zara-menu-button{width:64px!important}.ruth-zara-menu-slot{width:64px!important}.ruth-zara-hamburger{width:48px!important;height:18px!important}.ruth-zara-hamburger[data-open=true] .ruth-zara-hamburger__line--top{transform:translateY(8.5px) rotate(45deg)}.ruth-zara-hamburger[data-open=true] .ruth-zara-hamburger__line--bottom{transform:translateY(-8.5px) rotate(-45deg)}}
         .ruth-zara-menu-surface{--ruth-menu-left:clamp(232px,calc(3.77vw + 200px),274px);--ruth-menu-right:clamp(272px,calc(5.75vw + 194px),304px);--ink:var(--rosta-cream);--cream:var(--rosta-carbon);--gold:var(--rosta-brick-b);--gold-dark:var(--rosta-brick-b);background:var(--rosta-carbon);color:var(--rosta-cream);font-family:var(--font-body)}.ruth-zara-menu-content{position:relative;width:100%;height:100%}.ruth-zara-menu-logo{position:absolute;top:15px;left:var(--ruth-menu-left);z-index:2;display:block;width:clamp(199px,14.6vw,281px);height:auto;aspect-ratio:3175/1343;color:var(--ink)}.ruth-zara-menu-logo svg{display:block;width:100%;height:100%;overflow:visible;color:currentColor;shape-rendering:geometricPrecision}.ruth-zara-menu-actions{position:absolute;top:28px;right:32px;z-index:3;width:135px;color:var(--ink);font-size:13px;font-weight:400;line-height:22px;text-align:right;text-transform:uppercase}.ruth-zara-menu-actions__search{display:flex;width:135px;height:28px;align-items:flex-start;justify-content:flex-end;padding-bottom:5px;border-bottom:1px solid currentColor}.ruth-zara-menu-actions__links{display:flex;margin-top:104px;flex-direction:column;align-items:flex-end}.ruth-zara-menu-actions__links>*{display:flex;min-height:32px;align-items:center;justify-content:flex-end;padding-block:5px}
-        .ruth-zara-menu-desktop{position:absolute;top:175px;right:var(--ruth-menu-right);bottom:48px;left:calc(var(--ruth-menu-left) - 20px);display:grid;min-height:0;grid-template-columns:minmax(280px,360px) minmax(0,1fr);column-gap:clamp(28px,4vw,64px);overflow:hidden}.ruth-zara-desktop-accordion{min-width:0;overflow-y:auto;padding:0 8px 20px 20px;scrollbar-width:thin;scrollbar-color:transparent transparent}.ruth-zara-desktop-item{width:100%}.ruth-zara-desktop-row{display:grid;grid-template-columns:minmax(0,1fr) 34px;align-items:start;column-gap:8px;min-height:31px}.ruth-zara-desktop-link{display:block;min-width:0;color:var(--ink);font-family:var(--font-heading);font-size:24px;font-weight:900;line-height:25px;letter-spacing:-.04em;text-decoration:none;text-transform:uppercase;transition:color 180ms ease}.ruth-zara-desktop-toggle{display:grid;width:34px;height:31px;place-items:center;border:0;background:transparent;color:var(--ink);font-family:var(--font-body)}.ruth-zara-desktop-toggle span{display:block;font-size:24px;font-weight:400;line-height:24px;transform:translateY(-1px)}.ruth-zara-desktop-children{display:flex;overflow:hidden;flex-direction:column;padding:5px 38px 15px 16px}.ruth-zara-desktop-child{display:block;padding:4px 0;color:var(--ink);font-family:var(--font-body);font-size:12px;font-weight:400;line-height:18px;text-decoration:none;text-transform:uppercase;transition:color 180ms ease}.ruth-zara-main-tabs{position:relative;min-width:0;padding-left:20px}.ruth-zara-main-tab{position:relative;display:flex;width:max-content;max-width:100%;min-height:31px;align-items:flex-start;border:0;background:transparent;color:var(--ink);font-family:var(--font-heading);font-size:24px;font-weight:900;line-height:25px;letter-spacing:-.04em;text-align:left;text-transform:uppercase}.ruth-zara-main-tab__dot{position:absolute;top:10.5px;left:-20px;width:4px;height:4px;border-radius:50%;background:var(--gold)}.ruth-zara-menu-copy{min-width:0;overflow-y:auto;padding-right:8px;scrollbar-width:thin;scrollbar-color:transparent transparent}.ruth-zara-menu-copy__title{display:flex;min-height:36px;align-items:flex-start;color:var(--gold-dark);font-size:13px;font-weight:500;line-height:20px;text-transform:uppercase}.ruth-zara-menu-copy__group{display:grid;margin-top:32px;grid-template-columns:clamp(80px,8.8vw,120px) minmax(0,1fr);column-gap:clamp(12px,1.75vw,24px)}.ruth-zara-menu-copy__index{padding-top:8px;color:var(--gold-dark);font-size:11px;font-weight:400;line-height:16px;text-transform:uppercase}.ruth-zara-menu-copy__links{display:flex;min-width:0;flex-direction:column}.ruth-zara-menu-copy__link{display:flex;min-height:36px;align-items:center;padding:8px;color:var(--ink);font-size:13px;font-weight:400;line-height:20px;text-transform:uppercase;transition:color 180ms ease}
+        .ruth-zara-menu-desktop{position:absolute;top:175px;right:var(--ruth-menu-right);bottom:48px;left:calc(var(--ruth-menu-left) - 20px);display:grid;min-height:0;grid-template-columns:minmax(280px,360px) minmax(0,1fr);column-gap:clamp(28px,4vw,64px);overflow:hidden}.ruth-zara-desktop-accordion{display:flex;flex-direction:column;min-width:0;overflow-y:auto;padding:0 8px max(20px,var(--ruth-cookie-consent-height,0px)) 20px;scrollbar-width:thin;scrollbar-color:transparent transparent}.ruth-zara-desktop-item{width:100%}.ruth-zara-desktop-row{display:grid;grid-template-columns:minmax(0,1fr) 34px;align-items:start;column-gap:8px;min-height:31px}.ruth-zara-desktop-link{display:block;min-width:0;color:var(--ink);font-family:var(--font-heading);font-size:24px;font-weight:900;line-height:25px;letter-spacing:-.04em;text-decoration:none;text-transform:uppercase;transition:color 180ms ease}.ruth-zara-desktop-toggle{display:grid;width:34px;height:31px;place-items:center;border:0;background:transparent;color:var(--ink);font-family:var(--font-body)}.ruth-zara-desktop-toggle span{display:block;font-size:24px;font-weight:400;line-height:24px;transform:translateY(-1px)}.ruth-zara-desktop-children{display:flex;overflow:hidden;flex-direction:column;padding:5px 38px 15px 16px}.ruth-zara-desktop-child{display:block;padding:4px 0;color:var(--ink);font-family:var(--font-body);font-size:12px;font-weight:400;line-height:18px;text-decoration:none;text-transform:uppercase;transition:color 180ms ease}.ruth-zara-main-tabs{position:relative;min-width:0;padding-left:20px}.ruth-zara-main-tab{position:relative;display:flex;width:max-content;max-width:100%;min-height:31px;align-items:flex-start;border:0;background:transparent;color:var(--ink);font-family:var(--font-heading);font-size:24px;font-weight:900;line-height:25px;letter-spacing:-.04em;text-align:left;text-transform:uppercase}.ruth-zara-main-tab__dot{position:absolute;top:10.5px;left:-20px;width:4px;height:4px;border-radius:50%;background:var(--gold)}.ruth-zara-menu-copy{min-width:0;overflow-y:auto;padding-right:8px;scrollbar-width:thin;scrollbar-color:transparent transparent}.ruth-zara-menu-copy__title{display:flex;min-height:36px;align-items:flex-start;color:var(--gold-dark);font-size:13px;font-weight:500;line-height:20px;text-transform:uppercase}.ruth-zara-menu-copy__group{display:grid;margin-top:32px;grid-template-columns:clamp(80px,8.8vw,120px) minmax(0,1fr);column-gap:clamp(12px,1.75vw,24px)}.ruth-zara-menu-copy__index{padding-top:8px;color:var(--gold-dark);font-size:11px;font-weight:400;line-height:16px;text-transform:uppercase}.ruth-zara-menu-copy__links{display:flex;min-width:0;flex-direction:column}.ruth-zara-menu-copy__link{display:flex;min-height:36px;align-items:center;padding:8px;color:var(--ink);font-size:13px;font-weight:400;line-height:20px;text-transform:uppercase;transition:color 180ms ease}
         .ruth-menu-collection-rail{display:flex;min-width:0;cursor:grab;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch}.ruth-menu-collection-rail::-webkit-scrollbar{display:none}.ruth-menu-collection-rail[data-dragging=true]{cursor:grabbing;user-select:none}.ruth-menu-collection-rail--desktop{height:max-content;gap:6px;padding:0 8px 8px}.ruth-menu-collection-card{display:block;width:clamp(34px,calc(14.7vw - 166px),116px);min-width:clamp(34px,calc(14.7vw - 166px),116px);color:var(--ink);text-decoration:none}.ruth-menu-collection-card__media{display:block;width:100%;aspect-ratio:2/3;overflow:hidden;background:var(--rosta-cream)}.ruth-menu-collection-card__media img,.ruth-menu-collection-card__media video{display:block;width:100%;height:100%;object-fit:cover;object-position:center;transition:transform 450ms ease-in-out;pointer-events:none}.ruth-menu-collection-card__label{display:block;margin-top:4px;font-size:clamp(8px,calc(.36vw + 3.1px),10px);font-weight:400;line-height:clamp(11px,calc(.695vw + 1.5px),14.87px);letter-spacing:clamp(.25px,calc(.088vw - .95px),.74px);overflow-wrap:anywhere;text-transform:uppercase}.ruth-zara-menu-mobile,.ruth-zara-menu-mobile-actions{display:none}
         @media(min-width:1024px){.ruth-zara-header{height:92px}.ruth-zara-header-inner{height:92px;padding-inline:32px}.header-wordmark{width:145px;max-height:72px}.ruth-zara-menu-slot{width:80px;height:92px}.ruth-zara-menu-button{left:36px!important;width:64px!important;height:92px}.ruth-zara-hamburger{width:64px!important;height:16px!important}.ruth-zara-hamburger__line{height:1px!important}.ruth-zara-hamburger[data-open=true] .ruth-zara-hamburger__line--top{transform:translateY(7.5px) rotate(45deg)}.ruth-zara-hamburger[data-open=true] .ruth-zara-hamburger__line--bottom{transform:translateY(-7.5px) rotate(-45deg)}}
-        @media(max-width:1023px){.ruth-zara-menu-actions,.ruth-zara-menu-desktop{display:none}.ruth-zara-menu-logo{top:70px;left:24px;width:clamp(224px,68vw,292px);height:auto;aspect-ratio:3175/1343;min-width:0;min-height:0;max-width:292px;max-height:none}.ruth-zara-menu-mobile-actions{position:absolute;top:8px;right:8px;z-index:3;display:flex;height:48px;align-items:center}.ruth-zara-menu-mobile-actions>*{display:grid;width:44px;height:44px;place-items:center}.ruth-zara-menu-mobile{display:block;height:100%;overflow-y:auto;padding:174px 0 calc(42px + env(safe-area-inset-bottom))}.ruth-zara-menu-mobile .ruth-zara-main-tabs{padding-inline:36px 18px}.ruth-zara-menu-mobile .ruth-zara-main-tab{min-height:31px;font-size:24px;line-height:25px}.ruth-zara-menu-mobile .ruth-zara-main-tab__dot{left:-20px}.ruth-menu-collection-rail--mobile{gap:8px;margin-top:34px;padding-inline:16px}.ruth-menu-collection-rail--mobile .ruth-menu-collection-card{width:92px;min-width:92px}.ruth-zara-menu-mobile-panel{margin-top:58px;padding-inline:16px}.ruth-zara-menu-mobile-panel .ruth-zara-menu-copy__title{min-height:auto;letter-spacing:.26em}.ruth-zara-menu-mobile-panel .ruth-zara-menu-copy__group{margin-top:32px;grid-template-columns:120px minmax(0,1fr);column-gap:18px}.ruth-zara-menu-mobile-panel .ruth-zara-menu-copy__link{padding-inline:0}}
+        @media(max-width:1023px){.ruth-zara-menu-actions,.ruth-zara-menu-desktop{display:none}.ruth-zara-menu-logo{top:70px;left:24px;width:clamp(224px,68vw,292px);height:auto;aspect-ratio:3175/1343;min-width:0;min-height:0;max-width:292px;max-height:none}.ruth-zara-menu-mobile-actions{position:absolute;top:8px;right:8px;z-index:3;display:flex;height:48px;align-items:center}.ruth-zara-menu-mobile-actions>*{display:grid;width:44px;height:44px;place-items:center}.ruth-zara-menu-mobile{display:block;height:100%;overflow-y:auto;padding:174px 0 calc(max(42px,var(--ruth-cookie-consent-height,0px) + 28px) + env(safe-area-inset-bottom))}.ruth-zara-menu-mobile .ruth-zara-main-tabs{padding-inline:36px 18px}.ruth-zara-menu-mobile .ruth-zara-main-tab{min-height:31px;font-size:24px;line-height:25px}.ruth-zara-menu-mobile .ruth-zara-main-tab__dot{left:-20px}.ruth-menu-collection-rail--mobile{gap:8px;margin-top:34px;padding-inline:16px}.ruth-menu-collection-rail--mobile .ruth-menu-collection-card{width:92px;min-width:92px}.ruth-zara-menu-mobile-panel{margin-top:58px;padding-inline:16px}.ruth-zara-menu-mobile-panel .ruth-zara-menu-copy__title{min-height:auto;letter-spacing:.26em}.ruth-zara-menu-mobile-panel .ruth-zara-menu-copy__group{margin-top:32px;grid-template-columns:120px minmax(0,1fr);column-gap:18px}.ruth-zara-menu-mobile-panel .ruth-zara-menu-copy__link{padding-inline:0}}
+        .ruth-zara-desktop-primary{flex:none}
+        .ruth-menu-business{flex:none}
+        .ruth-menu-business--desktop{margin-top:auto;padding-top:40px}
+        .ruth-menu-business--mobile{margin-top:40px;padding-inline:36px 18px}
+        .ruth-zara-menu-surface .ruth-menu-business__heading{margin:0 0 8px;color:var(--ink);opacity:.6;font-family:var(--font-body);font-size:11px;font-weight:500;line-height:18px;letter-spacing:.14em;text-transform:uppercase}
+        .ruth-menu-business a{display:flex;min-height:44px;align-items:center}
         @media(hover:hover) and (pointer:fine){.ruth-zara-desktop-accordion:hover{scrollbar-color:color-mix(in srgb,var(--gold) 45%,transparent) transparent}.ruth-zara-desktop-link:hover{color:var(--gold)}.ruth-zara-desktop-child:hover{color:var(--gold)}.ruth-zara-menu-copy:hover{scrollbar-color:color-mix(in srgb,var(--gold) 48%,transparent) transparent}.ruth-zara-menu-copy__link:hover{color:var(--gold)}.ruth-menu-collection-card:hover .ruth-menu-collection-card__media img,.ruth-menu-collection-card:hover .ruth-menu-collection-card__media video{transform:scale(1.025)}}
         .ruth-zara-header :where(button,a):focus-visible,.ruth-zara-menu-surface :where(button,a):focus-visible{outline:2px solid var(--rosta-brick-b);outline-offset:2px}
         @media(forced-colors:active){.ruth-zara-header :where(button,a):focus-visible,.ruth-zara-menu-surface :where(button,a):focus-visible{outline:2px solid Highlight}}
@@ -845,7 +869,8 @@ export function Header({
 
               <div className="ruth-zara-menu-desktop">
                 <DesktopMenuAccordion
-                  items={menuItems}
+                  items={primaryMenuItems}
+                  businessItems={businessMenuItems}
                   openId={desktopOpenMenuId}
                   setOpenId={setDesktopOpenMenuId}
                   closeMenu={closeMenu}
@@ -860,11 +885,17 @@ export function Header({
 
               <nav className="ruth-zara-menu-mobile" aria-label="Mobil menü">
                 <MainMenuTabs
-                  items={menuItems}
+                  items={primaryMenuItems}
                   activeId={activeItem?.id || null}
                   setActiveId={setActiveMenuId}
                   panelId="ruth-zara-active-panel-mobile"
                   layoutScope="mobile"
+                />
+                <BusinessMenuLinks
+                  items={businessMenuItems}
+                  onNavigate={closeMenu}
+                  linkClassName="ruth-zara-desktop-link"
+                  className="ruth-menu-business--mobile"
                 />
                 <PhotoCollectionsRail
                   collections={collections}
