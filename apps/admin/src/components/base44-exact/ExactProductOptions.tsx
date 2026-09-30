@@ -264,7 +264,7 @@ export function ExactProductOptions() {
     <div className="mx-auto w-full max-w-[1240px] px-4 py-4 md:px-6 md:py-6">
       <ExactPageHeader
         title="Ürün Seçenekleri"
-        subtitle="Ana seçenek gruplarını ve ürün formundaki seçim listelerini tek yerden yönet."
+        subtitle="Kahve Türü, Kavrum Profili, Paket / Gramaj ve diğer ana seçenekleri tek yerden yönet."
         actions={
           <>
             <ExactButton
@@ -303,10 +303,10 @@ export function ExactProductOptions() {
 
       <div className="mb-4 rounded-[16px] border border-border-subtle bg-surface-secondary px-4 py-3">
         <p className="ruth-type-body text-main">
-          Ana seçenek gruplarını ve ürün formundaki sabit seçim listelerini buradan yönetebilirsin.
+          Aşağıdaki kartların her biri bir ana seçenektir. Kartın içindeki satırlar o ana seçeneğin alt seçenekleridir.
         </p>
         <p className="ruth-type-caption mt-1 text-muted">
-          Ana seçenek ekleyebilir, silebilir ve alt seçeneklerini düzenleyebilirsin. Buradan silinen ana seçenek mevcut ürünlerdeki kayıtlı varyantları otomatik silmez.
+          Örneğin Kahve Türü ana seçeneğinin altında Arabica ve Robusta; Kavrum Profili altında Açık, Orta ve Koyu Kavrum bulunur.
           {updatedAt ? ` Son kayıt: ${new Date(updatedAt).toLocaleString("tr-TR")}.` : ""}
         </p>
         {message ? <p className="ruth-type-caption mt-2 font-medium text-accent">{message}</p> : null}
@@ -319,214 +319,202 @@ export function ExactProductOptions() {
           ))}
         </div>
       ) : (
-        <div className="space-y-4">
-          <section className="rounded-[20px] border border-border-subtle bg-surface-primary p-4 shadow-card">
-            <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
-              <div>
-                <h2 className="text-base font-semibold text-main">Ana Seçenekler</h2>
-                <p className="ruth-type-caption mt-1 text-subtle">
-                  Renk, beden, gramaj, öğütme gibi ana seçenek gruplarını ve değerlerini yönet.
-                </p>
-              </div>
-              <span className="ruth-type-caption rounded-full bg-surface-tertiary px-2 py-1 text-subtle">
-                {mainGroups.length} grup
-              </span>
+        <section className="rounded-[20px] border border-border-subtle bg-surface-primary p-4 shadow-card">
+          <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h2 className="text-base font-semibold text-main">Ana Seçenekler</h2>
+              <p className="ruth-type-caption mt-1 text-subtle">
+                Ürün formunda kullanılan ana seçenekler ve bunların alt seçenekleri.
+              </p>
             </div>
-
-            {mainGroups.length ? (
-              <div className="grid gap-3 lg:grid-cols-2">
-                {mainGroups.map((group) => (
-                  <div
-                    key={group.id}
-                    className="rounded-[16px] border border-border-subtle bg-surface-secondary p-3"
-                  >
-                    <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_150px_auto]">
-                      <label>
-                        <span className="ruth-type-label mb-1.5 block text-subtle">Ana seçenek adı</span>
-                        <input
-                          value={group.name}
-                          onChange={(event) => patchMainGroup(group.id, { name: event.target.value })}
-                          className={exactFormInputClass}
-                          placeholder="Örn. Renk, Beden, Gramaj"
-                        />
-                      </label>
-                      <label>
-                        <span className="ruth-type-label mb-1.5 block text-subtle">Gösterim</span>
-                        <select
-                          value={group.displayType}
-                          onChange={(event) =>
-                            patchMainGroup(group.id, {
-                              displayType: event.target.value === "color" ? "color" : "list",
-                            })
-                          }
-                          className={exactFormInputClass}
-                        >
-                          <option value="list">İsim olarak</option>
-                          <option value="color">Renk olarak</option>
-                        </select>
-                      </label>
-                      <div className="pt-[23px]">
-                        <ExactIconButton
-                          icon={Trash2}
-                          label="Ana seçeneği sil"
-                          variant="ghost"
-                          size="icon-sm"
-                          onClick={() => removeMainGroup(group.id)}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="mt-3 space-y-2">
-                      {group.values.map((value) => (
-                        <div key={value.id} className="flex items-center gap-2">
-                          {group.displayType === "color" ? (
-                            <input
-                              type="color"
-                              value={value.color || "#111111"}
-                              onChange={(event) =>
-                                patchMainValue(group.id, value.id, { color: event.target.value })
-                              }
-                              className="h-10 w-11 shrink-0 cursor-pointer rounded-[10px] border border-border-subtle bg-transparent p-0"
-                              aria-label={`${value.label || "Seçenek"} rengi`}
-                            />
-                          ) : null}
-                          <input
-                            value={value.label}
-                            onChange={(event) =>
-                              patchMainValue(group.id, value.id, { label: event.target.value })
-                            }
-                            className={`${exactFormInputClass} min-w-0 flex-1`}
-                            placeholder="Seçenek değeri"
-                          />
-                          <ExactIconButton
-                            icon={Trash2}
-                            label="Alt seçeneği sil"
-                            variant="ghost"
-                            size="icon-sm"
-                            onClick={() => removeMainValue(group.id, value.id)}
-                            disabled={group.values.length <= 1}
-                          />
-                        </div>
-                      ))}
-                    </div>
-
-                    <ExactButton
-                      type="button"
-                      variant="secondary"
-                      size="sm"
-                      className="mt-3 w-full"
-                      onClick={() => addMainValue(group.id)}
-                    >
-                      <Plus className="h-4 w-4" />
-                      Alt seçenek ekle
-                    </ExactButton>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="rounded-[14px] border border-dashed border-border-subtle bg-surface-secondary p-6 text-center">
-                <p className="ruth-type-body font-medium text-main">Henüz ana seçenek yok.</p>
-                <p className="ruth-type-caption mt-1 text-muted">
-                  Renk, beden, gramaj veya öğütme gibi bir grup ekleyebilirsin.
-                </p>
-                <ExactButton type="button" size="sm" className="mt-3" onClick={addMainGroup}>
-                  <Plus className="h-4 w-4" />
-                  Ana seçenek ekle
-                </ExactButton>
-              </div>
-            )}
-          </section>
+            <span className="ruth-type-caption rounded-full bg-surface-tertiary px-2 py-1 text-subtle">
+              {groups.length + mainGroups.length} grup
+            </span>
+          </div>
 
           <div className="grid items-start gap-4 lg:grid-cols-2">
             {groups.map((group) => (
-            <section
-              key={group.field}
-              className="rounded-[20px] border border-border-subtle bg-surface-primary p-4 shadow-card"
-            >
-              <div className="mb-4 flex items-start justify-between gap-3">
-                <div>
-                  <h2 className="text-base font-semibold text-main">{group.title}</h2>
-                  <p className="ruth-type-caption mt-1 text-subtle">
-                    {group.template
-                      ? "Seçenek adı ürün formunda görünür; şablon metni ürüne kaydedilir."
-                      : "Buradaki değerler ürün formundaki açılır listede görünür."}
-                  </p>
-                </div>
-                <span className="ruth-type-caption shrink-0 rounded-full bg-surface-tertiary px-2 py-1 text-subtle">
-                  {group.options.length}
-                </span>
-              </div>
-
-              <div className="space-y-2">
-                {group.options.map((option) => (
-                  <div
-                    key={option.id}
-                    className="rounded-[14px] border border-border-subtle bg-surface-secondary p-3"
-                  >
-                    <div className="flex items-start gap-2">
-                      <label className="min-w-0 flex-1">
-                        <span className="ruth-type-label mb-1.5 block text-subtle">
-                          Seçenek adı
-                        </span>
-                        <input
-                          value={option.label}
-                          onChange={(event) => {
-                            const label = event.target.value;
-                            patchOption(
-                              group.field,
-                              option.id,
-                              group.template ? { label } : { label, value: label },
-                            );
-                          }}
-                          className={exactFormInputClass}
-                          placeholder="Seçenek adı"
-                        />
-                      </label>
-                      <div className="pt-[23px]">
-                        <ExactIconButton
-                          icon={Trash2}
-                          label="Seçeneği kaldır"
-                          variant="ghost"
-                          size="icon-sm"
-                          onClick={() => removeOption(group.field, option.id)}
-                          disabled={group.options.length <= 1}
-                        />
-                      </div>
-                    </div>
-
-                    {group.template ? (
-                      <label className="mt-3 block">
-                        <span className="ruth-type-label mb-1.5 block text-subtle">
-                          Şablon metni
-                        </span>
-                        <textarea
-                          value={option.value}
-                          onChange={(event) =>
-                            patchOption(group.field, option.id, { value: event.target.value })
-                          }
-                          className={`${exactFormInputClass} min-h-24 resize-y`}
-                          placeholder="Bu seçenek seçildiğinde ürüne kaydedilecek metin"
-                        />
-                      </label>
-                    ) : null}
-                  </div>
-                ))}
-              </div>
-
-              <ExactButton
-                type="button"
-                variant="secondary"
-                size="sm"
-                className="mt-3 w-full"
-                onClick={() => addOption(group)}
+              <div
+                key={group.field}
+                className="rounded-[16px] border border-border-subtle bg-surface-secondary p-3"
               >
-                <Plus className="h-4 w-4" />
-                Yeni seçenek ekle
-              </ExactButton>
-            </section>
+                <div className="mb-4 flex items-start justify-between gap-3">
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="text-base font-semibold text-main">{group.title}</h3>
+                      <span className="ruth-type-caption rounded-full bg-surface-primary px-2 py-0.5 text-subtle">
+                        Ana seçenek
+                      </span>
+                    </div>
+                    <p className="ruth-type-caption mt-1 text-subtle">
+                      {group.template
+                        ? "Bu ana seçeneğin alt seçeneklerinde ad ve şablon metni yönetilir."
+                        : "Aşağıdaki değerler bu ana seçeneğin alt seçenekleridir."}
+                    </p>
+                  </div>
+                  <span className="ruth-type-caption shrink-0 rounded-full bg-surface-primary px-2 py-1 text-subtle">
+                    {group.options.length}
+                  </span>
+                </div>
+
+                <div className="space-y-2">
+                  {group.options.map((option) => (
+                    <div
+                      key={option.id}
+                      className="rounded-[14px] border border-border-subtle bg-surface-primary p-3"
+                    >
+                      <div className="flex items-start gap-2">
+                        <label className="min-w-0 flex-1">
+                          <span className="ruth-type-label mb-1.5 block text-subtle">
+                            Alt seçenek
+                          </span>
+                          <input
+                            value={option.label}
+                            onChange={(event) => {
+                              const label = event.target.value;
+                              patchOption(
+                                group.field,
+                                option.id,
+                                group.template ? { label } : { label, value: label },
+                              );
+                            }}
+                            className={exactFormInputClass}
+                            placeholder="Seçenek adı"
+                          />
+                        </label>
+                        <div className="pt-[23px]">
+                          <ExactIconButton
+                            icon={Trash2}
+                            label="Alt seçeneği kaldır"
+                            variant="ghost"
+                            size="icon-sm"
+                            onClick={() => removeOption(group.field, option.id)}
+                            disabled={group.options.length <= 1}
+                          />
+                        </div>
+                      </div>
+
+                      {group.template ? (
+                        <label className="mt-3 block">
+                          <span className="ruth-type-label mb-1.5 block text-subtle">
+                            Şablon metni
+                          </span>
+                          <textarea
+                            value={option.value}
+                            onChange={(event) =>
+                              patchOption(group.field, option.id, { value: event.target.value })
+                            }
+                            className={`${exactFormInputClass} min-h-24 resize-y`}
+                            placeholder="Bu seçenek seçildiğinde ürüne kaydedilecek metin"
+                          />
+                        </label>
+                      ) : null}
+                    </div>
+                  ))}
+                </div>
+
+                <ExactButton
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  className="mt-3 w-full"
+                  onClick={() => addOption(group)}
+                >
+                  <Plus className="h-4 w-4" />
+                  Alt seçenek ekle
+                </ExactButton>
+              </div>
+            ))}
+
+            {mainGroups.map((group) => (
+              <div
+                key={group.id}
+                className="rounded-[16px] border border-border-subtle bg-surface-secondary p-3"
+              >
+                <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_150px_auto]">
+                  <label>
+                    <span className="ruth-type-label mb-1.5 block text-subtle">Ana seçenek adı</span>
+                    <input
+                      value={group.name}
+                      onChange={(event) => patchMainGroup(group.id, { name: event.target.value })}
+                      className={exactFormInputClass}
+                      placeholder="Örn. Öğütme, Renk, Beden"
+                    />
+                  </label>
+                  <label>
+                    <span className="ruth-type-label mb-1.5 block text-subtle">Gösterim</span>
+                    <select
+                      value={group.displayType}
+                      onChange={(event) =>
+                        patchMainGroup(group.id, {
+                          displayType: event.target.value === "color" ? "color" : "list",
+                        })
+                      }
+                      className={exactFormInputClass}
+                    >
+                      <option value="list">İsim olarak</option>
+                      <option value="color">Renk olarak</option>
+                    </select>
+                  </label>
+                  <div className="pt-[23px]">
+                    <ExactIconButton
+                      icon={Trash2}
+                      label="Ana seçeneği sil"
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={() => removeMainGroup(group.id)}
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-3 space-y-2">
+                  {group.values.map((value) => (
+                    <div key={value.id} className="flex items-center gap-2">
+                      {group.displayType === "color" ? (
+                        <input
+                          type="color"
+                          value={value.color || "#111111"}
+                          onChange={(event) =>
+                            patchMainValue(group.id, value.id, { color: event.target.value })
+                          }
+                          className="h-10 w-11 shrink-0 cursor-pointer rounded-[10px] border border-border-subtle bg-transparent p-0"
+                          aria-label={`${value.label || "Seçenek"} rengi`}
+                        />
+                      ) : null}
+                      <input
+                        value={value.label}
+                        onChange={(event) =>
+                          patchMainValue(group.id, value.id, { label: event.target.value })
+                        }
+                        className={`${exactFormInputClass} min-w-0 flex-1`}
+                        placeholder="Alt seçenek"
+                      />
+                      <ExactIconButton
+                        icon={Trash2}
+                        label="Alt seçeneği sil"
+                        variant="ghost"
+                        size="icon-sm"
+                        onClick={() => removeMainValue(group.id, value.id)}
+                        disabled={group.values.length <= 1}
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                <ExactButton
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  className="mt-3 w-full"
+                  onClick={() => addMainValue(group.id)}
+                >
+                  <Plus className="h-4 w-4" />
+                  Alt seçenek ekle
+                </ExactButton>
+              </div>
             ))}
           </div>
-        </div>
+        </section>
       )}
     </div>
   );
