@@ -23,6 +23,7 @@ type ActivityResponse = {
 
 const POLL_MS = 3_000;
 const AUTO_DISMISS_MS = 10_000;
+const LAST_ACTIVITY_KEY = "ruth_contact_activity_last_seen_v1";
 
 function shouldWatch(pathname: string) {
   return !pathname.startsWith("/login")
@@ -53,16 +54,23 @@ export function AdminContactMessagePopup() {
       if (!next?.key) return;
 
       if (!baselineReady.current) {
-        latestKey.current = next.key;
+        const persistedKey = window.localStorage.getItem(LAST_ACTIVITY_KEY);
         baselineReady.current = true;
-        return;
+
+        if (!persistedKey) {
+          latestKey.current = next.key;
+          window.localStorage.setItem(LAST_ACTIVITY_KEY, next.key);
+          return;
+        }
+
+        latestKey.current = persistedKey;
       }
 
       if (latestKey.current === next.key) return;
-      latestKey.current = next.key;
-
       if (document.visibilityState !== "visible") return;
 
+      latestKey.current = next.key;
+      window.localStorage.setItem(LAST_ACTIVITY_KEY, next.key);
       setActivity(next);
       window.dispatchEvent(new CustomEvent("ruth:contact-message-activity", { detail: next }));
     } catch {
