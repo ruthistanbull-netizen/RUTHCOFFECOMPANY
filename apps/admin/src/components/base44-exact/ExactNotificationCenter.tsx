@@ -177,9 +177,34 @@ export function ExactNotificationProvider({ children }: { children: ReactNode })
     };
     navigator.serviceWorker?.addEventListener("message", onServiceWorkerMessage);
 
+    const onContactActivity = (event: Event) => {
+      const detail = (event as CustomEvent<Record<string, unknown>>).detail;
+      if (!detail || typeof detail !== "object") return;
+      const contactMessageId = String(detail.contactMessageId || "").trim();
+      const activityKey = String(detail.key || "").trim();
+      if (!contactMessageId || !activityKey) return;
+
+      const activityKind = String(detail.kind || "contact") === "reply" ? "reply" : "contact";
+      const sender = String(detail.sender || "Müşteri").trim() || "Müşteri";
+      const preview = String(detail.preview || "").trim();
+      const tag = activityKind === "reply"
+        ? `ruth-contact-reply-${activityKey.replace(/[^a-zA-Z0-9:_-]/g, "-")}`
+        : `ruth-contact-${contactMessageId}`;
+
+      addNotification({
+        tag,
+        type: "contact",
+        title: activityKind === "reply" ? "Yeni müşteri cevabı" : "Yeni iletişim mesajı",
+        body: preview ? `${sender} · ${preview}` : `${sender} yeni bir mesaj gönderdi.`,
+        url: `/contact-messages?message_id=${encodeURIComponent(contactMessageId)}`,
+      });
+    };
+    window.addEventListener("ruth:contact-message-activity", onContactActivity);
+
     return () => {
       window.removeEventListener("ruth-notification-history", onHistory);
       window.removeEventListener("storage", onStorage);
+      window.removeEventListener("ruth:contact-message-activity", onContactActivity);
       navigator.serviceWorker?.removeEventListener("message", onServiceWorkerMessage);
     };
   }, [addNotification]);
