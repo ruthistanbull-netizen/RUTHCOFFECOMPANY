@@ -291,7 +291,7 @@ export async function GET(request: Request) {
         )
       : Promise.resolve([] as any[]),
     directCollectionIds.length > 0
-      ? safeSelect<any>(supabase.from("collections").select("id, name, slug, product_code").in("id", directCollectionIds))
+      ? safeSelect<any>(supabase.from("collections").select("id, name, slug").in("id", directCollectionIds))
       : Promise.resolve([] as any[]),
   ]);
 
@@ -444,7 +444,7 @@ export async function POST(request: Request) {
   const { data: product, error: productError } = await supabase
     .from("products")
     .insert(payload)
-    .select("id, name, slug")
+    .select("id, name, slug, product_code")
     .single();
 
   if (productError) return NextResponse.json({ ok: false, error: productError.message }, { status: 400 });
