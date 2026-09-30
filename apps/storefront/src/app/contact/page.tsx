@@ -1,43 +1,51 @@
 import Link from "next/link";
-import { Instagram, Mail, MessageCircle } from "lucide-react";
+import { Mail, MessageCircle } from "lucide-react";
+import { activeSocialMediaLinks } from "@ruth-commerce/contracts/social-media";
 import { AnimatedBlock, PageIntro } from "@/components/PageIntro";
 import { ContactForm } from "@/components/contact/ContactForm";
+import { SocialMediaIcon } from "@/components/social/SocialMediaIcon";
+import { getSocialMediaSettings } from "@/data/site";
 
 export const metadata = {
   title: "İletişim",
   description: "ROSTA Coffee Co. iletişim ve destek.",
 };
 
-export default function ContactPage() {
-  const whatsappUrl = String(process.env.NEXT_PUBLIC_ROSTA_WHATSAPP_URL || "").trim();
-  const instagramUrl = String(process.env.NEXT_PUBLIC_ROSTA_INSTAGRAM_URL || "").trim();
+export default async function ContactPage() {
+  const socialSettings = await getSocialMediaSettings();
+  const socialLinks = activeSocialMediaLinks(socialSettings);
+  const whatsapp = socialLinks.find((item) => item.platform === "whatsapp") || null;
+  const profileLinks = socialLinks.filter((item) => item.platform !== "whatsapp");
   const supportEmail = String(process.env.NEXT_PUBLIC_ROSTA_SUPPORT_EMAIL || "").trim();
 
   const cards = [
     {
-      icon: MessageCircle,
+      key: "whatsapp",
+      icon: <MessageCircle className="mb-5 text-brick" size={22} />,
       title: "Canlı Destek",
       desc: "Canlı destek kapalıysa WhatsApp üzerinden ROSTA ekibine ulaşabilirsiniz.",
-      href: null,
-      actionLabel: whatsappUrl ? "WhatsApp'tan Yaz" : null,
-      actionHref: whatsappUrl || null,
+      href: null as string | null,
+      actionLabel: whatsapp ? "WhatsApp'tan Yaz" : null,
+      actionHref: whatsapp?.href || null,
     },
     {
-      icon: Mail,
+      key: "message",
+      icon: <Mail className="mb-5 text-brick" size={22} />,
       title: "Mesaj Gönder",
       desc: "Aşağıdaki formdan bize mesaj bırakabilirsiniz.",
       href: "#contact-form",
       actionLabel: null,
       actionHref: null,
     },
-    {
-      icon: Instagram,
-      title: "Instagram",
-      desc: "ROSTA Coffee Co. sosyal medya hesabını ziyaret edin.",
-      href: instagramUrl || null,
+    ...profileLinks.map((social) => ({
+      key: social.platform,
+      icon: <SocialMediaIcon platform={social.platform} className="mb-5 h-[22px] w-[22px] text-brick" />,
+      title: social.label,
+      desc: `ROSTA Coffee Co. ${social.label} hesabını ziyaret edin.`,
+      href: social.href,
       actionLabel: null,
       actionHref: null,
-    },
+    })),
   ];
 
   return (
@@ -52,10 +60,9 @@ export default function ContactPage() {
 
         <div className="mt-12 grid gap-5 md:grid-cols-3">
           {cards.map((item, index) => {
-            const CardIcon = item.icon;
             const content = (
-              <div className="h-full rounded-lg border border-kraft/35 bg-carbon-soft p-7 transition  focus-visible:border-brick  ">
-                <CardIcon className="mb-5 text-brick" size={22} />
+              <div className="h-full rounded-lg border border-kraft/35 bg-carbon-soft p-7 transition focus-visible:border-brick">
+                {item.icon}
                 <h2 className="font-heading text-2xl">{item.title}</h2>
                 <p className="mt-4 leading-7 text-cream/70">{item.desc}</p>
                 {item.actionHref && item.actionLabel ? (
@@ -72,7 +79,7 @@ export default function ContactPage() {
             );
 
             return (
-              <AnimatedBlock key={item.title} delay={0.12 + index * 0.08}>
+              <AnimatedBlock key={item.key} delay={0.12 + index * 0.08}>
                 {item.href ? (
                   item.href.startsWith("http") ? (
                     <a href={item.href} target="_blank" rel="noreferrer" className="block h-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brick">
