@@ -26,9 +26,23 @@ type FieldGroup = {
   options: FieldOption[];
 };
 
+type MainOptionValue = {
+  id: string;
+  label: string;
+  color?: string;
+};
+
+type MainOptionGroup = {
+  id: string;
+  name: string;
+  displayType: "list" | "color";
+  values: MainOptionValue[];
+};
+
 type Payload = {
   ok: boolean;
   groups?: FieldGroup[];
+  mainGroups?: MainOptionGroup[];
   updatedAt?: string | null;
   warning?: string | null;
 };
@@ -47,9 +61,17 @@ function cloneGroups(value: FieldGroup[]) {
   }));
 }
 
+function cloneMainGroups(value: MainOptionGroup[]) {
+  return value.map((group) => ({
+    ...group,
+    values: group.values.map((option) => ({ ...option })),
+  }));
+}
+
 export function ExactProductOptions() {
   const [groups, setGroups] = useState<FieldGroup[]>([]);
-  const [savedSnapshot, setSavedSnapshot] = useState("[]");
+  const [mainGroups, setMainGroups] = useState<MainOptionGroup[]>([]);
+  const [savedSnapshot, setSavedSnapshot] = useState("{}");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [savedFlash, setSavedFlash] = useState(false);
@@ -57,8 +79,8 @@ export function ExactProductOptions() {
   const [updatedAt, setUpdatedAt] = useState<string | null>(null);
 
   const dirty = useMemo(
-    () => JSON.stringify(groups) !== savedSnapshot,
-    [groups, savedSnapshot],
+    () => JSON.stringify({ groups, mainGroups }) !== savedSnapshot,
+    [groups, mainGroups, savedSnapshot],
   );
 
   const load = async (hardRefresh = false) => {
@@ -71,8 +93,10 @@ export function ExactProductOptions() {
         staleMs: 60_000,
       });
       const next = cloneGroups(payload.groups || []);
+      const nextMainGroups = cloneMainGroups(payload.mainGroups || []);
       setGroups(next);
-      setSavedSnapshot(JSON.stringify(next));
+      setMainGroups(nextMainGroups);
+      setSavedSnapshot(JSON.stringify({ groups: next, mainGroups: nextMainGroups }));
       setUpdatedAt(payload.updatedAt || null);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Ürün seçenekleri yüklenemedi.");
@@ -93,12 +117,14 @@ export function ExactProductOptions() {
     try {
       const payload = await adminRequest<Payload>("/api/product-settings/options", {
         method: "PUT",
-        body: JSON.stringify({ groups }),
+        body: JSON.stringify({ groups, mainGroups }),
         invalidate: ["/api/product-settings/options", "/api/products?q="],
       });
       const next = cloneGroups(payload.groups || groups);
+      const nextMainGroups = cloneMainGroups(payload.mainGroups || mainGroups);
       setGroups(next);
-      setSavedSnapshot(JSON.stringify(next));
+      setMainGroups(nextMainGroups);
+      setSavedSnapshot(JSON.stringify({ groups: next, mainGroups: nextMainGroups }));
       setUpdatedAt(payload.updatedAt || new Date().toISOString());
       setMessage(payload.warning || "Ürün seçenekleri kaydedildi.");
       setSavedFlash(true);
@@ -163,13 +189,94 @@ export function ExactProductOptions() {
     );
   };
 
+  const addMainGroup = () => {
+    setMainGroups((current) => [
+      ...current,
+      {
+        id: makeId("main-group"),
+        name: "Yeni ana seçenek",
+        displayType: "list",
+        values: [{ id: makeId("main-value"), label: "Yeni seçenek" }],
+      },
+    ]);
+  };
+
+  const patchMainGroup = (groupId: string, patch: Partial<MainOptionGroup>) => {
+    setMainGroups((current) =>
+      current.map((group) => group.id === groupId ? { ...group, ...patch } : group),
+    );
+  };
+
+  const removeMainGroup = (groupId: string) => {
+    const group = mainGroups.find((item) => item.id === groupId);
+    if (!group) return;
+    if (!window.confirm(`"${group.name}" ana seçeneğini kütüphaneden kaldırmak istiyor musun? Mevcut ürünlerdeki seçenekler silinmez.`)) return;
+    setMainGroups((current) => current.filter((item) => item.id !== groupId));
+  };
+
+  const addMainValue = (groupId: string) => {
+    setMainGroups((current) =>
+      current.map((group) => group.id !== groupId
+        ? group
+        : {
+            ...group,
+            values: [
+              ...group.values,
+              {
+                id: makeId("main-value"),
+                label: "Yeni seçenek",
+                ...(group.displayType === "color" ? { color: "#111111" } : {}),
+              },
+            ],
+          }),
+    );
+  };
+
+  const patchMainValue = (
+    groupId: string,
+    valueId: string,
+    patch: Partial<MainOptionValue>,
+  ) => {
+    setMainGroups((current) =>
+      current.map((group) => group.id !== groupId
+        ? group
+        : {
+            ...group,
+            values: group.values.map((value) =>
+              value.id === valueId ? { ...value, ...patch } : value,
+            ),
+          }),
+    );
+  };
+
+  const removeMainValue = (groupId: string, valueId: string) => {
+    setMainGroups((current) =>
+      current.map((group) => group.id !== groupId
+        ? group
+        : {
+            ...group,
+            values: group.values.filter((value) => value.id !== valueId),
+          }),
+    );
+  };
+
   return (
     <div className="mx-auto w-full max-w-[1240px] px-4 py-4 md:px-6 md:py-6">
       <ExactPageHeader
         title="Ürün Seçenekleri"
-        subtitle="Ürün oluşturma ve düzenleme ekranındaki sabit seçim listelerini buradan yönet."
+        subtitle="Ana seçenek gruplarını ve ürün formundaki seçim listelerini tek yerden yönet."
         actions={
           <>
+            <ExactButton
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={addMainGroup}
+              disabled={loading || saving}
+            >
+              <Plus className="h-4 w-4" />
+              Ana seçenek ekle
+            </ExactButton>
             <ExactButton
               type="button"
               variant="secondary"
@@ -196,10 +303,10 @@ export function ExactProductOptions() {
 
       <div className="mb-4 rounded-[16px] border border-border-subtle bg-surface-secondary px-4 py-3">
         <p className="ruth-type-body text-main">
-          Varyantlar burada yönetilmez. Yalnız ürün formunda görünen seçim listeleri ve şablonlar bulunur.
+          Ana seçenek gruplarını ve ürün formundaki sabit seçim listelerini buradan yönetebilirsin.
         </p>
         <p className="ruth-type-caption mt-1 text-muted">
-          Bir seçeneğin adını değiştirebilir, yeni seçenek ekleyebilir veya kullanılmayan bir seçeneği kaldırabilirsin.
+          Ana seçenek ekleyebilir, silebilir ve alt seçeneklerini düzenleyebilirsin. Buradan silinen ana seçenek mevcut ürünlerdeki kayıtlı varyantları otomatik silmez.
           {updatedAt ? ` Son kayıt: ${new Date(updatedAt).toLocaleString("tr-TR")}.` : ""}
         </p>
         {message ? <p className="ruth-type-caption mt-2 font-medium text-accent">{message}</p> : null}
@@ -212,8 +319,126 @@ export function ExactProductOptions() {
           ))}
         </div>
       ) : (
-        <div className="grid items-start gap-4 lg:grid-cols-2">
-          {groups.map((group) => (
+        <div className="space-y-4">
+          <section className="rounded-[20px] border border-border-subtle bg-surface-primary p-4 shadow-card">
+            <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h2 className="text-base font-semibold text-main">Ana Seçenekler</h2>
+                <p className="ruth-type-caption mt-1 text-subtle">
+                  Renk, beden, gramaj, öğütme gibi ana seçenek gruplarını ve değerlerini yönet.
+                </p>
+              </div>
+              <span className="ruth-type-caption rounded-full bg-surface-tertiary px-2 py-1 text-subtle">
+                {mainGroups.length} grup
+              </span>
+            </div>
+
+            {mainGroups.length ? (
+              <div className="grid gap-3 lg:grid-cols-2">
+                {mainGroups.map((group) => (
+                  <div
+                    key={group.id}
+                    className="rounded-[16px] border border-border-subtle bg-surface-secondary p-3"
+                  >
+                    <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_150px_auto]">
+                      <label>
+                        <span className="ruth-type-label mb-1.5 block text-subtle">Ana seçenek adı</span>
+                        <input
+                          value={group.name}
+                          onChange={(event) => patchMainGroup(group.id, { name: event.target.value })}
+                          className={exactFormInputClass}
+                          placeholder="Örn. Renk, Beden, Gramaj"
+                        />
+                      </label>
+                      <label>
+                        <span className="ruth-type-label mb-1.5 block text-subtle">Gösterim</span>
+                        <select
+                          value={group.displayType}
+                          onChange={(event) =>
+                            patchMainGroup(group.id, {
+                              displayType: event.target.value === "color" ? "color" : "list",
+                            })
+                          }
+                          className={exactFormInputClass}
+                        >
+                          <option value="list">İsim olarak</option>
+                          <option value="color">Renk olarak</option>
+                        </select>
+                      </label>
+                      <div className="pt-[23px]">
+                        <ExactIconButton
+                          icon={Trash2}
+                          label="Ana seçeneği sil"
+                          variant="ghost"
+                          size="icon-sm"
+                          onClick={() => removeMainGroup(group.id)}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="mt-3 space-y-2">
+                      {group.values.map((value) => (
+                        <div key={value.id} className="flex items-center gap-2">
+                          {group.displayType === "color" ? (
+                            <input
+                              type="color"
+                              value={value.color || "#111111"}
+                              onChange={(event) =>
+                                patchMainValue(group.id, value.id, { color: event.target.value })
+                              }
+                              className="h-10 w-11 shrink-0 cursor-pointer rounded-[10px] border border-border-subtle bg-transparent p-0"
+                              aria-label={`${value.label || "Seçenek"} rengi`}
+                            />
+                          ) : null}
+                          <input
+                            value={value.label}
+                            onChange={(event) =>
+                              patchMainValue(group.id, value.id, { label: event.target.value })
+                            }
+                            className={`${exactFormInputClass} min-w-0 flex-1`}
+                            placeholder="Seçenek değeri"
+                          />
+                          <ExactIconButton
+                            icon={Trash2}
+                            label="Alt seçeneği sil"
+                            variant="ghost"
+                            size="icon-sm"
+                            onClick={() => removeMainValue(group.id, value.id)}
+                            disabled={group.values.length <= 1}
+                          />
+                        </div>
+                      ))}
+                    </div>
+
+                    <ExactButton
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      className="mt-3 w-full"
+                      onClick={() => addMainValue(group.id)}
+                    >
+                      <Plus className="h-4 w-4" />
+                      Alt seçenek ekle
+                    </ExactButton>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-[14px] border border-dashed border-border-subtle bg-surface-secondary p-6 text-center">
+                <p className="ruth-type-body font-medium text-main">Henüz ana seçenek yok.</p>
+                <p className="ruth-type-caption mt-1 text-muted">
+                  Renk, beden, gramaj veya öğütme gibi bir grup ekleyebilirsin.
+                </p>
+                <ExactButton type="button" size="sm" className="mt-3" onClick={addMainGroup}>
+                  <Plus className="h-4 w-4" />
+                  Ana seçenek ekle
+                </ExactButton>
+              </div>
+            )}
+          </section>
+
+          <div className="grid items-start gap-4 lg:grid-cols-2">
+            {groups.map((group) => (
             <section
               key={group.field}
               className="rounded-[20px] border border-border-subtle bg-surface-primary p-4 shadow-card"
@@ -299,7 +524,8 @@ export function ExactProductOptions() {
                 Yeni seçenek ekle
               </ExactButton>
             </section>
-          ))}
+            ))}
+          </div>
         </div>
       )}
     </div>

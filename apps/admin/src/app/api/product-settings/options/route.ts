@@ -22,6 +22,19 @@ type FieldGroup = {
   options: FieldOption[];
 };
 
+type MainOptionValue = {
+  id: string;
+  label: string;
+  color?: string;
+};
+
+type MainOptionGroup = {
+  id: string;
+  name: string;
+  displayType: "list" | "color";
+  values: MainOptionValue[];
+};
+
 const DEFAULT_GROUPS: FieldGroup[] = [
   {
     field: "material",
@@ -139,6 +152,92 @@ function normalizeGroups(input: unknown): FieldGroup[] {
   });
 }
 
+function normalizeMainGroups(input: unknown): MainOptionGroup[] {
+  const source = input && typeof input === "object" && Array.isArray((input as { mainGroups?: unknown }).mainGroups)
+    ? (input as { mainGroups: unknown[] }).mainGroups
+    : [];
+
+  const seenGroups = new Set<string>();
+  return source.flatMap((item, groupIndex) => {
+    const row = item && typeof item === "object" ? item as Record<string, unknown> : {};
+    const name = clean(row.name, 100);
+    if (!name) return [];
+    const groupKey = name.toLocaleLowerCase("tr-TR");
+    if (seenGroups.has(groupKey)) return [];
+    seenGroups.add(groupKey);
+
+    const displayType = clean(row.displayType, 20) === "color" ? "color" : "list";
+    const sourceValues = Array.isArray(row.values) ? row.values : [];
+    const seenValues = new Set<string>();
+    const values = sourceValues.flatMap((valueItem, valueIndex) => {
+      const valueRow = valueItem && typeof valueItem === "object" ? valueItem as Record<string, unknown> : {};
+      const label = clean(valueRow.label, 100);
+      if (!label) return [];
+      const valueKey = label.toLocaleLowerCase("tr-TR");
+      if (seenValues.has(valueKey)) return [];
+      seenValues.add(valueKey);
+      const rawColor = clean(valueRow.color, 16);
+      const color = /^#[0-9a-fA-F]{6}$/.test(rawColor) ? rawColor : undefined;
+      return [{
+        id: clean(valueRow.id, 100) || safeId(label, `main-value-${groupIndex + 1}-${valueIndex + 1}`),
+        label,
+        ...(displayType === "color" && color ? { color } : {}),
+      }];
+    });
+
+    return [{
+      id: clean(row.id, 100) || safeId(name, `main-group-${groupIndex + 1}`),
+      name,
+      displayType,
+      values,
+    }];
+  });
+}
+
+function bootstrapMainGroups(variants: Array<Record<string, unknown>>): MainOptionGroup[] {
+  const groups = new Map<string, MainOptionGroup>();
+
+  for (const variant of variants) {
+    const options = variant.options && typeof variant.options === "object"
+      ? variant.options as Record<string, unknown>
+      : {};
+    const displayType = clean(options.__displayType, 20) === "color" ? "color" : "list";
+    const rawColor = clean(options.__colorValue, 16);
+    const color = /^#[0-9a-fA-F]{6}$/.test(rawColor) ? rawColor : undefined;
+
+    for (const [nameKey, rawValue] of Object.entries(options)) {
+      if (nameKey.startsWith("__")) continue;
+      const name = clean(nameKey, 100);
+      const label = clean(rawValue, 100);
+      if (!name || !label) continue;
+
+      const mapKey = name.toLocaleLowerCase("tr-TR");
+      let group = groups.get(mapKey);
+      if (!group) {
+        group = {
+          id: safeId(name, `main-group-${groups.size + 1}`),
+          name,
+          displayType,
+          values: [],
+        };
+        groups.set(mapKey, group);
+      } else if (displayType === "color") {
+        group.displayType = "color";
+      }
+
+      const valueKey = label.toLocaleLowerCase("tr-TR");
+      if (group.values.some((value) => value.label.toLocaleLowerCase("tr-TR") === valueKey)) continue;
+      group.values.push({
+        id: safeId(label, `${group.id}-value-${group.values.length + 1}`),
+        label,
+        ...(group.displayType === "color" && color ? { color } : {}),
+      });
+    }
+  }
+
+  return [...groups.values()];
+}
+
 function mergeCurrentProductValues(groups: FieldGroup[], products: Array<Record<string, unknown>>) {
   return groups.map((group) => {
     const next = group.options.map((option) => ({ ...option }));
@@ -185,7 +284,11 @@ export async function GET(request: Request) {
   const auth = await requireAdmin(request);
   if ("error" in auth) return auth.error;
 
-  const [{ data: saved, error: savedError }, { data: products, error: productsError }] = await Promise.all([
+  const [
+    { data: saved, error: savedError },
+    { data: products, error: productsError },
+    { data: variantRows, error: variantsError },
+  ] = await Promise.all([
     auth.supabase
       .from("site_settings")
       .select("setting_value,updated_at")
@@ -195,11 +298,18 @@ export async function GET(request: Request) {
       .from("products")
       .select("material,finish_color,size_usage,care_advice")
       .limit(5000),
+    auth.supabase
+      .from("product_variants")
+      .select("options")
+      .limit(10000),
   ]);
 
-  if (savedError || productsError) {
+  if (savedError || productsError || variantsError) {
     return NextResponse.json(
-      { ok: false, error: savedError?.message || productsError?.message || "Ürün seçenekleri okunamadı." },
+      {
+        ok: false,
+        error: savedError?.message || productsError?.message || variantsError?.message || "Ürün seçenekleri okunamadı.",
+      },
       { status: 400, headers: noStoreHeaders() },
     );
   }
@@ -212,10 +322,19 @@ export async function GET(request: Request) {
         (products || []) as Array<Record<string, unknown>>,
       );
 
+  const savedValue = saved?.setting_value && typeof saved.setting_value === "object"
+    ? saved.setting_value as Record<string, unknown>
+    : null;
+  const hasSavedMainGroups = Boolean(savedValue && Array.isArray(savedValue.mainGroups));
+  const mainGroups = hasSavedMainGroups
+    ? normalizeMainGroups(savedValue)
+    : bootstrapMainGroups((variantRows || []) as Array<Record<string, unknown>>);
+
   return NextResponse.json(
     {
       ok: true,
       groups,
+      mainGroups,
       updatedAt: saved?.updated_at || null,
       source: saved?.setting_value ? "saved-library" : "bootstrap-from-products",
     },
@@ -229,6 +348,7 @@ export async function PUT(request: Request) {
 
   const body = await request.json().catch(() => ({}));
   const groups = normalizeGroups({ groups: body?.groups });
+  const mainGroups = normalizeMainGroups({ mainGroups: body?.mainGroups });
   const now = new Date().toISOString();
 
   for (const group of groups) {
@@ -265,7 +385,7 @@ export async function PUT(request: Request) {
     .upsert(
       {
         setting_key: KEY,
-        setting_value: { version: 1, groups: storedGroups },
+        setting_value: { version: 2, groups: storedGroups, mainGroups },
         is_public: false,
         updated_at: now,
       },
@@ -287,6 +407,7 @@ export async function PUT(request: Request) {
         ...group,
         options: group.options.map((option) => ({ ...option, originalValue: option.value })),
       })),
+      mainGroups,
       updatedAt: now,
       revalidate,
       warning: revalidate.ok ? null : revalidate.message,

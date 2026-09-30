@@ -3,6 +3,7 @@
 import { AnimatePresence, Reorder, motion } from "framer-motion";
 import { ImagePlus, Palette, Plus, Trash2, Type, X } from "lucide-react";
 import { Pressable, reorderItem } from "@ruth-commerce/ui";
+import { adminRequest } from "@/lib/adminApi";
 import { createPortal } from "react-dom";
 import { useEffect, useMemo, useState, type Dispatch, type SetStateAction } from "react";
 import { ExactDataCard, ExactEmptyState } from "./data";
@@ -23,6 +24,13 @@ export type StudioVariant = {
 };
 
 type AddOption = { id: string; label: string; color: string };
+
+type MainOptionLibraryGroup = {
+  id: string;
+  name: string;
+  displayType: "list" | "color";
+  values: Array<{ id: string; label: string; color?: string }>;
+};
 
 type Props = {
   variants: StudioVariant[];
@@ -75,6 +83,7 @@ export function VariantStudioManager({ variants, setVariants, productPhotos, bas
   ]);
   const [mediaIndex, setMediaIndex] = useState<number | null>(null);
   const [mediaOrder, setMediaOrder] = useState<string[]>([]);
+  const [libraryGroups, setLibraryGroups] = useState<MainOptionLibraryGroup[]>([]);
 
   const mediaVariant = mediaIndex == null ? null : variants[mediaIndex];
   const allProductPhotos = useMemo(() => unique(productPhotos), [productPhotos]);
@@ -89,6 +98,23 @@ export function VariantStudioManager({ variants, setVariants, productPhotos, bas
     }
     return [...groups.entries()].map(([name, values]) => ({ name, values: [...values] }));
   }, [variants]);
+
+  useEffect(() => {
+    let active = true;
+    void adminRequest<{ mainGroups?: MainOptionLibraryGroup[] }>("/api/product-settings/options", {
+      ttlMs: 15_000,
+      staleMs: 60_000,
+    })
+      .then((payload) => {
+        if (active) setLibraryGroups(payload.mainGroups || []);
+      })
+      .catch(() => {
+        if (active) setLibraryGroups([]);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (!addOpen && mediaIndex == null) return;
@@ -130,6 +156,20 @@ export function VariantStudioManager({ variants, setVariants, productPhotos, bas
     setOptionName("Seçenek");
     setDisplayType("list");
     setAddOptions([{ id: crypto.randomUUID(), label: "", color: "#111111" }]);
+  };
+
+  const applyLibraryGroup = (group: MainOptionLibraryGroup) => {
+    setOptionName(group.name);
+    setDisplayType(group.displayType);
+    setAddOptions(
+      group.values.length
+        ? group.values.map((value) => ({
+            id: crypto.randomUUID(),
+            label: value.label,
+            color: value.color || "#111111",
+          }))
+        : [{ id: crypto.randomUUID(), label: "", color: "#111111" }],
+    );
   };
 
   const deleteOptionGroup = (groupName: string) => {
@@ -252,6 +292,28 @@ export function VariantStudioManager({ variants, setVariants, productPhotos, bas
 
             <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-5 sm:px-6 sm:py-7">
               <div className="mx-auto grid w-full max-w-2xl gap-5">
+                {libraryGroups.length ? (
+                  <div>
+                    <div className="mb-2 flex items-center justify-between gap-3">
+                      <p className="ruth-type-label text-muted">Kayıtlı ana seçenekler</p>
+                      <span className="ruth-type-caption text-subtle">{libraryGroups.length} grup</span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {libraryGroups.map((group) => (
+                        <Pressable
+                          key={group.id}
+                          type="button"
+                          pressStrength="subtle"
+                          onClick={() => applyLibraryGroup(group)}
+                          className="ruth-type-control rounded-full border border-border-subtle bg-surface-secondary px-3 py-2 text-main"
+                        >
+                          {group.name}
+                        </Pressable>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+
                 <ExactField label="Seçenek adı">
                   <input value={optionName} onChange={(event) => setOptionName(event.target.value)} className={exactFormInputClass} placeholder="Örn. Renk, Zincir Uzunluğu, Beden" />
                 </ExactField>
