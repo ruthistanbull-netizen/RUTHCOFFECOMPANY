@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   AnimatePresence,
   motion,
@@ -689,14 +689,6 @@ function FinalCTA() {
 }
 
 export function RostaStudioClient() {
-  useEffect(() => {
-    const previous = document.documentElement.style.scrollBehavior;
-    document.documentElement.style.scrollBehavior = "smooth";
-    return () => {
-      document.documentElement.style.scrollBehavior = previous;
-    };
-  }, []);
-
   return (
     <main className="rosta-studio-exact bg-[#111111]">
       <Nav />
