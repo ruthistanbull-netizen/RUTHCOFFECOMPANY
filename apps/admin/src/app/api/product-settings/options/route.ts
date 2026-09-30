@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { normalizeInformationSections } from "@ruth-commerce/commerce-core/product-information";
+import { resolveInformationSections } from "@ruth-commerce/commerce-core/product-information";
 import { requireAdmin } from "@/lib/auth";
 import { noStoreHeaders, revalidateWebsite } from "@/lib/websiteRevalidate";
 
@@ -331,12 +331,7 @@ export async function GET(request: Request) {
     ? normalizeMainGroups(savedValue)
     : bootstrapMainGroups((variantRows || []) as Array<Record<string, unknown>>);
 
-  const sections = normalizeInformationSections(savedValue?.sections || [
-    { id: "description", fields: [{ id: "description", label: "Ürün açıklaması", options: [] }] },
-    { id: "material", fields: groups.filter(group => ["material", "finish_color"].includes(group.field)).map(group => ({ id: group.field, label: group.title, options: group.options })) },
-    { id: "size-usage", fields: groups.filter(group => group.field === "care_advice").map(group => ({ id: group.field, label: "Saklama / Kullanım", options: group.options })) },
-    { id: "shipping-returns", fields: [{ id: "shipping", label: "Teslimat ve iade koşulları", options: [] }] },
-  ]);
+  const sections = resolveInformationSections(savedValue?.sections, groups);
 
   return NextResponse.json(
     {
@@ -358,8 +353,8 @@ export async function PUT(request: Request) {
   const body = await request.json().catch(() => ({}));
   const { data: previous, error: previousError } = await auth.supabase.from("site_settings").select("setting_value").eq("setting_key", KEY).maybeSingle();
   if (previousError) return NextResponse.json({ ok: false, error: previousError.message }, { status: 400, headers: noStoreHeaders() });
-  const sections = normalizeInformationSections(body?.sections || previous?.setting_value?.sections);
   const groups = normalizeGroups({ groups: body?.groups });
+  const sections = resolveInformationSections(body?.sections ?? previous?.setting_value?.sections, groups);
   const mainGroups = normalizeMainGroups({ mainGroups: body?.mainGroups || previous?.setting_value?.mainGroups });
   const now = new Date().toISOString();
 

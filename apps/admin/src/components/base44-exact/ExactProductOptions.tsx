@@ -3,7 +3,7 @@
 import { Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { adminRequest } from "@/lib/adminApi";
-import { normalizeInformationSections, type InformationSection, type InformationField } from "@ruth-commerce/commerce-core/product-information";
+import { resolveInformationSections, type InformationSection, type InformationField } from "@ruth-commerce/commerce-core/product-information";
 import { ExactButton, ExactField, ExactIconButton, ExactPageHeader, exactFormInputClass } from "./primitives";
 import { ExactDataCard } from "./data";
 
@@ -16,7 +16,7 @@ export function ExactProductOptions() {
   const [message, setMessage] = useState("");
   useEffect(() => {
     void adminRequest<{ sections?: InformationSection[]; groups?: unknown[] }>("/api/product-settings/options", { hardRefresh: true }).then(payload => {
-      const next = normalizeInformationSections(payload.sections);
+      const next = resolveInformationSections(payload.sections, payload.groups);
       setSections(next); setGroups(payload.groups || []); setSnapshot(JSON.stringify(next));
     }).catch(error => setMessage(error.message)).finally(() => setLoading(false));
   }, []);
@@ -34,10 +34,10 @@ export function ExactProductOptions() {
     finally { setSaving(false); }
   };
   return <div className="mx-auto max-w-[1240px] space-y-4 p-4 md:p-6">
-    <ExactPageHeader title="Ürün Seçenekleri" subtitle="Ürün sayfasındaki dört bilgi başlığının alt başlıklarını ve açıklama seçeneklerini yönet." actions={<ExactButton onClick={() => void save()} loading={saving} disabled={loading || JSON.stringify(sections) === snapshot}>Kaydet</ExactButton>} />
-    <p className="text-sm text-muted">Burada tanımlanan bilgi alanları ürün oluşturma ve düzenleme formunda görünür. Gramaj, öğütme, fiyat ve stok seçeneklerini ürün formundaki Varyantlar bölümünden yönetebilirsin.</p>
+    <ExactPageHeader title="Ürün Seçenekleri" subtitle="Ürün Bilgisi, Paket / Kullanım ve Kargo ve İade başlıklarının alt alanlarını yönet." actions={<ExactButton onClick={() => void save()} loading={saving} disabled={loading || JSON.stringify(sections) === snapshot}>Kaydet</ExactButton>} />
+    <p className="text-sm text-muted">Burada tanımlanan bilgi alanları ürün oluşturma ve düzenleme formunda görünür. Ürün açıklamasını her ürünün formunda elle yazabilirsin. Gramaj, öğütme, fiyat ve stok seçeneklerini Varyantlar bölümünden yönetebilirsin.</p>
     {message ? <p role="status" className="text-sm text-accent">{message}</p> : null}
-    {loading ? <p>Yükleniyor…</p> : sections.map(section => <ExactDataCard key={section.id} title={section.title} action={<ExactButton variant="secondary" size="sm" onClick={() => update(section.id, item => ({ ...item, fields: [...item.fields, { id: crypto.randomUUID(), label: "Yeni alt başlık", options: [] }] }))}><Plus className="h-4 w-4" /> Alt başlık ekle</ExactButton>}>
+    {loading ? <p>Yükleniyor…</p> : sections.filter(section => section.id !== "description").map(section => <ExactDataCard key={section.id} title={section.title} action={<ExactButton variant="secondary" size="sm" onClick={() => update(section.id, item => ({ ...item, fields: [...item.fields, { id: crypto.randomUUID(), label: "Yeni alt başlık", options: [] }] }))}><Plus className="h-4 w-4" /> Alt başlık ekle</ExactButton>}>
       <div className="space-y-4">{section.fields.map(field => <div key={field.id} className="rounded-xl border border-border-subtle bg-surface-secondary p-3">
         <div className="flex items-end gap-2"><ExactField label="Alt başlık" className="flex-1"><input value={field.label} className={exactFormInputClass} onChange={event => patch(section.id, field.id, row => ({ ...row, label: event.target.value }))} /></ExactField><ExactIconButton icon={Trash2} label="Alt başlığı kaldır" variant="ghost" onClick={() => update(section.id, item => ({ ...item, fields: item.fields.filter(row => row.id !== field.id) }))} /></div>
         <p className="my-2 text-xs text-muted">Seçenek eklenmezse ürün formunda serbest metin yazılabilir.</p>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { normalizeInformationSections, normalizeProductInformation, type InformationSection, type InformationField, type ProductInformation } from "@ruth-commerce/commerce-core/product-information";
+import { resolveInformationSections, normalizeInformationSections, normalizeProductInformation, type InformationSection, type InformationField, type ProductInformation } from "@ruth-commerce/commerce-core/product-information";
 import { InformationControl, ProductInformationEditor } from "./ProductInformationEditor";
 import { useSearchParams } from "next/navigation";
 import {
@@ -211,7 +211,7 @@ export function ExactProductStudioV2() {
       setCollections(catalog.collections || []);
       setCategories(catalog.categories || []);
       setFieldGroups(nextGroups);
-      setInformationSections(normalizeInformationSections(optionResult.sections || [{ id: "description", fields: [{ id: "description", label: "Ürün açıklaması", options: [] }] }, { id: "material", fields: nextGroups.filter(g => ["material", "finish_color"].includes(g.field)).map(g => ({ id: g.field, label: g.title, options: g.options })) }, { id: "size-usage", fields: nextGroups.filter(g => g.field === "care_advice").map(g => ({ id: g.field, label: "Saklama / Kullanım", options: g.options })) }, { id: "shipping-returns", fields: [{ id: "shipping", label: "Teslimat ve iade koşulları", options: [] }] }]));
+      setInformationSections(resolveInformationSections(optionResult.sections, nextGroups));
       setMaterials(fieldOptions(nextGroups, "material").map((item) => item.value).filter(Boolean));
     } catch (caught) { toast.error(caught instanceof Error ? caught.message : "Ürün stüdyosu verileri alınamadı."); }
     finally { setLoading(false); }
@@ -388,7 +388,7 @@ export function ExactProductStudioV2() {
       <div className="space-y-4">
         <ExactDataCard title={selected ? `Ürünü düzenle · ${selected.name}` : "Yeni ürün"} action={<ExactSegmentedControl size="sm" value={form.productType} onChange={(value) => updateForm({ productType: value as "single" | "bundle" })} options={[{ value: "single", label: "Tekil Ürün", icon: PackagePlus }, { value: "bundle", label: "Paket Ürün", icon: Boxes }]} />}>
           <div className="grid gap-3 md:grid-cols-2"><ExactField label="Ürün adı" required><input value={form.name} onChange={(event) => updateForm({ name: event.target.value, slug: form.slug || slugify(event.target.value) })} className={exactFormInputClass} /></ExactField><ExactField label="Slug"><input value={form.slug} onChange={(event) => updateForm({ slug: event.target.value })} className={exactFormInputClass} /></ExactField><ExactField label="Ürün Kodu"><input value={form.product_code} onChange={(event) => updateForm({ product_code: event.target.value })} className={exactFormInputClass} placeholder="Boş bırakırsan otomatik 4 haneli kod oluşur" /></ExactField><ExactField label="Satış fiyatı" required><input type="number" min="0" step="0.01" value={form.price} onChange={(event) => updateForm({ price: event.target.value })} className={exactFormInputClass} /></ExactField><ExactField label="Karşılaştırma fiyatı"><input type="number" min="0" step="0.01" value={form.compare_at_price} onChange={(event) => updateForm({ compare_at_price: event.target.value })} className={exactFormInputClass} /></ExactField><ExactField label="Yayın durumu"><select value={form.status} onChange={(event) => updateForm({ status: event.target.value })} className={exactFormInputClass}><option value="active">Aktif</option><option value="draft">Taslak</option><option value="archived">Arşiv</option></select></ExactField><ExactField label="Stok durumu"><select value={form.stock_status} onChange={(event) => updateForm({ stock_status: event.target.value })} className={exactFormInputClass}><option value="in_stock">Stokta</option><option value="out_of_stock">Stok yok</option><option value="preorder">Ön sipariş</option></select></ExactField><InformationControl field={{ ...careField, label: "Saklama önerisi şablonu" }} value={form.care_advice} onChange={value => updateForm({ care_advice: value })} /></div>
-          <div className="mt-3 grid gap-3"><ExactField label="Kısa açıklama"><textarea value={form.short_description} onChange={(event) => updateForm({ short_description: event.target.value })} className={`${exactFormInputClass} min-h-20`} /></ExactField></div>
+          <div className="mt-3 grid gap-3"><ExactField label="Kısa açıklama"><textarea value={form.short_description} onChange={(event) => updateForm({ short_description: event.target.value })} className={`${exactFormInputClass} min-h-20`} /></ExactField><ExactField label="Ürün açıklaması"><textarea aria-label="Ürün açıklaması" value={form.description} onChange={(event) => updateForm({ description: event.target.value })} className={`${exactFormInputClass} min-h-32`} /></ExactField></div>
         </ExactDataCard>
 
         <ProductInformationEditor sections={informationSections} values={informationValues} onChange={changeInformation} />
