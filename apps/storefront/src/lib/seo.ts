@@ -6,7 +6,6 @@ export const DEFAULT_SEO_DESCRIPTION =
   "Rosta Coffee Co. kahve, kahve danışmanlığı ve tedarik çözümleri.";
 export const DEFAULT_OG_IMAGE = "/home/rosta-hero.webp";
 
-export const SOCIAL_PROFILES = [] as const;
 
 export function absoluteUrl(value: string | null | undefined) {
   const input = String(value || "").trim();
