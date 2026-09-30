@@ -1,4 +1,5 @@
 import { after, NextResponse } from "next/server";
+import { normalizeProductInformation } from "@ruth-commerce/commerce-core/product-information";
 import {
   archiveProductWithAuth,
   updateProductWithAuth,
@@ -126,6 +127,7 @@ function productPersistenceMismatches(
 ) {
   const mismatches: string[] = [];
   const product = snapshot.product || {};
+  if ("information_sections" in body && JSON.stringify(normalizeProductInformation(product.information_sections)) !== JSON.stringify(normalizeProductInformation(body.information_sections))) mismatches.push("information_sections");
   const textFields = [
     "name",
     "slug",

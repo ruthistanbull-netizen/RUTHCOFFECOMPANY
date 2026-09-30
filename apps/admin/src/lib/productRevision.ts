@@ -287,6 +287,7 @@ export function productRevisionToPatch(snapshot: ProductRevisionSnapshot) {
     main_image_url: product.main_image_url,
     size_usage: product.size_usage,
     care_advice: product.care_advice,
+    information_sections: product.information_sections || [],
     is_featured: product.is_featured,
     is_new: product.is_new,
     product_type: product.product_type,

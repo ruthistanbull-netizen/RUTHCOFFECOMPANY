@@ -278,12 +278,12 @@ export function VariantStudioManager({ variants, setVariants, productPhotos, bas
             className="fixed inset-0 z-[2147483600] flex h-[100dvh] w-screen flex-col overflow-hidden bg-surface-primary"
             role="dialog"
             aria-modal="true"
-            aria-label="Yeni ana seçenek ekle"
+            aria-label="Yeni varyant grubu ekle"
           >
             <header className="shrink-0 border-b border-border-subtle bg-surface-primary px-4 pb-3 pt-[max(1rem,env(safe-area-inset-top))] sm:px-6 sm:pb-4">
               <div className="mx-auto flex w-full max-w-2xl items-start gap-3">
                 <div className="min-w-0 flex-1">
-                  <h3 className="ruth-type-section-title text-main">Yeni ana seçenek ekle</h3>
+                  <h3 className="ruth-type-section-title text-main">Yeni varyant grubu ekle</h3>
                   <p className="ruth-type-caption mt-1 text-muted">Seçenek adını, görünümünü ve değerlerini belirle.</p>
                 </div>
                 <ExactIconButton icon={X} label="Kapat" variant="ghost" size="icon-sm" onClick={() => setAddOpen(false)} />
@@ -295,7 +295,7 @@ export function VariantStudioManager({ variants, setVariants, productPhotos, bas
                 {libraryGroups.length ? (
                   <div>
                     <div className="mb-2 flex items-center justify-between gap-3">
-                      <p className="ruth-type-label text-muted">Kayıtlı ana seçenekler</p>
+                      <p className="ruth-type-label text-muted">Kayıtlı varyant grupları</p>
                       <span className="ruth-type-caption text-subtle">{libraryGroups.length} grup</span>
                     </div>
                     <div className="flex flex-wrap gap-2">
@@ -357,7 +357,7 @@ export function VariantStudioManager({ variants, setVariants, productPhotos, bas
             <footer className="shrink-0 border-t border-border-subtle bg-surface-primary px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 sm:px-6 sm:pt-4">
               <div className="mx-auto grid w-full max-w-2xl grid-cols-2 gap-2">
                 <ExactButton variant="secondary" onClick={() => setAddOpen(false)}>Vazgeç</ExactButton>
-                <ExactButton onClick={saveNewVariants}>Seçenekleri oluştur</ExactButton>
+                <ExactButton onClick={saveNewVariants}>Varyantları oluştur</ExactButton>
               </div>
             </footer>
           </motion.section>
@@ -392,7 +392,7 @@ export function VariantStudioManager({ variants, setVariants, productPhotos, bas
                     ) : (
                       <ImagePlus className="absolute inset-0 m-auto h-8 w-8 text-subtle" />
                     )}
-                    <span className="ruth-type-caption absolute left-3 top-3 rounded-full bg-black/55 px-2.5 py-1 font-semibold text-white backdrop-blur-sm">Ana seçenek görseli</span>
+                    <span className="ruth-type-caption absolute left-3 top-3 rounded-full bg-black/55 px-2.5 py-1 font-semibold text-white backdrop-blur-sm">Varyant görseli</span>
                   </div>
 
                   <Reorder.Group axis="y" values={mediaOrder} onReorder={setMediaOrder} className="max-h-[64dvh] space-y-2 overflow-y-auto pr-0.5 no-scrollbar">
@@ -447,16 +447,16 @@ export function VariantStudioManager({ variants, setVariants, productPhotos, bas
   return (
     <>
       <ExactDataCard
-        title="Ürün Seçenekleri"
+        title="Varyantlar"
         action={
           <ExactButton variant="secondary" size="sm" onClick={() => setAddOpen(true)}>
-            <Plus className="h-4 w-4" /> Ana seçenek ekle
+            <Plus className="h-4 w-4" /> Varyant grubu ekle
           </ExactButton>
         }
       >
         <div className="mb-4 rounded-[16px] border border-border-subtle bg-surface-secondary p-3">
           <div className="mb-2 flex items-center justify-between gap-3">
-            <p className="ruth-type-label text-muted">Ana seçenekler</p>
+            <p className="ruth-type-label text-muted">Varyant grupları</p>
             <span className="ruth-type-caption text-subtle">{optionGroups.length} grup</span>
           </div>
           {optionGroups.length ? (
@@ -470,7 +470,7 @@ export function VariantStudioManager({ variants, setVariants, productPhotos, bas
               ))}
             </div>
           ) : (
-            <p className="ruth-type-caption text-subtle">Henüz ana seçenek yok. “Ana seçenek ekle” ile oluşturabilirsin.</p>
+            <p className="ruth-type-caption text-subtle">Henüz varyant grubu yok. “Varyant grubu ekle” ile oluşturabilirsin.</p>
           )}
         </div>
         <div className="space-y-2.5">
@@ -534,7 +534,7 @@ export function VariantStudioManager({ variants, setVariants, productPhotos, bas
               </motion.div>
             );
           })}
-          {!variants.length ? <ExactEmptyState compact icon={ImagePlus} title="Seçenek yok" description="Ana seçenek ekleyerek Gramaj, Öğütme, Renk veya Beden gibi seçenek grupları oluşturabilirsin." /> : null}
+          {!variants.length ? <ExactEmptyState compact icon={ImagePlus} title="Varyant yok" description="Varyant grubu ekleyerek Gramaj, Öğütme, Renk veya Beden gibi seçenek grupları oluşturabilirsin." /> : null}
         </div>
       </ExactDataCard>
 

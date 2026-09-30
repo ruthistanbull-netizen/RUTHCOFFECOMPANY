@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { normalizeProductInformation } from "@ruth-commerce/commerce-core/product-information";
 import { requireAdmin } from "@/lib/auth";
 import { getLocalProductImage } from "@/lib/localProductImages";
 import { noStoreHeaders, revalidateWebsite } from "@/lib/websiteRevalidate";
@@ -234,6 +235,7 @@ export async function GET(request: Request) {
       bundle_items,
       size_usage,
       care_advice,
+      information_sections,
       collection_id,
       product_variants (
         id,
@@ -436,6 +438,7 @@ export async function POST(request: Request) {
     bundle_items: Array.isArray(body.bundleItems) ? body.bundleItems : [],
     size_usage: clean(body.size_usage) || null,
     care_advice: clean(body.care_advice) || null,
+    information_sections: normalizeProductInformation(body.information_sections),
     updated_at: now,
   };
 
@@ -555,6 +558,7 @@ export async function updateProductWithAuth(request: Request, auth: any) {
 
 
   const update: Record<string, unknown> = {};
+  if ("information_sections" in body) update.information_sections = normalizeProductInformation(body.information_sections);
   for (const field of ["name","slug","material","finish_color","stock_status","status","short_description","description","main_image_url","size_usage","care_advice"]) {
     if (field in body) update[field] = body[field] === "" ? null : body[field];
   }
@@ -588,7 +592,7 @@ export async function updateProductWithAuth(request: Request, auth: any) {
     .from("products")
     .update(update)
     .eq("id", id)
-    .select("id, name, slug, product_code, price, compare_at_price, material, finish_color, status, stock_status, short_description, description, size_usage, care_advice, main_image_url, product_type, is_bundle, bundle_items")
+    .select("id, name, slug, product_code, price, compare_at_price, material, finish_color, status, stock_status, short_description, description, size_usage, care_advice, information_sections, main_image_url, product_type, is_bundle, bundle_items")
     .single();
 
   if (productError) return NextResponse.json({ ok: false, error: productError.message }, { status: 400 });
