@@ -46,13 +46,26 @@ function Nav() {
         style={{ mixBlendMode: "difference" }}
       >
         <div className="flex items-center justify-between px-5 sm:px-8 py-5">
-          <a
-            href="#hero"
-            className="font-display font-bold uppercase tracking-tight text-lg sm:text-xl leading-none"
-            style={{ color: C.cream }}
-          >
-            ROSTA<span className="text-[0.7em] align-top">.</span>Studio
-          </a>
+          <div className="flex items-center gap-4 sm:gap-5">
+            <button
+              type="button"
+              aria-label="Menü"
+              aria-expanded={open}
+              onClick={() => setOpen(true)}
+              className="flex h-8 w-10 flex-col justify-center gap-[7px] p-0"
+            >
+              <span className="block h-px w-10" style={{ background: C.cream }} />
+              <span className="block h-px w-10" style={{ background: C.cream }} />
+            </button>
+
+            <a
+              href="#hero"
+              className="font-display font-bold uppercase tracking-tight text-lg sm:text-xl leading-none"
+              style={{ color: C.cream }}
+            >
+              ROSTA<span className="text-[0.7em] align-top">.</span>Studio
+            </a>
+          </div>
 
           <nav className="hidden md:flex items-center gap-7">
             {navLinks.map((l) => (
@@ -67,16 +80,6 @@ function Nav() {
             ))}
           </nav>
 
-          <button
-            type="button"
-            aria-label="Menü"
-            onClick={() => setOpen(true)}
-            className="md:hidden flex flex-col gap-[5px] p-1"
-          >
-            <span className="block w-6 h-[2px]" style={{ background: C.cream }} />
-            <span className="block w-6 h-[2px]" style={{ background: C.cream }} />
-            <span className="block w-4 h-[2px] ml-auto" style={{ background: C.cream }} />
-          </button>
         </div>
       </header>
 
@@ -87,7 +90,7 @@ function Nav() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "tween", duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed inset-0 z-[160] bg-[#111111] flex flex-col md:hidden"
+            className="fixed inset-0 z-[160] bg-[#111111] flex flex-col"
           >
             <div className="flex items-center justify-between px-5 py-5">
               <span className="font-display font-bold uppercase text-lg" style={{ color: C.cream }}>
@@ -642,7 +645,7 @@ function FinalCTA() {
   const big = { fontSize: "clamp(3rem, 13vw, 13rem)", color: C.cream };
 
   return (
-    <section id="contact" ref={ref} className="relative bg-[#C94A40] min-h-screen flex flex-col justify-center overflow-hidden grain">
+    <section id="contact" ref={ref} className="relative bg-[#C94A40] min-h-[125svh] sm:min-h-[150svh] flex flex-col justify-center overflow-x-hidden overflow-y-visible grain py-16 sm:py-24">
       <div className="px-5 sm:px-8 py-7 flex items-center justify-between font-mono-tech text-[10px] uppercase tracking-[0.25em]" style={{ color: "rgba(251,243,230,0.7)" }}>
         <span>BÖLÜM / 10</span>
         <span>İLETİŞİM</span>
@@ -675,7 +678,7 @@ function FinalCTA() {
             <span className="absolute left-0 -bottom-2 h-[3px] w-full origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out" style={{ background: C.cream }} />
           </a>
 
-          <div className="mt-10 sm:mt-16 flex flex-col sm:flex-row gap-4 sm:gap-10 font-mono-tech text-[10px] uppercase tracking-[0.22em]" style={{ color: "rgba(251,243,230,0.7)" }}>
+          <div className="mt-10 sm:mt-16 mb-6 sm:mb-10 flex flex-col sm:flex-row flex-wrap gap-4 sm:gap-10 font-mono-tech text-[10px] uppercase tracking-[0.22em]" style={{ color: "rgba(251,243,230,0.7)" }}>
             <span>ROSTA / STUDIO</span>
             <span>İST / TR</span>
             <span>KAHVE SİSTEMİ</span>
