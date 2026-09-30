@@ -4,6 +4,14 @@
   --studio-cream: var(--rosta-cream, #fbf3e6);
   --studio-brick: var(--rosta-brick-b, #c94a40);
   --studio-kraft: var(--rosta-kraft, #c8a77d);
+
+  /* Base44 source typography: Archivo body, Oswald display, Space Mono technical. */
+  --font-heading: var(--studio-font-display);
+  --font-body: var(--studio-font-body);
+  --font-editorial: var(--studio-font-display);
+  --ruth-font-display: var(--studio-font-display);
+  --ruth-font-body: var(--studio-font-body);
+
   position: relative;
   width: 100%;
   overflow-x: clip;
@@ -27,15 +35,16 @@
   mix-blend-mode: soft-light;
 }
 
-.display {
-  font-family: var(--studio-font-display), "Arial Narrow", sans-serif !important;
+.studioPage .display,
+.studioPage :where(h1, h2, h3, h4, h5, h6).display {
+  font-family: var(--studio-font-display), "Oswald", "Archivo", ui-sans-serif, system-ui, sans-serif !important;
   font-weight: 700 !important;
   letter-spacing: -0.045em !important;
   text-transform: uppercase !important;
 }
 
-.tech {
-  font-family: var(--studio-font-mono), ui-monospace, SFMono-Regular, Menlo, monospace !important;
+.studioPage .tech {
+  font-family: var(--studio-font-mono), "Space Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
   font-size: clamp(9px, 0.72vw, 12px);
   font-weight: 400;
   line-height: 1.3;
@@ -120,11 +129,21 @@
   align-items: center;
   gap: 10px;
   color: inherit;
-  font-family: var(--studio-font-mono), ui-monospace, monospace !important;
-  font-size: clamp(11px, 0.9vw, 14px);
-  letter-spacing: 0.07em;
+  font-family: var(--studio-font-display), "Oswald", "Archivo", ui-sans-serif, system-ui, sans-serif !important;
+  font-weight: 700;
+  letter-spacing: -0.025em;
   text-decoration: none;
   text-transform: uppercase;
+}
+
+.heroCta {
+  font-size: clamp(18px, 1.45vw, 21px);
+}
+
+.projectLink {
+  font-size: clamp(36px, 7vw, 112px);
+  line-height: 0.9;
+  letter-spacing: -0.035em;
 }
 
 .heroCta::after,
