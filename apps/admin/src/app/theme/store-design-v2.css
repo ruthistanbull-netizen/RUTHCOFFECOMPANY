@@ -2106,3 +2106,81 @@
     transform-origin:top left!important;
   }
 }
+
+/* Store Design V2.2 — fixed desktop preview + overlay side panels.
+   Desktop/tablet panels must never participate in workspace sizing. They slide
+   over the storefront canvas, so opening Yapı/Düzenle cannot change preview scale. */
+@media(min-width:768px){
+  [data-store-design-v2-admin] .sd-editor-workspace{
+    position:relative!important;
+    overflow:hidden!important;
+  }
+
+  [data-store-design-v2-admin] .sd-preview-stage{
+    position:relative!important;
+    z-index:1!important;
+    width:100%!important;
+    min-width:0!important;
+    flex:1 1 auto!important;
+  }
+
+  [data-store-design-v2-admin] .sd-sidebar-left,
+  [data-store-design-v2-admin] .sd-inspector{
+    position:absolute!important;
+    top:0!important;
+    bottom:0!important;
+    height:auto!important;
+    max-height:none!important;
+    z-index:42!important;
+    flex:none!important;
+    box-shadow:var(--sd-shadow-panel)!important;
+  }
+
+  [data-store-design-v2-admin] .sd-sidebar-left{
+    left:0!important;
+    right:auto!important;
+    width:var(--sd-v22-structure,288px)!important;
+    min-width:var(--sd-v22-structure,288px)!important;
+  }
+
+  [data-store-design-v2-admin] .sd-sidebar-left.is-open{
+    width:var(--sd-v22-structure,288px)!important;
+    min-width:var(--sd-v22-structure,288px)!important;
+    transform:translateX(0)!important;
+    opacity:1!important;
+    pointer-events:auto!important;
+  }
+
+  [data-store-design-v2-admin] .sd-sidebar-left.is-closed{
+    width:var(--sd-v22-structure,288px)!important;
+    min-width:var(--sd-v22-structure,288px)!important;
+    transform:translateX(calc(-100% - 14px))!important;
+    opacity:0!important;
+    pointer-events:none!important;
+    border-right-width:0!important;
+  }
+
+  [data-store-design-v2-admin] .sd-inspector{
+    left:auto!important;
+    right:0!important;
+    width:var(--sd-v22-inspector,400px)!important;
+    min-width:var(--sd-v22-inspector,400px)!important;
+  }
+
+  [data-store-design-v2-admin] .sd-inspector.is-open{
+    width:var(--sd-v22-inspector,400px)!important;
+    min-width:var(--sd-v22-inspector,400px)!important;
+    transform:translateX(0)!important;
+    opacity:1!important;
+    pointer-events:auto!important;
+  }
+
+  [data-store-design-v2-admin] .sd-inspector.is-closed{
+    width:var(--sd-v22-inspector,400px)!important;
+    min-width:var(--sd-v22-inspector,400px)!important;
+    transform:translateX(calc(100% + 14px))!important;
+    opacity:0!important;
+    pointer-events:none!important;
+    border-left-width:0!important;
+  }
+}

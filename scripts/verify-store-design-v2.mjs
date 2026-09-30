@@ -265,6 +265,25 @@ if (storeDesignV22.includes("new ResizeObserver(syncDesktopViewport)")) {
 if (storeDesignV22.includes("availableHeight / viewportHeight")) {
   fail("Masaüstü preview yüksekliğe göre küçültülüyor; yalnız genişlik ölçeği kullanılmalı.");
 }
+for (const token of [
+  "sd-editor-workspace relative flex min-h-0 flex-1",
+  "Side panels are desktop overlays",
+]) {
+  if (!storeDesignV22.includes(token)) fail(`Sabit preview / overlay panel sözleşmesi eksik: ${token}`);
+}
+if (storeDesignV22.includes("[device, isMobileViewport, leftOpen, rightOpen]")) {
+  fail("Masaüstü preview panel açılıp kapanınca yeniden ölçekleniyor.");
+}
+for (const token of [
+  "fixed desktop preview + overlay side panels",
+  ".sd-editor-workspace",
+  "position:absolute!important;",
+  "top:0!important;",
+  "transform:translateX(calc(-100% - 14px))!important;",
+  "transform:translateX(calc(100% + 14px))!important;",
+]) {
+  if (!storeDesignRouteCss.includes(token)) fail(`Overlay panel CSS sözleşmesi eksik: ${token}`);
+}
 
 const blockSectionEditor = read("apps/admin/src/components/theme/StoreDesignBlockSectionEditor.tsx");
 for (const token of [
