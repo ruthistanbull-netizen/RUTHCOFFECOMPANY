@@ -632,7 +632,7 @@ export function ExactProductStudioWorkspace({
       }
 
       toast.success(result.warning || (selected
-        ? "Ürün, varyant, medya ve katalog bilgileri güncellendi."
+        ? "Ürün, seçenek, medya ve katalog bilgileri güncellendi."
         : "Ürün oluşturuldu ve düzenleme modunda açık bırakıldı."));
 
       // The durable mutation already succeeded. Refreshing the full catalogue is
@@ -745,7 +745,7 @@ export function ExactProductStudioWorkspace({
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="ruth-type-card-title truncate text-main">{product.name}</p>
-                        <p className="ruth-type-caption truncate text-muted">{product.material || "Kahve türü yok"} · {product.product_variants?.length || 0} varyant</p>
+                        <p className="ruth-type-caption truncate text-muted">{product.material || "Kahve türü yok"} · {product.product_variants?.length || 0} seçenek</p>
                         <p className="ruth-type-price mt-1 text-main">{money(product.price)}</p>
                       </div>
                       <ExactStatusBadge status={product.status} label={product.status === "active" ? "Aktif" : product.status === "archived" ? "Arşiv" : "Taslak"} size="sm" />
