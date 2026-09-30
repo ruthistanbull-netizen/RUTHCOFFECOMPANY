@@ -1,27 +1,26 @@
 .rosta-studio-exact {
-  --font-heading: var(--studio-font-display);
-  --font-body: var(--studio-font-body);
-  --font-editorial: var(--studio-font-display);
-  --ruth-font-display: var(--studio-font-display);
-  --ruth-font-body: var(--studio-font-body);
+  --font-heading: "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Oswald", "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Space Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   width: 100%;
   min-width: 0;
   overflow-x: clip;
   background: #111111;
   color: #FBF3E6;
-  font-family: var(--studio-font-body), "Archivo", ui-sans-serif, system-ui, sans-serif;
+  font-family: "Archivo", ui-sans-serif, system-ui, sans-serif;
 }
 
 .rosta-studio-exact .font-display {
-  font-family: var(--studio-font-display), "Oswald", "Archivo", ui-sans-serif, system-ui, sans-serif !important;
+  font-family: "Oswald", "Archivo", ui-sans-serif, system-ui, sans-serif !important;
 }
 
 .rosta-studio-exact .font-body {
-  font-family: var(--studio-font-body), "Archivo", ui-sans-serif, system-ui, sans-serif !important;
+  font-family: "Archivo", ui-sans-serif, system-ui, sans-serif !important;
 }
 
 .rosta-studio-exact .font-mono-tech {
-  font-family: var(--studio-font-mono), "Space Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  font-family: "Space Mono", ui-monospace, monospace !important;
 }
 
 .rosta-studio-exact .grain {
@@ -54,13 +53,13 @@
 
 .rosta-studio-exact :where(h1,h2,h3,h4,h5,h6).font-display,
 .rosta-studio-exact :where(a,button,span,div).font-display {
-  font-family: var(--studio-font-display), "Oswald", "Archivo", ui-sans-serif, system-ui, sans-serif !important;
+  font-family: "Oswald", "Archivo", ui-sans-serif, system-ui, sans-serif !important;
 }
 
 .rosta-studio-exact :where(p,a,span,div).font-body {
-  font-family: var(--studio-font-body), "Archivo", ui-sans-serif, system-ui, sans-serif !important;
+  font-family: "Archivo", ui-sans-serif, system-ui, sans-serif !important;
 }
 
 .rosta-studio-exact :where(a,button,span,div).font-mono-tech {
-  font-family: var(--studio-font-mono), "Space Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  font-family: "Space Mono", ui-monospace, monospace !important;
 }
