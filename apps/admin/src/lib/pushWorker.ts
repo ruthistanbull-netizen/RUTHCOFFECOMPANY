@@ -150,11 +150,12 @@ function notificationFor(job: PushJob) {
 
   if (job.kind === "contact") {
     const senderName = clean(payload.name) || "Bir müşteri";
+    const messageId = clean(payload.message_id);
     return {
       title: "Yeni iletişim mesajı",
       body: `${senderName} iletişim formundan yeni bir mesaj gönderdi.`,
-      url,
-      tag: `rosta-contact-${clean(payload.message_id) || job.id}`,
+      url: messageId ? `/contact-messages?message_id=${encodeURIComponent(messageId)}` : url,
+      tag: `rosta-contact-${messageId || job.id}`,
     };
   }
 
