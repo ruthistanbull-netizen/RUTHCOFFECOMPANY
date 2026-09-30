@@ -45,6 +45,11 @@ const FORCE_LIVE_THEME_READS =
   process.env.NEXT_PUBLIC_FORCE_LIVE_THEME_READS === "true" && !FAST_NAVIGATION_MODE;
 const NEXT_CACHE_REVALIDATE_SECONDS = Number(process.env.NEXT_PUBLIC_CATALOG_REVALIDATE_SECONDS || 600);
 const THEME_CACHE_REVALIDATE_SECONDS = 10;
+const SOCIAL_MEDIA_FALLBACK: Partial<SocialMediaSettings> = {
+  instagram: process.env.NEXT_PUBLIC_ROSTA_INSTAGRAM_URL || "",
+  tiktok: process.env.NEXT_PUBLIC_ROSTA_TIKTOK_URL || "",
+  whatsapp: process.env.NEXT_PUBLIC_ROSTA_WHATSAPP_URL || "",
+};
 
 function getCatalogClient() {
   try {
@@ -1036,6 +1041,43 @@ export async function getSiteSettings(): Promise<
     acc[setting.setting_key] = setting.setting_value;
     return acc;
   }, {});
+}
+
+async function fetchSocialMediaSettings(): Promise<SocialMediaSettings> {
+  const client = getCatalogClient();
+  if (!USE_SUPABASE_CATALOG || !client) {
+    return normalizeSocialMediaSettings({}, SOCIAL_MEDIA_FALLBACK);
+  }
+
+  const { data, error } = await client
+    .from("site_settings")
+    .select("setting_value")
+    .eq("setting_key", "social_media")
+    .eq("is_public", true)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Sosyal medya ayarları alınamadı:", error.message);
+    return normalizeSocialMediaSettings({}, SOCIAL_MEDIA_FALLBACK);
+  }
+
+  return data
+    ? normalizeSocialMediaSettings(data.setting_value)
+    : normalizeSocialMediaSettings({}, SOCIAL_MEDIA_FALLBACK);
+}
+
+const getCachedSocialMediaSettings = unstable_cache(
+  fetchSocialMediaSettings,
+  ["rosta-social-media-v1"],
+  { revalidate: THEME_CACHE_REVALIDATE_SECONDS, tags: ["rosta-social-media"] },
+);
+
+export async function getSocialMediaSettings(): Promise<SocialMediaSettings> {
+  if (FORCE_LIVE_THEME_READS) {
+    noStore();
+    return fetchSocialMediaSettings();
+  }
+  return getCachedSocialMediaSettings();
 }
 
 async function fetchThemeCustomizerSettings(): Promise<ThemeCustomizerSettings> {
