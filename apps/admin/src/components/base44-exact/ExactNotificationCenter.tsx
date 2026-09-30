@@ -188,8 +188,8 @@ export function ExactNotificationProvider({ children }: { children: ReactNode })
       const sender = String(detail.sender || "Müşteri").trim() || "Müşteri";
       const preview = String(detail.preview || "").trim();
       const tag = activityKind === "reply"
-        ? `ruth-contact-reply-${activityKey.replace(/[^a-zA-Z0-9:_-]/g, "-")}`
-        : `ruth-contact-${contactMessageId}`;
+        ? `rosta-contact-reply-${activityKey.replace(/[^a-zA-Z0-9:_-]/g, "-")}`
+        : `rosta-contact-${contactMessageId}`;
 
       addNotification({
         tag,
