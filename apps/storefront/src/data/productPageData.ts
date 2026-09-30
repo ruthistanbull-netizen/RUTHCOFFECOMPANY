@@ -10,7 +10,7 @@ import type { Product } from "@/types/site";
 
 const READ_MODEL_TIMEOUT_MS = 1_500;
 const WINDOW_BUDGET_MS = 1_900;
-const CACHE_REVALIDATE_SECONDS = 600;
+const CACHE_REVALIDATE_SECONDS = 30;
 const EMPTY_DISCOUNTS: DiscountCampaignSettings = { discounts: [], coupons: [], campaigns: [] };
 
 export type ProductPageWindow = {
