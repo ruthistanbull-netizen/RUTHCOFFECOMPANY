@@ -6,6 +6,7 @@ import type { Category, Collection } from "@/types/site";
 import type { ThemeCustomizerSettings } from "@/lib/themeCustomizer";
 import { getThemeCustomizerSettings } from "@/data/site";
 import { ROSTA_WORDMARK_SRC } from "@/components/brand/rostaWordmark";
+import { FooterRouteVisibility } from "@/components/FooterRouteVisibility";
 
 type SocialLink = {
   label: string;
@@ -77,7 +78,7 @@ export async function Footer({ categories = [], collections = [], themeSettings 
   ];
 
   return (
-    <>
+    <FooterRouteVisibility>
       <footer data-editor-id="global.footer" data-editor-type="footer-shell" data-editor-label="Footer" className="bg-carbon px-4 pb-8 pt-14 text-cream md:px-8 md:pt-20" style={{ borderTop: "1px solid color-mix(in srgb, var(--rosta-kraft) 45%, transparent)" }}>
         <div className="mx-auto max-w-7xl">
           <div className="mb-10 flex flex-col items-center text-center md:mb-12">
@@ -100,6 +101,6 @@ export async function Footer({ categories = [], collections = [], themeSettings 
           <div className="flex flex-col justify-between gap-2 border-t border-kraft/35 pt-6 text-[9px] sm:text-[10px] md:flex-row" style={{ color: "var(--muted-foreground)" }}><p data-editor-id="global.footer.copyright" data-editor-type="footer-text" data-editor-label="Telif metni" data-editor-instance="copyright" data-store-design-editable-text="true">Copyright © 2026, ROSTA COFFEE CO. Tüm Hakları Saklıdır.</p><p data-editor-id="global.footer.tagline" data-editor-type="footer-text" data-editor-label="Alt bilgi sloganı" data-editor-instance="tagline" data-store-design-editable-text="true">Kahvenin her adımında.</p></div>
         </div>
       </footer>
-    </>
+    </FooterRouteVisibility>
   );
 }
