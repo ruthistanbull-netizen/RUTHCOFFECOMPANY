@@ -645,7 +645,7 @@ function FinalCTA() {
   const big = { fontSize: "clamp(3rem, 13vw, 13rem)", color: C.cream };
 
   return (
-    <section id="contact" ref={ref} className="relative bg-[#C94A40] min-h-screen flex flex-col justify-center overflow-hidden grain">
+    <section id="contact" ref={ref} className="relative bg-[#C94A40] min-h-[125svh] sm:min-h-[150svh] flex flex-col justify-center overflow-x-hidden overflow-y-visible grain py-16 sm:py-24">
       <div className="px-5 sm:px-8 py-7 flex items-center justify-between font-mono-tech text-[10px] uppercase tracking-[0.25em]" style={{ color: "rgba(251,243,230,0.7)" }}>
         <span>BÖLÜM / 10</span>
         <span>İLETİŞİM</span>
@@ -678,7 +678,7 @@ function FinalCTA() {
             <span className="absolute left-0 -bottom-2 h-[3px] w-full origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out" style={{ background: C.cream }} />
           </a>
 
-          <div className="mt-10 sm:mt-16 flex flex-col sm:flex-row gap-4 sm:gap-10 font-mono-tech text-[10px] uppercase tracking-[0.22em]" style={{ color: "rgba(251,243,230,0.7)" }}>
+          <div className="mt-10 sm:mt-16 mb-6 sm:mb-10 flex flex-col sm:flex-row flex-wrap gap-4 sm:gap-10 font-mono-tech text-[10px] uppercase tracking-[0.22em]" style={{ color: "rgba(251,243,230,0.7)" }}>
             <span>ROSTA / STUDIO</span>
             <span>İST / TR</span>
             <span>KAHVE SİSTEMİ</span>
