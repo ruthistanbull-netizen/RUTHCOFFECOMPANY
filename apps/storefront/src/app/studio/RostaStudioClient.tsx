@@ -257,14 +257,14 @@ function MarqueeOne() {
   );
 }
 
-function WhoWeAre() {
+function WhoWeAre({ isMobile }: { isMobile: boolean }) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"],
   });
-  const leftX = useTransform(scrollYProgress, [0, 0.45], ["-110%", "0%"]);
-  const rightX = useTransform(scrollYProgress, [0.1, 0.55], ["110%", "0%"]);
+  const leftX = useTransform(scrollYProgress, [0, 0.45], [isMobile ? "-18vw" : "-110%", "0%"]);
+  const rightX = useTransform(scrollYProgress, [0.1, 0.55], [isMobile ? "18vw" : "110%", "0%"]);
   const words = ["BAR.", "ÜRÜN.", "MARKA.", "DENEYİM."];
 
   return (
@@ -698,7 +698,7 @@ export function RostaStudioClient() {
       <Nav />
       <Hero isMobile={isMobile} />
       <MarqueeOne />
-      <WhoWeAre />
+      <WhoWeAre isMobile={isMobile} />
       <Services isMobile={isMobile} />
       <StreetText isMobile={isMobile} />
       <Process isMobile={isMobile} />
