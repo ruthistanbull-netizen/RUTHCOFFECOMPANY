@@ -19,6 +19,21 @@ function unique(values: Array<string | null | undefined>) {
   return [...new Set(values.filter((value): value is string => Boolean(value)))];
 }
 
+const FALLBACK_VARIANT_OPTION = "Varyant";
+
+function variantOptionValue(variant: ProductVariant, name: string) {
+  const explicit = variant.options?.[name];
+  if (explicit) return explicit;
+  if (name !== FALLBACK_VARIANT_OPTION) return "";
+  return String(
+    variant.option_summary
+    || variant.name
+    || variant.sku
+    || variant.id
+    || "",
+  ).trim();
+}
+
 function optionNames(variants: ProductVariant[]) {
   const names: string[] = [];
   for (const variant of variants) {
@@ -26,6 +41,7 @@ function optionNames(variants: ProductVariant[]) {
       if (!name.startsWith("__") && !names.includes(name)) names.push(name);
     }
   }
+  if (!names.length && variants.length > 1) names.push(FALLBACK_VARIANT_OPTION);
   return names;
 }
 
@@ -34,7 +50,7 @@ function exactOptionMatch(
   selected: Record<string, string>,
 ) {
   return Object.entries(selected).every(
-    ([name, value]) => !value || variant.options?.[name] === value,
+    ([name, value]) => !value || variantOptionValue(variant, name) === value,
   );
 }
 
@@ -164,7 +180,7 @@ export function ProductPurchasePanel({
         return !selected || variant.options?.[name] === selected;
       }),
     );
-    return unique(matching.map((variant) => variant.options?.[optionName]));
+    return unique(matching.map((variant) => variantOptionValue(variant, optionName)));
   };
 
   const optionPossible = (optionName: string, value: string) => {
@@ -173,10 +189,10 @@ export function ProductPurchasePanel({
     return visibleVariants.some(
       (variant) =>
         isAvailable(variant) &&
-        variant.options?.[optionName] === value &&
+        variantOptionValue(variant, optionName) === value &&
         previousNames.every((name) => {
           const selected = selectedOptions[name];
-          return !selected || variant.options?.[name] === selected;
+          return !selected || variantOptionValue(variant, name) === selected;
         }),
     );
   };
