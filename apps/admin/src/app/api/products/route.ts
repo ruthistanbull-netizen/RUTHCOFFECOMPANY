@@ -509,7 +509,7 @@ export async function POST(request: Request) {
   }
 
 
-  const revalidate = await revalidateWebsite({ source: "admin-product-create", productIds: [String(productId)] });
+  const revalidate = await revalidateWebsite({ source: "admin-product-create", productIds: [String(productId)], immediate: true });
   return NextResponse.json({ ok: true, product, variantMediaHandled: true, revalidate, warning: revalidate.ok ? null : revalidate.message }, { headers: noStoreHeaders() });
 }
 
@@ -710,7 +710,7 @@ export async function updateProductWithAuth(request: Request, auth: any) {
 
   const revalidate = request.headers.get("x-ruth-skip-storefront-revalidate") === "1"
     ? { ok: true, skipped: true, deferred: true, attempts: 0, message: "Storefront yenilemesi güvenli ürün akışına devredildi." }
-    : await revalidateWebsite({ source: "admin-product-update", productIds: [id] });
+    : await revalidateWebsite({ source: "admin-product-update", productIds: [id], immediate: true });
   return NextResponse.json({ ok: true, product, variantMediaHandled: true, revalidate, warning: revalidate.ok ? null : revalidate.message }, { headers: noStoreHeaders() });
 }
 
@@ -753,7 +753,7 @@ export async function archiveProductWithAuth(request: Request, auth: any) {
 
   const revalidate = request.headers.get("x-ruth-skip-storefront-revalidate") === "1"
     ? { ok: true, skipped: true, deferred: true, attempts: 0, message: "Storefront yenilemesi güvenli ürün akışına devredildi." }
-    : await revalidateWebsite({ source: "admin-product-archive", productIds: [id] });
+    : await revalidateWebsite({ source: "admin-product-archive", productIds: [id], immediate: true });
   return NextResponse.json({ ok: true, revalidate, warning: revalidate.ok ? null : revalidate.message }, { headers: noStoreHeaders() });
 }
 
