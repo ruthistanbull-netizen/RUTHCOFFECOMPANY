@@ -800,7 +800,7 @@ export async function PATCH(request: Request) {
       return apiError(message, 500, { correlationId: idempotencyKey, reconciliationRequired, compensationFailures });
     }
 
-    const revalidate = await revalidateWebsite({ source: "admin-products-bulk-update", productIds: updatedIds });
+    const revalidate = await revalidateWebsite({ source: "admin-products-bulk-update", productIds: updatedIds, immediate: true });
     if (!revalidate.ok) {
       successBody.warning = revalidate.message || "Site önbelleği yenilenemedi.";
       await completeIdempotency(supabase, idempotencyKey, 200, successBody).catch(() => undefined);
@@ -907,7 +907,7 @@ export async function PATCH(request: Request) {
     return apiError(message, 500, { correlationId: idempotencyKey, reconciliationRequired, compensationFailures });
   }
 
-  const revalidate = await revalidateWebsite({ source: "admin-products-bulk-update", productIds: mutatedIds });
+  const revalidate = await revalidateWebsite({ source: "admin-products-bulk-update", productIds: mutatedIds, immediate: true });
   if (!revalidate.ok) {
     successBody.warning = revalidate.message || "Site önbelleği yenilenemedi.";
     await completeIdempotency(supabase, idempotencyKey, 200, successBody).catch(() => undefined);
