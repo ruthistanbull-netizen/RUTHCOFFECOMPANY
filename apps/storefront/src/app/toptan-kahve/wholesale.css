@@ -1,0 +1,278 @@
+.wholesale-page {
+  background: #C94A40 !important;
+  color: #FBF3E6;
+}
+
+.wholesale-page > header {
+  mix-blend-mode: normal !important;
+}
+
+.wholesale-page .business-hero,
+.wholesale-page .business-hero-sticky,
+.wholesale-page #coffee,
+.wholesale-page .business-process {
+  background: #C94A40 !important;
+}
+
+.wholesale-page .business-hero-sticky > .absolute,
+.wholesale-page .wholesale-meta,
+.wholesale-page .business-process > .px-5 {
+  color: rgba(251, 243, 230, 0.78) !important;
+}
+
+.wholesale-page .studio-service > .font-mono-tech,
+.wholesale-page .studio-service .font-mono-tech {
+  color: rgba(251, 243, 230, 0.78) !important;
+}
+
+.wholesale-page .studio-service-number {
+  color: rgba(251, 243, 230, 0.16) !important;
+}
+
+.wholesale-page .wholesale-marquees span[style],
+.wholesale-page > section[aria-label="ROSTA toptan kahve"] span[style] {
+  color: rgba(251, 243, 230, 0.72) !important;
+}
+
+.wholesale-page .business-process > .relative > .absolute {
+  background: rgba(251, 243, 230, 0.22) !important;
+}
+
+.wholesale-page .business-process > .relative > .absolute > div {
+  background: #FBF3E6 !important;
+}
+
+.wholesale-page .business-process-stage > div > div > span {
+  color: #FBF3E6 !important;
+}
+
+.wholesale-page .wholesale-questions .wholesale-meta {
+  color: #C94A40 !important;
+}
+
+.wholesale-page section[id] {
+  scroll-margin-top: 88px;
+}
+
+.wholesale-page .business-inline-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  width: fit-content;
+  max-width: 100%;
+  min-height: 44px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+
+.wholesale-page .wholesale-section-link {
+  margin-top: 0.5rem;
+  color: #FBF3E6;
+}
+
+.wholesale-page header a,
+.wholesale-page .business-hero-sticky a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.wholesale-page .studio-drawer nav > a {
+  min-height: 44px;
+  font-size: clamp(2rem, 10vw, 3.75rem);
+  overflow-wrap: anywhere;
+}
+
+.wholesale-page .studio-drawer {
+  background: #C94A40 !important;
+  padding-bottom: calc(var(--ruth-cookie-consent-height, 0px) + max(32px, env(safe-area-inset-bottom) + 20px)) !important;
+}
+
+.wholesale-page .studio-drawer > div:last-child {
+  color: rgba(251, 243, 230, 0.78) !important;
+}
+
+.wholesale-page .business-service-sticky {
+  padding-block: 3.5rem 1.5rem;
+}
+
+.wholesale-page .business-process > div:nth-child(2) h2 {
+  font-size: clamp(2.1rem, 9vw, 9rem) !important;
+}
+
+.wholesale-page .business-process-stage h3 {
+  overflow-wrap: anywhere;
+}
+
+.wholesale-faq {
+  border-top: 1px solid #C8A77D;
+}
+
+.wholesale-faq:last-child {
+  border-bottom: 1px solid #C8A77D;
+}
+
+.wholesale-faq summary {
+  display: flex;
+  align-items: baseline;
+  gap: clamp(0.75rem, 2vw, 2rem);
+  min-height: 64px;
+  padding-block: 1.2rem;
+  cursor: pointer;
+  list-style: none;
+  font-size: clamp(1.35rem, 2.5vw, 2.4rem);
+  line-height: 1.25;
+}
+
+.wholesale-faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.wholesale-faq summary::after {
+  content: "+";
+  margin-left: auto;
+  color: #C94A40;
+  font-family: var(--font-mono);
+  flex: 0 0 auto;
+}
+
+.wholesale-faq[open] summary::after {
+  content: "−";
+}
+
+.wholesale-faq-number {
+  color: #C94A40;
+  font-size: 0.7rem;
+  flex: 0 0 auto;
+}
+
+.wholesale-faq-answer {
+  max-width: 48rem;
+  padding: 0 0 1.5rem clamp(2rem, 4vw, 3.5rem);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.wholesale-faq-answer .business-inline-link {
+  margin-top: 0.75rem;
+  color: #111111;
+}
+
+.wholesale-page :is(a, button, summary):focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 5px;
+}
+
+@media (max-width: 767px) {
+  .wholesale-page .business-hero-sticky > div:nth-of-type(2) {
+    transform: translateY(-5rem);
+  }
+
+  .wholesale-page .business-hero-copy {
+    bottom: calc(7rem + var(--ruth-cookie-consent-height, 0px));
+    gap: 0.75rem;
+  }
+
+  .wholesale-page .business-hero-copy > div:first-child {
+    min-width: 0;
+    max-width: 100%;
+    letter-spacing: 0.14em;
+    overflow-wrap: anywhere;
+  }
+
+  .wholesale-page .business-hero-sticky > div:last-child {
+    bottom: calc(2.5rem + var(--ruth-cookie-consent-height, 0px));
+  }
+
+  .wholesale-page .business-hero-copy p {
+    max-width: 22rem;
+  }
+
+  .wholesale-page .wholesale-meta {
+    gap: 1rem;
+    letter-spacing: 0.12em;
+  }
+
+  .wholesale-page .studio-service h3 {
+    font-size: clamp(2.4rem, 11vw, 5.2rem) !important;
+  }
+
+  .wholesale-page .business-process > div:nth-child(2) {
+    margin-bottom: 3rem;
+  }
+
+  .wholesale-faq-answer {
+    padding-left: 0;
+  }
+}
+
+/* Short viewports keep text in the native page flow and retain pinned media. */
+@media (max-height: 650px) {
+  .wholesale-page .business-hero-sticky {
+    min-height: 560px;
+  }
+
+  .wholesale-page .business-hero {
+    min-height: 760px;
+  }
+
+  .wholesale-page .business-hero-sticky > div:nth-of-type(2) {
+    margin-top: -4rem;
+  }
+
+  .wholesale-page .business-hero-sticky > div:nth-of-type(2) .font-display {
+    font-size: clamp(4rem, 14vw, 8rem) !important;
+  }
+
+  .wholesale-page .business-service-track {
+    height: max(160vh, 640px);
+  }
+
+  .wholesale-page .business-service-sticky {
+    min-height: 500px;
+    padding-block: 3.5rem 1rem;
+  }
+
+  .wholesale-page .business-service-sticky .studio-media-slot {
+    height: 150px;
+    flex-shrink: 1;
+  }
+
+  .wholesale-page .studio-service h3 {
+    font-size: clamp(2.2rem, 6vw, 3.5rem) !important;
+  }
+
+  .wholesale-page .business-service-sticky > div:nth-child(2) {
+    margin-top: 1.25rem;
+  }
+
+  .wholesale-page .business-service-sticky > div:nth-child(3) {
+    margin-top: 1rem;
+  }
+}
+
+@media (max-height: 450px) {
+  .wholesale-page .business-service-sticky {
+    height: 100svh;
+    min-height: 0;
+  }
+
+  .wholesale-page .business-service-sticky .studio-media-slot {
+    height: 26svh;
+  }
+
+  .wholesale-page .studio-service h3 {
+    font-size: clamp(1.8rem, 5vw, 3rem) !important;
+  }
+
+  .wholesale-page .business-service-sticky > div:nth-child(2) {
+    margin-top: 0.75rem;
+  }
+
+  .wholesale-page .business-service-sticky > div:nth-child(3) {
+    margin-top: 0.75rem;
+  }
+}

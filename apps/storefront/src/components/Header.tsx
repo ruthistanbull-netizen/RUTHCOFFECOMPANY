@@ -20,6 +20,7 @@ import {
   type ThemeNavItem,
 } from "@/lib/themeCustomizer";
 import { categoryHref } from "@/lib/catalogCategories";
+import { isBusinessEditorialRoute } from "@/lib/businessEditorialRoutes";
 import { BusinessMenuLinks, partitionMenuLinks } from "@/components/navigation/BusinessMenuLinks";
 import type { Category, Collection } from "@/types/site";
 
@@ -503,11 +504,11 @@ export function Header({
 
   const productPage = pathname.startsWith("/products/");
   const homePage = pathname === "/";
-  const studioPage = pathname === "/studio";
+  const businessEditorialPage = isBusinessEditorialRoute(pathname);
   const transparentProductHeader = productPage && !scrolled && !menuOpen && !searchOpen;
   const transparentHomeHeader = homePage && !menuOpen && !searchOpen;
-  const transparentStudioHeader = studioPage && !scrolled && !menuOpen && !searchOpen;
-  const contrastHeader = transparentProductHeader || transparentHomeHeader || transparentStudioHeader;
+  const transparentBusinessHeader = businessEditorialPage && !scrolled && !menuOpen && !searchOpen;
+  const contrastHeader = transparentProductHeader || transparentHomeHeader || transparentBusinessHeader;
   const menuControlColor = "#FBF3E6";
   const menuToneStyle = {
     "--ruth-menu-control-color": menuControlColor,
@@ -662,7 +663,7 @@ export function Header({
     router.push(`/products?search=${encodeURIComponent(query)}`);
   };
 
-  if (studioPage) return null;
+  if (businessEditorialPage) return null;
 
   return (
     <>

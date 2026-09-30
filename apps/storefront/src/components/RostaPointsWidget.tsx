@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { isBusinessEditorialRoute } from "@/lib/businessEditorialRoutes";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   Cake,
@@ -308,7 +309,7 @@ export function RostaPointsWidget({ themeSettings }: { themeSettings: ThemeCusto
     ? { duration: 0.01 }
     : { duration: 0.48, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] };
 
-  if (pathname === "/studio") return null;
+  if (isBusinessEditorialRoute(pathname)) return null;
 
   return (
     <>
