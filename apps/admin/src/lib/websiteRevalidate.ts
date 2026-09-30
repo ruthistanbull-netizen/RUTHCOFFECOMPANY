@@ -20,6 +20,7 @@ export type WebsiteRevalidateInput = {
   paths?: string[];
   tags?: string[];
   productIds?: string[];
+  immediate?: boolean;
 };
 
 const REVALIDATE_ATTEMPT_TIMEOUT_MS = 1_500;
@@ -171,6 +172,39 @@ export async function revalidateWebsite(input: WebsiteRevalidateInput): Promise<
   }
 
   const durableJob = await enqueueDurableDelivery(input);
+
+  if (input.immediate) {
+    const result = await executeWebsiteRevalidate(input);
+    if (result.ok) {
+      if (durableJob) after(() => acknowledgeImmediateDelivery(durableJob));
+      return {
+        ...result,
+        deferred: false,
+        durable: Boolean(durableJob),
+        message: "Storefront ürün cache'i anında yenilendi.",
+      };
+    }
+
+    if (!result.skipped) {
+      console.warn("[storefront-delivery] immediate revalidate failed; durable worker will retry", {
+        source: input.source, scope: result.scope, status: result.status, message: result.message,
+        durable: Boolean(durableJob),
+      });
+    }
+    if (durableJob) {
+      return {
+        ok: true,
+        deferred: true,
+        durable: true,
+        scope,
+        status: result.status,
+        attempts: result.attempts,
+        message: result.message || "Anlık yenileme gecikti; kalıcı teslim işçisi tekrar deneyecek.",
+      };
+    }
+    return result;
+  }
+
   after(async () => {
     const result = await executeWebsiteRevalidate(input);
     if (result.ok && durableJob) {
