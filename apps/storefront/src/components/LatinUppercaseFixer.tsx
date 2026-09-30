@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
+import { isBusinessEditorialRoute } from "@/lib/businessEditorialRoutes";
 
 const UPPERCASE_SELECTOR = [
   ".uppercase",
@@ -87,8 +88,8 @@ export function LatinUppercaseFixer() {
   const pathname = usePathname();
 
   useEffect(() => {
-    // Studio preserves the reference's Turkish lettering and owns its typography.
-    if (pathname === "/studio" || pathname.startsWith("/studio/") || pathname.startsWith("/products/")) return;
+    // Business editorial pages own their typography and Turkish lettering.
+    if (isBusinessEditorialRoute(pathname) || pathname.startsWith("/products/")) return;
 
     const pending = new Set<ParentNode>([document]);
     let idleId = 0;

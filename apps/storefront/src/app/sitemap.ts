@@ -7,6 +7,7 @@ const staticRoutes = [
   "",
   "/about",
   "/studio",
+  "/toptan-kahve",
   "/products",
   "/categories",
   "/collections",

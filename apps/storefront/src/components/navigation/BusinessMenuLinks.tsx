@@ -2,14 +2,28 @@
 
 import Link from "next/link";
 import type { ThemeNavItem } from "@/lib/themeCustomizer";
+import { BUSINESS_EDITORIAL_ROUTES, isBusinessEditorialRoute } from "@/lib/businessEditorialRoutes";
 
 export function partitionMenuLinks<T extends ThemeNavItem>(items: T[]) {
   const primary: T[] = [];
-  const business: T[] = [];
+  const business: ThemeNavItem[] = [];
 
   for (const item of items) {
     const pathname = item.path.split(/[?#]/, 1)[0].replace(/\/+$/, "");
-    (pathname === "/studio" ? business : primary).push(item);
+    if (isBusinessEditorialRoute(pathname)) business.push(item);
+    else primary.push(item);
+  }
+
+  // Existing saved navigation settings predate the wholesale page.
+  // Keep configured links intact and supply its default destination once.
+  if (!business.some((item) => item.path.split(/[?#]/, 1)[0].replace(/\/+$/, "") === BUSINESS_EDITORIAL_ROUTES.wholesale)) {
+    business.push({
+      id: "rosta-wholesale",
+      label: "Toptan Kahve",
+      path: BUSINESS_EDITORIAL_ROUTES.wholesale,
+      side: "left",
+      children: [],
+    });
   }
 
   return { primary, business };
