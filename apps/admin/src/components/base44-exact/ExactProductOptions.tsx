@@ -264,7 +264,7 @@ export function ExactProductOptions() {
     <div className="mx-auto w-full max-w-[1240px] px-4 py-4 md:px-6 md:py-6">
       <ExactPageHeader
         title="Ürün Seçenekleri"
-        subtitle="Ürün oluşturma ve düzenleme ekranındaki sabit seçim listelerini buradan yönet."
+        subtitle="Ana seçenek gruplarını ve ürün formundaki seçim listelerini tek yerden yönet."
         actions={
           <>
             <ExactButton
