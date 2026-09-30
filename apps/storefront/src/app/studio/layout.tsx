@@ -1,9 +1,16 @@
 import "./studio.css";
-import { Archivo, Space_Mono } from "next/font/google";
+import { Archivo, Oswald, Space_Mono } from "next/font/google";
 
 const archivo = Archivo({
   subsets: ["latin", "latin-ext"],
   variable: "--studio-font-archivo",
+  display: "swap",
+});
+
+const oswald = Oswald({
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "700"],
+  variable: "--studio-font-oswald",
   display: "swap",
 });
 
@@ -18,7 +25,7 @@ export default function StudioLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <div className={`${archivo.variable} ${spaceMono.variable}`}>
+    <div className={`${archivo.variable} ${oswald.variable} ${spaceMono.variable}`}>
       {children}
     </div>
   );

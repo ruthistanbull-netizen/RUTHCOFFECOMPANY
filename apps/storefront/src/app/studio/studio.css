@@ -1,7 +1,7 @@
 .rosta-studio-exact {
   --font-heading: var(--studio-font-archivo), "Archivo", ui-sans-serif, system-ui, sans-serif;
   --font-body: var(--studio-font-archivo), "Archivo", ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--studio-font-archivo), "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--studio-font-oswald), "Oswald", var(--studio-font-archivo), "Archivo", ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--studio-font-mono), "Space Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   width: 100%;
   min-width: 0;
@@ -12,7 +12,13 @@
 }
 
 .rosta-studio-exact .font-display {
-  font-family: var(--studio-font-archivo), "Archivo", ui-sans-serif, system-ui, sans-serif !important;
+  font-family: var(--font-display) !important;
+  font-weight: 400 !important;
+}
+
+/* Keep the reference weights when storefront rules override Tailwind utilities. */
+.rosta-studio-exact .font-display.font-bold {
+  font-weight: 700 !important;
 }
 
 .rosta-studio-exact .font-body {
@@ -21,6 +27,13 @@
 
 .rosta-studio-exact .font-mono-tech {
   font-family: var(--studio-font-mono), "Space Mono", ui-monospace, monospace !important;
+  font-weight: 400 !important;
+}
+
+/* Nested words/labels retain their role; explicit font classes still take priority. */
+.rosta-studio-exact :where(.font-display, .font-mono-tech) span {
+  font-family: inherit !important;
+  font-weight: inherit !important;
 }
 
 .rosta-studio-exact .grain {
@@ -52,20 +65,6 @@
   backface-visibility: hidden;
   transform: translateZ(0);
 }
-
-.rosta-studio-exact :where(h1,h2,h3,h4,h5,h6).font-display,
-.rosta-studio-exact :where(a,button,span,div).font-display {
-  font-family: var(--studio-font-archivo), "Archivo", ui-sans-serif, system-ui, sans-serif !important;
-}
-
-.rosta-studio-exact :where(p,a,span,div).font-body {
-  font-family: var(--studio-font-archivo), "Archivo", ui-sans-serif, system-ui, sans-serif !important;
-}
-
-.rosta-studio-exact :where(a,button,span,div).font-mono-tech {
-  font-family: var(--studio-font-mono), "Space Mono", ui-monospace, monospace !important;
-}
-
 
 @media (max-width: 767px) {
   .rosta-studio-exact .grain::after {

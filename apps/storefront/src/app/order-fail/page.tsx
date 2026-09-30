@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 type Props = {
-  searchParams?: Promise<{ order?: string; message?: string }> | { order?: string; message?: string };
+  searchParams?: Promise<{ order?: string; message?: string }>;
 };
 
 export default async function OrderFailPage({ searchParams }: Props) {
