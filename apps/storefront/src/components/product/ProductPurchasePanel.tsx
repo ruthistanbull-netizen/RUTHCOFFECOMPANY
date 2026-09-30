@@ -27,7 +27,6 @@ function variantOptionValue(variant: ProductVariant, name: string) {
   if (name !== FALLBACK_VARIANT_OPTION) return "";
   return String(
     variant.option_summary
-    || variant.name
     || variant.sku
     || variant.id
     || "",
