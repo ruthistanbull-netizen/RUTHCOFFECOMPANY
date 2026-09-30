@@ -38,17 +38,19 @@
 }
 
 @keyframes rosta-marquee-left {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
 }
 
 @keyframes rosta-marquee-right {
-  from { transform: translateX(-50%); }
-  to { transform: translateX(0); }
+  from { transform: translate3d(-50%, 0, 0); }
+  to { transform: translate3d(0, 0, 0); }
 }
 
 .rosta-studio-exact .rosta-marquee {
   will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 .rosta-studio-exact :where(h1,h2,h3,h4,h5,h6).font-display,
@@ -62,4 +64,20 @@
 
 .rosta-studio-exact :where(a,button,span,div).font-mono-tech {
   font-family: var(--studio-font-mono), "Space Mono", ui-monospace, monospace !important;
+}
+
+
+@media (max-width: 767px) {
+  .rosta-studio-exact .grain::after {
+    display: none;
+  }
+
+  .rosta-studio-exact .rosta-marquee {
+    contain: paint;
+  }
+
+  .rosta-studio-exact img {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
 }
