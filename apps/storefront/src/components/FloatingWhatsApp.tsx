@@ -28,9 +28,7 @@ export function FloatingWhatsApp({
 }) {
   const [editorMode, setEditorMode] = useState(false);
   const socialTarget = String(socialHref || "").trim();
-  const message = (
-    "Merhaba, Rosta Coffee Co ekibinden yardım almak istiyorum.",
-  );
+  const message = "Merhaba, Rosta Coffee Co ekibinden yardım almak istiyorum.";
 
   const targetHref = (() => {
     if (!socialTarget) return "";
