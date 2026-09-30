@@ -13,7 +13,7 @@ import { productPrimaryDetailImageSrc } from "@/lib/productDisplayImage";
 import { absoluteUrl, cleanSeoText, SITE_NAME, SITE_URL } from "@/lib/seo";
 import type { Product } from "@/types/site";
 
-export const revalidate = 300;
+export const revalidate = 30;
 
 function description(product: Product) {
   return cleanSeoText(
