@@ -33,6 +33,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
+import { useRouter } from "next/navigation";
 import {
   STORE_DESIGN_MESSAGES,
   STORE_DESIGN_SCHEMA_VERSION,
@@ -670,6 +671,7 @@ function StableInspectorTextControl({
 
 export function StoreDesignV21() {
   const toast = useExactToast();
+  const router = useRouter();
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const editorShellRef = useRef<HTMLDivElement | null>(null);
   const previewStageRef = useRef<HTMLElement | null>(null);
@@ -1037,12 +1039,13 @@ export function StoreDesignV21() {
   };
 
   const requestEditorExit = useCallback(() => {
+    if (saving) return;
     if (hasUnsavedChanges) {
       const leave = window.confirm("Kaydedilmemiş değişiklikler var. Çıkarsan bu değişiklikler kaybolacak. Yine de çıkmak istiyor musun?");
       if (!leave) return;
     }
-    window.history.back();
-  }, [hasUnsavedChanges]);
+    router.push("/dashboard");
+  }, [hasUnsavedChanges, router, saving]);
 
   const editorPages = useMemo(() => {
     const merged = new Map(pages.map((page) => [page.path, page]));
@@ -2278,9 +2281,10 @@ export function StoreDesignV21() {
   return (
     <div ref={editorShellRef} data-store-design-v2-admin data-store-design-version="2.2" data-physical-mobile={isMobileViewport ? "true" : "false"} data-device={device} data-interaction-mode={interactionMode} className="sd-editor-shell flex h-dvh min-h-0 flex-col overflow-hidden bg-[#f5f5f3] text-[#111]">
       <header className="sd-toolbar z-30 flex h-14 shrink-0 items-center justify-between gap-2 border-b px-2 sm:px-3">
-        <div className="sd-toolbar-left flex min-w-0 items-center gap-1">
-          <button type="button" onClick={requestEditorExit} className="sd-icon-button grid h-9 w-9 shrink-0 place-items-center rounded-md border" aria-label="Geri" title="Geri">
+        <div className="sd-toolbar-left flex w-full min-w-0 items-center gap-1">
+          <button type="button" onClick={requestEditorExit} disabled={saving !== null} className="sd-toolbar-button flex h-9 shrink-0 items-center gap-1.5 rounded-md border px-2 text-[11px] font-semibold disabled:opacity-50 sm:px-3" aria-label="Panele dön" title="Panele dön">
             <ArrowLeft className="h-4 w-4" />
+            <span>Panele dön</span>
           </button>
           <button type="button" onClick={toggleStructurePanel} aria-pressed={leftOpen} className="sd-icon-button grid h-9 w-9 shrink-0 place-items-center rounded-md border" aria-label="Yapıyı aç veya kapat" title="Yapı">
             <PanelLeft className="h-4 w-4" />
