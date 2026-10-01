@@ -21,6 +21,7 @@ import {
   type ThemeNavItem,
 } from "@/lib/themeCustomizer";
 import { categoryHref } from "@/lib/catalogCategories";
+import { storeDesignPreviewHref } from "@/lib/storeDesignPreviewNavigation";
 import { isBusinessEditorialRoute } from "@/lib/businessEditorialRoutes";
 import { BusinessMenuLinks, partitionMenuLinks } from "@/components/navigation/BusinessMenuLinks";
 import type { Category, Collection } from "@/types/site";
@@ -645,7 +646,7 @@ export function Header({
     const query = searchValue.trim();
     if (!query) return;
     setSearchOpen(false);
-    router.push(`/products?search=${encodeURIComponent(query)}`);
+    router.push(storeDesignPreviewHref(`/products?search=${encodeURIComponent(query)}`, window.location.href));
   };
 
   if (businessEditorialPage) return null;

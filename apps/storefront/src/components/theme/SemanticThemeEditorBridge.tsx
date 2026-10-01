@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { storeDesignPreviewHref } from "@/lib/storeDesignPreviewNavigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   SEMANTIC_RUNTIME_PATCH_EVENT,
   STORE_DESIGN_PREVIEW_DOCUMENT_EVENT,
@@ -558,12 +559,31 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
   const selectedRef = useRef<SemanticTarget | null>(null);
   const pathname = usePathname();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const previewContextRef = useRef<URLSearchParams | null>(null);
+  const interactionModeRef = useRef<"browse" | "edit">("edit");
 
   useEffect(() => {
-    if (!editorEnabled() || window.parent === window) return;
+    if (window.parent === window) return;
+    if (!editorEnabled()) {
+      // Client-side buttons and history navigation can omit the editor query.
+      // Restore the authenticated preview context and refetch the draft route.
+      const context = previewContextRef.current;
+      if (!context) return;
+      const url = new URL(window.location.href);
+      for (const key of ["themeEditor", "storeDesignV2", "editorOrigin", "storeDesignV2Preview"]) {
+        const value = context.get(key);
+        if (value) url.searchParams.set(key, value);
+      }
+      // Mark the browser URL before other effects can start customer analytics.
+      window.history.replaceState(window.history.state, "", `${url.pathname}${url.search}${url.hash}`);
+      router.refresh();
+      return;
+    }
 
     const expectedParentOrigin = parentOrigin(allowedOrigins);
     if (!expectedParentOrigin) return;
+    previewContextRef.current = new URLSearchParams(window.location.search);
 
     const post = (payload: Record<string, unknown>) => {
       window.parent.postMessage(payload, expectedParentOrigin);
@@ -592,7 +612,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
     `;
     document.head.appendChild(previewScrollbarStyle);
 
-    let interactionMode: "browse" | "edit" = "edit";
+    let interactionMode: "browse" | "edit" = interactionModeRef.current;
     const originalTabIndex = new Map<HTMLElement, string | null>();
     const originalMediaSources = new WeakMap<HTMLImageElement | HTMLVideoElement, { src: string | null; srcset?: string | null }>();
     const originalTextValues = new WeakMap<HTMLElement, string>();
@@ -811,6 +831,23 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
     let lastEditAction: Element | null = null;
     let lastEditActionAt = 0;
 
+    const navigatePreview = (next: string) => {
+      const url = new URL(storeDesignPreviewHref(next, window.location.href), window.location.origin);
+      url.searchParams.set("themeEditor", "1");
+      url.searchParams.set("storeDesignV2", "1");
+      url.searchParams.set("editorOrigin", expectedParentOrigin);
+      const currentParams = new URLSearchParams(window.location.search);
+      const token = currentParams.get("storeDesignV2Preview") || previewContextRef.current?.get("storeDesignV2Preview");
+      if (token) url.searchParams.set("storeDesignV2Preview", token);
+      if (url.pathname === "/order-tracking") url.pathname = "/siparis-takip";
+      // Cart preview is a layout drawer and needs its mount lifecycle.
+      if (currentParams.get("storeDesignCartPreview") === "1" || url.searchParams.get("storeDesignCartPreview") === "1") {
+        window.location.assign(url.toString());
+      } else {
+        router.push(`${url.pathname}${url.search}${url.hash}`);
+      }
+    };
+
     const onClick = (event: MouseEvent) => {
       const now = Date.now();
       if (now < suppressClickUntil) {
@@ -818,7 +855,18 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
         event.stopPropagation();
         return;
       }
-      if (interactionMode !== "edit") return;
+      if (interactionMode !== "edit") {
+        const anchor = event.target instanceof Element ? event.target.closest<HTMLAnchorElement>("a[href]") : null;
+        if (!anchor || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey
+          || anchor.hasAttribute("download") || (anchor.target && anchor.target !== "_self")) return;
+        const href = anchor.getAttribute("href") || "";
+        if (href.startsWith("#")) return;
+        const next = routePath(anchor.href);
+        if (!next) return;
+        event.preventDefault();
+        navigatePreview(next);
+        return;
+      }
 
       const eventElement = event.target instanceof Element ? event.target : null;
       const actionable = eventElement?.closest("a[href],button,[role='button']") || null;
@@ -1015,6 +1063,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
 
       if (event.data.type === STORE_DESIGN_MESSAGES.INTERACTION_MODE) {
         interactionMode = event.data.mode === "browse" ? "browse" : "edit";
+        interactionModeRef.current = interactionMode;
         if (interactionMode === "browse") {
           overlay.style.opacity = "0";
           overlay.style.visibility = "hidden";
@@ -1085,21 +1134,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
       if (event.data.type === STORE_DESIGN_MESSAGES.ROUTE_NAVIGATE) {
         const next = routePath(event.data.path);
         if (!next) return;
-        const url = new URL(next, window.location.origin);
-        url.searchParams.set("themeEditor", "1");
-        url.searchParams.set("storeDesignV2", "1");
-        const currentParams = new URLSearchParams(window.location.search);
-        const editorOrigin = currentParams.get("editorOrigin");
-        const previewToken = currentParams.get("storeDesignV2Preview");
-        if (editorOrigin) url.searchParams.set("editorOrigin", editorOrigin);
-        if (previewToken) url.searchParams.set("storeDesignV2Preview", previewToken);
-        // The cart preview opens a layout drawer on mount, rather than a route.
-        // Preserve that lifecycle only when entering/leaving this special mode.
-        if (currentParams.get("storeDesignCartPreview") === "1" || url.searchParams.get("storeDesignCartPreview") === "1") {
-          window.location.assign(url.toString());
-        } else {
-          router.push(`${url.pathname}${url.search}${url.hash}`);
-        }
+        navigatePreview(next);
       }
     };
 
@@ -1108,6 +1143,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
         type: STORE_DESIGN_MESSAGES.READY,
         schemaVersion: STORE_DESIGN_SCHEMA_VERSION,
         route: window.location.pathname,
+        pagePath: new URLSearchParams(window.location.search).get("storeDesignCartPreview") === "1" ? "/cart" : window.location.pathname,
         viewport: { width: window.innerWidth, height: window.innerHeight },
         registeredTypes: COMPONENT_REGISTRY.map((item) => item.semanticType),
       });
@@ -1157,7 +1193,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
       overlay.remove();
       selectedRef.current = null;
     };
-  }, [allowedOrigins, pathname, router]);
+  }, [allowedOrigins, pathname, router, searchParams]);
 
   return null;
 }
