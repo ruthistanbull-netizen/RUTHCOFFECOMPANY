@@ -167,6 +167,12 @@ export function MobileSafeAreaContinuity() {
     const body = document.body;
     root.classList.add("ruth-mobile-chrome-active");
 
+    // Editorial pages own their header and have a known canvas. Sampling the
+    // hidden storefront header during scroll forces unnecessary style work.
+    const editorialSurface = pathname === "/studio"
+      ? DEFAULT_SURFACE
+      : pathname === "/toptan-kahve" ? "rgb(201 74 64)" : null;
+
     let frame = 0;
     let lastColor = "";
 
@@ -174,7 +180,7 @@ export function MobileSafeAreaContinuity() {
       frame = 0;
       if (!window.matchMedia("(max-width: 767px)").matches) return;
 
-      const color = resolvedHeaderSurface(pathname);
+      const color = editorialSurface || resolvedHeaderSurface(pathname);
       if (!color) return;
 
       if (color !== lastColor) {
@@ -182,9 +188,10 @@ export function MobileSafeAreaContinuity() {
         root.style.setProperty("--ruth-mobile-chrome-surface", color);
         root.style.backgroundColor = color;
         body.style.backgroundColor = color;
+        if (editorialSurface) applyThemeColorWithoutTakingHeadOwnership(color);
       }
 
-      applyThemeColorWithoutTakingHeadOwnership(color);
+      if (!editorialSurface) applyThemeColorWithoutTakingHeadOwnership(color);
     };
 
     const schedule = () => {
@@ -196,7 +203,7 @@ export function MobileSafeAreaContinuity() {
     };
 
     schedule();
-    window.addEventListener("scroll", schedule, { passive: true });
+    if (!editorialSurface) window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule, { passive: true });
     window.addEventListener("orientationchange", schedule);
     window.addEventListener("pageshow", schedule);
@@ -207,7 +214,7 @@ export function MobileSafeAreaContinuity() {
     window.addEventListener("ruth:home-media-top-tone", schedule);
     document.addEventListener("visibilitychange", onVisibility);
     window.visualViewport?.addEventListener("resize", schedule, { passive: true });
-    window.visualViewport?.addEventListener("scroll", schedule, { passive: true });
+    if (!editorialSurface) window.visualViewport?.addEventListener("scroll", schedule, { passive: true });
 
     return () => {
       if (frame) window.cancelAnimationFrame(frame);
