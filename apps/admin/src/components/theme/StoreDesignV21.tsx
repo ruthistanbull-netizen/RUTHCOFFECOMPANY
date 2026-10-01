@@ -1,5 +1,6 @@
 "use client";
 
+import { StoreDesignMediaFocusControl } from "./StoreDesignMediaFocusControl";
 import {
   ArrowDown,
   ArrowLeft,
@@ -1754,6 +1755,9 @@ export function StoreDesignV21() {
     revisionRef.current = revision;
     setDocument((current) => persistSemanticPatch(current, target, patchScope, patchDevice, activePage, path, value, revision));
     setSelected((current) => current?.id === target.id ? updateTargetSnapshot(current, path, value) : current);
+    setContextMenu((current) => current?.target.id === target.id
+      ? { ...current, target: updateTargetSnapshot(current.target, path, value) }
+      : current);
     postToPreview({
       type: STORE_DESIGN_MESSAGES.PATCH,
       targetId: target.id,
@@ -2634,7 +2638,7 @@ export function StoreDesignV21() {
                     </button>
                     <div className="grid grid-cols-2 gap-2">
                       <label className="grid gap-1.5 text-[11px] opacity-70">Sığdırma<select value={selected.current.media.objectFit || "cover"} onChange={(event) => applyInspectorPatch("media.objectFit", event.target.value)} className="sd-field h-10 rounded-md border px-2.5 text-[12px] outline-none"><option value="cover">Kapla / kırp</option><option value="contain">Tamamını göster</option></select></label>
-                      <label className="grid gap-1.5 text-[11px] opacity-70">Odak<select value={selected.current.media.objectPosition || "50% 50%"} onChange={(event) => applyInspectorPatch("media.objectPosition", event.target.value)} className="sd-field h-10 rounded-md border px-2.5 text-[12px] outline-none"><option value="50% 50%">Orta</option><option value="50% 0%">Üst</option><option value="50% 100%">Alt</option><option value="0% 50%">Sol</option><option value="100% 50%">Sağ</option></select></label>
+                      <StoreDesignMediaFocusControl value={selected.current.media.objectPosition} onChange={(value) => applyInspectorPatch("media.objectPosition", value)} />
                     </div>
                     {selected.current.media.kind === "image" ? (
                       <label className="grid gap-1.5 text-[11px] opacity-70">
@@ -2871,16 +2875,7 @@ export function StoreDesignV21() {
                     <option value="contain">Tamamını göster</option>
                   </select>
                 </label>
-                <label className="grid gap-1 text-[10px] opacity-65">
-                  Odak noktası
-                  <select value={contextMenu.target.current.media.objectPosition || "50% 50%"} onChange={(event) => applyContextPatch(contextMenu.target, "media.objectPosition", event.target.value)} className="sd-field h-9 rounded-md border px-2.5 text-[11px] font-medium outline-none">
-                    <option value="50% 50%">Orta</option>
-                    <option value="50% 0%">Üst</option>
-                    <option value="50% 100%">Alt</option>
-                    <option value="0% 50%">Sol</option>
-                    <option value="100% 50%">Sağ</option>
-                  </select>
-                </label>
+                <StoreDesignMediaFocusControl value={contextMenu.target.current.media.objectPosition} onChange={(value) => applyContextPatch(contextMenu.target, "media.objectPosition", value)} />
               </section>
             ) : null}
 

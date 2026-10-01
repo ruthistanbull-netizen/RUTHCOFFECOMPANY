@@ -421,7 +421,7 @@ function validatePatch(target: SemanticTarget, message: ThemePatchMessage) {
         ? { ok: true }
         : { ok: false, error: "Geçersiz medya yerleşimi." };
     case "media.objectPosition":
-      return ["50% 50%", "50% 0%", "50% 100%", "0% 50%", "100% 50%"].includes(String(message.value))
+      return /^(?:100|\d{1,2})(?:\.\d+)?% (?:100|\d{1,2})(?:\.\d+)?%$/.test(String(message.value)) && String(message.value).split(" ").every((coordinate) => Number.parseFloat(coordinate) <= 100)
         ? { ok: true }
         : { ok: false, error: "Geçersiz görsel odak konumu." };
     case "title":
