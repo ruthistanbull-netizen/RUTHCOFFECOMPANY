@@ -62,6 +62,7 @@
 }
 
 .rosta-studio-exact .studio-media-frame {
+  width: var(--business-image-width, 100%);
   contain: layout paint;
 }
 
@@ -84,6 +85,12 @@
 .rosta-studio-exact .studio-contact-underline { transition-duration: 500ms !important; }
 
 @media (max-width: 767px) {
+  /* Reveal the same centred image without resizing its layout on every scroll frame. */
+  .rosta-studio-exact .studio-media-frame {
+    width: 100%;
+    clip-path: inset(0 calc((100% - var(--business-image-width, 100%)) / 2));
+  }
+
   .rosta-studio-exact .grain::after {
     display: none;
   }
