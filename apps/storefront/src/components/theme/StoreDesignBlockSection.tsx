@@ -43,7 +43,7 @@ function BlockLink({ value, children, className }: { value: unknown; children: R
 
 function media(block: V2Block, className: string) {
   if (!block.assetUrl) return null;
-  return <StoreDesignEditableMedia editorId={`block:${block.id}.media`} aliases={[`block:${block.id}`]} src={block.assetUrl} type={block.assetType} poster={block.posterUrl} alt={text(block.settings.alt || block.settings.label || block.settings.name)} className={className} />;
+  return <StoreDesignEditableMedia editorId={`block:${block.id}.media`} aliases={[`block:${block.id}`]} src={block.assetUrl} mobileSrc={block.mobileAssetUrl} type={block.assetType} poster={block.posterUrl} alt={text(block.settings.alt || block.settings.label || block.settings.name)} className={className} />;
 }
 
 function blockSemanticType(type: string) {

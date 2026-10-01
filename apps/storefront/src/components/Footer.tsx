@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { StoreDesignEditableMedia } from "@/components/theme/StoreDesignEditableMedia";
 import { Mail } from "lucide-react";
 import {
   activeSocialMediaLinks,
@@ -60,7 +61,7 @@ export async function Footer({ categories = [], collections = [], themeSettings,
       <footer data-editor-id="global.footer" data-editor-type="footer-shell" data-editor-label="Footer" className="bg-carbon px-4 pb-8 pt-14 text-cream md:px-8 md:pt-20" style={{ borderTop: "1px solid color-mix(in srgb, var(--rosta-kraft) 45%, transparent)" }}>
         <div className="mx-auto max-w-7xl">
           <div className="mb-10 flex flex-col items-center text-center md:mb-12">
-            <Link href="/" data-editor-id="global.footer.logo" data-editor-type="footer-logo" data-editor-label="Alt bilgi logosu" data-editor-instance="footer-logo" aria-label="Rosta Coffee Co anasayfa" className="mb-4 inline-flex"><img src={ROSTA_WORDMARK_SRC} alt="" className="h-auto w-[190px] object-contain brightness-0 invert sm:w-[220px]" /></Link>
+            <Link href="/" data-editor-id="global.footer.logo" data-editor-type="footer-logo" data-editor-label="Alt bilgi logosu" data-editor-instance="footer-logo" aria-label="Rosta Coffee Co anasayfa" className="mb-4 inline-flex"><StoreDesignEditableMedia editorId="global.footer.logo.asset" aliases={["global.footer.logo"]} editorLabel="Alt bilgi logo medyası" src={ROSTA_WORDMARK_SRC} alt="" className="h-auto w-[190px] object-contain brightness-0 invert sm:w-[220px]" /></Link>
             <p data-editor-id="global.footer.description" data-editor-type="footer-text" data-editor-label="Alt bilgi açıklaması" data-editor-instance="footer-description" data-store-design-editable-text="true" className="max-w-sm text-xs leading-relaxed sm:text-sm" style={{ color: "var(--muted-foreground)" }}>Kahve, danışmanlık ve tedarik için sade, güvenilir çözümler.</p>
             <div className="mt-5 flex justify-center gap-3">
               {socialLinks.map((social) => <a key={social.platform} href={social.href} data-editor-id={`global.footer.social.${social.platform}`} data-editor-type="footer-link" data-editor-label={social.label} data-editor-instance={`social.${social.platform}`} target="_blank" rel="noreferrer" aria-label={social.label} className="flex h-10 w-10 items-center justify-center rounded-full border border-kraft/40 text-cream transition-colors active:bg-carbon-soft focus-visible:border-brick focus-visible:bg-carbon-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brick"><SocialMediaIcon platform={social.platform} /></a>)}
