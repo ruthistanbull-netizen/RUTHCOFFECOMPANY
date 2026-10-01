@@ -42,107 +42,9 @@ const EDITORIAL_SLIDES = [
 ] as const;
 
 type EditorialSlide = (typeof EDITORIAL_SLIDES)[number];
-type SampledMedia = HTMLImageElement | HTMLVideoElement;
-
-function sourceSize(media: SampledMedia) {
-  if (media instanceof HTMLVideoElement) {
-    return { width: media.videoWidth, height: media.videoHeight };
-  }
-  return { width: media.naturalWidth, height: media.naturalHeight };
-}
-
-function sampleMediaTone(media: SampledMedia, viewportX: number, viewportY: number) {
-  const rect = media.getBoundingClientRect();
-  const source = sourceSize(media);
-  if (!rect.width || !rect.height || !source.width || !source.height) return null;
-
-  const scale = Math.max(rect.width / source.width, rect.height / source.height);
-  const renderedWidth = source.width * scale;
-  const renderedHeight = source.height * scale;
-  const cropX = (renderedWidth - rect.width) / 2;
-  const cropY = (renderedHeight - rect.height) / 2;
-  const sourceX = Math.max(0, Math.min(source.width - 1, (viewportX - rect.left + cropX) / Math.max(scale, 0.0001)));
-  const sourceY = Math.max(0, Math.min(source.height - 1, (viewportY - rect.top + cropY) / Math.max(scale, 0.0001)));
-  const sampleWidth = Math.max(1, Math.min(source.width - sourceX, source.width * 0.24));
-  const sampleHeight = Math.max(1, Math.min(source.height - sourceY, source.height * 0.1));
-
-  const canvas = document.createElement("canvas");
-  canvas.width = 32;
-  canvas.height = 10;
-  const context = canvas.getContext("2d", { willReadFrequently: true });
-  if (!context) return null;
-
-  try {
-    context.drawImage(
-      media,
-      Math.max(0, sourceX - sampleWidth / 2),
-      Math.max(0, sourceY - sampleHeight / 2),
-      sampleWidth,
-      sampleHeight,
-      0,
-      0,
-      canvas.width,
-      canvas.height,
-    );
-    const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
-    let total = 0;
-    let samples = 0;
-    for (let index = 0; index < pixels.length; index += 16) {
-      const alpha = pixels[index + 3] || 0;
-      if (alpha < 30) continue;
-      total += (pixels[index] || 0) * 0.2126
-        + (pixels[index + 1] || 0) * 0.7152
-        + (pixels[index + 2] || 0) * 0.0722;
-      samples += 1;
-    }
-    return samples ? total / samples : null;
-  } catch {
-    return null;
-  }
-}
 
 function notifyHeroMediaReady() {
   window.dispatchEvent(new Event("rosta:home-hero-media-changed"));
-}
-
-function contrastInk(luminance: number | null, fallback = "#111111") {
-  if (luminance == null) return fallback;
-  return luminance >= 118 ? "#111111" : "#FBF3E6";
-}
-
-function editorialMediaAtPoint(x: number, y: number) {
-  return document.elementsFromPoint(x, y).find(
-    (element): element is SampledMedia =>
-      (element instanceof HTMLImageElement || element instanceof HTMLVideoElement)
-      && element.hasAttribute("data-home-editorial-media")
-      && window.getComputedStyle(element).display !== "none"
-      && window.getComputedStyle(element).visibility !== "hidden",
-  ) || null;
-}
-
-function sampleToneAtPoint(x: number, y: number) {
-  const media = editorialMediaAtPoint(x, y);
-  return media ? sampleMediaTone(media, x, y) : null;
-}
-
-function sampleToneAcrossRect(rect: DOMRect) {
-  const points = [
-    [0.18, 0.24],
-    [0.5, 0.24],
-    [0.82, 0.24],
-    [0.24, 0.58],
-    [0.5, 0.58],
-    [0.76, 0.58],
-    [0.28, 0.82],
-    [0.5, 0.82],
-    [0.72, 0.82],
-  ] as const;
-  const tones = points
-    .map(([rx, ry]) => sampleToneAtPoint(rect.left + rect.width * rx, rect.top + rect.height * ry))
-    .filter((value): value is number => typeof value === "number" && Number.isFinite(value));
-  if (!tones.length) return null;
-  tones.sort((a, b) => a - b);
-  return tones[Math.floor(tones.length / 2)] ?? null;
 }
 
 function EditorialMedia({
@@ -708,8 +610,6 @@ export default function Hero({
 }) {
   const reduceMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement | null>(null);
-  const wordmarkRef = useRef<HTMLDivElement | null>(null);
-  const [wordmarkColor, setWordmarkColor] = useState("#111111");
   const [wordmarkVisible, setWordmarkVisible] = useState(true);
   const [liveHeroImages, setLiveHeroImages] = useState(heroImages);
   const [liveThemeSettings, setLiveThemeSettings] = useState(themeSettings);
@@ -757,8 +657,7 @@ export default function Hero({
       window.cancelAnimationFrame(frame);
       frame = window.requestAnimationFrame(() => {
         const section = sectionRef.current;
-        const wordmark = wordmarkRef.current;
-        if (!section || !wordmark) return;
+        if (!section) return;
 
         const sectionRect = section.getBoundingClientRect();
         const horizontalRail = document.querySelector<HTMLElement>(".home-horizontal-editorial");
@@ -767,10 +666,6 @@ export default function Hero({
         const scrollStoryHasEntered = scrollStory ? scrollStory.getBoundingClientRect().top <= window.innerHeight : false;
         const visible = sectionRect.bottom > 0 && sectionRect.top < window.innerHeight && !horizontalRailHasEntered && !scrollStoryHasEntered;
         setWordmarkVisible(visible);
-        if (!visible) return;
-
-        const wordmarkTone = sampleToneAcrossRect(wordmark.getBoundingClientRect());
-        setWordmarkColor(contrastInk(wordmarkTone, "#111111"));
       });
     };
 
@@ -813,16 +708,15 @@ export default function Hero({
       className="relative overflow-clip bg-carbon"
     >
       <style>{`
-        .home-editorial-wordmark{box-sizing:border-box;pointer-events:none;position:fixed;left:0;top:calc(100svh - clamp(184px,38vw,236px) + 20px);z-index:40;width:min(100vw,1208px);max-width:100vw;height:auto;aspect-ratio:3175/1343;user-select:none;transition:color .24s ease,opacity .28s ease,visibility .28s ease}.home-editorial-wordmark[data-visible="false"]{opacity:0!important;visibility:hidden}.home-editorial-wordmark svg{display:block;width:100%;height:100%;overflow:visible}@media(min-width:1024px){.home-editorial-wordmark{right:1vw!important;left:auto!important;top:calc(47vh + 18px)!important;width:44.8vw!important;max-width:44.8vw!important;height:auto!important;aspect-ratio:3175/1343}}
+        .home-editorial-wordmark{box-sizing:border-box;pointer-events:none;position:fixed;left:0;top:calc(100svh - clamp(184px,38vw,236px) + 20px);z-index:40;width:min(100vw,1208px);max-width:100vw;height:auto;aspect-ratio:3175/1343;user-select:none;transition:opacity .28s ease,visibility .28s ease}.home-editorial-wordmark[data-visible="false"]{opacity:0!important;visibility:hidden}.home-editorial-wordmark svg{display:block;width:100%;height:100%;overflow:visible}@media(min-width:1024px){.home-editorial-wordmark{right:1vw!important;left:auto!important;top:calc(47vh + 18px)!important;width:44.8vw!important;max-width:44.8vw!important;height:auto!important;aspect-ratio:3175/1343}}
       `}</style>
       <motion.div
-        ref={wordmarkRef}
         role="img"
         aria-label="Rosta Coffee Co"
         className="home-editorial-wordmark"
         data-theme-editor-ignore="true"
         data-visible={wordmarkVisible ? "true" : "false"}
-        style={{ color: wordmarkColor }}
+        style={{ color: "#FBF3E6", mixBlendMode: "difference" }}
         initial={reduceMotion ? false : { opacity: 0 }}
         animate={{ opacity: wordmarkVisible ? 1 : 0 }}
         transition={{
