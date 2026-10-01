@@ -46,8 +46,15 @@ export function useSemanticMedia(id: string, fallback: string, aliases: readonly
   };
   let video = sourceIsVideo(src, fallbackVideo);
   const targetType = video ? "video" : "image";
+  // Canonical IDs supersede their legacy aliases in a saved document.
+  // A newer live patch still wins by revision, regardless of its selector.
+  const ordered = [...patches].sort((a, b) =>
+    a.revision - b.revision
+    || Number(a.selectorValue === id) - Number(b.selectorValue === id)
+    || Number(a.path === "media.src") - Number(b.path === "media.src"),
+  );
   for (const device of mobile ? ["desktop", "mobile"] : ["desktop"]) {
-    for (const patch of patches) {
+    for (const patch of ordered) {
       const matches = patch.selectorMode === "type"
         ? patch.selectorValue === targetType
         : [id, ...aliases].includes(patch.selectorValue) && (patch.selectorMode !== "sectionType" || patch.targetType === targetType);

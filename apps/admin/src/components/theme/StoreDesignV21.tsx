@@ -177,6 +177,8 @@ function cleanPreviewPath(page: PageItem) {
   const candidate = page.previewPath || (page.template ? "/" : page.path) || "/";
   try {
     const url = new URL(candidate, STOREFRONT_ORIGIN);
+    // Preview the destination directly so its readiness signal matches the route.
+    if (url.pathname === "/order-tracking") url.pathname = "/siparis-takip";
     return `${url.pathname}${url.search}${url.hash}`;
   } catch {
     return "/";

@@ -17,7 +17,7 @@ export default function BrandStory() {
           transition={{ duration: 0.8 }}
           className="relative overflow-hidden rounded-lg ruth-glow"
         >
-          <StoreDesignEditableMedia editorId={"media:BrandStory:0"}  src={"/home/rosta-under-hero-photo.jpg"}  alt="ROSTA Coffee Co. kahve" className="aspect-[4/5] h-full w-full object-cover" loading="lazy" />
+          <StoreDesignEditableMedia editorId={"media:BrandStory:0"} aliases={["section:home-brand-story::auto::0.0.0.0"]}  src={"/home/rosta-under-hero-photo.jpg"}  alt="ROSTA Coffee Co. kahve" className="aspect-[4/5] h-full w-full object-cover" loading="lazy" />
         </motion.div>
 
         <motion.div

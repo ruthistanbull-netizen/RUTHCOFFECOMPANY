@@ -92,7 +92,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
           if (Array.isArray(parsed)) setItems(parsed);
         }
       } catch {
-        window.localStorage.removeItem(STORAGE_KEY);
+        // Storage can be denied in the editor iframe or a private browser.
+        try { window.localStorage.removeItem(STORAGE_KEY); } catch {}
       } finally {
         setIsReady(true);
       }
@@ -103,10 +104,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!isReady) return;
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-
-    if (items.length === 0) {
-      window.localStorage.removeItem(CART_CREATED_ACTIVE_KEY);
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+      if (items.length === 0) {
+        window.localStorage.removeItem(CART_CREATED_ACTIVE_KEY);
+      }
+    } catch {
+      // Keep the in-memory cart usable when persistent storage is unavailable.
     }
   }, [isReady, items]);
 
@@ -125,7 +129,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const nextItem = productToCartItem(product, Math.max(1, quantity), variant);
 
     setItems((current) => {
-      const cartAlreadyCounted = window.localStorage.getItem(CART_CREATED_ACTIVE_KEY) === "1";
+      let cartAlreadyCounted = false;
+      try { cartAlreadyCounted = window.localStorage.getItem(CART_CREATED_ACTIVE_KEY) === "1"; } catch {}
       const isNewCart = current.length === 0 || !cartAlreadyCounted;
       const existing = current.find((item) => item.key === nextItem.key);
       const nextItems = !existing
@@ -137,7 +142,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
           );
 
       if (isNewCart) {
-        window.localStorage.setItem(CART_CREATED_ACTIVE_KEY, "1");
+        try { window.localStorage.setItem(CART_CREATED_ACTIVE_KEY, "1"); } catch {}
         trackRuthEvent("cart_created", {
           product_slug: product.slug,
           product_name: product.name,
@@ -180,7 +185,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const replaceCartItems = useCallback((nextItems: CartItem[]) => {
     setItems(nextItems);
     if (nextItems.length > 0) {
-      window.localStorage.setItem(CART_CREATED_ACTIVE_KEY, "1");
+      try { window.localStorage.setItem(CART_CREATED_ACTIVE_KEY, "1"); } catch {}
       setIsOpen(false);
     }
   }, []);
