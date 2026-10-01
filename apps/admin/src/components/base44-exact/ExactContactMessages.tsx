@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2, Mail, MessageSquareText, RefreshCw, Reply, Search, Send } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { adminRequest } from "@/lib/adminApi";
 import { ExactButton, ExactDetailDrawer, ExactField, ExactIconButton, ExactPageHeader, ExactSearchInput, ExactSegmentedControl, ExactSkeleton, ExactStatusBadge, exactFormInputClass, useExactToast } from "./primitives";
 import { ExactDataTable, ExactEmptyState, ExactMetricCard, type ExactColumn } from "./data";
@@ -47,6 +47,8 @@ function label(value: ContactStatus) {
 
 export function ExactContactMessages() {
   const toast = useExactToast();
+  const [requestedMessageId, setRequestedMessageId] = useState("");
+  const openedFromQueryRef = useRef<string | null>(null);
   const [messages, setMessages] = useState<ContactMessage[]>([]);
   const [filter, setFilter] = useState<"all" | ContactStatus>("all");
   const [query, setQuery] = useState("");
@@ -59,6 +61,11 @@ export function ExactContactMessages() {
   const [syncing, setSyncing] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
+
+  useEffect(() => {
+    const messageId = new URLSearchParams(window.location.search).get("message_id")?.trim() || "";
+    setRequestedMessageId(messageId);
+  }, []);
 
   const setLocalStatus = useCallback((messageId: string, status: ContactStatus) => {
     setMessages((current) => current.map((item) => item.id === messageId ? { ...item, status } : item));
@@ -180,6 +187,14 @@ export function ExactContactMessages() {
     void loadThread(message.id);
     if (message.status === "new") void update(message, "read", false);
   };
+
+  useEffect(() => {
+    if (!requestedMessageId || openedFromQueryRef.current === requestedMessageId) return;
+    const target = messages.find((message) => message.id === requestedMessageId);
+    if (!target) return;
+    openedFromQueryRef.current = requestedMessageId;
+    open(target);
+  }, [messages, requestedMessageId]);
 
   const sendReply = async () => {
     if (!selected?.email) {
