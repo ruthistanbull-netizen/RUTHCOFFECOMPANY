@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { after } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
+import { getStorefrontRevalidationSecret } from "@/lib/storefrontRevalidationSecret";
 
 export type WebsiteRevalidateResult = {
   ok: boolean;
@@ -60,15 +61,15 @@ function resolveTarget(input: WebsiteRevalidateInput) {
     process.env.STOREFRONT_ORIGIN || process.env.PUBLIC_SITE_URL || "https://rostacoffecompany.zeabur.app"
   ).replace(/\/$/, "");
   const scope = input.scope || inferScope(input.source);
-  const secret = process.env.WEBSITE_REVALIDATE_SECRET || process.env.REVALIDATE_SECRET || "";
   const target = baseUrl.includes("/api/revalidate") ? baseUrl : `${baseUrl}/api/revalidate`;
-  return { scope, secret, target };
+  return { scope, target };
 }
 
 export async function executeWebsiteRevalidate(input: WebsiteRevalidateInput): Promise<WebsiteRevalidateResult> {
-  const { scope, secret, target } = resolveTarget(input);
+  const { scope, target } = resolveTarget(input);
+  const secret = await getStorefrontRevalidationSecret();
   if (!secret) {
-    return { ok: false, skipped: true, scope, attempts: 0, message: "Website revalidate secret tanımlı değil; storefront cache fallback ile yenilenecek." };
+    return { ok: false, skipped: true, scope, attempts: 0, message: "Canlı mağaza yenileme bağlantısı hazırlanamadı; önbellek süresi dolunca yenilenecek." };
   }
 
   const payload = payloadFor(input);
@@ -166,9 +167,10 @@ async function acknowledgeImmediateDelivery(job: DurableJob) {
  * 4) on failure the platform delivery worker retries with backoff/DLQ
  */
 export async function revalidateWebsite(input: WebsiteRevalidateInput): Promise<WebsiteRevalidateResult> {
-  const { scope, secret } = resolveTarget(input);
+  const { scope } = resolveTarget(input);
+  const secret = await getStorefrontRevalidationSecret();
   if (!secret) {
-    return { ok: false, skipped: true, scope, attempts: 0, message: "Website revalidate secret tanımlı değil; storefront cache fallback ile yenilenecek." };
+    return { ok: false, skipped: true, scope, attempts: 0, message: "Canlı mağaza yenileme bağlantısı hazırlanamadı; önbellek süresi dolunca yenilenecek." };
   }
 
   const durableJob = await enqueueDurableDelivery(input);

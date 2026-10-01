@@ -1,18 +1,18 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
+import { getStorefrontRevalidationSecret } from "@/lib/storefrontRevalidationSecret";
+import { matchesStorefrontRevalidationSecret } from "@ruth-commerce/commerce-core/storefront-revalidation";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const IMMEDIATE_EXPIRY = { expire: 0 } as const;
 
-function authorized(request: Request) {
-  const expected = process.env.REVALIDATE_SECRET || process.env.WEBSITE_REVALIDATE_SECRET || "";
-  const incoming = request.headers.get("x-revalidate-secret")
+function incomingSecret(request: Request) {
+  return request.headers.get("x-revalidate-secret")
     || request.headers.get("authorization")?.replace(/^Bearer\s+/i, "")
     || "";
-  return Boolean(expected) && incoming === expected;
 }
 
 function stringList(value: unknown) {
@@ -95,10 +95,15 @@ async function productWindowInvalidationTargets(productIds: string[], suppliedSl
 }
 
 export async function POST(request: Request) {
-  if (!process.env.REVALIDATE_SECRET && !process.env.WEBSITE_REVALIDATE_SECRET) {
-    return NextResponse.json({ ok: false, error: "REVALIDATE_SECRET tanımlı değil." }, { status: 503 });
+  const supplied = incomingSecret(request);
+  if (!supplied) {
+    return NextResponse.json({ ok: false, error: "Revalidate secret hatalı." }, { status: 401 });
   }
-  if (!authorized(request)) {
+  const expected = await getStorefrontRevalidationSecret();
+  if (!expected) {
+    return NextResponse.json({ ok: false, error: "Canlı mağaza yenileme bağlantısı hazırlanamadı." }, { status: 503 });
+  }
+  if (!matchesStorefrontRevalidationSecret(expected, supplied)) {
     return NextResponse.json({ ok: false, error: "Revalidate secret hatalı." }, { status: 401 });
   }
 

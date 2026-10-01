@@ -6,6 +6,7 @@
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "exports": {
+    "./storefront-revalidation": "./src/storefront-revalidation.ts",
     "./product-information": "./src/product-information.ts",
     ".": "./src/index.ts",
     "./customer": "./src/customer.ts",
