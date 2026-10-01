@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata, Viewport } from "next";
 import { socialProfileUrls } from "@ruth-commerce/contracts/social-media";
 import "@ruth-commerce/ui/styles.css";
@@ -315,7 +316,7 @@ export default async function RootLayout({
             letter-spacing: normal;
           }
         `}</style>
-        <SemanticThemeEditorBridge allowedOrigins={themeEditorOrigins} />
+        <Suspense fallback={null}><SemanticThemeEditorBridge allowedOrigins={themeEditorOrigins} /></Suspense>
         <ThemeEditorNativeNavigation />
         <ThemeEditorEnhancements />
         <ThemeEditorBridgeV3 settings={themeSettings} />

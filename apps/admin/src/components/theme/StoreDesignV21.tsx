@@ -1352,11 +1352,27 @@ export function StoreDesignV21() {
 
       if (data.type === STORE_DESIGN_MESSAGES.READY) {
         if (expectedPreviewRouteRef.current && data.route !== expectedPreviewRouteRef.current) return;
+        if (!expectedPreviewRouteRef.current) {
+          const route = typeof data.pagePath === "string" ? data.pagePath : data.route;
+          const page = editorPages.find((item) => item.path === route)
+            || editorPages.find((item) => new URL(cleanPreviewPath(item), STOREFRONT_ORIGIN).pathname === route)
+            || editorPages.find((item) => item.path === "/products/[slug]" && /^\/products\/[^/]+$/.test(route))
+            || editorPages.find((item) => item.path === "/category/[slug]" && /^\/(category|categories)\/[^/]+$/.test(route))
+            || editorPages.find((item) => item.path === "/collections/[slug]" && /^\/collections\/[^/]+$/.test(route));
+          if (page && page.path !== activePath) {
+            setActivePath(page.path);
+            setSelected(null);
+            setContextMenu(null);
+            setHistory([]);
+            setFuture([]);
+          }
+        }
         expectedPreviewRouteRef.current = null;
         setConnected(true);
         setConnectionStalled(false);
         setLastHeartbeat(Date.now());
         postToPreview({ type: PREVIEW_DOCUMENT_MESSAGE, document });
+        postToPreview({ type: STORE_DESIGN_MESSAGES.INTERACTION_MODE, mode: interactionMode });
         return;
       }
 
@@ -1444,7 +1460,7 @@ export function StoreDesignV21() {
 
     window.addEventListener("message", listener);
     return () => window.removeEventListener("message", listener);
-  }, [document, isMobileViewport, postToPreview, toast]);
+  }, [activePath, document, editorPages, interactionMode, isMobileViewport, postToPreview, toast]);
 
   useEffect(() => {
     if (!iframeRef.current?.contentWindow) return;
