@@ -429,7 +429,7 @@ export function SemanticThemeRuntimeProvider({
       active = false;
       controller.abort();
     };
-  }, [pathname]);
+  }, []);
 
   useEffect(() => {
     const onPatch = (event: Event) => {

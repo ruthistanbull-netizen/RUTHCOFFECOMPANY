@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import {
   SEMANTIC_RUNTIME_PATCH_EVENT,
   STORE_DESIGN_PREVIEW_DOCUMENT_EVENT,
@@ -555,6 +556,8 @@ function routePath(value: unknown) {
 
 export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrigins?: string[] }) {
   const selectedRef = useRef<SemanticTarget | null>(null);
+  const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     if (!editorEnabled() || window.parent === window) return;
@@ -1074,6 +1077,11 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
         return;
       }
 
+      if (event.data.type === STORE_DESIGN_MESSAGES.REQUEST_READY) {
+        announceReady();
+        return;
+      }
+
       if (event.data.type === STORE_DESIGN_MESSAGES.ROUTE_NAVIGATE) {
         const next = routePath(event.data.path);
         if (!next) return;
@@ -1085,7 +1093,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
         const previewToken = currentParams.get("storeDesignV2Preview");
         if (editorOrigin) url.searchParams.set("editorOrigin", editorOrigin);
         if (previewToken) url.searchParams.set("storeDesignV2Preview", previewToken);
-        window.location.assign(url.toString());
+        router.push(`${url.pathname}${url.search}${url.hash}`);
       }
     };
 
@@ -1143,7 +1151,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
       overlay.remove();
       selectedRef.current = null;
     };
-  }, [allowedOrigins]);
+  }, [allowedOrigins, pathname, router]);
 
   return null;
 }
