@@ -55,7 +55,7 @@ function friendlyIssueMessage(issue: ThemeReferenceIssue) {
     case "missing-template-binding":
       return "Bir sayfanın şablon bağlantısı eksik veya geçersiz. Şablonlar bölümünden bu sayfaya uygun şablonu yeniden bağla.";
     case "unknown-section-definition":
-      return "Bir bölüm bu sürümde tanınmıyor. Yayınlamadan önce bölümü değiştir veya kaldır.";
+      return `“${rawTarget || issue.source || "Bölüm"}” bölümü bu sürümde tanınmıyor. Yayınlamadan önce bölümü değiştir veya kaldır.`;
     case "section-runtime-unavailable":
       return "Bir bölüm mağazada gösterime hazır değil. Yayınlamadan önce farklı bir bölüm kullan veya bu bölümü kaldır.";
     case "missing-section-block":
@@ -70,8 +70,8 @@ function friendlyIssueMessage(issue: ThemeReferenceIssue) {
       return "Aynı içerik öğesi birden fazla bölümde kullanılıyor. Değişiklik bağlı bölümleri de etkileyebilir.";
     case "invalid-preset-reference":
       return "Kaydedilmiş bir bölüm düzeninde eksik veya artık kullanılamayan içerik var. Hazır düzeni yeniden oluştur.";
-    case "missing-template-binding":
-      return "Bir sayfanın şablon bağlantısı eksik. Sayfaya uygun bir şablon ata.";
+    case "document-validation":
+      return issue.message;
     case "missing-og-media":
       return "Bir sayfanın paylaşım görseli bulunamadı. Sayfa ayarlarından yeni bir paylaşım görseli seç.";
     case "broken-merchant-link":

@@ -987,7 +987,7 @@ async function fetchStoreDesignV2Published(): Promise<ThemeDocument> {
 const getCachedStoreDesignV2Published = unstable_cache(
   fetchStoreDesignV2Published,
   ["rosta-store-design-v2-published"],
-  { revalidate: THEME_CACHE_REVALIDATE_SECONDS, tags: ["ruth-theme"] },
+  { revalidate: THEME_CACHE_REVALIDATE_SECONDS, tags: ["rosta-theme"] },
 );
 
 export async function getStoreDesignV2Published(): Promise<ThemeDocument> {

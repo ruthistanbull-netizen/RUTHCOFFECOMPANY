@@ -203,8 +203,9 @@ export async function PUT(request: Request) {
       const revalidate = await revalidateWebsite({
         source: "admin-store-design-v2",
         scope: "theme",
-        paths: ["/", "/products", "/collections", "/categories", "/search"],
-        tags: ["ruth-theme"],
+        immediate: true,
+        paths: ["/", "/studio", "/toptan-kahve", "/products", "/collections", "/categories", "/search"],
+        tags: ["rosta-theme"],
       });
 
       // Snapshot retention is deliberately best-effort: a cleanup problem must

@@ -181,7 +181,7 @@ export async function revalidateWebsite(input: WebsiteRevalidateInput): Promise<
         ...result,
         deferred: false,
         durable: Boolean(durableJob),
-        message: "Storefront ürün cache'i anında yenilendi.",
+        message: "Canlı mağaza önbelleği anında yenilendi.",
       };
     }
 
