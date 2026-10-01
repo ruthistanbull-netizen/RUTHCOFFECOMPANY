@@ -469,7 +469,7 @@ export function SemanticThemeRuntimeProvider({
   );
 
   const css = useMemo(
-    () => mergedPatches
+    () => [...mergedPatches.filter((patch) => patch.device === "desktop"), ...mergedPatches.filter((patch) => patch.device === "mobile")]
       .map(ruleFor)
       .filter(Boolean)
       .join("\n"),
