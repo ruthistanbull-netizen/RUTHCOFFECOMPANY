@@ -313,6 +313,9 @@ const section = (
 });
 
 export const SECTION_LIBRARY: SectionDefinition[] = [
+  // These original homepage sections are still rendered by HomeSectionRenderer.
+  section("collections", "Koleksiyonlar", "commerce", allContentPages, ["title", "eyebrow", "linkLabel", "linkHref"], [], true),
+  section("trust", "Güven Bilgileri", "content", allContentPages, ["title", "body"], [], true),
   section("featured-products", "Öne Çıkan Ürünler", "commerce", allCommercePages, ["title", "eyebrow", "productSource", "productLimit", "desktopItems", "mobileItems", "gap", "paddingY", "showArrows", "linkLabel", "linkHref"], [], true),
   section("product-slider", "Ürün Kaydırıcısı", "commerce", allCommercePages, ["title", "eyebrow", "productSource", "productLimit", "desktopItems", "mobileItems", "gap", "paddingY", "showArrows", "linkLabel", "linkHref"], [], true),
   section("product-grid", "Ürün Izgarası", "commerce", ["content", "landing", "category", "collection"], ["title", "eyebrow", "productSource", "productLimit", "desktopItems", "mobileItems", "gap", "maxWidth", "paddingY", "linkLabel", "linkHref"], [], true),
@@ -1120,7 +1123,17 @@ export function analyzeThemeDocumentReferences(document: ThemeDocument): ThemeRe
 
   for (const [sectionId, section] of Object.entries(document.sections)) {
     const definition = SECTION_LIBRARY_BY_TYPE[section.type];
-    if (!definition) {
+    // The semantic runtime also stores edits to existing image/text components
+    // here. They are settings owners, not independently rendered sections.
+    // Only accept registered component types with actual overrides outside a
+    // template's section list; unsupported renderable sections still warn.
+    const semantic = section.settings?.semantic;
+    const semanticSettingsOwner = !sectionOwners.has(sectionId)
+      && Boolean(COMPONENT_REGISTRY_BY_TYPE[section.type])
+      && semantic !== null && typeof semantic === "object" && !Array.isArray(semantic)
+      && Object.keys(semantic).length > 0
+      && (section.blockIds || []).length === 0;
+    if (!definition && !semanticSettingsOwner) {
       issues.push({
         severity: "warning",
         code: "unknown-section-definition",
@@ -1128,7 +1141,7 @@ export function analyzeThemeDocumentReferences(document: ThemeDocument): ThemeRe
         source: sectionId,
         target: section.type,
       });
-    } else if (!definition.implemented) {
+    } else if (definition && !definition.implemented) {
       issues.push({
         severity: "error",
         code: "section-runtime-unavailable",

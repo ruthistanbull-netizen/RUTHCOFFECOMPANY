@@ -40,6 +40,7 @@ import {
   analyzeThemeDocumentReferences,
   createEmptyThemeDocument,
   normalizeThemeDocument,
+  validateThemeDocument,
   type EditorScope,
   type ThemeReferenceIssue,
   type PageCompatibility,
@@ -2173,15 +2174,25 @@ export function StoreDesignV21() {
   const save = async (mode: "draft" | "publish", forcePublish = false) => {
     if (saving) return;
 
-    if (mode === "publish" && !forcePublish) {
-      setPublishIssues(analyzeThemeDocumentReferences(document));
-      return;
+    if (mode === "publish") {
+      const issues = analyzeThemeDocumentReferences(document);
+      const referenceMessages = new Set(issues.map((issue) => issue.message));
+      for (const message of validateThemeDocument(document).errors) {
+        if (!referenceMessages.has(message)) {
+          issues.push({ severity: "error", code: "document-validation", message, source: message.split(": ")[0] });
+          referenceMessages.add(message);
+        }
+      }
+      if (issues.some((issue) => issue.severity === "error") || (!forcePublish && issues.length)) {
+        setPublishIssues(issues);
+        return;
+      }
     }
 
     setSaveFeedback(null);
     setSaving(mode);
     try {
-      const result = await adminRequest<{ document?: unknown; revalidate?: { ok?: boolean; message?: string } }>("/api/store-design-v2", {
+      const result = await adminRequest<{ document?: unknown; revalidate?: { ok?: boolean; deferred?: boolean; message?: string } }>("/api/store-design-v2", {
         method: "PUT",
         body: JSON.stringify({ mode, document }),
         confirmation: false,
@@ -2194,7 +2205,11 @@ export function StoreDesignV21() {
         setPublished(persisted);
         setPublishIssues(null);
       }
-      toast.success(mode === "publish" ? "Mağaza tasarımı yayınlandı." : "Taslak kaydedildi.");
+      toast.success(mode === "publish"
+        ? result.revalidate?.ok && !result.revalidate.deferred
+          ? "Mağaza tasarımı yayınlandı. Canlı mağaza yenilendi."
+          : "Mağaza tasarımı yayınlandı. Canlı mağaza kısa süre içinde yenilenecek."
+        : "Taslak kaydedildi.");
       setSaveFeedback(mode);
       window.setTimeout(() => {
         setSaveFeedback((current) => current === mode ? null : current);
