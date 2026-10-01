@@ -686,6 +686,8 @@ export function StoreDesignV21() {
   const previewTokenRef = useRef("");
   const previewSyncTimerRef = useRef<number | null>(null);
   const lastPreviewJsonRef = useRef("");
+  const previewSyncInFlightRef = useRef<{ serialized: string; promise: Promise<void> } | null>(null);
+  const expectedPreviewRouteRef = useRef<string | null>(null);
   const [pages, setPages] = useState<PageItem[]>([]);
   const [activePath, setActivePath] = useState("/");
   const [document, setDocument] = useState<ThemeDocument>(createEmptyThemeDocument());
@@ -1247,18 +1249,29 @@ export function StoreDesignV21() {
     const token = previewTokenRef.current;
     if (!token) return;
     const serialized = JSON.stringify(value);
+    while (previewSyncInFlightRef.current) {
+      if (previewSyncInFlightRef.current.serialized === serialized) return previewSyncInFlightRef.current.promise;
+      await previewSyncInFlightRef.current.promise.catch(() => {});
+    }
     if (!force && lastPreviewJsonRef.current === serialized) return;
 
-    await adminRequest("/api/store-design-v2", {
+    const promise = adminRequest("/api/store-design-v2", {
       method: "POST",
       body: JSON.stringify({ token, document: value }),
       confirmation: false,
+    }).then(() => {
+      lastPreviewJsonRef.current = serialized;
+      iframeRef.current?.contentWindow?.postMessage({
+        type: PREVIEW_DOCUMENT_MESSAGE,
+        document: value,
+      }, STOREFRONT_ORIGIN);
     });
-    lastPreviewJsonRef.current = serialized;
-    iframeRef.current?.contentWindow?.postMessage({
-      type: PREVIEW_DOCUMENT_MESSAGE,
-      document: value,
-    }, STOREFRONT_ORIGIN);
+    previewSyncInFlightRef.current = { serialized, promise };
+    try {
+      await promise;
+    } finally {
+      if (previewSyncInFlightRef.current?.promise === promise) previewSyncInFlightRef.current = null;
+    }
   }, []);
 
   useEffect(() => {
@@ -1279,16 +1292,19 @@ export function StoreDesignV21() {
       if (!active) return;
       const nextDraft = seedLegacyHomepage(normalizeThemeDocument(themeResult.draft || themeResult.published), legacySections.settings);
       const nextPublished = seedLegacyHomepage(normalizeThemeDocument(themeResult.published || themeResult.draft), legacySections.settings);
-      const nextPages = Array.isArray(pageResult.pages) && pageResult.pages.length
+      const pageItems = Array.isArray(pageResult.pages) && pageResult.pages.length
         ? pageResult.pages
         : [{ path: "/", label: "Ana Sayfa", group: "Sayfalar" }];
+      const nextPages = pageItems.some((page) => page.path === "/")
+        ? pageItems
+        : [{ path: "/", label: "Ana Sayfa", group: "Sayfalar" }, ...pageItems];
 
       setDocument(nextDraft);
       setSavedDraft(nextDraft);
       setPublished(nextPublished);
       revisionRef.current = nextDraft.revision;
       setPages(nextPages);
-      setActivePath(nextPages[0]?.path || "/");
+      setActivePath("/");
 
       try {
         await syncPreviewDocument(nextDraft, true);
@@ -1298,7 +1314,7 @@ export function StoreDesignV21() {
       if (!active) return;
 
       initialSrcRef.current = previewUrl(
-        cleanPreviewPath(nextPages[0] || { path: "/", label: "Ana Sayfa", group: "Sayfalar" }),
+        "/",
         previewToken,
       );
       setLoading(false);
@@ -1333,13 +1349,17 @@ export function StoreDesignV21() {
       if (!data || typeof data !== "object") return;
 
       if (data.type === STORE_DESIGN_MESSAGES.READY) {
+        if (expectedPreviewRouteRef.current && data.route !== expectedPreviewRouteRef.current) return;
+        expectedPreviewRouteRef.current = null;
         setConnected(true);
         setConnectionStalled(false);
         setLastHeartbeat(Date.now());
+        postToPreview({ type: PREVIEW_DOCUMENT_MESSAGE, document });
         return;
       }
 
       if (data.type === STORE_DESIGN_MESSAGES.HEARTBEAT) {
+        if (expectedPreviewRouteRef.current && data.route !== expectedPreviewRouteRef.current) return;
         setConnected(true);
         setConnectionStalled(false);
         setLastHeartbeat(Date.now());
@@ -1422,7 +1442,7 @@ export function StoreDesignV21() {
 
     window.addEventListener("message", listener);
     return () => window.removeEventListener("message", listener);
-  }, [isMobileViewport, toast]);
+  }, [document, isMobileViewport, postToPreview, toast]);
 
   useEffect(() => {
     if (!iframeRef.current?.contentWindow) return;
@@ -1466,13 +1486,16 @@ export function StoreDesignV21() {
     if (!page) return;
 
     try {
-      await syncPreviewDocument(document, true);
+      await syncPreviewDocument(document);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Taslak önizleme senkronlanamadı.");
       return;
     }
 
     setActivePath(path);
+    expectedPreviewRouteRef.current = new URL(cleanPreviewPath(page), STOREFRONT_ORIGIN).pathname;
+    setConnected(false);
+    setConnectionStalled(false);
     setLastHeartbeat(Date.now());
     setSelected(null);
     setStructureFocusSectionId(null);
@@ -2417,9 +2440,7 @@ export function StoreDesignV21() {
                 transformOrigin: "top left",
               } : undefined}
               onLoad={() => {
-                setConnected(false);
-                setConnectionStalled(false);
-                setLastHeartbeat(Date.now());
+                postToPreview({ type: STORE_DESIGN_MESSAGES.REQUEST_READY });
               }}
             />
           </div>
