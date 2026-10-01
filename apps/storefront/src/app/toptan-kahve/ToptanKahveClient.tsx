@@ -85,6 +85,8 @@ function CoffeeSections({ reduceMotion }: { reduceMotion: boolean }) {
       </div>
       <ServiceBlock
         index={1}
+        imageEditorId="wholesale.section.01.image"
+        imageEditorLabel="Toptan Kahve · Kahve Seçimi"
         label="TOPTAN"
         title={<>KAHVE<br />SEÇİMİ</>}
         subline="ESPRESSO / FİLTRE / DENEYİM"
@@ -95,6 +97,8 @@ function CoffeeSections({ reduceMotion }: { reduceMotion: boolean }) {
       />
       <ServiceBlock
         index={2}
+        imageEditorId="wholesale.section.02.image"
+        imageEditorLabel="Toptan Kahve · Miktar ve Planlama"
         label="TOPTAN"
         side="right"
         title={<>MİKTAR &<br />PLANLAMA</>}
@@ -106,6 +110,8 @@ function CoffeeSections({ reduceMotion }: { reduceMotion: boolean }) {
       />
       <ServiceBlock
         index={3}
+        imageEditorId="wholesale.section.03.image"
+        imageEditorLabel="Toptan Kahve · Talep ve Teklif"
         label="TOPTAN"
         title={<>TALEP &<br />TEKLİF</>}
         subline="ÜRÜN / KOŞULLAR / SİPARİŞ"
@@ -116,6 +122,8 @@ function CoffeeSections({ reduceMotion }: { reduceMotion: boolean }) {
       />
       <ServiceBlock
         index={4}
+        imageEditorId="wholesale.section.04.image"
+        imageEditorLabel="Toptan Kahve · ROSTA.Studio"
         label="TOPTAN"
         side="right"
         title={<>ROSTA.<br />STUDIO</>}

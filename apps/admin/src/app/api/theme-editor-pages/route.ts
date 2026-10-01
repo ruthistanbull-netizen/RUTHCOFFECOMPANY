@@ -14,6 +14,8 @@ const FALLBACK_PAGES = [
   "/collections",
   "/search",
   "/about",
+  "/studio",
+  "/toptan-kahve",
   "/contact",
   "/faq",
   "/shipping-returns",
@@ -33,6 +35,8 @@ const exactLabels: Record<string, string> = {
   "/collections": "Koleksiyonlar",
   "/search": "Arama",
   "/about": "Hakkımızda",
+  "/studio": "ROSTA.Studio",
+  "/toptan-kahve": "Toptan Kahve",
   "/contact": "İletişim",
   "/faq": "S.S.S.",
   "/shipping-returns": "Kargo / İade",
@@ -75,6 +79,7 @@ function words(value: string) {
 }
 
 function pageMeta(path: string) {
+  if (path === "/studio" || path === "/toptan-kahve") return { label: exactLabels[path], group: "İşletmeler İçin" };
   if (exactLabels[path]) return { label: exactLabels[path], group: "Sayfalar" };
   const parts = path.split("/").filter(Boolean);
   const slug = parts.at(-1) || path;

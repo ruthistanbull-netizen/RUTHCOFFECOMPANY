@@ -699,6 +699,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
         return;
       }
       if (message.path !== "media.src") return;
+      if (media.dataset.editorMediaOwned === "true") return;
 
       if (!originalMediaSources.has(media)) {
         originalMediaSources.set(media, {
