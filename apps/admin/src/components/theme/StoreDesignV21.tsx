@@ -115,7 +115,7 @@ type QuickMediaEditState = {
   scope: EditorScope;
   device: Device;
   page: PageItem;
-  mediaType: "image" | "video";
+  mediaType: "image" | "video" | "any";
   beforeOverride: unknown;
   visibleSource: string;
 };
@@ -1853,7 +1853,7 @@ export function StoreDesignV21() {
       scope: patchScope,
       device,
       page: activePage,
-      mediaType: target.current.media.kind === "video" ? "video" : "image",
+      mediaType: /^(studio\.|wholesale\.)/.test(target.id) ? "any" : target.current.media.kind === "video" ? "video" : "image",
       beforeOverride: deviceLeaves.has("media.src") ? deviceLeaves.get("media.src") : null,
       visibleSource: target.current.media.src || "",
     });

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import {
   STORE_DESIGN_MEDIA_RUNTIME_EVENT,
@@ -29,6 +29,29 @@ export type SemanticRuntimePatch = {
   device: "desktop" | "mobile";
   revision: number;
 };
+
+const SemanticMediaContext = createContext<{ patches: SemanticRuntimePatch[]; media: ThemeDocument["media"]; mobile: boolean }>({ patches: [], media: {}, mobile: false });
+
+export function useSemanticMedia(id: string, fallback: string) {
+  const { patches, media, mobile } = useContext(SemanticMediaContext);
+  let src = fallback;
+  let video = /\.(mp4|webm|mov)(?:[?#]|$)/i.test(src);
+  for (const device of mobile ? ["desktop", "mobile"] : ["desktop"]) {
+    for (const patch of patches) {
+      if (patch.device !== device || patch.selectorMode !== "id" || patch.selectorValue !== id) continue;
+      if (patch.path === "media.src" && typeof patch.value === "string" && patch.value) {
+        src = patch.value;
+        video = Object.values(media).some((asset) => asset.url === src && asset.type === "video") || /\.(mp4|webm|mov)(?:[?#]|$)/i.test(src);
+      }
+      if (patch.path === "media.assetId" && media[String(patch.value)]) {
+        const asset = media[String(patch.value)];
+        src = asset.url;
+        video = asset.type === "video";
+      }
+    }
+  }
+  return { src, video };
+}
 
 function cssString(value: string) {
   return `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
@@ -323,6 +346,14 @@ export function SemanticThemeRuntimeProvider({
   }, [pathname]);
   const [previewDocument, setPreviewDocument] = useState<ThemeDocument | null>(null);
   const [runtimeMediaAssets, setRuntimeMediaAssets] = useState<Record<string, StoreDesignMediaRuntimeDetail>>({});
+  const [mobileMedia, setMobileMedia] = useState(false);
+  useEffect(() => {
+    const query = window.matchMedia("(max-width:767px)");
+    const update = () => setMobileMedia(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
 
   useEffect(() => {
     const onPreviewDocument = (event: Event) => {
@@ -518,6 +549,7 @@ export function SemanticThemeRuntimeProvider({
             ? [node]
             : Array.from(node.querySelectorAll<HTMLImageElement | HTMLVideoElement>("img,video"));
           for (const element of candidates) {
+            if (element.dataset.editorMediaOwned === "true") continue;
             if (!originals.has(element)) {
               originals.set(element, {
                 src: element.getAttribute("src"),
@@ -712,9 +744,9 @@ export function SemanticThemeRuntimeProvider({
   }, []);
 
   return (
-    <>
+    <SemanticMediaContext.Provider value={{ patches: mergedPatches, media: effectiveDocument?.media || {}, mobile: mobileMedia }}>
       {children}
       {css ? <style data-store-design-v2-runtime>{css}</style> : null}
-    </>
+    </SemanticMediaContext.Provider>
   );
 }

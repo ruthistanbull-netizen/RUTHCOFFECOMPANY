@@ -4,6 +4,7 @@ import React, { useRef, useState } from "react";
 import { AnimatePresence, motion, useScroll, useTransform, useVelocity, useSpring, useInView } from "framer-motion";
 import { useOverlayBehavior } from "@ruth-commerce/ui";
 import { ruthMotion } from "@ruth-commerce/ui/motion";
+import { useSemanticMedia } from "@/components/theme/SemanticThemeRuntimeProvider";
 
 export const C = {
   carbon: "#111111",
@@ -12,10 +13,16 @@ export const C = {
   kraft: "#C8A77D",
 };
 
-export function StudioImage({ src, alt = "", className = "" }: { src: string; alt?: string; className?: string }) {
+export function StudioImage({ src, alt = "", className = "", editorId, editorLabel }: { src: string; alt?: string; className?: string; editorId: string; editorLabel: string }) {
+  const media = useSemanticMedia(editorId, src);
+  if (media.video) return <video key={media.src} data-editor-id={editorId} data-editor-type="video" data-editor-label={editorLabel} data-editor-media-owned="true" src={media.src} aria-label={alt || editorLabel} className={`${className} object-cover`} autoPlay muted loop playsInline controls preload="metadata" />;
   return (
     <img
-      src={src}
+      data-editor-id={editorId}
+      data-editor-type="image"
+      data-editor-label={editorLabel}
+      data-editor-media-owned="true"
+      src={media.src}
       alt={typeof alt === "string" ? alt : ""}
       className={`${className} object-cover`}
       loading="lazy"
@@ -376,13 +383,15 @@ export function WhoWeAre({
   );
 }
 
-export function ServiceBlock({ index, title, subline, description, image, imageAlt = "", side = "left", reduceMotion, label = "HİZMET" }: {
+export function ServiceBlock({ index, title, subline, description, image, imageAlt = "", imageEditorId, imageEditorLabel, side = "left", reduceMotion, label = "HİZMET" }: {
   index: number;
   title: React.ReactNode;
   subline: string;
   description: React.ReactNode;
   image: string;
   imageAlt?: string;
+  imageEditorId: string;
+  imageEditorLabel: string;
   side?: "left" | "right";
   reduceMotion: boolean;
   label?: string;
@@ -426,8 +435,8 @@ export function ServiceBlock({ index, title, subline, description, image, imageA
               style={imageStyle}
               className="studio-media-frame absolute left-1/2 top-0 h-full overflow-hidden"
             >
-              <StudioImage src={image} alt={imageAlt} className="w-full h-full" />
-              <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(17,17,17,0.15), rgba(17,17,17,0.55))" }} />
+              <StudioImage src={image} alt={imageAlt} editorId={imageEditorId} editorLabel={imageEditorLabel} className="w-full h-full" />
+              <div className="pointer-events-none absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(17,17,17,0.15), rgba(17,17,17,0.55))" }} />
             </motion.div>
           </div>
 

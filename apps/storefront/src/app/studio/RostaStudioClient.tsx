@@ -113,6 +113,8 @@ function Services({ reduceMotion }: { reduceMotion: boolean }) {
           {...service}
           reduceMotion={reduceMotion}
           image={serviceImages[i % serviceImages.length]}
+          imageEditorId={`studio.service.${String(i + 1).padStart(2, "0")}.image`}
+          imageEditorLabel={`ROSTA.Studio · Hizmet ${i + 1} · ${service.subline}`}
         />
       ))}
     </section>
@@ -170,12 +172,14 @@ function BigImage({ reduceMotion }: { reduceMotion: boolean }) {
         <div className="studio-media-slot relative h-[70vh] sm:h-[88vh] w-full">
         <motion.div style={{ width: reduceMotion ? "100%" : width, scale: reduceMotion ? 1 : scale, x: "-50%" }} className="studio-media-frame absolute left-1/2 top-0 h-full overflow-hidden">
           <StudioImage
+            editorId="studio.workflow.image"
+            editorLabel="ROSTA.Studio · Kahve barı çalışma akışı"
             src="https://media.base44.com/images/public/6abc5148a8d8f7bdd9a2ee6f/ee0e38c8f_generated_5fe6b1a5.jpg"
             alt="ROSTA.Studio kahve barı çalışma akışı"
             className="w-full h-full"
           />
-          <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(17,17,17,0.25), rgba(17,17,17,0.45))" }} />
-          <motion.div style={{ opacity: reduceMotion ? 1 : cornerOpacity }}>
+          <div className="pointer-events-none absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(17,17,17,0.25), rgba(17,17,17,0.45))" }} />
+          <motion.div className="pointer-events-none" style={{ opacity: reduceMotion ? 1 : cornerOpacity }}>
             <div className={corner} style={{ color: C.cream, top: "1.2rem", left: "1.2rem" }}>ROSTA.STUDIO</div>
             <div className={corner} style={{ color: C.cream, top: "1.2rem", right: "1.2rem" }}>İSTANBUL</div>
             <div className={corner} style={{ color: C.cream, bottom: "1.2rem", left: "1.2rem" }}>KAHVE / MARKA / İŞLETME</div>
