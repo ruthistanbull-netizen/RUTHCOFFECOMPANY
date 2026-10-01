@@ -728,7 +728,10 @@ export function Header({
             className="header-wordmark-link flex justify-center"
             aria-label="Rosta Coffee Co ana sayfa"
           >
-            <img
+            <StoreDesignEditableMedia
+              editorId="global.header.logo.asset"
+              aliases={["global.header.logo"]}
+              editorLabel="Logo medyası"
               src={ROSTA_WORDMARK_SRC}
               alt=""
               className="header-wordmark object-contain"

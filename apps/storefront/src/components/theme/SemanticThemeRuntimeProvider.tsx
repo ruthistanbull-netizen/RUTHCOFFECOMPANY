@@ -35,8 +35,16 @@ const SemanticMediaContext = createContext<{ patches: SemanticRuntimePatch[]; me
 export function useSemanticMedia(id: string, fallback: string, aliases: readonly string[] = [], fallbackVideo?: boolean) {
   const { patches, media, mobile } = useContext(SemanticMediaContext);
   let src = fallback;
-  const fallbackAsset = Object.values(media).find((asset) => asset.url === src);
-  let video = fallbackAsset ? fallbackAsset.type === "video" : fallbackVideo ?? /\.(mp4|m4v|webm|mov)(?:[?#]|$)/i.test(src);
+  const unversioned = (url: string) => url.replace(/([?&])v=\d+(&|$)/, (_match, prefix, suffix) => suffix ? prefix : "");
+  const assetForSource = (url: string) => Object.values(media).find((asset) => unversioned(asset.url) === unversioned(url));
+  const sourceIsVideo = (url: string, fallbackKind?: boolean) => {
+    const asset = assetForSource(url);
+    if (asset) return asset.type === "video";
+    if (/\.(mp4|m4v|webm|mov)(?:[?#]|$)/i.test(url)) return true;
+    if (/\.(jpe?g|png|webp|avif|gif|svg|heic|heif)(?:[?#]|$)/i.test(url)) return false;
+    return fallbackKind ?? false;
+  };
+  let video = sourceIsVideo(src, fallbackVideo);
   const targetType = video ? "video" : "image";
   for (const device of mobile ? ["desktop", "mobile"] : ["desktop"]) {
     for (const patch of patches) {
@@ -46,7 +54,7 @@ export function useSemanticMedia(id: string, fallback: string, aliases: readonly
       if (patch.device !== device || !matches) continue;
       if (patch.path === "media.src" && typeof patch.value === "string" && patch.value) {
         src = patch.value;
-        video = Object.values(media).some((asset) => asset.url === src && asset.type === "video") || /\.(mp4|m4v|webm|mov)(?:[?#]|$)/i.test(src);
+        video = sourceIsVideo(src);
       }
       if (patch.path === "media.assetId" && media[String(patch.value)]) {
         const asset = media[String(patch.value)];
