@@ -32,6 +32,7 @@ function validImageSrc(value: unknown) {
 }
 
 function setImageSource(image: HTMLImageElement, src: string) {
+  if (image.dataset.editorMediaOwned === "true") return;
   if (image.getAttribute("src") !== src) image.setAttribute("src", src);
   if (image.getAttribute("srcset") !== src) image.setAttribute("srcset", src);
   if (image.src !== src) image.src = src;
@@ -40,6 +41,7 @@ function setImageSource(image: HTMLImageElement, src: string) {
 }
 
 function setPictureSources(image: HTMLImageElement, src: string) {
+  if (image.dataset.editorMediaOwned === "true") return;
   const picture = image.closest("picture");
   if (!picture) return;
   for (const source of Array.from(picture.querySelectorAll("source"))) {

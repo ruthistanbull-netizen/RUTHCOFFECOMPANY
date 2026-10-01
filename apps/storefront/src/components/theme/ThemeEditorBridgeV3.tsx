@@ -168,6 +168,7 @@ function snapshot(element: Element): Snapshot {
 }
 
 function restore(element: Element, original: Snapshot, preserveMedia = false) {
+  preserveMedia ||= element.getAttribute("data-editor-media-owned") === "true";
   if (original.style === null) element.removeAttribute("style"); else element.setAttribute("style", original.style);
   if (original.text !== null && isPlainTextElement(element) && element.textContent !== original.text) element.textContent = original.text;
   if (!preserveMedia && (element.tagName === "IMG" || element.tagName === "VIDEO")) {
@@ -318,6 +319,7 @@ function overrideMediaType(override: ThemeElementOverride, mobile: boolean): "im
 
 function applyOverride(element: Element, override: ThemeElementOverride, mobile: boolean, preserveMedia = false) {
   const html = element as HTMLElement;
+  preserveMedia ||= html.dataset.editorMediaOwned === "true";
   if (override.hidden) { html.style.display = "none"; return; }
   if (override.text !== undefined && isPlainTextElement(element) && ["text", "button", "link"].includes(String(override.kind))) element.textContent = override.text;
   const activeMediaSource = overrideMediaSource(override, mobile);
@@ -537,6 +539,7 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
     };
 
     const swapMediaElement = (element: Element, mediaType: "image" | "video") => {
+      if (element.getAttribute("data-editor-media-owned") === "true") return element;
       const desiredTag = mediaType === "video" ? "VIDEO" : "IMG";
       if (element.tagName === desiredTag) return element;
       const id = rememberMediaOrigin(element);
@@ -709,7 +712,7 @@ export function ThemeEditorBridgeV3({ settings }: { settings: ThemeCustomizerSet
       if (event.data.type === "RUTH_THEME_EDITOR_MEDIA_OVERRIDE" && typeof event.data.id === "string" && event.data.imageSrc) {
         registerElements();
         let element = findById(event.data.id);
-        if (element) {
+        if (element && element.getAttribute("data-editor-media-owned") !== "true") {
           const mediaType = event.data.mediaType === "video" ? "video" : "image";
           element = swapMediaElement(element, mediaType);
           const media = element as HTMLImageElement | HTMLVideoElement;

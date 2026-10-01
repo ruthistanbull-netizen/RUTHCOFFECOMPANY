@@ -66,7 +66,7 @@ function replaceImage(target: Element, src: string) {
   const image = target instanceof HTMLImageElement
     ? target
     : target.querySelector("img");
-  if (!(image instanceof HTMLImageElement)) return;
+  if (!(image instanceof HTMLImageElement) || image.dataset.editorMediaOwned === "true") return;
 
   image.setAttribute("src", src);
   image.setAttribute("srcset", src);

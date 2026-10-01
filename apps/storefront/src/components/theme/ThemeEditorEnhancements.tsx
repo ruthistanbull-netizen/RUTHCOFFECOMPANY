@@ -126,6 +126,7 @@ function sendPageSections() {
 }
 
 function replaceImageSource(image: HTMLImageElement, src: string) {
+  if (image.dataset.editorMediaOwned === "true") return;
   image.setAttribute("src", src);
   image.setAttribute("srcset", src);
   image.src = src;
