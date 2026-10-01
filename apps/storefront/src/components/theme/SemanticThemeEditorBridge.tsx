@@ -1093,7 +1093,13 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
         const previewToken = currentParams.get("storeDesignV2Preview");
         if (editorOrigin) url.searchParams.set("editorOrigin", editorOrigin);
         if (previewToken) url.searchParams.set("storeDesignV2Preview", previewToken);
-        router.push(`${url.pathname}${url.search}${url.hash}`);
+        // The cart preview opens a layout drawer on mount, rather than a route.
+        // Preserve that lifecycle only when entering/leaving this special mode.
+        if (currentParams.get("storeDesignCartPreview") === "1" || url.searchParams.get("storeDesignCartPreview") === "1") {
+          window.location.assign(url.toString());
+        } else {
+          router.push(`${url.pathname}${url.search}${url.hash}`);
+        }
       }
     };
 
