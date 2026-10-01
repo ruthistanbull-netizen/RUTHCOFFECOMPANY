@@ -1,4 +1,5 @@
 "use client";
+import { StoreDesignEditableMedia } from "@/components/theme/StoreDesignEditableMedia";
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
@@ -16,12 +17,7 @@ export default function BrandStory() {
           transition={{ duration: 0.8 }}
           className="relative overflow-hidden rounded-lg ruth-glow"
         >
-          <img
-            src="/home/rosta-under-hero-photo.jpg"
-            alt="ROSTA Coffee Co. kahve"
-            className="aspect-[4/5] h-full w-full object-cover"
-            loading="lazy"
-          />
+          <StoreDesignEditableMedia editorId={"media:BrandStory:0"}  src={"/home/rosta-under-hero-photo.jpg"}  alt="ROSTA Coffee Co. kahve" className="aspect-[4/5] h-full w-full object-cover" loading="lazy" />
         </motion.div>
 
         <motion.div

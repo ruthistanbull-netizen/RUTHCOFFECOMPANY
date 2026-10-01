@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { StoreDesignEditableMedia } from "./StoreDesignEditableMedia";
 
 export const STORE_DESIGN_MEDIA_RUNTIME_EVENT = "store-design-v2:media-asset-ready";
 
@@ -15,6 +16,7 @@ export type StoreDesignMediaRuntimeDetail = {
 };
 
 type Props = {
+  editorId: string;
   assetId?: string;
   src: string;
   mobileAssetId?: string;
@@ -40,6 +42,7 @@ function versioned(url: string | undefined, version?: number) {
 }
 
 export function StoreDesignResponsiveImage({
+  editorId,
   assetId,
   src,
   mobileAssetId,
@@ -100,18 +103,9 @@ export function StoreDesignResponsiveImage({
   const mobileResolved = mobile.src || desktop.src;
 
   return (
-    <picture className="absolute inset-0 block h-full w-full">
-      {mobileResolved && mobileResolved !== desktop.src ? <source media="(max-width: 767px)" srcSet={mobileResolved} /> : null}
-      <img
-        src={desktop.src}
-        alt={alt}
-        className={`h-full w-full object-cover ${className}`}
-        style={{
-          ["--store-design-object-position-desktop" as string]: desktop.objectPosition,
-          ["--store-design-object-position-mobile" as string]: mobile.objectPosition,
-        }}
-      />
-      <style>{`.store-design-responsive-media{object-position:var(--store-design-object-position-mobile)}@media(min-width:768px){.store-design-responsive-media{object-position:var(--store-design-object-position-desktop)}}`}</style>
-    </picture>
+    <div className="absolute inset-0 block h-full w-full">
+      <StoreDesignEditableMedia editorId={`${editorId}.mobile`} aliases={[editorId, editorId.replace(/\.media$/, "")]} src={mobileResolved} alt={alt} className={`h-full w-full object-cover md:hidden ${className}`} style={{ objectPosition: mobile.objectPosition }} />
+      <StoreDesignEditableMedia editorId={`${editorId}.desktop`} aliases={[editorId]} src={desktop.src} alt={alt} className={`hidden h-full w-full object-cover md:block ${className}`} style={{ objectPosition: desktop.objectPosition }} />
+    </div>
   );
 }

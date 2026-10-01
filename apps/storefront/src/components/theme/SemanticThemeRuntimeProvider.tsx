@@ -32,16 +32,21 @@ export type SemanticRuntimePatch = {
 
 const SemanticMediaContext = createContext<{ patches: SemanticRuntimePatch[]; media: ThemeDocument["media"]; mobile: boolean }>({ patches: [], media: {}, mobile: false });
 
-export function useSemanticMedia(id: string, fallback: string) {
+export function useSemanticMedia(id: string, fallback: string, aliases: readonly string[] = [], fallbackVideo?: boolean) {
   const { patches, media, mobile } = useContext(SemanticMediaContext);
   let src = fallback;
-  let video = /\.(mp4|webm|mov)(?:[?#]|$)/i.test(src);
+  const fallbackAsset = Object.values(media).find((asset) => asset.url === src);
+  let video = fallbackAsset ? fallbackAsset.type === "video" : fallbackVideo ?? /\.(mp4|m4v|webm|mov)(?:[?#]|$)/i.test(src);
+  const targetType = video ? "video" : "image";
   for (const device of mobile ? ["desktop", "mobile"] : ["desktop"]) {
     for (const patch of patches) {
-      if (patch.device !== device || patch.selectorMode !== "id" || patch.selectorValue !== id) continue;
+      const matches = patch.selectorMode === "type"
+        ? patch.selectorValue === targetType
+        : [id, ...aliases].includes(patch.selectorValue) && (patch.selectorMode !== "sectionType" || patch.targetType === targetType);
+      if (patch.device !== device || !matches) continue;
       if (patch.path === "media.src" && typeof patch.value === "string" && patch.value) {
         src = patch.value;
-        video = Object.values(media).some((asset) => asset.url === src && asset.type === "video") || /\.(mp4|webm|mov)(?:[?#]|$)/i.test(src);
+        video = Object.values(media).some((asset) => asset.url === src && asset.type === "video") || /\.(mp4|m4v|webm|mov)(?:[?#]|$)/i.test(src);
       }
       if (patch.path === "media.assetId" && media[String(patch.value)]) {
         const asset = media[String(patch.value)];
@@ -157,6 +162,7 @@ function selectorFor(patch: SemanticRuntimePatch) {
   } else {
     const attribute = patch.selectorMode === "type" ? "data-editor-type" : "data-editor-id";
     selector = `[${attribute}=${cssString(patch.selectorValue)}]`;
+    if (patch.selectorMode === "id") selector = `:is(${selector},[data-editor-aliases~=${cssString(patch.selectorValue)}])`;
   }
   if (patch.path === "media.assetId" || patch.path === "media.src" || patch.path === "media.objectFit" || patch.path === "media.objectPosition" || patch.path === "media.alt") return `${selector},${selector} img,${selector} video`;
   return selector;

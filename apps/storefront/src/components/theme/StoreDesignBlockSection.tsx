@@ -1,3 +1,4 @@
+import { StoreDesignEditableMedia } from "@/components/theme/StoreDesignEditableMedia";
 import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 import type { ThemeSection } from "@ruth-commerce/commerce-core/theme-sections";
@@ -42,20 +43,7 @@ function BlockLink({ value, children, className }: { value: unknown; children: R
 
 function media(block: V2Block, className: string) {
   if (!block.assetUrl) return null;
-  if (block.assetType === "video") {
-    return (
-      <video
-        src={block.assetUrl}
-        poster={block.posterUrl}
-        className={className}
-        muted
-        playsInline
-        loop
-        autoPlay
-      />
-    );
-  }
-  return <img src={block.assetUrl} alt={text(block.settings.alt || block.settings.label || block.settings.name)} className={className} />;
+  return <StoreDesignEditableMedia editorId={`block:${block.id}.media`} aliases={[`block:${block.id}`]} src={block.assetUrl} type={block.assetType} poster={block.posterUrl} alt={text(block.settings.alt || block.settings.label || block.settings.name)} className={className} />;
 }
 
 function blockSemanticType(type: string) {
@@ -313,24 +301,11 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
         className="relative isolate overflow-hidden"
         style={{ minHeight: height, color: contrast === "light" ? "#fff" : "#111" }}
       >
-        <video
-          className="v2-media-narrative-media absolute inset-0 h-full w-full"
-          poster={posterUrl}
-          autoPlay={playback.autoPlay}
-          muted={playback.muted}
-          loop={playback.loop}
-          controls={playback.controls}
-          playsInline
-          preload="metadata"
-          style={{
+        <StoreDesignEditableMedia editorId={`section:${section.id}` + ".media-2"} aliases={[`section:${section.id}`]} src={section.imageSrc} mobileSrc={section.mobileImageSrc} type={section.v2MediaType} className="v2-media-narrative-media absolute inset-0 h-full w-full" poster={posterUrl} autoPlay={playback.autoPlay} muted={playback.muted} loop={playback.loop} controls={playback.controls} preload="metadata" style={{
             objectFit: fit,
             ["--v2-media-pos-desktop" as string]: section.imageObjectPosition || "50% 50%",
             ["--v2-media-pos-mobile" as string]: section.mobileImageObjectPosition || section.imageObjectPosition || "50% 50%",
-          }}
-        >
-          {section.mobileImageSrc ? <source media="(max-width: 767px)" src={section.mobileImageSrc} /> : null}
-          <source src={section.imageSrc} />
-        </video>
+          }} />
         <div
           className="pointer-events-none absolute inset-0"
           style={{ background: contrast === "light" ? `rgba(0,0,0,${overlay})` : `rgba(255,255,255,${overlay})` }}
@@ -392,38 +367,20 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
         style={{ minHeight, color: contrast === "light" ? "#fff" : "#111" }}
       >
         {section.v2MediaType === "video" ? (
-          <video
-            className="v2-media-narrative-media absolute inset-0 h-full w-full"
-            poster={posterUrl}
-            autoPlay={playback.autoPlay}
-            muted={playback.muted}
-            loop={playback.loop}
-            controls={playback.controls}
-            playsInline
-            preload="metadata"
-            style={{
+          <StoreDesignEditableMedia editorId={`section:${section.id}` + ".media-3"} aliases={[`section:${section.id}`]} src={section.imageSrc} mobileSrc={section.mobileImageSrc} type={section.v2MediaType} className="v2-media-narrative-media absolute inset-0 h-full w-full" poster={posterUrl} autoPlay={playback.autoPlay} muted={playback.muted} loop={playback.loop} controls={playback.controls} preload="metadata" style={{
               objectFit: fit,
               ["--v2-media-pos-desktop" as string]: section.imageObjectPosition || "50% 50%",
               ["--v2-media-pos-mobile" as string]: section.mobileImageObjectPosition || section.imageObjectPosition || "50% 50%",
-            }}
-          >
-            {section.mobileImageSrc ? <source media="(max-width: 767px)" src={section.mobileImageSrc} /> : null}
-            <source src={section.imageSrc} />
-          </video>
+            }} />
         ) : (
-          <picture>
+          <>
             {section.mobileImageSrc ? <source media="(max-width: 767px)" srcSet={section.mobileImageSrc} /> : null}
-            <img
-              src={section.imageSrc}
-              alt=""
-              className="v2-media-narrative-media absolute inset-0 h-full w-full"
-              style={{
+            <StoreDesignEditableMedia editorId={`section:${section.id}` + ".media-4"} aliases={[`section:${section.id}`]} src={section.imageSrc} mobileSrc={section.mobileImageSrc} alt="" className="v2-media-narrative-media absolute inset-0 h-full w-full" style={{
                 objectFit: fit,
                 ["--v2-media-pos-desktop" as string]: section.imageObjectPosition || "50% 50%",
                 ["--v2-media-pos-mobile" as string]: section.mobileImageObjectPosition || section.imageObjectPosition || "50% 50%",
-              }}
-            />
-          </picture>
+              }} />
+          </>
         )}
         <div
           className="pointer-events-none absolute inset-0"
@@ -685,6 +642,7 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
         <div className="mx-auto max-w-[1200px]">
           {heading}
           <StoreDesignBeforeAfter
+            editorId={`section:${section.id}`}
             beforeUrl={before.url}
             afterUrl={after.url}
             beforeLabel={text(settings.beforeLabel) || "Önce"}
@@ -710,7 +668,7 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
         <div className="mx-auto max-w-[1200px]">
           {heading}
           <div className="relative overflow-hidden rounded-2xl">
-            <img src={section.imageSrc} alt={title || "Lookbook"} className="block h-auto w-full object-cover" />
+            <StoreDesignEditableMedia editorId={`section:${section.id}` + ".media-5"} aliases={[`section:${section.id}`]} src={section.imageSrc} mobileSrc={section.mobileImageSrc} alt={title || "Lookbook"} className="block h-auto w-full object-cover" />
             {blocks.map((block, index) => {
               const x = number(block.settings.x, 50, 0, 100);
               const y = number(block.settings.y, 50, 0, 100);
@@ -760,19 +718,9 @@ export function StoreDesignBlockSection({ section }: { section: ThemeSection }) 
     const mediaNode = section.imageSrc
       ? section.v2MediaType === "video"
         ? (
-            <video
-              src={section.imageSrc}
-              poster={section.v2PosterUrl}
-              className="h-full w-full"
-              style={mediaStyle}
-              muted={playback !== "controls"}
-              playsInline
-              loop={playback === "ambient"}
-              autoPlay={playback !== "controls"}
-              controls={playback === "controls"}
-            />
+            <StoreDesignEditableMedia editorId={`section:${section.id}.media`} aliases={[`section:${section.id}`]}  src={section.imageSrc} mobileSrc={section.mobileImageSrc} type={section.v2MediaType} poster={section.v2PosterUrl} className="h-full w-full" style={mediaStyle} muted={playback !== "controls"} loop={playback === "ambient"} autoPlay={playback !== "controls"} controls={playback === "controls"} />
           )
-        : <img src={section.imageSrc} alt={heading} className="h-full w-full" style={mediaStyle} />
+        : <StoreDesignEditableMedia editorId={`section:${section.id}.media`} aliases={[`section:${section.id}`]}  src={section.imageSrc} mobileSrc={section.mobileImageSrc} alt={heading} className="h-full w-full" style={mediaStyle} />
       : <div className="grid min-h-64 place-items-center bg-black/[0.04] text-[10px] opacity-40">Medya seçilmedi</div>;
 
     return (

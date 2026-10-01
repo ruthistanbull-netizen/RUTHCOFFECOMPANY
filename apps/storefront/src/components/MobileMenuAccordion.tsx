@@ -1,5 +1,6 @@
 "use client";
 
+import { StoreDesignEditableMedia } from "@/components/theme/StoreDesignEditableMedia";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Plus } from "lucide-react";
@@ -400,13 +401,7 @@ export function MobileMenuAccordion({
               className="ruth-mobile-photo-collection-card"
             >
               <span className="ruth-mobile-photo-collection-card__media">
-                <img
-                  src={collection.cover_image_url || ""}
-                  alt=""
-                  loading="eager"
-                  decoding="async"
-                  draggable={false}
-                />
+                <StoreDesignEditableMedia editorId={`global.header.menu.collection.${collection.id}.asset`} aliases={[`global.header.menu.collection.${collection.id}`]} editorLabel={collection.name} src={collection.cover_image_url || ""} />
               </span>
               <span className="ruth-mobile-photo-collection-card__label">
                 {collection.name}
@@ -425,25 +420,7 @@ export function MobileMenuAccordion({
               data-theme-menu-media-card={card.id}
             >
               <span className="ruth-mobile-photo-collection-card__media">
-                {card.mediaType === "video" ? (
-                  <video
-                    src={card.imageSrc}
-                    aria-label={card.label || "Menü videosu"}
-                    muted
-                    loop
-                    autoPlay
-                    playsInline
-                    preload="metadata"
-                  />
-                ) : (
-                  <img
-                    src={card.imageSrc}
-                    alt={card.label || ""}
-                    loading="eager"
-                    decoding="async"
-                    draggable={false}
-                  />
-                )}
+                <StoreDesignEditableMedia editorId={`global.header.menu.media.${card.id}.asset`} aliases={[`global.header.menu.media.${card.id}`]} editorLabel={card.label || "Menü medyası"} src={card.imageSrc} type={card.mediaType} alt={card.label || ""} />
               </span>
               {card.label ? (
                 <span className="ruth-mobile-photo-collection-card__label">{card.label}</span>

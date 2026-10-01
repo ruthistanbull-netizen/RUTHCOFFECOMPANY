@@ -1,8 +1,10 @@
 "use client";
+import { StoreDesignEditableMedia } from "@/components/theme/StoreDesignEditableMedia";
 
 import { useState } from "react";
 
 type Props = {
+  editorId: string;
   beforeUrl: string;
   afterUrl: string;
   beforeLabel?: string;
@@ -15,6 +17,7 @@ function clamp(value: number) {
 }
 
 export function StoreDesignBeforeAfter({
+  editorId,
   beforeUrl,
   afterUrl,
   beforeLabel = "Önce",
@@ -25,14 +28,9 @@ export function StoreDesignBeforeAfter({
 
   return (
     <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-black/[0.04]">
-      <img src={beforeUrl} alt={beforeLabel} className="absolute inset-0 h-full w-full object-cover" />
+      <StoreDesignEditableMedia editorId={`${editorId}.before`}  src={beforeUrl}  alt={beforeLabel} className="absolute inset-0 h-full w-full object-cover" />
       <div className="absolute inset-y-0 right-0 overflow-hidden" style={{ width: `${100 - position}%` }}>
-        <img
-          src={afterUrl}
-          alt={afterLabel}
-          className="absolute inset-y-0 right-0 h-full max-w-none object-cover"
-          style={{ width: `${10000 / Math.max(1, 100 - position)}%` }}
-        />
+        <StoreDesignEditableMedia editorId={`${editorId}.after`}  src={afterUrl}  alt={afterLabel} className="absolute inset-y-0 right-0 h-full max-w-none object-cover" style={{ width: `${10000 / Math.max(1, 100 - position)}%` }} />
       </div>
 
       <div className="pointer-events-none absolute inset-y-0 w-px bg-white/90 shadow-[0_0_0_1px_rgba(0,0,0,.12)]" style={{ left: `${position}%` }}>
