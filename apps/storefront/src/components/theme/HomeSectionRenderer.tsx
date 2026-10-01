@@ -1,3 +1,4 @@
+import { StoreDesignEditableMedia } from "@/components/theme/StoreDesignEditableMedia";
 import Link from "next/link";
 import Hero from "@/components/home/Hero";
 import ScrollStory from "@/components/home/ScrollStory";
@@ -251,52 +252,14 @@ export function HomeSectionRenderer({
         style={{ minHeight, color: contentColor }}
       >
         {mobileVideo ? (
-          <video
-            src={mobileSrc}
-            poster={poster}
-            className="absolute inset-0 h-full w-full md:hidden"
-            style={mediaStyle(section.mobileImageObjectPosition)}
-            autoPlay={playback.autoPlay}
-            muted={playback.muted}
-            loop={playback.loop}
-            controls={playback.controls}
-            playsInline
-            preload="metadata"
-            data-home-editorial-media
-          />
+          <StoreDesignEditableMedia editorId={`section:${section.id}` + ".media-0"} aliases={[`section:${section.id}`]} src={mobileSrc}  type="video" poster={poster} className="absolute inset-0 h-full w-full md:hidden" style={mediaStyle(section.mobileImageObjectPosition)} autoPlay={playback.autoPlay} muted={playback.muted} loop={playback.loop} controls={playback.controls} preload="metadata" data-home-editorial-media />
         ) : (
-          <img
-            src={mobileSrc}
-            alt=""
-            className="absolute inset-0 h-full w-full md:hidden"
-            style={mediaStyle(section.mobileImageObjectPosition)}
-            fetchPriority="high"
-            data-home-editorial-media
-          />
+          <StoreDesignEditableMedia editorId={`section:${section.id}` + ".media-1"} aliases={[`section:${section.id}`]} src={mobileSrc}  alt="" className="absolute inset-0 h-full w-full md:hidden" style={mediaStyle(section.mobileImageObjectPosition)} fetchPriority="high" data-home-editorial-media />
         )}
         {desktopVideo ? (
-          <video
-            src={desktopSrc}
-            poster={poster}
-            className="absolute inset-0 hidden h-full w-full md:block"
-            style={mediaStyle(section.imageObjectPosition)}
-            autoPlay={playback.autoPlay}
-            muted={playback.muted}
-            loop={playback.loop}
-            controls={playback.controls}
-            playsInline
-            preload="metadata"
-            data-home-editorial-media
-          />
+          <StoreDesignEditableMedia editorId={`section:${section.id}` + ".media-2"} aliases={[`section:${section.id}`]} src={desktopSrc}  type="video" poster={poster} className="absolute inset-0 hidden h-full w-full md:block" style={mediaStyle(section.imageObjectPosition)} autoPlay={playback.autoPlay} muted={playback.muted} loop={playback.loop} controls={playback.controls} preload="metadata" data-home-editorial-media />
         ) : (
-          <img
-            src={desktopSrc}
-            alt=""
-            className="absolute inset-0 hidden h-full w-full md:block"
-            style={mediaStyle(section.imageObjectPosition)}
-            fetchPriority="high"
-            data-home-editorial-media
-          />
+          <StoreDesignEditableMedia editorId={`section:${section.id}` + ".media-3"} aliases={[`section:${section.id}`]} src={desktopSrc}  alt="" className="absolute inset-0 hidden h-full w-full md:block" style={mediaStyle(section.imageObjectPosition)} fetchPriority="high" data-home-editorial-media />
         )}
         <div className="pointer-events-none absolute inset-0" style={{ background: overlayBackground }} />
         <div className={`relative z-10 mx-auto flex w-full max-w-[1600px] flex-col justify-center px-6 py-14 md:px-10 ${contentAlignClass}`} style={{ minHeight }}>
@@ -399,11 +362,7 @@ export function HomeSectionRenderer({
         <div className="mx-auto grid max-w-7xl gap-8 md:grid-cols-2 md:items-center md:gap-14">
           <Link href={`/products/${product.slug}`} className={`group block overflow-hidden rounded-[24px] bg-carbon/[0.04] ${mediaOrder}`}>
             <div className="aspect-[4/5] overflow-hidden">
-              <img
-                src={product.main_image_url || "/product-placeholder.svg"}
-                alt={product.name}
-                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
-              />
+              <StoreDesignEditableMedia editorId={`section:${section.id}.product.${product.id}.media`} aliases={[`section:${section.id}`]} src={product.main_image_url || "/product-placeholder.svg"}  alt={product.name} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]" />
             </div>
           </Link>
           <div className={`min-w-0 ${contentOrder}`}>
@@ -536,7 +495,7 @@ export function HomeSectionRenderer({
                   <div className="overflow-hidden">
                     <div className="relative overflow-hidden rounded-[22px] bg-cream" style={{ aspectRatio: ratioStyle }}>
                       {category.cover_image_url ? (
-                        <img src={category.cover_image_url} alt={category.name} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]" />
+                        <StoreDesignEditableMedia editorId={`section:${section.id}.category.${category.id}.media`} aliases={[`section:${section.id}`]} src={category.cover_image_url}  alt={category.name} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]" />
                       ) : (
                         <div className="ruth-card-gradient h-full w-full" />
                       )}
@@ -625,7 +584,7 @@ export function HomeSectionRenderer({
                     <th key={product.id} className="border-b border-carbon/10 p-4 text-left align-top">
                       <Link href={`/products/${product.slug}`} className="group block">
                         <div className="aspect-[4/5] overflow-hidden rounded-xl bg-carbon/[0.04]">
-                          <img src={product.main_image_url || "/product-placeholder.svg"} alt={product.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]" />
+                          <StoreDesignEditableMedia editorId={`section:${section.id}.product.${product.id}.media`} aliases={[`section:${section.id}`]} src={product.main_image_url || "/product-placeholder.svg"}  alt={product.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]" />
                         </div>
                         <p className="mt-3 font-heading text-lg leading-tight">{product.name}</p>
                       </Link>
@@ -716,7 +675,7 @@ export function HomeSectionRenderer({
                 <div className="overflow-hidden">
                   <div className="relative overflow-hidden rounded-[22px] bg-cream" style={{ aspectRatio: ratioStyle }}>
                     {collection.cover_image_url ? (
-                      <img src={collection.cover_image_url} alt={collection.name} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]" />
+                      <StoreDesignEditableMedia editorId={`section:${section.id}.collection.${collection.id}.media`} aliases={[`section:${section.id}`]} src={collection.cover_image_url}  alt={collection.name} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]" />
                     ) : (
                       <div className="ruth-card-gradient h-full w-full" />
                     )}
@@ -782,36 +741,18 @@ export function HomeSectionRenderer({
         <div className="mx-auto flex max-w-7xl flex-col items-stretch gap-10 md:flex-row md:gap-16">
           <div className={`min-w-0 overflow-hidden rounded-2xl ${mediaOrderClass}`} style={{ flexBasis: mediaWidth }}>
             {mediaIsVideo ? (
-              <video
-                className="v2-brand-story-media h-full min-h-[360px] w-full object-cover"
-                poster={poster}
-                autoPlay={playback.autoPlay}
-                muted={playback.muted}
-                loop={playback.loop}
-                controls={playback.controls}
-                playsInline
-                preload="metadata"
-                style={{
+              <StoreDesignEditableMedia editorId={`section:${section.id}` + ".media-8"} aliases={[`section:${section.id}`]} src={mediaSrc} mobileSrc={mobileMediaSrc}  type="video" className="v2-brand-story-media h-full min-h-[360px] w-full object-cover" poster={poster} autoPlay={playback.autoPlay} muted={playback.muted} loop={playback.loop} controls={playback.controls} preload="metadata" style={{
                   ["--brand-media-pos-desktop" as string]: section.imageObjectPosition || "50% 50%",
                   ["--brand-media-pos-mobile" as string]: section.mobileImageObjectPosition || section.imageObjectPosition || "50% 50%",
-                }}
-              >
-                {section.mobileImageSrc ? <source media="(max-width: 767px)" src={mobileMediaSrc} /> : null}
-                <source src={mediaSrc} />
-              </video>
+                }} />
             ) : (
-              <picture className="block h-full min-h-[360px]">
+              <>
                 {section.mobileImageSrc ? <source media="(max-width: 767px)" srcSet={mobileMediaSrc} /> : null}
-                <img
-                  src={mediaSrc}
-                  alt=""
-                  className="v2-brand-story-media h-full min-h-[360px] w-full object-cover"
-                  style={{
+                <StoreDesignEditableMedia editorId={`section:${section.id}` + ".media-9"} aliases={[`section:${section.id}`]} src={mediaSrc} mobileSrc={mobileMediaSrc}  alt="" className="v2-brand-story-media h-full min-h-[360px] w-full object-cover" style={{
                     ["--brand-media-pos-desktop" as string]: section.imageObjectPosition || "50% 50%",
                     ["--brand-media-pos-mobile" as string]: section.mobileImageObjectPosition || section.imageObjectPosition || "50% 50%",
-                  }}
-                />
-              </picture>
+                  }} />
+              </>
             )}
           </div>
           <div className={`flex min-w-0 items-center ${contentOrderClass}`} style={{ flexBasis: contentWidth }}>
@@ -971,6 +912,7 @@ export function HomeSectionRenderer({
       >
         {section.imageSrc ? (
           <StoreDesignResponsiveImage
+            editorId={`section:${section.id}.media`}
             assetId={section.imageAssetId}
             src={section.imageSrc}
             mobileAssetId={section.mobileImageAssetId}

@@ -326,9 +326,6 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
       const mediaId = text(settings.imageAssetId);
       const asset = mediaId ? document.media[mediaId] : undefined;
       if (!mediaId || !asset) return toast.error("Bu bölüm için Medya Arşivi'den bir medya seç.");
-      if ((section.type === "video-hero" || section.type === "video-banner") && asset.type !== "video") {
-        return toast.error("Bu bölümde yalnız video kullanılabilir.");
-      }
       const posterId = text(settings.posterAssetId);
       if (posterId && document.media[posterId]?.type !== "image") return toast.error("Video kapak görseli yalnız bir görsel olabilir.");
     }
@@ -472,7 +469,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                           .filter((asset) => section.type === "background-media" || section.type === "hero" || asset.type === "video")
                           .map((asset) => <option key={asset.assetId} value={asset.assetId}>{mediaOptionLabel(asset)}</option>)}
                       </select>
-                      <button type="button" onClick={() => setMediaPicker({ target: "section", key: "imageAssetId", mediaType: section.type === "background-media" || section.type === "hero" ? "any" : "video" })} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
+                      <button type="button" onClick={() => setMediaPicker({ target: "section", key: "imageAssetId", mediaType: "any" })} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
                         Medya Arşivi
                       </button>
                     </div>
@@ -1353,7 +1350,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                         onClick={() => setMediaPicker({
                           target: "section",
                           key: "imageAssetId",
-                          mediaType: section.type === "video-text-split" ? "video" : "image",
+                          mediaType: "any",
                         })}
                         className="h-9 shrink-0 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]"
                       >

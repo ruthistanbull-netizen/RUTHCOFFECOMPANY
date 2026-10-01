@@ -10,6 +10,7 @@ import {
 } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { StoreDesignEditableMedia } from "@/components/theme/StoreDesignEditableMedia";
 import { RostaHomeWordmark } from "@/components/brand/RostaHomeWordmark";
 import {
   HOME_EDITORIAL_IMAGE_ID,
@@ -144,10 +145,6 @@ function sampleToneAcrossRect(rect: DOMRect) {
   return tones[Math.floor(tones.length / 2)] ?? null;
 }
 
-function isVideoMediaSource(value: string) {
-  return /\.(mp4|m4v|mov|webm)(?:$|[?#])/i.test(value || "");
-}
-
 function EditorialMedia({
   slide,
   index,
@@ -193,135 +190,15 @@ function EditorialMedia({
         >
           {slide.kind === "hero-image" ? (
             <div className="h-full w-full">
-              {isVideoMediaSource(heroImages.mobile) ? (
-                <video
-                  key={`hero-mobile-video:${heroImages.mobile}`}
-                  src={heroImages.mobile}
-                  className="h-full w-full object-cover object-center md:hidden"
-                  aria-label={slide.alt}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  preload="auto"
-                  disablePictureInPicture
-                  onLoadedData={notifyHeroMediaReady}
-                  data-home-editorial-media
-                  data-theme-id={HOME_HERO_MOBILE_IMAGE_ID}
-                  data-theme-label="Ana sayfa hero medyası · Mobil"
-                />
-              ) : (
-                <img
-                  key={`hero-mobile:${heroImages.mobile}`}
-                  src={heroImages.mobile}
-                  alt={slide.alt}
-                  className="h-full w-full object-cover object-center md:hidden"
-                  loading="eager"
-                  fetchPriority="high"
-                  decoding="async"
-                  draggable={false}
-                  onLoad={notifyHeroMediaReady}
-                  data-home-editorial-media
-                  data-theme-id={HOME_HERO_MOBILE_IMAGE_ID}
-                  data-theme-label="Ana sayfa hero medyası · Mobil"
-                />
-              )}
-              {isVideoMediaSource(heroImages.desktop) ? (
-                <video
-                  key={`hero-desktop-video:${heroImages.desktop}`}
-                  src={heroImages.desktop}
-                  className="hidden h-full w-full object-cover object-center md:block"
-                  aria-label={slide.alt}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  preload="auto"
-                  disablePictureInPicture
-                  onLoadedData={notifyHeroMediaReady}
-                  data-home-editorial-media
-                  data-theme-id={HOME_HERO_DESKTOP_IMAGE_ID}
-                  data-theme-label="Ana sayfa hero medyası · Masaüstü"
-                />
-              ) : (
-                <img
-                  key={`hero-desktop:${heroImages.desktop}`}
-                  src={heroImages.desktop}
-                  alt={slide.alt}
-                  className="hidden h-full w-full object-cover object-center md:block"
-                  loading="eager"
-                  fetchPriority="high"
-                  decoding="async"
-                  draggable={false}
-                  onLoad={notifyHeroMediaReady}
-                  data-home-editorial-media
-                  data-theme-id={HOME_HERO_DESKTOP_IMAGE_ID}
-                  data-theme-label="Ana sayfa hero medyası · Masaüstü"
-                />
-              )}
+              <StoreDesignEditableMedia editorId={HOME_HERO_MOBILE_IMAGE_ID} themeId={HOME_HERO_MOBILE_IMAGE_ID} aliases={["section:home-hero::auto::0.2.0.0.0.0"]} editorLabel="Ana sayfa hero medyası · Mobil" src={heroImages.mobile} alt={slide.alt} className="h-full w-full object-cover object-center md:hidden" priority onReady={notifyHeroMediaReady} data-home-editorial-media />
+              <StoreDesignEditableMedia editorId={HOME_HERO_DESKTOP_IMAGE_ID} themeId={HOME_HERO_DESKTOP_IMAGE_ID} aliases={["section:home-hero::auto::0.2.0.0.0.1"]} editorLabel="Ana sayfa hero medyası · Masaüstü" src={heroImages.desktop} alt={slide.alt} className="hidden h-full w-full object-cover object-center md:block" priority onReady={notifyHeroMediaReady} data-home-editorial-media />
             </div>
           ) : slide.kind === "image" ? (
-            editorialImageType === "video" ? (
-              <video
-                className="h-full w-full object-cover object-center"
-                src={editorialImage}
-                aria-label={slide.alt}
-                autoPlay
-                loop
-                muted
-                playsInline
-                preload="auto"
-                disablePictureInPicture
-                data-home-editorial-media
-                data-theme-id={HOME_EDITORIAL_IMAGE_ID}
-                data-theme-label="Ana sayfa editoryal medyası"
-              />
-            ) : (
-              <picture className="block h-full w-full">
-                <source media="(min-width: 768px)" srcSet={editorialImage} />
-                <img
-                  src={editorialImage}
-                  alt={slide.alt}
-                  className="h-full w-full object-cover object-center"
-                  loading="lazy"
-                  fetchPriority="auto"
-                  decoding="async"
-                  draggable={false}
-                  data-home-editorial-media
-                  data-theme-id={HOME_EDITORIAL_IMAGE_ID}
-                  data-theme-label="Ana sayfa editoryal medyası"
-                />
-              </picture>
-            )
+            <div className="block h-full w-full">
+              <StoreDesignEditableMedia editorId={HOME_EDITORIAL_IMAGE_ID} themeId={HOME_EDITORIAL_IMAGE_ID} aliases={["section:home-hero::auto::0.4.0.0.0.1", "section:home-hero::auto::0.4.0.0.0"]} editorLabel="Ana sayfa editoryal medyası" src={editorialImage} type={editorialImageType} alt={slide.alt} className="h-full w-full object-cover object-center" data-home-editorial-media />
+            </div>
           ) : (
-            editorialVideoType === "video" ? (
-              <video
-                className="h-full w-full object-cover object-center"
-                src={editorialVideo}
-                aria-label={slide.label}
-                autoPlay
-                loop
-                muted
-                playsInline
-                preload="auto"
-                disablePictureInPicture
-                data-home-editorial-media
-                data-theme-id={HOME_EDITORIAL_VIDEO_ID}
-                data-theme-label="Ana sayfa ikinci editoryal medyası"
-              />
-            ) : (
-              <img
-                src={editorialVideo}
-                alt={slide.label}
-                className="h-full w-full object-cover object-center"
-                loading="lazy"
-                decoding="async"
-                draggable={false}
-                data-home-editorial-media
-                data-theme-id={HOME_EDITORIAL_VIDEO_ID}
-                data-theme-label="Ana sayfa ikinci editoryal medyası"
-              />
-            )
+            <StoreDesignEditableMedia editorId={HOME_EDITORIAL_VIDEO_ID} themeId={HOME_EDITORIAL_VIDEO_ID} aliases={["section:home-hero::auto::0.3.0.0.0"]} editorLabel="Ana sayfa ikinci editoryal medyası" src={editorialVideo} type={editorialVideoType} alt={slide.label} className="h-full w-full object-cover object-center" data-home-editorial-media />
           )}
         </motion.div>
 
@@ -377,30 +254,7 @@ function HorizontalStoryMedia({
 }) {
   return (
     <div className="home-horizontal-story-media h-full w-full" aria-label="Fotoğraf alanı">
-      {media.mediaType === "video" ? (
-        <video
-          src={media.src}
-          className="h-full w-full object-cover"
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="metadata"
-          data-theme-id={id}
-          data-theme-label="Yatay hikaye fotoğraf alanı"
-        />
-      ) : (
-        <img
-          src={media.src}
-          alt=""
-          className="h-full w-full object-cover"
-          loading="lazy"
-          decoding="async"
-          draggable={false}
-          data-theme-id={id}
-          data-theme-label="Yatay hikaye fotoğraf alanı"
-        />
-      )}
+      <StoreDesignEditableMedia editorId={id} themeId={id} editorLabel="Yatay hikaye medyası" src={media.src} type={media.mediaType} className="h-full w-full object-cover" />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 "use client";
+import { StoreDesignEditableMedia } from "@/components/theme/StoreDesignEditableMedia";
 
 import Link from "next/link";
 import { useRostaPointsSettings } from "@/lib/useRostaPointsSettings";
@@ -69,35 +70,18 @@ export function StoreDesignRewardsPromo({
 
   const media = mediaSrc ? (
     mediaType === "video" ? (
-      <video
-        className="v2-rewards-promo-media h-full w-full object-cover"
-        poster={posterUrl}
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="metadata"
-        style={{
+      <StoreDesignEditableMedia editorId={`section:${sectionId}.media`} aliases={[`section:${sectionId}`]}  src={mediaSrc} mobileSrc={mobileMediaSrc}  type="video" className="v2-rewards-promo-media h-full w-full object-cover" poster={posterUrl} autoPlay loop muted preload="metadata" style={{
           ["--rewards-pos-desktop" as string]: desktopPosition || "50% 50%",
           ["--rewards-pos-mobile" as string]: mobilePosition || desktopPosition || "50% 50%",
-        }}
-      >
-        {mobileSrc ? <source media="(max-width: 767px)" src={mobileMediaSrc} /> : null}
-        <source src={mediaSrc} />
-      </video>
+        }} />
     ) : (
-      <picture className="block h-full">
+      <>
         {mobileSrc ? <source media="(max-width: 767px)" srcSet={mobileMediaSrc} /> : null}
-        <img
-          src={mediaSrc}
-          alt=""
-          className="v2-rewards-promo-media h-full w-full object-cover"
-          style={{
+        <StoreDesignEditableMedia editorId={`section:${sectionId}.media`} aliases={[`section:${sectionId}`]}  src={mediaSrc} mobileSrc={mobileMediaSrc}  alt="" className="v2-rewards-promo-media h-full w-full object-cover" style={{
             ["--rewards-pos-desktop" as string]: desktopPosition || "50% 50%",
             ["--rewards-pos-mobile" as string]: mobilePosition || desktopPosition || "50% 50%",
-          }}
-        />
-      </picture>
+          }} />
+      </>
     )
   ) : null;
 

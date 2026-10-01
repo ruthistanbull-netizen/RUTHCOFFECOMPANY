@@ -1,5 +1,6 @@
 "use client";
 
+import { StoreDesignEditableMedia } from "@/components/theme/StoreDesignEditableMedia";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
@@ -145,11 +146,7 @@ function PhotoCollectionsRail({
           data-editor-instance={collection.id}
         >
           <span className="ruth-menu-collection-card__media">
-            <img
-              src={collection.cover_image_url || ""}
-              alt=""
-              draggable={false}
-            />
+            <StoreDesignEditableMedia editorId={`global.header.menu.collection.${collection.id}.asset`} aliases={[`global.header.menu.collection.${collection.id}`]} editorLabel={collection.name} src={collection.cover_image_url || ""} />
           </span>
           <span className="ruth-menu-collection-card__label" data-store-design-editable-text="true">{collection.name}</span>
         </Link>
@@ -175,19 +172,7 @@ function PhotoCollectionsRail({
           data-editor-instance={card.id}
         >
           <span className="ruth-menu-collection-card__media">
-            {card.mediaType === "video" ? (
-              <video
-                src={card.imageSrc}
-                aria-label={card.label || "Menü videosu"}
-                muted
-                loop
-                autoPlay
-                playsInline
-                preload="metadata"
-              />
-            ) : (
-              <img src={card.imageSrc} alt={card.label || ""} draggable={false} />
-            )}
+            <StoreDesignEditableMedia editorId={`global.header.menu.media.${card.id}.asset`} aliases={[`global.header.menu.media.${card.id}`]} editorLabel={card.label || "Menü medyası"} src={card.imageSrc} type={card.mediaType} alt={card.label || ""} />
           </span>
           {card.label ? <span className="ruth-menu-collection-card__label" data-store-design-editable-text="true">{card.label}</span> : null}
         </Link>

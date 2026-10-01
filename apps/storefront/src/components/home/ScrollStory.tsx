@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { StoreDesignEditableMedia } from "@/components/theme/StoreDesignEditableMedia";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { storySlides as defaultStorySlides } from "@/data/storySlides";
@@ -277,33 +278,7 @@ export default function ScrollStory({
                     cursor: "pointer",
                   }}
                 >
-                  {activeMedia.mediaType === "video" ? (
-                    <video
-                      src={activeMedia.src}
-                      poster={activeMedia.posterUrl}
-                      aria-label={slide.title}
-                      className="h-full w-full object-cover"
-                      style={{ objectPosition: activeMedia.objectPosition || "50% 50%" }}
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      preload={index <= 1 ? "auto" : "metadata"}
-                      disablePictureInPicture
-                      data-theme-id={slide.blockId ? undefined : homeScrollMediaId(index)}
-                      data-theme-label={slide.blockId ? undefined : `Kayan medya ${index + 1}`}
-                    />
-                  ) : (
-                    <img
-                      src={activeMedia.src}
-                      alt={slide.title}
-                      className="h-full w-full object-cover"
-                      style={{ objectPosition: activeMedia.objectPosition || "50% 50%" }}
-                      loading={index <= 1 ? "eager" : "lazy"}
-                      data-theme-id={slide.blockId ? undefined : homeScrollMediaId(index)}
-                      data-theme-label={slide.blockId ? undefined : `Kayan medya ${index + 1}`}
-                    />
-                  )}
+                  <StoreDesignEditableMedia editorId={slide.blockId ? `block:${slide.blockId}.media` : homeScrollMediaId(index)} aliases={slide.blockId ? [`block:${slide.blockId}`] : []} themeId={slide.blockId ? undefined : homeScrollMediaId(index)} editorLabel={slide.title} src={activeMedia.src} type={activeMedia.mediaType} poster={activeMedia.posterUrl} alt={slide.title} className="h-full w-full object-cover" style={{ objectPosition: activeMedia.objectPosition || "50% 50%" }} priority={index <= 1} />
                 </Link>
               );
             })}

@@ -384,10 +384,10 @@ export function StoreDesignMediaLibrary({
               ) : null}
 
               <label className="mt-4 grid gap-1.5 text-[8px] font-semibold text-black/45">
-                Mobil görsel
+                Mobil medya
                 <select value={selected.mobileAssetId || ""} onChange={(event) => void setRelation("mobileAssetId", event.target.value)} className="h-9 rounded-lg border border-black/10 bg-white px-2 text-[8px] font-medium text-black outline-none">
                   <option value="">Aynı medyayı kullan</option>
-                  {Object.values(document.media).filter((asset) => asset.assetId !== selected.assetId && asset.type === selected.type).map((asset) => (
+                  {Object.values(document.media).filter((asset) => asset.assetId !== selected.assetId).map((asset) => (
                     <option key={asset.assetId} value={asset.assetId}>{mediaDisplayName(asset)}</option>
                   ))}
                 </select>

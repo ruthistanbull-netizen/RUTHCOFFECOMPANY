@@ -1392,8 +1392,6 @@ export function validateThemeDocument(document: ThemeDocument) {
     if (asset.mobileAssetId === assetId) errors.push(`${assetId}: medya kendi mobil varyantı olamaz.`);
     if (asset.posterAssetId === assetId) errors.push(`${assetId}: medya kendi posteri olamaz.`);
 
-    const mobile = asset.mobileAssetId ? document.media[asset.mobileAssetId] : undefined;
-    if (mobile && mobile.type !== asset.type) errors.push(`${assetId}: mobil varyant aynı medya tipinde olmalı.`);
     const poster = asset.posterAssetId ? document.media[asset.posterAssetId] : undefined;
     if (poster && (asset.type !== "video" || poster.type !== "image")) errors.push(`${assetId}: video posteri görsel asset olmalı.`);
   }
@@ -1408,12 +1406,6 @@ export function validateThemeDocument(document: ThemeDocument) {
     const imageAssetId = typeof section.settings.imageAssetId === "string" ? section.settings.imageAssetId : "";
     const asset = imageAssetId ? document.media[imageAssetId] : undefined;
     if (imageAssetId && !asset) errors.push(`${section.id}: bölüm medya referansı bulunamadı.`);
-    if (asset && section.type === "image-text-split" && asset.type !== "image") {
-      errors.push(`${section.id}: Image + Text Split yalnız image asset kabul eder.`);
-    }
-    if (asset && section.type === "video-text-split" && asset.type !== "video") {
-      errors.push(`${section.id}: Video + Text Split yalnız video asset kabul eder.`);
-    }
 
     if (section.type === "product-spotlight") {
       const productId = typeof section.settings.productId === "string" ? section.settings.productId.trim() : "";
@@ -1620,8 +1612,7 @@ export function validateThemeDocument(document: ThemeDocument) {
     }
 
     if (section.type === "video-hero" || section.type === "video-banner") {
-      if (!imageAssetId) errors.push(`${section.id}: ${section.type === "video-hero" ? "Video Hero" : "Video Banner"} video asset gerektirir.`);
-      if (asset && asset.type !== "video") errors.push(`${section.id}: ${section.type === "video-hero" ? "Video Hero" : "Video Banner"} yalnız video asset kabul eder.`);
+      if (!imageAssetId) errors.push(`${section.id}: ${section.type === "video-hero" ? "Video Hero" : "Video Banner"} medya gerektirir.`);
       const posterId = typeof section.settings.posterAssetId === "string" ? section.settings.posterAssetId : "";
       const poster = posterId ? document.media[posterId] : undefined;
       if (posterId && !poster) errors.push(`${section.id}: poster medya referansı bulunamadı (${posterId}).`);
@@ -1661,7 +1652,6 @@ export function validateThemeDocument(document: ThemeDocument) {
 
     if (section.type === "hotspot-lookbook") {
       if (!imageAssetId) errors.push(`${section.id}: Hotspot / Lookbook görseli gerekli.`);
-      if (asset && asset.type !== "image") errors.push(`${section.id}: Hotspot / Lookbook yalnız image asset kabul eder.`);
       for (const blockId of section.blockIds || []) {
         const block = document.blocks[blockId];
         if (!block || block.type !== "hotspot") continue;

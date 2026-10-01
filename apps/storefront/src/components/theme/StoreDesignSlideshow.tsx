@@ -1,4 +1,5 @@
 "use client";
+import { StoreDesignEditableMedia } from "@/components/theme/StoreDesignEditableMedia";
 
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -79,17 +80,9 @@ export function StoreDesignSlideshow({
               }
             >
               {slide.type === "video" ? (
-                <video
-                  src={slide.url}
-                  poster={slide.posterUrl}
-                  className="aspect-[16/10] w-full object-cover"
-                  muted
-                  playsInline
-                  loop
-                  autoPlay={active && !reducedMotion}
-                />
+                <StoreDesignEditableMedia editorId={`block:${slide.id}` + ".media"} aliases={[`block:${slide.id}`]} src={slide.url || ""}  type="video" poster={slide.posterUrl} className="aspect-[16/10] w-full object-cover" muted loop autoPlay={active && !reducedMotion} />
               ) : (
-                <img src={slide.url} alt={slide.title || ""} className="aspect-[16/10] w-full object-cover" />
+                <StoreDesignEditableMedia editorId={`block:${slide.id}` + ".media"} aliases={[`block:${slide.id}`]} src={slide.url || ""}  alt={slide.title || ""} className="aspect-[16/10] w-full object-cover" autoPlay={active && !reducedMotion} />
               )}
               {(slide.title || slide.body || slide.ctaHref) ? (
                 <div className="absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-black/75 via-black/30 to-transparent p-6 text-white md:p-9">

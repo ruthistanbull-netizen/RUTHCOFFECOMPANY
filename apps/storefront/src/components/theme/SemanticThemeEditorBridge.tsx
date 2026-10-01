@@ -1026,7 +1026,7 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
       if (event.data.type === STORE_DESIGN_MESSAGES.PATCH) {
         const message = event.data as ThemePatchMessage;
         const selected = selectedRef.current;
-        const target = selected?.id === message.targetId
+        const target = selected?.id === message.targetId && selected.element.isConnected
           ? selected
           : targetFrom(document.querySelector(`[data-editor-id="${CSS.escape(String(message.targetId || ""))}"]`));
 
@@ -1041,13 +1041,15 @@ export function SemanticThemeEditorBridge({ allowedOrigins = [] }: { allowedOrig
           selectedRef.current = target;
           positionOverlay();
           window.requestAnimationFrame(() => {
+            const currentTarget = targetFrom(document.querySelector(`[data-editor-id="${CSS.escape(target.id)}"]`)) || target;
+            selectedRef.current = currentTarget;
             positionOverlay();
             post({
               type: STORE_DESIGN_MESSAGES.PATCH_APPLIED,
               targetId: message.targetId,
               revision: Number(message.revision || 0),
               ...result,
-              current: snapshot(target),
+              current: snapshot(currentTarget),
             });
           });
           return;

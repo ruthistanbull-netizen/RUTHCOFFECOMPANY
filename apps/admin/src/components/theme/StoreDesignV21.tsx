@@ -1067,13 +1067,7 @@ export function StoreDesignV21() {
             : null
       )
     : null;
-  const selectedSectionMediaType: "image" | "video" | "any" = selectedSection?.type === "video-text-split"
-    || selectedSection?.type === "video-hero"
-    || selectedSection?.type === "video-banner"
-      ? "video"
-      : selectedSection?.type === "background-media" || selectedSection?.type === "hero"
-        ? "any"
-        : "image";
+  const selectedSectionMediaType: "image" | "video" | "any" = "any";
   const contextSectionRegistration = contextMenu ? sectionRegistration(contextMenu.target) : null;
   const contextSection = contextSectionRegistration ? document.sections[contextSectionRegistration.id] || null : null;
   const contextTargetsWholeSection = Boolean(
@@ -1857,7 +1851,7 @@ export function StoreDesignV21() {
       scope: patchScope,
       device,
       page: activePage,
-      mediaType: /^(studio\.|wholesale\.)/.test(target.id) ? "any" : target.current.media.kind === "video" ? "video" : "image",
+      mediaType: "any",
       beforeOverride: deviceLeaves.has("media.src") ? deviceLeaves.get("media.src") : null,
       visibleSource: target.current.media.src || "",
     });

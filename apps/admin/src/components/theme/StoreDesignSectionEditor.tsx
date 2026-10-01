@@ -81,8 +81,8 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
   const [busy, setBusy] = useState(false);
   const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
 
-  const imageAssets = useMemo(
-    () => Object.values(document.media).filter((asset) => asset.type === "image"),
+  const mediaAssets = useMemo(
+    () => Object.values(document.media),
     [document.media],
   );
 
@@ -333,7 +333,7 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
                     <div className="flex gap-2">
                       <select value={textValue(settings.imageAssetId)} onChange={(event) => set("imageAssetId", event.target.value || undefined)} className="h-10 min-w-0 flex-1 rounded-lg border border-black/10 bg-white px-3 text-[10px] outline-none">
                         <option value="">Medya seçilmedi</option>
-                        {imageAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{mediaLabel(asset)}</option>)}
+                        {mediaAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{mediaLabel(asset)}</option>)}
                       </select>
                       <button type="button" onClick={() => setMediaPickerOpen(true)} className="h-10 shrink-0 rounded-lg border border-black/10 bg-white px-3 text-[9px] font-semibold hover:bg-black/[0.03]">
                         Medya Arşivi
@@ -342,7 +342,9 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
                     <span className="text-[8px] font-normal leading-4 text-black/35">Yeni dosya yüklemek veya mobil görsel ve odak noktası belirlemek için Medya Arşivi'ni kullan.</span>
                   </label>
                   {textValue(settings.imageAssetId) && document.media[textValue(settings.imageAssetId)]?.url ? (
-                    <img src={document.media[textValue(settings.imageAssetId)]!.url} alt="" className="h-36 w-full rounded-xl border border-black/[0.08] object-cover" />
+                    document.media[textValue(settings.imageAssetId)]!.type === "video"
+                      ? <video src={document.media[textValue(settings.imageAssetId)]!.url} muted playsInline controls className="h-36 w-full rounded-xl border border-black/[0.08] object-cover" />
+                      : <img src={document.media[textValue(settings.imageAssetId)]!.url} alt="" className="h-36 w-full rounded-xl border border-black/[0.08] object-cover" />
                   ) : null}
                   <div className="grid gap-4 md:grid-cols-2">
                     <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
@@ -379,7 +381,7 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
               setMediaPickerOpen(false);
             }}
             selectedAssetId={textValue(settings.imageAssetId) || undefined}
-            mediaType="image"
+            mediaType="any"
           />
         ) : null}
 
