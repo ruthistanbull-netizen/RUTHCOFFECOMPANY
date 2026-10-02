@@ -664,9 +664,12 @@ export function Header({
         .ruth-zara-desktop-primary{flex:none}
         .ruth-menu-business{flex:none}
         .ruth-menu-business--desktop{margin-top:clamp(80px,20vh,180px);padding-top:0}
-        .ruth-menu-business--mobile{margin-top:40px;padding-inline:36px 18px}
+        .ruth-menu-business--mobile{margin-top:40px;padding-inline:36px 18px}.ruth-menu-business--mobile .ruth-menu-business__row>a:first-child{font-size:clamp(20px,6.2vw,24px);white-space:nowrap}
         .ruth-zara-menu-surface .ruth-menu-business__heading{margin:0 0 8px;color:var(--ink);opacity:.6;font-family:var(--font-body);font-size:11px;font-weight:500;line-height:18px;letter-spacing:.14em;text-transform:uppercase}
         .ruth-menu-business a{display:flex;min-height:44px;align-items:center}
+        .ruth-menu-business__row{display:flex;align-items:center;gap:8px}
+        .ruth-menu-business__row>a:first-child{flex:0 1 auto;white-space:nowrap}
+        .ruth-menu-business__appointment{flex:none;gap:8px;color:var(--ink);font-family:var(--font-body);font-size:13px;font-weight:700;line-height:18px;text-decoration:none;white-space:nowrap;text-transform:uppercase}
         @media(hover:hover) and (pointer:fine){.ruth-zara-desktop-accordion:hover{scrollbar-color:color-mix(in srgb,var(--gold) 45%,transparent) transparent}.ruth-zara-desktop-link:hover{color:var(--gold)}.ruth-zara-desktop-child:hover{color:var(--gold)}.ruth-zara-menu-copy:hover{scrollbar-color:color-mix(in srgb,var(--gold) 48%,transparent) transparent}.ruth-zara-menu-copy__link:hover{color:var(--gold)}.ruth-menu-collection-card:hover .ruth-menu-collection-card__media img,.ruth-menu-collection-card:hover .ruth-menu-collection-card__media video{transform:scale(1.025)}}
         .ruth-zara-header :where(button,a):focus-visible,.ruth-zara-menu-surface :where(button,a):focus-visible{outline:2px solid var(--rosta-brick-b);outline-offset:2px}
         @media(forced-colors:active){.ruth-zara-header :where(button,a):focus-visible,.ruth-zara-menu-surface :where(button,a):focus-visible{outline:2px solid Highlight}}

@@ -49,19 +49,33 @@ export function BusinessMenuLinks({
     >
       <h2 className="ruth-menu-business__heading">İŞLETMELER İÇİN</h2>
       {items.map((item) => (
-        <Link
-          key={item.id}
-          href={item.path}
-          data-editor-id={`global.header.menu.link.${item.id}`}
-          data-editor-type="menu-link"
-          data-editor-label={item.label}
-          data-editor-instance={item.id}
-          data-store-design-editable-text="true"
-          onClick={onNavigate}
-          className={linkClassName}
-        >
-          {item.label}
-        </Link>
+        <div key={item.id} className="ruth-menu-business__row">
+          <Link
+            href={item.path}
+            data-editor-id={`global.header.menu.link.${item.id}`}
+            data-editor-type="menu-link"
+            data-editor-label={item.label}
+            data-editor-instance={item.id}
+            data-store-design-editable-text="true"
+            onClick={onNavigate}
+            className={linkClassName}
+          >
+            {item.label}
+          </Link>
+          <Link
+            href={`${item.path.split("#", 1)[0]}#business-inquiry`}
+            aria-label={`${item.label} için randevu al`}
+            data-editor-id={`global.header.menu.link.${item.id}.appointment`}
+            data-editor-type="menu-link"
+            data-editor-label={`${item.label} · Randevu al`}
+            data-editor-instance={`${item.id}.appointment`}
+            onClick={onNavigate}
+            className="ruth-menu-business__appointment"
+          >
+            <span aria-hidden="true">—</span>
+            Randevu al
+          </Link>
+        </div>
       ))}
     </section>
   );
