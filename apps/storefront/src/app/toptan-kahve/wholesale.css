@@ -1,4 +1,5 @@
 .wholesale-page {
+  --business-appointment-background: #111111;
   background: #C94A40 !important;
   color: #FBF3E6;
 }
@@ -80,7 +81,7 @@
   min-height: 44px;
 }
 
-.wholesale-page .studio-drawer nav > a {
+.wholesale-page .studio-drawer nav > a:not(.business-appointment-link) {
   min-height: 44px;
   font-size: clamp(2rem, 10vw, 3.75rem);
   overflow-wrap: anywhere;
