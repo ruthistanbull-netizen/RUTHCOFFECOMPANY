@@ -1,41 +1,8 @@
 /* RR HUB authentication visuals are owned by ExactAuth.tsx.
-   Keep this file limited to non-auth panel branding so legacy ROSTA login
-   overrides cannot replace the RR HUB wordmark or palette. */
+   The ROSTA sidebar wordmark is owned by ExactBase44ShellV2.tsx. */
 
 [data-exact-base44-auth] img[alt="RR HUB"] {
   -webkit-user-drag: none;
   user-select: none;
   pointer-events: none;
-}
-
-/* Desktop ROSTA workspace sidebar keeps the store brand after a brand is chosen. */
-@media (min-width: 1024px) {
-  aside[class*="z-sidebar"] > div:first-child > a {
-    position: relative;
-    width: 100%;
-    height: 48px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-  }
-
-  aside[class*="z-sidebar"] > div:first-child > a > * {
-    visibility: hidden !important;
-  }
-
-  aside[class*="z-sidebar"] > div:first-child > a::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: url('/rosta-coffee-co.svg?v=20260807-3') center / contain no-repeat;
-    pointer-events: none;
-  }
-
-  html.dark aside[class*="z-sidebar"] > div:first-child > a::after {
-    filter:
-      drop-shadow(0 0 1px rgba(255, 255, 255, 0.95))
-      drop-shadow(0 0 4px rgba(255, 255, 255, 0.58));
-  }
 }

@@ -51,17 +51,6 @@ a:has(> div > img[src*="/brand/ruth-r-mark.webp"]) > div:not(:has(img)) {
   display: none !important;
 }
 
-/* Keep the ROSTA wordmark inside the ROSTA workspace only.
-   RR HUB auth screens own their own branding in ExactAuth.tsx. */
-aside[class*="z-sidebar"] > div:first-child > a::after {
-  background-color: transparent !important;
-  background-image: var(--ruth-panel-user-logo) !important;
-  background-position: center !important;
-  background-repeat: no-repeat !important;
-  background-size: contain !important;
-  box-shadow: none !important;
-}
-
 /* Older Control Room auth/logo classes. */
 .cr-login__brand-mark,
 .cr-auth-state__mark {
@@ -92,7 +81,6 @@ html.dark img[data-ruth-loading-logo],
 html.dark img[src*="/rosta-coffee-co.svg"],
 html.dark img[src*="/brand/ruth-r-mark.webp"],
 html.dark [data-panel-brand] [class*="brandMark"],
-html.dark aside[class*="z-sidebar"] > div:first-child > a::after,
 .cr-login__brand-mark {
   filter: invert(1) !important;
 }
