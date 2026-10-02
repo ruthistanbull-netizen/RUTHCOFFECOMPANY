@@ -292,7 +292,7 @@ input[type="radio"]:not(:disabled) {
   }
 
   .ruth-zara-menu-desktop {
-    grid-template-columns: minmax(150px, 18vw) minmax(0, 1fr) !important;
+    grid-template-columns: minmax(360px, 18vw) minmax(0, 1fr) !important;
     column-gap: 16px !important;
   }
 

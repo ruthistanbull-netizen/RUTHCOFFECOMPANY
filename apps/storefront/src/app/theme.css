@@ -108,7 +108,8 @@ body:has(.ds-page) {
   border-color: var(--ruth-color-border-subtle);
 }
 
-.site-app-shell:not(:has(.ds-page)) :where(h1, h2, h3, h4, h5, h6, button, input, select, textarea, a, p, span, strong) {
+/* Menu typography is owned by its mobile and desktop navigation components. */
+.site-app-shell:not(:has(.ds-page)) :where(h1, h2, h3, h4, h5, h6, button, input, select, textarea, a, p, span, strong):not(:where(.ruth-zara-menu-surface *)) {
   font-weight: 400;
 }
 
