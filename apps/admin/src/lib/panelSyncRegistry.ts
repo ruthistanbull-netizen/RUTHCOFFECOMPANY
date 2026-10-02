@@ -80,6 +80,7 @@ export function panelSnapshotEligible(route: string) {
     // snapshots or dynamic registration become the first paint authority here.
     "/api/products",
     "/api/orders",
+    "/api/appointments",
     "/api/customers",
     // Meta is an external provider-backed view. Keeping several date-range
     // snapshots hot in the background fan-outs Graph API calls and can trigger

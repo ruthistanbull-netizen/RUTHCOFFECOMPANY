@@ -7,6 +7,7 @@ import {
   sign as signPayload,
 } from "node:crypto";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
+import { appointmentNotification } from "@ruth-commerce/commerce-core/appointments";
 
 type PushConfig = {
   vapid_public_key: string;
@@ -149,6 +150,8 @@ function notificationFor(job: PushJob) {
   }
 
   if (job.kind === "contact") {
+    const appointment = appointmentNotification(payload);
+    if (appointment) return appointment;
     const senderName = clean(payload.name) || "Bir müşteri";
     return {
       title: "Yeni iletişim mesajı",

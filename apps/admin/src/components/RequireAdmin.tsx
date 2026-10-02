@@ -4,6 +4,7 @@ import { ArrowRight, RefreshCw, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { type ReactNode, useEffect, useLayoutEffect, useState } from "react";
 import { adminRememberSessionEnabled, getSupabaseBrowser } from "@/lib/supabaseBrowser";
+import { rostaLoginPath } from "@/lib/rrHubRuntime";
 
 const CACHE_KEY = "ruth_admin_next_checked_until";
 const CACHE_MS = 30 * 24 * 60 * 60 * 1000;
@@ -186,7 +187,7 @@ export function RequireAdmin({ children }: { children: ReactNode }) {
         const token = session?.access_token;
         if (!token) {
           clearVerifiedAccess();
-          if (!cancelled) router.replace("/login");
+          if (!cancelled) router.replace(rostaLoginPath());
           return;
         }
 
@@ -277,7 +278,7 @@ export function RequireAdmin({ children }: { children: ReactNode }) {
             ) : (
               <button
                 type="button"
-                onClick={() => router.replace("/login")}
+                onClick={() => router.replace(rostaLoginPath())}
                 className="mt-5 inline-flex h-11 w-full items-center justify-center gap-2 rounded-[14px] bg-[#FBF3E6] px-4 text-sm font-semibold text-[#111111] transition active:scale-[0.98]"
               >
                 Giriş ekranına dön <ArrowRight className="h-4 w-4" />

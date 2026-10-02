@@ -42,6 +42,7 @@ export function BusinessInquirySection({ context, reduceMotion }: { context: Bus
   const [submitted, setSubmitted] = useState(false);
   const [sendError, setSendError] = useState("");
   const sendingRef = useRef(false);
+  const submissionRef = useRef<{ fingerprint: string; requestKey: string } | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const confirmationRef = useRef<HTMLDivElement>(null);
   const controls = useRef<Partial<Record<keyof BusinessInquiry, HTMLElement | null>>>({});
@@ -79,9 +80,11 @@ export function BusinessInquirySection({ context, reduceMotion }: { context: Bus
     sendingRef.current = true;
     setSending(true);
     try {
+      const fingerprint = JSON.stringify(form);
+      if (submissionRef.current?.fingerprint !== fingerprint) submissionRef.current = { fingerprint, requestKey: crypto.randomUUID() };
       const response = await fetch("/api/business-inquiry", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...normalized, company: new FormData(formRef.current!).get("company") || "" }),
+        body: JSON.stringify({ ...normalized, requestKey: submissionRef.current!.requestKey, company: new FormData(formRef.current!).get("company") || "" }),
         signal: AbortSignal.timeout(25_000),
       });
       const result = await response.json().catch(() => ({}));

@@ -58,7 +58,7 @@ export async function POST(request: Request) {
     dedupe_key: `push-enabled:${auth.profile.id}:${Date.now()}`,
     payload: {
       title: "ROSTA Panel bildirimleri açık",
-      body: "Sipariş ve hatırlatıcı bildirimleri bu iPhone’a gönderilecek.",
+      body: "Randevu, sipariş ve hatırlatıcı bildirimleri bu cihaza gönderilecek.",
     },
     target_url: "/notifications",
   });

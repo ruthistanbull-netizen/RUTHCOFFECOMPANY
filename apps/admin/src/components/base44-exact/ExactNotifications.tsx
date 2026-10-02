@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, BellOff, BellRing, CheckCircle2, HeartPulse, MessageSquareText, RefreshCw, Send, Smartphone } from "lucide-react";
+import { AlertTriangle, BellOff, BellRing, CalendarDays, CheckCircle2, HeartPulse, MessageSquareText, RefreshCw, Send, Smartphone } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { adminRequest } from "@/lib/adminApi";
 import { ExactButton, ExactIconButton, ExactPageHeader, ExactStatusBadge, useExactToast } from "./primitives";
@@ -18,6 +18,7 @@ function urlBase64ToArrayBuffer(value: string): ArrayBuffer {
 function standaloneMode() { if (typeof window === "undefined") return false; const navigatorWithStandalone = navigator as Navigator & { standalone?: boolean }; return window.matchMedia("(display-mode: standalone)").matches || navigatorWithStandalone.standalone === true; }
 
 const NOTIFICATION_COVERAGE = [
+  { icon: CalendarDays, title: "Yeni randevu talebi", text: "ROSTA.Studio veya Toptan Kahve formundan gelen talepler. Bildirime dokununca randevu detayları açılır." },
   { icon: BellRing, title: "Yeni sipariş", text: "Ödemesi tamamlanan yeni sipariş geldiğinde." },
   { icon: CheckCircle2, title: "CRM hatırlatması", text: "Planlanan müşteri veya sipariş takip zamanı geldiğinde." },
   { icon: MessageSquareText, title: "Yeni müşteri mesajı", text: "Web sitesindeki iletişim formundan yeni mesaj geldiğinde." },
@@ -29,6 +30,7 @@ export function ExactNotifications() {
   const toast = useExactToast();
   const [supported, setSupported] = useState<boolean | null>(null);
   const [standalone, setStandalone] = useState(false);
+  const [ios, setIos] = useState(false);
   const [permission, setPermission] = useState<NotificationPermission>("default");
   const [subscription, setSubscription] = useState<PushSubscription | null>(null);
   const [checking, setChecking] = useState(false);
@@ -40,6 +42,7 @@ export function ExactNotifications() {
       const canPush = "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
       setSupported(canPush);
       setStandalone(standaloneMode());
+      setIos(/iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1));
       if (!canPush) {
         setPermission("default");
         setSubscription(null);
@@ -79,7 +82,7 @@ export function ExactNotifications() {
       });
       await adminRequest("/api/push/subscriptions", { method: "POST", body: JSON.stringify(next.toJSON()) });
       setSubscription(next);
-      toast.success("Sipariş, CRM, müşteri mesajı, servis sağlığı ve operasyon bildirimleri açıldı.");
+      toast.success("Randevu, sipariş, CRM, müşteri mesajı ve servis bildirimleri açıldı.");
     } catch (caught) {
       toast.error(caught instanceof Error ? caught.message : "Bildirimler açılamadı.");
     } finally {
@@ -120,7 +123,7 @@ export function ExactNotifications() {
   return <div className="space-y-4 animate-fade-in" data-exact-base44-page="notifications">
     <ExactPageHeader
       title="Bildirimler"
-      subtitle="Panel kapalıyken sipariş, CRM, müşteri mesajı, servis sağlığı ve operasyon uyarılarını bu cihazda al"
+      subtitle="Panel kapalıyken randevu, sipariş ve diğer yönetici bildirimlerini bu cihazda al"
       actions={<ExactIconButton icon={RefreshCw} label="Durumu yenile" variant="secondary" onClick={() => void inspect(true)} loading={checking || busy} />}
     />
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
@@ -129,7 +132,7 @@ export function ExactNotifications() {
       <ExactMetricCard label="Bildirim İzni" value={permission === "granted" ? 1 : 0} icon={BellRing} />
       <ExactMetricCard label="Push Aboneliği" value={subscription ? 1 : 0} icon={BellRing} />
     </div>
-    {!standalone && supported ? <div className="ruth-type-caption p-3 radius-control bg-info-soft border border-info/20 flex items-start gap-2 text-info-foreground"><Smartphone className="h-4 w-4 shrink-0" /><span>iPhone’da tam push desteği için Safari paylaş menüsünden <strong>Ana Ekrana Ekle</strong> seçeneğini kullan ve paneli ana ekran simgesinden aç.</span></div> : null}
+    {!standalone && (ios || supported) ? <div className="ruth-type-caption p-3 radius-control bg-info-soft border border-info/20 flex items-start gap-2 text-info-foreground"><Smartphone className="h-4 w-4 shrink-0" /><span>iPhone’da Safari’den <strong>paneli Ana Ekrana Ekle</strong>, ana ekran simgesinden açıp bu sayfada <strong>Bildirimleri aç</strong> düğmesine dokun. iOS 16.4 veya üzeri gerekir.</span></div> : null}
     <div className="grid lg:grid-cols-2 gap-3">
       <ExactDataCard title="Bu Cihaz">
         <div className="flex items-center gap-3 p-3 radius-small bg-surface-secondary">

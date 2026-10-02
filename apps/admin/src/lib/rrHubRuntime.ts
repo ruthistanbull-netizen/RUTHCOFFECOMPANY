@@ -1,3 +1,5 @@
+import { isAppointmentId } from "@ruth-commerce/commerce-core/appointments";
+
 export const ROSTA_ENTERED_KEY = "rosta_panel_hub_entered_v1";
 export const RUTH_ENTERED_KEY = "rr_hub_ruth_entered_v1";
 export const RR_HUB_PWA_HANDOFF_KEY = "rr_hub_pwa_handoff_v1";
@@ -26,7 +28,14 @@ export function markRRHubWorkspaceHandoff() {
 }
 
 export function prepareRRHubWorkspaceForDocument() {
-  if (typeof window === "undefined" || pwaStartupChecked) return;
+  if (typeof window === "undefined") return;
+
+  // A notification opens its ROSTA workspace even in a newly-created window.
+  // RequireAdmin still performs the independent authentication check.
+  if (window.location.pathname === "/appointments" && isAppointmentId(new URLSearchParams(window.location.search).get("appointment"))) {
+    try { window.sessionStorage.setItem(ROSTA_ENTERED_KEY, "1"); } catch {}
+  }
+  if (pwaStartupChecked) return;
   pwaStartupChecked = true;
 
   if (!isStandaloneWebApp()) return;
@@ -83,4 +92,17 @@ export function navigateRostaPanelDocument(target: string | URL, options?: { rep
 
   if (options?.replace) window.location.replace(url.href);
   else window.location.assign(url.href);
+}
+export function rostaLoginPath() {
+  if (typeof window === "undefined") return "/login";
+  const id = new URLSearchParams(window.location.search).get("appointment");
+  return window.location.pathname === "/appointments" && isAppointmentId(id) ? `/login?appointment=${id}` : "/login";
+}
+
+export function rostaLoginDestination() {
+  if (typeof window === "undefined") return "/profiles";
+  const id = new URLSearchParams(window.location.search).get("appointment");
+  if (!isAppointmentId(id)) return "/profiles";
+  try { window.sessionStorage.setItem(ROSTA_ENTERED_KEY, "1"); } catch {}
+  return `/appointments?appointment=${id}`;
 }

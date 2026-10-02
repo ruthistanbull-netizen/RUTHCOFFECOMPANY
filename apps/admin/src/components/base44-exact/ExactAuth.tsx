@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { rostaLoginDestination } from "@/lib/rrHubRuntime";
 import { useEffect, useState, type FormEvent } from "react";
 import { getSupabaseBrowser, setAdminRememberSession } from "@/lib/supabaseBrowser";
 
@@ -30,7 +31,7 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
 
     if (mode === "login") {
       void supabase.auth.getSession().then(({ data }) => {
-        if (data.session) router.replace("/profiles");
+        if (data.session) router.replace(rostaLoginDestination());
       });
       return;
     }
@@ -132,7 +133,7 @@ export function ExactAuth({ mode }: { mode: AuthMode }) {
         } catch {}
 
         try { window.sessionStorage.removeItem("rosta_panel_hub_entered_v1"); } catch {}
-        router.replace("/profiles");
+        router.replace(rostaLoginDestination());
         router.refresh();
         return;
       }

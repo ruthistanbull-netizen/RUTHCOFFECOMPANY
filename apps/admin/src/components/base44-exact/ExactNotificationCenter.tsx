@@ -5,6 +5,7 @@ import {
   AlertCircle,
   AlertTriangle,
   Bell,
+  CalendarDays,
   CheckCircle2,
   ChevronRight,
   Info,
@@ -22,7 +23,7 @@ import { ExactIconButton, exactCx, useExactToast } from "./primitives";
 const STORAGE_KEY = "ruth_exact_notification_history_v1";
 const MAX_HISTORY = 40;
 
-type NotificationKind = "order" | "reminder" | "contact" | "health" | "test" | "default";
+type NotificationKind = "order" | "reminder" | "contact" | "appointment" | "health" | "test" | "default";
 
 type NotificationItem = {
   id: string;
@@ -79,6 +80,7 @@ function saveHistory(items: NotificationItem[]) {
 }
 
 function notificationIcon(kind: NotificationKind): LucideIcon {
+  if (kind === "appointment") return CalendarDays;
   if (kind === "order") return PackageCheck;
   if (kind === "contact") return MessageSquareText;
   if (kind === "reminder") return AlertCircle;
@@ -90,14 +92,14 @@ function notificationIcon(kind: NotificationKind): LucideIcon {
 function notificationAccent(kind: NotificationKind) {
   if (kind === "order" || kind === "test") return "bg-accent-soft text-accent";
   if (kind === "health") return "bg-warning-soft text-warning";
-  if (kind === "contact") return "bg-info-soft text-info";
+  if (kind === "contact" || kind === "appointment") return "bg-info-soft text-info";
   if (kind === "reminder") return "bg-warning-soft text-warning";
   return "bg-surface-tertiary text-muted";
 }
 
 function notificationTone(kind: NotificationKind) {
   if (kind === "health" || kind === "reminder") return "warning" as const;
-  if (kind === "contact") return "info" as const;
+  if (kind === "contact" || kind === "appointment") return "info" as const;
   if (kind === "order" || kind === "test") return "success" as const;
   return "info" as const;
 }
