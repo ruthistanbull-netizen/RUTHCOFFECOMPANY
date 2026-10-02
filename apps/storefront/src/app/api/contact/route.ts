@@ -1,25 +1,11 @@
-import crypto from "node:crypto";
 import { NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
+import { saveContactMessage } from "@/lib/contactSubmission";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 function clean(value: unknown, max: number) {
   return typeof value === "string" ? value.trim().slice(0, max) : "";
-}
-
-function clientIp(request: Request) {
-  return (
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    request.headers.get("x-real-ip")?.trim() ||
-    "unknown"
-  );
-}
-
-function ipHash(request: Request) {
-  const salt = process.env.CONTACT_IP_HASH_SALT || "rosta-contact-rate-limit-v1";
-  return crypto.createHash("sha256").update(`${salt}|${clientIp(request)}`).digest("hex");
 }
 
 export async function POST(request: Request) {
@@ -48,27 +34,5 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: "Mesaj en az 10 karakter olmalı." }, { status: 400 });
   }
 
-  const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase.rpc("submit_contact_message", {
-    p_name: name,
-    p_email: email,
-    p_phone: phone || null,
-    p_message: message,
-    p_ip_hash: ipHash(request),
-    p_user_agent: clean(request.headers.get("user-agent"), 500),
-  });
-
-  if (error) {
-    const raw = String(error.message || "");
-    if (raw.includes("contact_rate_limited")) {
-      return NextResponse.json({ ok: false, error: "Çok fazla mesaj gönderdiniz. Lütfen 15 dakika sonra tekrar deneyin." }, { status: 429 });
-    }
-    console.error("Contact message could not be saved", error);
-    return NextResponse.json({ ok: false, error: "Mesajınız şu anda gönderilemedi. WhatsApp üzerinden bize ulaşabilirsiniz." }, { status: 500 });
-  }
-
-  return NextResponse.json({ ok: true, messageId: data }, {
-    status: 201,
-    headers: { "Cache-Control": "no-store" },
-  });
+  return saveContactMessage(request, { name, email, phone, message });
 }
