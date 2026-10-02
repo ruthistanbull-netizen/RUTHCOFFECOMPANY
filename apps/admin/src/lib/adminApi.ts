@@ -116,6 +116,7 @@ function cachePolicy(path: string) {
 
 function mutationInvalidation(path: string) {
   const pathname = routePathname(path);
+  if (pathname.startsWith("/api/appointments")) return ["/api/appointments"];
   if (pathname.startsWith("/api/products") || pathname.startsWith("/api/product-") || pathname.startsWith("/api/catalog")) return ["/api/products", "/api/product-", "/api/catalog", "/api/dashboard/catalog-counts", "/api/summary"];
   if (pathname.startsWith("/api/orders")) return ["/api/orders", "/api/preparing-products", "/api/summary", "/api/dashboard/", "/api/payments", "/api/returns", "/api/shipping", "/api/customers", "/api/crm"];
   if (pathname.startsWith("/api/payments") || pathname.startsWith("/api/paytr")) return ["/api/payments", "/api/paytr", "/api/orders", "/api/summary", "/api/dashboard/", "/api/returns"];

@@ -3,6 +3,7 @@ import {
   AudioWaveform,
   BarChart,
   Brush,
+  CalendarDays,
   CircleUserRound,
   ClipboardPlus,
   Contact,
@@ -65,6 +66,7 @@ export const exactNavStructure: ExactNavGroup[] = [
     label: "SİPARİŞ VE OPERASYON",
     items: [
       { label: "Siparişler", path: "/orders", icon: ShoppingBag, exact: true },
+      { label: "Randevular", path: "/appointments", icon: CalendarDays },
       { label: "Sepetler", path: "/cart-activity", icon: ShoppingCart, exact: true },
       { label: "Hazırlanacak Ürünler", path: "/preparing-products", icon: ListChecks, exact: true },
       { label: "Terk Edilen Sepetler", path: "/abandoned-carts", icon: History, exact: true },
@@ -151,7 +153,7 @@ export const exactNavStructure: ExactNavGroup[] = [
 
 export const exactMobileNav: ExactNavItem[] = [
   { label: "Genel", path: "/dashboard", icon: LayoutDashboard, exact: true },
-  { label: "Siparişler", path: "/orders", icon: ShoppingBag, aliases: ["/cart-activity", "/abandoned-carts", "/preparing-products"] },
+  { label: "Siparişler", path: "/orders", icon: ShoppingBag, aliases: ["/cart-activity", "/abandoned-carts", "/preparing-products", "/appointments"] },
   { label: "Ürünler", path: "/products", icon: Package },
   { label: "Müşteriler", path: "/customers", icon: Contact },
   { label: "E-posta", path: "/email", icon: Inbox },

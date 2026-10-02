@@ -16,7 +16,9 @@
     "./store-design-v2": "./src/store-design-v2.ts",
     "./http-resilience": "./src/http-resilience.ts",
     "./internal-transport": "./src/internal-transport.ts",
-    "./theme-engine": "./src/theme-engine.ts"
+    "./theme-engine": "./src/theme-engine.ts",
+    "./business-inquiry": "./src/business-inquiry.ts",
+    "./appointments": "./src/appointments.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
