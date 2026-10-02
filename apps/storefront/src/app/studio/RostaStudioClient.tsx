@@ -4,6 +4,7 @@ import React, { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { usePrefersReducedMotion } from "@ruth-commerce/ui";
 import { C, StudioImage, Nav, Hero, MarqueeRow, Brick, WhoWeAre, ServiceBlock, Process, FinalCTA } from "@/components/business/BusinessEditorialPrimitives";
+import { BusinessInquirySection } from "@/components/business/BusinessInquirySection";
 
 function MarqueeOne({ reduceMotion }: { reduceMotion: boolean }) {
   const head = "font-display uppercase font-bold leading-[0.9] tracking-[-0.03em]";
@@ -280,7 +281,8 @@ export function RostaStudioClient() {
       <BigImage reduceMotion={reduceMotion} />
       <Principles reduceMotion={reduceMotion} />
       <MarqueeTwo reduceMotion={reduceMotion} />
-      <FinalCTA reduceMotion={reduceMotion} />
+      <FinalCTA reduceMotion={reduceMotion} actionHref="#business-inquiry" />
+      <BusinessInquirySection context="studio" reduceMotion={reduceMotion} />
     </main>
   );
 }

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePrefersReducedMotion } from "@ruth-commerce/ui";
+import { BusinessInquirySection } from "@/components/business/BusinessInquirySection";
 import {
   Brick,
   C,
@@ -33,7 +34,7 @@ const stages: readonly EditorialStage[] = [
   {
     n: "01",
     t: "PAYLAŞ",
-    d: "İşletme adınızı, bulunduğunuz şehri, kahveyi nasıl hazırladığınızı ve tahmini tüketiminizi iletişim formundaki mesajınıza ekleyin.",
+    d: "Bu sayfadaki görüşme formunda işletme bilgilerinizi, kahveyi nasıl hazırladığınızı ve tahmini tüketiminizi paylaşın.",
     side: "left",
   },
   {
@@ -53,7 +54,7 @@ const stages: readonly EditorialStage[] = [
 const questions = [
   {
     question: "Toptan kahve talebimi nasıl iletebilirim?",
-    answer: "İletişim sayfasındaki formdan işletme bilgilerinizi ve kahve ihtiyacınızı paylaşabilirsiniz.",
+    answer: "Bu sayfadaki görüşme formundan işletme bilgilerinizi ve kahve ihtiyacınızı paylaşabilir, tercih ettiğiniz görüşme zamanını seçebilirsiniz.",
   },
   {
     question: "Talebimde hangi bilgileri paylaşmalıyım?",
@@ -67,7 +68,7 @@ const questions = [
   {
     question: "Miktar, fiyat ve teslimat koşulları nasıl netleşir?",
     answer: "Çalışma koşulları ürün, miktar ve teslimat adresi üzerinden teklifte netleştirilir. Güncel miktar ve fiyat bilgisi için ihtiyacınızı iletişim formundan paylaşabilirsiniz.",
-    link: { label: "TALEBİNİ PAYLAŞ", href: "/contact#contact-form" },
+    link: { label: "TALEBİNİ PAYLAŞ", href: "#business-inquiry" },
   },
   {
     question: "Kahve dışında profesyonel destek alabilir miyim?",
@@ -215,11 +216,12 @@ export function ToptanKahveClient() {
         sectionNumber="07"
         brand="ROSTA / TOPTAN KAHVE"
         actionLabel="TEKLİF AL"
-        actionHref="/contact#contact-form"
-        description="Toptan talebini paylaş. İşletme adını, şehrini, kullanım şeklini ve tahmini ihtiyacını iletişim formundaki mesajına ekleyebilirsin. Ürün, miktar ve teslimat koşullarını teklif üzerinden değerlendirelim."
+        actionHref="#business-inquiry"
+        description="Toptan talebini paylaş. İşletme bilgilerini, kahve ihtiyacını ve görüşmek istediğin zamanı aşağıdaki formdan ilet. Ürün, miktar ve teslimat koşullarını birlikte değerlendirelim."
         secondaryLink={{ label: "ROSTA.STUDIO HİZMETLERİ", href: "/studio" }}
         meta={["ROSTA", "TOPTAN KAHVE", "İŞLETMELER İÇİN"]}
       />
+      <BusinessInquirySection context="wholesale" reduceMotion={reduceMotion} />
     </div>
   );
 }
