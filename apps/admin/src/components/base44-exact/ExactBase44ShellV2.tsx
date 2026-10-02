@@ -48,7 +48,7 @@ function Brand({ collapsed = false }: { collapsed?: boolean }) {
       aria-label="ROSTA Coffee Co."
       className={exactCx(
         "flex min-w-0 items-center",
-        collapsed ? "justify-center" : "h-full w-full justify-center",
+        collapsed ? "justify-center" : "h-12 w-full justify-center",
       )}
     >
       <div
@@ -56,7 +56,7 @@ function Brand({ collapsed = false }: { collapsed?: boolean }) {
           "flex shrink-0 items-center justify-center overflow-hidden",
           collapsed
             ? "h-10 w-10 rounded-[var(--radius-small)] bg-transparent"
-            : "h-[58px] w-full max-w-[202px] bg-transparent",
+            : "h-12 w-full max-w-[202px] bg-transparent",
         )}
       >
         <span
