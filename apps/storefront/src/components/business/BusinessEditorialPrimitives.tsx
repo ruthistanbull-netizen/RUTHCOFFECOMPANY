@@ -46,7 +46,11 @@ const studioNavLinks = [
   { label: "İLETİŞİM", href: "#contact" },
 ];
 
-const studioMenuLinks = [{ label: "ANASAYFA", href: "/" }, ...studioNavLinks];
+const studioMenuLinks = [
+  { label: "ANASAYFA", href: "/" },
+  ...studioNavLinks,
+  { label: "TOPTAN KAHVE", href: "/toptan-kahve" },
+];
 
 type EditorialLink = { label: string; href: string };
 
@@ -114,6 +118,13 @@ export function Nav({
                 {l.label}
               </a>
             ))}
+            <a
+              href="#business-inquiry"
+              className="inline-flex min-h-11 items-center gap-2 border px-3 font-mono-tech text-[11px] uppercase tracking-[0.12em] hover:opacity-60 transition-opacity focus-visible:outline-2 focus-visible:outline-offset-4"
+              style={{ color: C.cream, borderColor: C.cream }}
+            >
+              RANDEVU AL <StudioArrow />
+            </a>
           </nav>
 
         </div>
@@ -159,6 +170,14 @@ export function Nav({
                   {l.label}
                 </a>
               ))}
+              <a
+                href="#business-inquiry"
+                onClick={() => setOpen(false)}
+                className="business-appointment-link mt-6 inline-flex min-h-14 w-fit items-center gap-5 px-6 py-3 font-display text-3xl font-bold uppercase leading-none transition-opacity hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-4"
+                style={{ color: C.cream, background: `var(--business-appointment-background, ${C.brick})` }}
+              >
+                RANDEVU AL <StudioArrow />
+              </a>
             </nav>
 
             <div className="mt-auto shrink-0 px-5 pb-8 font-mono-tech text-[10px] uppercase tracking-[0.2em]" style={{ color: C.kraft }}>
