@@ -3,6 +3,7 @@
   --font-body: var(--studio-font-archivo), "Archivo", ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--studio-font-oswald), "Oswald", var(--studio-font-archivo), "Archivo", ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--studio-font-mono), "Space Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --business-menu-font-size: 3.75rem;
   width: 100%;
   min-width: 0;
   overflow-x: clip;
@@ -67,10 +68,35 @@
 }
 
 .rosta-studio-exact .studio-drawer {
-  max-height: 100dvh;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-inline: env(safe-area-inset-left, 0px) env(safe-area-inset-right, 0px);
+  padding-bottom: calc(var(--ruth-cookie-consent-height, 0px) + max(20px, env(safe-area-inset-bottom, 0px)));
+}
+
+/* Only the links scroll on short screens; the appointment action stays visible. */
+.rosta-studio-exact .studio-drawer-links {
+  flex: 1;
+  min-height: 0;
+  margin-top: 40px;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding-bottom: var(--ruth-cookie-consent-height, 0px);
+}
+
+.rosta-studio-exact .studio-drawer-links > a {
+  flex-shrink: 0;
+  min-height: 44px;
+  font-size: var(--business-menu-font-size);
+  overflow-wrap: anywhere;
+}
+
+.rosta-studio-exact .studio-drawer-actions {
+  padding-top: 20px;
+  gap: 20px;
 }
 
 .rosta-studio-exact .studio-contact {
@@ -85,6 +111,19 @@
 .rosta-studio-exact .studio-contact-underline { transition-duration: 500ms !important; }
 
 @media (max-width: 767px) {
+  .rosta-studio-exact .studio-drawer-links {
+    margin-top: 12px;
+  }
+
+  .rosta-studio-exact .studio-drawer-links > a {
+    font-size: min(var(--business-menu-font-size), clamp(2rem, 7.5dvh, 3.75rem));
+  }
+
+  .rosta-studio-exact .studio-drawer-actions {
+    padding-top: 16px;
+    gap: 12px;
+  }
+
   /* Reveal the same centred image without resizing its layout on every scroll frame. */
   .rosta-studio-exact .studio-media-frame {
     width: 100%;

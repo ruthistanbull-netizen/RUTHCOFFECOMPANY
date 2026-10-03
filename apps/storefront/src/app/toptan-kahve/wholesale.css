@@ -81,18 +81,12 @@
   min-height: 44px;
 }
 
-.wholesale-page .studio-drawer nav > a:not(.business-appointment-link) {
-  min-height: 44px;
-  font-size: clamp(2rem, 10vw, 3.75rem);
-  overflow-wrap: anywhere;
-}
-
 .wholesale-page .studio-drawer {
+  --business-menu-font-size: clamp(2rem, 10vw, 3.75rem);
   background: #C94A40 !important;
-  padding-bottom: calc(var(--ruth-cookie-consent-height, 0px) + max(32px, env(safe-area-inset-bottom) + 20px)) !important;
 }
 
-.wholesale-page .studio-drawer > div:last-child {
+.wholesale-page .studio-drawer-meta {
   color: rgba(251, 243, 230, 0.78) !important;
 }
 
