@@ -49,7 +49,9 @@ export function RuthieOrbDockSlot() {
     const seatOrb = () => {
       const layer = findOrbLayer();
       if (!layer) return;
-      if (layer.parentElement !== dock) dock.appendChild(layer);
+      const portalHost = layer.closest<HTMLElement>("[data-ruthie-orb-portal]");
+      if (!portalHost) return;
+      if (portalHost.parentElement !== dock) dock.appendChild(portalHost);
       layer.style.position = "absolute";
       layer.style.left = "0";
       layer.style.top = "0";
@@ -60,12 +62,13 @@ export function RuthieOrbDockSlot() {
 
     const releaseOrb = () => {
       const layer = findOrbLayer();
-      if (!layer || layer.parentElement === document.body) {
+      const portalHost = layer?.closest<HTMLElement>("[data-ruthie-orb-portal]");
+      if (!layer || !portalHost || portalHost.parentElement === document.body) {
         if (layer) layer.style.zIndex = FLOATING_ORB_Z_INDEX;
         return;
       }
       const rect = layer.getBoundingClientRect();
-      document.body.appendChild(layer);
+      document.body.appendChild(portalHost);
       layer.style.position = "fixed";
       layer.style.left = "0";
       layer.style.top = "0";
@@ -113,7 +116,8 @@ export function RuthieOrbDockSlot() {
       const layer = findOrbLayer();
       if (layer) {
         const rect = layer.getBoundingClientRect();
-        if (layer.parentElement !== document.body) document.body.appendChild(layer);
+        const portalHost = layer.closest<HTMLElement>("[data-ruthie-orb-portal]");
+        if (portalHost && portalHost.parentElement !== document.body) document.body.appendChild(portalHost);
         layer.style.position = "fixed";
         layer.style.left = "0";
         layer.style.top = "0";

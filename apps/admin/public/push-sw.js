@@ -1,14 +1,23 @@
+const PUSH_BRAND_TITLE = "ROSTA Coffee";
+
+// This worker owns push only; activating an update does not replace a page or cache.
+self.addEventListener("install", (event) => event.waitUntil(self.skipWaiting()));
+self.addEventListener("activate", (event) => event.waitUntil(self.clients.claim()));
+
 self.addEventListener("push", (event) => {
   let payload = {};
   try {
     payload = event.data ? event.data.json() : {};
+    if (!payload || typeof payload !== "object" || Array.isArray(payload)) payload = {};
   } catch {
-    payload = { title: "ROSTA Panel", body: event.data ? event.data.text() : "Yeni bildirim" };
+    payload = { title: PUSH_BRAND_TITLE, body: event.data ? event.data.text() : "Yeni bildirim" };
   }
 
-  const title = payload.title || "ROSTA Panel";
+  const title = typeof payload.title === "string" && payload.title.trim() ? payload.title.trim() : PUSH_BRAND_TITLE;
+  const body = typeof payload.body === "string" && payload.body.trim() ? payload.body.trim() : "Yeni bildirim";
+  const nativeBody = title === PUSH_BRAND_TITLE ? body : `${title}\n${body}`;
   const options = {
-    body: payload.body || "Yeni bildirim",
+    body: nativeBody,
     icon: "/icon-192.png",
     badge: "/icon-192.png",
     tag: payload.tag || "rosta-panel-notification",
@@ -31,7 +40,7 @@ self.addEventListener("push", (event) => {
           payload: { ...payload, title, type: payload.type || payload.kind || "default", tag: options.tag },
         });
       }
-      await self.registration.showNotification(title, options);
+      await self.registration.showNotification(PUSH_BRAND_TITLE, options);
     }),
   );
 });

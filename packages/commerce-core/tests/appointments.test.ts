@@ -31,7 +31,7 @@ test("face-to-face updates require a usable address and bounded notes",()=>{
 test("appointment push links to the exact detail and carries an appointment type",()=>{
   for(const context of ["studio","wholesale"]) {
     const notification=appointmentNotification({appointment_id:id,context,business_name:"Test Kafe",date:"2026-10-03",time:"11:00 - 12:00"});
-    assert.equal(notification?.url,`/appointments?appointment=${id}`);
+    assert.equal(notification?.url,`/appointments/${id}`);
     assert.equal(notification?.type,"appointment");
     assert.match(notification!.body,/Test Kafe.*3 Ekim 2026.*11:00 - 12:00/);
     assert.match(notification!.title,context==="studio"?/ROSTA.Studio/:/Toptan Kahve/);

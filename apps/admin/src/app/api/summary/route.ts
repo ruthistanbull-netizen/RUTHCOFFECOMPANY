@@ -142,6 +142,7 @@ export async function GET(request: Request) {
       selectedOrders,
       analyticsResult,
       returnsCount,
+      appointmentCount,
       openReturnsCount,
       productCount,
       checkoutDrafts,
@@ -153,6 +154,7 @@ export async function GET(request: Request) {
       selectedOrdersPromise,
       analyticsPromise,
       countRows(applyRange(supabase.from("returns_exchanges").select("id", { count: "exact", head: true }), "created_at", range) as any, "İade/değişim vakaları", warnings),
+      countRows(applyRange(supabase.from("business_appointments").select("id", { count: "exact", head: true }), "created_at", range) as any, "Randevu talepleri", warnings),
       countRows(supabase.from("returns_exchanges").select("id", { count: "exact", head: true }).in("status", ["open", "approved"]) as any, "Açık iade/değişim vakaları", warnings),
       countRows(supabase.from("products").select("id", { count: "exact", head: true }).eq("status", "active") as any, "Aktif ürünler", warnings),
       rows<DashboardCheckoutDraft>(
@@ -322,6 +324,7 @@ export async function GET(request: Request) {
         carts: cartCount,
         checkoutReached,
         returns: returnsCount,
+        appointments: appointmentCount,
         products: productCount,
         conversionRate: conversion.purchaseRate,
         conversion,

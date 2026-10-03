@@ -241,7 +241,8 @@ function mirrorVoiceIntoActiveChat(item: Transcript) {
 export function RuthieDockedQuickVoiceOrb() {
   const [status, setStatus] = useState<ProviderStatus | null>(null);
   const [transcripts, setTranscripts] = useState<Transcript[]>([]);
-  const [portalReady, setPortalReady] = useState(false);
+  const [portalHost, setPortalHost] = useState<HTMLElement | null>(null);
+  const portalReady = Boolean(portalHost);
   const [positionReady, setPositionReady] = useState(false);
   const [pressed, setPressed] = useState(false);
   const [listeningLatched, setListeningLatched] = useState(false);
@@ -518,8 +519,15 @@ export function RuthieDockedQuickVoiceOrb() {
   }, []);
 
   useEffect(() => {
-    setPortalReady(true);
+    // Move this unmanaged host when docking, never React's portal children.
+    // React can then remove its children from the same parent on navigation.
+    const host = document.createElement("div");
+    host.dataset.ruthieOrbPortal = "true";
+    host.style.display = "contents";
+    document.body.appendChild(host);
+    setPortalHost(host);
     return () => {
+      host.remove();
       gestureRef.current?.releaseBackgroundLock?.();
       gestureRef.current = null;
       cancelMotionFrame();
@@ -929,7 +937,7 @@ export function RuthieDockedQuickVoiceOrb() {
           ? "ROSTA Insight dinliyor; kapatmak için bir kez dokun"
           : "ROSTA Insight sesli modu açmak için dokun; basılı tutarak da konuşabilirsin";
 
-  if (!portalReady) return null;
+  if (!portalHost) return null;
 
   const waveStyle = activationWave ? ({
     "--wave-x": `${activationWave.x}px`,
@@ -982,6 +990,6 @@ export function RuthieDockedQuickVoiceOrb() {
         </button>
       </div>
     </>,
-    document.body,
+    portalHost,
   );
 }

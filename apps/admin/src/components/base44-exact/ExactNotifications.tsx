@@ -50,7 +50,7 @@ export function ExactNotifications() {
         return;
       }
       setPermission(Notification.permission);
-      const registration = await navigator.serviceWorker.register("/push-sw.js", { scope: "/" });
+      const registration = await navigator.serviceWorker.register("/push-sw.js", { scope: "/", updateViaCache: "none" });
       setSubscription(await registration.pushManager.getSubscription());
       if (showSuccess) toast.success("Cihaz bildirim durumu yenilendi.");
     } catch (caught) {
@@ -73,7 +73,7 @@ export function ExactNotifications() {
       if (nextPermission !== "granted") throw new Error("Bildirim izni verilmedi.");
       const config = await adminRequest<{ vapidPublicKey?: string }>("/api/push/config");
       if (!config.vapidPublicKey) throw new Error("VAPID açık anahtarı bulunamadı.");
-      const registration = await navigator.serviceWorker.register("/push-sw.js", { scope: "/" });
+      const registration = await navigator.serviceWorker.register("/push-sw.js", { scope: "/", updateViaCache: "none" });
       await navigator.serviceWorker.ready;
       const current = await registration.pushManager.getSubscription();
       const next = current || await registration.pushManager.subscribe({
