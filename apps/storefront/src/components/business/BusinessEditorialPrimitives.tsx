@@ -155,13 +155,13 @@ export function Nav({
               </button>
             </div>
 
-            <nav className="flex shrink-0 flex-col px-5 mt-10 mb-8 gap-1">
+            <nav className="studio-drawer-links flex flex-col px-5 gap-1">
               {menuLinks.map((l, i) => (
                 <a
                   key={l.label}
                   href={l.href}
                   onClick={() => setOpen(false)}
-                  className="font-display uppercase text-6xl font-bold leading-[1.05] tracking-tight"
+                  className="font-display uppercase font-bold leading-[1.05] tracking-tight"
                   style={{ color: C.cream }}
                 >
                   <span className="font-mono-tech text-xs mr-3 align-middle" style={{ color: C.brick }}>
@@ -170,18 +170,20 @@ export function Nav({
                   {l.label}
                 </a>
               ))}
+            </nav>
+
+            <div className="studio-drawer-actions flex shrink-0 flex-col items-start px-5">
               <a
                 href="#business-inquiry"
                 onClick={() => setOpen(false)}
-                className="business-appointment-link mt-6 inline-flex min-h-14 w-fit items-center gap-5 px-6 py-3 font-display text-3xl font-bold uppercase leading-none transition-opacity hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-4"
+                className="business-appointment-link inline-flex min-h-14 w-fit max-w-full items-center gap-5 px-6 py-3 font-display text-3xl font-bold uppercase leading-none transition-opacity hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-4"
                 style={{ color: C.cream, background: `var(--business-appointment-background, ${C.brick})` }}
               >
                 RANDEVU AL <StudioArrow />
               </a>
-            </nav>
-
-            <div className="mt-auto shrink-0 px-5 pb-8 font-mono-tech text-[10px] uppercase tracking-[0.2em]" style={{ color: C.kraft }}>
-              {footerText}
+              <div className="studio-drawer-meta font-mono-tech text-[10px] uppercase tracking-[0.2em]" style={{ color: C.kraft }}>
+                {footerText}
+              </div>
             </div>
           </motion.div>
         )}
