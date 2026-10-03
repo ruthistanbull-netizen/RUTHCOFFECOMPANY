@@ -18,12 +18,13 @@ import {
 } from "lucide-react";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
+import { normalizePanelNotificationPayload, type AdminNotificationKind } from "@/lib/adminNotification";
 import { ExactIconButton, exactCx, useExactToast } from "./primitives";
 
 const STORAGE_KEY = "ruth_exact_notification_history_v1";
 const MAX_HISTORY = 40;
 
-type NotificationKind = "order" | "reminder" | "contact" | "appointment" | "health" | "test" | "default";
+type NotificationKind = AdminNotificationKind;
 
 type NotificationItem = {
   id: string;
@@ -57,10 +58,13 @@ function readHistory(): NotificationItem[] {
       if (!value.id || !value.title || !value.body) return [];
       return [{
         id: String(value.id),
-        kind: (value.kind || "default") as NotificationKind,
-        title: String(value.title),
-        body: String(value.body),
-        url: typeof value.url === "string" ? value.url : "/",
+        ...normalizePanelNotificationPayload({
+          kind: value.kind,
+          tag: value.id,
+          title: value.title,
+          body: value.body,
+          url: value.url,
+        }),
         createdAt: Number(value.createdAt) || Date.now(),
         read: Boolean(value.read),
       }];
@@ -117,14 +121,6 @@ function formatRelative(timestamp: number) {
   return new Intl.DateTimeFormat("tr-TR", { day: "numeric", month: "short" }).format(timestamp);
 }
 
-function normalizePushPayload(payload: Record<string, unknown>): Omit<NotificationItem, "id" | "createdAt" | "read"> {
-  const kind = String(payload.type || payload.kind || "default") as NotificationKind;
-  const title = String(payload.title || "ROSTA Panel");
-  const body = String(payload.body || "Yeni bildirim");
-  const url = typeof payload.url === "string" && payload.url ? payload.url : "/";
-  return { kind, title, body, url };
-}
-
 export function ExactNotificationProvider({ children }: { children: ReactNode }) {
   const toast = useExactToast();
   const [items, setItems] = useState<NotificationItem[]>([]);
@@ -136,7 +132,7 @@ export function ExactNotificationProvider({ children }: { children: ReactNode })
   }, []);
 
   const addNotification = useCallback((payload: Record<string, unknown>) => {
-    const normalized = normalizePushPayload(payload);
+    const normalized = normalizePanelNotificationPayload(payload);
     const id = String(payload.tag || "") || `push-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
     const next: NotificationItem = {
       id,
