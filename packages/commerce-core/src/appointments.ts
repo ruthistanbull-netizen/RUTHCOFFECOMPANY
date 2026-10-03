@@ -38,7 +38,7 @@ export function appointmentNotification(payload: Record<string, unknown>) {
   return {
     title: `Yeni randevu talebi · ${context}`,
     body: `${text("business_name") || "Bir işletme"} · ${formatBusinessDate(text("date"))} · ${text("time")}`,
-    url: `/appointments?appointment=${payload.appointment_id}`,
+    url: `/appointments/${payload.appointment_id}`,
     tag: `rosta-appointment-${payload.appointment_id}`,
     type: "appointment",
   };

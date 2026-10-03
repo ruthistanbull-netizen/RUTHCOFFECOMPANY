@@ -6,6 +6,14 @@ export const RR_HUB_PWA_HANDOFF_KEY = "rr_hub_pwa_handoff_v1";
 
 let pwaStartupChecked = false;
 
+function appointmentIdFromLocation() {
+  if (typeof window === "undefined") return null;
+  const match = /^\/appointments\/([^/]+)$/.exec(window.location.pathname);
+  const id = match ? match[1] : window.location.pathname === "/appointments" || window.location.pathname === "/login"
+    ? new URLSearchParams(window.location.search).get("appointment") : null;
+  return isAppointmentId(id) ? id : null;
+}
+
 function isStandaloneWebApp() {
   if (typeof window === "undefined") return false;
   const navigatorWithStandalone = window.navigator as Navigator & { standalone?: boolean };
@@ -32,7 +40,7 @@ export function prepareRRHubWorkspaceForDocument() {
 
   // A notification opens its ROSTA workspace even in a newly-created window.
   // RequireAdmin still performs the independent authentication check.
-  if (window.location.pathname === "/appointments" && isAppointmentId(new URLSearchParams(window.location.search).get("appointment"))) {
+  if (window.location.pathname.startsWith("/appointments") && appointmentIdFromLocation()) {
     try { window.sessionStorage.setItem(ROSTA_ENTERED_KEY, "1"); } catch {}
   }
   if (pwaStartupChecked) return;
@@ -95,14 +103,14 @@ export function navigateRostaPanelDocument(target: string | URL, options?: { rep
 }
 export function rostaLoginPath() {
   if (typeof window === "undefined") return "/login";
-  const id = new URLSearchParams(window.location.search).get("appointment");
-  return window.location.pathname === "/appointments" && isAppointmentId(id) ? `/login?appointment=${id}` : "/login";
+  const id = appointmentIdFromLocation();
+  return id ? `/login?appointment=${id}` : "/login";
 }
 
 export function rostaLoginDestination() {
   if (typeof window === "undefined") return "/profiles";
-  const id = new URLSearchParams(window.location.search).get("appointment");
-  if (!isAppointmentId(id)) return "/profiles";
+  const id = appointmentIdFromLocation();
+  if (!id) return "/profiles";
   try { window.sessionStorage.setItem(ROSTA_ENTERED_KEY, "1"); } catch {}
-  return `/appointments?appointment=${id}`;
+  return `/appointments/${id}`;
 }

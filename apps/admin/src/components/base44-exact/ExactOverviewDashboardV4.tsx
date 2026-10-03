@@ -7,6 +7,7 @@ import {
   AlertCircle,
   ArrowRight,
   CircleDollarSign,
+  CalendarDays,
   Package,
   Percent,
   RotateCcw,
@@ -55,6 +56,7 @@ type SummaryPayload = {
     carts?: number;
     checkoutReached?: number;
     returns?: number;
+    appointments?: number;
     products?: number;
     conversionRate?: number;
     conversion?: Conversion;
@@ -81,7 +83,7 @@ type State = {
 };
 
 const EMPTY: State = {
-  summary: { orders: 0, paidOrders: 0, revenue: 0, sessions: 0, carts: 0, checkoutReached: 0, returns: 0, products: 0, conversionRate: 0, conversion: {} },
+  summary: { orders: 0, paidOrders: 0, revenue: 0, sessions: 0, carts: 0, checkoutReached: 0, returns: 0, appointments: 0, products: 0, conversionRate: 0, conversion: {} },
   recentOrders: [],
   operations: { newOrders: 0, preparing: 0, ready: 0, shippingAttention: 0 },
   openReturns: 0,
@@ -319,11 +321,11 @@ function ConversionExpansion({ summary }: { summary: State["summary"] }) {
   ];
   return (
     <div className="pb-1">
-      <div className="grid gap-2 sm:grid-cols-3">
+      <div className="grid min-w-0 gap-2 xl:grid-cols-3">
         {steps.map((step) => (
           <div key={step.label} className="rounded-[var(--radius-small)] bg-surface-secondary p-3.5">
             <p className="text-[10px] font-semibold text-muted">{step.label}</p>
-            <div className="mt-2 flex items-end justify-between gap-2">
+            <div className="mt-2 flex flex-wrap items-end justify-between gap-2">
               <strong className="text-xl font-bold text-main">{percent(step.rate)}</strong>
               <span className="pb-0.5 text-[10px] text-subtle">{number(step.value)} oturum</span>
             </div>
@@ -338,7 +340,7 @@ function ConversionExpansion({ summary }: { summary: State["summary"] }) {
           </div>
         ))}
       </div>
-      <div className="mt-3 flex items-center justify-between rounded-[var(--radius-small)] border border-border-subtle px-3.5 py-3 text-[10px] text-muted">
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-[var(--radius-small)] border border-border-subtle px-3.5 py-3 text-[10px] text-muted">
         <span>Dönüşüm tabanı</span>
         <strong className="text-main">{number(sessions)} oturum</strong>
       </div>
@@ -495,7 +497,7 @@ export function ExactOverviewDashboardV4() {
             />
             <DashboardMetricTile label="Sipariş" value={Number(summary.orders || 0)} icon={ShoppingBag} onActivate={() => router.push("/orders")} ariaLabel="Siparişleri aç" />
             <ExactMetricCard label="Sepet" value={Number(summary.carts || 0)} icon={ShoppingCart} className="min-h-[132px]" />
-            <DashboardMetricTile label="İade" value={Number(summary.returns || 0)} icon={RotateCcw} onActivate={() => router.push("/returns")} ariaLabel="İadeleri aç" />
+            <DashboardMetricTile label="Randevular" value={Number(summary.appointments || 0)} icon={CalendarDays} onActivate={() => router.push("/appointments")} ariaLabel="Randevuları aç" />
 
             <DashboardMetricTile
               label="Dönüşüm"
@@ -505,9 +507,9 @@ export function ExactOverviewDashboardV4() {
               expanded={conversionOpen}
               onActivate={() => setConversionOpen((value) => !value)}
               ariaLabel={conversionOpen ? "Dönüşüm detayını kapat" : "Dönüşüm detayını aç"}
-              className="col-span-2"
               details={<ConversionExpansion summary={summary} />}
             />
+            <DashboardMetricTile label="İade" value={Number(summary.returns || 0)} icon={RotateCcw} onActivate={() => router.push("/returns")} ariaLabel="İadeleri aç" />
 
             <DashboardMetricTile label="Toplam Ürün" value={state.products} icon={Package} onActivate={() => router.push("/products")} ariaLabel="Ürünleri aç" secondary={<p className="text-[11px] font-medium text-muted">{state.variants.toLocaleString("tr-TR")} toplam varyant</p>} />
             <DashboardMetricTile label="Ortalama Sepet" value={averageOrder} format="currency" icon={ShoppingBag} onActivate={() => router.push("/orders")} ariaLabel="Siparişleri aç" />

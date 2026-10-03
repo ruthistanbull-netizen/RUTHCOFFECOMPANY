@@ -48,17 +48,17 @@ test('invalid and oversized public requests do not reach the database',async()=>
 test('notification deep links select ROSTA and survive the login redirect without weakening auth',()=>{
  const runtime=load(root+'/apps/admin/src/lib/rrHubRuntime.ts'),storage=new Map();
  global.window={location:{pathname:'/appointments',search:'?appointment='+id},sessionStorage:{getItem:key=>storage.get(key)||null,setItem:(key,value)=>storage.set(key,value),removeItem:key=>storage.delete(key)},navigator:{},matchMedia:()=>({matches:false})};
- try{runtime.prepareRRHubWorkspaceForDocument();assert.equal(storage.get(runtime.ROSTA_ENTERED_KEY),'1');assert.equal(runtime.rostaLoginPath(),'/login?appointment='+id);storage.clear();window.location.pathname='/login';assert.equal(runtime.rostaLoginDestination(),'/appointments?appointment='+id);assert.equal(storage.get(runtime.ROSTA_ENTERED_KEY),'1');window.location.search='?appointment=https://attacker.invalid';assert.equal(runtime.rostaLoginDestination(),'/profiles');window.location.pathname='/orders';assert.equal(runtime.rostaLoginPath(),'/login');}
+ try{runtime.prepareRRHubWorkspaceForDocument();assert.equal(storage.get(runtime.ROSTA_ENTERED_KEY),'1');assert.equal(runtime.rostaLoginPath(),'/login?appointment='+id);storage.clear();window.location.pathname='/login';assert.equal(runtime.rostaLoginDestination(),'/appointments/'+id);assert.equal(storage.get(runtime.ROSTA_ENTERED_KEY),'1');window.location.pathname='/appointments/'+id;window.location.search='';storage.clear();runtime.prepareRRHubWorkspaceForDocument();assert.equal(storage.get(runtime.ROSTA_ENTERED_KEY),'1');assert.equal(runtime.rostaLoginPath(),'/login?appointment='+id);window.location.pathname='/login';window.location.search='?appointment='+id;assert.equal(runtime.rostaLoginDestination(),'/appointments/'+id);window.location.search='?appointment=https://attacker.invalid';assert.equal(runtime.rostaLoginDestination(),'/profiles');window.location.pathname='/orders';assert.equal(runtime.rostaLoginPath(),'/login');}
  finally{delete global.window;}
 });
 test('the existing service worker displays appointment pushes and opens the exact detail',async()=>{
  const handlers={},shown=[],opened=[];let windows=[];
  const self={addEventListener:(type,fn)=>handlers[type]=fn,location:{origin:'https://admin.test'},clients:{matchAll:async()=>windows,openWindow:async url=>opened.push(url)},registration:{showNotification:async(title,options)=>shown.push({title,options})}};
  vm.runInNewContext(fs.readFileSync(root+'/apps/admin/public/push-sw.js','utf8'),{self,URL});
- let waited;const payload={type:'appointment',title:'Yeni randevu talebi',body:'Test Kafe',url:'/appointments?appointment='+id,tag:'rosta-appointment-'+id};
- handlers.push({data:{json:()=>payload},waitUntil:p=>waited=p});await waited;assert.equal(shown[0].options.data.type,'appointment');assert.equal(shown[0].options.tag,payload.tag);
+ let waited;const payload={type:'appointment',title:'Yeni randevu talebi',body:'Test Kafe',url:'/appointments/'+id,tag:'rosta-appointment-'+id};
+ handlers.push({data:{json:()=>payload},waitUntil:p=>waited=p});await waited;assert.equal(shown[0].title,'ROSTA Coffee');assert.equal(shown[0].options.body,'Yeni randevu talebi\nTest Kafe');assert.equal(shown[0].options.data.type,'appointment');assert.equal(shown[0].options.tag,payload.tag);
  handlers.notificationclick({action:'open',notification:{close(){},data:{url:payload.url}},waitUntil:p=>waited=p});await waited;assert.equal(opened[0],'https://admin.test'+payload.url);
  const messages=[],navigated=[];let focused=false;windows=[{postMessage:m=>messages.push(m),navigate:async url=>navigated.push(url),focus:async()=>focused=true}];
- handlers.push({data:{json:()=>payload},waitUntil:p=>waited=p});await waited;assert.equal(messages[0].kind,'ruth-push');assert.equal(messages[0].payload.type,'appointment');
+ handlers.push({data:{json:()=>payload},waitUntil:p=>waited=p});await waited;assert.equal(messages[0].kind,'ruth-push');assert.equal(messages[0].payload.type,'appointment');assert.equal(messages[0].payload.title,payload.title);
  handlers.notificationclick({action:'open',notification:{close(){},data:{url:payload.url}},waitUntil:p=>waited=p});await waited;assert.equal(navigated[0],'https://admin.test'+payload.url);assert.ok(focused);
 });

@@ -4,53 +4,50 @@ import Link from "next/link";
 import { Pressable } from "@ruth-commerce/ui";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CalendarDays, CheckCircle2, Clock, Plus, RefreshCw, Save } from "lucide-react";
-import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
+import { AppointmentBadge, ErrorText, kindLabel, meetingLabel } from "@/components/appointments/appointmentPresentation";
+import { appointmentListSearch } from "@/lib/appointmentNavigation";
 import { adminRequest } from "@/lib/adminApi";
 import { requestAdminConfirmation } from "@/lib/adminConfirmation";
-import { APPOINTMENT_STATUSES, appointmentEdit, isAppointmentId, validateAppointmentEdit, type Appointment, type AppointmentEdit } from "@ruth-commerce/commerce-core/appointments";
+import { APPOINTMENT_STATUSES, type Appointment } from "@ruth-commerce/commerce-core/appointments";
 import { BUSINESS_TYPES, STUDIO_SERVICES, USAGE_AREAS, TIME_SLOTS, MEETING_PREFERENCES, businessToday, formatBusinessDate, initialBusinessInquiry, normalizeBusinessInquiry, validateBusinessInquiry, type BusinessInquiry, type InquiryErrors } from "@ruth-commerce/commerce-core/business-inquiry";
-import { ExactButton, ExactField, ExactFilterBar, ExactFormModal, ExactIconButton, ExactPageHeader, ExactSearchInput, ExactSkeleton, ExactStatusBadge, exactFormInputClass, useExactToast } from "./primitives";
+import { ExactButton, ExactField, ExactFilterBar, ExactFormModal, ExactIconButton, ExactPageHeader, ExactSearchInput, exactFormInputClass, useExactToast } from "./primitives";
 import { ExactDataCard, ExactDataTable, ExactEmptyState, ExactMetricCard, type ExactColumn } from "./data";
 
 type ListResult = { appointments: Appointment[]; total: number; counts: { total:number; pending:number; confirmed:number; today:number } };
 const emptyCounts = { total:0, pending:0, confirmed:0, today:0 };
-const kindLabel = (context:string) => context === "studio" ? "ROSTA.Studio" : "Toptan Kahve";
-const meetingLabel = (value:string) => MEETING_PREFERENCES.find(item => item.value === value)?.label || value;
-function AppointmentBadge({ row }: {row:Appointment}) {
-  return <ExactStatusBadge status={row.status} label={APPOINTMENT_STATUSES.find(s => s.value === row.status)?.label} tone={row.status === "pending" ? "warning" : row.status === "confirmed" ? "info" : row.status === "completed" ? "success" : "neutral"} />;
-}
-function Information({label,children}:{label:string;children:ReactNode}) {
-  return <div className="min-w-0"><dt className="ruth-type-label text-muted">{label}</dt><dd className="ruth-type-body mt-1 break-words whitespace-pre-wrap text-main">{children || "—"}</dd></div>;
-}
-function ErrorText({error}:{error?:string}) { return error ? <p role="alert" className="ruth-type-caption mt-1 text-danger">{error}</p> : null; }
 
 export function ExactAppointments() {
   const router = useRouter();
   const params = useSearchParams();
-  const selectedId = params.get("appointment");
-  const toast = useExactToast();
+  const listSearch = appointmentListSearch(params);
+  const currentParams = new URLSearchParams(listSearch);
   const [rows,setRows] = useState<Appointment[]>([]);
   const [counts,setCounts] = useState(emptyCounts);
   const [total,setTotal] = useState(0);
-  const [page,setPage] = useState(1);
-  const [query,setQuery] = useState("");
-  const [search,setSearch] = useState("");
-  const [status,setStatus] = useState<string|null>(null);
-  const [context,setContext] = useState<string|null>(null);
+  const page = Number(currentParams.get("page") || 1);
+  const search = currentParams.get("q") || "";
+  const status = currentParams.get("status");
+  const context = currentParams.get("context");
+  const [query,setQuery] = useState(search);
   const [loading,setLoading] = useState(true);
   const [loadError,setLoadError] = useState("");
   const [createKey,setCreateKey] = useState<string|null>(null);
-  const [selected,setSelected] = useState<Appointment|null>(null);
-  const [edit,setEdit] = useState<AppointmentEdit|null>(null);
-  const [detailLoading,setDetailLoading] = useState(false);
-  const [detailError,setDetailError] = useState("");
-  const [editErrors,setEditErrors] = useState<Partial<Record<keyof AppointmentEdit,string>>>({});
-  const [saving,setSaving] = useState(false);
   const requestGeneration = useRef(0);
-  const saveLock = useRef(false);
-  const dirty = Boolean(selected && edit && JSON.stringify(edit) !== JSON.stringify(appointmentEdit(selected)));
-
-  useEffect(() => { const timer = setTimeout(() => {setSearch(query.trim());setPage(1);},250); return () => clearTimeout(timer); },[query]);
+  const setListParam = useCallback((key:string,value:string|null,resetPage = true) => {
+    const next = new URLSearchParams(listSearch);
+    if (value) next.set(key,value); else next.delete(key);
+    if (resetPage) next.delete("page");
+    const normalized = appointmentListSearch(next);
+    router.replace(`/appointments${normalized ? `?${normalized}` : ""}`,{scroll:false});
+  },[listSearch,router]);
+  useEffect(() => {setQuery(search);},[search]);
+  useEffect(() => {
+    if (query.trim() === search) return;
+    const timer = setTimeout(() => setListParam("q",query.trim() || null),250);
+    return () => clearTimeout(timer);
+  },[query,search,setListParam]);
+  const detailHref = (id:string) => `/appointments/${id}${listSearch ? `?${listSearch}` : ""}`;
   const load = useCallback(async (silent = false) => {
     const generation = ++requestGeneration.current;
     if (!silent) setLoading(true);
@@ -71,48 +68,6 @@ export function ExactAppointments() {
     navigator.serviceWorker?.addEventListener("message",onPush);
     return () => {++requestGeneration.current;clearInterval(timer);document.removeEventListener("visibilitychange",refresh);navigator.serviceWorker?.removeEventListener("message",onPush);};
   },[load]);
-  useEffect(() => {
-    if (!dirty) return;
-    const beforeExit = (event:BeforeUnloadEvent) => {event.preventDefault();event.returnValue = "";};
-    window.addEventListener("beforeunload",beforeExit);
-    return () => window.removeEventListener("beforeunload",beforeExit);
-  },[dirty]);
-  useEffect(() => {
-    // Browser Back can hide the detail without destroying its in-progress draft.
-    if (!selectedId || selected?.id === selectedId) return;
-    let cancelled = false;
-    if (!isAppointmentId(selectedId)) {setDetailError("Geçersiz randevu bağlantısı.");return;}
-    setDetailLoading(true);setDetailError("");
-    void adminRequest<{appointment:Appointment}>(`/api/appointments/${selectedId}`,{force:true,ttlMs:0,staleMs:0})
-      .then(result => {if (!cancelled) {setSelected(result.appointment);setEdit(appointmentEdit(result.appointment));setEditErrors({});}})
-      .catch(error => {if (!cancelled) setDetailError(error instanceof Error ? error.message : "Randevu alınamadı.");})
-      .finally(() => {if (!cancelled) setDetailLoading(false);});
-    return () => {cancelled = true;};
-  },[selectedId,selected?.id]);
-
-  const closeDetail = async () => {
-    if (saving || (dirty && !await requestAdminConfirmation("Kaydedilmemiş randevu değişikliklerini bırakıp kapatmak istiyor musun?"))) return;
-    const next = new URLSearchParams(params.toString());next.delete("appointment");
-    router.replace(`/appointments${next.size ? `?${next}` : ""}`,{scroll:false});setSelected(null);setEdit(null);setDetailError("");
-  };
-  const reloadDetail = async () => {
-    if (!selectedId || saving || (dirty && !await requestAdminConfirmation("Kaydedilmemiş değişiklikleri bırakıp randevunun güncel halini yüklemek istiyor musun?"))) return;
-    setDetailLoading(true);
-    try {const result = await adminRequest<{appointment:Appointment}>(`/api/appointments/${selectedId}`,{force:true,ttlMs:0,staleMs:0});setSelected(result.appointment);setEdit(appointmentEdit(result.appointment));setDetailError("");setEditErrors({});}
-    catch(error) {setDetailError(error instanceof Error ? error.message : "Randevu yenilenemedi.");}
-    finally {setDetailLoading(false);}
-  };
-  const save = async (event:FormEvent) => {
-    event.preventDefault();if (!selected || !edit || saveLock.current) return;
-    const errors = validateAppointmentEdit(edit,selected);setEditErrors(errors);if (Object.keys(errors).length) return;
-    saveLock.current = true;setSaving(true);setDetailError("");
-    try {
-      const result = await adminRequest<{appointment:Appointment}>(`/api/appointments/${selected.id}`,{method:"PATCH",body:JSON.stringify({...edit,revision:selected.revision}),confirmation:false});
-      setSelected(result.appointment);setEdit(appointmentEdit(result.appointment));toast.success("Randevu güncellendi.");void load(true);
-    } catch(error) {setDetailError(error instanceof Error ? error.message : "Randevu kaydedilemedi.");}
-    finally {saveLock.current = false;setSaving(false);}
-  };
-  function update<K extends keyof AppointmentEdit>(key:K,value:AppointmentEdit[K]) {setEdit(previous => previous ? {...previous,[key]:value} : previous);setEditErrors(previous => ({...previous,[key]:undefined}));}
   const columns:ExactColumn<Appointment>[] = [
     {key:"business_name",label:"İşletme / Yetkili",render:row => <div><span className="font-semibold text-main">{row.business_name}</span><p className="ruth-type-caption text-muted mt-1">{row.contact_name}</p></div>},
     {key:"context",label:"Konu",render:row => kindLabel(row.context)},
@@ -125,30 +80,14 @@ export function ExactAppointments() {
     <ExactPageHeader title="Randevular" subtitle="ROSTA.Studio ve toptan kahve görüşmelerini tek yerden yönet" actions={<><Link href="/notifications" className="ruth-type-control inline-flex h-11 items-center px-3 text-muted hover:text-main">Bildirimler</Link><ExactButton onClick={() => setCreateKey(crypto.randomUUID())}><Plus className="h-4 w-4" />Manuel randevu</ExactButton></>} />
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3"><ExactMetricCard label="Toplam Randevu" value={counts.total} icon={CalendarDays}/><ExactMetricCard label="Yeni Talep" value={counts.pending} icon={Clock}/><ExactMetricCard label="Onaylı Randevu" value={counts.confirmed} icon={CheckCircle2}/><ExactMetricCard label="Bugünkü Görüşme" value={counts.today} icon={CalendarDays}/></div>
     <ExactDataCard title="Görüşme talepleri" action={<ExactIconButton icon={RefreshCw} label="Randevuları yenile" onClick={() => void load()} loading={loading} />} noPadding>
-      <div className="p-4 space-y-3"><ExactSearchInput value={query} onChange={setQuery} placeholder="İşletme veya yetkili ara…"/><ExactFilterBar chips={[{key:"status",label:"Tüm durumlar",value:status,options:APPOINTMENT_STATUSES.map(s=>({value:s.value,label:s.label}))},{key:"context",label:"Tüm konular",value:context,options:[{value:"studio",label:"ROSTA.Studio"},{value:"wholesale",label:"Toptan Kahve"}]}]} onChipChange={(key,value) => {setPage(1);key === "status" ? setStatus(value) : setContext(value);}}/>
+      <div className="p-4 space-y-3"><ExactSearchInput value={query} onChange={setQuery} placeholder="İşletme veya yetkili ara…"/><ExactFilterBar chips={[{key:"status",label:"Tüm durumlar",value:status,options:APPOINTMENT_STATUSES.map(s=>({value:s.value,label:s.label}))},{key:"context",label:"Tüm konular",value:context,options:[{value:"studio",label:"ROSTA.Studio"},{value:"wholesale",label:"Toptan Kahve"}]}]} onChipChange={(key,value) => setListParam(key,value)}/>
         <p className="ruth-type-caption text-muted">Saatler Türkiye saatidir. Yeni talepler, onaylanana kadar tercih edilen görüşme saatini gösterir.</p>
         {loadError ? <p role="alert" className="text-danger">{loadError}</p> : null}
       </div>
-      <ExactDataTable columns={columns} data={rows} loading={loading} onRowClick={row => router.push(`/appointments?appointment=${row.id}`,{scroll:false})} emptyState={<ExactEmptyState icon={CalendarDays} title={search || status || context ? "Bu filtrelere uygun randevu yok" : "Henüz randevu yok"} description="Web sitesi talepleri burada görünecek. Manuel randevu da ekleyebilirsin."/>} mobileCard={row => <Pressable type="button" pressStrength="subtle" onClick={() => router.push(`/appointments?appointment=${row.id}`,{scroll:false})} aria-label={`${row.business_name} randevu detaylarını aç`} className="w-full min-h-11 text-left p-4 radius-card bg-surface-primary space-y-2"><div className="flex justify-between gap-2"><span className="font-semibold text-main">{row.business_name}</span><AppointmentBadge row={row}/></div><p className="ruth-type-caption text-muted">{kindLabel(row.context)} · {row.contact_name}</p><p className="text-main">{formatBusinessDate(row.scheduled_date)}</p><p className="text-muted">{row.scheduled_time} · {meetingLabel(row.meeting)}</p></Pressable>} />
-      <div className="flex flex-wrap items-center justify-between gap-2 p-4 border-t border-border-subtle"><span className="ruth-type-caption text-muted">{total} kayıt · Sayfa {page} / {Math.max(1,Math.ceil(total/50))}</span><div className="flex gap-2"><ExactButton variant="secondary" disabled={page <= 1 || loading} onClick={() => setPage(p=>p-1)}>Önceki</ExactButton><ExactButton variant="secondary" disabled={page*50 >= total || loading} onClick={() => setPage(p=>p+1)}>Sonraki</ExactButton></div></div>
+      <ExactDataTable columns={columns} data={rows} loading={loading} onRowClick={row => router.push(detailHref(row.id))} emptyState={<ExactEmptyState icon={CalendarDays} title={search || status || context ? "Bu filtrelere uygun randevu yok" : "Henüz randevu yok"} description="Web sitesi talepleri burada görünecek. Manuel randevu da ekleyebilirsin."/>} mobileCard={row => <Pressable type="button" pressStrength="subtle" onClick={() => router.push(detailHref(row.id))} aria-label={`${row.business_name} randevu detaylarını aç`} className="w-full min-h-11 text-left p-4 radius-card bg-surface-primary space-y-2"><div className="flex justify-between gap-2"><span className="font-semibold text-main">{row.business_name}</span><AppointmentBadge row={row}/></div><p className="ruth-type-caption text-muted">{kindLabel(row.context)} · {row.contact_name}</p><p className="text-main">{formatBusinessDate(row.scheduled_date)}</p><p className="text-muted">{row.scheduled_time} · {meetingLabel(row.meeting)}</p></Pressable>} />
+      <div className="flex flex-wrap items-center justify-between gap-2 p-4 border-t border-border-subtle"><span className="ruth-type-caption text-muted">{total} kayıt · Sayfa {page} / {Math.max(1,Math.ceil(total/50))}</span><div className="flex gap-2"><ExactButton variant="secondary" disabled={page <= 1 || loading} onClick={() => setListParam("page",String(page-1),false)}>Önceki</ExactButton><ExactButton variant="secondary" disabled={page*50 >= total || loading} onClick={() => setListParam("page",String(page+1),false)}>Sonraki</ExactButton></div></div>
     </ExactDataCard>
-    <ExactFormModal open={Boolean(selectedId)} onClose={() => void closeDetail()} title={selected?.id === selectedId ? selected.business_name : "Randevu detayları"} subtitle="İşletme bilgileri, ihtiyaçlar ve görüşme planı" size="xl" dismissalPolicy={dirty || saving ? "explicit-dismiss" : "light-dismiss"} footer={<><ExactButton variant="secondary" onClick={() => void closeDetail()} disabled={saving}>Kapat</ExactButton><ExactButton variant="secondary" onClick={() => void reloadDetail()} disabled={saving || detailLoading}>Yenile</ExactButton><ExactButton type="submit" form="appointment-edit" loading={saving} disabled={!dirty || detailLoading || selected?.id !== selectedId}><Save className="h-4 w-4"/>Kaydet</ExactButton></>}>
-      {detailLoading ? <ExactSkeleton className="h-64"/> : null}
-      {detailError ? <p role="alert" className="p-3 mb-4 radius-control bg-danger-soft text-danger">{detailError}</p> : null}
-      {selected?.id === selectedId && edit ? <div className="space-y-5">
-        <div className="flex flex-wrap gap-2"><AppointmentBadge row={selected}/><span className="ruth-type-caption text-muted">{kindLabel(selected.context)} · {selected.source === "manual" ? "Manuel oluşturuldu" : "Web sitesinden geldi"}</span></div>
-        <dl className="grid md:grid-cols-2 gap-4"><Information label="Yetkili">{selected.inquiry.contactName}</Information><Information label="İşletme türü / Şehir">{selected.inquiry.businessType} · {selected.inquiry.city}</Information><Information label="E-posta"><a className="text-accent underline" href={`mailto:${selected.inquiry.email}`}>{selected.inquiry.email}</a></Information><Information label="Telefon"><a className="text-accent underline" href={`tel:${selected.inquiry.phone.replace(/[^+\d]/g,"")}`}>{selected.inquiry.phone}</a></Information><Information label="Website / Instagram">{selected.inquiry.website}</Information><Information label="Talebin geldiği tarih">{new Intl.DateTimeFormat("tr-TR",{timeZone:"Europe/Istanbul",dateStyle:"medium",timeStyle:"short"}).format(new Date(selected.created_at))}</Information><Information label="İhtiyaçlar">{selected.inquiry.needs}</Information>{selected.context === "studio" ? <Information label="Talep edilen hizmetler">{selected.inquiry.services.join("\n")}</Information> : <Information label="Kahve ihtiyacı">{selected.inquiry.monthlyKg} kg / ay · {selected.inquiry.usage}{"\n"}Cupping: {selected.inquiry.cupping ? "İsteniyor" : "İstenmiyor"}</Information>}<Information label="İlk talep edilen görüşme">{formatBusinessDate(selected.inquiry.date)} · {selected.inquiry.time}{"\n"}{meetingLabel(selected.inquiry.meeting)}{selected.inquiry.meeting === "in_person" ? `\n${selected.inquiry.address}` : ""}</Information></dl>
-        <form id="appointment-edit" onSubmit={save} className="space-y-4">
-          <fieldset disabled={saving || detailLoading} className="space-y-4"><legend className="ruth-type-section-title mb-3 text-main">Görüşme planı</legend><div className="grid md:grid-cols-2 gap-4">
-            <ExactField label="Randevu tarihi" required><input className={exactFormInputClass} aria-label="Randevu tarihi" type="date" value={edit.scheduled_date} onChange={e=>update("scheduled_date",e.target.value)} required aria-invalid={!!editErrors.scheduled_date}/></ExactField><ExactField label="Randevu saati" required><select className={exactFormInputClass} value={edit.scheduled_time} onChange={e=>update("scheduled_time",e.target.value)}>{TIME_SLOTS.map(slot=><option key={slot}>{slot}</option>)}</select></ExactField>
-            <ExactField label="Durum"><select className={exactFormInputClass} value={edit.status} onChange={e=>update("status",e.target.value as AppointmentEdit["status"])}>{APPOINTMENT_STATUSES.map(s=><option key={s.value} value={s.value}>{s.label}</option>)}</select></ExactField><ExactField label="Görüşme türü"><select className={exactFormInputClass} value={edit.meeting} onChange={e=>update("meeting",e.target.value)}>{MEETING_PREFERENCES.map(m=><option key={m.value} value={m.value}>{m.label}</option>)}</select></ExactField>
-          </div>{Object.entries(editErrors).filter(([key])=>key!=="address" && key!=="admin_notes").map(([key,error])=><ErrorText key={key} error={error}/>)}
-          {edit.meeting === "in_person" ? <ExactField label="Görüşme adresi" required><textarea className={exactFormInputClass} aria-label="Görüşme adresi" rows={3} value={edit.address} onChange={e=>update("address",e.target.value)} minLength={10} maxLength={600} required/></ExactField> : null}<ErrorText error={editErrors.address}/>
-          <ExactField label="Panel notu"><textarea className={exactFormInputClass} aria-label="Panel notu" rows={4} value={edit.admin_notes} onChange={e=>update("admin_notes",e.target.value)} maxLength={4000}/></ExactField><ErrorText error={editErrors.admin_notes}/><p className="ruth-type-caption text-muted">Durum ve notlar panel içindir. Müşteriye tarih ve saat onayını ayrıca iletin.</p></fieldset>
-        </form>
-      </div> : null}
-    </ExactFormModal>
-    {createKey ? <AppointmentCreate key={createKey} requestKey={createKey} onClose={()=>setCreateKey(null)} onSaved={row=>{setCreateKey(null);void load();router.push(`/appointments?appointment=${row.id}`,{scroll:false});}}/> : null}
+    {createKey ? <AppointmentCreate key={createKey} requestKey={createKey} onClose={()=>setCreateKey(null)} onSaved={row=>{setCreateKey(null);router.push(detailHref(row.id));}}/> : null}
   </div>;
 }
 
