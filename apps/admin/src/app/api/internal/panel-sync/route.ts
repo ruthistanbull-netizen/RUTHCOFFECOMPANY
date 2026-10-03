@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
 import { kickAdminPushWorker } from "@/lib/pushWorker";
+import { panelServiceAlertTitle } from "@/lib/adminNotification";
 import {
   PANEL_SYNC_BY_ROUTE,
   PANEL_SYNC_TARGETS,
@@ -164,7 +165,7 @@ async function setHealthState(
       payload: {
         service_key: key,
         status,
-        title: status === "unhealthy" ? "Ruth Panel servis hatası" : "Ruth Panel servis uyarısı",
+        title: panelServiceAlertTitle(status),
         body: detail,
       },
       target_url: "/system",

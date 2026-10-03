@@ -7,6 +7,7 @@ import {
   sign as signPayload,
 } from "node:crypto";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
+import { normalizePanelNotificationTitle, panelServiceAlertTitle } from "@/lib/adminNotification";
 import { appointmentNotification } from "@ruth-commerce/commerce-core/appointments";
 
 type PushConfig = {
@@ -165,7 +166,7 @@ function notificationFor(job: PushJob) {
     const serviceKey = clean(payload.service_key) || "system";
     const status = clean(payload.status) || "degraded";
     return {
-      title: clean(payload.title) || (status === "unhealthy" ? "ROSTA Panel servis hatası" : "ROSTA Panel servis uyarısı"),
+      title: normalizePanelNotificationTitle(clean(payload.title) || panelServiceAlertTitle(status), "health"),
       body: clean(payload.body) || `${serviceKey} kontrol gerektiriyor.`,
       url: url || "/system",
       tag: `rosta-health-${serviceKey}`,
@@ -350,7 +351,7 @@ export async function kickAdminPushWorker(): Promise<AdminPushWorkerResult> {
   let deliveredNotifications = 0;
 
   for (const job of jobs) {
-    const notification = notificationFor(job);
+    const notification = { type: job.kind, ...notificationFor(job) };
     const encodedPayload = JSON.stringify(notification);
     let successes = 0;
     const errors: string[] = [];
