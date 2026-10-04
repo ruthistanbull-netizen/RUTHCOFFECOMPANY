@@ -138,7 +138,7 @@ export function AppFrame({ children }: { children: ReactNode }) {
     );
   }
 
-  if (pathname === "/theme" || pathname === "/settings") {
+  if (pathname === "/theme") {
     return (
       <AdminPanelHubEntryGuard>
       <RequireAdmin>

@@ -26,7 +26,7 @@ const NOTIFICATION_COVERAGE = [
   { icon: AlertTriangle, title: "Operasyon istisnası", text: "Ödeme başarısızlığı, kargo dead-letter veya reconcile manuel inceleme gerektirdiğinde." },
 ];
 
-export function ExactNotifications() {
+export function ExactNotifications({ embedded = false }: { embedded?: boolean } = {}) {
   const toast = useExactToast();
   const [supported, setSupported] = useState<boolean | null>(null);
   const [standalone, setStandalone] = useState(false);
@@ -120,12 +120,17 @@ export function ExactNotifications() {
     }
   };
 
-  return <div className="space-y-4 animate-fade-in" data-exact-base44-page="notifications">
-    <ExactPageHeader
+  const refreshAction = <ExactIconButton icon={RefreshCw} label="Durumu yenile" variant="secondary" onClick={() => void inspect(true)} loading={checking || busy} />;
+
+  return <div className={embedded ? "space-y-4" : "space-y-4 animate-fade-in"} data-exact-base44-page={embedded ? undefined : "notifications"} data-exact-base44-section={embedded ? "notification-settings" : undefined}>
+    {embedded ? <div className="flex items-start justify-between gap-3">
+      <div className="min-w-0"><h2 className="ruth-type-section-title text-main">Bildirim ayarları</h2><p className="ruth-type-body mt-1 text-muted">Bu cihazın bildirim iznini ve aboneliğini yönetin.</p></div>
+      {refreshAction}
+    </div> : <ExactPageHeader
       title="Bildirimler"
       subtitle="Panel kapalıyken randevu, sipariş ve diğer yönetici bildirimlerini bu cihazda al"
-      actions={<ExactIconButton icon={RefreshCw} label="Durumu yenile" variant="secondary" onClick={() => void inspect(true)} loading={checking || busy} />}
-    />
+      actions={refreshAction}
+    />}
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
       <ExactMetricCard label="Tarayıcı Desteği" value={supported ? 1 : 0} icon={Smartphone} />
       <ExactMetricCard label="Uygulama Modu" value={standalone ? 1 : 0} icon={Smartphone} />
