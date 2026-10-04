@@ -122,7 +122,7 @@ export function ExactNotifications({ embedded = false }: { embedded?: boolean } 
 
   const refreshAction = <ExactIconButton icon={RefreshCw} label="Durumu yenile" variant="secondary" onClick={() => void inspect(true)} loading={checking || busy} />;
 
-  return <div className={embedded ? "space-y-4" : "space-y-4 animate-fade-in"} data-exact-base44-page={embedded ? undefined : "notifications"} data-exact-base44-section={embedded ? "notification-settings" : undefined}>
+  return <div id={embedded ? "bildirim-ayarlari" : undefined} className={embedded ? "space-y-4 scroll-mt-20" : "space-y-4 animate-fade-in"} data-exact-base44-page={embedded ? undefined : "notifications"} data-exact-base44-section={embedded ? "notification-settings" : undefined}>
     {embedded ? <div className="flex items-start justify-between gap-3">
       <div className="min-w-0"><h2 className="ruth-type-section-title text-main">Bildirim ayarları</h2><p className="ruth-type-body mt-1 text-muted">Bu cihazın bildirim iznini ve aboneliğini yönetin.</p></div>
       {refreshAction}
