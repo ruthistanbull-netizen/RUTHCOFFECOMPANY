@@ -13,10 +13,12 @@ import {
   AnimatePresence,
   motion,
   useMotionValue,
+  useMotionValueEvent,
   useReducedMotion,
   useTransform,
   type MotionValue,
 } from "framer-motion";
+import { ruthMotion } from "@ruth-commerce/ui/motion";
 import { usePathname } from "next/navigation";
 import { createPortal } from "react-dom";
 import {
@@ -55,6 +57,14 @@ const CODEPEN_CENTER_DEG = 225;
 const CODEPEN_SCALE = VIEWBOX / CODEPEN_VIEWBOX;
 const CODEPEN_SHIFT = 120 * CODEPEN_SCALE;
 const CODEPEN_LINK_ORIGIN = 300 * CODEPEN_SCALE;
+const MENU_DRAG_POLICY = {
+  axis: "y",
+  customDrag: true,
+  touchDragHoldMs: 0,
+  tapSlopPx: 6,
+  dragThresholdPx: 8,
+  scrollThresholdPx: 10,
+} as const;
 
 type Point = { x: number; y: number };
 type Segment = { start: number; end: number; mid: number; path: string; icon: Point };
@@ -63,8 +73,7 @@ type MenuGesture = {
   pointerId: number;
   interaction: InteractionCandidate | null;
   startPosition: number;
-  lastY: number;
-  lastAt: number;
+  samples: { y: number; at: number }[];
   velocity: number;
   captured: boolean;
 };
@@ -123,11 +132,32 @@ function emptyGesture(): MenuGesture {
     pointerId: -1,
     interaction: null,
     startPosition: 0,
-    lastY: 0,
-    lastAt: 0,
+    samples: [],
     velocity: 0,
     captured: false,
   };
+}
+
+function recordMenuVelocity(current: MenuGesture, y: number, at: number) {
+  const last = current.samples.at(-1);
+  // A deliberate reversal takes effect immediately; tiny release jitter does not.
+  if (last && Math.abs(y - last.y) > 2 && (y - last.y) * current.velocity < 0) {
+    current.samples = [last];
+  }
+  current.samples = current.samples
+    .filter((sample) => at - sample.at < ruthMotion.milliseconds.fast)
+    .concat({ y, at })
+    .slice(-8);
+  const first = current.samples[0];
+  current.velocity = at > first.at
+    ? clamp((y - first.y) / Math.max(8, at - first.at), -1.25, 1.25)
+    : 0;
+}
+
+function menuDragPosition(raw: number, max: number) {
+  if (raw < 0) return -(1 - Math.exp(raw)) * 0.35;
+  if (raw > max) return max + (1 - Math.exp(max - raw)) * 0.35;
+  return raw;
 }
 
 function groupLabel(group: ExactNavGroup) {
@@ -284,6 +314,9 @@ export function AdminMobileQuarterMenu() {
   const [settled, setSettled] = useState(0);
   const position = useMotionValue(0);
   const animationRef = useRef<ReturnType<typeof animateValue> | null>(null);
+  const wheelTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const settledRef = useRef(0);
+  const coreButtonRef = useRef<HTMLButtonElement>(null);
   const gesture = useRef<MenuGesture>(emptyGesture());
   const suppressClick = useRef(false);
 
@@ -291,20 +324,36 @@ export function AdminMobileQuarterMenu() {
   useBackgroundInteractionLock(open && mobile);
   const menuSize = clamp(Math.min(viewport.width * 1.035, viewport.height * 0.64), 306, 430);
   const compact = viewport.width <= 390 || viewport.height <= 720;
-  const pixelsPerItem = clamp(menuSize * 0.23, 70, 98);
+  const pixelsPerItem = clamp(menuSize * 0.20, 64, 86);
   const maxPosition = Math.max(0, exactNavStructure.length - VISIBLE);
   const mainSegments = useMemo(() => buildSegments(VISIBLE, MAIN_INNER, MAIN_OUTER, MAIN_GAP), []);
   const selected = selectedGroup == null ? null : exactNavStructure[selectedGroup];
   const subSegments = useMemo(() => buildSegments(selected?.items.length || 0, SUB_INNER, SUB_OUTER, SUB_GAP), [selected]);
 
+  // Keep the hit targets aligned with the labels while a swipe is still settling.
+  // React only updates when a whole slot changes, not on every pointer/frame.
+  useMotionValueEvent(position, "change", (value) => {
+    const next = Math.round(clamp(value, 0, maxPosition));
+    if (next === settledRef.current) return;
+    settledRef.current = next;
+    setSettled(next);
+  });
+
   const stopAnimation = useCallback(() => {
     animationRef.current?.stop();
     animationRef.current = null;
+    if (wheelTimerRef.current !== null) clearTimeout(wheelTimerRef.current);
+    wheelTimerRef.current = null;
   }, []);
 
   const snapTo = useCallback((target: number, initialVelocity = 0) => {
     const bounded = clamp(target, 0, maxPosition);
     stopAnimation();
+    const distance = bounded - position.get();
+    const velocityLimit = Math.abs(distance) / ruthMotion.duration.fast;
+    const velocity = Math.sign(distance) === Math.sign(initialVelocity)
+      ? clamp(initialVelocity, -velocityLimit, velocityLimit)
+      : 0;
     if (reduceMotion) {
       position.set(bounded);
       setSettled(Math.round(bounded));
@@ -312,10 +361,10 @@ export function AdminMobileQuarterMenu() {
     }
     animationRef.current = animateValue(position, bounded, {
       type: "spring",
-      stiffness: compact ? 570 : 520,
-      damping: compact ? 45 : 42,
-      mass: 0.58,
-      velocity: initialVelocity,
+      stiffness: compact ? 420 : 380,
+      damping: compact ? 39 : 37,
+      mass: 0.72,
+      velocity,
       restDelta: 0.002,
       restSpeed: 0.01,
       onComplete: () => {
@@ -328,12 +377,15 @@ export function AdminMobileQuarterMenu() {
 
   const close = useCallback(() => {
     stopAnimation();
+    gesture.current = emptyGesture();
     setOpen(false);
+    coreButtonRef.current?.focus({ preventScroll: true });
   }, [stopAnimation]);
 
   const chooseSlot = useCallback((slot: number) => {
     if (suppressClick.current) return;
     const base = clamp(Math.round(position.get()), 0, maxPosition);
+    snapTo(base);
     const index = clamp(base + slot, 0, exactNavStructure.length - 1);
     const group = exactNavStructure[index];
     if (!group) return;
@@ -343,7 +395,7 @@ export function AdminMobileQuarterMenu() {
       return;
     }
     setSelectedGroup((current) => current === index ? null : index);
-  }, [close, maxPosition, position]);
+  }, [close, maxPosition, position, snapTo]);
 
   const navigate = useCallback((item: ExactNavItem) => {
     if (suppressClick.current) return;
@@ -386,6 +438,7 @@ export function AdminMobileQuarterMenu() {
   useEffect(() => {
     const activeIndex = exactNavStructure.findIndex((group) => group.items.some((item) => exactItemIsActive(pathname, item)));
     const target = activeIndex < 0 ? 0 : clamp(activeIndex - 1, 0, maxPosition);
+    gesture.current = emptyGesture();
     stopAnimation();
     position.set(target);
     setSettled(Math.round(target));
@@ -396,10 +449,13 @@ export function AdminMobileQuarterMenu() {
   useEffect(() => () => stopAnimation(), [stopAnimation]);
 
   const pointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (!open) return;
+    if (!event.isPrimary) return;
     if (event.pointerType === "mouse" && event.button !== 0) return;
+    if (gesture.current.pointerId !== -1) return;
+    suppressClick.current = false;
+    if (!open) return;
     stopAnimation();
-    const at = performance.now();
+    const at = event.timeStamp;
     gesture.current = {
       pointerId: event.pointerId,
       interaction: beginInteraction({
@@ -410,8 +466,7 @@ export function AdminMobileQuarterMenu() {
         startedOnHandle: true,
       }),
       startPosition: position.get(),
-      lastY: event.clientY,
-      lastAt: at,
+      samples: [{ y: event.clientY, at }],
       velocity: 0,
       captured: false,
     };
@@ -420,18 +475,12 @@ export function AdminMobileQuarterMenu() {
   const pointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
     const current = gesture.current;
     if (!open || current.pointerId !== event.pointerId || !current.interaction) return;
-    const now = performance.now();
+    const now = event.timeStamp;
+    recordMenuVelocity(current, event.clientY, now);
     const resolution = moveInteraction(
       current.interaction,
       { x: event.clientX, y: event.clientY, at: now },
-      {
-        axis: "y",
-        customDrag: true,
-        touchDragHoldMs: 0,
-        tapSlopPx: 4,
-        dragThresholdPx: 6,
-        scrollThresholdPx: 10,
-      },
+      MENU_DRAG_POLICY,
     );
 
     if (resolution.phase === "candidate") return;
@@ -445,18 +494,13 @@ export function AdminMobileQuarterMenu() {
         event.currentTarget.setPointerCapture(event.pointerId);
         current.captured = true;
       } catch {}
+      setSelectedGroup(null);
     }
 
     event.preventDefault();
     suppressClick.current = true;
-    setSelectedGroup(null);
     const raw = current.startPosition + resolution.deltaY / pixelsPerItem;
-    const bounded = clamp(raw, -0.12, maxPosition + 0.12);
-    position.set(bounded < 0 ? bounded * 0.28 : bounded > maxPosition ? maxPosition + (bounded - maxPosition) * 0.28 : bounded);
-    const elapsed = Math.max(1, now - current.lastAt);
-    current.velocity = (event.clientY - current.lastY) / elapsed;
-    current.lastY = event.clientY;
-    current.lastAt = now;
+    position.set(menuDragPosition(raw, maxPosition));
   };
 
   const finishPointer = (event: ReactPointerEvent<HTMLDivElement>, cancelled = false) => {
@@ -465,38 +509,53 @@ export function AdminMobileQuarterMenu() {
     if (cancelled) current.interaction.phase = "cancelled";
     const resolution = endInteraction(
       current.interaction,
-      { x: event.clientX, y: event.clientY, at: performance.now() },
-      {
-        axis: "y",
-        customDrag: true,
-        touchDragHoldMs: 0,
-        tapSlopPx: 4,
-        dragThresholdPx: 6,
-        scrollThresholdPx: 10,
-      },
+      { x: event.clientX, y: event.clientY, at: event.timeStamp },
+      MENU_DRAG_POLICY,
     );
+    gesture.current = emptyGesture();
     if (current.captured && event.currentTarget.hasPointerCapture?.(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId);
     }
-    gesture.current = emptyGesture();
-
     const currentPos = position.get();
     if (resolution.phase !== "custom-drag") {
       snapTo(Math.round(currentPos));
-      if (resolution.phase === "tap") {
-        suppressClick.current = false;
-      } else {
-        suppressClick.current = true;
-        window.setTimeout(() => { suppressClick.current = false; }, 90);
-      }
+      suppressClick.current = resolution.phase !== "tap";
       return;
     }
 
     event.preventDefault();
-    const projected = currentPos + (current.velocity * (compact ? 126 : 145)) / pixelsPerItem;
+    recordMenuVelocity(current, event.clientY, event.timeStamp);
+    const drift = reduceMotion ? 0 : clamp(
+      (current.velocity * ruthMotion.milliseconds.fast) / pixelsPerItem,
+      -1.5,
+      1.5,
+    );
+    const projected = currentPos + drift;
     const target = clamp(Math.round(projected), 0, maxPosition);
     snapTo(target, (current.velocity * 1000) / pixelsPerItem);
-    window.setTimeout(() => { suppressClick.current = false; }, 40);
+    // Suppression belongs to this gesture. The next deliberate tap/keyboard
+    // activation clears it; a delayed synthetic click cannot open a menu item.
+    suppressClick.current = true;
+  };
+
+  const trackKeyDown = (event: ReactKeyboardEvent<SVGGElement>, action: () => void) => {
+    if (event.altKey || event.ctrlKey || event.metaKey) return;
+    const base = Math.round(clamp(position.get(), 0, maxPosition));
+    const target = event.key === "ArrowDown" ? base + 1
+      : event.key === "ArrowUp" ? base - 1
+      : event.key === "PageDown" ? base + VISIBLE
+      : event.key === "PageUp" ? base - VISIBLE
+      : event.key === "Home" ? 0
+      : event.key === "End" ? maxPosition
+      : null;
+    if (target === null) {
+      activateWithKeyboard(event, action);
+      return;
+    }
+    event.preventDefault();
+    suppressClick.current = false;
+    setSelectedGroup(null);
+    snapTo(target);
   };
 
   if (!mounted || !mobile || typeof document === "undefined") return null;
@@ -558,10 +617,39 @@ export function AdminMobileQuarterMenu() {
         onPointerMove={pointerMove}
         onPointerUp={(event) => finishPointer(event)}
         onPointerCancel={(event) => finishPointer(event, true)}
+        onLostPointerCapture={(event) => {
+          // Touch capture moves from the SVG child to this gesture owner.
+          // The child's bubbling capture-loss event is not a cancelled drag.
+          if (!event.currentTarget.hasPointerCapture?.(event.pointerId)) finishPointer(event, true);
+        }}
+        onClickCapture={(event) => {
+          if (event.detail === 0) {
+            suppressClick.current = false;
+          } else if (suppressClick.current) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+        }}
+        onKeyDownCapture={(event) => {
+          if (event.key === "Enter" || event.key === " ") suppressClick.current = false;
+        }}
+        onKeyDown={(event) => {
+          if (event.key === "Escape") {
+            event.preventDefault();
+            close();
+          }
+        }}
         onWheel={(event) => {
-          if (!open || Math.abs(event.deltaY) < 8) return;
-          event.preventDefault();
-          snapTo(Math.round(position.get()) + (event.deltaY > 0 ? 1 : -1));
+          if (!open || event.ctrlKey || gesture.current.pointerId !== -1 || Math.abs(event.deltaY) < 0.1) return;
+          stopAnimation();
+          suppressClick.current = true;
+          setSelectedGroup(null);
+          const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? menuSize : 1;
+          position.set(clamp(position.get() + event.deltaY * unit / pixelsPerItem, 0, maxPosition));
+          wheelTimerRef.current = setTimeout(() => {
+            wheelTimerRef.current = null;
+            snapTo(Math.round(position.get()));
+          }, ruthMotion.milliseconds.fast);
         }}
       >
         <svg className={styles.menuSvg} viewBox={`0 0 ${VIEWBOX} ${VIEWBOX}`} aria-label="ROSTA Coffee Co. mobil menüsü">
@@ -647,7 +735,7 @@ export function AdminMobileQuarterMenu() {
             const active = group.items.some((item) => exactItemIsActive(pathname, item));
             const action = () => chooseSlot(slot);
             return (
-              <g key={`hit-${slot}`} className={styles.segmentButton} role="button" tabIndex={0} aria-label={group.label === "GENEL" ? "Kontrol Merkezi" : `${groupLabel(group)} alt menüsünü aç`} aria-expanded={group.label === "GENEL" ? undefined : selectedNow} onClick={action} onKeyDown={(event) => activateWithKeyboard(event, action)}>
+              <g key={`hit-${slot}`} className={styles.segmentButton} role="button" tabIndex={0} aria-label={group.label === "GENEL" ? "Kontrol Merkezi" : `${groupLabel(group)} alt menüsünü aç`} aria-expanded={group.label === "GENEL" ? undefined : selectedNow} onClick={action} onKeyDown={(event) => trackKeyDown(event, action)}>
                 <path d={segment.path} className={`${styles.mainSegment} ${active ? styles.activeSegment : ""} ${selectedNow ? styles.selectedSegment : ""}`} />
                 {selectedNow ? (
                   <path d={arcPath(MAIN_OUTER + 2.7, segment.start, segment.end)} className={styles.selectedOuterArc} />
@@ -824,6 +912,7 @@ export function AdminMobileQuarterMenu() {
         </svg>
 
         <button
+          ref={coreButtonRef}
           type="button"
           className={styles.coreHit}
           aria-label={open ? "Menüyü kapat" : "Menüyü aç"}
@@ -835,6 +924,7 @@ export function AdminMobileQuarterMenu() {
             }
             setSelectedGroup(null);
             setOpen(true);
+            coreButtonRef.current?.focus({ preventScroll: true });
           }}
         />
       </div>
