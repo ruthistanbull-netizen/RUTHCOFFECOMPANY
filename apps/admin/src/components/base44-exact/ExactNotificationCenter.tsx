@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { normalizePanelNotificationPayload, type AdminNotificationKind } from "@/lib/adminNotification";
 import { ExactIconButton, exactCx, useExactToast } from "./primitives";
 
@@ -276,11 +277,11 @@ export function ExactNotificationBell() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -5, scale: 0.985 }}
               transition={{ type: "spring", stiffness: 420, damping: 32, mass: 0.7 }}
-              className="absolute right-0 top-[calc(100%+10px)] z-notification-panel w-[min(410px,calc(100vw-24px))] overflow-hidden rounded-[var(--radius-card)] border border-border-subtle bg-surface-primary shadow-overlay"
+              className="absolute right-0 top-[calc(100%+10px)] z-notification-panel flex max-h-[calc(100dvh-5rem-env(safe-area-inset-top)-var(--ruth-admin-quarter-menu-scroll-clearance))] w-[min(410px,calc(100vw-24px))] flex-col overflow-hidden rounded-[var(--radius-card)] border border-border-subtle bg-surface-primary shadow-overlay lg:max-h-[calc(100dvh-120px-env(safe-area-inset-top)-env(safe-area-inset-bottom))]"
               role="dialog"
               aria-label="Bildirimler"
             >
-              <header className="flex items-center justify-between gap-3 border-b border-border-subtle px-4 py-3.5">
+              <header className="flex shrink-0 items-center justify-between gap-3 border-b border-border-subtle px-4 py-3.5">
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
                     <h2 className="ruth-type-section-title text-main">Bildirimler</h2>
@@ -294,7 +295,7 @@ export function ExactNotificationBell() {
                 </div>
               </header>
 
-              <div className="max-h-[min(540px,calc(100vh-170px))] overflow-y-auto p-2">
+              <div className="min-h-0 max-h-[min(540px,calc(100vh-170px))] overflow-y-auto p-2">
                 {items.length ? (
                   <div className="space-y-1">
                     {items.map((item, index) => {
@@ -337,8 +338,20 @@ export function ExactNotificationBell() {
                 )}
               </div>
 
+              <div className="shrink-0 border-t border-border-subtle bg-surface-secondary/50 px-3 py-2">
+                <Link
+                  href="/settings#bildirim-ayarlari"
+                  data-no-view-transition="true"
+                  onClick={() => setOpen(false)}
+                  className="ruth-type-control flex min-h-11 items-center gap-2 rounded-md px-2 py-2 font-medium text-main transition-colors active:bg-surface-tertiary focus-visible:bg-surface-tertiary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                >
+                  <Settings2 className="h-4 w-4 shrink-0 text-subtle" aria-hidden="true" />
+                  Bildirim ayarları
+                  <ChevronRight className="ml-auto h-4 w-4 shrink-0 text-subtle" aria-hidden="true" />
+                </Link>
+              </div>
               {items.length ? (
-                <footer className="flex items-center justify-between gap-2 border-t border-border-subtle bg-surface-secondary/50 px-3 py-2.5">
+                <footer className="flex shrink-0 items-center justify-between gap-2 border-t border-border-subtle bg-surface-secondary/50 px-3 py-2.5">
                   <button type="button" onClick={clearAll} className="ruth-type-control inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 text-subtle transition-colors active:bg-surface-tertiary active:text-danger focus-visible:bg-surface-tertiary focus-visible:text-danger focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Trash2 className="h-3.5 w-3.5" />Temizle</button>
                   <button type="button" onClick={() => { setOpen(false); router.push("/notifications"); }} className="ruth-type-control inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 font-medium text-accent transition-colors active:bg-accent-soft focus-visible:bg-accent-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">Tüm bildirimleri gör<ChevronRight className="h-3.5 w-3.5" /></button>
                 </footer>
