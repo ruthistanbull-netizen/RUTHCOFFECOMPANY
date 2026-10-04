@@ -44,7 +44,7 @@ const plans: Record<string, AdminPagePerformancePlan> = {
   "/notifications": { apis: [], resourcePathnames: ["/api/push"], likelyNext: ["/settings", "/system"], budgetMs: 350 },
   "/search": { apis: [], resourcePathnames: ["/api/search"], likelyNext: ["/orders", "/customers", "/products"], budgetMs: 400 },
   "/account": { apis: ["/api/account"], likelyNext: ["/settings/users", "/settings/security"], budgetMs: 550 },
-  "/settings": { apis: ["/api/theme"], resourcePathnames: ["/api/theme"], likelyNext: ["/settings/integrations", "/settings/security", "/settings/appearance"], budgetMs: 550 },
+  "/settings": { apis: [], resourcePathnames: ["/api/push"], likelyNext: ["/notifications", "/settings/users", "/settings/integrations", "/settings/security", "/settings/appearance"], budgetMs: 550 },
   "/settings/users": { apis: ["/api/account"], likelyNext: ["/account", "/settings/security"], budgetMs: 550 },
   "/settings/security": { apis: ["/api/audit?limit=200"], resourcePathnames: ["/api/audit", "/api/admin/audit"], likelyNext: ["/settings/users", "/system"], budgetMs: 600 },
   "/settings/integrations": { apis: ["/api/email/status", "/api/shipping/basit-kargo/handlers"], resourcePathnames: ["/api/rosta-insight/integrations", "/api/email", "/api/shipping"], likelyNext: ["/settings", "/system"], budgetMs: 650 },
