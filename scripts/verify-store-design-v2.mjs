@@ -236,10 +236,11 @@ for (const token of [
 for (const token of [
   "previewStageRef",
   "desktopPreviewViewport",
-  "window.innerWidth",
-  "window.innerHeight",
-  "availableWidth / viewportWidth",
-  "Math.max(0.48, scale)",
+  "DESKTOP_PREVIEW_VIEWPORT = { width: 1440, height: 900 }",
+  "availableWidth / DESKTOP_PREVIEW_VIEWPORT.width",
+  "availableHeight / DESKTOP_PREVIEW_VIEWPORT.height",
+  "useLayoutEffect",
+  "[loading, device, isMobileViewport]",
   "data-preview-viewport-width",
   "sd-desktop-viewport-shell",
   "sd-desktop-viewport-frame",
@@ -262,8 +263,8 @@ if (storeDesignV22.includes('w-[min(1180px,calc(100vw_-_120px))]')) {
 if (storeDesignV22.includes("new ResizeObserver(syncDesktopViewport)")) {
   fail("Masaüstü preview ResizeObserver döngüsüne geri dönmüş.");
 }
-if (storeDesignV22.includes("availableHeight / viewportHeight")) {
-  fail("Masaüstü preview yüksekliğe göre küçültülüyor; yalnız genişlik ölçeği kullanılmalı.");
+if (storeDesignV22.includes("Math.max(0.48, scale)")) {
+  fail("Masaüstü preview minimum ölçek nedeniyle çalışma alanından taşabilir.");
 }
 for (const token of [
   "sd-editor-workspace relative flex min-h-0 flex-1",

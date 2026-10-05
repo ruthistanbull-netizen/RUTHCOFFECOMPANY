@@ -32,7 +32,7 @@ import {
   FileText,
   Trash2,
 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import {
   STORE_DESIGN_MESSAGES,
@@ -65,6 +65,7 @@ import { StoreDesignDestinationPicker } from "@/components/theme/StoreDesignDest
 import { StoreDesignMobileDockV22 } from "@/components/theme/StoreDesignMobileDockV22";
 
 type Device = "desktop" | "mobile";
+const DESKTOP_PREVIEW_VIEWPORT = { width: 1440, height: 900 };
 type PageItem = {
   path: string;
   label: string;
@@ -711,9 +712,8 @@ export function StoreDesignV21() {
   const [rightOpen, setRightOpen] = useState(false);
   const [isMobileViewport, setIsMobileViewport] = useState(false);
   const [desktopPreviewViewport, setDesktopPreviewViewport] = useState({
-    width: 1440,
-    height: 900,
-    scale: 0.75,
+    ...DESKTOP_PREVIEW_VIEWPORT,
+    scale: 1,
   });
   const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
   const [sectionPickerSignal, setSectionPickerSignal] = useState(0);
@@ -784,59 +784,55 @@ export function StoreDesignV21() {
     selectedIdRef.current = selected?.id || null;
   }, [selected?.id]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const stage = previewStageRef.current;
-    if (!stage || isMobileViewport || device !== "desktop") return;
+    const previewFrame = iframeRef.current;
+    if (loading || !stage || !previewFrame?.parentElement || isMobileViewport || device !== "desktop") return;
 
     let frame = 0;
-    let settleTimer = 0;
 
     const syncDesktopViewport = () => {
-      if (frame) window.cancelAnimationFrame(frame);
-      frame = window.requestAnimationFrame(() => {
-        frame = 0;
-        const viewportWidth = Math.max(1024, Math.round(window.innerWidth));
-        const viewportHeight = Math.max(640, Math.round(window.innerHeight));
-        const rect = stage.getBoundingClientRect();
-        const horizontalGutter = 20;
-        const availableWidth = Math.max(520, rect.width - horizontalGutter);
+      const stageStyle = window.getComputedStyle(stage);
+      const shellStyle = window.getComputedStyle(previewFrame.parentElement!);
+      const availableWidth = Math.max(1, stage.clientWidth
+        - parseFloat(stageStyle.paddingLeft) - parseFloat(stageStyle.paddingRight)
+        - parseFloat(shellStyle.borderLeftWidth) - parseFloat(shellStyle.borderRightWidth));
+      const availableHeight = Math.max(1, stage.clientHeight
+        - parseFloat(stageStyle.paddingTop) - parseFloat(stageStyle.paddingBottom)
+        - parseFloat(shellStyle.borderTopWidth) - parseFloat(shellStyle.borderBottomWidth));
 
-        // Keep the storefront's real desktop viewport. Only scale it visually
-        // by width so the editor never shrinks it because of panel/toolbar height.
-        const scale = Math.min(1, availableWidth / viewportWidth);
-
-        setDesktopPreviewViewport((current) => {
-          const next = {
-            width: viewportWidth,
-            height: viewportHeight,
-            scale: Math.max(0.48, scale),
-          };
-          if (
-            current.width === next.width
-            && current.height === next.height
-            && Math.abs(current.scale - next.scale) < 0.001
-          ) {
-            return current;
-          }
-          return next;
-        });
+      // One desktop viewport keeps storefront breakpoints and proportions stable.
+      // Fit the complete viewport; scrolling belongs to the storefront iframe.
+      const scale = Math.min(1,
+        availableWidth / DESKTOP_PREVIEW_VIEWPORT.width,
+        availableHeight / DESKTOP_PREVIEW_VIEWPORT.height);
+      setDesktopPreviewViewport((current) => {
+        if (Math.abs(current.scale - scale) < 0.0001) return current;
+        return { ...DESKTOP_PREVIEW_VIEWPORT, scale };
       });
     };
 
+    const scheduleViewport = () => {
+      if (frame) window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => {
+        frame = 0;
+        syncDesktopViewport();
+      });
+    };
+
+    // Measure after the async editor shell mounts, before its first paint.
     syncDesktopViewport();
     // Side panels are desktop overlays; opening/closing them must never resize
     // or rescale the storefront preview. Only the real browser viewport may.
-    settleTimer = window.setTimeout(syncDesktopViewport, 120);
-    window.addEventListener("resize", syncDesktopViewport);
-    window.visualViewport?.addEventListener("resize", syncDesktopViewport);
+    window.addEventListener("resize", scheduleViewport);
+    window.visualViewport?.addEventListener("resize", scheduleViewport);
 
     return () => {
       if (frame) window.cancelAnimationFrame(frame);
-      if (settleTimer) window.clearTimeout(settleTimer);
-      window.removeEventListener("resize", syncDesktopViewport);
-      window.visualViewport?.removeEventListener("resize", syncDesktopViewport);
+      window.removeEventListener("resize", scheduleViewport);
+      window.visualViewport?.removeEventListener("resize", scheduleViewport);
     };
-  }, [device, isMobileViewport]);
+  }, [loading, device, isMobileViewport]);
 
   useEffect(() => {
     if (!isMobileViewport) return;
@@ -1411,10 +1407,12 @@ export function StoreDesignV21() {
           iframeRef.current
         ) {
           const frame = iframeRef.current.getBoundingClientRect();
+          const scaleX = frame.width / iframeRef.current.clientWidth;
+          const scaleY = frame.height / iframeRef.current.clientHeight;
           const menuWidth = 336;
           const menuHeight = Math.min(620, Math.max(360, window.innerHeight - 88));
-          const x = Math.max(12, Math.min(window.innerWidth - menuWidth - 12, frame.left + pointer.x));
-          const y = Math.max(68, Math.min(window.innerHeight - menuHeight - 12, frame.top + pointer.y));
+          const x = Math.max(12, Math.min(window.innerWidth - menuWidth - 12, frame.left + pointer.x * scaleX));
+          const y = Math.max(68, Math.min(window.innerHeight - menuHeight - 12, frame.top + pointer.y * scaleY));
           setContextMenu({ x, y, target });
           setRightOpen(false);
         } else {
@@ -2363,7 +2361,7 @@ export function StoreDesignV21() {
       </header>
 
       <div className="sd-editor-workspace relative flex min-h-0 flex-1">
-        <aside ref={structurePanelRef} tabIndex={-1} aria-label="Yapı" data-open={leftOpen ? "true" : "false"} aria-hidden={!leftOpen} className={leftOpen ? "sd-sidebar sd-sidebar-left is-open flex w-72 shrink-0 flex-col border-r" : "sd-sidebar sd-sidebar-left is-closed flex w-72 shrink-0 flex-col border-r"}>
+        <aside ref={structurePanelRef} tabIndex={-1} aria-label="Yapı" data-open={leftOpen ? "true" : "false"} aria-hidden={!leftOpen} inert={!leftOpen} className={leftOpen ? "sd-sidebar sd-sidebar-left is-open flex w-72 shrink-0 flex-col border-r" : "sd-sidebar sd-sidebar-left is-closed flex w-72 shrink-0 flex-col border-r"}>
           <header className="sd-structure-header flex items-center justify-between border-b px-4 py-3">
             <div className="min-w-0">
               <p className="text-[13px] font-semibold">Yapı</p>
@@ -2437,7 +2435,7 @@ export function StoreDesignV21() {
             data-preview-viewport-width={device === "desktop" ? desktopPreviewViewport.width : undefined}
             data-preview-viewport-height={device === "desktop" ? desktopPreviewViewport.height : undefined}
             data-preview-scale={device === "desktop" ? desktopPreviewViewport.scale.toFixed(4) : undefined}
-            className={`sd-preview-shell relative shrink-0 overflow-hidden bg-white shadow-[0_18px_60px_rgba(15,23,42,.14)] transition-[width,height,border-radius] duration-300 ${
+            className={`sd-preview-shell relative shrink-0 overflow-hidden bg-white shadow-[0_18px_60px_rgba(15,23,42,.14)] ${
               device === "mobile"
                 ? isMobileViewport
                   ? "h-full w-full rounded-none border-0"
@@ -2445,8 +2443,8 @@ export function StoreDesignV21() {
                 : "sd-desktop-viewport-shell rounded-xl border border-black/10"
             }`}
             style={device === "desktop" && !isMobileViewport ? {
-              width: `${Math.round(desktopPreviewViewport.width * desktopPreviewViewport.scale)}px`,
-              height: `${Math.round(desktopPreviewViewport.height * desktopPreviewViewport.scale)}px`,
+              width: `${desktopPreviewViewport.width * desktopPreviewViewport.scale}px`,
+              height: `${desktopPreviewViewport.height * desktopPreviewViewport.scale}px`,
             } : undefined}
           >
             {device === "mobile" && !isMobileViewport ? <div className="sd-device-island pointer-events-none absolute left-1/2 top-3 z-10 h-7 w-28 -translate-x-1/2 rounded-full bg-[#111]" /> : null}
@@ -2468,7 +2466,7 @@ export function StoreDesignV21() {
           </div>
         </main>
 
-        <aside ref={inspectorPanelRef} tabIndex={-1} aria-label="Düzenleme paneli" data-open={rightOpen ? "true" : "false"} data-sheet-level={mobileSheetLevel} aria-hidden={!rightOpen} className={rightOpen ? "sd-sidebar sd-inspector is-open flex w-[400px] shrink-0 flex-col border-l" : "sd-sidebar sd-inspector is-closed flex w-[400px] shrink-0 flex-col border-l"}>
+        <aside ref={inspectorPanelRef} tabIndex={-1} aria-label="Düzenleme paneli" data-open={rightOpen ? "true" : "false"} data-sheet-level={mobileSheetLevel} aria-hidden={!rightOpen} inert={!rightOpen} className={rightOpen ? "sd-sidebar sd-inspector is-open flex w-[400px] shrink-0 flex-col border-l" : "sd-sidebar sd-inspector is-closed flex w-[400px] shrink-0 flex-col border-l"}>
           <div
             className="sd-inspector-header border-b px-4 py-3"
             onTouchStart={(event) => { mobileSheetTouchStartRef.current = event.touches.item(0)?.clientY ?? null; }}

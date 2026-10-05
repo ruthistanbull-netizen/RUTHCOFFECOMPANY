@@ -503,9 +503,8 @@ body {
 }
 [data-store-design-v2-admin] .sd-library-card:hover:not(:disabled){background:var(--sd-surface-2)!important;border-color:var(--sd-accent)!important;box-shadow:var(--sd-shadow-soft);}
 [data-store-design-v2-admin] .sd-preview-shell{
-  transition:width var(--sd-motion-preview) var(--sd-ease-enter),height var(--sd-motion-preview) var(--sd-ease-enter),
-  border-radius var(--sd-motion-preview) var(--sd-ease-enter),border-color var(--sd-motion-fast) var(--sd-ease),
-  box-shadow var(--sd-motion-base) var(--sd-ease)!important;will-change:width,height,border-radius;
+  transition:border-color var(--sd-motion-fast) var(--sd-ease),
+  box-shadow var(--sd-motion-base) var(--sd-ease)!important;
 }
 [data-store-design-v2-admin] .sd-sidebar-left{animation:sd-panel-in-left var(--sd-motion-panel) var(--sd-ease-enter) both;}
 [data-store-design-v2-admin] .sd-inspector{animation:sd-panel-in-right var(--sd-motion-panel) var(--sd-ease-enter) both;}
