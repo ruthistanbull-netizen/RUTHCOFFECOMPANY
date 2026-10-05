@@ -32,7 +32,7 @@ import {
   FileText,
   Trash2,
 } from "lucide-react";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ChangeEvent, type CSSProperties } from "react";
 import { useRouter } from "next/navigation";
 import {
   STORE_DESIGN_MESSAGES,
@@ -2456,9 +2456,11 @@ export function StoreDesignV21() {
               style={device === "desktop" && !isMobileViewport ? {
                 width: `${desktopPreviewViewport.width}px`,
                 height: `${desktopPreviewViewport.height}px`,
-                transform: `scale(${desktopPreviewViewport.scale})`,
-                transformOrigin: "top left",
-              } : undefined}
+                // Native zoom paints text at the displayed density instead of
+                // resampling an already painted iframe bitmap.
+                zoom: desktopPreviewViewport.scale,
+                "--sd-preview-scale": desktopPreviewViewport.scale,
+              } as CSSProperties : undefined}
               onLoad={() => {
                 postToPreview({ type: STORE_DESIGN_MESSAGES.REQUEST_READY });
               }}

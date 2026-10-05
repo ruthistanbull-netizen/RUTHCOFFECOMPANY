@@ -6,7 +6,6 @@ import { ruthMotion, ruthMotionEase } from "@ruth-commerce/ui/motion";
 
 const PAGE_SURFACE_SELECTORS = [
   "[data-ruthie-immersive-root]",
-  "[data-theme-editor-immersive-root]",
   "main",
 ] as const;
 
@@ -33,6 +32,14 @@ export function AdminUnifiedMotionEnhancer() {
   const animationRef = useRef<Animation | null>(null);
 
   useEffect(() => {
+    // The editor already owns its panels' motion. Moving its complete canvas
+    // adds a composited layer around the iframe and softens the preview.
+    if (pathname === "/theme") {
+      animationRef.current?.cancel();
+      animationRef.current = null;
+      return;
+    }
+
     /* On phones, animating the complete <main> creates a full-screen GPU layer
        containing long product/order lists and decoded images. Mobile Safari can
        retain that layer long enough to stutter or exhaust memory. Keep the
@@ -92,7 +99,7 @@ export function AdminUnifiedMotionEnhancer() {
       animationRef.current?.cancel();
       animationRef.current = null;
     };
-  }, [routeKey]);
+  }, [pathname, routeKey]);
 
   return null;
 }
