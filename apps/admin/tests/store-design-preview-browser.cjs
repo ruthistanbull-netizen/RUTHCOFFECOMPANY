@@ -75,24 +75,61 @@ async function desktop(page) {
   return g;
 }
 
+async function rendering(page, frame, pixelRatio) {
+  const paint = await frame.evaluate(() => ({
+    width: innerWidth, height: innerHeight, pixelRatio: devicePixelRatio,
+    desktop: matchMedia('(min-width:1024px)').matches,
+    desktopViewport: matchMedia('(min-width:1423px) and (max-width:1441px)').matches,
+    layoutWidth: document.documentElement.clientWidth,
+    headerWidth: document.querySelector('header').getBoundingClientRect().width,
+  }));
+  const style = await page.locator('iframe').evaluate(n => ({
+    zoom: Number(getComputedStyle(n).zoom), transform: getComputedStyle(n).transform,
+    scale: Number(n.parentElement.dataset.previewScale),
+  }));
+  assert.deepEqual([paint.width, paint.height], [1440, 900]);
+  assert.ok(paint.desktop, 'Scaling must retain desktop CSS media queries');
+  // WebKit subtracts the native scrollbar from its media-query viewport.
+  assert.ok(paint.desktopViewport, `CSS viewport units must retain the desktop width: ${JSON.stringify({paint,style})}`);
+  assert.ok(Math.abs(paint.headerWidth - paint.layoutWidth) < 1.1,
+    `The header fills the desktop layout, allowing its native scrollbar: ${JSON.stringify({paint,style,pixelRatio})}`);
+  if (engine === 'chromium') {
+    assert.equal(style.transform, 'none', 'Text must not be resampled through a transformed iframe');
+    assert.ok(Math.abs(style.zoom - style.scale) < 0.001);
+    assert.ok(Math.abs(paint.pixelRatio - pixelRatio * style.scale) < 0.001,
+      `Native zoom must paint at the display density, including Retina screens: ${JSON.stringify({paint,style,pixelRatio,topRatio:await page.evaluate(()=>devicePixelRatio)})}`);
+  } else {
+    assert.equal(style.zoom, 1, 'WebKit must retain its correct desktop layout');
+    assert.equal(paint.pixelRatio, pixelRatio);
+  }
+}
+
 function samePreview(a, b) {
   for (const key of ['x', 'y', 'width', 'height']) assert.ok(Math.abs(a.shell[key] - b.shell[key]) < 1, `Opening an overlay cannot change preview ${key}: ${JSON.stringify({before:a,after:b})}`);
 }
 
 (async () => {
-  const browser = await (engine === 'webkit' ? webkit : chromium).launch({ headless: true,
-    ...(engine === 'webkit' ? { executablePath: process.env.TEST_WEBKIT_EXECUTABLE } : { executablePath: '/usr/bin/chromium', args: ['--no-sandbox'] }),
-    ...(origin.startsWith('https:') ? { proxy: { server: process.env.HTTPS_PROXY || 'http://proxy:8080' } } : {}),
-  });
-  try {
-    for (const [width, height, reduced] of [[1920, 950, false], [1440, 900, false], [1280, 600, false], [768, 700, true], [390, 844, false]]) {
-      const context = await browser.newContext({ viewport: { width, height }, hasTouch: true, isMobile: width < 768, reducedMotion: reduced ? 'reduce' : 'no-preference' });
+  for (const [width, height, reduced, pixelRatio] of [[1920, 950, false, 1], [1440, 900, false, 2], [1280, 600, false, 1], [768, 700, true, 2], [390, 844, false, 3]]) {
+    // Chromium's iframe zoom reads the physical display density, so emulate it
+    // at browser launch as well as context level when checking Retina painting.
+    const browser = await (engine === 'webkit' ? webkit : chromium).launch({ headless: true,
+      ...(engine === 'webkit'
+        ? { executablePath: process.env.TEST_WEBKIT_EXECUTABLE }
+        : { executablePath: '/usr/bin/chromium', args: ['--no-sandbox', `--force-device-scale-factor=${pixelRatio}`] }),
+      ...(origin.startsWith('https:') ? { proxy: { server: process.env.HTTPS_PROXY || 'http://proxy:8080' } } : {}),
+    });
+    try {
+      const context = await browser.newContext({ viewport: { width, height }, deviceScaleFactor: pixelRatio, serviceWorkers: 'block', hasTouch: true, isMobile: width < 768, reducedMotion: reduced ? 'reduce' : 'no-preference' });
       await fixtures(context);
       const page = await context.newPage(), errors = [];
       page.on('pageerror', error => errors.push(error.message));
       await page.goto(origin + '/theme', { waitUntil: 'domcontentloaded', timeout: 60000 });
       await page.locator('.sd-preview-shell').waitFor();
       await page.waitForFunction(() => !document.querySelector('.sd-preview-connection-chip'));
+      const canvas = await page.locator('[data-theme-editor-immersive-root]').evaluate(n => ({
+        transform: getComputedStyle(n).transform, animations: n.getAnimations().length,
+      }));
+      assert.deepEqual(canvas, { transform: 'none', animations: 0 }, 'The complete editor canvas must not be composited by a route animation');
       const frame = page.frames().find(f => f.url().includes('storeDesignV2Preview'));
       if (width < 768) {
         assert.equal(await page.locator('[data-store-design-v2-admin]').getAttribute('data-device'), 'mobile');
@@ -103,6 +140,7 @@ function samePreview(a, b) {
         assert.ok(await page.locator('.sd-sidebar-left').evaluate(n => n.inert));
         assert.ok(await page.locator('.sd-inspector').evaluate(n => n.inert));
         assert.deepEqual(await frame.evaluate(() => [innerWidth, innerHeight]), [1440, 900]);
+        await rendering(page, frame, pixelRatio);
         await frame.evaluate(() => { window.__fixtureIdentity = 'retained'; });
         if (width >= 900) {
           await page.getByTitle('Mobil', { exact: true }).click();
@@ -135,7 +173,9 @@ function samePreview(a, b) {
         samePreview(initial, await desktop(page));
         await frame.locator('main').evaluate(n => n.scrollIntoView());
         await frame.evaluate(() => scrollTo(0, 500));
-        assert.ok(await frame.evaluate(() => scrollY >= 500), 'Scrolling stays inside the storefront');
+        const scroll = await frame.evaluate(() => ({ y: scrollY, pixelRatio: devicePixelRatio }));
+        assert.ok(Math.abs(scroll.y - 500) <= 1 / scroll.pixelRatio,
+          `Scrolling stays inside the storefront within one physical pixel: ${JSON.stringify(scroll)}`);
         samePreview(initial, await desktop(page));
         await page.getByLabel('Düzenlenen sayfa').selectOption('/studio');
         await frame.waitForURL(url => url.pathname === '/studio');
@@ -144,11 +184,12 @@ function samePreview(a, b) {
         await page.setViewportSize({ width: Math.max(768, width - 110), height: Math.max(420, height - 100) });
         await page.waitForFunction(() => { const f = document.querySelector('iframe'), s = document.querySelector('.sd-preview-stage'); return f.getBoundingClientRect().bottom <= s.getBoundingClientRect().bottom + 1; });
         await desktop(page);
+        await rendering(page, frame, pixelRatio);
       }
       assert.deepEqual(errors, []);
       await page.screenshot({ path: `/workspace/preview-fit-${engine}-${width}${origin.startsWith('https:') ? '-live' : ''}.png` });
-      console.log(JSON.stringify({ engine, origin, width, height, reduced, fullViewportFits: true, stableDeviceAndPanelToggles: true, scrollAndNavigation: true, noPageErrors: true }));
+      console.log(JSON.stringify({ engine, origin, width, height, reduced, pixelRatio, nativePaintDensity: engine === 'chromium', fullViewportFits: true, stableDeviceAndPanelToggles: true, scrollAndNavigation: true, noPageErrors: true }));
       await context.close();
-    }
-  } finally { await browser.close(); }
+    } finally { await browser.close(); }
+  }
 })().catch(error => { console.error(error); process.exit(1); });

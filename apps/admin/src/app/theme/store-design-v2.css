@@ -2103,7 +2103,16 @@
     max-width:none!important;
     min-width:0!important;
     border:0!important;
-    transform-origin:top left!important;
+  }
+
+  /* WebKit's iframe zoom changes CSS media-query widths. Keep the existing
+     transform path there so the desktop storefront never becomes mobile. */
+  @supports (-webkit-hyphenate-limit-before:2){
+    [data-store-design-v2-admin] .sd-preview-frame.sd-desktop-viewport-frame{
+      zoom:1!important;
+      transform:scale(var(--sd-preview-scale,1));
+      transform-origin:top left;
+    }
   }
 }
 
