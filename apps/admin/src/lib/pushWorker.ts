@@ -7,7 +7,7 @@ import {
   sign as signPayload,
 } from "node:crypto";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
-import { normalizePanelNotificationTitle, panelServiceAlertTitle } from "@/lib/adminNotification";
+import { isOptionalAIConfigurationNotice, normalizePanelNotificationTitle, panelServiceAlertTitle } from "@/lib/adminNotification";
 import { appointmentNotification } from "@ruth-commerce/commerce-core/appointments";
 
 type PushConfig = {
@@ -41,6 +41,7 @@ export type AdminPushWorkerResult = {
   sent_jobs?: number;
   failed_jobs?: number;
   delivered_notifications?: number;
+  suppressed_jobs?: number;
 };
 
 class PushDeliveryError extends Error {
@@ -349,8 +350,21 @@ export async function kickAdminPushWorker(): Promise<AdminPushWorkerResult> {
   let sentJobs = 0;
   let failedJobs = 0;
   let deliveredNotifications = 0;
+  let suppressedJobs = 0;
 
   for (const job of jobs) {
+    if (isOptionalAIConfigurationNotice({ ...job.payload, kind: job.kind })) {
+      // Existing queues can still contain notices produced before the health
+      // fix. Use the queue's terminal state so they cannot be sent or retried.
+      const { error } = await supabase.from("admin_push_jobs").update({
+        status: "failed",
+        error_message: "suppressed_optional_ai_connection_disabled",
+        updated_at: new Date().toISOString(),
+      }).eq("id", job.id);
+      if (error) failedJobs += 1;
+      else suppressedJobs += 1;
+      continue;
+    }
     const notification = { type: job.kind, ...notificationFor(job) };
     const encodedPayload = JSON.stringify(notification);
     let successes = 0;
@@ -427,5 +441,6 @@ export async function kickAdminPushWorker(): Promise<AdminPushWorkerResult> {
     sent_jobs: sentJobs,
     failed_jobs: failedJobs,
     delivered_notifications: deliveredNotifications,
+    suppressed_jobs: suppressedJobs,
   };
 }

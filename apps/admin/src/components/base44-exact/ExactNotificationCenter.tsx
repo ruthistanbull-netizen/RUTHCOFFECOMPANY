@@ -19,7 +19,7 @@ import {
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { normalizePanelNotificationPayload, type AdminNotificationKind } from "@/lib/adminNotification";
+import { isOptionalAIConfigurationNotice, normalizePanelNotificationPayload, type AdminNotificationKind } from "@/lib/adminNotification";
 import { ExactIconButton, exactCx, useExactToast } from "./primitives";
 
 const STORAGE_KEY = "ruth_exact_notification_history_v1";
@@ -57,6 +57,7 @@ function readHistory(): NotificationItem[] {
       if (!item || typeof item !== "object") return [];
       const value = item as Partial<NotificationItem>;
       if (!value.id || !value.title || !value.body) return [];
+      if (isOptionalAIConfigurationNotice({ ...value, tag: value.id })) return [];
       return [{
         id: String(value.id),
         ...normalizePanelNotificationPayload({
@@ -133,6 +134,7 @@ export function ExactNotificationProvider({ children }: { children: ReactNode })
   }, []);
 
   const addNotification = useCallback((payload: Record<string, unknown>) => {
+    if (isOptionalAIConfigurationNotice(payload)) return;
     const normalized = normalizePanelNotificationPayload(payload);
     const id = String(payload.tag || "") || `push-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
     const next: NotificationItem = {
@@ -156,7 +158,9 @@ export function ExactNotificationProvider({ children }: { children: ReactNode })
   }, [toast]);
 
   useEffect(() => {
-    setItems(readHistory());
+    const restored = readHistory();
+    setItems(restored);
+    saveHistory(restored);
 
     const onHistory = (event: Event) => {
       const detail = (event as CustomEvent<NotificationItem[]>).detail;
