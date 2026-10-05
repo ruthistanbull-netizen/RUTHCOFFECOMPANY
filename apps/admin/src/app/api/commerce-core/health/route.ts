@@ -15,7 +15,7 @@ export const dynamic = "force-dynamic";
 
 export type CoreHealthStatus = "healthy" | "warning" | "failed";
 
-type CoreConfigurationCheck = { status: CoreHealthStatus; detail: string };
+type CoreConfigurationCheck = { status: CoreHealthStatus; detail: string; enabled?: boolean };
 type CoreDefinition = {
   key: string;
   title: string;
@@ -62,8 +62,10 @@ const definitions: CoreDefinition[] = [
     selfTest: runRuthieCoreSelfTest,
     configurationCheck: () => {
       const provider = getRuthieOpenAIStatus();
-      if (!provider.configured) return { status: "warning", detail: `OpenAI provider yapılandırması eksik: ${provider.missing.join(", ")}` };
-      return { status: "healthy", detail: `OpenAI Chat ${provider.models.chat}, Realtime ${provider.models.realtime} ve ${provider.models.voice} sesi yapılandırıldı` };
+      // The external AI connection is optional. Its absence does not invalidate
+      // the local tools, connector routing or approval-policy self-test.
+      if (!provider.configured) return { status: "healthy", enabled: false, detail: "Yapay zekâ bağlantısı kapalı; araç ve onay kontrolleri etkin." };
+      return { status: "healthy", enabled: true, detail: `OpenAI Chat ${provider.models.chat}, Realtime ${provider.models.realtime} ve ${provider.models.voice} sesi yapılandırıldı` };
     },
   },
 ];
@@ -176,7 +178,10 @@ export async function GET(request: Request) {
 
   const cores = liveCores.map((core) => {
     const row = monitorByKey.get(`commerce-core-${core.key}`);
-    const monitored = monitoredStatus(core.liveStatus, row);
+    // Retire the old configuration warning immediately, including during the
+    // monitor freshness window. A failing self-test still follows normal policy.
+    const optionalConnectionDisabled = core.liveStatus === "healthy" && core.configuration?.enabled === false;
+    const monitored = monitoredStatus(core.liveStatus, optionalConnectionDisabled ? undefined : row);
     const monitorDetail = row?.detail || null;
     const detail = monitored.status === "failed"
       ? monitorDetail || core.detail

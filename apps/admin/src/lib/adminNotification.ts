@@ -31,3 +31,24 @@ export function normalizePanelNotificationPayload(payload: Record<string, unknow
     url: typeof payload.url === "string" && payload.url ? payload.url : "/",
   };
 }
+
+const optionalAIServiceKeys = new Set([
+  "core-rosta-insight", "commerce-core-rosta-insight",
+  "core-ruthie", "commerce-core-ruthie",
+]);
+const optionalAIConfigurationDetail = /^OpenAI provider yapılandırması eksik: (?:OPENAI_API_KEY|ROSTA_INSIGHT_CHAT_MODEL|RUTHIE_CHAT_MODEL)(?:,\s*(?:OPENAI_API_KEY|ROSTA_INSIGHT_CHAT_MODEL|RUTHIE_CHAT_MODEL))*\.?$/;
+const successfulAISelfTest = /^\d+ araç, \d+ connector ve sesli\/yazılı onay politikası geçti$/;
+
+// Match only the obsolete generated configuration notice, never a real tool,
+// database or provider error, nor customer text mentioning an API key.
+export function isOptionalAIConfigurationNotice(payload: Record<string, unknown>) {
+  const normalized = normalizePanelNotificationPayload(payload);
+  if (normalized.kind !== "health") return false;
+  const serviceKey = String(payload.service_key || "").trim()
+    || String(payload.tag || "").replace(/^rosta-health-/, "");
+  if (!optionalAIServiceKeys.has(serviceKey)) return false;
+  const detail = normalized.body.trim().replace(/^(?:ROSTA Insight|Ruthie) Core:\s*/, "");
+  const parts = detail.split(/\s*·\s*/);
+  return parts.some((part) => optionalAIConfigurationDetail.test(part))
+    && parts.every((part) => optionalAIConfigurationDetail.test(part) || successfulAISelfTest.test(part));
+}
