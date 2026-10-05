@@ -81,9 +81,8 @@
 }
 [data-store-design-v2-admin] .sd-library-card:hover:not(:disabled){background:var(--sd-surface-2)!important;border-color:var(--sd-accent)!important;box-shadow:var(--sd-shadow-soft);}
 [data-store-design-v2-admin] .sd-preview-shell{
-  transition:width var(--sd-motion-preview) var(--sd-ease-enter),height var(--sd-motion-preview) var(--sd-ease-enter),
-  border-radius var(--sd-motion-preview) var(--sd-ease-enter),border-color var(--sd-motion-fast) var(--sd-ease),
-  box-shadow var(--sd-motion-base) var(--sd-ease)!important;will-change:width,height,border-radius;
+  transition:border-color var(--sd-motion-fast) var(--sd-ease),
+  box-shadow var(--sd-motion-base) var(--sd-ease)!important;
 }
 [data-store-design-v2-admin] .sd-sidebar-left{animation:sd-panel-in-left var(--sd-motion-panel) var(--sd-ease-enter) both;}
 [data-store-design-v2-admin] .sd-inspector{animation:sd-panel-in-right var(--sd-motion-panel) var(--sd-ease-enter) both;}
@@ -2087,10 +2086,11 @@
 }
 
 /* Store Design V2.2 — true desktop viewport preview.
-   The iframe keeps the real browser viewport size and is only visually scaled
-   to fit the editor canvas. This keeps storefront breakpoints/layout identical. */
+   The iframe keeps one 1440x900 desktop viewport and scales uniformly to fit
+   the entire editor canvas. Storefront breakpoints/layout remain identical. */
 @media(min-width:768px){
   [data-store-design-v2-admin] .sd-preview-shell.sd-desktop-viewport-shell{
+    box-sizing:content-box!important;
     max-width:none!important;
     min-width:0!important;
     min-height:0!important;
@@ -2113,7 +2113,7 @@
 @media(min-width:768px){
   [data-store-design-v2-admin] .sd-editor-workspace{
     position:relative!important;
-    overflow:hidden!important;
+    overflow:clip!important;
   }
 
   [data-store-design-v2-admin] .sd-preview-stage{
@@ -2122,6 +2122,11 @@
     width:100%!important;
     min-width:0!important;
     flex:1 1 auto!important;
+  }
+
+  [data-store-design-v2-admin][data-device="desktop"] .sd-preview-stage{
+    align-items:center!important;
+    overflow:clip!important;
   }
 
   [data-store-design-v2-admin] .sd-sidebar-left,
