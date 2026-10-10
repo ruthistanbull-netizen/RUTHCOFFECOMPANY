@@ -35,3 +35,24 @@ export function normalizeSupabaseUrl(value?: string) {
 
   return parsed.origin;
 }
+
+/**
+ * Theme/editor public media URLs were saved with their Cloud origin before the
+ * self-hosted migration. Replace only ROSTA's exact original Storage host.
+ * Never rewrite product media or another brand's Supabase URLs.
+ */
+export function rewriteRostaThemeStorageUrl(source: string): string {
+  if (!source || !/^https:\/\//i.test(source)) return source;
+  const targetOrigin = normalizeSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL);
+  if (targetOrigin === CANONICAL_SUPABASE_URL) return source;
+  try {
+    const current = new URL(source);
+    if (
+      current.origin !== CANONICAL_SUPABASE_URL ||
+      !/^\/storage\/v1\/object\/public\/(?:rosta-media|website-media)\//.test(current.pathname)
+    ) return source;
+    return targetOrigin + current.pathname + current.search + current.hash;
+  } catch {
+    return source;
+  }
+}
