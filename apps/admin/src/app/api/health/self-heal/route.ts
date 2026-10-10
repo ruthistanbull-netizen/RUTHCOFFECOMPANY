@@ -21,7 +21,7 @@ export async function GET(request: Request) {
     auth.supabase
       .from("panel_service_health_state")
       .select("service_key,status,detail,last_seen_at,recovered_at,metadata")
-      .eq("service_key", "self-heal-supervisor")
+      .eq("service_key", "global-self-heal")
       .maybeSingle(),
     auth.supabase
       .from("commerce_recovery_events")
