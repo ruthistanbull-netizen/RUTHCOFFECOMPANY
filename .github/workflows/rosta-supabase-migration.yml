@@ -20,6 +20,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+      - name: Validate owner bootstrap script syntax
+        run: python3 -m py_compile scripts/bootstrap-rosta-owner.py
       - name: Scan Supabase URLs across both apps
         run: node scripts/audit-rosta-supabase-endpoints.mjs
       - name: Install dependencies
