@@ -149,12 +149,20 @@ export function ExactNotificationProvider({ children }: { children: ReactNode })
       saveHistory(merged);
       return merged;
     });
-    toast.push({
-      tone: notificationTone(next.kind),
-      message: `${next.title} · ${next.body}`,
-      dedupeKey: `push:${next.id}`,
-      durationMs: 6500,
-    });
+    // Keep transient maintenance transport events in the notification history
+    // without interrupting every admin screen with repeating "fetch failed" toasts.
+    // Confirmed service failures still display a toast as before.
+    const transientMaintenance = next.kind === "health"
+      && /bakım/i.test(next.title)
+      && /fetch failed|failed to fetch|network error|timeout|abort|ECONNRESET|ECONNREFUSED|ETIMEDOUT/i.test(next.body);
+    if (!transientMaintenance) {
+      toast.push({
+        tone: notificationTone(next.kind),
+        message: `${next.title} · ${next.body}`,
+        dedupeKey: `push:${next.id}`,
+        durationMs: 6500,
+      });
+    }
   }, [toast]);
 
   useEffect(() => {
