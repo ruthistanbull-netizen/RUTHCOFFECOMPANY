@@ -13,7 +13,8 @@ type MaintenanceResult = { key: string; path: string; ok: boolean; durationMs: n
 function json(body: unknown, status = 200) { return NextResponse.json(body, { status, headers: { "Cache-Control": "no-store" } }); }
 
 function internalBaseCandidates(configuredBaseUrl: string): string[] {
-  const preferLoopback = Boolean(String(process.env.ZEABUR_SERVICE_ID || "").trim() || String(process.env.ZEABUR_PROJECT_ID || "").trim());
+  // Production containers always have a local PORT; prefer that over public proxy hops.
+  const preferLoopback = Boolean(String(process.env.PORT || "").trim());
   const primary = resolveInternalServiceBaseUrl({
     configuredBaseUrl,
     internalBaseUrl: process.env.INTERNAL_SERVICE_BASE_URL,
@@ -142,10 +143,18 @@ async function updateHealth(supabase: any, result: MaintenanceResult) {
   const now = new Date();
   const { data: previous } = await supabase.from("panel_service_health_state").select("status,last_alerted_at,first_seen_at").eq("service_key", result.key).maybeSingle();
   const status = result.ok ? "healthy" : "degraded";
-  const wasProblem = previous?.status && previous.status !== "healthy";
+  const wasProblem = previous?.status === "degraded" || previous?.status === "unhealthy";
+  const startedAt = wasProblem && previous?.first_seen_at ? String(previous.first_seen_at) : now.toISOString();
+  const problemAgeMs = Math.max(0, now.getTime() - new Date(startedAt).getTime());
   const lastAlertedAt = previous?.last_alerted_at ? new Date(previous.last_alerted_at).getTime() : 0;
-  const shouldAlert = !result.ok && (!wasProblem || !lastAlertedAt || now.getTime() - lastAlertedAt > 30 * 60_000);
-  await supabase.from("panel_service_health_state").upsert({ service_key: result.key, status, detail: result.detail, first_seen_at: previous?.first_seen_at || now.toISOString(), last_seen_at: now.toISOString(), last_alerted_at: shouldAlert ? now.toISOString() : previous?.last_alerted_at || null, recovered_at: result.ok && wasProblem ? now.toISOString() : null, metadata: { path: result.path, durationMs: result.durationMs, changedCount: changedCount(result) }, updated_at: now.toISOString() }, { onConflict: "service_key" });
+  // A one-off fetch failed/timeout during a deploy is a transport warning, not
+  // proof of a broken database. Keep it visible in health state but avoid push
+  // spam until it persists across several five-minute maintenance intervals.
+  const transientTransport = /fetch failed|failed to fetch|network error|timeout|abort|ECONNRESET|ECONNREFUSED|ETIMEDOUT/i.test(result.detail);
+  const eligibleToAlert = transientTransport ? wasProblem && problemAgeMs >= 15 * 60_000 : true;
+  const repeatAfterMs = transientTransport ? 6 * 60 * 60_000 : 30 * 60_000;
+  const shouldAlert = !result.ok && eligibleToAlert && (!wasProblem || !lastAlertedAt || now.getTime() - lastAlertedAt >= repeatAfterMs);
+  await supabase.from("panel_service_health_state").upsert({ service_key: result.key, status, detail: result.detail, first_seen_at: result.ok ? now.toISOString() : startedAt, last_seen_at: now.toISOString(), last_alerted_at: shouldAlert ? now.toISOString() : previous?.last_alerted_at || null, recovered_at: result.ok && wasProblem ? now.toISOString() : null, metadata: { path: result.path, durationMs: result.durationMs, changedCount: changedCount(result), transientTransport, verifiedFailure: !transientTransport && !result.ok }, updated_at: now.toISOString() }, { onConflict: "service_key" });
   if (shouldAlert) {
     const bucket = Math.floor(now.getTime() / (30 * 60_000));
     await supabase.from("admin_push_jobs").insert({ kind: "health", dedupe_key: `health:${result.key}:degraded:${bucket}`, payload: { service_key: result.key, status: "degraded", title: "ROSTA Panel bakım uyarısı", body: result.detail }, target_url: "/system" });
