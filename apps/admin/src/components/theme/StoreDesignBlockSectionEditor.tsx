@@ -16,6 +16,7 @@ import {
 import { useExactToast } from "@/components/base44-exact/primitives";
 import { useStoreDesignDialogExit } from "@/components/theme/useStoreDesignDialogExit";
 import { StoreDesignMediaLibrary } from "@/components/theme/StoreDesignMediaLibrary";
+import { previewRostaPublicMediaUrl } from "@/lib/supabaseRuntime";
 
 type Props = {
   document: ThemeDocument;
@@ -91,6 +92,25 @@ function blockDefaults(type: string): Record<string, unknown> {
   return {};
 }
 
+// Match the six scenes already rendered by the ROSTA circular scroll story.
+const ROSTA_SCROLL_STORY_SCENES = [
+  { title: "Çekirdeğin karakteri fincanda.", body: "ROSTA’da ürün seçimi; aroma, gövde ve kullanım deneyimini anlaşılır biçimde sunmakla başlar.", href: "/products" },
+  { title: "Espresso için net ve dengeli.", body: "Günlük kahve rutininde tutarlı sonuç almak için ürün bilgisini sade, seçimi kolay tutuyoruz.", href: "/products" },
+  { title: "Kavrumdan servise tutarlı bir çizgi.", body: "Çekirdeğin karakterini koruyan kavrum yaklaşımı ve doğru kullanım bilgisi, her fincanda daha öngörülebilir sonuç verir.", href: "/products" },
+  { title: "Evde iyi kahve daha kolay.", body: "Doğru kahve, doğru saklama ve anlaşılır ürün detaylarıyla hazırlama sürecini gereksiz karmaşadan uzaklaştır.", href: "/products" },
+  { title: "Kahve ritüeli, günlük hayatın içinde.", body: "Evden kafeye, hızlı bir espresso molasından yavaş demlemeye kadar ROSTA ürünleri gerçek kullanım anları için tasarlanır.", href: "/products" },
+  { title: "ROSTA Coffee Co.", body: "Perakendeden profesyonel kahve ihtiyaçlarına kadar aynı yaklaşım: tutarlı ürün, açık bilgi ve güçlü deneyim.", href: "/about" },
+] as const;
+
+function newScrollStoryScene(index: number): DraftBlock {
+  const defaultScene = ROSTA_SCROLL_STORY_SCENES[index % ROSTA_SCROLL_STORY_SCENES.length]!;
+  return {
+    id: uid("block-scroll-story-slide"),
+    type: "scroll-story-slide",
+    settings: { assetId: "", ...defaultScene },
+  };
+}
+
 function fieldLabel(key: string) {
   const labels: Record<string, string> = {
     assetId: "Medya",
@@ -156,10 +176,17 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
     .map((type) => BLOCK_LIBRARY_BY_TYPE[type])
     .filter((item): item is BlockDefinition => Boolean(item?.implemented)), [definition]);
   const [settings, setSettings] = useState<Record<string, unknown>>(() => structuredClone(section.settings || {}));
-  const [blocks, setBlocks] = useState<DraftBlock[]>(() => (section.blockIds || [])
-    .map((blockId) => document.blocks[blockId])
-    .filter((block): block is BlockInstance => Boolean(block))
-    .map((block) => ({ id: block.id, type: block.type, settings: structuredClone(block.settings || {}) })));
+  const [blocks, setBlocks] = useState<DraftBlock[]>(() => {
+    const existing = (section.blockIds || [])
+      .map((blockId) => document.blocks[blockId])
+      .filter((block): block is BlockInstance => Boolean(block))
+      .map((block) => ({ id: block.id, type: block.type, settings: structuredClone(block.settings || {}) }));
+    if (section.type !== "scroll-story") return existing;
+    // Present every existing circle as a selectable slot immediately. Empty
+    // slots retain legacy media on the storefront instead of dropping scenes.
+    if (!existing.length) return ROSTA_SCROLL_STORY_SCENES.map((_, index) => newScrollStoryScene(index));
+    return existing;
+  });
   const [blockType, setBlockType] = useState(allowedDefinitions[0]?.type || "");
   const [busy, setBusy] = useState(false);
   const [catalogProducts, setCatalogProducts] = useState<CatalogProductOption[]>([]);
@@ -247,6 +274,11 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   };
 
   const addBlock = () => {
+    if (section.type === "scroll-story") {
+      if (blocks.length >= maxBlocks) return toast.error(`En fazla ${maxBlocks} daire ekleyebilirsin.`);
+      setBlocks((items) => [...items, newScrollStoryScene(items.length)]);
+      return;
+    }
     const selected = allowedDefinitions.find((item) => item.type === blockType) || allowedDefinitions[0];
     if (!selected) return toast.error("Bu bölüme eklenebilecek hazır içerik öğesi yok.");
     if (blocks.length >= maxBlocks) return toast.error(`Bu bölüm en fazla ${maxBlocks} içerik öğesi kabul eder.`);
@@ -415,7 +447,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   const showPadding = !["hero", "scroll-story", "video-hero", "video-banner", "background-media", "bundle", "cross-sell", "breadcrumb", "grid-stack-builder", "spacer", "anchor"].includes(section.type);
   const primaryMedia = mediaNarrative && text(settings.imageAssetId) ? mergedMedia[text(settings.imageAssetId)] : undefined;
   const brandStoryMedia = brandStory && text(settings.imageAssetId) ? mergedMedia[text(settings.imageAssetId)] : undefined;
-  const showBlockComposer = allowedDefinitions.length > 0;
+  const showBlockComposer = allowedDefinitions.length > 0 && section.type !== "scroll-story";
   const sharedReferenceCount = Object.values(document.templates).filter((template) => template.sectionIds.includes(section.id)).length;
 
   return (
@@ -433,6 +465,97 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
           {sharedReferenceCount > 1 ? (
             <div className="mb-4 rounded-xl border border-amber-500/20 bg-amber-50 p-3 text-[11px] leading-5 text-amber-900">
               Bu bölüm {sharedReferenceCount} yerde kullanılıyor. Burada yaptığın içerik ve görünüm değişiklikleri bağlı olan diğer yerleri de etkiler.
+            </div>
+          ) : null}
+          {section.type === "scroll-story" ? (
+            <div className="mb-4 rounded-xl border border-black/[0.08] bg-[#fafafa] p-3">
+              <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <p className="text-[12px] font-semibold text-black">Daireli kaydırma · Fotoğraf ve Video</p>
+                  <p className="mt-1 text-[9px] leading-4 text-black/55">
+                    Her daireye ayrı fotoğraf veya video seç. Boş bırakılanlarda eski görsel korunur.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  disabled={blocks.length >= maxBlocks}
+                  onClick={addBlock}
+                  className="flex h-9 items-center gap-1.5 rounded-lg bg-black px-3 text-[10px] font-semibold text-white disabled:opacity-40"
+                >
+                  <Plus className="h-3.5 w-3.5" /> Daire ekle
+                </button>
+              </div>
+              <div className="grid gap-3">
+                {blocks.map((block, index) => {
+                  const mediaId = text(block.settings.assetId);
+                  const chosenMedia = mediaId ? mergedMedia[mediaId] : undefined;
+                  return (
+                    <div key={block.id} className="rounded-xl border border-black/10 bg-white p-3">
+                      <div className="mb-3 flex items-center justify-between gap-2">
+                        <strong className="text-[11px] text-black">Daire {index + 1}</strong>
+                        <div className="flex items-center gap-1">
+                          <button type="button" disabled={index === 0} onClick={() => setBlocks((items) => {
+                            const next = [...items];
+                            [next[index - 1], next[index]] = [next[index]!, next[index - 1]!];
+                            return next;
+                          })} className="grid h-8 w-8 place-items-center rounded-lg border border-black/10 disabled:opacity-30" aria-label="Daireyi yukarı taşı"><ArrowUp className="h-3.5 w-3.5" /></button>
+                          <button type="button" disabled={index === blocks.length - 1} onClick={() => setBlocks((items) => {
+                            const next = [...items];
+                            [next[index + 1], next[index]] = [next[index]!, next[index + 1]!];
+                            return next;
+                          })} className="grid h-8 w-8 place-items-center rounded-lg border border-black/10 disabled:opacity-30" aria-label="Daireyi aşağı taşı"><ArrowDown className="h-3.5 w-3.5" /></button>
+                          <button type="button" onClick={() => setBlocks((items) => items.filter((item) => item.id !== block.id))} className="grid h-8 w-8 place-items-center rounded-lg border border-red-200 text-red-600" aria-label="Daireyi kaldır"><Trash2 className="h-3.5 w-3.5" /></button>
+                        </div>
+                      </div>
+                      <div className="grid gap-3 sm:grid-cols-[120px_minmax(0,1fr)]">
+                        <div className="relative aspect-square overflow-hidden rounded-full bg-[#221c19]">
+                          {chosenMedia?.type === "video" ? (
+                            <video src={previewRostaPublicMediaUrl(chosenMedia.url)} poster={chosenMedia.posterAssetId ? previewRostaPublicMediaUrl(mergedMedia[chosenMedia.posterAssetId]?.url || "") : undefined} muted playsInline preload="metadata" className="h-full w-full object-cover" />
+                          ) : chosenMedia?.url ? (
+                            <img src={previewRostaPublicMediaUrl(chosenMedia.url)} alt={`Daire ${index + 1} önizleme`} className="h-full w-full object-cover" />
+                          ) : (
+                            <div className="flex h-full w-full items-center justify-center px-2 text-center text-[9px] font-medium leading-4 text-white/65">Mevcut görsel korunur</div>
+                          )}
+                        </div>
+                        <div className="grid min-w-0 content-start gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setMediaPicker({ target: "block", blockId: block.id, key: "assetId", mediaType: "any" })}
+                            className="flex min-h-10 items-center justify-center rounded-lg bg-[#c94a40] px-3 text-[10px] font-semibold text-white"
+                          >
+                            {chosenMedia ? "Fotoğraf / Videoyu değiştir" : "Fotoğraf veya Video Ekle"}
+                          </button>
+                          <label className="grid gap-1 text-[9px] font-semibold text-black/50">
+                            Medya Arşivi
+                            <select value={mediaId} onChange={(event) => updateBlock(block.id, "assetId", event.target.value)} className="h-9 min-w-0 rounded-lg border border-black/10 bg-white px-2 text-[10px] text-black">
+                              <option value="">Eski görseli koru</option>
+                              {mediaAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{mediaOptionLabel(asset)}</option>)}
+                            </select>
+                          </label>
+                          {chosenMedia ? <span className="text-[9px] text-black/50">{chosenMedia.type === "video" ? "Video" : "Fotoğraf"} seçili · {mediaId}</span> : null}
+                        </div>
+                      </div>
+                      <div className="mt-3 grid gap-2">
+                        <label className="grid gap-1 text-[9px] font-semibold text-black/50">
+                          Başlık
+                          <input value={text(block.settings.title)} onChange={(event) => updateBlock(block.id, "title", event.target.value)} className="h-10 rounded-lg border border-black/10 px-3 text-[11px] font-medium text-black outline-none" />
+                        </label>
+                        <label className="grid gap-1 text-[9px] font-semibold text-black/50">
+                          Açıklama
+                          <textarea rows={2} value={text(block.settings.body)} onChange={(event) => updateBlock(block.id, "body", event.target.value)} className="resize-y rounded-lg border border-black/10 p-3 text-[11px] leading-5 text-black outline-none" />
+                        </label>
+                        <label className="grid gap-1 text-[9px] font-semibold text-black/50">
+                          Daireye tıklanınca gidilecek sayfa
+                          <input value={text(block.settings.href)} onChange={(event) => updateBlock(block.id, "href", event.target.value)} className="h-10 rounded-lg border border-black/10 px-3 text-[11px] text-black outline-none" />
+                        </label>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="mt-3 text-[9px] leading-4 text-black/55">
+                Bölüm ayarlarını kaydet; ardından Mağaza Tasarımı'nda Yayınla'ya basınca değişiklikler canlı mağazaya aktarılır.
+              </p>
             </div>
           ) : null}
           {!["announcement-bar", "marquee"].includes(section.type) ? (

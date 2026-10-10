@@ -2598,10 +2598,10 @@ export function StoreDesignV21() {
                         className="sd-secondary-button flex min-h-11 items-center justify-between gap-3 rounded-lg border px-3 text-left"
                       >
                         <span className="min-w-0">
-                          <small className="block text-[10px] opacity-55">Galeri / kaydırmalı video ve fotoğraflar</small>
-                          <strong className="mt-1 block text-[11px]">Her slayt için fotoğraf veya video seç, yükle ve sırala</strong>
+                          <small className="block text-[10px] opacity-55">{selectedSection.type === "scroll-story" ? "Daireli kaydırma · Fotoğraf ve video" : "Galeri / kaydırmalı video ve fotoğraflar"}</small>
+                          <strong className="mt-1 block text-[11px]">{selectedSection.type === "scroll-story" ? "6 daireye ayrı fotoğraf/video ekle, değiştir ve sırala" : "Her slayt için fotoğraf veya video seç, yükle ve sırala"}</strong>
                         </span>
-                        <span className="shrink-0 text-[10px] font-semibold">Slaytları Düzenle</span>
+                        <span className="shrink-0 text-[10px] font-semibold">{selectedSection.type === "scroll-story" ? "Daireleri Düzenle" : "Slaytları Düzenle"}</span>
                       </button>
                     ) : null}
                     {["image-text-split", "video-text-split"].includes(selectedSection.type) ? (

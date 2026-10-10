@@ -42,3 +42,31 @@ test("unknown types and unavailable runtimes remain visible in publish checks", 
   assert.ok(issues.some((issue) => issue.code === "section-runtime-unavailable" && issue.severity === "error"));
   assert.equal(validateThemeDocument(document).ok, false);
 });
+
+test("circular scroll scenes may retain legacy media while other scenes use uploaded assets", () => {
+  const document = createEmptyThemeDocument();
+  document.templates.home = {
+    id: "home", label: "Ana Sayfa", compatibility: ["home"], sectionIds: ["circles"],
+    componentSettings: {}, schemaVersion: 2,
+  };
+  document.sections.circles = {
+    id: "circles", type: "scroll-story", enabled: true, settings: {},
+    blockIds: ["scene-1", "scene-2"], schemaVersion: 2,
+  };
+  document.blocks["scene-1"] = {
+    id: "scene-1", type: "scroll-story-slide",
+    settings: { assetId: "", title: "Mevcut fotoğrafı koru", body: "", href: "/products" },
+    schemaVersion: 2,
+  };
+  document.blocks["scene-2"] = {
+    id: "scene-2", type: "scroll-story-slide",
+    settings: { assetId: "missing-asset", title: "Yeni medya", body: "", href: "/products" },
+    schemaVersion: 2,
+  };
+  const missing = validateThemeDocument(document);
+  assert.equal(missing.ok, false, "a selected but deleted media asset must be rejected");
+  assert.ok(missing.errors.some((message) => message.includes("scene-2")));
+  document.blocks["scene-2"]!.settings.assetId = "";
+  assert.deepEqual(validateThemeDocument(document), { ok: true, errors: [] },
+    "empty per-scene assets must preserve the legacy fallback");
+});
