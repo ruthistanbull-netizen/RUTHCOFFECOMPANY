@@ -305,17 +305,17 @@ function CreateUserEditor({
 }) {
   const toast = useExactToast();
   const { save, saving, requestTransition } = useSaveLifecycle();
-  const [createMode, setCreateMode] = useState<CreateMode>("invite_user");
+  const [createMode, setCreateMode] = useState<CreateMode>("create_user");
   const [draft, setDraft] = useState<CreateUserDraft>(() => emptyCreateDraft());
 
   useEffect(() => {
     if (!open) return;
-    setCreateMode("invite_user");
+    setCreateMode("create_user");
     setDraft(emptyCreateDraft());
   }, [open]);
 
   const dirty = open && (
-    createMode !== "invite_user"
+    createMode !== "create_user"
     || draft.full_name !== ""
     || draft.email !== ""
     || draft.phone !== ""
@@ -351,7 +351,7 @@ function CreateUserEditor({
   }, [createMode, draft, onApplied, toast]);
 
   const discardDraft = useCallback(() => {
-    setCreateMode("invite_user");
+    setCreateMode("create_user");
     setDraft(emptyCreateDraft());
   }, []);
 
@@ -377,8 +377,8 @@ function CreateUserEditor({
     <ExactFormModal
       open={open}
       onClose={requestClose}
-      title="Yeni Panel Kullanıcısı"
-      subtitle="Davet gönder veya geçici şifreyle doğrudan hesap oluştur"
+      title="Kullanıcı Oluştur"
+      subtitle="E-posta, şifre ve rol belirleyerek yeni panel hesabı oluştur."
       size="md"
       footer={(
         <>
@@ -406,7 +406,7 @@ function CreateUserEditor({
         </ExactField>
         <ExactField label="Panel rolü">
           <select value={draft.panel_role} onChange={(event) => setDraft((old) => ({ ...old, panel_role: event.target.value as PanelRole }))} className={exactFormInputClass}>
-            {Object.entries(roleLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+            {Object.entries(roleLabels).filter(([value]) => value !== "owner").map(([value, label]) => <option key={value} value={value}>{label}</option>)}
           </select>
         </ExactField>
         {createMode === "create_user" ? (
@@ -544,7 +544,7 @@ function UserEditor({
     }
   };
 
-  const disabled = !canManage || Boolean(draft?.is_current);
+  const disabled = !canManage || Boolean(draft?.is_current) || account?.panel_role === "owner";
 
   return (
     <ExactFormModal
@@ -609,7 +609,7 @@ function UserEditor({
   );
 }
 
-export function ExactAccount() {
+export function ExactAccount({ mode = "profile" }: { mode?: "profile" | "users" }) {
   const toast = useExactToast();
   const [current, setCurrent] = useState<Account | null>(null);
   const [accounts, setAccounts] = useState<Account[]>([]);
@@ -646,81 +646,88 @@ export function ExactAccount() {
   const listUnavailable = loading && !current && !accounts.length;
 
   return (
-    <div className="space-y-4 animate-fade-in" data-exact-base44-page="account">
+    <div className="space-y-4 animate-fade-in" data-exact-base44-page={mode === "users" ? "users" : "account"}>
       <ExactPageHeader
-        title="Hesabım"
-        subtitle="Profil, e-posta, şifre, ekip hesapları, roller ve erişim güvenliği"
+        title={mode === "users" ? "Kullanıcılar ve Roller" : "Hesabım"}
+        subtitle={mode === "users"
+          ? "Panel kullanıcılarını oluştur, rollerini ve erişim yetkilerini yönet."
+          : "Kendi profilini, e-posta adresini ve şifreni yönet."}
         actions={(
           <>
             <ExactIconButton icon={RefreshCw} label="Yenile" variant="secondary" onClick={() => void load()} loading={loading} />
-            {ownerCanManage ? (
-              <ExactButton size="sm" onClick={() => setCreateOpen(true)} disabled={listUnavailable}><Plus className="h-4 w-4" /> Yeni Kullanıcı</ExactButton>
+            {mode === "users" && ownerCanManage ? (
+              <ExactButton size="sm" onClick={() => setCreateOpen(true)} disabled={listUnavailable}>
+                <Plus className="h-4 w-4" /> Kullanıcı Oluştur
+              </ExactButton>
             ) : null}
           </>
         )}
       />
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <ExactMetricCard label="Panel Hesabı" value={accounts.length} icon={UsersRound} />
-        <ExactMetricCard label="Aktif Kullanıcı" value={activeCount} icon={ShieldCheck} />
-        <ExactMetricCard label="Doğrulanmış E-posta" value={confirmedCount} icon={BadgeCheck} />
-        <ExactMetricCard
-          label="Rol Seviyesi"
-          value={current?.panel_role === "owner" ? 6 : current?.panel_role === "admin" ? 5 : current?.panel_role === "operations" ? 4 : current?.panel_role === "marketing" ? 3 : current?.panel_role === "support" ? 2 : 1}
-          suffix={current ? ` · ${roleLabels[current.panel_role]}` : ""}
-          icon={UserRound}
-        />
-      </div>
+
+      {mode === "users" ? (
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <ExactMetricCard label="Panel Hesabı" value={accounts.length} icon={UsersRound} />
+          <ExactMetricCard label="Aktif Kullanıcı" value={activeCount} icon={ShieldCheck} />
+          <ExactMetricCard label="Doğrulanmış E-posta" value={confirmedCount} icon={BadgeCheck} />
+          <ExactMetricCard
+            label="Rol Seviyesi"
+            value={current?.panel_role === "owner" ? 6 : current?.panel_role === "admin" ? 5 : current?.panel_role === "operations" ? 4 : current?.panel_role === "marketing" ? 3 : current?.panel_role === "support" ? 2 : 1}
+            suffix={current ? ` · ${roleLabels[current.panel_role]}` : ""}
+            icon={UserRound}
+          />
+        </div>
+      ) : null}
 
       {listUnavailable ? (
-        <div className="grid gap-4 lg:grid-cols-[380px_1fr]">
-          <ExactSkeleton className="h-[520px]" />
-          <ExactSkeleton className="h-[520px]" />
-        </div>
-      ) : (
-        <div className="grid items-start gap-4 lg:grid-cols-[380px_1fr]">
+        <ExactSkeleton className="h-[420px]" />
+      ) : mode === "profile" ? (
+        <div className="max-w-[760px]">
           <SaveLifecycleProvider>
             <ProfileEditor current={current} onApplied={apply} />
           </SaveLifecycleProvider>
-
-          <ExactDataCard title="Panel Kullanıcıları" action={<span className="ruth-type-caption text-subtle">{activeCount} aktif</span>}>
-            <div className="space-y-2">
-              {accounts.map((account) => (
-                <button
-                  key={account.id}
-                  type="button"
-                  onClick={() => setSelected({ ...account })}
-                  className="flex w-full items-center gap-3 rounded-[var(--radius-control)] bg-surface-secondary p-3 text-left transition-all hover:bg-accent-soft"
-                >
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface-primary text-xs font-bold text-accent shadow-sm">
-                    {initials(account.full_name)}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <p className="ruth-type-card-title truncate text-main">{account.full_name}</p>
-                      {account.is_current ? <span className="ruth-type-caption rounded-full bg-accent px-2 py-0.5 font-semibold text-white">Sen</span> : null}
-                    </div>
-                    <p className="ruth-type-code truncate text-muted">{account.email}</p>
-                    <p className="ruth-type-caption mt-1 text-subtle">Son giriş: {dateTime(account.last_sign_in_at)}</p>
-                  </div>
-                  <div className="flex flex-col items-end gap-1">
-                    <ExactStatusBadge status={account.status} label={account.status === "active" ? "Aktif" : "Kapalı"} size="sm" />
-                    <span className="ruth-type-caption font-medium text-muted">{roleLabels[account.panel_role]}</span>
-                  </div>
-                </button>
-              ))}
-              {!accounts.length ? <ExactEmptyState compact icon={UsersRound} title="Panel kullanıcısı yok" /> : null}
-            </div>
-          </ExactDataCard>
         </div>
+      ) : (
+        <ExactDataCard title="Panel Kullanıcıları" action={<span className="ruth-type-caption text-subtle">{activeCount} aktif</span>}>
+          <div className="space-y-2">
+            {accounts.map((account) => (
+              <button
+                key={account.id}
+                type="button"
+                onClick={() => setSelected({ ...account })}
+                className="flex w-full items-center gap-3 rounded-[var(--radius-control)] bg-surface-secondary p-3 text-left transition-all hover:bg-accent-soft"
+              >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface-primary text-xs font-bold text-accent shadow-sm">
+                  {initials(account.full_name)}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <p className="ruth-type-card-title truncate text-main">{account.full_name}</p>
+                    {account.is_current ? <span className="ruth-type-caption rounded-full bg-accent px-2 py-0.5 font-semibold text-white">Sen</span> : null}
+                  </div>
+                  <p className="ruth-type-code truncate text-muted">{account.email}</p>
+                  <p className="ruth-type-caption mt-1 text-subtle">Son giriş: {dateTime(account.last_sign_in_at)}</p>
+                </div>
+                <div className="flex flex-col items-end gap-1">
+                  <ExactStatusBadge status={account.status} label={account.status === "active" ? "Aktif" : "Kapalı"} size="sm" />
+                  <span className="ruth-type-caption font-medium text-muted">{roleLabels[account.panel_role]}</span>
+                </div>
+              </button>
+            ))}
+            {!accounts.length ? <ExactEmptyState compact icon={UsersRound} title="Panel kullanıcısı yok" /> : null}
+          </div>
+        </ExactDataCard>
       )}
 
-      <SaveLifecycleProvider>
-        <CreateUserEditor open={createOpen} onClose={() => setCreateOpen(false)} onApplied={apply} />
-      </SaveLifecycleProvider>
-
-      <SaveLifecycleProvider>
-        <UserEditor account={selected} canManage={Boolean(ownerCanManage)} onClose={() => setSelected(null)} onApplied={apply} />
-      </SaveLifecycleProvider>
+      {mode === "users" ? (
+        <>
+          <SaveLifecycleProvider>
+            <CreateUserEditor open={createOpen} onClose={() => setCreateOpen(false)} onApplied={apply} />
+          </SaveLifecycleProvider>
+          <SaveLifecycleProvider>
+            <UserEditor account={selected} canManage={Boolean(ownerCanManage)} onClose={() => setSelected(null)} onApplied={apply} />
+          </SaveLifecycleProvider>
+        </>
+      ) : null}
     </div>
   );
 }
