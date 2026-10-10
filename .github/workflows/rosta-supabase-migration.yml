@@ -1,0 +1,32 @@
+name: ROSTA Supabase migration checks
+
+on:
+  push:
+    branches: ["fix/rosta-ovh-supabase-url"]
+  pull_request:
+    paths:
+      - "apps/admin/**"
+      - "apps/storefront/**"
+      - "packages/**"
+      - "scripts/audit-rosta-supabase-endpoints.mjs"
+      - "package.json"
+  workflow_dispatch:
+
+jobs:
+  rosta-check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate owner bootstrap script syntax
+        run: python3 -m py_compile scripts/bootstrap-rosta-owner.py
+      - name: Scan Supabase URLs across both apps
+        run: node scripts/audit-rosta-supabase-endpoints.mjs
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Type-check contracts, commerce, admin and storefront
+        run: npm run typecheck:all
