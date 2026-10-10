@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { normalizeSupabaseUrl, ROSTA_SELF_HOSTED_SUPABASE_URL } from "@/lib/supabaseRuntime";
+import { normalizeSupabaseUrl } from "@/lib/supabaseRuntime";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -40,26 +40,24 @@ async function handle(request: Request, context: RouteContext, method: "GET" | "
   if (forwardedRange) bridgeHeaders.set("range", forwardedRange);
   const panelCandidate = { url: bridgeUrl, headers: bridgeHeaders, name: "panel" };
 
-  let directCandidate: { url: string; headers: Headers; name: string } | null = null;
+  // The admin is the configured source of truth for ROSTA media; always try
+  // its bridge first, even if the storefront has stale Cloud environment values.
+  candidates.push(panelCandidate);
   try {
     const origin = normalizeSupabaseUrl(process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL);
     const secret = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
     if (secret) {
       const directHeaders = new Headers({ apikey: secret, authorization: `Bearer ${secret}` });
       if (forwardedRange) directHeaders.set("range", forwardedRange);
-      directCandidate = {
+      candidates.push({
         url: `${origin}/storage/v1/object/public/${bucket}/${escapedPath}`,
         headers: directHeaders,
         name: "direct",
-      };
+      });
     }
-    if (origin === ROSTA_SELF_HOSTED_SUPABASE_URL) candidates.push(panelCandidate);
-    if (directCandidate) candidates.push(directCandidate);
-    if (origin !== ROSTA_SELF_HOSTED_SUPABASE_URL) candidates.push(panelCandidate);
   } catch {
-    candidates.push(panelCandidate);
+    // The bridge still works even if this service has an invalid direct URL.
   }
-  if (!candidates.length) candidates.push(panelCandidate);
 
   let missing = false;
   for (const candidate of candidates) {
