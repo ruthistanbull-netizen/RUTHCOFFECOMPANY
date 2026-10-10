@@ -1065,14 +1065,15 @@ export function StoreDesignV21() {
   const selectedSectionDefinition = selectedSection ? SECTION_LIBRARY_BY_TYPE[selectedSection.type] || null : null;
   const selectedSectionMediaKey = selectedSection
     ? (
-        ["image-text-split", "video-text-split", "hero", "video-hero", "video-banner", "background-media", "brand-story", "rewards-promo", "hotspot-lookbook"].includes(selectedSection.type)
+        ["image-text-split", "video-text-split", "hero", "video-hero", "video-banner", "background-media", "brand-story", "rewards-promo", "hotspot-lookbook", "image-banner"].includes(selectedSection.type)
           ? "imageAssetId"
           : selectedSection.type === "before-after"
             ? "beforeAssetId"
             : null
       )
     : null;
-  const selectedSectionMediaType: "image" | "video" | "any" = "any";
+  const selectedSectionMediaType: "image" | "video" | "any" = selectedSection?.type === "hotspot-lookbook" ? "image" : "any";
+  const selectedSectionHasSlides = Boolean(selectedSection && ["scroll-story", "slideshow", "gallery-grid", "masonry-gallery", "collage", "social-grid", "logo-cloud", "team", "press-awards"].includes(selectedSection.type));
   const contextSectionRegistration = contextMenu ? sectionRegistration(contextMenu.target) : null;
   const contextSection = contextSectionRegistration ? document.sections[contextSectionRegistration.id] || null : null;
   const contextTargetsWholeSection = Boolean(
@@ -2582,7 +2583,23 @@ export function StoreDesignV21() {
                               : "Medya seçilmedi"}
                           </strong>
                         </span>
-                        <span className="shrink-0 text-[10px] font-semibold">Seç / Değiştir</span>
+                        <span className="shrink-0 text-[10px] font-semibold">Fotoğraf / Video Ekle</span>
+                      </button>
+                    ) : null}
+                    {selectedSectionHasSlides ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSectionEditorTargetId(selectedSection.id);
+                          setSectionEditorSignal((value) => value + 1);
+                        }}
+                        className="sd-secondary-button flex min-h-11 items-center justify-between gap-3 rounded-lg border px-3 text-left"
+                      >
+                        <span className="min-w-0">
+                          <small className="block text-[10px] opacity-55">Galeri / kaydırmalı video ve fotoğraflar</small>
+                          <strong className="mt-1 block text-[11px]">Her slayt için fotoğraf veya video seç, yükle ve sırala</strong>
+                        </span>
+                        <span className="shrink-0 text-[10px] font-semibold">Slaytları Düzenle</span>
                       </button>
                     ) : null}
                     {["image-text-split", "video-text-split"].includes(selectedSection.type) ? (
