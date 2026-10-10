@@ -42,24 +42,28 @@ export function normalizeSupabaseUrl(value?: string) {
  * If Zeabur is misconfigured, media rendering should not crash the entire
  * storefront/editor SSR tree; the public API issue can be diagnosed separately.
  */
+/**
+ * Browser-facing public media must not point to the private Tailscale address.
+ * Storefront serves known public bucket objects via its own origin. Old public
+ * Cloud URLs are migrated only when the configured database is the self-host.
+ * This is display-only: never mutate media URLs in database documents.
+ */
 export function rewriteRostaPublicStorageUrl(source: string): string {
   if (!source || !/^https:\/\//i.test(source)) return source;
-  let targetOrigin: string;
-  try {
-    targetOrigin = normalizeSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL);
-  } catch {
-    return source;
-  }
-  if (targetOrigin === CANONICAL_SUPABASE_URL) return source;
-
   try {
     const current = new URL(source);
-    if (
-      current.origin !== CANONICAL_SUPABASE_URL ||
-      !/^\/storage\/v1\/(?:object|render\/image)\/public\/(?:rosta-media|website-media)\//.test(current.pathname)
-    ) return source;
-    const objectPath = current.pathname.replace(/^\/storage\/v1\/render\/image\/public\//, "/storage/v1/object/public/");
-    return targetOrigin + objectPath + current.search + current.hash;
+    const validPath = current.pathname.match(/^\/storage\/v1\/(?:object|render\/image)\/public\/(rosta-media|website-media)\/(.+)$/);
+    if (!validPath) return source;
+
+    const fromPrivateSelfHost = current.origin === ROSTA_SELF_HOSTED_SUPABASE_URL;
+    const fromRetiredCloud = current.origin === CANONICAL_SUPABASE_URL;
+    if (!fromPrivateSelfHost && !fromRetiredCloud) return source;
+
+    const configured = normalizeSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL);
+    if (!fromPrivateSelfHost && configured !== ROSTA_SELF_HOSTED_SUPABASE_URL) return source;
+
+    const mediaPath = validPath[2];
+    return `https://rostacoffecompany.zeabur.app/api/rosta-media/${validPath[1]}/${mediaPath}${current.search}${current.hash}`;
   } catch {
     return source;
   }

@@ -8,6 +8,7 @@ import { NextResponse } from "next/server";
 import sharp from "sharp";
 import { requireAdmin } from "@/lib/auth";
 import { RUTH_PRODUCT_PHOTO_BUCKET } from "@/lib/productPhotoStorage";
+import { ROSTA_STORE_URL } from "@/lib/platform";
 
 export const runtime = "nodejs";
 
@@ -145,14 +146,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, error: error.message }, { status: 400 });
     }
 
-    const { data } = auth.supabase.storage
-      .from(RUTH_PRODUCT_PHOTO_BUCKET)
-      .getPublicUrl(path);
+    // Storage is self-hosted on a private Tailscale hostname. Public media
+    // must be served via the storefront origin, not a URL clients cannot open.
+    const encodedPath = path.split("/").map(encodeURIComponent).join("/");
+    const publicMediaUrl = `${ROSTA_STORE_URL}/api/rosta-media/${RUTH_PRODUCT_PHOTO_BUCKET}/${encodedPath}`;
 
     return NextResponse.json(
       {
         ok: true,
-        url: data.publicUrl,
+        url: publicMediaUrl,
         converted: kind.mode === "convert" || video,
         videoNormalized: video,
         mediaType: kind.mediaType || "image",
