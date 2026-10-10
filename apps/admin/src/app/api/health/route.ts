@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { panelSnapshotEligible } from "@/lib/panelSyncRegistry";
+import { panelSnapshotEligible, panelSnapshotRoutineExpiry } from "@/lib/panelSyncRegistry";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 
 export const dynamic = "force-dynamic";
@@ -59,11 +59,12 @@ async function diagnostics() {
   const modelRows = (readModels.data || []).filter((row: any) => panelSnapshotEligible(String(row?.route_path || "")));
   const readModelCount = modelRows.length;
 
-  // Read models are event-driven. Time passing does not make a snapshot wrong if
-  // its source data did not change. Only an explicit failed event refresh marks a
-  // currently-owned row stale/error. Volatile/live-only routes never affect health.
+  // TTL expiry removes snapshot authority but is not a failed backend refresh.
+  // Track it separately so old/volatile editor entries do not alarm the operator.
+  // Genuine failed refreshes (other last_error values) remain degraded.
   const modelErrors = modelRows.filter((row: any) => row.status === "error").length;
-  const staleCount = modelRows.filter((row: any) => row.status === "stale").length;
+  const routineExpiredCount = modelRows.filter((row: any) => panelSnapshotRoutineExpiry(row)).length;
+  const staleCount = modelRows.filter((row: any) => row.status === "stale" && !panelSnapshotRoutineExpiry(row)).length;
   const unresolvedReadModelCount = modelErrors + staleCount;
 
   const activeRows = activeSync.data || [];
@@ -138,9 +139,10 @@ async function diagnostics() {
       confirmedFailure: false,
       total: readModelCount,
       stale: staleCount,
+      expired: routineExpiredCount,
       refreshing: activeSyncCount,
       errors: modelErrors,
-      detail: readModels.error?.message || `${readModelCount} hazır veri seti · ${staleCount} event-refresh gecikmiş · ${modelErrors} hata`,
+      detail: readModels.error?.message || `${readModelCount} izlenen veri seti · ${routineExpiredCount} süresi dolmuş önbellek · ${staleCount} başarısız yenileme · ${modelErrors} hata`,
     },
     {
       name: "panel-sync",
