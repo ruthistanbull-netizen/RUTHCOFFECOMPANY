@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore, type CSSProperties, type HTMLAttributes } from "react";
 import { useSemanticMedia } from "./SemanticThemeRuntimeProvider";
+import { rewriteRostaThemeStorageUrl } from "@/lib/supabaseRuntime";
 
 type Props = Omit<HTMLAttributes<HTMLElement>, "onLoad"> & {
   editorId: string;
@@ -37,6 +38,8 @@ export function StoreDesignEditableMedia({ editorId, editorLabel = "Medya", alia
   const mobile = useSyncExternalStore(subscribeMobile, getMobile, () => false);
   const source = mobile && mobileSrc ? mobileSrc : src;
   const media = useSemanticMedia(editorId, source, aliases, type ? type === "video" : undefined);
+  const mediaSrc = rewriteRostaThemeStorageUrl(media.src);
+  const posterSrc = poster ? rewriteRostaThemeStorageUrl(poster) : undefined;
   const attributes = {
     ...rest,
     "data-editor-id": editorId,
@@ -50,6 +53,6 @@ export function StoreDesignEditableMedia({ editorId, editorLabel = "Medya", alia
     style,
   };
   return media.video
-    ? <video {...attributes} key={media.src} src={media.src} poster={poster} aria-label={alt || editorLabel} autoPlay={autoPlay} muted={muted} loop={loop} playsInline controls={controls} preload="metadata" onLoadedData={onReady} />
-    : <img {...attributes} src={media.src} alt={alt} loading={priority ? "eager" : "lazy"} fetchPriority={priority ? "high" : "auto"} decoding="async" draggable={false} onLoad={onReady} />;
+    ? <video {...attributes} key={mediaSrc} src={mediaSrc} poster={posterSrc} aria-label={alt || editorLabel} autoPlay={autoPlay} muted={muted} loop={loop} playsInline controls={controls} preload="metadata" onLoadedData={onReady} />
+    : <img {...attributes} src={mediaSrc} alt={alt} loading={priority ? "eager" : "lazy"} fetchPriority={priority ? "high" : "auto"} decoding="async" draggable={false} onLoad={onReady} />;
 }
