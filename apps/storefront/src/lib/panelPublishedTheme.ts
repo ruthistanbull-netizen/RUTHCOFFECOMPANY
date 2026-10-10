@@ -25,7 +25,7 @@ export type PanelThemeAttempt = {
   error: "dns" | "timeout" | "tls" | "network" | "http" | "invalid_json" | null;
 };
 
-function panelOrigins(): Array<{ origin: string; route: "private" | "public" }> {
+export function panelOrigins(): Array<{ origin: string; route: "private" | "public" }> {
   const origins: Array<{ origin: string; route: "private" | "public" }> = [];
   const privateValue = process.env.ROSTA_PANEL_INTERNAL_ORIGIN?.trim();
   if (privateValue) {
