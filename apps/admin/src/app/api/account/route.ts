@@ -209,6 +209,7 @@ export async function PATCH(request: Request) {
   const email = clean(body.email, 240).toLowerCase();
   const phone = clean(body.phone, 80) || null;
   const password = clean(body.password, 160);
+  const origin = new URL(request.url).origin;
 
   try {
     const currentPayload = await payload(auth);
