@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { normalizeSupabaseUrl } from "@/lib/supabaseRuntime";
+import { panelOrigins } from "@/lib/panelPublishedTheme";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const PUBLIC_BUCKETS = new Set(["rosta-media", "website-media"]);
-const PANEL_MEDIA_ORIGIN = "https://rostapanel.zeabur.app";
 type RouteContext = { params: Promise<{ bucket: string; path: string[] }> };
 
 function successfulMedia(result: Response, method: "GET" | "HEAD") {
@@ -31,18 +31,18 @@ async function handle(request: Request, context: RouteContext, method: "GET" | "
   const range = request.headers.get("range");
   const forwardedRange = range && /^bytes=\d*-\d*$/.test(range) ? range : null;
 
-  // Panel connectivity to ROSTA's self-host has already been established.
-  // The storefront container need not be joined to the same private Tailscale
-  // network: use the public media-only panel bridge as the preferred route.
-  const bridgeUrl = `${PANEL_MEDIA_ORIGIN}/api/public-theme-media/${bucket}/${escapedPath}`;
   const candidates: Array<{ url: string; headers: Headers; name: string }> = [];
-  const bridgeHeaders = new Headers();
-  if (forwardedRange) bridgeHeaders.set("range", forwardedRange);
-  const panelCandidate = { url: bridgeUrl, headers: bridgeHeaders, name: "panel" };
-
-  // The admin is the configured source of truth for ROSTA media; always try
-  // its bridge first, even if the storefront has stale Cloud environment values.
-  candidates.push(panelCandidate);
+  // Photo/video URLs use the SAME panel network path as published Store Design.
+  // Prefer Zeabur private routing when configured; retain public as fallback.
+  for (const panel of panelOrigins()) {
+    const bridgeHeaders = new Headers();
+    if (forwardedRange) bridgeHeaders.set("range", forwardedRange);
+    candidates.push({
+      url: `${panel.origin}/api/public-theme-media/${bucket}/${escapedPath}`,
+      headers: bridgeHeaders,
+      name: `panel-${panel.route}`,
+    });
+  }
   try {
     const origin = normalizeSupabaseUrl(process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL);
     const secret = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
