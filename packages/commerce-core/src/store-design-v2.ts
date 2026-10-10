@@ -1578,7 +1578,8 @@ export function validateThemeDocument(document: ThemeDocument) {
           const block = document.blocks[blockId];
           if (!block || block.type !== "scroll-story-slide") continue;
           const assetId = typeof block.settings.assetId === "string" ? block.settings.assetId : "";
-          if (!assetId) errors.push(`${blockId}: Scroll Story slide medya seçimi zorunlu.`);
+          // Blank slots deliberately use the existing/legacy circular image.
+          // A media asset is only required after the user selects one.
           const asset = assetId ? document.media[assetId] : undefined;
           if (assetId && !asset) errors.push(`${blockId}: Scroll Story medya referansı bulunamadı (${assetId}).`);
         }
