@@ -6,6 +6,8 @@
  * share a Zeabur project, configure ROSTA_PANEL_INTERNAL_ORIGIN to the exact
  * private HTTP origin shown in Panel > Networking > Private.
  */
+import { cache } from "react";
+
 const PUBLIC_PANEL_ORIGIN = "https://rostapanel.zeabur.app";
 const THEME_PATH = "/api/public-store-design/theme";
 
@@ -122,7 +124,7 @@ export async function inspectPanelPublishedTheme(): Promise<{
   };
 }
 
-export async function readPanelPublishedTheme(): Promise<PanelPublishedTheme | null> {
+export const readPanelPublishedTheme = cache(async (): Promise<PanelPublishedTheme | null> => {
   const result = await fetchPanelTheme(false);
   const payload = result.payload;
   if (!payload?.published) return null;
@@ -134,4 +136,4 @@ export async function readPanelPublishedTheme(): Promise<PanelPublishedTheme | n
     revision: typeof payload.revision === "number" ? payload.revision : null,
     publishedAt: typeof payload.publishedAt === "string" ? payload.publishedAt : null,
   };
-}
+});

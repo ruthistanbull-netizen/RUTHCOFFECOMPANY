@@ -1,3 +1,4 @@
+import { previewRostaPublicMediaUrl } from "@/lib/supabaseRuntime";
 import dns from "node:dns/promises";
 import { isIP } from "node:net";
 import { NextResponse } from "next/server";
@@ -119,7 +120,7 @@ export async function POST(request: Request) {
     const { data } = auth.supabase.storage.from(RUTH_PRODUCT_PHOTO_BUCKET).getPublicUrl(path);
     return NextResponse.json({
       ok: true,
-      url: data.publicUrl,
+      url: previewRostaPublicMediaUrl(data.publicUrl),
       width: OUTPUT_WIDTH,
       height: OUTPUT_HEIGHT,
       aspect: "3:4",

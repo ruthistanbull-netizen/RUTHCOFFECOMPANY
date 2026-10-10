@@ -6,7 +6,7 @@ ROSTA Coffee Co. storefront, Next.js tabanlı kahve perakende/toptan satış ve 
 
 - Storefront: `https://rostacoffecompany.zeabur.app`
 - Admin: `https://rostapanel.zeabur.app`
-- Supabase project ref: `fposvxuryzidmeuwytbg`
+- Supabase API: `https://rosta-supabase.tail178b60.ts.net` (ROSTA self-host)
 - Deploy platform: Zeabur
 
 ## Ana sayfalar
@@ -31,7 +31,7 @@ Güncel örnek değerler için `.env.example` dosyasını kullan.
 Temel Supabase değişkenleri:
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=https://fposvxuryzidmeuwytbg.supabase.co
+NEXT_PUBLIC_SUPABASE_URL=https://rosta-supabase.tail178b60.ts.net
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<ROSTA anon/publishable key>
 SUPABASE_SERVICE_ROLE_KEY=<ROSTA service-role key; server-only>
 NEXT_PUBLIC_SITE_URL=https://rostacoffecompany.zeabur.app

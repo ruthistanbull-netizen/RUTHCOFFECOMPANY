@@ -3,6 +3,7 @@ import { requireAdmin } from "@/lib/auth";
 import { defaultThemeCustomizerSettings, normalizeThemeCustomizerSettings } from "@/lib/themeCustomizer";
 import { normalizeThemeMediaSettings } from "@/lib/themeMedia";
 import { noStoreHeaders, revalidateWebsite } from "@/lib/websiteRevalidate";
+import { rewriteRostaPublicMediaReferences } from "@/lib/supabaseRuntime";
 
 export const runtime = "nodejs";
 
@@ -34,7 +35,7 @@ function preserveHeaderChildren(settings: any) {
 }
 
 function normalizedTheme(settings: unknown) {
-  const normalized = normalizeThemeCustomizerSettings(preserveHeaderChildren(settings));
+  const normalized = normalizeThemeCustomizerSettings(preserveHeaderChildren(rewriteRostaPublicMediaReferences(settings)));
   const media = normalizeThemeMediaSettings(normalized);
   return {
     ...media,

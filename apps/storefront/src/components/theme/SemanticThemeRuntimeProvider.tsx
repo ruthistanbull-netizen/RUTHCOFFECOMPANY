@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
+import { rewriteRostaPublicStorageUrl } from "@/lib/supabaseRuntime";
 import {
   STORE_DESIGN_MEDIA_RUNTIME_EVENT,
   type StoreDesignMediaRuntimeDetail,
@@ -554,9 +555,9 @@ export function SemanticThemeRuntimeProvider({
       const active = [...desktopPatches, ...mobilePatches];
       for (const patch of active) {
         const rawValue = String(patch.value || "").trim();
-        const source = patch.path === "media.assetId"
+        const source = rewriteRostaPublicStorageUrl(patch.path === "media.assetId"
           ? runtimeMediaAssets[rawValue]?.url || effectiveDocument?.media[rawValue]?.url || ""
-          : rawValue;
+          : rawValue);
         if (!source) continue;
         const selector = selectorFor(patch);
         let elements: NodeListOf<Element>;

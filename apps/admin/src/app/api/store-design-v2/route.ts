@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { requireAdmin } from "@/lib/auth";
 import { noStoreHeaders, revalidateWebsite } from "@/lib/websiteRevalidate";
+import { rewriteRostaPublicMediaReferences } from "@/lib/supabaseRuntime";
 import {
   createEmptyThemeDocument,
   flattenThemeRedirects,
@@ -41,7 +42,7 @@ async function readDocument(supabase: SupabaseClient, key: string) {
 
   if (error) throw new Error(error.message);
   return {
-    document: data?.setting_value ? migrateThemeDocument(data.setting_value).document : null,
+    document: data?.setting_value ? migrateThemeDocument(rewriteRostaPublicMediaReferences(data.setting_value)).document : null,
     updatedAt: data?.updated_at || null,
   };
 }
@@ -86,7 +87,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const migration = migrateThemeDocument(body?.document);
+  const migration = migrateThemeDocument(rewriteRostaPublicMediaReferences(body?.document));
   const normalizedDocument = withThemeMediaUsageCounts(migration.document);
   const validation = validateThemeDocument(normalizedDocument);
   if (!validation.ok) {
@@ -140,7 +141,7 @@ export async function PUT(request: Request) {
 
   const body = await request.json().catch(() => ({}));
   const mode = body?.mode === "publish" ? "publish" : "draft";
-  const migration = migrateThemeDocument(body?.document);
+  const migration = migrateThemeDocument(rewriteRostaPublicMediaReferences(body?.document));
   const incoming = withThemeMediaUsageCounts(migration.document);
   const validation = validateThemeDocument(incoming);
   if (!validation.ok) {

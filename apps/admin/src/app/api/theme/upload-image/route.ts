@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
 import { NextResponse } from "next/server";
-import sharp from "sharp";
+import { transformThemeImage } from "@/lib/themeImagePipeline";
 import { requireAdmin } from "@/lib/auth";
 import { RUTH_PRODUCT_PHOTO_BUCKET } from "@/lib/productPhotoStorage";
 import { ROSTA_STORE_URL } from "@/lib/platform";
@@ -119,15 +119,9 @@ export async function POST(request: Request) {
     const video = kind.mediaType === "video";
     const uploadBytes = video
       ? await browserSafeVideo(source, kind.extension)
-      : kind.mode === "convert"
-        ? await sharp(source, { failOn: "none" })
-            .rotate()
-            .toColorspace("srgb")
-            .webp({ quality: 92 })
-            .toBuffer()
-        : source;
-    const outputExtension = video ? "mp4" : kind.extension;
-    const outputContentType = video ? "video/mp4" : kind.contentType;
+      : await transformThemeImage(source);
+    const outputExtension = video ? "mp4" : "webp";
+    const outputContentType = video ? "video/mp4" : "image/webp";
 
     if (uploadBytes.byteLength > MAX_VIDEO_BYTES) {
       return NextResponse.json({ ok: false, error: "İşlenmiş video 80 MB sınırını aşıyor." }, { status: 413 });
@@ -146,8 +140,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, error: error.message }, { status: 400 });
     }
 
-    // Storage is self-hosted on a private Tailscale hostname. Public media
-    // must be served via the storefront origin, not a URL clients cannot open.
+    // Save the same public delivery URL used by storefront and editor previews.
     const encodedPath = path.split("/").map(encodeURIComponent).join("/");
     const publicMediaUrl = `${ROSTA_STORE_URL}/api/rosta-media/${RUTH_PRODUCT_PHOTO_BUCKET}/${encodedPath}`;
 
@@ -155,7 +148,7 @@ export async function POST(request: Request) {
       {
         ok: true,
         url: publicMediaUrl,
-        converted: kind.mode === "convert" || video,
+        converted: true,
         videoNormalized: video,
         mediaType: kind.mediaType || "image",
         preservedAspectRatio: true,

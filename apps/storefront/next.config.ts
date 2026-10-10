@@ -10,7 +10,8 @@ const themeEditorOrigins = (
   .map((value) => value.trim())
   .filter(Boolean)
   .join(" ");
-const supabaseHttpOrigin = (process.env.NEXT_PUBLIC_SUPABASE_URL || "https://fposvxuryzidmeuwytbg.supabase.co").replace(/\/$/, "");
+// Embed the migrated database URL in browser bundles as well as the CSP.
+const supabaseHttpOrigin = "https://rosta-supabase.tail178b60.ts.net";
 
 const supabaseWsOrigin = supabaseHttpOrigin.replace(/^http/, "ws");
 const contentSecurityPolicy = [
@@ -42,6 +43,7 @@ const nextConfig: NextConfig = {
   compress: true,
   poweredByHeader: false,
   env: {
+    NEXT_PUBLIC_SUPABASE_URL: supabaseHttpOrigin,
     // Panelden websiteyi etkileyen değişiklikler için ikinci güvenlik ağı:
     // revalidate çağrısı kaçsa bile ürün/tema cache'i 10 saniyeyi aşmasın.
     NEXT_PUBLIC_CATALOG_REVALIDATE_SECONDS: "10",

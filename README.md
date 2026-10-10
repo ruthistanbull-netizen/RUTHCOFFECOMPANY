@@ -13,7 +13,7 @@ ROSTA Coffee Co. için bağımsız storefront + admin commerce monoreposu.
 
 - Storefront: https://rostacoffecompany.zeabur.app
 - Admin: https://rostapanel.zeabur.app
-- Supabase project ref: `fposvxuryzidmeuwytbg`
+- Supabase API: `https://rosta-supabase.tail178b60.ts.net` (ROSTA self-host)
 
 ## Isolation contract
 
