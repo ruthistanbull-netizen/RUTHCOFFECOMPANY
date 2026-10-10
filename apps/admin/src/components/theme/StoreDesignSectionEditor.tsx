@@ -54,7 +54,8 @@ function mediaLabel(asset: ThemeDocument["media"][string]) {
   const readableDate = date && !Number.isNaN(date.getTime())
     ? date.toLocaleString("tr-TR", { dateStyle: "short", timeStyle: "short" })
     : null;
-  return readableDate ? `Görsel · ${readableDate}` : "Görsel";
+  const kind = asset.type === "video" ? "Video" : "Görsel";
+  return readableDate ? `${kind} · ${readableDate}` : kind;
 }
 
 type FaqDraftItem = { id: string; question: string; answer: string };
@@ -80,11 +81,9 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
     })));
   const [busy, setBusy] = useState(false);
   const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
-
-  const mediaAssets = useMemo(
-    () => Object.values(document.media),
-    [document.media],
-  );
+  const [pendingMediaAssets, setPendingMediaAssets] = useState<ThemeDocument["media"]>({});
+  const mergedMedia = useMemo(() => ({ ...document.media, ...pendingMediaAssets }), [document.media, pendingMediaAssets]);
+  const mediaAssets = useMemo(() => Object.values(mergedMedia), [mergedMedia]);
 
   const set = (key: string, value: unknown) => {
     setSettings((current) => ({ ...current, [key]: value }));
@@ -95,6 +94,8 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
     setBusy(true);
     try {
       const next = structuredClone(document) as ThemeDocument;
+      // Keep an image or video uploaded from the picker in the same saved draft.
+      next.media = { ...next.media, ...pendingMediaAssets };
       const nextBlockIds = section.type === "faq" ? faqItems.map((item) => item.id) : section.blockIds;
       if (section.type === "faq") {
         for (const blockId of section.blockIds || []) delete next.blocks[blockId];
@@ -341,10 +342,10 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
                     </div>
                     <span className="text-[8px] font-normal leading-4 text-black/35">Yeni dosya yüklemek veya mobil görsel ve odak noktası belirlemek için Medya Arşivi'ni kullan.</span>
                   </label>
-                  {textValue(settings.imageAssetId) && document.media[textValue(settings.imageAssetId)]?.url ? (
-                    document.media[textValue(settings.imageAssetId)]!.type === "video"
-                      ? <video src={document.media[textValue(settings.imageAssetId)]!.url} muted playsInline controls className="h-36 w-full rounded-xl border border-black/[0.08] object-cover" />
-                      : <img src={document.media[textValue(settings.imageAssetId)]!.url} alt="" className="h-36 w-full rounded-xl border border-black/[0.08] object-cover" />
+                  {textValue(settings.imageAssetId) && mergedMedia[textValue(settings.imageAssetId)]?.url ? (
+                    mergedMedia[textValue(settings.imageAssetId)]!.type === "video"
+                      ? <video src={mergedMedia[textValue(settings.imageAssetId)]!.url} muted playsInline controls className="h-36 w-full rounded-xl border border-black/[0.08] object-cover" />
+                      : <img src={mergedMedia[textValue(settings.imageAssetId)]!.url} alt="" className="h-36 w-full rounded-xl border border-black/[0.08] object-cover" />
                   ) : null}
                   <div className="grid gap-4 md:grid-cols-2">
                     <label className="grid gap-1.5 text-[9px] font-semibold text-black/50">
@@ -376,7 +377,8 @@ export function StoreDesignSectionEditor({ document, section, onApply, onClose }
             document={document}
             onApply={onApply}
             onClose={() => setMediaPickerOpen(false)}
-            onSelect={(assetId) => {
+            onSelect={(assetId, asset) => {
+              if (asset) setPendingMediaAssets((current) => ({ ...current, [assetId]: asset }));
               set("imageAssetId", assetId);
               setMediaPickerOpen(false);
             }}
