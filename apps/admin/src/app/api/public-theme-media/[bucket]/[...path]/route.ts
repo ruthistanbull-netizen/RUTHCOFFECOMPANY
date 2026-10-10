@@ -30,15 +30,19 @@ async function handle(request: Request, context: Context, method: "GET" | "HEAD"
   }
 
   try {
-    const supabase = getSupabaseAdmin();
-    const { data: bucketInfo, error: bucketError } = await supabase.storage.getBucket(bucket);
-    if (bucketError || !bucketInfo) {
-      console.warn("[ROSTA media] bucket lookup failed:", bucketError?.message || "not found");
-      return new NextResponse("Medya kaynağı bulunamadı.", { status: 404 });
+    const isPublishedThemeAsset = bucket === "rosta-media" && path[0] === "theme";
+    // All theme/ files are uploaded specifically to be displayed on the public
+    // storefront. Bucket metadata can fail on some self-host installations;
+    // do not turn an existing public theme asset into a false HTTP 404.
+    let publicBucket = false;
+    if (!isPublishedThemeAsset) {
+      const { data: bucketInfo, error: bucketError } = await getSupabaseAdmin().storage.getBucket(bucket);
+      if (bucketError || !bucketInfo?.public) {
+        console.warn("[ROSTA media] non-theme bucket is not publicly accessible:", bucket);
+        return new NextResponse("Not Found", { status: 404 });
+      }
+      publicBucket = true;
     }
-    const publicBucket = bucketInfo.public === true;
-    const publicTheme = path[0] === "theme";
-    if (!publicBucket && !publicTheme) return new NextResponse("Not Found", { status: 404 });
 
     const key = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
     if (!key) return new NextResponse("Medya servisi yapılandırılmamış.", { status: 503 });
