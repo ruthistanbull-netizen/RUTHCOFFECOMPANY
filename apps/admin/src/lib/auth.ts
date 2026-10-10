@@ -30,6 +30,7 @@ type VerifiedClaims = {
   sub?: string;
   email?: string;
   user_metadata?: Record<string, unknown>;
+  app_metadata?: Record<string, unknown>;
   exp?: number;
 };
 
@@ -37,6 +38,7 @@ type VerifiedAdminUser = {
   id: string;
   email?: string | null;
   user_metadata?: Record<string, unknown>;
+  app_metadata?: Record<string, unknown>;
 };
 
 type AdminProfile = {
@@ -238,6 +240,9 @@ async function verifyAdminToken(supabase: ReturnType<typeof getSupabaseAdmin>, t
             user_metadata: claims.user_metadata && typeof claims.user_metadata === "object"
               ? claims.user_metadata
               : {},
+            app_metadata: claims.app_metadata && typeof claims.app_metadata === "object"
+              ? claims.app_metadata
+              : {},
           },
         };
       }
@@ -296,7 +301,7 @@ function canUseContinuityFastPath(request: Request) {
   return method === "GET" || method === "HEAD" || method === "OPTIONS";
 }
 
-export async function requireAdmin(request: Request) {
+async function requireAdminIdentity(request: Request) {
   const internal = await internalAdmin(request);
   if (internal) return internal;
 
@@ -332,7 +337,7 @@ export async function requireAdmin(request: Request) {
     return { error: NextResponse.json({ ok: false, error: "Oturum geçersiz." }, { status: 401 }) };
   }
 
-  if (String(verified.user.user_metadata?.panel_status || "active") === "disabled") {
+  if (String(verified.user.app_metadata?.panel_status || "active") === "disabled") {
     return { error: NextResponse.json({ ok: false, error: "Bu panel hesabı devre dışı bırakılmış." }, { status: 403 }) };
   }
 
@@ -413,4 +418,43 @@ export async function requireAdmin(request: Request) {
       ),
     };
   }
+}
+
+
+const PANEL_ROLES = new Set(["owner", "admin", "operations", "support", "marketing", "viewer"]);
+const ROLE_WRITE_PREFIXES: Record<string, string[]> = {
+  operations: ["/api/products", "/api/product-settings", "/api/orders", "/api/shipping", "/api/inventory", "/api/preparing-products", "/api/warehouse"],
+  support: ["/api/orders", "/api/customers", "/api/contact", "/api/returns", "/api/shipping"],
+  marketing: ["/api/theme", "/api/social-media", "/api/collections", "/api/marketing", "/api/campaigns", "/api/email", "/api/media"],
+};
+
+function matchesRoute(path: string, prefix: string) {
+  return path === prefix || path.startsWith(prefix + "/");
+}
+
+/**
+ * Roles live in Supabase Auth app_metadata, never user_metadata.
+ * Existing admin users must be migrated by the ROSTA owner bootstrap before deployment.
+ * Unknown roles have no panel permissions (fail-closed).
+ */
+export async function requireAdmin(request: Request) {
+  const result = await requireAdminIdentity(request);
+  if ("error" in result || result.internal) return result;
+
+  const role = String(result.user.app_metadata?.panel_role || "").toLowerCase();
+  const status = String(result.user.app_metadata?.panel_status || "active").toLowerCase();
+  if (!PANEL_ROLES.has(role) || status !== "active") {
+    return { error: NextResponse.json({ ok: false, error: "ROSTA panel erişim yetkin yok veya hesabın devre dışı." }, { status: 403 }) };
+  }
+
+  const method = request.method.toUpperCase();
+  if (method === "GET" || method === "HEAD" || method === "OPTIONS") return result;
+  const path = new URL(request.url).pathname;
+
+  // Account mutations perform their own strict owner/self checks server-side.
+  if (path === "/api/account") return result;
+  if (role === "owner" || role === "admin") return result;
+  if (ROLE_WRITE_PREFIXES[role]?.some((prefix) => matchesRoute(path, prefix))) return result;
+
+  return { error: NextResponse.json({ ok: false, error: "Bu işlem için panel rolünün yetkisi yok." }, { status: 403 }) };
 }
