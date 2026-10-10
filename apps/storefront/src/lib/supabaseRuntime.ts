@@ -58,7 +58,8 @@ export function rewriteRostaPublicStorageUrl(source: string): string {
       current.origin !== CANONICAL_SUPABASE_URL ||
       !/^\/storage\/v1\/(?:object|render\/image)\/public\/(?:rosta-media|website-media)\//.test(current.pathname)
     ) return source;
-    return targetOrigin + current.pathname + current.search + current.hash;
+    const objectPath = current.pathname.replace(/^\/storage\/v1\/render\/image\/public\//, "/storage/v1/object/public/");
+    return targetOrigin + objectPath + current.search + current.hash;
   } catch {
     return source;
   }
