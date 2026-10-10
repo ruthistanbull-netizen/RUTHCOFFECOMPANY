@@ -1,3 +1,4 @@
+import { previewRostaPublicMediaUrl } from "@/lib/supabaseRuntime";
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
 
@@ -37,5 +38,5 @@ export async function POST(request: Request) {
   if (error) return NextResponse.json({ ok:false, error:error.message }, { status:400 });
 
   const { data } = auth.supabase.storage.from("rosta-media").getPublicUrl(path);
-  return NextResponse.json({ ok:true, path, url:data.publicUrl });
+  return NextResponse.json({ ok:true, path, url:previewRostaPublicMediaUrl(data.publicUrl) });
 }

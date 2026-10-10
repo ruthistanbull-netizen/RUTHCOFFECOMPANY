@@ -1,3 +1,4 @@
+import { previewRostaPublicMediaUrl } from "@/lib/supabaseRuntime";
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -199,7 +200,7 @@ export async function POST(request: Request) {
         ok: true,
         uploadUrl,
         path,
-        url: publicData.publicUrl,
+        url: previewRostaPublicMediaUrl(publicData.publicUrl),
         mediaType: "video",
         contentType,
         aspect: "3:4",

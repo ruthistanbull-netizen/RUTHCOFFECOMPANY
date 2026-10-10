@@ -3,6 +3,10 @@ FROM public.ecr.aws/docker/library/node:22-bookworm-slim
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends ffmpeg \
+  && rm -rf /var/lib/apt/lists/*
+
 COPY . .
 RUN npm install --no-audit --no-fund
 RUN npm run build:admin

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 import { normalizeSupabaseUrl } from "@/lib/supabaseRuntime";
+import { fetchRostaMediaHeaders, rostaMediaCacheControl } from "@ruth-commerce/commerce-core/rosta-media";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -10,16 +11,17 @@ export const dynamic = "force-dynamic";
 const ALLOWED_BUCKETS = new Set(["rosta-media", "website-media"]);
 type Context = { params: Promise<{ bucket: string; path: string[] }> };
 
-function responseFromStorage(result: Response, method: "GET" | "HEAD") {
+function responseFromStorage(result: Response, method: "GET" | "HEAD", path: string[]) {
   const headers = new Headers({
-    "Cache-Control": "public, max-age=300, stale-while-revalidate=60",
+    "Cache-Control": result.status === 416 ? "no-store" : rostaMediaCacheControl(path),
     "X-Content-Type-Options": "nosniff",
+    "Access-Control-Allow-Origin": "*",
   });
   for (const key of ["content-type", "content-length", "content-range", "accept-ranges", "etag", "last-modified"]) {
     const value = result.headers.get(key);
     if (value) headers.set(key, value);
   }
-  return new NextResponse(method === "HEAD" ? null : result.body, { status: result.status, headers });
+  return new NextResponse(method === "HEAD" || result.status === 304 ? null : result.body, { status: result.status, headers });
 }
 
 async function handle(request: Request, context: Context, method: "GET" | "HEAD") {
@@ -54,17 +56,21 @@ async function handle(request: Request, context: Context, method: "GET" | "HEAD"
     const headers = new Headers({ apikey: key, authorization: `Bearer ${key}` });
     const range = request.headers.get("range");
     if (range && /^bytes=\d*-\d*$/.test(range)) headers.set("range", range);
-    const result = await fetch(url, {
-      method, headers, cache: "no-store", redirect: "error", signal: AbortSignal.timeout(18_000),
-    });
-    if (!result.ok) {
+    for (const header of ["if-none-match", "if-modified-since", "if-range"]) {
+      const value = request.headers.get(header);
+      if (value) headers.set(header, value);
+    }
+    const result = await fetchRostaMediaHeaders(url, {
+      method, headers, cache: "no-store", redirect: "error", signal: request.signal,
+    }, 10_000);
+    if (!result.ok && result.status !== 304 && result.status !== 416) {
       console.warn("[ROSTA media] Storage returned:", result.status, bucket, path[0]);
       return new NextResponse(result.status === 404 ? "Medya bulunamadı." : "Depolama yanıt vermiyor.", {
         status: result.status === 404 ? 404 : 502,
         headers: { "Cache-Control": "no-store" },
       });
     }
-    return responseFromStorage(result, method);
+    return responseFromStorage(result, method, path);
   } catch (error) {
     console.error("[ROSTA media] Storage failed:", error instanceof Error ? error.message : error);
     return new NextResponse("Depolama bağlantısı kurulamadı.", { status: 502, headers: { "Cache-Control": "no-store" } });

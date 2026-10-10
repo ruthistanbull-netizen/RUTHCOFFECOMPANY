@@ -15,10 +15,11 @@ const banned = [
   { name: "Unrestricted third-party Supabase endpoint", pattern: /https?:\/\/[\w-]+\.supabase\.co/gi },
 ];
 const allowedOldCloud = new Set([
-  "apps/admin/src/lib/platform.ts",
-  "apps/storefront/src/lib/supabaseRuntime.ts",
-  "apps/storefront/next.config.ts",
+  // Retired URL exists solely to rewrite imported media references.
+  "packages/commerce-core/src/rosta-media.ts",
+  "packages/commerce-core/tests/rosta-media.test.ts",
 ]);
+const negativeEndpointFixtures = new Set(["packages/commerce-core/tests/rosta-media.test.ts"]);
 let files = 0;
 const findings = [];
 function walk(dir) {
@@ -28,6 +29,7 @@ function walk(dir) {
     if (!item.isFile() || !extensions.has(extname(item.name))) continue;
     files++;
     const rel = relative(".", path).replaceAll("\\", "/");
+    if (negativeEndpointFixtures.has(rel)) continue;
     for (const [i, line] of readFileSync(path, "utf8").split("\n").entries()) {
       for (const { name, pattern } of banned) {
         const re = new RegExp(pattern.source, pattern.flags);

@@ -1,3 +1,4 @@
+import { previewRostaPublicMediaUrl } from "@/lib/supabaseRuntime";
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
 import {
@@ -72,7 +73,7 @@ export async function POST(request: Request) {
       .getPublicUrl(path);
     return NextResponse.json({
       ok: true,
-      url: data.publicUrl,
+      url: previewRostaPublicMediaUrl(data.publicUrl),
       width: PRODUCT_IMAGE_WIDTH,
       height: PRODUCT_IMAGE_HEIGHT,
       aspect: "3:4",

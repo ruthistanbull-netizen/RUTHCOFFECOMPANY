@@ -19,6 +19,7 @@ const nextConfig = {
     webpackMemoryOptimizations: true,
   },
   env: {
+    NEXT_PUBLIC_SUPABASE_URL: "https://rosta-supabase.tail178b60.ts.net",
     NEXT_PUBLIC_STORE_URL: storefrontUrl,
     NEXT_PUBLIC_SITE_URL: storefrontUrl,
     PUBLIC_SITE_URL: storefrontUrl,
