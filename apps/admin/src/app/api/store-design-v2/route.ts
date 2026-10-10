@@ -198,7 +198,35 @@ export async function PUT(request: Request) {
 
       if (error) throw new Error(error.message);
       const publishedRow = data?.find((row) => row.setting_key === PUBLISHED_KEY);
-      const persisted = normalizeThemeDocument(publishedRow?.setting_value || document);
+      if (!publishedRow?.setting_value) {
+        throw new Error("Yayın kaydı veritabanından doğrulanamadı; canlıya geçti bilgisi verilmiyor.");
+      }
+
+      // Verify an authoritative post-write read, not only the request payload.
+      // A successful Storage upload alone does not mean the new section/slide
+      // reference made it into the document the storefront actually reads.
+      const verification = await auth.supabase.from("site_settings")
+        .select("setting_value,is_public,updated_at")
+        .eq("setting_key", PUBLISHED_KEY)
+        .single();
+      if (verification.error || !verification.data?.is_public) {
+        throw new Error(verification.error?.message || "Yayınlanmış tema veritabanından okunamadı.");
+      }
+      const persisted = normalizeThemeDocument(verification.data.setting_value);
+      const missingMedia = Object.entries(document.media)
+        .filter(([id, asset]) => persisted.media[id]?.url !== asset.url)
+        .map(([id]) => id);
+      const missingSections = Object.entries(document.sections)
+        .filter(([id, section]) => {
+          const saved = persisted.sections[id];
+          if (!saved) return true;
+          const mediaFields = ["imageAssetId", "posterAssetId", "beforeAssetId", "afterAssetId"];
+          return mediaFields.some((key) => section.settings?.[key] !== saved.settings?.[key]);
+        })
+        .map(([id]) => id);
+      if (persisted.revision !== document.revision || missingMedia.length || missingSections.length) {
+        throw new Error("Tema yayını doğrulanamadı: medya veya bölüm bağlantıları eksik. Lütfen yeniden dene.");
+      }
 
       const revalidate = await revalidateWebsite({
         source: "admin-store-design-v2",
@@ -230,7 +258,12 @@ export async function PUT(request: Request) {
         mode,
         document: persisted,
         snapshotKey,
-        persistedAt: publishedRow?.updated_at || now,
+        persistedAt: verification.data.updated_at || publishedRow.updated_at || now,
+        mediaVerified: {
+          storedAssets: Object.keys(persisted.media).length,
+          sectionCount: Object.keys(persisted.sections).length,
+          referencesPersisted: true,
+        },
         revalidate,
         migration: {
           fromVersion: migration.fromVersion,
