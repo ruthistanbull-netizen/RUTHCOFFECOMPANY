@@ -1,3 +1,4 @@
+import { rewriteRostaPublicStorageUrl } from "@/lib/supabaseRuntime";
 import type { Product } from "@/types/site";
 
 /**
@@ -18,7 +19,7 @@ export function productMainImageOverride(
 export function primaryProductImage(
   product: Pick<Product, "slug" | "main_image_url" | "image_urls">,
 ) {
-  return product.main_image_url || product.image_urls?.find(Boolean) || "";
+  return rewriteRostaPublicStorageUrl(product.main_image_url || product.image_urls?.find(Boolean) || "");
 }
 
 export function withProductMainImageOverride(
@@ -32,5 +33,5 @@ export function resolveProductImage(
   _product: Pick<Product, "slug" | "main_image_url" | "image_urls">,
   imageUrl: string | null | undefined,
 ) {
-  return imageUrl || null;
+  return imageUrl ? rewriteRostaPublicStorageUrl(imageUrl) : null;
 }
