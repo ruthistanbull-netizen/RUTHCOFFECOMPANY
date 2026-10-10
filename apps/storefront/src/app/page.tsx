@@ -18,6 +18,7 @@ import {
 import { getThemeSectionSettings } from "@/data/themeSections";
 import { getThemeSectionPreviewSettings } from "@/data/themeSectionPreview";
 import { homepageHeroImages } from "@/lib/themeMedia";
+import { publishedHomepageMedia } from "@/lib/publishedHomepageMedia";
 import { themeSectionPage } from "@ruth-commerce/commerce-core/theme-sections";
 import {
   storeDesignPageForRoute,
@@ -75,9 +76,12 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
   }));
   const bestSellerProductsByWindow = Object.fromEntries(bestSellerEntries);
 
-  const heroImages = homepageHeroImages(themeSettings);
-  const editorialVideo = themeSettings.homepageImages.editorialVideo || "/home/rosta-under-hero-video.mp4";
-  const editorialImage = themeSettings.homepageImages.editorialImage || "/home/rosta-under-hero-photo.jpg";
+  // Resolve published photo/video selections BEFORE rendering the real storefront.
+  // Legacy homepage fields are only fallbacks when V2 has no override.
+  const effectiveThemeSettings = publishedHomepageMedia(themeSettings, previewV2 || publishedV2);
+  const heroImages = homepageHeroImages(effectiveThemeSettings);
+  const editorialVideo = effectiveThemeSettings.homepageImages.editorialVideo || "/home/rosta-under-hero-video.mp4";
+  const editorialImage = effectiveThemeSettings.homepageImages.editorialImage || "/home/rosta-under-hero-photo.jpg";
 
   return <>
     <HomeHeroRuntimeAdjustments />
@@ -97,8 +101,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
           heroImages={heroImages}
           editorialVideo={editorialVideo}
           editorialImage={editorialImage}
-          scrollImages={themeSettings.homepageImages.scrollImages}
-          themeSettings={themeSettings}
+          scrollImages={effectiveThemeSettings.homepageImages.scrollImages}
+          themeSettings={effectiveThemeSettings}
           freeShippingThreshold={freeShippingThreshold}
         />
       ))}
