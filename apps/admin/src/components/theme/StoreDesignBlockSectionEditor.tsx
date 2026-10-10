@@ -167,13 +167,16 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   const [catalogCategories, setCatalogCategories] = useState<CatalogGroupOption[]>([]);
   const [catalogLoading, setCatalogLoading] = useState(false);
   const [catalogError, setCatalogError] = useState("");
+  const [pendingMediaAssets, setPendingMediaAssets] = useState<Record<string, MediaAsset>>({});
   const [mediaPicker, setMediaPicker] = useState<
     | { target: "section"; key: string; mediaType: "image" | "video" | "any" }
     | { target: "block"; blockId: string; key: string; mediaType: "image" | "video" | "any" }
     | null
   >(null);
 
-  const mediaAssets = useMemo(() => Object.values(document.media), [document.media]);
+  // Newly uploaded media stays selectable before the document prop catches up.
+  const mergedMedia = useMemo(() => ({ ...document.media, ...pendingMediaAssets }), [document.media, pendingMediaAssets]);
+  const mediaAssets = useMemo(() => Object.values(mergedMedia), [mergedMedia]);
   const maxBlocks = definition?.allowedBlocks.length ? (definition.maxBlocks || 50) : 0;
   const needsCommerceCatalog = ["product-spotlight", "featured-collection", "category-cards", "product-comparison", "review-highlights"].includes(section.type);
 
@@ -315,19 +318,19 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
 
     if (section.type === "hero") {
       const mediaId = text(settings.imageAssetId);
-      const asset = mediaId ? document.media[mediaId] : undefined;
+      const asset = mediaId ? mergedMedia[mediaId] : undefined;
       if (mediaId && !asset) return toast.error("Ana görsel medyası bulunamadı.");
       const posterId = text(settings.posterAssetId);
-      if (posterId && document.media[posterId]?.type !== "image") return toast.error("Video kapak görseli yalnız bir görsel olabilir.");
+      if (posterId && mergedMedia[posterId]?.type !== "image") return toast.error("Video kapak görseli yalnız bir görsel olabilir.");
       if (posterId && asset?.type !== "video") return toast.error("Video kapak görseli yalnız video hero medyasında kullanılabilir.");
     }
 
     if (["video-hero", "video-banner", "background-media"].includes(section.type)) {
       const mediaId = text(settings.imageAssetId);
-      const asset = mediaId ? document.media[mediaId] : undefined;
+      const asset = mediaId ? mergedMedia[mediaId] : undefined;
       if (!mediaId || !asset) return toast.error("Bu bölüm için Medya Arşivi'den bir medya seç.");
       const posterId = text(settings.posterAssetId);
-      if (posterId && document.media[posterId]?.type !== "image") return toast.error("Video kapak görseli yalnız bir görsel olabilir.");
+      if (posterId && mergedMedia[posterId]?.type !== "image") return toast.error("Video kapak görseli yalnız bir görsel olabilir.");
     }
 
     if (section.type === "anchor") {
@@ -344,6 +347,8 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
     setBusy(true);
     try {
       const next = structuredClone(document) as ThemeDocument;
+      // Commit media and section/slides together; do not drop a fresh upload.
+      next.media = { ...next.media, ...pendingMediaAssets };
       const owned = new Set(section.blockIds || []);
       for (const blockId of owned) delete next.blocks[blockId];
 
@@ -408,8 +413,8 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
   const showTitle = !["product-spotlight", "featured-collection", "scroll-story", "background-media", "bundle", "cross-sell", "breadcrumb", "newsletter", "grid-stack-builder", "quote", "spacer", "divider", "anchor"].includes(section.type);
   const showEyebrow = !genericZeroBlock && !["product-spotlight", "featured-collection", "scroll-story", "background-media"].includes(section.type);
   const showPadding = !["hero", "scroll-story", "video-hero", "video-banner", "background-media", "bundle", "cross-sell", "breadcrumb", "grid-stack-builder", "spacer", "anchor"].includes(section.type);
-  const primaryMedia = mediaNarrative && text(settings.imageAssetId) ? document.media[text(settings.imageAssetId)] : undefined;
-  const brandStoryMedia = brandStory && text(settings.imageAssetId) ? document.media[text(settings.imageAssetId)] : undefined;
+  const primaryMedia = mediaNarrative && text(settings.imageAssetId) ? mergedMedia[text(settings.imageAssetId)] : undefined;
+  const brandStoryMedia = brandStory && text(settings.imageAssetId) ? mergedMedia[text(settings.imageAssetId)] : undefined;
   const showBlockComposer = allowedDefinitions.length > 0;
   const sharedReferenceCount = Object.values(document.templates).filter((template) => template.sectionIds.includes(section.id)).length;
 
@@ -453,7 +458,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
               {mediaNarrative ? (
                 <>
                   <label className="grid gap-1.5 text-[8px] font-semibold text-black/45 md:col-span-2">
-                    {section.type === "background-media" ? "Arka plan medyası" : "Video medyası"}
+                    {section.type === "background-media" ? "Arka plan fotoğrafı / videosu" : "Bölüm fotoğrafı / videosu"}
                     <div className="flex gap-2">
                       <select
                         value={text(settings.imageAssetId)}
@@ -466,7 +471,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                       >
                         <option value="">{section.type === "hero" ? "Mevcut ana görseli kullan" : "Medya seçilmedi"}</option>
                         {mediaAssets
-                          .filter((asset) => section.type === "background-media" || section.type === "hero" || asset.type === "video")
+                          .filter((asset) => asset.type === "image" || asset.type === "video")
                           .map((asset) => <option key={asset.assetId} value={asset.assetId}>{mediaOptionLabel(asset)}</option>)}
                       </select>
                       <button type="button" onClick={() => setMediaPicker({ target: "section", key: "imageAssetId", mediaType: "any" })} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
@@ -1342,7 +1347,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                       <select value={text(settings.imageAssetId)} onChange={(event) => updateSetting("imageAssetId", event.target.value)} className="h-9 min-w-0 flex-1 rounded-lg border border-black/10 bg-white px-2.5 text-[9px] outline-none">
                         <option value="">Medya seçilmedi</option>
                         {mediaAssets
-                          .filter((asset) => section.type === "video-text-split" ? asset.type === "video" : asset.type === "image")
+                          .filter((asset) => asset.type === "image" || asset.type === "video")
                           .map((asset) => <option key={asset.assetId} value={asset.assetId}>{mediaOptionLabel(asset)}</option>)}
                       </select>
                       <button
@@ -1585,7 +1590,7 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
                                   {mediaAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{mediaOptionLabel(asset)}</option>)}
                                 </select>
                                 <button type="button" onClick={() => setMediaPicker({ target: "block", blockId: block.id, key, mediaType: "any" })} className="h-9 rounded-lg border border-black/10 bg-white px-3 text-[8px] font-semibold hover:bg-black/[0.03]">
-                                  Medya Arşivi
+                                  Fotoğraf / Video Ekle
                                 </button>
                               </div>
                             </label>
@@ -1695,12 +1700,13 @@ export function StoreDesignBlockSectionEditor({ document, section, onApply, onCl
             document={document}
             onApply={onApply}
             onClose={() => setMediaPicker(null)}
-            onSelect={(assetId) => {
+            onSelect={(assetId, asset) => {
+              if (asset) setPendingMediaAssets((current) => ({ ...current, [assetId]: asset }));
               if (mediaPicker.target === "block") {
                 updateBlock(mediaPicker.blockId, mediaPicker.key, assetId);
               } else {
                 updateSetting(mediaPicker.key, assetId);
-                if (mediaPicker.key === "imageAssetId" && document.media[assetId]?.type !== "video") updateSetting("posterAssetId", "");
+                if (mediaPicker.key === "imageAssetId" && (asset || mergedMedia[assetId])?.type !== "video") updateSetting("posterAssetId", "");
               }
               setMediaPicker(null);
             }}
