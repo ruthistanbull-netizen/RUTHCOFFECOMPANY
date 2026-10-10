@@ -8,6 +8,7 @@ import {
   defaultDynamicTarget,
   normalizePanelRoute,
   panelSnapshotEligible,
+  panelSnapshotRoutineExpiry,
   type PanelSyncTarget,
 } from "@/lib/panelSyncRegistry";
 
@@ -330,10 +331,16 @@ async function run(request: Request) {
 
     const { data: freshnessRows } = await supabase
       .from("panel_read_models")
-      .select("status,expires_at,last_error")
+      .select("route_path,status,expires_at,last_error")
       .limit(300);
-    const staleCount = (freshnessRows || []).filter((row: any) => row.status !== "healthy" || (row.expires_at && new Date(row.expires_at).getTime() < Date.now())).length;
-    const errorCount = (freshnessRows || []).filter((row: any) => row.status === "error").length;
+    // TTL expiry is expected for event-driven snapshots; editor routes are
+    // live-only. Neither should produce a worker failure alert.
+    const relevantRows = (freshnessRows || []).filter((row: any) => panelSnapshotEligible(String(row.route_path || "")));
+    const routineExpiredCount = relevantRows.filter((row: any) => panelSnapshotRoutineExpiry(row)).length;
+    const staleCount = relevantRows.filter((row: any) =>
+      row.status === "error" || (row.status === "stale" && !panelSnapshotRoutineExpiry(row)),
+    ).length;
+    const errorCount = relevantRows.filter((row: any) => row.status === "error").length;
 
     const [{ count: outboxPending }, { count: outboxDead }, { count: jobsPending }, { count: jobsDead }] = await Promise.all([
       supabase.from("commerce_outbox").select("id", { count: "exact", head: true }).in("status", ["pending", "processing", "failed"]),
@@ -350,9 +357,9 @@ async function run(request: Request) {
       errorCount > 5
         ? `${errorCount} read-model hata durumunda.`
         : staleCount > 0 || failed.length > 0
-          ? `${staleCount} snapshot eski, bu turda ${failed.length} yenileme başarısız.`
-          : `${freshnessRows?.length || 0} read-model güncel ve hazır.`,
-      { staleCount, errorCount, failedTargets: failed.length },
+          ? `${staleCount} gerçek read-model sorunu, bu turda ${failed.length} yenileme başarısız.`
+          : `${relevantRows.length} izlenen read-model, ${routineExpiredCount} yalnızca süresi dolmuş.`,
+      { staleCount, routineExpiredCount, errorCount, failedTargets: failed.length },
       { notify: errorCount > 5 },
     )) || alertQueued;
 

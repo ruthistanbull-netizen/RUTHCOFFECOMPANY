@@ -60,6 +60,17 @@ export function panelSnapshotExpired(expiresAt: unknown, now = Date.now()) {
   return !Number.isFinite(timestamp) || timestamp <= now;
 }
 
+/**
+ * The self-heal supervisor marks TTL-expired snapshot copies "stale", even when
+ * their original source is healthy. They cannot be used as authoritative data,
+ * but expiration alone is not a failed refresh or a degraded database.
+ * Actual worker errors retain their own error message and remain actionable.
+ */
+export function panelSnapshotRoutineExpiry(row: { status?: unknown; last_error?: unknown }) {
+  return row.status === "stale"
+    && row.last_error === "ROSTA self-heal: read model expired";
+}
+
 export function panelSnapshotEligible(route: string) {
   const pathname = new URL(route, "https://admin.local").pathname;
   if (!pathname.startsWith("/api/")) return false;
@@ -75,6 +86,13 @@ export function panelSnapshotEligible(route: string) {
     "/api/ruthie",
     "/api/health",
     "/api/commerce-core/health",
+    // Store Design is live-editing state, not durable dashboard snapshots.
+    // Numeric editor IDs change each visit and previously created 135+ stale
+    // entries from /api/theme and /api/theme-editor-pages alone.
+    "/api/theme",
+    "/api/theme-editor-pages",
+    "/api/theme-sections",
+    "/api/store-design-v2",
     // Products, orders and customers were stable in the early-August panel when
     // their pages owned one live request directly. Never let panel read-model
     // snapshots or dynamic registration become the first paint authority here.
@@ -128,7 +146,7 @@ export const PANEL_SYNC_TARGETS: PanelSyncTarget[] = [
   eventTarget("reviews-pending", "/api/reviews?status=pending", "reviews", 70),
   eventTarget("contact-all", "/api/contact-messages?status=all", "contact", 80),
   eventTarget("contact-new", "/api/contact-messages?status=new", "contact", 80),
-  eventTarget("theme", "/api/theme", "theme", 50),
+  // /api/theme is intentionally live-only; do not prefetch editor documents.
 ];
 
 export const PANEL_SYNC_BY_ROUTE = new Map(PANEL_SYNC_TARGETS.map((target) => [normalizePanelRoute(target.route), target]));
