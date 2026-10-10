@@ -459,14 +459,29 @@ export async function requireAdmin(request: Request) {
       return { error: NextResponse.json({ ok: false, error: "Rol doğrulaması geçici olarak yapılamıyor." }, { status: 503 }) };
     }
   }
+  // Keep the route's owner/role checks in sync with live metadata, not a
+  // previously signed JWT whose role may now have been revoked.
+  if (!isRead) Object.assign(result.user, { app_metadata: metadata });
   const role = String(metadata.panel_role || "").toLowerCase();
   const status = String(metadata.panel_status || "active").toLowerCase();
   if (!PANEL_ROLES.has(role) || status !== "active") {
     return { error: NextResponse.json({ ok: false, error: "ROSTA panel erişim yetkin yok veya hesabın devre dışı." }, { status: 403 }) };
   }
 
-  if (isRead) return result;
   const path = new URL(request.url).pathname;
+  if (role === "owner" || role === "admin") return result;
+  if (isRead) {
+    if (path === "/api/me" || path === "/api/account") return result;
+    if (role === "viewer") {
+      const viewerReadable = ["/api/products", "/api/categories", "/api/collections", "/api/inventory", "/api/dashboard"];
+      if (viewerReadable.some((prefix) => matchesRoute(path, prefix))) return result;
+    } else {
+      const commonReadable = ["/api/dashboard", "/api/products", "/api/categories", "/api/collections", "/api/inventory", "/api/health"];
+      if ([...commonReadable, ...(ROLE_WRITE_PREFIXES[role] || [])]
+        .some((prefix) => matchesRoute(path, prefix))) return result;
+    }
+    return { error: NextResponse.json({ ok: false, error: "Bu verileri görmek için panel rolünün yetkisi yok." }, { status: 403 }) };
+  }
 
   // Account mutations perform their own strict owner/self checks server-side.
   if (path === "/api/account") return result;
