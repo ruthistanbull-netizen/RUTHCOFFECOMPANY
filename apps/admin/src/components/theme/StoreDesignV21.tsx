@@ -703,7 +703,8 @@ export function StoreDesignV21() {
   const [device, setDevice] = useState<Device>("desktop");
   const [interactionMode, setInteractionMode] = useState<"browse" | "edit">("edit");
   const [selected, setSelected] = useState<SelectedTarget | null>(null);
-  const [scope, setScope] = useState<EditorScope>("global");
+  // Editing a selected element defaults to that element, never every image on the site.
+  const [scope, setScope] = useState<EditorScope>("instance");
   const [connected, setConnected] = useState(false);
   const [connectionStalled, setConnectionStalled] = useState(false);
   const [lastHeartbeat, setLastHeartbeat] = useState(0);
@@ -1893,7 +1894,8 @@ export function StoreDesignV21() {
 
   const openQuickMediaPickerForTarget = useCallback((target: SelectedTarget) => {
     if (!activePage || !target.current.media) return;
-    const patchScope = target.allowedScopes.includes(scope) ? scope : target.defaultScope;
+    // Quick media change must target the clicked image/video, not a global image family.
+    const patchScope = target.allowedScopes.includes("instance") ? "instance" : target.defaultScope;
     const responsive = responsiveSettingsFor(document, target, patchScope, activePage);
     const deviceLeaves = new Map(flattenResponsiveLeaves(recordValue(responsive[device])));
     setSelected(target);
@@ -1908,7 +1910,7 @@ export function StoreDesignV21() {
     });
     setContextMenu(null);
     setMediaOpen(true);
-  }, [activePage, document, scope, device]);
+  }, [activePage, document, device]);
 
   const openQuickMediaPicker = () => {
     if (!selected) return;
