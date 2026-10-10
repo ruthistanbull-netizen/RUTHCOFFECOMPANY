@@ -51,8 +51,7 @@ export function publishedHomepageMedia(
   settings: ThemeCustomizerSettings,
   document: ThemeDocument,
 ): ThemeCustomizerSettings {
-  const page = settings.editor.pages["/"];
-  if (!page) return settings;
+  const page = settings.editor.pages["/"] || { overrides: [] };
 
   const selected = new Map<string, ResponsiveSources>();
   const accept = (key: string, responsive: unknown) => {
@@ -76,7 +75,7 @@ export function publishedHomepageMedia(
   }
 
   const home = document.pages["/"] || Object.values(document.pages).find((item) => item.route === "/");
-  const template = home?.templateId ? document.templates[home.templateId] : undefined;
+  const template = home?.templateId ? document.templates[home.templateId] : (document.templates["route:/"] || document.templates["template:home"]);
   for (const [key, value] of Object.entries(template?.componentSettings || {})) accept(key, value);
   for (const sectionId of template?.sectionIds || []) {
     const section = document.sections[sectionId];
@@ -100,6 +99,8 @@ export function publishedHomepageMedia(
     const value = {
       ...old,
       id,
+      selector: typeof old.selector === "string" ? old.selector : `[data-theme-id="${id}"]`,
+      label: typeof old.label === "string" ? old.label : id,
       imageSrc: src,
       desktopImageSrc: src,
       mobileImageSrc: mobile,
