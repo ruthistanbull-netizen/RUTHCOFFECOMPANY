@@ -18,7 +18,8 @@ export function previewRostaPublicMediaUrl(value: string): string {
     if (host.origin !== ROSTA_SUPABASE_URL ||
       !/^\/storage\/v1\/(?:object|render\/image)\/public\/(?:rosta-media|website-media)\//.test(host.pathname)) return value;
     const endpoint = normalizeSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL);
-    return endpoint + host.pathname + host.search + host.hash;
+    const objectPath = host.pathname.replace(/^\/storage\/v1\/render\/image\/public\//, "/storage/v1/object/public/");
+    return endpoint + objectPath + host.search + host.hash;
   } catch {
     return value;
   }
