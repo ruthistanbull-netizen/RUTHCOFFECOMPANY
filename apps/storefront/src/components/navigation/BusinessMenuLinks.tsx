@@ -14,8 +14,19 @@ export function partitionMenuLinks<T extends ThemeNavItem>(items: T[]) {
     else primary.push(item);
   }
 
-  // Existing saved navigation settings predate the wholesale page.
-  // Keep configured links intact and supply its default destination once.
+  // Persisted menus from the old Supabase project may not contain new
+  // editorial pages. Keep saved menu links intact, but always show ROSTA.Studio
+  // and wholesale once, on mobile and desktop alike.
+  if (!business.some((item) => item.path.split(/[?#]/, 1)[0].replace(/\/+$/, "") === BUSINESS_EDITORIAL_ROUTES.studio)) {
+    business.push({
+      id: "rosta-studio",
+      label: "ROSTA.Studio",
+      path: BUSINESS_EDITORIAL_ROUTES.studio,
+      side: "left",
+      children: [],
+    });
+  }
+
   if (!business.some((item) => item.path.split(/[?#]/, 1)[0].replace(/\/+$/, "") === BUSINESS_EDITORIAL_ROUTES.wholesale)) {
     business.push({
       id: "rosta-wholesale",
