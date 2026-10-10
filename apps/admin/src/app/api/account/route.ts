@@ -300,23 +300,37 @@ export async function POST(request: Request) {
       });
       if (error || !data.user) throw new Error(error?.message || "Davet gönderilemedi.");
       userId = String(data.user.id);
+      // GoTrue can return nullable phone in app_metadata; spreading that typed
+      // object directly fails AdminUserAttributes (phone must not be null).
+      // Preserve provider metadata without copying nullable fields verbatim.
+      const existingAppMetadata: Record<string, unknown> = Object.fromEntries(
+        Object.entries(data.user.app_metadata || {}).filter(
+          ([key, value]) => key !== "phone" || typeof value === "string",
+        ),
+      );
       const { error: inviteRoleError } = await auth.supabase.auth.admin.updateUserById(userId, {
-        app_metadata: { ...(data.user.app_metadata || {}), panel_role: role, panel_status: "active" },
+        app_metadata: { ...existingAppMetadata, panel_role: role, panel_status: "active" },
       });
       if (inviteRoleError) throw new Error(inviteRoleError.message);
     } else {
       throw new Error("Geçersiz kullanıcı oluşturma işlemi.");
     }
 
-    const { error: profileError } = await auth.supabase.from("profiles").upsert({
+    // Never overwrite an existing Ruth/ROSTA profile by matching email.
+    // Each newly created Auth identity gets a new, explicit panel profile.
+    const { error: profileError } = await auth.supabase.from("profiles").insert({
       auth_user_id: userId,
       email,
       full_name: fullName,
       phone,
       role: "admin",
       updated_at: new Date().toISOString(),
-    }, { onConflict: "email" });
-    if (profileError) throw new Error(profileError.message);
+    });
+    if (profileError) {
+      // Roll back only the Auth identity created by this request.
+      await auth.supabase.auth.admin.deleteUser(userId).catch(() => undefined);
+      throw new Error(profileError.message);
+    }
     return NextResponse.json({ ok: true, ...(await payload(auth)) });
   } catch (error) {
     return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : "Kullanıcı oluşturulamadı." }, { status: 400 });

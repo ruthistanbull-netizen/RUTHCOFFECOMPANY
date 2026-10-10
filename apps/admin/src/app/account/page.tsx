@@ -4,7 +4,7 @@ import { ExactAccountLogout } from "@/components/base44-exact/ExactAccountLogout
 export default function AccountPage() {
   return (
     <div className="space-y-4">
-      <ExactAccount />
+      <ExactAccount mode="profile" />
       <ExactAccountLogout />
     </div>
   );
