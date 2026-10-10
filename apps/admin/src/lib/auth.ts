@@ -441,14 +441,31 @@ export async function requireAdmin(request: Request) {
   const result = await requireAdminIdentity(request);
   if ("error" in result || result.internal) return result;
 
-  const role = String(result.user.app_metadata?.panel_role || "").toLowerCase();
-  const status = String(result.user.app_metadata?.panel_status || "active").toLowerCase();
+  const method = request.method.toUpperCase();
+  const isRead = method === "GET" || method === "HEAD" || method === "OPTIONS";
+  // Always refresh authoritative app_metadata on mutations: JWT claims and
+  // continuity cookies may contain a stale role after an owner disables a user.
+  let metadata = result.user.app_metadata || {};
+  if (!isRead) {
+    try {
+      const live = await withTimeout(
+        result.supabase.auth.admin.getUserById(String(result.user.id)),
+        5_000,
+        "ROSTA kullanıcı yetkisi doğrulanamadı.",
+      );
+      if (live.error || !live.data.user) throw new Error("Kullanıcı yetkisi alınamadı.");
+      metadata = live.data.user.app_metadata || {};
+    } catch {
+      return { error: NextResponse.json({ ok: false, error: "Rol doğrulaması geçici olarak yapılamıyor." }, { status: 503 }) };
+    }
+  }
+  const role = String(metadata.panel_role || "").toLowerCase();
+  const status = String(metadata.panel_status || "active").toLowerCase();
   if (!PANEL_ROLES.has(role) || status !== "active") {
     return { error: NextResponse.json({ ok: false, error: "ROSTA panel erişim yetkin yok veya hesabın devre dışı." }, { status: 403 }) };
   }
 
-  const method = request.method.toUpperCase();
-  if (method === "GET" || method === "HEAD" || method === "OPTIONS") return result;
+  if (isRead) return result;
   const path = new URL(request.url).pathname;
 
   // Account mutations perform their own strict owner/self checks server-side.
