@@ -182,7 +182,7 @@ export function StoreDesignMediaLibrary({
       await onApply(next, "Medya kütüphanesine dosya eklendi");
       setDetailId(assetId);
       setFocal({ x: 50, y: 50 });
-      toast.success("Medya yüklendi.");
+      toast.success("Medya yüklendi. Canlı sitede görünmesi için bölüme bağlayıp Yayınla.");
       if (onSelect) onSelect(assetId, next.media[assetId]);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Medya yüklenemedi.");
