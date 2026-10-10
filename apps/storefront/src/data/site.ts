@@ -1,6 +1,7 @@
 import { unstable_cache, unstable_noStore as noStore } from "next/cache";
 import { supabase } from "@/lib/supabase";
 import { rewriteRostaPublicMediaReferences } from "@/lib/supabaseRuntime";
+import { readPanelPublishedTheme } from "@/lib/panelPublishedTheme";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 import { automaticDiscountForItem, loadDiscountCampaignSettings } from "@/lib/discountCampaigns";
 import { productHasImage } from "@/lib/productDisplay";
@@ -964,6 +965,16 @@ export async function getHomepageSections(): Promise<HomepageSection[]> {
 }
 
 async function fetchStoreDesignV2Published(): Promise<ThemeDocument> {
+  // Never silently prefer an old Cloud database over the panel's live self-host.
+  // This route serves only the already-published, public V2 theme.
+  const panel = await readPanelPublishedTheme();
+  if (panel?.published) {
+    try {
+      return migrateThemeDocument(rewriteRostaPublicMediaReferences(panel.published)).document;
+    } catch (error) {
+      console.error("[ROSTA storefront] Panel published theme is unreadable:", error);
+    }
+  }
   const client = getCatalogClient();
   if (!USE_SUPABASE_CATALOG || !client) return createEmptyThemeDocument();
 
@@ -1088,6 +1099,16 @@ export async function getSocialMediaSettings(): Promise<SocialMediaSettings> {
 }
 
 async function fetchThemeCustomizerSettings(): Promise<ThemeCustomizerSettings> {
+  const panel = await readPanelPublishedTheme();
+  if (panel?.customizer) {
+    try {
+      return applyRostaStorefrontDesignSystem(
+        normalizeThemeCustomizerSettings(rewriteRostaPublicMediaReferences(panel.customizer)),
+      );
+    } catch (error) {
+      console.error("[ROSTA storefront] Panel theme customizer cannot be loaded:", error);
+    }
+  }
   const client = getCatalogClient();
   if (!client) return applyRostaStorefrontDesignSystem(defaultThemeCustomizerSettings);
 
@@ -1117,9 +1138,8 @@ const getCachedThemeCustomizerSettings = unstable_cache(
 );
 
 export async function getThemeCustomizerSettings(): Promise<ThemeCustomizerSettings> {
-  if (!USE_SUPABASE_CATALOG || !getCatalogClient()) {
-    return applyRostaStorefrontDesignSystem(defaultThemeCustomizerSettings);
-  }
+  // Public theme remains available through the panel's self-host even when
+  // this storefront service does not have working direct Supabase credentials.
   if (liveThemePromise) return liveThemePromise;
 
   const promise = (FORCE_LIVE_THEME_READS ? (noStore(), fetchThemeCustomizerSettings()) : getCachedThemeCustomizerSettings())
