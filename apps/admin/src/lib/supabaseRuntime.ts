@@ -1,25 +1,24 @@
-import { assertRostaSupabaseUrl, ROSTA_SUPABASE_URL } from "@/lib/platform";
+import { ROSTA_SELF_HOSTED_SUPABASE_URL, ROSTA_STORE_URL, ROSTA_SUPABASE_URL, assertRostaSupabaseUrl } from "@/lib/platform";
 
 export const CANONICAL_SUPABASE_URL = ROSTA_SUPABASE_URL;
 
-/**
- * Reject Ruth or third-party hosts. Never silently rewrite a configured
- * endpoint back to the retired Cloud project.
- */
 export function normalizeSupabaseUrl(value?: string) {
   return assertRostaSupabaseUrl(value?.trim() || CANONICAL_SUPABASE_URL);
 }
 
-/** View only: never change the published theme or Storage metadata. */
+/** Browser previews use the storefront same-origin public media gateway. */
 export function previewRostaPublicMediaUrl(value: string): string {
-  if (!value || !value.startsWith("https://")) return value;
+  if (!value || !/^https:\/\//i.test(value)) return value;
   try {
-    const host = new URL(value);
-    if (host.origin !== ROSTA_SUPABASE_URL ||
-      !/^\/storage\/v1\/(?:object|render\/image)\/public\/(?:rosta-media|website-media)\//.test(host.pathname)) return value;
-    const endpoint = normalizeSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL);
-    const objectPath = host.pathname.replace(/^\/storage\/v1\/render\/image\/public\//, "/storage/v1/object/public/");
-    return endpoint + objectPath + host.search + host.hash;
+    const current = new URL(value);
+    const parsed = current.pathname.match(/^\/storage\/v1\/(?:object|render\/image)\/public\/(rosta-media|website-media)\/(.+)$/);
+    if (!parsed) return value;
+    if (current.origin !== ROSTA_SELF_HOSTED_SUPABASE_URL && current.origin !== ROSTA_SUPABASE_URL) return value;
+    if (current.origin === ROSTA_SUPABASE_URL) {
+      const configured = normalizeSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL);
+      if (configured !== ROSTA_SELF_HOSTED_SUPABASE_URL) return value;
+    }
+    return `${ROSTA_STORE_URL}/api/rosta-media/${parsed[1]}/${parsed[2]}${current.search}${current.hash}`;
   } catch {
     return value;
   }
