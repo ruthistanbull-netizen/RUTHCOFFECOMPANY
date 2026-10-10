@@ -1,8 +1,8 @@
 import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 
 export const ADMIN_CONTINUITY_COOKIE = "rosta_admin_continuity";
-const CONTINUITY_VERSION = 2;
-const MAX_CONTINUITY_MS = 8 * 60 * 60 * 1000;
+const CONTINUITY_VERSION = 3;
+const MAX_CONTINUITY_MS = 10 * 60 * 1000;
 
 type AdminProfileSnapshot = {
   id: string;
@@ -17,6 +17,8 @@ type AdminContinuityPayload = {
   sid?: string;
   email?: string | null;
   profile: AdminProfileSnapshot;
+  panelRole: string;
+  panelStatus: string;
   ua: string;
   tokenHash: string;
   iat: number;
@@ -85,7 +87,7 @@ function signaturesEqual(left: string, right: string) {
 export function mintAdminContinuity(
   request: Request,
   bearerToken: string,
-  user: { id: string; email?: string | null },
+  user: { id: string; email?: string | null; app_metadata?: Record<string, unknown> },
   profile: AdminProfileSnapshot,
 ) {
   const bearer = bearerSnapshot(bearerToken);
@@ -107,6 +109,8 @@ export function mintAdminContinuity(
       full_name: profile.full_name || null,
       role: String(profile.role || "admin"),
     },
+    panelRole: String(user.app_metadata?.panel_role || ""),
+    panelStatus: String(user.app_metadata?.panel_status || "active"),
     ua: userAgentDigest(request),
     tokenHash: bearerDigest(bearerToken),
     iat: now,
@@ -144,6 +148,8 @@ export function readAdminContinuity(request: Request, bearerToken: string) {
   const payload = decodeBase64UrlJson<AdminContinuityPayload>(encoded);
   if (!payload || payload.v !== CONTINUITY_VERSION || payload.exp <= Date.now()) return null;
   if (payload.profile?.role !== "admin") return null;
+  if (!["owner", "admin", "operations", "support", "marketing", "viewer"].includes(payload.panelRole)) return null;
+  if (payload.panelStatus !== "active") return null;
   if (payload.ua !== userAgentDigest(request)) return null;
   if (!signaturesEqual(payload.tokenHash, bearerDigest(bearerToken))) return null;
 
@@ -156,7 +162,8 @@ export function readAdminContinuity(request: Request, bearerToken: string) {
     user: {
       id: payload.sub,
       email: payload.email || null,
-      user_metadata: { panel_status: "active", continuity_session: true },
+      user_metadata: { continuity_session: true },
+      app_metadata: { panel_role: payload.panelRole, panel_status: payload.panelStatus },
     },
     profile: payload.profile,
     issuedAt: payload.iat,
