@@ -37,22 +37,41 @@ export function normalizeSupabaseUrl(value?: string) {
 }
 
 /**
- * Theme/editor public media URLs were saved with their Cloud origin before the
- * self-hosted migration. Replace only ROSTA's exact original Storage host.
- * Never rewrite product media or another brand's Supabase URLs.
+ * Convert only ROSTA's own *public* Supabase Storage URLs.
+ * Never touch Ruth, foreign URLs, private/signed URLs, or records in the DB.
+ * If Zeabur is misconfigured, media rendering should not crash the entire
+ * storefront/editor SSR tree; the public API issue can be diagnosed separately.
  */
-export function rewriteRostaThemeStorageUrl(source: string): string {
+export function rewriteRostaPublicStorageUrl(source: string): string {
   if (!source || !/^https:\/\//i.test(source)) return source;
-  const targetOrigin = normalizeSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL);
+  let targetOrigin: string;
+  try {
+    targetOrigin = normalizeSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL);
+  } catch {
+    return source;
+  }
   if (targetOrigin === CANONICAL_SUPABASE_URL) return source;
+
   try {
     const current = new URL(source);
     if (
       current.origin !== CANONICAL_SUPABASE_URL ||
-      !/^\/storage\/v1\/object\/public\/(?:rosta-media|website-media)\//.test(current.pathname)
+      !/^\/storage\/v1\/(?:object|render\/image)\/public\/(?:rosta-media|website-media)\//.test(current.pathname)
     ) return source;
     return targetOrigin + current.pathname + current.search + current.hash;
   } catch {
     return source;
   }
+}
+
+export const rewriteRostaThemeStorageUrl = rewriteRostaPublicStorageUrl;
+
+/** Update public media URLs in CMS theme documents without changing stored data. */
+export function rewriteRostaPublicMediaReferences<T>(value: T): T {
+  if (typeof value === "string") return rewriteRostaPublicStorageUrl(value) as T;
+  if (Array.isArray(value)) return value.map((item) => rewriteRostaPublicMediaReferences(item)) as T;
+  if (!value || typeof value !== "object") return value;
+  return Object.fromEntries(
+    Object.entries(value).map(([key, item]) => [key, rewriteRostaPublicMediaReferences(item)]),
+  ) as T;
 }
