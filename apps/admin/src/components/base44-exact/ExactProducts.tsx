@@ -633,20 +633,22 @@ export function ExactProducts() {
             signal: controller.signal,
           };
 
-      const [catalog, optionResult] = await Promise.all([
-        adminRequest<ProductsResponse>(catalogPath, catalogOptions),
-        adminRequest<{ groups?: ProductFieldGroup[] }>("/api/product-settings/options", { signal: controller.signal })
-          .catch(() => ({ groups: FALLBACK_FIELD_GROUPS })),
-      ]);
+      // Filter metadata is auxiliary. A slow settings read must not keep an
+      // already-loaded product catalogue behind the primary page spinner.
+      void adminRequest<{ groups?: ProductFieldGroup[] }>("/api/product-settings/options", { signal: controller.signal })
+        .then((result) => {
+          if (controller.signal.aborted || loadSequenceRef.current !== sequence) return;
+          const groups = result.groups?.length ? result.groups : FALLBACK_FIELD_GROUPS;
+          setFieldGroups(groups);
+          setMaterials(managedFieldOptions(groups, "material").map((item) => item.value));
+        }).catch(() => undefined);
+      const catalog = await adminRequest<ProductsResponse>(catalogPath, catalogOptions);
       if (controller.signal.aborted || loadSequenceRef.current !== sequence) return;
 
-      const nextFieldGroups = optionResult.groups?.length ? optionResult.groups : FALLBACK_FIELD_GROUPS;
       const firstProducts = catalog.products || [];
       setProducts(firstProducts);
       setCollections(catalog.collections || []);
       setCategories(catalog.categories || []);
-      setFieldGroups(nextFieldGroups);
-      setMaterials(managedFieldOptions(nextFieldGroups, "material").map((item) => item.value));
       seedProgressiveProductCache(catalog, firstProducts, catalog.pagination);
 
       if (mode === "initial") setLoading(false);

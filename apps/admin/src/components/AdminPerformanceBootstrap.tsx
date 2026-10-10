@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { adminWarmJson, clearAdminApiCache, hydrateAdminSnapshotBootstrap, seedAdminApiCache } from "@/lib/adminApi";
+import { adminWarmJson, clearAdminApiCache, clearAdminAuthHeaderCache, hydrateAdminSnapshotBootstrap, seedAdminApiCache } from "@/lib/adminApi";
 import { clearAdminDataContinuity, installAdminDataContinuityGuard } from "@/lib/adminDataContinuity";
 import { clearAcceleratedAdminFetch, installAdminFetchAccelerator } from "@/lib/adminFetchAccelerator";
 import {
@@ -201,6 +201,9 @@ export function AdminPerformanceBootstrap() {
         } catch {}
       }
       if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+        // A rotated JWT must immediately match the newly signed continuity
+        // cookie; otherwise every read falls back to remote Auth verification.
+        clearAdminAuthHeaderCache();
         scheduleAuthBootstrap(event === "SIGNED_IN");
       }
     });

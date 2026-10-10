@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { timingSafeEqual } from "node:crypto";
+import { createHash, timingSafeEqual } from "node:crypto";
 import { readAdminContinuity } from "@/lib/adminContinuity";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 
@@ -61,6 +61,7 @@ type InternalSecretCache = {
 };
 
 const profileCache = new Map<string, ProfileCacheEntry>();
+const tokenVerifications = new Map<string, ReturnType<typeof verifyAdminTokenLive>>();
 let internalSecretCache: InternalSecretCache | null = null;
 let internalSecretLoad: Promise<string | null> | null = null;
 let authFailureCount = 0;
@@ -210,7 +211,7 @@ function authTransientFailure() {
   }
 }
 
-async function verifyAdminToken(supabase: ReturnType<typeof getSupabaseAdmin>, token: string): Promise<{
+async function verifyAdminTokenLive(supabase: ReturnType<typeof getSupabaseAdmin>, token: string): Promise<{
   user?: VerifiedAdminUser;
   invalid?: boolean;
   transientError?: string;
@@ -280,6 +281,19 @@ async function verifyAdminToken(supabase: ReturnType<typeof getSupabaseAdmin>, t
         : "Kimlik servisine geçici olarak ulaşılamıyor.",
     };
   }
+}
+
+function verifyAdminToken(supabase: ReturnType<typeof getSupabaseAdmin>, token: string) {
+  // Concurrent page loaders share cryptographic verification, with no result TTL
+  // and no change to the live verification required for mutations.
+  const key = createHash("sha256").update(token).digest("hex");
+  const existing = tokenVerifications.get(key);
+  if (existing) return existing;
+  const work = verifyAdminTokenLive(supabase, token).finally(() => {
+    if (tokenVerifications.get(key) === work) tokenVerifications.delete(key);
+  });
+  tokenVerifications.set(key, work);
+  return work;
 }
 
 function continuityAuth(request: Request, token: string, supabase: ReturnType<typeof getSupabaseAdmin>) {

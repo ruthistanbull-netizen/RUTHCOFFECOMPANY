@@ -1,8 +1,7 @@
 "use client";
 
 import {
-  adminAuthHeaders,
-  apiUrl,
+  adminRequest,
   clearAdminApiCache,
   seedAdminApiCache,
 } from "@/lib/adminApi";
@@ -70,13 +69,6 @@ function routePathname(path: string) {
 
 function routeTimeout(path: string) {
   return routePathname(path).startsWith("/api/meta-ads") ? 45_000 : 12_000;
-}
-
-function apiErrorMessage(payload: any, status: number) {
-  if (typeof payload?.error === "string" && payload.error.trim()) return payload.error;
-  if (typeof payload?.error?.message === "string" && payload.error.message.trim()) return payload.error.message;
-  if (typeof payload?.message === "string" && payload.message.trim()) return payload.message;
-  return `Canlı veri isteği başarısız oldu (${status}).`;
 }
 
 function readPersistedLastGood(path: string) {
@@ -158,30 +150,11 @@ function acceptCandidate<T>(path: string, value: T, sequence: number, reason: Ad
 }
 
 async function authoritativeRead<T>(path: string, timeoutMs: number): Promise<T> {
-  const controller = new AbortController();
-  const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const authHeaders = await adminAuthHeaders();
-    const headers = new Headers(authHeaders);
-    headers.set("X-Ruth-Admin-Request", "1");
-    headers.set("X-Ruth-Cache-Bypass", "1");
-    headers.set("X-Ruth-Continuity-Probe", "1");
-
-    const response = await fetch(apiUrl(path), {
-      method: "GET",
-      headers,
-      cache: "no-store",
-      signal: controller.signal,
-    });
-    const payload = await response.json().catch(() => ({}));
-    if (!response.ok || payload?.ok === false) throw new Error(apiErrorMessage(payload, response.status));
-    return payload as T;
-  } catch (error) {
-    if (controller.signal.aborted) throw new Error(`Canlı veri isteği ${Math.ceil(timeoutMs / 1000)} saniye içinde yanıt vermedi.`);
-    throw error;
-  } finally {
-    window.clearTimeout(timeout);
-  }
+  return adminRequest<T>(path, {
+    hardRefresh: true,
+    timeoutMs,
+    headers: { "X-Ruth-Continuity-Probe": "1" },
+  });
 }
 
 function commitConfirmedEmpty<T>(path: string, value: T, sequence: number, reason: AdminFreshnessReason) {
@@ -310,11 +283,6 @@ export function installAdminOperationalFreshnessCacheGuard() {
     // second freshness owner when their normal page request updates adminApi cache.
     if (!panelSnapshotEligible(path)) return;
 
-    if (!acceptedPayloads.has(path)) {
-      void reconcileAdminResource(path, { reason: "safety-reconcile" });
-      return;
-    }
-
     if (detail?.seeded) return;
 
     const acceptedValue = acceptedPayloads.get(path);
@@ -336,7 +304,14 @@ export function installAdminOperationalFreshnessCacheGuard() {
       return;
     }
 
-    void reconcileAdminResource(path, { reason: "safety-reconcile" });
+    // This is already the canonical live response. Accept it directly instead of
+    // issuing another identical database request for every cache update. Only an
+    // unexpected empty transition needs a second authoritative confirmation.
+    if (meaningfulAdminPayload(detail?.value) && !suspiciousAdminEmptyTransition(previousPayload(path), detail?.value)) {
+      acceptCandidate(path, detail.value, kernel.begin(path), "safety-reconcile");
+    } else {
+      void reconcileAdminResource(path, { reason: "safety-reconcile" }).catch(() => undefined);
+    }
   }) as EventListener);
 }
 

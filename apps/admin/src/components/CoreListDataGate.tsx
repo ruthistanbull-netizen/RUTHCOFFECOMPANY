@@ -3,9 +3,7 @@
 import { AlertTriangle, Loader2, RefreshCw } from "lucide-react";
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import {
-  adminAuthHeaders,
-  apiUrl,
-  clearAdminApiCache,
+  adminRequest,
   seedAdminApiCache,
 } from "@/lib/adminApi";
 
@@ -37,52 +35,13 @@ const CORE_CONFIG: Record<CoreListKind, CoreConfig> = {
   },
 };
 
-function wait(ms: number) {
-  return new Promise<void>((resolve) => window.setTimeout(resolve, ms));
-}
-
 function rowsOf(config: CoreConfig, payload: CoreListPayload) {
   const value = payload?.[config.rowKey];
   return Array.isArray(value) ? value : [];
 }
 
-function messageFrom(payload: any, status: number) {
-  if (typeof payload?.error === "string" && payload.error.trim()) return payload.error;
-  if (typeof payload?.error?.message === "string" && payload.error.message.trim()) return payload.error.message;
-  if (typeof payload?.message === "string" && payload.message.trim()) return payload.message;
-  return `Canlı veri isteği başarısız oldu (${status}).`;
-}
-
-async function liveGet<T>(path: string, timeoutMs = 8_000): Promise<T> {
-  const controller = new AbortController();
-  const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const authHeaders = await adminAuthHeaders();
-    const response = await fetch(apiUrl(path), {
-      method: "GET",
-      headers: {
-        ...authHeaders,
-        "X-Ruth-Admin-Request": "1",
-        "X-Ruth-Cache-Bypass": "1",
-        "X-Ruth-Core-Live": "1",
-      },
-      cache: "no-store",
-      signal: controller.signal,
-    });
-    const payload = await response.json().catch(() => ({}));
-    if (!response.ok || payload?.ok === false) throw new Error(messageFrom(payload, response.status));
-    return payload as T;
-  } catch (error) {
-    if (controller.signal.aborted) throw new Error(`Canlı veri isteği ${Math.ceil(timeoutMs / 1000)} saniye içinde yanıt vermedi.`);
-    throw error;
-  } finally {
-    window.clearTimeout(timeout);
-  }
-}
-
 function seedCoreList(kind: CoreListKind, payload: CoreListPayload) {
   if (kind === "products") {
-    clearAdminApiCache("/api/products");
     seedAdminApiCache("/api/products?q=", {
       ok: true,
       products: payload.products || [],
@@ -102,7 +61,6 @@ function seedCoreList(kind: CoreListKind, payload: CoreListPayload) {
   }
 
   if (kind === "orders") {
-    clearAdminApiCache("/api/orders");
     seedAdminApiCache("/api/orders?range=all&payment=all&q=", {
       ok: true,
       orders: payload.orders || [],
@@ -110,7 +68,6 @@ function seedCoreList(kind: CoreListKind, payload: CoreListPayload) {
     return;
   }
 
-  clearAdminApiCache("/api/customers");
   seedAdminApiCache(CORE_CONFIG.customers.sourcePath, payload, {
     ttlMs: 60_000,
     staleMs: 2 * 60 * 60_000,
@@ -142,39 +99,42 @@ export function CoreListDataGate({
         setError("");
       }
 
-      let lastError: unknown = null;
-      for (let attempt = 0; attempt < 3; attempt += 1) {
-        try {
-          const [countsPayload, listPayload] = await Promise.all([
-            liveGet<CountPayload>("/api/core-list-counts", attempt === 0 ? 6_000 : 8_000),
-            liveGet<CoreListPayload>(config.sourcePath, attempt === 0 ? 7_000 : 9_000),
-          ]);
-
-          const expected = Math.max(0, Number(countsPayload.counts?.[kind] || 0));
-          const rows = rowsOf(config, listPayload);
-
-          // This is the failure mode that used to become “Ürün bulunamadı”: the DB
-          // still has rows while the list request transiently returns []. Never seed
-          // or render that false empty response.
-          if (expected > 0 && rows.length === 0) {
-            throw new Error(`DB'de ${expected} ${label} var ama canlı liste endpointi 0 kayıt döndürdü.`);
-          }
-
-          seedCoreList(kind, listPayload);
-          if (!mountedRef.current) return;
-          setError("");
-          setReady(true);
-          setRevision((current) => current + 1);
-          return;
-        } catch (caught) {
-          lastError = caught;
-          if (attempt < 2) await wait(attempt === 0 ? 350 : 700);
+      try {
+        const listPayload = await adminRequest<CoreListPayload>(config.sourcePath, {
+          hardRefresh: true,
+          force: true,
+          headers: { "X-Ruth-Core-Live": "1" },
+        });
+        if (!Array.isArray(listPayload?.[config.rowKey])) throw new Error(`${label} listesi eksik döndü.`);
+        const rows = rowsOf(config, listPayload);
+        // Non-empty lists are already verified by their route's PostgREST body
+        // and count checks. Never block them on counts for unrelated tables.
+        const expected = rows.length > 0 ? rows.length : await adminRequest<CountPayload>(
+          `/api/core-list-counts?kind=${kind}`,
+          { hardRefresh: true },
+        ).then((payload) => {
+          const count = payload.counts?.[kind];
+          if (!Number.isSafeInteger(count) || Number(count) < 0) throw new Error("Liste sayacı doğrulanamadı.");
+          return Number(count);
+        });
+        // This is the failure mode that used to become “Ürün bulunamadı”: the DB
+        // still has rows while the list request transiently returns []. Never seed
+        // or render that false empty response.
+        if (expected > 0 && rows.length === 0) {
+          throw new Error(`DB'de ${expected} ${label} var ama canlı liste endpointi 0 kayıt döndürdü.`);
         }
-      }
 
-      if (!mountedRef.current) return;
-      setError(lastError instanceof Error ? lastError.message : `Canlı ${label} verisi alınamadı.`);
-      if (blocking) setReady(false);
+        seedCoreList(kind, listPayload);
+        if (!mountedRef.current) return;
+        setError("");
+        setReady(true);
+        setRevision((current) => current + 1);
+        return;
+      } catch (caught) {
+        if (!mountedRef.current) return;
+        setError(caught instanceof Error ? caught.message : `Canlı ${label} verisi alınamadı.`);
+        if (blocking) setReady(false);
+      }
     })().finally(() => {
       runningRef.current = null;
     });
