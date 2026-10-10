@@ -274,9 +274,12 @@ export default function ScrollStory({
                   key={`img-${activeMedia.src}-${index}`}
                   href={slide.href}
                   aria-label={`${slide.title} içeriğini incele`}
-                  data-editor-id={slide.blockId ? `block:${slide.blockId}` : undefined}
-                  data-editor-type={slide.blockId ? "scroll-story-slide" : undefined}
-                  data-editor-label={slide.blockId ? slide.title : undefined}
+                  // Explicitly register EVERY circle, including the legacy six
+                  // before any V2 scene blocks have been added. Clicking anywhere
+                  // on the circle must select that scene in the admin inspector.
+                  data-editor-id={slide.blockId ? `block:${slide.blockId}` : homeScrollMediaId(index)}
+                  data-editor-type="scroll-story-slide"
+                  data-editor-label={slide.title}
                   className="absolute inset-0 overflow-hidden rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brick"
                   style={{
                     opacity,

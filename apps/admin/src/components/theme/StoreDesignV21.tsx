@@ -304,6 +304,71 @@ function sectionRegistration(target: SelectedTarget) {
   return entry ? { id: entry.id.slice("section:".length), type: entry.type } : null;
 }
 
+
+const ROSTA_CIRCLE_COPY = [
+  { title: "Çekirdeğin karakteri fincanda.", body: "ROSTA’da ürün seçimi; aroma, gövde ve kullanım deneyimini anlaşılır biçimde sunmakla başlar.", href: "/products" },
+  { title: "Espresso için net ve dengeli.", body: "Günlük kahve rutininde tutarlı sonuç almak için ürün bilgisini sade, seçimi kolay tutuyoruz.", href: "/products" },
+  { title: "Kavrumdan servise tutarlı bir çizgi.", body: "Çekirdeğin karakterini koruyan kavrum yaklaşımı ve doğru kullanım bilgisi, her fincanda daha öngörülebilir sonuç verir.", href: "/products" },
+  { title: "Evde iyi kahve daha kolay.", body: "Doğru kahve, doğru saklama ve anlaşılır ürün detaylarıyla hazırlama sürecini gereksiz karmaşadan uzaklaştır.", href: "/products" },
+  { title: "Kahve ritüeli, günlük hayatın içinde.", body: "Evden kafeye, hızlı bir espresso molasından yavaş demlemeye kadar ROSTA ürünleri gerçek kullanım anları için tasarlanır.", href: "/products" },
+  { title: "ROSTA Coffee Co.", body: "Perakendeden profesyonel kahve ihtiyaçlarına kadar aynı yaklaşım: tutarlı ürün, açık bilgi ve güçlü deneyim.", href: "/about" },
+] as const;
+
+type SelectedScrollCircle = { sectionId: string; index: number; blockId?: string };
+type CircleMediaPickerTarget = { sectionId: string; index: number };
+
+/**
+ * Resolve both legacy circles (home-scroll-media-N) and published V2 scene
+ * blocks (block:ID / block:ID.media). The selection can come from the circle
+ * link or its nested video/image, rather than from a whole-section click.
+ */
+function resolveSelectedScrollCircle(
+  document: ThemeDocument,
+  target: SelectedTarget,
+): SelectedScrollCircle | null {
+  const ids = [target.id, ...target.breadcrumb.map((item) => item.id)];
+  const registration = sectionRegistration(target);
+  const explicitSection = registration ? document.sections[registration.id] : undefined;
+
+  const blockId = ids.map((id) => id.startsWith("block:")
+    ? id.slice("block:".length).replace(/\.media(?:$|::auto::.*$)/, "").split("::auto::")[0]
+    : "").find((id) => id && document.blocks[id]?.type === "scroll-story-slide");
+  if (blockId) {
+    const owner = Object.values(document.sections).find((section) =>
+      section.type === "scroll-story" && section.blockIds.includes(blockId));
+    if (owner) return { sectionId: owner.id, index: owner.blockIds.indexOf(blockId), blockId };
+  }
+
+  const inScrollStory = target.type === "scroll-story-slide"
+    || explicitSection?.type === "scroll-story"
+    || target.breadcrumb.some((item) => item.type === "scroll-story" || item.label.toLowerCase() === "scroll story");
+  if (!inScrollStory) return null;
+  const id = ids.find((candidate) => /(?:^|::)home-scroll-media-\d+(?:$|::)/.test(candidate));
+  const match = id?.match(/home-scroll-media-(\d+)/);
+  let index = match ? Number(match[1]) : -1;
+  if (index < 0 && target.type === "scroll-story-slide") {
+    index = ROSTA_CIRCLE_COPY.findIndex((item) => target.label.startsWith(item.title));
+  }
+  if (!Number.isInteger(index) || index < 0 || index > 7) return null;
+  const section = explicitSection?.type === "scroll-story"
+    ? explicitSection
+    : Object.values(document.sections).find((item) => item.type === "scroll-story"
+      && Object.values(document.templates).some((template) => template.sectionIds.includes(item.id)));
+  if (!section) return null;
+  return { sectionId: section.id, index, blockId: section.blockIds[index] };
+}
+
+function createScrollCircleBlock(index: number) {
+  const fallback = ROSTA_CIRCLE_COPY[index % ROSTA_CIRCLE_COPY.length]!;
+  const id = `block-scroll-story-slide-${crypto.randomUUID().replace(/-/g, "")}`;
+  return {
+    id,
+    type: "scroll-story-slide",
+    schemaVersion: STORE_DESIGN_SCHEMA_VERSION,
+    settings: { assetId: "", ...fallback },
+  };
+}
+
 function responsiveSettingsFor(
   document: ThemeDocument,
   target: SelectedTarget,
@@ -722,6 +787,7 @@ export function StoreDesignV21() {
   const [presetPickerSignal, setPresetPickerSignal] = useState(0);
   const [sectionEditorSignal, setSectionEditorSignal] = useState(0);
   const [sectionEditorTargetId, setSectionEditorTargetId] = useState<string | null>(null);
+  const [circleMediaPicker, setCircleMediaPicker] = useState<CircleMediaPickerTarget | null>(null);
   const [sectionMediaPicker, setSectionMediaPicker] = useState<{
     sectionId: string;
     key: string;
@@ -1061,6 +1127,7 @@ export function StoreDesignV21() {
   const groupedPages = useMemo(() => groupPages(editorPages), [editorPages]);
   const activePage = editorPages.find((item) => item.path === activePath) || editorPages[0] || null;
   const managedPage = document.pages[activePath] || Object.values(document.pages).find((page) => page.route === activePath) || null;
+  const selectedCircle = selected ? resolveSelectedScrollCircle(document, selected) : null;
   const selectedSectionId = selected ? sectionRegistration(selected)?.id || null : null;
   const selectedSection = selectedSectionId ? document.sections[selectedSectionId] || null : null;
   const selectedSectionDefinition = selectedSection ? SECTION_LIBRARY_BY_TYPE[selectedSection.type] || null : null;
@@ -1893,6 +1960,15 @@ export function StoreDesignV21() {
   };
 
   const openQuickMediaPickerForTarget = useCallback((target: SelectedTarget) => {
+    const circle = resolveSelectedScrollCircle(document, target);
+    if (circle) {
+      // The generic media.src semantic patch does NOT update a scroll-story
+      // block assetId. Always open the real per-circle picker instead.
+      setSelected(target);
+      setCircleMediaPicker({ sectionId: circle.sectionId, index: circle.index });
+      setContextMenu(null);
+      return;
+    }
     if (!activePage || !target.current.media) return;
     // Quick media change must target the clicked image/video, not a global image family.
     const patchScope = target.allowedScopes.includes("instance") ? "instance" : target.defaultScope;
@@ -2547,7 +2623,9 @@ export function StoreDesignV21() {
                   {selected.current.link ? (
                     <button type="button" onClick={() => setDestinationTarget(selected)} className="sd-mobile-quick-action"><Link2 className="h-4 w-4" /><span>Hedef</span></button>
                   ) : null}
-                  {selected.current.media ? (
+                  {selectedCircle ? (
+                    <button type="button" onClick={() => setCircleMediaPicker({ sectionId: selectedCircle.sectionId, index: selectedCircle.index })} className="sd-mobile-quick-action"><Images className="h-4 w-4" /><span>Daire Medyası</span></button>
+                  ) : selected.current.media ? (
                     <button type="button" onClick={openQuickMediaPicker} className="sd-mobile-quick-action"><Images className="h-4 w-4" /><span>Medya</span></button>
                   ) : null}
                   {selected.controlGroups.includes("layout") ? (
@@ -2721,7 +2799,21 @@ export function StoreDesignV21() {
                 </section>
               ) : null}
 
-              {selected.current.media ? (
+              {selectedCircle ? (
+                <section className="sd-inspector-group border-b px-4 py-4">
+                  <h3 className="sd-inspector-group-title">Daire {selectedCircle.index + 1} · Fotoğraf / Video</h3>
+                  <p className="mt-1 text-[11px] leading-5 opacity-65">Seçtiğin dairenin fotoğrafını veya videosunu yükle ve değiştir. Diğer daireler etkilenmez.</p>
+                  <button
+                    type="button"
+                    onClick={() => setCircleMediaPicker({ sectionId: selectedCircle.sectionId, index: selectedCircle.index })}
+                    className="sd-primary-button mt-3 flex min-h-11 w-full items-center justify-center gap-2 rounded-md px-3 text-[11px] font-semibold"
+                  >
+                    <Images className="h-4 w-4" />Fotoğraf / Video Ekle veya Değiştir
+                  </button>
+                  <p className="mt-2 text-[10px] leading-4 opacity-60">Medya Arşivi'nden seçebilir veya yeni dosya yükleyebilirsin. Ardından Yayınla.</p>
+                </section>
+              ) : null}
+              {selected.current.media && !selectedCircle ? (
                 <section className="sd-inspector-group border-b px-4 py-4">
                   <h3 className="sd-inspector-group-title">Medya</h3>
                   <div className="mt-3 grid gap-3">
@@ -3085,6 +3177,53 @@ export function StoreDesignV21() {
           onSelect={quickMediaEdit ? (_assetId, asset) => {
             if (asset?.url) applyQuickMediaSource(asset.url);
           } : undefined}
+        />
+      ) : null}
+
+      {circleMediaPicker ? (
+        <StoreDesignMediaLibrary
+          document={document}
+          onApply={applyMediaDocument}
+          onClose={() => setCircleMediaPicker(null)}
+          mediaType="any"
+          selectedAssetId={(() => {
+            const section = document.sections[circleMediaPicker.sectionId];
+            const blockId = section?.blockIds[circleMediaPicker.index];
+            const value = blockId ? document.blocks[blockId]?.settings.assetId : null;
+            return typeof value === "string" ? value : undefined;
+          })()}
+          onSelect={(assetId, asset) => {
+            const selection = circleMediaPicker;
+            const currentSection = document.sections[selection.sectionId];
+            if (!currentSection || currentSection.type !== "scroll-story") {
+              toast.error("Daireli kaydırma bölümü bulunamadı.");
+              return;
+            }
+            const next = structuredClone(document) as ThemeDocument;
+            if (asset) next.media[assetId] = asset;
+            const section = next.sections[selection.sectionId]!;
+            const blockIds = [...(section.blockIds || [])];
+            // First click on a legacy circle: preserve all six original
+            // scenes. Never replace the complete story with a single slide.
+            const desiredCount = blockIds.length ? selection.index + 1 : Math.max(6, selection.index + 1);
+            while (blockIds.length < desiredCount) {
+              const block = createScrollCircleBlock(blockIds.length);
+              next.blocks[block.id] = block;
+              blockIds.push(block.id);
+            }
+            const blockId = blockIds[selection.index];
+            if (!blockId) {
+              toast.error("Daire bulunamadı.");
+              return;
+            }
+            const previous = next.blocks[blockId];
+            next.blocks[blockId] = previous
+              ? { ...previous, settings: { ...previous.settings, assetId } }
+              : { ...createScrollCircleBlock(selection.index), id: blockId, settings: { ...ROSTA_CIRCLE_COPY[selection.index % ROSTA_CIRCLE_COPY.length], assetId } };
+            next.sections[section.id] = { ...section, blockIds };
+            setCircleMediaPicker(null);
+            void applyStructureDocument(next, `Daire ${selection.index + 1} fotoğraf / video güncellendi`);
+          }}
         />
       ) : null}
 
