@@ -49,7 +49,7 @@ async function diagnostics() {
       .maybeSingle(),
     supabase.from("panel_service_health_state")
       .select("status,detail,last_seen_at,metadata")
-      .eq("service_key", "self-heal-supervisor")
+      .eq("service_key", "global-self-heal")
       .maybeSingle(),
   ]);
 
