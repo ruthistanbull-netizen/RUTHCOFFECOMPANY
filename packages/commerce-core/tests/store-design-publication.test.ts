@@ -66,7 +66,7 @@ test("circular scroll scenes may retain legacy media while other scenes use uplo
   const missing = validateThemeDocument(document);
   assert.equal(missing.ok, false, "a selected but deleted media asset must be rejected");
   assert.ok(missing.errors.some((message) => message.includes("scene-2")));
-  document.blocks["scene-2"].settings.assetId = "";
+  document.blocks["scene-2"]!.settings.assetId = "";
   assert.deepEqual(validateThemeDocument(document), { ok: true, errors: [] },
     "empty per-scene assets must preserve the legacy fallback");
 });
