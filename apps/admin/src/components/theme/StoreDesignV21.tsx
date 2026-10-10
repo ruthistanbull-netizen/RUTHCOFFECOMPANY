@@ -699,6 +699,7 @@ export function StoreDesignV21() {
   const [savedDraft, setSavedDraft] = useState<ThemeDocument>(createEmptyThemeDocument());
   const [published, setPublished] = useState<ThemeDocument>(createEmptyThemeDocument());
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [device, setDevice] = useState<Device>("desktop");
   const [interactionMode, setInteractionMode] = useState<"browse" | "edit">("edit");
   const [selected, setSelected] = useState<SelectedTarget | null>(null);
@@ -1278,6 +1279,7 @@ export function StoreDesignV21() {
   useEffect(() => {
     let active = true;
     setLoading(true);
+    setLoadError(null);
 
     if (!previewTokenRef.current) {
       const random = window.crypto?.randomUUID?.().replace(/-/g, "") || Math.random().toString(36).slice(2);
@@ -1287,7 +1289,10 @@ export function StoreDesignV21() {
 
     Promise.all([
       adminRequest<StoreDesignResponse>(`/api/store-design-v2?t=${Date.now()}`, { force: true }),
-      adminRequest<{ pages?: PageItem[] }>(`/api/theme-editor-pages?t=${Date.now()}`, { force: true, timeoutMs: 7_000 }),
+      adminRequest<{ pages?: PageItem[] }>(`/api/theme-editor-pages?t=${Date.now()}`, { force: true, timeoutMs: 7_000 }).catch((error) => {
+        console.warn("Mağaza Tasarımı sayfa listesi okunamadı, ana sayfa kullanılacak:", error);
+        return { pages: [{ path: "/", label: "Ana Sayfa", group: "Sayfalar" }] };
+      }),
       adminRequest<{ settings?: unknown }>(`/api/theme-sections?t=${Date.now()}`, { force: true, timeoutMs: 7_000 }).catch(() => ({ settings: undefined })),
     ]).then(async ([themeResult, pageResult, legacySections]) => {
       if (!active) return;
@@ -1322,7 +1327,9 @@ export function StoreDesignV21() {
     }).catch((error) => {
       if (!active) return;
       setLoading(false);
-      toast.error(error instanceof Error ? error.message : "Mağaza tasarımı yüklenemedi.");
+      const message = error instanceof Error ? error.message : "Mağaza tasarımı yüklenemedi.";
+      setLoadError(message);
+      toast.error(message);
     });
 
     return () => { active = false; };
@@ -2264,6 +2271,20 @@ export function StoreDesignV21() {
     }
   };
 
+  if (loadError) {
+    return (
+      <main role="alert" data-store-design-v2-error className="grid min-h-dvh place-items-center bg-[#f5f5f3] p-5 text-[#111]">
+        <section className="w-full max-w-[480px] space-y-4 rounded-2xl border border-black/10 bg-white p-6 shadow-sm">
+          <h1 className="text-lg font-semibold">Mağaza Tasarımı açılamadı</h1>
+          <p className="text-sm text-black/70">Tasarımların silinmedi. Veritabanından mevcut taslağı okuyamadığımız için düzenleme durduruldu.</p>
+          <p className="break-words rounded-lg bg-black/5 p-3 text-xs">{loadError}</p>
+          <button type="button" onClick={() => window.location.reload()} className="rounded-lg bg-[#111] px-4 py-2 text-sm font-medium text-white">
+            <RefreshCw className="mr-2 inline-block h-4 w-4" /> Yeniden dene
+          </button>
+        </section>
+      </main>
+    );
+  }
   if (loading || !initialSrcRef.current) {
     return (
       <div data-store-design-v2-loading className="sd-loading-screen grid min-h-dvh place-items-center bg-[#f5f5f3]">
