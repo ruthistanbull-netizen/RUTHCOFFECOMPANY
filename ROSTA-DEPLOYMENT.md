@@ -4,7 +4,8 @@ Production targets:
 
 - Storefront: `https://rostacoffecompany.zeabur.app`
 - Admin: `https://rostapanel.zeabur.app`
-- Supabase project ref: `fposvxuryzidmeuwytbg`
+- Legacy Cloud project ref: `fposvxuryzidmeuwytbg` (rollback reference only)
+- OVHcloud self-hosted API: `https://rosta-supabase.tail178b60.ts.net` (Tailscale Funnel)
 
 ## Storefront service
 
@@ -16,7 +17,7 @@ Required environment variables:
 ROSTA_APP=storefront
 NEXT_PUBLIC_SITE_URL=https://rostacoffecompany.zeabur.app/
 NEXT_PUBLIC_ADMIN_URL=https://rostapanel.zeabur.app/
-NEXT_PUBLIC_SUPABASE_URL=https://fposvxuryzidmeuwytbg.supabase.co
+NEXT_PUBLIC_SUPABASE_URL=https://rosta-supabase.tail178b60.ts.net
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<ROSTA publishable key>
 NEXT_PUBLIC_USE_SUPABASE_CATALOG=true
 NEXT_PUBLIC_FAST_NAVIGATION_MODE=true
@@ -74,7 +75,7 @@ Required environment variables:
 ```env
 ROSTA_APP=admin
 NEXT_PUBLIC_PANEL_URL=https://rostapanel.zeabur.app/
-NEXT_PUBLIC_SUPABASE_URL=https://fposvxuryzidmeuwytbg.supabase.co
+NEXT_PUBLIC_SUPABASE_URL=https://rosta-supabase.tail178b60.ts.net
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<ROSTA publishable key>
 SUPABASE_SERVICE_ROLE_KEY=<ROSTA service role key>
 
@@ -135,9 +136,20 @@ Do not reuse secrets from any legacy commerce environment.
 
 ## Isolation guarantees
 
-- Admin and storefront reject any Supabase hostname outside `fposvxuryzidmeuwytbg.supabase.co`.
+- Admin and storefront accept only the legacy ROSTA Cloud origin or the ROSTA OVHcloud Funnel origin. Ruth Supabase is never a valid ROSTA target.
 - Storefront Docker image no longer builds or starts the admin application.
 - Runtime catalog has no legacy static-product fallback.
 - Legacy image-cache tooling is removed.
 - ROSTA Points uses the ROSTA-named public RPC layer.
 - Internal commerce queues, email queue, analytics and contact data are stored in the ROSTA Supabase project.
+
+## ROSTA OVHcloud account and staged cutover
+
+- Only run ROSTA owner bootstrap against local ROSTA API `127.0.0.1:18000`.
+- Before deploying the role-enforced admin code, run `python3 scripts/bootstrap-rosta-owner.py` (read-only preview), then `python3 scripts/bootstrap-rosta-owner.py --apply` interactively on the ROSTA VPS. The password must NEVER be saved in this repository or provided in a screenshot.
+- `Hesabım → Yeni Kullanıcı → Geçici Şifre` already offers direct account creation. Only the authenticated owner may create accounts; server-controlled `app_metadata.panel_role` now determines permissions.
+- Keep ROSTA cron jobs disabled until all integrations and worker schedules are reviewed. Self-hosted `pg_cron` does not inherit Supabase Cloud schedules.
+- Zeabur storefront and panel must both use the SAME ROSTA OVHcloud API URL, ROSTA OVHcloud `ANON_KEY` for `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, and ROSTA OVHcloud `SERVICE_ROLE_KEY` for server-only `SUPABASE_SERVICE_ROLE_KEY`.
+- Run `node scripts/audit-rosta-supabase-endpoints.mjs` from a repository checkout before merge and verify any legacy absolute Storage URLs in ROSTA site settings, hero/scroll media, and product media. Importantly, copied Storage metadata is not equivalent to a copied physical object.
+- Confirm Supabase Auth redirect URLs, CORS/preflight requests, Storage GET/POST, HTTPS certificate, product/cart reads, checkout and payment callback behavior before enabling live traffic.
+- Do not modify Ruth's Caddy, Docker networks, containers, database, or HTTPS configuration.

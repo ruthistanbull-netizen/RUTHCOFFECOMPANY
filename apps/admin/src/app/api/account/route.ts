@@ -74,16 +74,16 @@ async function payload(auth: any) {
   if (authError) throw new Error(authError.message);
   const usersById = new Map((authData.users || []).map((user: any) => [String(user.id), user]));
 
-  const accounts: AccountRow[] = profileRows.map((profile, index) => {
+  const accounts: AccountRow[] = profileRows.map((profile) => {
     const user: any = usersById.get(String(profile.auth_user_id || ""));
-    const metadata = user?.user_metadata || {};
+    const metadata = user?.app_metadata || {};
     return {
       id: String(profile.id),
       auth_user_id: profile.auth_user_id ? String(profile.auth_user_id) : null,
       full_name: displayName(profile, user),
       email: clean(user?.email || profile.email, 240),
       phone: clean(profile.phone, 80) || null,
-      panel_role: normalizedRole(metadata.panel_role || (index === 0 ? "owner" : "admin")),
+      panel_role: normalizedRole(metadata.panel_role),
       status: normalizedStatus(metadata.panel_status),
       email_confirmed: Boolean(user?.email_confirmed_at || user?.confirmed_at),
       last_sign_in_at: user?.last_sign_in_at || null,
@@ -99,8 +99,8 @@ async function payload(auth: any) {
     full_name: clean(auth.profile.full_name, 160) || clean(auth.user.user_metadata?.full_name, 160) || clean(auth.user.email, 160).split("@")[0] || "Yönetici",
     email: clean(auth.user.email, 240),
     phone: null,
-    panel_role: normalizedRole(auth.user.user_metadata?.panel_role || "admin"),
-    status: normalizedStatus(auth.user.user_metadata?.panel_status),
+    panel_role: normalizedRole(auth.user.app_metadata?.panel_role),
+    status: normalizedStatus(auth.user.app_metadata?.panel_status),
     email_confirmed: Boolean(auth.user.email_confirmed_at),
     last_sign_in_at: auth.user.last_sign_in_at || null,
     created_at: auth.user.created_at || null,
@@ -149,6 +149,7 @@ async function updateAccountIdentity(options: {
   if (userReadError || !userData.user) throw new Error(userReadError?.message || "Auth kullanıcısı okunamadı.");
 
   const oldMetadata = userData.user.user_metadata || {};
+  const oldAppMetadata = userData.user.app_metadata || {};
   const profileUpdate = {
     email,
     full_name: fullName,
@@ -168,6 +169,9 @@ async function updateAccountIdentity(options: {
     user_metadata: {
       ...oldMetadata,
       full_name: fullName,
+    },
+    app_metadata: {
+      ...oldAppMetadata,
       ...(panelRole ? { panel_role: panelRole } : {}),
       ...(status ? { panel_status: status } : {}),
     },
@@ -227,6 +231,10 @@ export async function PATCH(request: Request) {
       if (isSelf) throw new Error("Kendi rolünü ve erişimini bu işlemle değiştiremezsin.");
       const status = normalizedStatus(body.status);
       const role = normalizedRole(body.panel_role);
+      if (role === "owner") throw new Error("Yeni sahip rolü yalnızca güvenli ilk kurulumda atanabilir.");
+      if (currentPayload.accounts.some((account: AccountRow) => account.id === targetId && account.panel_role === "owner")) {
+        throw new Error("Ana sahip hesabının rolü veya erişimi buradan değiştirilemez.");
+      }
       const activeOthers = currentPayload.accounts.filter((account: AccountRow) => account.id !== targetId && account.status === "active").length;
       if (status === "disabled" && activeOthers === 0) throw new Error("Son aktif yönetici hesabı devre dışı bırakılamaz.");
       await updateAccountIdentity({ auth, target, fullName, email, phone, password, panelRole: role, status });
@@ -256,6 +264,10 @@ export async function POST(request: Request) {
   try {
     if (!email || !validEmail(email)) throw new Error("Geçerli bir e-posta adresi gir.");
     if (action === "send_reset") {
+      const currentEmail = clean(auth.user.email, 240).toLowerCase();
+      if (email !== currentEmail && normalizedRole(auth.user.app_metadata?.panel_role) !== "owner") {
+        throw new Error("Başka bir kullanıcıya şifre bağlantısını yalnızca hesap sahibi gönderebilir.");
+      }
       const { error } = await auth.supabase.auth.resetPasswordForEmail(email, { redirectTo: `${origin}/reset-password` });
       if (error) throw new Error(error.message);
       return NextResponse.json({ ok: true, sent: true });
@@ -266,6 +278,7 @@ export async function POST(request: Request) {
       throw new Error("Yeni panel hesabını yalnızca hesap sahibi oluşturabilir.");
     }
     if (!fullName) throw new Error("Kullanıcı adı zorunlu.");
+    if (role === "owner") throw new Error("Ana sahip rolü yeni kullanıcılara atanamaz.");
 
     let userId = "";
     if (action === "create_user") {
@@ -275,17 +288,22 @@ export async function POST(request: Request) {
         phone: authPhone,
         password,
         email_confirm: true,
-        user_metadata: { full_name: fullName, panel_role: role, panel_status: "active" },
+        user_metadata: { full_name: fullName },
+        app_metadata: { panel_role: role, panel_status: "active" },
       });
       if (error || !data.user) throw new Error(error?.message || "Kullanıcı oluşturulamadı.");
       userId = String(data.user.id);
     } else if (action === "invite_user") {
       const { data, error } = await auth.supabase.auth.admin.inviteUserByEmail(email, {
         redirectTo: `${origin}/reset-password`,
-        data: { full_name: fullName, panel_role: role, panel_status: "active", phone: authPhone },
+        data: { full_name: fullName, phone: authPhone },
       });
       if (error || !data.user) throw new Error(error?.message || "Davet gönderilemedi.");
       userId = String(data.user.id);
+      const { error: inviteRoleError } = await auth.supabase.auth.admin.updateUserById(userId, {
+        app_metadata: { ...(data.user.app_metadata || {}), panel_role: role, panel_status: "active" },
+      });
+      if (inviteRoleError) throw new Error(inviteRoleError.message);
     } else {
       throw new Error("Geçersiz kullanıcı oluşturma işlemi.");
     }
