@@ -185,6 +185,7 @@ export function ExactProductStudioV2() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const loadAbortRef = useRef<AbortController | null>(null);
 
   const carePresets = useMemo(() => fieldOptions(fieldGroups, "care_advice"), [fieldGroups]);
 
@@ -199,24 +200,41 @@ export function ExactProductStudioV2() {
   }, [categories, collections]);
 
   const load = useCallback(async () => {
+    loadAbortRef.current?.abort();
+    const controller = new AbortController();
+    loadAbortRef.current = controller;
     setLoading(true);
     try {
-      const [catalog, optionResult] = await Promise.all([
-        adminRequest<{ products?: Product[]; collections?: Group[]; categories?: Group[] }>("/api/products?q=", { hardRefresh: true }),
-        adminRequest<{ groups?: ProductFieldGroup[]; sections?: InformationSection[] }>("/api/product-settings/options", { hardRefresh: true })
-          .catch(() => ({ groups: fallbackFieldGroups, sections: undefined })),
-      ]);
-      const nextGroups = optionResult.groups?.length ? optionResult.groups : fallbackFieldGroups;
-      setProducts(catalog.products || []);
-      setCollections(catalog.collections || []);
-      setCategories(catalog.categories || []);
-      setFieldGroups(nextGroups);
-      setInformationSections(resolveInformationSections(optionResult.sections, nextGroups));
-      setMaterials(fieldOptions(nextGroups, "material").map((item) => item.value).filter(Boolean));
-    } catch (caught) { toast.error(caught instanceof Error ? caught.message : "Ürün stüdyosu verileri alınamadı."); }
-    finally { setLoading(false); }
-  }, [toast]);
-  useEffect(() => { void load(); }, [load]);
+      type Catalog = { products?: Product[]; collections?: Group[]; categories?: Group[] };
+      const catalogRequest = adminRequest<Catalog>("/api/products?q=", { signal: controller.signal });
+      const catalogResult = catalogRequest.then((value) => ({ value }), () => ({ value: null }));
+      void adminRequest<{ groups?: ProductFieldGroup[]; sections?: InformationSection[] }>("/api/product-settings/options", { signal: controller.signal })
+        .then((fields) => {
+          if (controller.signal.aborted) return;
+          const groups = fields.groups?.length ? fields.groups : fallbackFieldGroups;
+          setFieldGroups(groups);
+          setInformationSections(resolveInformationSections(fields.sections, groups));
+          setMaterials(fieldOptions(groups, "material").map((item) => item.value).filter(Boolean));
+        }).catch(() => undefined);
+      const primary = requestedId
+        ? await adminRequest<Catalog>(`/api/products?id=${encodeURIComponent(requestedId)}`, { hardRefresh: true, ttlMs: 0, staleMs: 0, signal: controller.signal })
+        : await catalogRequest;
+      if (controller.signal.aborted) return;
+      const product = primary.products?.find((item) => item.id === requestedId);
+      if (requestedId && !product) throw new Error("Düzenlenecek ürün bulunamadı.");
+      setProducts(primary.products || []);
+      setCollections(primary.collections || []);
+      setCategories(primary.categories || []);
+      if (product) void catalogResult.then(({ value }) => {
+        if (value && !controller.signal.aborted) setProducts([...(value.products || []).filter((item) => item.id !== product.id), product]);
+      });
+    } catch (caught) { if (!controller.signal.aborted) toast.error(caught instanceof Error ? caught.message : "Ürün stüdyosu verileri alınamadı."); }
+    finally { if (!controller.signal.aborted) setLoading(false); }
+  }, [requestedId, toast]);
+  useEffect(() => {
+    void load();
+    return () => loadAbortRef.current?.abort();
+  }, [load]);
 
   const reset = useCallback((type: "single" | "bundle" = requestedType) => {
     const nextSize = "";

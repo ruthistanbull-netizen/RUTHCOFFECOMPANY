@@ -389,6 +389,7 @@ export function ExactProductStudioWorkspace({
   const [loading, setLoading] = useState(true);
   const [actionPending, setActionPending] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const loadAbortRef = useRef<AbortController | null>(null);
 
   const currentDraft = useMemo<ProductStudioDraft>(() => ({
     productId: selected?.id || null,
@@ -419,44 +420,59 @@ export function ExactProductStudioWorkspace({
   }, []);
 
   const load = useCallback(async (showLoading = true): Promise<Product[]> => {
+    loadAbortRef.current?.abort();
+    const controller = new AbortController();
+    loadAbortRef.current = controller;
     if (showLoading) setLoading(true);
     try {
-      const detailRequest = requestedId
-        ? adminRequest<{ products?: Product[] }>(
-            `/api/products?id=${encodeURIComponent(requestedId)}`,
-            { hardRefresh: true, force: true, ttlMs: 0, staleMs: 0 },
-          )
-        : Promise.resolve<{ products?: Product[] }>({ products: [] });
-      const [catalog, materialResult, detailResult] = await Promise.all([
-        adminRequest<{ products?: Product[]; collections?: Group[]; categories?: Group[] }>("/api/products?q="),
-        adminRequest<{ options?: string[] }>("/api/product-settings/materials")
-          .catch(() => ({ options: defaultMaterials })),
-        detailRequest,
-      ]);
-      const detailProduct = detailResult.products?.[0] || null;
-      const catalogProducts = catalog.products || [];
-      const nextProducts = detailProduct
-        ? [
-            ...catalogProducts.map((product) => product.id === detailProduct.id ? detailProduct : product),
-            ...(catalogProducts.some((product) => product.id === detailProduct.id) ? [] : [detailProduct]),
-          ]
-        : catalogProducts;
+      type Catalog = { products?: Product[]; collections?: Group[]; categories?: Group[] };
+      const catalogRequest = adminRequest<Catalog>("/api/products?q=", { signal: controller.signal });
+      // Attach both handlers immediately; an auxiliary failure cannot leave an
+      // unhandled rejection while the authoritative product is still loading.
+      const catalogResult = catalogRequest.then((value) => ({ value }), () => ({ value: null }));
+      void adminRequest<{ options?: string[] }>("/api/product-settings/materials", { signal: controller.signal })
+        .then((result) => {
+          if (!controller.signal.aborted) setMaterials([...new Set([...(result.options || []), ...defaultMaterials].filter(Boolean))]);
+        }).catch(() => undefined);
+
+      const primary = requestedId
+        ? await adminRequest<Catalog>(`/api/products?id=${encodeURIComponent(requestedId)}`, {
+            hardRefresh: true, ttlMs: 0, staleMs: 0, signal: controller.signal,
+          })
+        : await catalogRequest;
+      if (controller.signal.aborted) return [];
+      if (requestedId && !primary.products?.some((product) => product.id === requestedId)) {
+        throw new Error("Düzenlenecek ürün bulunamadı.");
+      }
+      const nextProducts = primary.products || [];
       setProducts(nextProducts);
-      setCollections(catalog.collections || []);
-      setCategories(catalog.categories || []);
-      setMaterials([...new Set([...(materialResult.options || []), ...defaultMaterials].filter(Boolean))]);
+      setCollections(primary.collections || []);
+      setCategories(primary.categories || []);
+      // The sidebar catalogue is independent of opening the current product.
+      // Keep the fresh full detail over any lightweight/cached list entry.
+      if (requestedId) void catalogResult.then(({ value }) => {
+        if (!value || controller.signal.aborted) return;
+        const currentProduct = nextProducts.find((product) => product.id === requestedId)!;
+        setProducts([
+          ...(value.products || []).filter((product) => product.id !== requestedId),
+          currentProduct,
+        ]);
+      });
       return nextProducts;
     } catch (caught) {
-      if (showLoading) {
+      if (showLoading && !controller.signal.aborted) {
         toast.error(caught instanceof Error ? caught.message : "Ürün stüdyosu verileri alınamadı.");
       }
       return [];
     } finally {
-      if (showLoading) setLoading(false);
+      if (showLoading && !controller.signal.aborted) setLoading(false);
     }
   }, [requestedId, toast]);
 
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => {
+    void load();
+    return () => loadAbortRef.current?.abort();
+  }, [load]);
 
   const reset = useCallback((type: "single" | "bundle" = requestedType) => {
     const draft = emptyDraftFor(type);

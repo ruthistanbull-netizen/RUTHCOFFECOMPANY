@@ -33,6 +33,11 @@
     "typecheck:all": "npm run typecheck:commerce && npm run typecheck:admin-app && npm run typecheck:storefront",
     "build:all": "npm run build:storefront && npm run build:admin",
     "verify:rosta-parity": "node scripts/verify-rosta-commerce-parity.mjs",
-    "verify:store-design-v2": "node scripts/verify-store-design-v2.mjs"
+    "verify:store-design-v2": "node scripts/verify-store-design-v2.mjs",
+    "test:admin-reads": "node --test apps/admin/tests/*.test.cjs",
+    "test:admin-loading": "playwright test --config playwright.admin-loading.config.ts"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.61.1"
   }
 }

@@ -36,6 +36,7 @@ const registeredPanelRoutes = new Set<string>();
 let cacheGeneration = 0;
 let tokenCache: { token: string; expiresAt: number } | null = null;
 let tokenRequest: Promise<string> | null = null;
+let authGeneration = 0;
 let snapshotBootstrapRequest: Promise<{ hydrated: number; generatedAt?: string } | null> | null = null;
 let lastSyncKickAt = 0;
 let syncKickScheduled = false;
@@ -159,7 +160,7 @@ function readCache(path: string) {
 }
 
 function writeCache(path: string, value: any, ttlMs: number, staleMs: number, generation = cacheGeneration) {
-  if (generation !== cacheGeneration || !value || value.ok === false) return;
+  if (generation !== cacheGeneration || !value || value.ok === false) return false;
   const now = Date.now();
   const safeTtl = Math.max(0, ttlMs);
   const safeStale = Math.max(1_000, staleMs || DEFAULT_STALE_MS);
@@ -167,7 +168,7 @@ function writeCache(path: string, value: any, ttlMs: number, staleMs: number, ge
   const key = cacheKey(path);
   memory.set(key, entry);
   while (memory.size > 220) memory.delete(memory.keys().next().value as string);
-  if (!storageAvailable()) return;
+  if (!storageAvailable()) return true;
 
   const persist = () => {
     if (generation !== cacheGeneration) return;
@@ -179,6 +180,7 @@ function writeCache(path: string, value: any, ttlMs: number, staleMs: number, ge
   const idle = (window as Window & { requestIdleCallback?: (callback: () => void, options?: { timeout?: number }) => number }).requestIdleCallback;
   if (idle) idle(persist, { timeout: 350 });
   else window.setTimeout(persist, 0);
+  return true;
 }
 
 export function seedAdminApiCache(path: string, value: any, options: { ttlMs?: number; staleMs?: number } = {}) {
@@ -282,6 +284,7 @@ function mutationIdempotency(path: string, init: RequestInit) {
 }
 
 export function clearAdminApiCache(match?: string) {
+  if (!match) clearAdminAuthHeaderCache();
   cacheGeneration += 1;
   for (const key of [...memory.keys()]) if (!match || key.includes(match)) memory.delete(key);
   for (const path of [...inFlight.keys()]) if (!match || path.includes(match)) inFlight.delete(path);
@@ -371,19 +374,27 @@ export function apiUrl(path: string) {
   return apiBase ? `${apiBase}${path}` : path;
 }
 
+export function clearAdminAuthHeaderCache() {
+  authGeneration += 1;
+  tokenCache = null;
+  tokenRequest = null;
+}
+
 export async function adminAuthHeaders() {
   const now = Date.now();
   if (tokenCache && tokenCache.expiresAt > now + 15_000) return { Authorization: `Bearer ${tokenCache.token}` };
   if (!tokenRequest) {
-    tokenRequest = (async () => {
+    const generation = authGeneration;
+    const work = (async () => {
       const { data, error } = await getSupabaseBrowser().auth.getSession();
       if (error) throw error;
       const token = data.session?.access_token || "";
       if (!token) throw new Error("Oturum bulunamadı.");
       const expiry = tokenExpiry(token);
-      tokenCache = { token, expiresAt: expiry > now ? expiry - 30_000 : now + 5 * 60_000 };
+      if (generation === authGeneration) tokenCache = { token, expiresAt: expiry > now ? expiry - 30_000 : now + 5 * 60_000 };
       return token;
-    })().finally(() => { tokenRequest = null; });
+    })().finally(() => { if (tokenRequest === work) tokenRequest = null; });
+    tokenRequest = work;
   }
   const token = await tokenRequest;
   return { Authorization: `Bearer ${token}` };
@@ -426,7 +437,10 @@ async function fetchRequest<T>(path: string, init: RequestInit, timeoutMs: numbe
       signal: controller.signal,
       headers: requestHeaders,
     });
-    const payload = await response.json().catch(() => ({}));
+    const payload = await response.json().catch(() => {
+      throw new Error(`Sunucudan geçerli veri alınamadı (${response.status}).`);
+    });
+    if (payload == null || typeof payload !== "object") throw new Error("Sunucudan veri yanıtı eksik döndü.");
     if (!response.ok || payload?.ok === false) throw new Error(apiErrorMessage(payload));
     if (idempotency?.storageKey && storageAvailable()) window.sessionStorage.removeItem(idempotency.storageKey);
     return payload as T;
@@ -531,23 +545,37 @@ function kickPanelSync() {
   else window.setTimeout(() => { void run(); }, 1_200);
 }
 
-function startBackgroundRefresh<T>(path: string, requestInit: RequestInit, timeoutMs: number, ttlMs: number, staleMs: number) {
-  if (inFlight.has(path)) return;
+function liveRead<T>(path: string, requestInit: RequestInit, timeoutMs: number, ttlMs: number, staleMs: number): Promise<T> {
+  const existing = inFlight.get(path);
+  if (existing) return existing;
   const generation = cacheGeneration;
-  const refresh = fetchRequest<T>(path, withCacheBypass(requestInit), timeoutMs)
+  // The transport belongs to the resource, not the first mounted consumer. A
+  // cancelled prefetch/list component must not abort a detail or refresh subscriber.
+  const { signal: _consumerSignal, ...sharedInit } = requestInit;
+  const refresh = fetchRequest<T>(path, withCacheBypass(sharedInit), timeoutMs)
     .then((value) => {
-      writeCache(path, value, ttlMs, staleMs, generation);
-      void registerPanelRoute(path);
-      if (typeof window !== "undefined") {
+      const committed = writeCache(path, value, ttlMs, staleMs, generation);
+      if (committed) void registerPanelRoute(path);
+      if (committed && typeof window !== "undefined") {
         window.dispatchEvent(new CustomEvent("ruth-admin-api-cache-updated", { detail: { path, value, fresh: ttlMs > 0 } }));
       }
       return value;
     })
-    .catch(() => undefined)
     .finally(() => {
       if (inFlight.get(path) === refresh) inFlight.delete(path);
     });
   inFlight.set(path, refresh);
+  return refresh;
+}
+
+function subscribeRead<T>(promise: Promise<T>, signal?: AbortSignal | null): Promise<T> {
+  if (!signal) return promise;
+  if (signal.aborted) return Promise.reject(signal.reason || new DOMException("Aborted", "AbortError"));
+  return new Promise<T>((resolve, reject) => {
+    const abort = () => reject(signal.reason || new DOMException("Aborted", "AbortError"));
+    signal.addEventListener("abort", abort, { once: true });
+    promise.then(resolve, reject).finally(() => signal.removeEventListener("abort", abort));
+  });
 }
 
 export async function adminRequest<T = any>(inputPath: string, init: AdminRequestInit = {}): Promise<T> {
@@ -576,7 +604,7 @@ export async function adminRequest<T = any>(inputPath: string, init: AdminReques
   const cached = cacheable ? readCache(path) : null;
 
   if (cacheable && cached && !effectiveHardRefresh) {
-    if (force || !cached.fresh) startBackgroundRefresh<T>(path, requestInit, timeoutMs, ttlMs, staleMs);
+    if (force || !cached.fresh) void liveRead<T>(path, requestInit, timeoutMs, ttlMs, staleMs).catch(() => undefined);
     return {
       ...cached.entry.value,
       __fromCache: true,
@@ -585,15 +613,18 @@ export async function adminRequest<T = any>(inputPath: string, init: AdminReques
     } as T;
   }
 
-  if (cacheable && !effectiveHardRefresh && inFlight.has(path)) return inFlight.get(path) as Promise<T>;
-
-  // Cold browser/device: use the server-maintained read model before touching a
-  // slow provider API. The live endpoint is then revalidated in the background.
-  if (cacheable && !effectiveHardRefresh && panelSnapshotEligible(path)) {
-    const snapshot = await fetchServerSnapshot<T>(path);
-    if (snapshot) {
+  if (cacheable) {
+    if (requestInit.signal?.aborted) return subscribeRead(Promise.resolve(null as T), requestInit.signal);
+    const generation = cacheGeneration;
+    // Start/dedupe the live read BEFORE any await. A missing/slow read-model may
+    // never add a serial 1.2-second wait to every cold panel request.
+    const live = liveRead<T>(path, requestInit, timeoutMs, ttlMs, staleMs);
+    if (effectiveHardRefresh || !panelSnapshotEligible(path)) return subscribeRead(live, requestInit.signal);
+    let liveSettled = false;
+    void live.then(() => { liveSettled = true; }, () => { liveSettled = true; });
+    const snapshotRead = fetchServerSnapshot<T>(path).then((snapshot) => {
+      if (!snapshot || liveSettled || generation !== cacheGeneration) return live;
       seedAdminApiCache(path, snapshot.value, { ttlMs: snapshot.status === "healthy" ? ttlMs : 0, staleMs });
-      startBackgroundRefresh<T>(path, requestInit, timeoutMs, ttlMs, staleMs);
       return {
         ...(snapshot.value as any),
         __fromCache: true,
@@ -602,30 +633,19 @@ export async function adminRequest<T = any>(inputPath: string, init: AdminReques
         __revalidating: true,
         __snapshotRefreshedAt: snapshot.refreshedAt || null,
       } as T;
-    }
+    });
+    return subscribeRead(Promise.race([live, snapshotRead]), requestInit.signal);
   }
 
   const effectiveInit = (force || effectiveHardRefresh) && cacheable ? withCacheBypass(requestInit) : requestInit;
-  const generation = cacheGeneration;
   const promise = fetchRequest<T>(path, effectiveInit, timeoutMs)
     .then((value) => {
-      if (cacheable) {
-        writeCache(path, value, ttlMs, staleMs, generation);
-        void registerPanelRoute(path);
-        if (typeof window !== "undefined") {
-          window.dispatchEvent(new CustomEvent("ruth-admin-api-cache-updated", { detail: { path, value, fresh: ttlMs > 0 } }));
-        }
-      } else if (invalidate !== false) {
+      if (invalidate !== false) {
         invalidateCaches(Array.isArray(invalidate) ? invalidate : mutationInvalidation(path));
         void kickPanelSync();
       }
       return value;
-    })
-    .finally(() => {
-      if (cacheable && inFlight.get(path) === promise) inFlight.delete(path);
     });
-
-  if (cacheable) inFlight.set(path, promise);
   return promise;
 }
 

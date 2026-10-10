@@ -14,7 +14,8 @@ const NO_STORE = {
 async function exactCount(query: PromiseLike<{ count?: number | null; error?: { message?: string } | null }>) {
   const result = await query;
   if (result.error) throw new Error(result.error.message || "Sayaç sorgusu başarısız.");
-  return Number(result.count || 0);
+  if (!Number.isSafeInteger(result.count) || Number(result.count) < 0) throw new Error("Sayaç yanıtı eksik.");
+  return Number(result.count);
 }
 
 export async function GET(request: Request) {
@@ -23,16 +24,21 @@ export async function GET(request: Request) {
 
   try {
     const { supabase } = auth;
+    const kind = new URL(request.url).searchParams.get("kind");
+    if (kind && !["products", "orders", "customers"].includes(kind)) {
+      return NextResponse.json({ ok: false, error: "Geçersiz liste türü." }, { status: 400, headers: NO_STORE });
+    }
     const [products, orders, customers] = await Promise.all([
+      !kind || kind === "products" ?
       exactCount(
         supabase
           .from("products")
           .select("id", { count: "exact", head: true })
           .neq("status", "deleted")
           .neq("status", "archived") as any,
-      ),
-      exactCount(supabase.from("orders").select("id", { count: "exact", head: true }) as any),
-      exactCount(supabase.from("customer_read_model").select("id", { count: "exact", head: true }) as any),
+      ) : undefined,
+      !kind || kind === "orders" ? exactCount(supabase.from("orders").select("id", { count: "exact", head: true }) as any) : undefined,
+      !kind || kind === "customers" ? exactCount(supabase.from("customer_read_model").select("id", { count: "exact", head: true }) as any) : undefined,
     ]);
 
     return NextResponse.json(

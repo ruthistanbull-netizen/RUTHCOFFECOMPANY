@@ -247,7 +247,10 @@ export async function GET(request: Request) {
         is_active,
         image_url,
         options
-      )
+      ),
+      product_images (variant_id, image_url, is_main, sort_order),
+      product_categories (category_id),
+      product_collections (collection_id)
     `)
     .order("sort_order", { ascending: true });
 
@@ -257,73 +260,40 @@ export async function GET(request: Request) {
     if (search) query = query.or(`name.ilike.%${search}%,slug.ilike.%${search}%`);
   }
 
-  const { data, error } = await query;
-  if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 400 });
-
-  const productRows = (data || []).filter((product: any) => product.status !== "deleted" && product.status !== "archived" && product.status !== "archived");
-  const productIds = productRows.map((product: any) => String(product.id));
-
-  const directCollectionIds = [...new Set(productRows.map((product: any) => product.collection_id).filter(Boolean).map(String))];
-
-  const [imageRows, categoryRows, collectionLinkRows, directCollections] = await Promise.all([
-    productIds.length > 0
-      ? safeSelect<any>(
-          supabase
-            .from("product_images")
-            .select("product_id, variant_id, image_url, is_main, sort_order")
-            .in("product_id", productIds)
-            .order("is_main", { ascending: false })
-            .order("sort_order", { ascending: true })
-        )
-      : Promise.resolve([] as any[]),
-    productIds.length > 0
-      ? safeSelect<any>(
-          supabase
-            .from("product_categories")
-            .select("product_id, categories(id, name, slug)")
-            .in("product_id", productIds)
-        )
-      : Promise.resolve([] as any[]),
-    productIds.length > 0
-      ? safeSelect<any>(
-          supabase
-            .from("product_collections")
-            .select("product_id, collections(id, name, slug)")
-            .in("product_id", productIds)
-        )
-      : Promise.resolve([] as any[]),
-    directCollectionIds.length > 0
-      ? safeSelect<any>(supabase.from("collections").select("id, name, slug").in("id", directCollectionIds))
-      : Promise.resolve([] as any[]),
+  // Product relations and independent group dictionaries resolve in one remote
+  // round trip each; a detail request no longer pays three serial query waves.
+  const [productResult, collectionResult, categoryResult] = await Promise.all([
+    query,
+    supabase.from("collections").select("id, name, slug, status").order("sort_order", { ascending: true }),
+    supabase.from("categories").select("id, name, slug, status").order("sort_order", { ascending: true }),
   ]);
-
-  const directCollectionById = new Map(directCollections.map((collection: any) => [String(collection.id), collection]));
-
+  const error = productResult.error || collectionResult.error || categoryResult.error;
+  if (error) return apiError(error.message);
+  if (!Array.isArray(productResult.data) || !Array.isArray(collectionResult.data) || !Array.isArray(categoryResult.data)) {
+    return apiError("Ürün detayları veritabanından eksik döndü.", 503);
+  }
+  const productRows = productResult.data.filter((product: any) => !["deleted", "archived"].includes(product.status));
+  const rawCollections = collectionResult.data;
+  const rawCategories = categoryResult.data;
+  const directCollectionById = new Map(rawCollections.map((collection: any) => [String(collection.id), collection]));
+  const categoryById = new Map(rawCategories.map((category: any) => [String(category.id), category]));
   const imagesByProduct = new Map<string, any[]>();
   const imageByVariant = new Map<string, string>();
-
-  for (const image of imageRows) {
-    const productId = String(image.product_id || "");
-    if (!imagesByProduct.has(productId)) imagesByProduct.set(productId, []);
-    imagesByProduct.get(productId)!.push(image);
-
-    if (image.variant_id && image.image_url && !imageByVariant.has(String(image.variant_id))) {
-      imageByVariant.set(String(image.variant_id), String(image.image_url));
-    }
-  }
-
   const categoriesByProduct = new Map<string, any[]>();
-  for (const row of categoryRows) {
-    const productId = String(row.product_id || "");
-    if (!categoriesByProduct.has(productId)) categoriesByProduct.set(productId, []);
-    if (row.categories) categoriesByProduct.get(productId)!.push(row.categories);
-  }
-
   const collectionsByProduct = new Map<string, any[]>();
-  for (const row of collectionLinkRows) {
-    const productId = String(row.product_id || "");
-    if (!collectionsByProduct.has(productId)) collectionsByProduct.set(productId, []);
-    if (row.collections) collectionsByProduct.get(productId)!.push(row.collections);
+  for (const product of productRows as any[]) {
+    const images = [...(product.product_images || [])].sort((a, b) =>
+      Number(Boolean(b.is_main)) - Number(Boolean(a.is_main)) || Number(a.sort_order || 0) - Number(b.sort_order || 0));
+    imagesByProduct.set(String(product.id), images);
+    for (const image of images) {
+      if (image.variant_id && image.image_url && !imageByVariant.has(String(image.variant_id))) {
+        imageByVariant.set(String(image.variant_id), String(image.image_url));
+      }
+    }
+    categoriesByProduct.set(String(product.id), (product.product_categories || [])
+      .map((row: any) => categoryById.get(String(row.category_id))).filter(Boolean));
+    collectionsByProduct.set(String(product.id), (product.product_collections || [])
+      .map((row: any) => directCollectionById.get(String(row.collection_id))).filter(Boolean));
   }
 
   const products = productRows.map((product: any) => {
@@ -351,6 +321,9 @@ export async function GET(request: Request) {
 
     return {
       ...product,
+      product_images: undefined,
+      product_categories: undefined,
+      product_collections: undefined,
       main_image_url: mainImage || variants.find((variant: any) => variant.image_url)?.image_url || null,
       image_urls: [...productImages.map((image) => image.image_url).filter(Boolean), ...productImageUrls].filter(Boolean),
       product_variants: variants,
@@ -360,11 +333,6 @@ export async function GET(request: Request) {
       collection_list: collectionList,
     };
   });
-
-  const [rawCollections, rawCategories] = await Promise.all([
-    safeSelect<any>(supabase.from("collections").select("id, name, slug, status").order("sort_order", { ascending: true })),
-    safeSelect<any>(supabase.from("categories").select("id, name, slug, status").order("sort_order", { ascending: true })),
-  ]);
 
   const collections = rawCollections.filter((item) => item.status !== "inactive");
   const categories = rawCategories.filter((item) => item.status !== "inactive");
