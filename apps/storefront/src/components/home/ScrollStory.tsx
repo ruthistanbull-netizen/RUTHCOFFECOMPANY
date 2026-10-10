@@ -63,29 +63,38 @@ function safeStoryHref(value: unknown) {
   }
 }
 
-function buildV2Slides(blocks: V2StoryBlock[] | undefined): StorySlide[] {
+function buildV2Slides(blocks: V2StoryBlock[] | undefined, images: string[] | null | undefined): StorySlide[] {
   if (!blocks?.length) return [];
+  const fallbacks = buildSlides(images);
   return blocks
-    .filter((block) => block.type === "scroll-story-slide" && Boolean(block.assetUrl))
-    .map((block, index) => ({
-      eyebrow: "",
-      title: typeof block.settings.title === "string" && block.settings.title.trim()
-        ? block.settings.title.trim()
-        : `Scroll Story ${index + 1}`,
-      body: typeof block.settings.body === "string" ? block.settings.body.trim() : "",
-      image: block.assetUrl || "",
-      href: safeStoryHref(block.settings.href),
-      blockId: block.id,
-      v2Media: {
-        desktopSrc: block.assetUrl || "",
-        desktopType: block.assetType === "video" ? "video" : "image",
-        mobileSrc: block.mobileAssetUrl || block.assetUrl || "",
-        mobileType: block.mobileAssetType === "video" ? "video" : (block.assetType === "video" ? "video" : "image"),
-        desktopPosition: block.objectPosition,
-        mobilePosition: block.mobileObjectPosition || block.objectPosition,
-        posterUrl: block.posterUrl,
-      },
-    }));
+    .filter((block) => block.type === "scroll-story-slide")
+    .map((block, index) => {
+      const legacy = fallbacks[index] || defaultStorySlides[index % defaultStorySlides.length]!;
+      const selectedUrl = block.assetUrl || "";
+      return {
+        ...legacy,
+        title: typeof block.settings.title === "string" && block.settings.title.trim()
+          ? block.settings.title.trim()
+          : legacy.title,
+        body: typeof block.settings.body === "string" ? block.settings.body : legacy.body,
+        image: selectedUrl || legacy.image,
+        href: safeStoryHref(block.settings.href || legacy.href),
+        blockId: block.id,
+        // Empty media slots intentionally keep their old scene. This lets users
+        // update one circle at a time without making the remaining five vanish.
+        v2Media: selectedUrl
+          ? {
+              desktopSrc: selectedUrl,
+              desktopType: block.assetType === "video" ? "video" as const : "image" as const,
+              mobileSrc: block.mobileAssetUrl || selectedUrl,
+              mobileType: block.mobileAssetType === "video" ? "video" as const : (block.assetType === "video" ? "video" as const : "image" as const),
+              desktopPosition: block.objectPosition,
+              mobilePosition: block.mobileObjectPosition || block.objectPosition,
+              posterUrl: block.posterUrl,
+            }
+          : undefined,
+      };
+    });
 }
 
 function scrollImagesFromSettings(settings: unknown) {
@@ -113,7 +122,7 @@ export default function ScrollStory({
   const [liveThemeSettings, setLiveThemeSettings] = useState(themeSettings);
   const [mobileViewport, setMobileViewport] = useState(false);
   const slides = useMemo(() => {
-    const custom = buildV2Slides(v2Slides);
+    const custom = buildV2Slides(v2Slides, liveImages);
     return custom.length ? custom : buildSlides(liveImages);
   }, [liveImages, v2Slides]);
   const [progress, setProgress] = useState(0);
