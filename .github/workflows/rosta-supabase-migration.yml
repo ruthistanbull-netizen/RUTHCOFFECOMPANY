@@ -1,6 +1,8 @@
 name: ROSTA Supabase migration checks
 
 on:
+  push:
+    branches: ["fix/rosta-ovh-supabase-url"]
   pull_request:
     paths:
       - "apps/admin/**"
