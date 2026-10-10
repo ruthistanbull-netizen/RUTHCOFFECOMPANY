@@ -136,7 +136,7 @@ Do not reuse secrets from any legacy commerce environment.
 
 ## Isolation guarantees
 
-- Admin and storefront accept only the legacy ROSTA Cloud origin or the ROSTA OVHcloud Funnel origin. Ruth Supabase is never a valid ROSTA target.
+- Admin and storefront connect only to the ROSTA OVHcloud Funnel origin. The retired Cloud address is recognized solely to translate imported configuration/media into the self-host target; it is never a connection fallback. Ruth Supabase is never a valid ROSTA target.
 - Storefront Docker image no longer builds or starts the admin application.
 - Runtime catalog has no legacy static-product fallback.
 - Legacy image-cache tooling is removed.
@@ -151,5 +151,6 @@ Do not reuse secrets from any legacy commerce environment.
 - Keep ROSTA cron jobs disabled until all integrations and worker schedules are reviewed. Self-hosted `pg_cron` does not inherit Supabase Cloud schedules.
 - Zeabur storefront and panel must both use the SAME ROSTA OVHcloud API URL, ROSTA OVHcloud `ANON_KEY` for `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, and ROSTA OVHcloud `SERVICE_ROLE_KEY` for server-only `SUPABASE_SERVICE_ROLE_KEY`.
 - Run `node scripts/audit-rosta-supabase-endpoints.mjs` from a repository checkout before merge and verify any legacy absolute Storage URLs in ROSTA site settings, hero/scroll media, and product media. Importantly, copied Storage metadata is not equivalent to a copied physical object.
+- Run `python3 scripts/rosta-public-media-delivery-check.py` and then the same command with `--gateway`. Both must exit successfully and return actual image/video bytes. A successful HEAD response alone does not certify a migrated object. If direct Storage returns 500, inspect its container logs, physical object data, configured backend/volume and object versions before treating the migration as complete.
 - Confirm Supabase Auth redirect URLs, CORS/preflight requests, Storage GET/POST, HTTPS certificate, product/cart reads, checkout and payment callback behavior before enabling live traffic.
 - Do not modify Ruth's Caddy, Docker networks, containers, database, or HTTPS configuration.
