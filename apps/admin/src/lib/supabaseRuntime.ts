@@ -1,15 +1,11 @@
-export const CANONICAL_SUPABASE_URL = "https://fposvxuryzidmeuwytbg.supabase.co";
+import { assertRostaSupabaseUrl, ROSTA_SUPABASE_URL } from "@/lib/platform";
 
-const LEGACY_PRODUCTION_SUPABASE_URLS = new Set([
-  "https://supabase.ruthistanbul.com",
-  "https://mpfpkiikqutiwuycpsjb.supabase.co",
-]);
+export const CANONICAL_SUPABASE_URL = ROSTA_SUPABASE_URL;
 
+/**
+ * Reject Ruth or third-party hosts. Never silently rewrite a configured
+ * endpoint back to the retired Cloud project.
+ */
 export function normalizeSupabaseUrl(value?: string) {
-  const normalized = value?.trim().replace(/\/+$/, "").replace(/\/rest\/v1$/i, "");
-  if (!normalized) return CANONICAL_SUPABASE_URL;
-  if (LEGACY_PRODUCTION_SUPABASE_URLS.has(normalized.toLowerCase())) {
-    return CANONICAL_SUPABASE_URL;
-  }
-  return normalized;
+  return assertRostaSupabaseUrl(value?.trim() || CANONICAL_SUPABASE_URL);
 }
