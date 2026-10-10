@@ -5,7 +5,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const PANEL_ROLES = new Set(["owner", "admin", "operations", "support", "marketing", "viewer"]);
-type AccountAction = "update_profile" | "update_user" | "invite_user" | "create_user" | "send_reset";
+type AccountAction = "update_profile" | "update_user" | "create_user" | "send_reset";
 
 type ProfileRow = {
   id: string;
@@ -209,6 +209,7 @@ export async function PATCH(request: Request) {
   const email = clean(body.email, 240).toLowerCase();
   const phone = clean(body.phone, 80) || null;
   const password = clean(body.password, 160);
+  const origin = new URL(request.url).origin;
 
   try {
     const currentPayload = await payload(auth);
@@ -259,7 +260,6 @@ export async function POST(request: Request) {
   const authPhone = phone || undefined;
   const role = normalizedRole(body.panel_role);
   const password = clean(body.password, 160);
-  const origin = new URL(request.url).origin;
 
   try {
     if (!email || !validEmail(email)) throw new Error("Geçerli bir e-posta adresi gir.");
@@ -280,41 +280,21 @@ export async function POST(request: Request) {
     if (!fullName) throw new Error("Kullanıcı adı zorunlu.");
     if (role === "owner") throw new Error("Ana sahip rolü yeni kullanıcılara atanamaz.");
 
-    let userId = "";
-    if (action === "create_user") {
-      if (password.length < 8) throw new Error("Geçici şifre en az 8 karakter olmalı.");
-      const { data, error } = await auth.supabase.auth.admin.createUser({
-        email,
-        phone: authPhone,
-        password,
-        email_confirm: true,
-        user_metadata: { full_name: fullName },
-        app_metadata: { panel_role: role, panel_status: "active" },
-      });
-      if (error || !data.user) throw new Error(error?.message || "Kullanıcı oluşturulamadı.");
-      userId = String(data.user.id);
-    } else if (action === "invite_user") {
-      const { data, error } = await auth.supabase.auth.admin.inviteUserByEmail(email, {
-        redirectTo: `${origin}/reset-password`,
-        data: { full_name: fullName, phone: authPhone },
-      });
-      if (error || !data.user) throw new Error(error?.message || "Davet gönderilemedi.");
-      userId = String(data.user.id);
-      // GoTrue can return nullable phone in app_metadata; spreading that typed
-      // object directly fails AdminUserAttributes (phone must not be null).
-      // Preserve provider metadata without copying nullable fields verbatim.
-      const existingAppMetadata: Record<string, unknown> = Object.fromEntries(
-        Object.entries(data.user.app_metadata || {}).filter(
-          ([key, value]) => key !== "phone" || typeof value === "string",
-        ),
-      );
-      const { error: inviteRoleError } = await auth.supabase.auth.admin.updateUserById(userId, {
-        app_metadata: { ...existingAppMetadata, panel_role: role, panel_status: "active" },
-      });
-      if (inviteRoleError) throw new Error(inviteRoleError.message);
-    } else {
-      throw new Error("Geçersiz kullanıcı oluşturma işlemi.");
-    }
+    // RR HUB staff creation uses the explicit email/password flow.
+    // Do not attempt inviteUserByEmail + updateUserById: the latter receives
+    // nullable GoTrue metadata and caused Zeabur's AdminUserAttributes build error.
+    if (action !== "create_user") throw new Error("Geçersiz kullanıcı oluşturma işlemi.");
+    if (password.length < 8) throw new Error("Şifre en az 8 karakter olmalı.");
+    const { data, error } = await auth.supabase.auth.admin.createUser({
+      email,
+      ...(authPhone ? { phone: authPhone } : {}),
+      password,
+      email_confirm: true,
+      user_metadata: { full_name: fullName },
+      app_metadata: { panel_role: role, panel_status: "active" },
+    });
+    if (error || !data.user) throw new Error(error?.message || "Kullanıcı oluşturulamadı.");
+    const userId = String(data.user.id);
 
     // Never overwrite an existing Ruth/ROSTA profile by matching email.
     // Each newly created Auth identity gets a new, explicit panel profile.

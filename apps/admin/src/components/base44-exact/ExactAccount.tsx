@@ -25,7 +25,6 @@ import {
   ExactFormModal,
   ExactIconButton,
   ExactPageHeader,
-  ExactSegmentedControl,
   ExactSkeleton,
   ExactStatusBadge,
   exactFormInputClass,
@@ -49,7 +48,7 @@ type Account = {
   is_current?: boolean;
 };
 type AccountResponse = { current?: Account; accounts?: Account[]; credentials_changed?: boolean };
-type CreateMode = "invite_user" | "create_user";
+type CreateMode = "create_user";
 type CreateUserDraft = {
   full_name: string;
   email: string;
@@ -305,18 +304,16 @@ function CreateUserEditor({
 }) {
   const toast = useExactToast();
   const { save, saving, requestTransition } = useSaveLifecycle();
-  const [createMode, setCreateMode] = useState<CreateMode>("create_user");
+  const createMode: CreateMode = "create_user";
   const [draft, setDraft] = useState<CreateUserDraft>(() => emptyCreateDraft());
 
   useEffect(() => {
     if (!open) return;
-    setCreateMode("create_user");
     setDraft(emptyCreateDraft());
   }, [open]);
 
   const dirty = open && (
-    createMode !== "create_user"
-    || draft.full_name !== ""
+    draft.full_name !== ""
     || draft.email !== ""
     || draft.phone !== ""
     || draft.panel_role !== "operations"
@@ -342,7 +339,7 @@ function CreateUserEditor({
         body: JSON.stringify({ action: createMode, ...draft }),
       });
       onApplied(result);
-      toast.success(createMode === "invite_user" ? "Kullanıcı daveti gönderildi." : "Yeni panel kullanıcısı oluşturuldu.");
+      toast.success("Yeni panel kullanıcısı oluşturuldu.");
       return true;
     } catch (caught) {
       toast.error(caught instanceof Error ? caught.message : "Kullanıcı oluşturulamadı.");
@@ -351,7 +348,6 @@ function CreateUserEditor({
   }, [createMode, draft, onApplied, toast]);
 
   const discardDraft = useCallback(() => {
-    setCreateMode("create_user");
     setDraft(emptyCreateDraft());
   }, []);
 
@@ -384,17 +380,12 @@ function CreateUserEditor({
         <>
           <ExactButton variant="secondary" size="sm" onClick={requestClose} disabled={saving}>Vazgeç</ExactButton>
           <ExactButton size="sm" onClick={() => void handleSave()} loading={saving} disabled={!dirty}>
-            <Plus className="h-4 w-4" /> {createMode === "invite_user" ? "Daveti Gönder" : "Hesabı Oluştur"}
+            <Plus className="h-4 w-4" /> Hesabı Oluştur
           </ExactButton>
         </>
       )}
     >
       <div className="space-y-3">
-        <ExactSegmentedControl
-          value={createMode}
-          onChange={(value) => setCreateMode(value as CreateMode)}
-          options={[{ value: "invite_user", label: "E-posta Daveti" }, { value: "create_user", label: "Geçici Şifre" }]}
-        />
         <ExactField label="Ad soyad" required>
           <input value={draft.full_name} onChange={(event) => setDraft((old) => ({ ...old, full_name: event.target.value }))} className={exactFormInputClass} />
         </ExactField>
@@ -409,15 +400,9 @@ function CreateUserEditor({
             {Object.entries(roleLabels).filter(([value]) => value !== "owner").map(([value, label]) => <option key={value} value={value}>{label}</option>)}
           </select>
         </ExactField>
-        {createMode === "create_user" ? (
-          <ExactField label="Geçici şifre" required>
-            <input type="password" minLength={8} value={draft.password} onChange={(event) => setDraft((old) => ({ ...old, password: event.target.value }))} className={exactFormInputClass} />
-          </ExactField>
-        ) : (
-          <div className="ruth-type-caption rounded-[var(--radius-control)] bg-info-soft p-3 text-info-foreground">
-            <Mail className="mb-1 h-4 w-4" />Kullanıcıya güvenli hesap kurulum bağlantısı gönderilir.
-          </div>
-        )}
+        <ExactField label="Şifre" required>
+          <input type="password" minLength={8} value={draft.password} onChange={(event) => setDraft((old) => ({ ...old, password: event.target.value }))} className={exactFormInputClass} autoComplete="new-password" />
+        </ExactField>
       </div>
     </ExactFormModal>
   );
