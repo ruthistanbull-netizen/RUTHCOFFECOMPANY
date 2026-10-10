@@ -16,6 +16,7 @@ import {
   type ThemeDocument,
 } from "@ruth-commerce/commerce-core/store-design-v2";
 import { uploadThemeMedia } from "@/lib/themeImageUpload";
+import { previewRostaPublicMediaUrl } from "@/lib/supabaseRuntime";
 import { useExactToast } from "@/components/base44-exact/primitives";
 import { useStoreDesignDialogExit } from "@/components/theme/useStoreDesignDialogExit";
 
@@ -301,9 +302,9 @@ export function StoreDesignMediaLibrary({
                   >
                     <div className="relative aspect-[4/3] overflow-hidden bg-black/[0.04]">
                       {asset.type === "video" ? (
-                        <video src={asset.url} poster={asset.posterAssetId ? document.media[asset.posterAssetId]?.url : undefined} className="h-full w-full object-cover" muted preload="metadata" />
+                        <video src={previewRostaPublicMediaUrl(asset.url)} poster={asset.posterAssetId ? previewRostaPublicMediaUrl(document.media[asset.posterAssetId]?.url || "") : undefined} className="h-full w-full object-cover" muted preload="metadata" />
                       ) : (
-                        <img src={asset.url} alt="" className="h-full w-full object-cover" loading="lazy" />
+                        <img src={previewRostaPublicMediaUrl(asset.url)} alt="" className="h-full w-full object-cover" loading="lazy" />
                       )}
                       <span className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-black/70 px-1.5 py-1 text-[7px] font-semibold text-white">
                         {asset.type === "video" ? <Film className="h-2.5 w-2.5" /> : <ImageIcon className="h-2.5 w-2.5" />}
@@ -347,9 +348,9 @@ export function StoreDesignMediaLibrary({
               <div className="overflow-hidden rounded-xl border border-black/[0.08] bg-white">
                 <div className="aspect-[4/3] bg-black/[0.04]">
                   {selected.type === "video" ? (
-                    <video src={selected.url} poster={selected.posterAssetId ? document.media[selected.posterAssetId]?.url : undefined} className="h-full w-full object-cover" muted controls />
+                    <video src={previewRostaPublicMediaUrl(selected.url)} poster={selected.posterAssetId ? previewRostaPublicMediaUrl(document.media[selected.posterAssetId]?.url || "") : undefined} className="h-full w-full object-cover" muted controls />
                   ) : (
-                    <img src={selected.url} alt="" className="h-full w-full object-cover" />
+                    <img src={previewRostaPublicMediaUrl(selected.url)} alt="" className="h-full w-full object-cover" />
                   )}
                 </div>
               </div>

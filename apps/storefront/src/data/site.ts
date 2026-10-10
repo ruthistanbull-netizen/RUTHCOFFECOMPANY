@@ -1,5 +1,6 @@
 import { unstable_cache, unstable_noStore as noStore } from "next/cache";
 import { supabase } from "@/lib/supabase";
+import { rewriteRostaPublicMediaReferences } from "@/lib/supabaseRuntime";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 import { automaticDiscountForItem, loadDiscountCampaignSettings } from "@/lib/discountCampaigns";
 import { productHasImage } from "@/lib/productDisplay";
@@ -110,6 +111,7 @@ type SupabaseProductRow = Product & {
 };
 
 function normalizeSupabaseProduct(row: SupabaseProductRow): Product {
+  row = rewriteRostaPublicMediaReferences(row);
   const imageRows = [...(row.product_images || [])].sort((a, b) => {
     const mainScore = Number(Boolean(b.is_main)) - Number(Boolean(a.is_main));
     if (mainScore !== 0) return mainScore;
@@ -261,6 +263,7 @@ function withLocalCollections(collections: Collection[]) {
 }
 
 function withLocalProductDefaults(product: Product): Product {
+  product = rewriteRostaPublicMediaReferences(product);
   const fallback = fallbackProducts.find((item) => item.slug === product.slug);
   const image =
     product.main_image_url ||
@@ -977,7 +980,7 @@ async function fetchStoreDesignV2Published(): Promise<ThemeDocument> {
   }
 
   try {
-    return migrateThemeDocument(data?.setting_value).document;
+    return migrateThemeDocument(rewriteRostaPublicMediaReferences(data?.setting_value)).document;
   } catch (error) {
     console.error("Store Design V2 yayın şeması okunamadı; legacy storefront fallback kullanılacak:", error);
     return createEmptyThemeDocument();
@@ -1016,7 +1019,7 @@ export async function getStoreDesignV2Preview(token: string): Promise<ThemeDocum
       return null;
     }
 
-    return data?.setting_value ? migrateThemeDocument(data.setting_value).document : null;
+    return data?.setting_value ? migrateThemeDocument(rewriteRostaPublicMediaReferences(data.setting_value)).document : null;
   } catch (error) {
     console.error("Store Design V2 preview okunamadı:", error);
     return null;
@@ -1042,7 +1045,7 @@ export async function getSiteSettings(): Promise<
   return ((data || []) as SiteSetting[]).reduce<
     Record<string, SiteSetting["setting_value"]>
   >((acc, setting) => {
-    acc[setting.setting_key] = setting.setting_value;
+    acc[setting.setting_key] = rewriteRostaPublicMediaReferences(setting.setting_value);
     return acc;
   }, {});
 }
@@ -1102,7 +1105,7 @@ async function fetchThemeCustomizerSettings(): Promise<ThemeCustomizerSettings> 
 
   return applyRostaStorefrontDesignSystem(
     normalizeThemeCustomizerSettings(
-      data?.setting_value || defaultThemeCustomizerSettings,
+      rewriteRostaPublicMediaReferences(data?.setting_value || defaultThemeCustomizerSettings),
     ),
   );
 }

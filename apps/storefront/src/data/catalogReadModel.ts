@@ -6,6 +6,7 @@ import {
 } from "@/lib/discountCampaigns";
 import { productHasImage } from "@/lib/productDisplay";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
+import { rewriteRostaPublicMediaReferences } from "@/lib/supabaseRuntime";
 import type { Product } from "@/types/site";
 
 const READ_MODEL_TIMEOUT_MS = 1_800;
@@ -35,7 +36,7 @@ function sortProducts(products: Product[]) {
 
 function normalizeProduct(value: unknown): Product | null {
   if (!value || typeof value !== "object") return null;
-  const product = value as Product;
+  const product = rewriteRostaPublicMediaReferences(value) as Product;
   if (!product.id || !product.slug) return null;
   return {
     ...product,
