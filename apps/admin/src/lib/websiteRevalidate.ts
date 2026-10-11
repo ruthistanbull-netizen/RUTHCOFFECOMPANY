@@ -1,7 +1,8 @@
-import { createHash } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import { after } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 import { getStorefrontRevalidationSecret } from "@/lib/storefrontRevalidationSecret";
+import { ROSTA_STORE_URL } from "@/lib/platform";
 
 export type WebsiteRevalidateResult = {
   ok: boolean;
@@ -58,8 +59,8 @@ function payloadFor(input: WebsiteRevalidateInput) {
 function resolveTarget(input: WebsiteRevalidateInput) {
   const baseUrl = (
     process.env.WEBSITE_REVALIDATE_URL || process.env.NEXT_PUBLIC_STOREFRONT_URL ||
-    process.env.STOREFRONT_ORIGIN || process.env.PUBLIC_SITE_URL || "https://rostacoffecompany.zeabur.app"
-  ).replace(/\/$/, "");
+    process.env.STOREFRONT_ORIGIN || process.env.PUBLIC_SITE_URL || ROSTA_STORE_URL
+  ).trim().replace(/\/$/, "");
   const scope = input.scope || inferScope(input.source);
   const target = baseUrl.includes("/api/revalidate") ? baseUrl : `${baseUrl}/api/revalidate`;
   return { scope, target };
@@ -75,8 +76,10 @@ export async function executeWebsiteRevalidate(input: WebsiteRevalidateInput): P
   const payload = payloadFor(input);
   let lastStatus: number | undefined;
   let lastMessage = "Website revalidate çağrısı başarısız.";
+  let attempts = 0;
 
   for (let attempt = 1; attempt <= 2; attempt += 1) {
+    attempts = attempt;
     try {
       const response = await fetch(target, {
         method: "POST",
@@ -91,7 +94,7 @@ export async function executeWebsiteRevalidate(input: WebsiteRevalidateInput): P
       });
       const data = await response.json().catch(() => ({}));
       lastStatus = response.status;
-      if (response.ok && data?.ok !== false) return { ok: true, status: response.status, scope, attempts: attempt };
+      if (response.ok && data?.ok === true && data?.revalidated === true) return { ok: true, status: response.status, scope, attempts: attempt };
       lastMessage = data?.error || "Website cache temizlenemedi.";
       if (response.status >= 400 && response.status < 500 && response.status !== 408 && response.status !== 429) break;
     } catch (error) {
@@ -101,21 +104,20 @@ export async function executeWebsiteRevalidate(input: WebsiteRevalidateInput): P
     }
     if (attempt < 2) await pause(80);
   }
-  return { ok: false, status: lastStatus, scope, attempts: 2, message: lastMessage };
+  return { ok: false, status: lastStatus, scope, attempts, message: lastMessage };
 }
 
-function deliveryDedupeKey(input: WebsiteRevalidateInput) {
-  const payload = payloadFor(input);
-  const bucket = Math.floor(Date.now() / 5_000);
-  const digest = createHash("sha256").update(JSON.stringify({ ...payload, bucket })).digest("hex").slice(0, 32);
-  return `storefront-revalidate:${digest}`;
+function deliveryDedupeKey() {
+  // Two saves of the same product/scope can contain different values. A recently
+  // completed delivery must never suppress recovery of a subsequent save.
+  return `storefront-revalidate:${randomUUID()}`;
 }
 
 async function enqueueDurableDelivery(input: WebsiteRevalidateInput): Promise<DurableJob | null> {
-  const supabase = getSupabaseAdmin();
-  const dedupeKey = deliveryDedupeKey(input);
+  const dedupeKey = deliveryDedupeKey();
   let timer: ReturnType<typeof setTimeout> | null = null;
   try {
+    const supabase = getSupabaseAdmin();
     const result = await Promise.race([
       Promise.resolve(
         supabase.from("platform_delivery_jobs").upsert({
@@ -134,8 +136,6 @@ async function enqueueDurableDelivery(input: WebsiteRevalidateInput): Promise<Du
     if (result.error) throw new Error(result.error.message);
     if (result.data?.id) return { id: String(result.data.id), dedupeKey: String(result.data.dedupe_key || dedupeKey) };
 
-    // A duplicate means an equivalent durable job already exists in the same 5s
-    // bucket. Do not perform a second DB round-trip on the user's mutation path.
     return null;
   } catch (caught) {
     const message = caught instanceof Error ? caught.message : "durable enqueue failed";
@@ -160,11 +160,9 @@ async function acknowledgeImmediateDelivery(job: DurableJob) {
 }
 
 /**
- * Storefront delivery is fast + durable:
- * 1) persist a bounded DB delivery job (at-least-once recovery path)
- * 2) return to the caller without waiting for Vercel/storefront
- * 3) attempt immediate delivery after the response
- * 4) on failure the platform delivery worker retries with backoff/DLQ
+ * User saves await cache invalidation, concurrently with bounded durable recovery
+ * persistence. Background maintenance may explicitly opt into after-response
+ * delivery with immediate: false. The worker retries failures with backoff/DLQ.
  */
 export async function revalidateWebsite(input: WebsiteRevalidateInput): Promise<WebsiteRevalidateResult> {
   const { scope } = resolveTarget(input);
@@ -173,10 +171,11 @@ export async function revalidateWebsite(input: WebsiteRevalidateInput): Promise<
     return { ok: false, skipped: true, scope, attempts: 0, message: "Canlı mağaza yenileme bağlantısı hazırlanamadı; önbellek süresi dolunca yenilenecek." };
   }
 
-  const durableJob = await enqueueDurableDelivery(input);
-
-  if (input.immediate) {
-    const result = await executeWebsiteRevalidate(input);
+  if (input.immediate !== false) {
+    const [durableJob, result] = await Promise.all([
+      enqueueDurableDelivery(input),
+      executeWebsiteRevalidate(input),
+    ]);
     if (result.ok) {
       if (durableJob) after(() => acknowledgeImmediateDelivery(durableJob));
       return {
@@ -195,7 +194,7 @@ export async function revalidateWebsite(input: WebsiteRevalidateInput): Promise<
     }
     if (durableJob) {
       return {
-        ok: true,
+        ok: false,
         deferred: true,
         durable: true,
         scope,
@@ -207,6 +206,7 @@ export async function revalidateWebsite(input: WebsiteRevalidateInput): Promise<
     return result;
   }
 
+  const durableJob = await enqueueDurableDelivery(input);
   after(async () => {
     const result = await executeWebsiteRevalidate(input);
     if (result.ok && durableJob) {
@@ -227,10 +227,13 @@ export async function revalidateWebsite(input: WebsiteRevalidateInput): Promise<
     durable: Boolean(durableJob),
     scope,
     attempts: 0,
-    message: durableJob ? "Storefront yenilemesi kalıcı teslim kuyruğuna alındı." : "Storefront yenilemesi post-commit olarak başlatıldı veya eşdeğer teslim zaten kuyrukta.",
+    message: durableJob ? "Storefront yenilemesi kalıcı teslim kuyruğuna alındı." : "Storefront yenilemesi post-commit olarak başlatıldı.",
   };
 }
 
 export function noStoreHeaders() {
-  return { "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0" };
+  return {
+    "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+    "X-ROSTA-Revalidation-Version": "2",
+  };
 }

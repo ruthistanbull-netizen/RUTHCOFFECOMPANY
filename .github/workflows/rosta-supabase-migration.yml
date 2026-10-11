@@ -30,3 +30,5 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Type-check contracts, commerce, admin and storefront
         run: npm run typecheck:all
+      - name: Verify admin reads and immediate storefront delivery
+        run: npm run test:admin-reads

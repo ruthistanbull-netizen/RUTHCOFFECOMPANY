@@ -1,6 +1,5 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 import { getStorefrontRevalidationSecret } from "@/lib/storefrontRevalidationSecret";
 import { matchesStorefrontRevalidationSecret } from "@ruth-commerce/commerce-core/storefront-revalidation";
 
@@ -8,6 +7,18 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const IMMEDIATE_EXPIRY = { expire: 0 } as const;
+const SCOPES = new Set(["all", "catalog", "theme", "discounts"]);
+
+function json(body: Record<string, unknown>, status = 200) {
+  return NextResponse.json(body, {
+    status,
+    headers: {
+      "Cache-Control": "no-store",
+      // Public protocol version permits deployment verification without a secret.
+      "X-ROSTA-Revalidation-Version": "2",
+    },
+  });
+}
 
 function incomingSecret(request: Request) {
   return request.headers.get("x-revalidate-secret")
@@ -17,153 +28,69 @@ function incomingSecret(request: Request) {
 
 function stringList(value: unknown) {
   return Array.isArray(value)
-    ? [...new Set(value.map((item) => String(item || "").trim()).filter(Boolean))]
+    ? [...new Set(value.filter((item): item is string => typeof item === "string").map((item) => item.trim()).filter(Boolean))].slice(0, 250)
     : [];
-}
-
-type ProductIndexRow = {
-  product_id: string;
-  slug: string;
-  status: string;
-  sort_order: number | null;
-  name: string;
-};
-
-function sortProductIndex(rows: ProductIndexRow[]) {
-  return [...rows]
-    .filter((row) => row.status === "active" && row.slug)
-    .sort((left, right) => {
-      const order = Number(left.sort_order ?? Number.MAX_SAFE_INTEGER) - Number(right.sort_order ?? Number.MAX_SAFE_INTEGER);
-      return order
-        || String(left.name || "").localeCompare(String(right.name || ""), "tr")
-        || String(left.product_id).localeCompare(String(right.product_id));
-    });
-}
-
-async function productWindowInvalidationTargets(productIds: string[], suppliedSlugs: string[]) {
-  const slugs = new Set(suppliedSlugs);
-  if (!productIds.length) return { slugs: [...slugs], broad: false };
-
-  try {
-    const supabase = getSupabaseAdmin();
-    let rows: ProductIndexRow[] = [];
-    const readModel = await supabase
-      .from("storefront_product_read_models")
-      .select("product_id, slug, status, sort_order, name");
-
-    if (!readModel.error) {
-      rows = (readModel.data || []).map((row: any) => ({
-        product_id: String(row.product_id || ""),
-        slug: String(row.slug || ""),
-        status: String(row.status || ""),
-        sort_order: row.sort_order === null ? null : Number(row.sort_order),
-        name: String(row.name || ""),
-      }));
-    } else {
-      const fallback = await supabase
-        .from("products")
-        .select("id, slug, status, sort_order, name");
-      if (fallback.error) throw fallback.error;
-      rows = (fallback.data || []).map((row: any) => ({
-        product_id: String(row.id || ""),
-        slug: String(row.slug || ""),
-        status: String(row.status || ""),
-        sort_order: row.sort_order === null ? null : Number(row.sort_order),
-        name: String(row.name || ""),
-      }));
-    }
-
-    const active = sortProductIndex(rows);
-    let broad = false;
-    for (const productId of productIds) {
-      const raw = rows.find((row) => row.product_id === productId);
-      if (raw?.slug) slugs.add(raw.slug);
-      const index = active.findIndex((row) => row.product_id === productId);
-      if (index < 0) {
-        broad = true;
-        continue;
-      }
-      const current = active[index];
-      const previous = active.length > 1 ? active[(index - 1 + active.length) % active.length] : null;
-      const next = active.length > 1 ? active[(index + 1) % active.length] : null;
-      for (const row of [previous, current, next]) if (row?.slug) slugs.add(row.slug);
-    }
-    return { slugs: [...slugs], broad };
-  } catch {
-    return { slugs: [...slugs], broad: true };
-  }
 }
 
 export async function POST(request: Request) {
   const supplied = incomingSecret(request);
-  if (!supplied) {
-    return NextResponse.json({ ok: false, error: "Revalidate secret hatalı." }, { status: 401 });
-  }
+  if (!supplied) return json({ ok: false, error: "Revalidate secret hatalı." }, 401);
   const expected = await getStorefrontRevalidationSecret();
-  if (!expected) {
-    return NextResponse.json({ ok: false, error: "Canlı mağaza yenileme bağlantısı hazırlanamadı." }, { status: 503 });
-  }
+  if (!expected) return json({ ok: false, error: "Canlı mağaza yenileme bağlantısı hazırlanamadı." }, 503);
   if (!matchesStorefrontRevalidationSecret(expected, supplied)) {
-    return NextResponse.json({ ok: false, error: "Revalidate secret hatalı." }, { status: 401 });
+    return json({ ok: false, error: "Revalidate secret hatalı." }, 401);
   }
 
-  const body = await request.json().catch(() => ({}));
-  const scope = body?.scope || new URL(request.url).searchParams.get("scope") || "all";
-  const productIds = stringList(body?.productIds);
-  const productSlugs = stringList(body?.productSlugs);
+  const body = request.method === "GET" ? {} : await request.json().catch(() => null);
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    return json({ ok: false, error: "Yenileme isteği geçerli bir JSON nesnesi olmalı." }, 400);
+  }
+  const scope = body.scope || new URL(request.url).searchParams.get("scope") || "all";
+  if (!SCOPES.has(scope)) return json({ ok: false, error: "Geçersiz yenileme kapsamı." }, 400);
+  const productIds = stringList(body.productIds);
+  const productSlugs = stringList(body.productSlugs);
   const targetedCatalogChange = scope === "catalog" && (productIds.length > 0 || productSlugs.length > 0);
-
-  // Admin writes require read-your-writes semantics. Next 16's "max" profile
-  // intentionally serves stale content while it refreshes in the background,
-  // which made the storefront appear out of sync with the panel. expire: 0
-  // makes the next catalog read block for fresh data instead.
-  if (scope === "all" || scope === "theme") revalidateTag("rosta-theme", IMMEDIATE_EXPIRY);
-
-  let invalidatedProductSlugs: string[] = [];
-  if (scope === "all" || scope === "catalog") {
-    revalidateTag("rosta-products", IMMEDIATE_EXPIRY);
-
-    if (targetedCatalogChange) {
-      const targets = await productWindowInvalidationTargets(productIds, productSlugs);
-      invalidatedProductSlugs = targets.slugs;
-      if (targets.broad) {
-        revalidateTag("rosta-product-windows", IMMEDIATE_EXPIRY);
-      } else {
-        for (const slug of targets.slugs) revalidateTag(`rosta-product-window:${slug}`, IMMEDIATE_EXPIRY);
-      }
-    } else {
-      revalidateTag("rosta-product-windows", IMMEDIATE_EXPIRY);
-      revalidateTag("rosta-collections", IMMEDIATE_EXPIRY);
-      revalidateTag("rosta-categories", IMMEDIATE_EXPIRY);
-    }
-  }
-
-  if (scope === "all" || scope === "discounts" || scope === "catalog") {
-    revalidateTag("rosta-discounts", IMMEDIATE_EXPIRY);
-  }
+  const invalidatedTags = new Set<string>();
 
   if (scope === "all" || scope === "theme") {
-    revalidatePath("/", "layout");
+    invalidatedTags.add("rosta-theme");
+    invalidatedTags.add("rosta-social-media");
   }
+  if (scope === "all" || scope === "catalog" || scope === "discounts") {
+    // Catalog prices already include discounts, and a cached product window also
+    // contains its neighbours. IDs cannot identify all affected slugs without a
+    // full DB scan. Invalidate the shared tag instead: no DB work on delivery,
+    // including renamed, reordered, newly created or archived products.
+    invalidatedTags.add("rosta-products");
+    invalidatedTags.add("rosta-product-windows");
+    invalidatedTags.add("rosta-discounts");
+  }
+  if (scope === "all" || scope === "catalog") {
+    invalidatedTags.add("rosta-collections");
+    invalidatedTags.add("rosta-categories");
+  }
+  if (scope === "all") invalidatedTags.add("rosta-orders");
+
+  // expire: 0 blocks the next read for fresh data; "max" would return stale data
+  // first. Only known, brand-specific cache owners are accepted by this endpoint.
+  for (const tag of invalidatedTags) revalidateTag(tag, IMMEDIATE_EXPIRY);
+  if (scope === "all" || scope === "theme") revalidatePath("/", "layout");
   if (scope === "all" || scope === "catalog" || scope === "discounts") {
     revalidatePath("/");
     revalidatePath("/products");
     revalidatePath("/category/[slug]", "page");
     revalidatePath("/collections/[slug]", "page");
-    if (invalidatedProductSlugs.length) {
-      for (const slug of invalidatedProductSlugs) revalidatePath(`/products/${encodeURIComponent(slug)}`);
-    } else if (!targetedCatalogChange) {
-      revalidatePath("/products/[slug]", "page");
-    }
+    revalidatePath("/products/[slug]", "page");
   }
 
-  return NextResponse.json({
+  return json({
     ok: true,
     revalidated: true,
     mode: "immediate-expiry",
     scope,
     targetedCatalogChange,
-    invalidatedProductSlugs,
+    invalidatedProductSlugs: productSlugs,
+    invalidatedTags: [...invalidatedTags],
     at: new Date().toISOString(),
   });
 }
