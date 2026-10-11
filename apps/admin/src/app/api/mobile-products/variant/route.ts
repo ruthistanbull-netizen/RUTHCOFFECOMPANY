@@ -127,6 +127,7 @@ export async function POST(request: Request) {
       name, option_summary: name, options: Object.fromEntries(options),
       price: Math.round(price * 100) / 100, stock,
       stock_status: stock > 0 ? "in_stock" : "out_of_stock", is_active: true,
+      sort_order: siblings.length,
       image_url: product.main_image_url || null, updated_at: new Date().toISOString()
     }).select("id, product_id").single();
   if (error || !saved) return NextResponse.json({ ok: false, error: error?.message || "Varyant kaydedilemedi." }, { status: 400, headers });
