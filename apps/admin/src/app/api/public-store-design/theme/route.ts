@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
+import { noStoreHeaders } from "@/lib/websiteRevalidate";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -42,7 +43,7 @@ export async function GET(request: Request) {
     }, {
       status: published?.setting_value ? 200 : 503,
       headers: {
-        "Cache-Control": "no-store, max-age=0",
+        ...noStoreHeaders(),
         "X-Robots-Tag": "noindex, nofollow",
       },
     });
@@ -50,7 +51,7 @@ export async function GET(request: Request) {
     console.error("[ROSTA published theme] self-host read failed:", error instanceof Error ? error.message : error);
     return NextResponse.json({ ok: false, error: "Yayınlanmış tema okunamadı." }, {
       status: 503,
-      headers: { "Cache-Control": "no-store, max-age=0" },
+      headers: noStoreHeaders(),
     });
   }
 }
