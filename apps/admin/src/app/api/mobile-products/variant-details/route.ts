@@ -77,7 +77,7 @@ export async function PATCH(request: Request) {
   let warning: string | null = null;
   try {
     const publish = await revalidateWebsite({ source: "admin-ios-variant-details", productIds: [productId] });
-    warning = publish.ok ? null : publish.message;
+    warning = publish.ok ? null : publish.message ?? "Mağaza yenilemesi doğrulanamadı.";
   } catch {
     warning = "Varyant kaydedildi ancak mağaza yenilemesi doğrulanamadı.";
   }
