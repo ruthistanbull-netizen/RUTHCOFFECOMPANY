@@ -207,3 +207,47 @@ test('legacy catalog and inventory delivery use the same canonical immediate pub
   assert.equal(calls[0].scope, 'catalog');
   assert.equal(calls[0].source, 'rosta-admin-inventory-update');
 });
+
+function insightCreate(revalidate) {
+  return load('admin/src/app/api/rosta-insight/admin/execute/route.ts', {
+    'next/server': { NextResponse, after: () => { throw new Error('user product creation must await storefront delivery'); } },
+    '@/lib/auth': { requireAdmin: async () => ({ profile: { id: 'owner' }, supabase: {} }) },
+    '@/lib/ruthieAdminGateway': { invokeRuthieAdminAction: () => { throw new Error('unexpected action'); } },
+    '@/lib/ruthieActionConfirmation': { verifyRuthieConfirmationToken: () => ({ arguments: { action: 'products.create', payload: {} } }) },
+    '@/lib/ruthieProductFastPath': {
+      createRuthieProductFast: async () => ({ product: { id: 'p1' }, counts: {}, durationMs: 10 }),
+      RuthieProductCreateError: class extends Error {},
+    },
+    '@/lib/websiteRevalidate': { noStoreHeaders: () => ({ 'Cache-Control': 'no-store' }), revalidateWebsite: revalidate },
+  }).POST(new Request('https://admin.test/api/rosta-insight/admin/execute', {
+    method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token: 'confirmed-fixture-action' }),
+  }));
+}
+
+test('Insight product creation waits for the same cache delivery acknowledgement as the panel editor', async () => {
+  let release, delivered = false, resolved = false;
+  const gate = new Promise(resolve => { release = resolve; });
+  const response = insightCreate(async input => {
+    assert.equal(input.productIds[0], 'p1');
+    delivered = true;
+    await gate;
+    return { ok: true, deferred: false };
+  });
+  response.then(() => { resolved = true; });
+  await sleep(0);
+  assert.equal(delivered, true);
+  assert.equal(resolved, false, 'creation cannot claim storefront freshness before delivery');
+  release();
+  const payload = await (await response).json();
+  assert.equal(payload.result.data.revalidate.ok, true);
+  assert.equal(payload.result.data.revalidate.deferred, false);
+});
+
+test('Insight keeps a successful product write while reporting deferred cache delivery accurately', async () => {
+  const response = await insightCreate(async () => ({ ok: false, deferred: true, durable: true }));
+  const payload = await response.json();
+  assert.equal(payload.ok, true);
+  assert.equal(payload.result.data.product.id, 'p1');
+  assert.equal(payload.result.data.revalidate.ok, false);
+  assert.equal(payload.result.data.revalidate.durable, true);
+});

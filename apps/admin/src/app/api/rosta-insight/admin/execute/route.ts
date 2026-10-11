@@ -1,4 +1,4 @@
-import { after, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
 import { invokeRuthieAdminAction } from "@/lib/ruthieAdminGateway";
 import { verifyRuthieConfirmationToken } from "@/lib/ruthieActionConfirmation";
@@ -22,11 +22,9 @@ export async function POST(request: Request) {
 
     if (action === "products.create") {
       const created = await createRuthieProductFast(auth.supabase, record(confirmed.arguments.payload));
-      after(async () => {
-        await revalidateWebsite({
-          source: "ruthie-product-create-fast",
-          productIds: [created.product.id],
-        });
+      const revalidate = await revalidateWebsite({
+        source: "ruthie-product-create-fast",
+        productIds: [created.product.id],
       });
 
       return NextResponse.json({
@@ -40,7 +38,7 @@ export async function POST(request: Request) {
             product: created.product,
             counts: created.counts,
             durationMs: created.durationMs,
-            revalidate: { queued: true },
+            revalidate,
           },
         },
         executedAt: new Date().toISOString(),
