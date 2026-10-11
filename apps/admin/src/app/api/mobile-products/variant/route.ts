@@ -64,13 +64,23 @@ export async function PATCH(request: Request) {
   const verified = Math.abs(Number(saved.price) - rounded) < 0.005 && Number(saved.stock) === stock;
   if (!verified) return NextResponse.json({ ok: false, error: "Kayıt doğrulanamadı." }, { status: 500, headers });
 
-  const published = await revalidateWebsite({ source: "admin-mobile-variant-update", productIds: [productId] });
+  // Persistence already succeeded. A storefront revalidation error must
+  // not turn this response into a false failure that invites unsafe retries.
+  let warning: string | null = null;
+  try {
+    const published = await revalidateWebsite({
+      source: "admin-mobile-variant-update", productIds: [productId],
+    });
+    warning = published.ok ? null : published.message;
+  } catch {
+    warning = "Varyant kaydedildi ancak storefront yenilemesi doğrulanamadı.";
+  }
   return NextResponse.json({
     ok: true,
     product_id: productId,
     variant_id: variantId,
     price: Number(saved.price),
     stock: Number(saved.stock),
-    warning: published.ok ? null : published.message,
+    warning,
   }, { headers });
 }
