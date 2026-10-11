@@ -136,7 +136,7 @@ export async function PUT(request: Request) {
   let warning: string | null = null;
   try {
     const published = await revalidateWebsite({ source: "admin-ios-variant-gallery", productIds: [productId] });
-    warning = published.ok ? null : published.message;
+    warning = published.ok ? null : published.message ?? "Mağaza yenilemesi doğrulanamadı.";
   } catch {
     warning = "Fotoğraflar kaydedildi ancak mağaza yenilemesi doğrulanamadı.";
   }
