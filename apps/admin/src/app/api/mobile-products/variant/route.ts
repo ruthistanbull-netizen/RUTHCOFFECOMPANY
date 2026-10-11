@@ -71,7 +71,7 @@ export async function PATCH(request: Request) {
     const published = await revalidateWebsite({
       source: "admin-mobile-variant-update", productIds: [productId],
     });
-    warning = published.ok ? null : published.message;
+    warning = published.ok ? null : (published.message ?? "Mağaza yenilemesi doğrulanamadı.");
   } catch {
     warning = "Varyant kaydedildi ancak storefront yenilemesi doğrulanamadı.";
   }
