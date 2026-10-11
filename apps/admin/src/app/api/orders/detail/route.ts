@@ -22,7 +22,7 @@ export async function GET(request: Request) {
 
   const [orderResult, emailResult, reviewResult, paymentResult] = await Promise.all([
     auth.supabase.from("orders").select(`
-      id, profile_id, order_no, customer_name, customer_email, customer_phone,
+      id, state_version, profile_id, order_no, customer_name, customer_email, customer_phone,
       total_amount, currency, status, payment_status, fulfillment_status,
       cancelled_at, delivered_at, cargo_company, cargo_tracking_no, cargo_tracking_url,
       customer_note, admin_note, imported_source, reminder_note, reminder_at,
