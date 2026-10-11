@@ -71,7 +71,7 @@ export async function PATCH(request: Request) {
     const published = await revalidateWebsite({
       source: "admin-mobile-variant-update", productIds: [productId],
     });
-    warning = published.ok ? null : published.message;
+    warning = published.ok ? null : published.message ?? "Mağaza yenilemesi doğrulanamadı.";
   } catch {
     warning = "Varyant kaydedildi ancak storefront yenilemesi doğrulanamadı.";
   }
@@ -134,7 +134,7 @@ export async function POST(request: Request) {
   let warning: string | null = null;
   try {
     const result = await revalidateWebsite({ source: "admin-ios-variant-create", productIds: [productId] });
-    warning = result.ok ? null : result.message;
+    warning = result.ok ? null : result.message ?? "Mağaza yenilemesi doğrulanamadı.";
   } catch { warning = "Varyant kaydedildi, mağaza yenilemesi doğrulanamadı."; }
   return NextResponse.json({ ok: true, product_id: productId, variant_id: saved.id, warning }, { headers });
 }
@@ -173,7 +173,7 @@ export async function DELETE(request: Request) {
   let warning: string | null = null;
   try {
     const result = await revalidateWebsite({ source: "admin-ios-variant-archive", productIds: [productId] });
-    warning = result.ok ? null : result.message;
+    warning = result.ok ? null : result.message ?? "Mağaza yenilemesi doğrulanamadı.";
   } catch { warning = "Arşivleme kaydedildi, mağaza yenilemesi doğrulanamadı."; }
   return NextResponse.json({ ok: true, product_id: productId, variant_id: variantId, archived: true, warning }, { headers });
 }
