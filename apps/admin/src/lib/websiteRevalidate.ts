@@ -234,6 +234,6 @@ export async function revalidateWebsite(input: WebsiteRevalidateInput): Promise<
 export function noStoreHeaders() {
   return {
     "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
-    "X-ROSTA-Revalidation-Version": "2",
+    "X-ROSTA-Revalidation-Version": "2.1",
   };
 }
