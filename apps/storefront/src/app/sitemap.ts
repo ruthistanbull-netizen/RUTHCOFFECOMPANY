@@ -22,8 +22,9 @@ const staticRoutes = [
 ];
 
 function date(value: unknown) {
-  const parsed = value ? new Date(String(value)) : new Date();
-  return Number.isNaN(parsed.getTime()) ? new Date() : parsed;
+  if (!value) return undefined;
+  const parsed = new Date(String(value));
+  return Number.isNaN(parsed.getTime()) ? undefined : parsed;
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
