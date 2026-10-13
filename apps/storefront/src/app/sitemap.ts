@@ -22,8 +22,9 @@ const staticRoutes = [
 ];
 
 function date(value: unknown) {
-  const parsed = value ? new Date(String(value)) : new Date();
-  return Number.isNaN(parsed.getTime()) ? new Date() : parsed;
+  if (!value) return undefined;
+  const parsed = new Date(String(value));
+  return Number.isNaN(parsed.getTime()) ? undefined : parsed;
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -73,7 +74,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     ...staticRoutes.map((path) => ({
       url: `${SITE_URL}${path}`,
-      lastModified: new Date(),
       changeFrequency: path === "" || path === "/products" ? "daily" as const : "monthly" as const,
       priority: path === "" ? 1 : path === "/products" ? 0.9 : 0.5,
     })),

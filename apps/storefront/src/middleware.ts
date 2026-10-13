@@ -1,5 +1,16 @@
 import { NextResponse, type NextRequest } from "next/server";
 
+function nextWithPreviewRobots(request: NextRequest) {
+  const response = NextResponse.next();
+  const isThemePreview =
+    request.nextUrl.searchParams.has("storeDesignV2Preview") ||
+    request.nextUrl.searchParams.has("themeSectionsPreview");
+  if (isThemePreview) {
+    response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
+  }
+  return response;
+}
+
 export function middleware(request: NextRequest) {
   if (request.nextUrl.pathname === "/order-tracking") {
     const target = request.nextUrl.clone();
@@ -10,11 +21,11 @@ export function middleware(request: NextRequest) {
   const isInternalPath =
     request.nextUrl.pathname.startsWith("/internal/") ||
     request.nextUrl.pathname.startsWith("/api/catalog-debug");
-  if (!isInternalPath) return NextResponse.next();
+  if (!isInternalPath) return nextWithPreviewRobots(request);
 
   const isProduction = process.env.NODE_ENV === "production";
   const internalQaEnabled = process.env.PHASE1E_INTERNAL_QA === "1";
-  if (!isProduction || internalQaEnabled) return NextResponse.next();
+  if (!isProduction || internalQaEnabled) return nextWithPreviewRobots(request);
 
   return new NextResponse("Not Found", {
     status: 404,

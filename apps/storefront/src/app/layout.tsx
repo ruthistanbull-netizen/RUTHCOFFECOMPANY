@@ -56,6 +56,12 @@ import {
 
 export const revalidate = 10;
 
+const googleSiteVerification = (
+  process.env.GOOGLE_SITE_VERIFICATION ||
+  process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ||
+  ""
+).trim();
+
 function recordValue(value: unknown): Record<string, unknown> {
   return value && typeof value === "object" && !Array.isArray(value)
     ? value as Record<string, unknown>
@@ -80,6 +86,7 @@ export const metadata: Metadata = {
   creator: SITE_NAME,
   publisher: SITE_NAME,
   authors: [{ name: SITE_NAME, url: SITE_URL }],
+  verification: googleSiteVerification ? { google: googleSiteVerification } : undefined,
   robots: {
     index: true,
     follow: true,
