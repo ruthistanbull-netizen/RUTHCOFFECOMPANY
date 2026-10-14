@@ -26,7 +26,7 @@ export async function GET(request: Request) {
   if (error) return error;
   if (!auth) return err("Oturum doğrulanamadı.", 401);
   const result = await auth.supabase.from("admin_mobile_push_devices")
-    .select("id,active,apns_environment,bundle_id,updated_at,last_success_at,last_error")
+    .select("id,active,apns_environment,bundle_id,enabled_kinds,updated_at,last_success_at,last_error")
     .eq("admin_profile_id", auth.profile.id).eq("active", true)
     .order("updated_at", { ascending: false }).limit(20);
   if (result.error) return err("APNs cihaz tablosu hazır değil: " + result.error.message, 503);
@@ -51,6 +51,10 @@ export async function POST(request: Request) {
   if (!expectedBundle || bundleId !== expectedBundle) {
     return err("RR HUB bundle ID ile sunucudaki Apple Push App ID eşleşmiyor.", 409);
   }
+  const validKinds = new Set(["order","contact","reminder","health","test","appointment"]);
+  const enabledKinds = Array.isArray(data.enabledKinds)
+    ? data.enabledKinds.filter((value): value is string => typeof value === "string" && validKinds.has(value))
+    : ["order","contact","reminder","health","test"];
   const tokenHash = createHash("sha256").update(token, "utf8").digest("hex");
   const now = new Date().toISOString();
   const result = await auth.supabase.from("admin_mobile_push_devices")
@@ -61,6 +65,7 @@ export async function POST(request: Request) {
       bundle_id: bundleId,
       apns_environment: environment,
       active: true,
+      enabled_kinds: Array.from(new Set(enabledKinds)),
       updated_at: now,
       last_error: null,
     }, { onConflict: "token_sha256" })
