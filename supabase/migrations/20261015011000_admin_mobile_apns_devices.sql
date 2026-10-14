@@ -8,6 +8,7 @@ create table if not exists public.admin_mobile_push_devices (
   bundle_id text not null,
   apns_environment text not null check (apns_environment in ('sandbox','production')),
   active boolean not null default true,
+  enabled_kinds text[] not null default array['order','contact','reminder','health','test']::text[],
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   last_success_at timestamptz,
