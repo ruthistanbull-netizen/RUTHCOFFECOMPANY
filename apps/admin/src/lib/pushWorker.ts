@@ -9,6 +9,7 @@ import {
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 import { isOptionalAIConfigurationNotice, normalizePanelNotificationTitle, panelServiceAlertTitle } from "@/lib/adminNotification";
 import { appointmentNotification } from "@ruth-commerce/commerce-core/appointments";
+import { APNsError, mobileAPNsConfigured, mobileDevicesFrom, sendNativeAPNs } from "@/lib/mobileApns";
 
 type PushConfig = {
   vapid_public_key: string;
@@ -325,18 +326,32 @@ export async function kickAdminPushWorker(): Promise<AdminPushWorkerResult> {
     .maybeSingle();
   const config = pushConfigFrom(configData);
 
-  if (configError || !config) {
+  const apnsReady = mobileAPNsConfigured();
+  if ((configError || !config) && !apnsReady) {
     return { ok: false, error: configError?.message || "Push yapılandırması bulunamadı." };
   }
-
-  const { data: subscriptionData, error: subscriptionError } = await supabase
-    .from("admin_push_subscriptions")
-    .select("id,endpoint,p256dh,auth_key")
-    .eq("active", true);
+  const { data: subscriptionData, error: subscriptionError } = config && !configError
+    ? await supabase.from("admin_push_subscriptions")
+      .select("id,endpoint,p256dh,auth_key").eq("active", true)
+    : { data: [], error: null };
   const subscriptions = subscriptionsFrom(subscriptionData);
-
   if (subscriptionError) return { ok: false, error: subscriptionError.message };
-  if (!subscriptions.length) return { ok: true, sent: 0, reason: "no_active_subscriptions" };
+
+  const { data: mobileData, error: mobileError } = apnsReady
+    ? await supabase.from("admin_mobile_push_devices")
+      .select("id,device_token,bundle_id,apns_environment,enabled_kinds").eq("active", true)
+    : { data: [], error: null };
+  if (mobileError) return { ok: false, error: "Native APNs device table not ready: " + mobileError.message };
+  const mobileDevices = mobileDevicesFrom(mobileData).map((device) => {
+    const row = (mobileData || []).find((item: any) => item.id === device.id);
+    const enabledKinds = Array.isArray(row?.enabled_kinds)
+      ? row.enabled_kinds.filter((kind: unknown): kind is string => typeof kind === "string")
+      : ["order", "contact", "reminder", "health", "test"];
+    return { ...device, enabledKinds };
+  });
+  if (!subscriptions.length && !mobileDevices.length) {
+    return { ok: true, sent: 0, reason: "no_active_subscriptions" };
+  }
 
   await supabase.rpc("enqueue_due_admin_reminders");
 
@@ -350,6 +365,8 @@ export async function kickAdminPushWorker(): Promise<AdminPushWorkerResult> {
   let sentJobs = 0;
   let failedJobs = 0;
   let deliveredNotifications = 0;
+  const nativeBrand = "rosta";
+  const nativeBrandTitle = "ROSTA Coffee Co.";
   let suppressedJobs = 0;
 
   for (const job of jobs) {
@@ -372,6 +389,7 @@ export async function kickAdminPushWorker(): Promise<AdminPushWorkerResult> {
 
     for (const subscription of subscriptions) {
       try {
+        if (!config) throw new Error("VAPID configuration is unavailable.");
         await sendWebPushNotification(
           subscription,
           encodedPayload,
@@ -400,6 +418,34 @@ export async function kickAdminPushWorker(): Promise<AdminPushWorkerResult> {
             .update({ last_error: message, updated_at: new Date().toISOString() })
             .eq("id", subscription.id);
         }
+      }
+    }
+
+    for (const device of mobileDevices) {
+      if (!device.enabledKinds.includes(job.kind)) continue;
+      try {
+        await sendNativeAPNs(device, {
+          title: nativeBrandTitle + " — " + notification.title,
+          body: notification.body,
+          url: notification.url,
+          kind: job.kind,
+          brand: nativeBrand,
+        });
+        successes += 1;
+        deliveredNotifications += 1;
+        await supabase.from("admin_mobile_push_devices")
+          .update({ last_success_at: new Date().toISOString(),
+                    last_error: null, updated_at: new Date().toISOString() })
+          .eq("id", device.id);
+      } catch (caught) {
+        const code = caught instanceof APNsError ? caught.statusCode : 0;
+        const message = caught instanceof Error ? caught.message : "Apple APNs rejected delivery.";
+        errors.push("Apple APNs: " + message);
+        await supabase.from("admin_mobile_push_devices")
+          .update({ active: code === 410 || code === 400 ? false : true,
+                    last_error: message.slice(0, 500),
+                    updated_at: new Date().toISOString() })
+          .eq("id", device.id);
       }
     }
 
