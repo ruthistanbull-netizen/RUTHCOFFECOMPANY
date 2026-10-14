@@ -421,14 +421,19 @@ export async function kickAdminPushWorker(): Promise<AdminPushWorkerResult> {
       }
     }
 
+    // Storefront appointments are already enqueued as kind=contact for
+    // backwards-compatible Web Push. Native preferences must distinguish
+    // appointment alerts from ordinary contact-form messages.
+    const nativeKind = job.kind === "contact" && clean(job.payload?.appointment_id)
+      ? "appointment" : job.kind;
     for (const device of mobileDevices) {
-      if (!device.enabledKinds.includes(job.kind)) continue;
+      if (!device.enabledKinds.includes(nativeKind)) continue;
       try {
         await sendNativeAPNs(device, {
           title: nativeBrandTitle + " — " + notification.title,
           body: notification.body,
           url: notification.url,
-          kind: job.kind,
+          kind: nativeKind,
           brand: nativeBrand,
         });
         successes += 1;
