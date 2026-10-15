@@ -37,7 +37,7 @@ grant all on public.rosta_live_support_messages to service_role;
 -- Only server-side getSupabaseAdmin/requireAdmin may access these tables.
 
 
--- Private customer chat attachments. Only the Ruth server's service-role may
+-- Private customer chat attachments. Only the ROSTA Coffee Co. server's service-role may
 -- create signed read links after checking customer token or admin auth.
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values ('rosta-live-support-private', 'rosta-live-support-private', false, 1572864,
@@ -48,3 +48,6 @@ on conflict (id) do update set
   allowed_mime_types = array['image/jpeg'];
 
 -- Never add anonymous select/storage policies for support images.
+
+-- Refresh self-hosted PostgREST's table/schema cache immediately.
+NOTIFY pgrst, 'reload schema';
