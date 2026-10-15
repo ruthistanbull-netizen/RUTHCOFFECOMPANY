@@ -250,7 +250,9 @@ export async function GET(request: Request) {
       pageSize,
       total,
       totalPages: Math.max(1, Math.ceil(total / pageSize)),
-      hasMore: page * pageSize < total,
+      // Text search is a capped one-shot result; do not advertise page 2
+      // when its backend intentionally resolves every q request to page 1.
+      hasMore: !normalizedSearch && page * pageSize < total,
     },
   }, { headers: noStoreHeaders() });
 }
