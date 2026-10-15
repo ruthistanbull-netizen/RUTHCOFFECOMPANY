@@ -26,7 +26,10 @@ export async function GET(request: Request) {
       .from("rosta_live_support_messages")
       .select("id,thread_id,sender,body,image_path,created_at")
       .eq("thread_id", id).order("created_at", { ascending: true }).limit(250);
-    if (messageError) return res({ ok: false, error: "Mesajlar alınamadı." }, 503);
+    if (messageError) {
+      console.error("[live-support/admin] messages read failed", { code: messageError.code, message: messageError.message });
+      return res({ ok: false, error: "Mesajlar alınamadı." }, 503);
+    }
     const signedMessages = await Promise.all((messages || []).map(async (item) => {
       if (!item.image_path) return { ...item, image_url: null, image_path: undefined };
       const { data: signed } = await auth.supabase.storage.from("rosta-live-support-private")
@@ -39,7 +42,10 @@ export async function GET(request: Request) {
     .from("rosta_live_support_threads")
     .select("id,name,email,status,created_at,updated_at")
     .order("updated_at", { ascending: false }).limit(150);
-  if (error) return res({ ok: false, error: "Destek listesi alınamadı." }, 503);
+  if (error) {
+    console.error("[live-support/admin] thread list failed", { code: error.code, message: error.message });
+    return res({ ok: false, error: "Destek listesi alınamadı." }, 503);
+  }
   return res({ ok: true, threads: data || [] });
 }
 
@@ -58,7 +64,10 @@ export async function POST(request: Request) {
   }
   const { error } = await auth.supabase.from("rosta_live_support_messages")
     .insert({ thread_id: id, sender: "admin", body: message });
-  if (error) return res({ ok: false, error: "Yanıt kaydedilemedi." }, 503);
+  if (error) {
+    console.error("[live-support/admin] reply insert failed", { code: error.code, message: error.message });
+    return res({ ok: false, error: "Yanıt kaydedilemedi." }, 503);
+  }
   await auth.supabase.from("rosta_live_support_threads")
     .update({ status: "active", updated_at: new Date().toISOString() }).eq("id", id);
   return res({ ok: true });
@@ -81,7 +90,10 @@ export async function PATCH(request: Request) {
   }
   const { error } = await auth.supabase.from("rosta_live_support_threads")
     .update({ status, updated_at: new Date().toISOString() }).eq("id", id);
-  if (error) return res({ ok: false, error: "İşlem gerçekleştirilemedi." }, 503);
+  if (error) {
+    console.error("[live-support/admin] status change failed", { code: error.code, message: error.message });
+    return res({ ok: false, error: "İşlem gerçekleştirilemedi." }, 503);
+  }
   const systemMessage = action === "reject"
     ? "Şu anda canlı destek hizmeti veremiyoruz. Sorununla ilgili detayları yazarsan seninle e-posta üzerinden iletişime geçeceğiz."
     : action === "close" ? "Canlı destek görüşmesi sonlandırıldı."
