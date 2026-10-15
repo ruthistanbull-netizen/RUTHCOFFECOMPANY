@@ -42,14 +42,20 @@ export async function POST(request: Request) {
     const { count, error: countError } = await db.from("rosta_live_support_threads")
       .select("id", { count: "exact", head: true })
       .eq("email", email).gte("created_at", since);
-    if (countError) return failure("Destek şu anda açılamıyor.", 503);
+    if (countError) {
+      console.error("[live-support] list request failed", { code: countError.code, message: countError.message });
+      return failure("Destek şu anda açılamıyor.", 503);
+    }
     if ((count || 0) >= 4) return failure("Çok fazla destek talebi. Lütfen daha sonra deneyin.", 429);
 
     const token = randomBytes(32).toString("hex");
     const { data, error } = await db.from("rosta_live_support_threads")
       .insert({ name, email, access_hash: hash(token), status: "pending" })
       .select("id,status,created_at").single();
-    if (error || !data) return failure("Canlı destek hazırlanamadı.", 503);
+    if (error || !data) {
+      console.error("[live-support] thread creation failed", { code: error?.code, message: error?.message || "No thread returned" });
+      return failure("Canlı destek hazırlanamadı.", 503);
+    }
     return success({ thread: data, accessToken: token }, 201);
   }
   if (action === "message") {
@@ -78,11 +84,15 @@ export async function POST(request: Request) {
       imagePath = id + "/" + randomBytes(16).toString("hex") + ".jpg";
       const { error: storageError } = await db.storage.from("rosta-live-support-private")
         .upload(imagePath, buffer, { contentType: "image/jpeg", upsert: false });
-      if (storageError) return failure("Fotoğraf yüklenemedi. Tekrar deneyin.", 503);
+      if (storageError) {
+        console.error("[live-support] private attachment failed", { message: storageError.message });
+        return failure("Fotoğraf yüklenemedi. Tekrar deneyin.", 503);
+      }
     }
     const { error } = await db.from("rosta_live_support_messages")
       .insert({ thread_id: id, sender: "customer", body: text || "Fotoğraf", image_path: imagePath });
     if (error) {
+      console.error("[live-support] message insert failed", { code: error.code, message: error.message });
       if (imagePath) await db.storage.from("rosta-live-support-private").remove([imagePath]);
       return failure("Mesaj gönderilemedi.", 503);
     }
