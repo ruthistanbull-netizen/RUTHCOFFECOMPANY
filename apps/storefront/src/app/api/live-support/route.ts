@@ -76,14 +76,14 @@ export async function POST(request: Request) {
         return failure("En fazla 1,4 MB JPEG fotoğraf gönderebilirsin.", 413);
       }
       imagePath = id + "/" + randomBytes(16).toString("hex") + ".jpg";
-      const { error: storageError } = await db.storage.from("ruth-live-support-private")
+      const { error: storageError } = await db.storage.from("rosta-live-support-private")
         .upload(imagePath, buffer, { contentType: "image/jpeg", upsert: false });
       if (storageError) return failure("Fotoğraf yüklenemedi. Tekrar deneyin.", 503);
     }
     const { error } = await db.from("rosta_live_support_messages")
       .insert({ thread_id: id, sender: "customer", body: text || "Fotoğraf", image_path: imagePath });
     if (error) {
-      if (imagePath) await db.storage.from("ruth-live-support-private").remove([imagePath]);
+      if (imagePath) await db.storage.from("rosta-live-support-private").remove([imagePath]);
       return failure("Mesaj gönderilemedi.", 503);
     }
     await db.from("rosta_live_support_threads")
@@ -107,7 +107,7 @@ export async function GET(request: Request) {
   if (error) return failure("Mesajlar alınamadı.", 503);
   const messages = await Promise.all((data || []).map(async (item) => {
     if (!item.image_path) return { ...item, image_url: null, image_path: undefined };
-    const { data: signed } = await db.storage.from("ruth-live-support-private")
+    const { data: signed } = await db.storage.from("rosta-live-support-private")
       .createSignedUrl(item.image_path, 10 * 60);
     return { ...item, image_url: signed?.signedUrl || null, image_path: undefined };
   }));
