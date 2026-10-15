@@ -38,12 +38,47 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const search = String(url.searchParams.get("q") || "").trim();
   const normalizedSearch = normalizeSearchText(search);
+  const categoryId = String(url.searchParams.get("categoryId") || "").trim();
+  const collectionId = String(url.searchParams.get("collectionId") || "").trim();
+  const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  if ((categoryId && !uuidPattern.test(categoryId)) ||
+      (collectionId && !uuidPattern.test(collectionId))) {
+    return NextResponse.json({ ok: false, error: "Geçersiz kategori veya koleksiyon." },
+      { status: 400, headers: noStoreHeaders() });
+  }
   const requestedPage = Math.max(1, Math.trunc(Number(url.searchParams.get("page") || 1)));
   const requestedPageSize = Math.max(1, Math.trunc(Number(url.searchParams.get("pageSize") || DEFAULT_PAGE_SIZE)));
   const page = normalizedSearch ? 1 : requestedPage;
   const pageSize = normalizedSearch ? MAX_PAGE_SIZE : Math.min(MAX_PAGE_SIZE, requestedPageSize);
   const rangeStart = (page - 1) * pageSize;
   const rangeEnd = rangeStart + pageSize - 1;
+
+  // Category/collection selection must be evaluated before pagination.
+  let filteredIds: Set<string> | null = null;
+  if (categoryId) {
+    const links = await auth.supabase.from("product_categories")
+      .select("product_id").eq("category_id", categoryId);
+    if (links.error) return NextResponse.json({ ok: false, error: links.error.message },
+      { status: 400, headers: noStoreHeaders() });
+    filteredIds = new Set((links.data || []).map((row) => String(row.product_id)));
+  }
+  if (collectionId) {
+    const [links, primary] = await Promise.all([
+      auth.supabase.from("product_collections").select("product_id").eq("collection_id", collectionId),
+      auth.supabase.from("products").select("id").eq("collection_id", collectionId),
+    ]);
+    if (links.error || primary.error) {
+      return NextResponse.json({ ok: false, error: links.error?.message || primary.error?.message },
+        { status: 400, headers: noStoreHeaders() });
+    }
+    const matches = new Set([
+      ...(links.data || []).map((row) => String(row.product_id)),
+      ...(primary.data || []).map((row) => String(row.id)),
+    ]);
+    filteredIds = filteredIds === null
+      ? matches
+      : new Set([...filteredIds].filter((id) => matches.has(id)));
+  }
 
   let productQuery = auth.supabase
     .from("products")
@@ -84,6 +119,12 @@ export async function GET(request: Request) {
     .order("sort_order", { ascending: true })
     .order("id", { ascending: true });
 
+  if (filteredIds !== null) {
+    const matches = [...filteredIds];
+    productQuery = matches.length
+      ? productQuery.in("id", matches)
+      : productQuery.eq("id", "00000000-0000-0000-0000-000000000000");
+  }
   productQuery = normalizedSearch
     ? productQuery.limit(500)
     : productQuery.range(rangeStart, rangeEnd);
@@ -209,7 +250,9 @@ export async function GET(request: Request) {
       pageSize,
       total,
       totalPages: Math.max(1, Math.ceil(total / pageSize)),
-      hasMore: page * pageSize < total,
+      // Text search is a capped one-shot result; do not advertise page 2
+      // when its backend intentionally resolves every q request to page 1.
+      hasMore: !normalizedSearch && page * pageSize < total,
     },
   }, { headers: noStoreHeaders() });
 }
