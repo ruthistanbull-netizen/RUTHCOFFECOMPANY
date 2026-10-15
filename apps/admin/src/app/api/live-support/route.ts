@@ -24,10 +24,16 @@ export async function GET(request: Request) {
     if (error || !thread) return res({ ok: false, error: "Görüşme bulunamadı." }, 404);
     const { data: messages, error: messageError } = await auth.supabase
       .from("rosta_live_support_messages")
-      .select("id,thread_id,sender,body,created_at")
+      .select("id,thread_id,sender,body,image_path,created_at")
       .eq("thread_id", id).order("created_at", { ascending: true }).limit(250);
     if (messageError) return res({ ok: false, error: "Mesajlar alınamadı." }, 503);
-    return res({ ok: true, thread, messages: messages || [] });
+    const signedMessages = await Promise.all((messages || []).map(async (item) => {
+      if (!item.image_path) return { ...item, image_url: null, image_path: undefined };
+      const { data: signed } = await auth.supabase.storage.from("rosta-live-support-private")
+        .createSignedUrl(item.image_path, 10 * 60);
+      return { ...item, image_url: signed?.signedUrl || null, image_path: undefined };
+    }));
+    return res({ ok: true, thread, messages: signedMessages });
   }
   const { data, error } = await auth.supabase
     .from("rosta_live_support_threads")
