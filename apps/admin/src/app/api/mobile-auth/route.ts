@@ -29,7 +29,13 @@ export async function POST(request: Request) {
   const authBase = ROSTA_SUPABASE_URL;
   const anonKey = ROSTA_SUPABASE_PUBLISHABLE_KEY;
   if (!anonKey || !authBase) {
-    return NextResponse.json({ ok: false, error: "Mobil giriş sunucu ayarları eksik." }, { status: 503, headers });
+    console.error("[rosta/mobile-auth] Missing self-hosted public auth configuration", {
+      publicKeyConfigured: Boolean(anonKey), urlConfigured: Boolean(authBase),
+    });
+    return NextResponse.json({
+      ok: false, code: "ROSTA_AUTH_CONFIG_MISSING",
+      error: "ROSTA panelinde mobil oturum ayarı eksik. Zeabur'da ROSTA self-host anon/public anahtarını tanımla.",
+    }, { status: 503, headers });
   }
   const email = String(body.email || "").trim();
   const password = String(body.password || "");
@@ -82,7 +88,15 @@ export async function POST(request: Request) {
       refresh_token: newRefresh,
       expires_in: Number.isFinite(expiresIn) && expiresIn > 0 ? expiresIn : 3600,
     }, { headers });
-  } catch {
-    return NextResponse.json({ ok: false, error: "Mobil giriş servisine erişilemiyor." }, { status: 503, headers });
+  } catch (error) {
+    // No tokens, passwords, user email, private URLs or credential values in logs.
+    console.error("[rosta/mobile-auth] Self-hosted auth upstream unavailable", {
+      reason: error instanceof Error ? error.name : "unknown",
+      action,
+    });
+    return NextResponse.json({
+      ok: false, code: "ROSTA_AUTH_UPSTREAM_UNAVAILABLE",
+      error: "ROSTA kimlik servisine şu anda ulaşılamıyor. Self-host bağlantısını kontrol et.",
+    }, { status: 503, headers });
   }
 }
