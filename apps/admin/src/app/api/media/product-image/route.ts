@@ -1,17 +1,7 @@
-import { previewRostaPublicMediaUrl } from "@/lib/supabaseRuntime";
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
-import {
-  PRODUCT_IMAGE_HEIGHT,
-  PRODUCT_IMAGE_MAX_BYTES,
-  PRODUCT_IMAGE_WIDTH,
-  transformProductImage,
-} from "@/lib/productImagePipeline";
-import {
-  RUTH_PRODUCT_PHOTO_BUCKET,
-  RUTH_PRODUCT_PHOTO_SYSTEM_NAME,
-  ruthProductPhotoPath,
-} from "@/lib/productPhotoStorage";
+import { PRODUCT_IMAGE_MAX_BYTES } from "@/lib/productImagePipeline";
+import { createPhotoAsset, defaultPhotoEdits, normalizedPhotoCrop } from "@/lib/productPhotoAssets";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -42,45 +32,13 @@ export async function POST(request: Request) {
   }
 
   try {
-    const transformed = await transformProductImage(
-      Buffer.from(await file.arrayBuffer()),
-      {
-        focalX: Number(form.get("focalX") ?? 0.5),
-        focalY: Number(form.get("focalY") ?? 0.5),
-        zoom: Number(form.get("zoom") ?? 1),
-        rotation: Number(form.get("rotation") ?? 0),
-      },
-    );
-    const { buffer, ...metadata } = transformed;
-    const path = ruthProductPhotoPath(file.name, "original");
-
-    const { error } = await auth.supabase.storage
-      .from(RUTH_PRODUCT_PHOTO_BUCKET)
-      .upload(path, buffer, {
-        contentType: "image/webp",
-        upsert: false,
-        cacheControl: "31536000",
-      });
-    if (error) {
-      return NextResponse.json(
-        { ok: false, error: error.message },
-        { status: 400 },
-      );
-    }
-
-    const { data } = auth.supabase.storage
-      .from(RUTH_PRODUCT_PHOTO_BUCKET)
-      .getPublicUrl(path);
-    return NextResponse.json({
-      ok: true,
-      url: previewRostaPublicMediaUrl(data.publicUrl),
-      width: PRODUCT_IMAGE_WIDTH,
-      height: PRODUCT_IMAGE_HEIGHT,
-      aspect: "3:4",
-      storage: RUTH_PRODUCT_PHOTO_SYSTEM_NAME,
-      bucket: RUTH_PRODUCT_PHOTO_BUCKET,
-      ...metadata,
+    const edits = defaultPhotoEdits();
+    edits.website = normalizedPhotoCrop({
+      focalX: Number(form.get("focalX") ?? 0.5), focalY: Number(form.get("focalY") ?? 0.5),
+      zoom: Number(form.get("zoom") ?? 1), rotation: Number(form.get("rotation") ?? 0),
     });
+    const result = await createPhotoAsset(auth.supabase, Buffer.from(await file.arrayBuffer()), edits);
+    return NextResponse.json({ ok: true, ...result }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     return NextResponse.json(
       {
@@ -91,3 +49,4 @@ export async function POST(request: Request) {
     );
   }
 }
+

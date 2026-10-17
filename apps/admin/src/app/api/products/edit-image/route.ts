@@ -1,26 +1,13 @@
-import { previewRostaPublicMediaUrl } from "@/lib/supabaseRuntime";
 import dns from "node:dns/promises";
 import { isIP } from "node:net";
 import { NextResponse } from "next/server";
-import sharp from "sharp";
 import { requireAdmin } from "@/lib/auth";
-import {
-  RUTH_PRODUCT_PHOTO_BUCKET,
-  RUTH_PRODUCT_PHOTO_SYSTEM_NAME,
-  ruthProductPhotoPath,
-} from "@/lib/productPhotoStorage";
-
+import { RUTH_PRODUCT_PHOTO_BUCKET } from "@/lib/productPhotoStorage";
+import { createPhotoAsset, readPhotoAsset, normalizedPhotoCrop } from "@/lib/productPhotoAssets";
 export const runtime = "nodejs";
 
 const MAX_SOURCE_BYTES = 24 * 1024 * 1024;
 const MAX_REDIRECTS = 4;
-const OUTPUT_WIDTH = 1200;
-const OUTPUT_HEIGHT = 1600;
-
-function finite(value: unknown, fallback: number, min: number, max: number) {
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? Math.min(max, Math.max(min, parsed)) : fallback;
-}
 
 function privateAddress(address: string) {
   if (address === "::1" || address.startsWith("fe80:") || address.startsWith("fc") || address.startsWith("fd")) return true;
@@ -78,55 +65,47 @@ async function fetchSafeImage(initial: URL) {
   throw new Error("Görsel indirilemedi.");
 }
 
+export async function GET(request: Request) {
+  const auth = await requireAdmin(request);
+  if ("error" in auth) return auth.error;
+  try {
+    const url = await safeImageUrl(new URL(request.url).searchParams.get("url"));
+    const asset = await readPhotoAsset(auth.supabase, url.toString());
+    return NextResponse.json({ ok: true, originalURL: asset.originalURL, edits: asset.edits,
+      hasRenditions: Boolean(asset.folder) },
+      { headers: { "Cache-Control": "private, no-store" } });
+  } catch (error) {
+    return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : "Fotoğraf okunamadı." }, { status: 400 });
+  }
+}
+
 export async function POST(request: Request) {
   const auth = await requireAdmin(request);
   if ("error" in auth) return auth.error;
-
   try {
-    const body = await request.json().catch(() => ({}));
+    const body = await request.json();
+    if (!body.edits?.website || !body.edits?.application) throw new Error("İki gösterim ayarı da gerekli. Düzenleyiciyi yenile.");
+    const edits = {
+      website: normalizedPhotoCrop(body.edits.website),
+      application: normalizedPhotoCrop(body.edits.application),
+    };
     const url = await safeImageUrl(body.url);
-    const zoom = finite(body.zoom, 1, 1, 3);
-    const rotation = Math.round(finite(body.rotation, 0, -360, 360) / 90) * 90;
-    const offsetX = finite(body.offsetX, 0, -1, 1);
-    const offsetY = finite(body.offsetY, 0, -1, 1);
-    const flipX = Boolean(body.flipX);
-
-    const response = await fetchSafeImage(url);
-    const input = Buffer.from(await response.arrayBuffer());
+    const asset = await readPhotoAsset(auth.supabase, url.toString());
+    let input: Buffer;
+    if (asset.folder) {
+      const { data, error } = await auth.supabase.storage.from(RUTH_PRODUCT_PHOTO_BUCKET)
+        .download(asset.folder + "/original");
+      if (error || !data) throw new Error("Orijinal fotoğraf okunamadı.");
+      if (data.size > MAX_SOURCE_BYTES) throw new Error("Görsel en fazla 24 MB olabilir.");
+      input = Buffer.from(await data.arrayBuffer());
+    } else {
+      const response = await fetchSafeImage(url);
+      input = Buffer.from(await response.arrayBuffer());
+    }
     if (!input.length || input.length > MAX_SOURCE_BYTES) throw new Error("Görsel boyutu geçersiz.");
 
-    let pipeline = sharp(input, { failOn: "error", limitInputPixels: 80_000_000 }).rotate(rotation);
-    if (flipX) pipeline = pipeline.flop();
-
-    const workWidth = Math.max(OUTPUT_WIDTH, Math.round(OUTPUT_WIDTH * zoom));
-    const workHeight = Math.max(OUTPUT_HEIGHT, Math.round(OUTPUT_HEIGHT * zoom));
-    const maxLeft = workWidth - OUTPUT_WIDTH;
-    const maxTop = workHeight - OUTPUT_HEIGHT;
-    const left = Math.round((offsetX + 1) * 0.5 * maxLeft);
-    const top = Math.round((offsetY + 1) * 0.5 * maxTop);
-
-    const output = await pipeline
-      .resize(workWidth, workHeight, { fit: "cover", position: "centre" })
-      .extract({ left, top, width: OUTPUT_WIDTH, height: OUTPUT_HEIGHT })
-      .webp({ quality: 91, effort: 4 })
-      .toBuffer();
-
-    const path = ruthProductPhotoPath("edited-product", "edited");
-    const { error } = await auth.supabase.storage
-      .from(RUTH_PRODUCT_PHOTO_BUCKET)
-      .upload(path, output, { contentType: "image/webp", upsert: false, cacheControl: "31536000" });
-    if (error) throw new Error(error.message);
-
-    const { data } = auth.supabase.storage.from(RUTH_PRODUCT_PHOTO_BUCKET).getPublicUrl(path);
-    return NextResponse.json({
-      ok: true,
-      url: previewRostaPublicMediaUrl(data.publicUrl),
-      width: OUTPUT_WIDTH,
-      height: OUTPUT_HEIGHT,
-      aspect: "3:4",
-      storage: RUTH_PRODUCT_PHOTO_SYSTEM_NAME,
-      bucket: RUTH_PRODUCT_PHOTO_BUCKET,
-    }, { headers: { "Cache-Control": "no-store" } });
+    const result = await createPhotoAsset(auth.supabase, input, edits);
+    return NextResponse.json({ ok: true, ...result }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : "Görsel düzenlenemedi." }, { status: 400 });
   }
