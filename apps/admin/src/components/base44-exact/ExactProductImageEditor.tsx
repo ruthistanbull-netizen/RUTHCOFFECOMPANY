@@ -30,28 +30,54 @@ type ImageDraft = {
   zoom: number;
   rotation: number;
   flipX: boolean;
-  offsetX: number;
-  offsetY: number;
+  focalX: number;
+  focalY: number;
 };
 
 const defaultDraft = (): ImageDraft => ({
   zoom: 1,
   rotation: 0,
   flipX: false,
-  offsetX: 0,
-  offsetY: 0,
+  focalX: 0.5,
+  focalY: 0.5,
 });
 
 function fingerprint(value: ImageDraft) {
-  return JSON.stringify(value);
+  return JSON.stringify([value.focalX, value.focalY, value.zoom, value.rotation, value.flipX]);
 }
 
 function ExactProductImageEditorContent({ open, imageUrl, onClose, onSave }: Props) {
   const toast = useExactToast();
   const { save, saving, requestTransition } = useSaveLifecycle();
   const [draft, setDraft] = useState<ImageDraft>(() => defaultDraft());
-  const drag = useRef<{ x: number; y: number; offsetX: number; offsetY: number } | null>(null);
-  const dirty = open && fingerprint(draft) !== fingerprint(defaultDraft());
+  const [initial, setInitial] = useState<ImageDraft>(() => defaultDraft());
+  const [application, setApplication] = useState<ImageDraft>(() => defaultDraft());
+  const [originalUrl, setOriginalUrl] = useState<string | null>(null);
+  const [needsRenditions, setNeedsRenditions] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [sourceSize, setSourceSize] = useState({ width: 1, height: 1 });
+  const [frameSize, setFrameSize] = useState({ width: 1, height: 1 });
+  const frame = useCallback((element: HTMLDivElement | null) => {
+    if (!element) return;
+    const observer = new ResizeObserver(([entry]) => {
+      if (entry.contentRect.width && entry.contentRect.height) setFrameSize({ width: entry.contentRect.width, height: entry.contentRect.height });
+    });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+  const drag = useRef<{ x: number; y: number; focalX: number; focalY: number } | null>(null);
+  const dirty = open && !loading && !!originalUrl && (needsRenditions || fingerprint(draft) !== fingerprint(initial));
+  const quarterTurn = Math.abs(draft.rotation % 180) === 90;
+  const width = quarterTurn ? sourceSize.height : sourceSize.width;
+  const height = quarterTurn ? sourceSize.width : sourceSize.height;
+  const scale = Math.max(frameSize.width / width, frameSize.height / height) * draft.zoom;
+  const drawnWidth = width * scale;
+  const drawnHeight = height * scale;
+  const halfX = frameSize.width / drawnWidth / 2;
+  const halfY = frameSize.height / drawnHeight / 2;
+  const focalX = Math.min(1 - halfX, Math.max(halfX, draft.focalX));
+  const focalY = Math.min(1 - halfY, Math.max(halfY, draft.focalY));
 
   const reset = useCallback(() => {
     setDraft(defaultDraft());
@@ -59,15 +85,29 @@ function ExactProductImageEditorContent({ open, imageUrl, onClose, onSave }: Pro
   }, []);
 
   useEffect(() => {
-    if (open) reset();
-  }, [imageUrl, open, reset]);
+    if (!open || !imageUrl) return;
+    let active = true;
+    setLoading(true); setOriginalUrl(null); setLoadError(null); drag.current = null;
+    void adminRequest<{ originalURL: string; edits: { website: ImageDraft; application: ImageDraft }; hasRenditions: boolean }>(
+      "/api/products/edit-image?url=" + encodeURIComponent(imageUrl), { method: "GET" },
+    ).then((result) => {
+      if (!active) return;
+      setDraft(result.edits.website); setInitial(result.edits.website);
+      setApplication(result.edits.application); setOriginalUrl(result.originalURL);
+      setNeedsRenditions(!result.hasRenditions);
+    }).catch((error: unknown) => {
+      if (active) setLoadError(error instanceof Error ? error.message : "Fotoğraf yüklenemedi.");
+    }).finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [imageUrl, open]);
+
 
   const persistDraft = useCallback(async () => {
-    if (!imageUrl) return true;
+    if (!imageUrl || !originalUrl || loading || loadError) return false;
     try {
       const result = await adminRequest<{ url?: string }>("/api/products/edit-image", {
         method: "POST",
-        body: JSON.stringify({ url: imageUrl, ...draft }),
+        body: JSON.stringify({ url: imageUrl, edits: { website: draft, application } }),
       });
       if (!result.url) throw new Error("Düzenlenmiş görsel adresi alınamadı.");
       onSave(result.url);
@@ -77,13 +117,13 @@ function ExactProductImageEditorContent({ open, imageUrl, onClose, onSave }: Pro
       toast.error(caught instanceof Error ? caught.message : "Görsel düzenlenemedi.");
       return false;
     }
-  }, [draft, imageUrl, onSave, toast]);
+  }, [draft, application, imageUrl, originalUrl, loading, loadError, onSave, toast]);
 
   useSaveLifecycleSource({
     id: "product-image-editor",
     dirty,
     save: persistDraft,
-    discard: reset,
+    discard: () => setDraft(initial),
   });
 
   const requestClose = () => {
@@ -110,26 +150,29 @@ function ExactProductImageEditorContent({ open, imageUrl, onClose, onSave }: Pro
             <RotateCcw className="h-4 w-4" /> Sıfırla
           </ExactButton>
           <ExactButton variant="secondary" size="sm" onClick={requestClose} disabled={saving}>Vazgeç</ExactButton>
-          <ExactButton size="sm" onClick={() => void handleSave()} loading={saving} disabled={!dirty || !imageUrl}>
+          <ExactButton size="sm" onClick={() => void handleSave()} loading={saving} disabled={!dirty || !imageUrl || !!loadError}>
             <Save className="h-4 w-4" /> Düzenlemeyi Kaydet
           </ExactButton>
         </>
       )}
     >
-      <div className="grid gap-4 lg:grid-cols-[1fr_280px]">
+      {loading && <p role="status">Orijinal fotoğraf yükleniyor…</p>}
+      {loadError && <p role="alert">{loadError}</p>}
+      <fieldset disabled={loading || saving || !!loadError} className="grid min-w-0 gap-4 border-0 p-0 lg:grid-cols-[1fr_280px]">
         <div className="flex min-h-[480px] items-center justify-center rounded-[var(--radius-card)] bg-surface-secondary p-4">
           <div
+            ref={frame}
+            style={{ touchAction: "none" }}
             className="relative aspect-[3/4] h-[min(64vh,620px)] max-w-full cursor-grab overflow-hidden rounded-[var(--radius-card)] bg-black/90 shadow-floating active:cursor-grabbing"
             onPointerDown={(event) => {
               event.currentTarget.setPointerCapture(event.pointerId);
-              drag.current = { x: event.clientX, y: event.clientY, offsetX: draft.offsetX, offsetY: draft.offsetY };
+              drag.current = { x: event.clientX, y: event.clientY, focalX, focalY };
             }}
             onPointerMove={(event) => {
-              if (!drag.current || draft.zoom <= 1) return;
-              const rect = event.currentTarget.getBoundingClientRect();
-              const offsetX = Math.max(-1, Math.min(1, drag.current.offsetX + (event.clientX - drag.current.x) / Math.max(1, rect.width * 0.35)));
-              const offsetY = Math.max(-1, Math.min(1, drag.current.offsetY + (event.clientY - drag.current.y) / Math.max(1, rect.height * 0.35)));
-              setDraft((current) => ({ ...current, offsetX, offsetY }));
+              if (!drag.current || loading || saving) return;
+              const nextX = Math.max(halfX, Math.min(1 - halfX, drag.current.focalX - (event.clientX - drag.current.x) / drawnWidth));
+              const nextY = Math.max(halfY, Math.min(1 - halfY, drag.current.focalY - (event.clientY - drag.current.y) / drawnHeight));
+              setDraft((current) => ({ ...current, focalX: nextX, focalY: nextY }));
             }}
             onPointerUp={(event) => {
               event.currentTarget.releasePointerCapture(event.pointerId);
@@ -137,13 +180,19 @@ function ExactProductImageEditorContent({ open, imageUrl, onClose, onSave }: Pro
             }}
             onPointerCancel={() => { drag.current = null; }}
           >
-            {imageUrl ? (
+            {originalUrl ? (
               <img
-                src={imageUrl}
+                src={originalUrl}
                 alt="Düzenlenen ürün görseli"
                 draggable={false}
-                className="absolute inset-0 h-full w-full select-none object-cover transition-transform duration-150"
-                style={{ transform: `translate(${draft.offsetX * 16}%, ${draft.offsetY * 16}%) scale(${draft.zoom}) rotate(${draft.rotation}deg) scaleX(${draft.flipX ? -1 : 1})` }}
+                onLoad={(event) => setSourceSize({ width: event.currentTarget.naturalWidth, height: event.currentTarget.naturalHeight })}
+                onError={() => setLoadError("Orijinal fotoğraf görüntülenemedi.")}
+                className="absolute select-none max-w-none"
+                aria-busy={loading}
+                style={{ width: sourceSize.width * scale, height: sourceSize.height * scale,
+                  left: frameSize.width / 2 + (0.5 - focalX) * drawnWidth,
+                  top: frameSize.height / 2 + (0.5 - focalY) * drawnHeight,
+                  transform: `translate(-50%, -50%) scaleX(${draft.flipX ? -1 : 1}) rotate(${draft.rotation}deg)` }}
               />
             ) : (
               <div className="flex h-full items-center justify-center text-white/40"><ImageIcon className="h-12 w-12" /></div>
@@ -164,8 +213,8 @@ function ExactProductImageEditorContent({ open, imageUrl, onClose, onSave }: Pro
             </div>
             <div className="flex items-center gap-2">
               <ExactIconButton icon={Minus} label="Uzaklaştır" variant="secondary" size="icon-sm" onClick={() => setDraft((current) => ({ ...current, zoom: Math.max(1, Number((current.zoom - 0.1).toFixed(1))) }))} />
-              <input type="range" min="1" max="3" step="0.05" value={draft.zoom} onChange={(event) => setDraft((current) => ({ ...current, zoom: Number(event.target.value) }))} className="w-full accent-[hsl(var(--accent))]" />
-              <ExactIconButton icon={Plus} label="Yakınlaştır" variant="secondary" size="icon-sm" onClick={() => setDraft((current) => ({ ...current, zoom: Math.min(3, Number((current.zoom + 0.1).toFixed(1))) }))} />
+              <input type="range" min="1" max="4" step="0.05" value={draft.zoom} onChange={(event) => setDraft((current) => ({ ...current, zoom: Number(event.target.value) }))} className="w-full accent-[hsl(var(--accent))]" />
+              <ExactIconButton icon={Plus} label="Yakınlaştır" variant="secondary" size="icon-sm" onClick={() => setDraft((current) => ({ ...current, zoom: Math.min(4, Number((current.zoom + 0.1).toFixed(1))) }))} />
             </div>
           </div>
 
@@ -180,10 +229,10 @@ function ExactProductImageEditorContent({ open, imageUrl, onClose, onSave }: Pro
 
           <div className="rounded-[var(--radius-control)] bg-surface-secondary p-3">
             <p className="ruth-type-card-title text-main">Konum</p>
-            <p className="ruth-type-caption mt-1 text-muted">Görseli önizleme üzerinde sürükleyerek ürünün kartta görünecek alanını belirle. Sürükleme yakınlaştırma yapıldığında aktif olur.</p>
+            <p className="ruth-type-caption mt-1 text-muted">Görseli önizleme üzerinde sürükleyerek ürünün kartta görünecek alanını belirle. Website kadrajı uygulamadaki kadrajdan bağımsız kaydedilir.</p>
             <div className="mt-3 grid grid-cols-2 gap-2">
-              <div className="ruth-type-code rounded-[var(--radius-small)] bg-surface-primary p-2 text-muted">Yatay: <strong className="text-main">{Math.round(draft.offsetX * 100)}</strong></div>
-              <div className="ruth-type-code rounded-[var(--radius-small)] bg-surface-primary p-2 text-muted">Dikey: <strong className="text-main">{Math.round(draft.offsetY * 100)}</strong></div>
+              <div className="ruth-type-code rounded-[var(--radius-small)] bg-surface-primary p-2 text-muted">Yatay: <strong className="text-main">{Math.round(draft.focalX * 100)}</strong></div>
+              <div className="ruth-type-code rounded-[var(--radius-small)] bg-surface-primary p-2 text-muted">Dikey: <strong className="text-main">{Math.round(draft.focalY * 100)}</strong></div>
             </div>
           </div>
 
@@ -191,7 +240,7 @@ function ExactProductImageEditorContent({ open, imageUrl, onClose, onSave }: Pro
             Kaydedilen görsel 1200 × 1600 WebP olarak oluşturulur. Orijinal görsel silinmez; yeni düzenlenmiş kopya ürün galerisine yazılır.
           </div>
         </div>
-      </div>
+      </fieldset>
     </ExactFormModal>
   );
 }
