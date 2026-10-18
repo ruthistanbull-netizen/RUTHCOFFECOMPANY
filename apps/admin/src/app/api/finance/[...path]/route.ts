@@ -185,9 +185,26 @@ export async function GET(request: Request, context: Context) {
         paidByEntry.set(id,(paidByEntry.get(id)||0)+Number(p.amount||0));
         paymentsByEntry.set(id,[...(paymentsByEntry.get(id)||[]),p]);
       }
-      const purchased=await financeOrderItems(db,
-        (expenses.data||[]).filter(e=>e.source==="purchase_payable" && e.order_id)
-          .map(e=>String(e.order_id)));
+      const purchaseOrderIds=(expenses.data||[])
+        .filter(e=>e.source==="purchase_payable" && e.order_id)
+        .map(e=>String(e.order_id));
+      const purchased=await financeOrderItems(db,purchaseOrderIds);
+      const costSnapshots=purchaseOrderIds.length
+        ? await db.from("finance_item_snapshots")
+            .select("item_id,unit_cost,quantity,returned_quantity")
+            .in("order_id",purchaseOrderIds).limit(2500)
+        : {data:[],error:null};
+      if(costSnapshots.error)throw new Error(costSnapshots.error.message);
+      const itemCosts=new Map<string,{unit_cost:number;total_cost:number}>();
+      for(const snapshot of costSnapshots.data||[]){
+        if(!snapshot.item_id||snapshot.unit_cost==null)continue;
+        const unit=Number(snapshot.unit_cost||0);
+        itemCosts.set(String(snapshot.item_id),{
+          unit_cost:unit,
+          total_cost:Math.round(unit*Math.max(0,
+            Number(snapshot.quantity||0)-Number(snapshot.returned_quantity||0))*100)/100
+        });
+      }
       const missingOrders=await db.from("finance_entries")
         .select("order_id").eq("source","order").eq("cancelled",false)
         .not("order_id","is",null).order("occurred_on",{ascending:false}).limit(250);
@@ -218,7 +235,11 @@ export async function GET(request: Request, context: Context) {
         return {...e,paid,remaining,
           status:remaining<=0?"paid":paid>0?"partial":"unpaid",
           payments:paymentsByEntry.get(e.id)||[],
-          order_items:e.order_id?purchased.get(String(e.order_id))||[]:[]
+          order_items:e.order_id?(purchased.get(String(e.order_id))||[]).map(item=>({
+            ...item,
+            unit_cost:itemCosts.get(item.id)?.unit_cost??null,
+            purchase_total:itemCosts.get(item.id)?.total_cost??null,
+          })):[]
         };
       }),missing_cost_order_ids:missing});
     }
