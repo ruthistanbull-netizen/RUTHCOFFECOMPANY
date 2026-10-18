@@ -47,7 +47,7 @@ BEGIN
   v_month := (date_trunc('month',v_base::timestamp) + interval '1 month')::date;
   v_first := v_month + LEAST(
     v_day,
-    extract(day from (v_month + interval '1 month - 1 day'))::integer
+    extract(day from (v_month + interval '1 month' - interval '1 day'))::integer
   ) - 1;
 
   IF v_end IS NOT NULL AND v_end < v_first THEN
@@ -163,7 +163,7 @@ BEGIN
         next_d := next_month + LEAST(
           preferred_day,
           extract(day from (
-            next_month + interval '1 month - 1 day'
+            next_month + interval '1 month' - interval '1 day'
           ))::integer
         ) - 1;
       END IF;
