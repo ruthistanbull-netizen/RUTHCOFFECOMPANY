@@ -196,4 +196,55 @@ revoke all on function public.finance_enqueue_due_reminders(date)
   from public,anon,authenticated;
 grant execute on function public.finance_enqueue_due_reminders(date)
   to service_role;
+
+-- Correct an existing recorded installment without creating another expense.
+create or replace function public.finance_update_expense_payment(
+  p_payment uuid,p_account uuid,p_amount numeric,p_paid_on date,p_actor uuid
+) returns jsonb language plpgsql security invoker
+set search_path=public as $fn$
+declare
+  old_pay public.finance_payments;
+  entry public.finance_entries;
+  acct public.finance_accounts;
+  others numeric;
+begin
+  select * into old_pay from public.finance_payments where id=p_payment;
+  if old_pay.id is null or old_pay.source<>'expense_payment' then
+    raise exception 'Düzenlenebilir ödeme bulunamadı';
+  end if;
+  select * into entry from public.finance_entries
+   where id=old_pay.entry_id for update;
+  select * into old_pay from public.finance_payments
+   where id=p_payment for update;
+  if entry.id is null or entry.cancelled
+     or entry.source not in ('manual','recurring','purchase_payable')
+     or p_actor is null or p_paid_on is null then
+    raise exception 'Bu ödeme değiştirilemez';
+  end if;
+  select * into acct from public.finance_accounts where id=p_account;
+  if acct.id is null or acct.currency<>entry.currency
+     or acct.kind not in ('bank','cash') then
+    raise exception 'Geçerli bir kasa veya banka seç';
+  end if;
+  if p_amount is null or p_amount<=0 or round(p_amount,2)<>p_amount then
+    raise exception 'Pozitif kuruş hassasiyetinde tutar gerekli';
+  end if;
+  select coalesce(sum(amount),0) into others
+   from public.finance_payments
+   where entry_id=entry.id and direction='out' and id<>p_payment;
+  if others+p_amount>entry.gross then
+    raise exception 'Düzenlenen ödeme kalan borcu aşıyor';
+  end if;
+  update public.finance_payments
+   set amount=p_amount,paid_on=p_paid_on,account_id=p_account
+   where id=p_payment;
+  return jsonb_build_object('updated',true,
+    'remaining',greatest(entry.gross-others-p_amount,0));
+end;
+$fn$;
+revoke all on function public.finance_update_expense_payment(uuid,uuid,numeric,date,uuid)
+ from public,anon,authenticated;
+grant execute on function public.finance_update_expense_payment(uuid,uuid,numeric,date,uuid)
+ to service_role;
+
 commit;
