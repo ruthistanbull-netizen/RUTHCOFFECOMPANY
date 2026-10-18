@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { paytrCommission, isNonPaytrOrder } from "@/lib/finance/paytrCommission";
 import { requireAdmin } from "@/lib/auth";
 import { applyRange, getDateRange } from "@/lib/ranges";
 import { isHistoricalImportedOrder, normalizeOrderStatus } from "@/lib/statusLabels";
@@ -275,25 +274,11 @@ export async function GET(request: Request) {
     refundedTotal = Number(refundedTotal.toFixed(2));
     const netRevenue = Number(Math.max(0, grossRevenue - refundedTotal).toFixed(2));
 
-    // Fixed 4.10% commission on the original order value after refunds.
-    // Card installment surcharges are not part of orders.total_amount.
-    // Never use PayTR statement imports or deduct the same fee twice.
-    const providerPaidIds = new Set(paymentIntents.map((intent) => String(intent.order_id || "")));
-    const paytrOrders = paidReportOrders.filter((order) =>
-      !isNonPaytrOrder(order, providerPaidIds.has(String(order.id)))
-    );
+    // Sales must remain the original order revenue without PayTR deductions.
+    // The fixed commission is booked once under Finance > Expenses.
     const paytrFeeMissingCount = 0;
     const paytrFeeImportError = false;
-    let totalPaytrCommission = 0;
-    for (const order of paytrOrders) {
-      const gross = grossByOrderId.get(String(order.id)) || 0;
-      const confirmed = Math.max(0, number(order.refunded_total));
-      const providerRefund = Math.max(0, refundsByOrderId.get(String(order.id)) || 0);
-      const refund = String(order.payment_status || "").toLowerCase() === "refunded"
-        ? gross : Math.max(confirmed, providerRefund);
-      totalPaytrCommission += paytrCommission(Math.max(0, gross - Math.min(gross, refund)));
-    }
-    const paytrNetReceivable = Number((netRevenue - totalPaytrCommission).toFixed(2));
+    const paytrNetReceivable = netRevenue;
     const paytrNetProvisional = false;
 
     const paidOrdersCount = paidReportOrders.length;
