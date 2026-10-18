@@ -79,6 +79,12 @@ export async function GET(request: Request) {
   const profile = profileResult.data as any;
   const payment = (paymentResult.data || [])[0] || null;
   const review = (reviewResult.data || [])[0] || null;
+  const feeResult = await auth.supabase.from("finance_entries")
+    .select("direction,net,tax").eq("order_id",orderId)
+    .eq("source","paytr_fee").eq("cancelled",false);
+  const feeKnown = !feeResult.error && Boolean(feeResult.data?.length);
+  const paytrFee = feeKnown ? (feeResult.data || []).reduce((sum, row) =>
+    sum + (row.direction === "income" ? -1 : 1) * (numeric(row.net) + numeric(row.tax)),0) : null;
 
   return NextResponse.json({
     ok: true,
@@ -94,6 +100,11 @@ export async function GET(request: Request) {
     },
     customer: { isMember: Boolean(profile?.auth_user_id), rewardPoints: Math.max(0, Math.floor(numeric(profile?.reward_points_balance))) },
     emailLogs: emailResult.error ? [] : emailResult.data || [],
+    finance: {
+      paytrFee: paytrFee == null ? null : Number(paytrFee.toFixed(2)),
+      netAfterPaytr: paytrFee == null ? null : Number((numeric(order.total_amount) - paytrFee).toFixed(2)),
+      feeImported: feeKnown,
+    },
     payment: payment ? {
       provider: payment.provider || "paytr",
       status: payment.status || order.payment_status,
