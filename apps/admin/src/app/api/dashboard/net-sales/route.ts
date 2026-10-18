@@ -105,7 +105,9 @@ export async function GET(request: Request) {
     }
 
     const orders = paidOrders.map((order) => {
-      const collectedAmount = collectedByOrder.has(String(order.id)) ? collectedByOrder.get(String(order.id)) || 0 : Math.max(0, number(order.total_amount));
+      // The provider charge can include a customer-financed installment surcharge.
+      // Revenue and our retained amount start from the original order price ONLY.
+      const collectedAmount = Math.max(0, number(order.total_amount));
       const amountAfterRefunds = Math.max(0,collectedAmount - Math.max(0,number(order.refunded_total)));
       const directSources = ["manual","wholesale","b2b","bulk","consulting"];
       const feeKnown = (directSources.includes(String(order.imported_source || "").toLowerCase()) &&
