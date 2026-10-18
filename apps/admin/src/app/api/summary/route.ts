@@ -301,10 +301,13 @@ export async function GET(request: Request) {
       }
     }
     paytrFeeMissingCount = paytrOrders.filter((order) => !feeByOrder.has(String(order.id))).length;
-    const paytrNetReceivable: number | null =
-      paytrFeeImportError || paytrFeeMissingCount > 0
-        ? null
-        : Number((netRevenue - [...feeByOrder.values()].reduce((sum, amount) => sum + amount, 0)).toFixed(2));
+    // Always show a usable numeric figure. Subtract only verified provider
+    // deductions; if some fees have not arrived, mark the figure provisional.
+    // 0 orders / 0 revenue must display 0, never a dash.
+    const importedPaytrFees = [...feeByOrder.values()].reduce((sum, amount) => sum + amount, 0);
+    const paytrNetReceivable = Number((netRevenue - importedPaytrFees).toFixed(2));
+    const paytrNetProvisional = netRevenue > 0 &&
+      (paytrFeeImportError || paytrFeeMissingCount > 0);
 
     const paidOrdersCount = paidReportOrders.length;
 
@@ -361,6 +364,7 @@ export async function GET(request: Request) {
         paidOrders: paidOrdersCount,
         revenue: netRevenue,
         paytrNetReceivable,
+        paytrNetProvisional,
         paytrFeeMissingCount,
         paytrFeeImportError,
         grossRevenue,
