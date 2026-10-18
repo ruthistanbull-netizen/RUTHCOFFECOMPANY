@@ -140,11 +140,9 @@ export function ProductCostEditor({
           setValues(old=>({...old,cost_method:value}));
           setError("");setSaved(false);
         }}
-        options={[
-          ["manual","Mevcut alış fiyatım (TL)"],
-          ...(!rosta?[["weight_usd","Gram × gram başı USD"]] as [string,string][]:
-            [["coffee_kg","Kahve gramajı × TL/kg"]] as [string,string][]),
-        ]}/>
+        options={rosta
+          ? [["manual","Mevcut alış fiyatım (TL)"],["coffee_kg","Kahve gramajı × TL/kg"]]
+          : [["manual","Mevcut alış fiyatım (TL)"],["weight_usd","Gram × gram başı USD"]]}/>
     </div>
 
     {method==="manual"?
