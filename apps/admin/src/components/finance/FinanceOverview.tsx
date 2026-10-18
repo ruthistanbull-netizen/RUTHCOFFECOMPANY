@@ -28,7 +28,7 @@ import {
 import { FinanceSettings } from "./FinanceSettings";
 const metrics = [
   "net_sales", "cogs", "gross_profit", "operating_expenses",
-  "operating_profit", "total_expenses", "unpaid", "receivables",
+  "total_expenses", "unpaid", "receivables",
 ];
 function readableDate(value:string) {
   const date=new Date(value+"T12:00:00Z");
@@ -50,10 +50,10 @@ export function FinanceOverview() {
     [chart, setChart] = useState("line"),
     [settings, setSettings] = useState(false),
     [exportError, setExportError] = useState("");
+  const [expensesOpen, setExpensesOpen] = useState(false);
   const [visible, setVisible] = useState([
     "net_sales",
     "operating_expenses",
-    "operating_profit",
   ]);
   const report = useFinance<{ report: Row }>(
       `/api/finance/overview?${period.query}&group=${group}`,
@@ -61,14 +61,32 @@ export function FinanceOverview() {
     setup = useFinance<Setup>("/api/finance/setup"),
     payouts = useFinance<{upcoming:Array<{date:string;currency:string;net:number;sales:number;refunds:number}>;unpaidTotal:number;checkedAt:string}>("/api/finance/payouts");
   const data = report.data?.report;
+  const expenseDetails = data?.expenseBreakdown as {
+    totalTRY: number | null;
+    cogs: number | null;
+    linesTotalTRY: number;
+    legacyWarning: boolean;
+    monthly: Record<string,number>;
+    rows: Array<{
+      id: string;title: string; occurred_on:string;currency:string;
+      nature:string;originalNet:number;originalGross:number;
+      fxToTry:number;fxPublishedOn:string|null;
+      fxMode:"original"|"recorded"|"current_for_legacy";tryNet:number;
+    }>;
+  } | undefined;
   const displayAmount=(key:string,values:Row)=>{
     if(key==="receivables") return payouts.error?"PayTR API hatası":
       payouts.data ? money(payouts.data.upcoming.filter(x=>x.currency===period.currency)
         .reduce((sum,x)=>sum+Number(x.net||0),0),period.currency)
         : "Yükleniyor…";
-    if(key==="total_expenses") return values.cogs == null?"Eksik ürün maliyeti":
-      money(Number(values.cogs||0)+Number(values.operating_expenses||0)+
-        Number(values.taxes||0),period.currency);
+    if(key==="total_expenses") {
+      // Always TL, even when the other finance charts have a USD/EUR filter.
+      if (data?.current === values) return expenseDetails
+        ? expenseDetails.totalTRY == null ? "Ürün maliyeti eksik" :
+            money(expenseDetails.totalTRY,"TRY")
+        : "Hesaplanıyor…";
+      return money(expenseDetails?.monthly?.[String(values?.date||"")] ?? null,"TRY");
+    }
     return money(values[key],period.currency);
   };
   const records = (extra: Row = {}) =>
@@ -150,7 +168,7 @@ export function FinanceOverview() {
             Eksik alış fiyatı veya henüz kaydedilmemiş vergi ve gider varsa
             kâr da eksik hesaplanır. PayTR bekleyen tahsilatlar gerçek ödeme
             özeti API'sinden alınır; bu tutarlar henüz banka bakiyesi değildir.
-            Her para birimi ayrı raporlanır.
+            Giderler dövizli işlemlerde kayıtlı kurla TL'ye çevrilir; satış ve diğer kayıtların para birimi değiştirilmez.
           </Notice>
           {Number(data.current.missing_costs) > 0 ||
           Number(data.current.refund_review) > 0 ? (
@@ -167,16 +185,78 @@ export function FinanceOverview() {
             </Notice>
           ) : null}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            {metrics.map((key) => (
+            {metrics.map((key) => key==="total_expenses" ? (
+              <button key={key} type="button"
+                className="w-full text-left rounded-[var(--radius-card)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                aria-expanded={expensesOpen} aria-controls="finance-expense-details"
+                onClick={()=>setExpensesOpen(value=>!value)}>
+                <MetricCard
+                  label="Toplam giderler (TL)"
+                  value={displayAmount(key,data.current)}
+                  description={expensesOpen ? "Gider listesini kapat ▲" :
+                    "Giderleri ve döviz kurlarını göster ▼"}
+                />
+              </button>
+            ) : (
               <MetricCard
                 key={key}
                 label={labels[key]}
                 value={displayAmount(key,data.current)}
                 description={key==="receivables"?"PayTR'nin henüz hesaba aktarmadığı ödemeler":
-                  key==="total_expenses"?"Ürün maliyeti + faaliyet giderleri + vergiler":delta(key)}
+                  delta(key)}
               />
             ))}
           </div>
+          {expensesOpen ? (
+            <PageSection title="Toplam giderler · TL karşılıkları">
+              <div id="finance-expense-details" className="space-y-3">
+                <p className="text-xs text-muted">
+                  Ürün maliyeti bir kez dahil edilir. Ürün alış borçları tekrar
+                  eklenmez. Gider tutarları iade edilebilir KDV hariç net değerdir.
+                  USD ve EUR için uygulanan kur ve TL karşılığı aşağıda yer alır.
+                </p>
+                {expenseDetails?.legacyWarning?<Notice tone="warning">
+                  Bazı eski döviz giderlerinin kayıt tarihinde saklanmış kuru yok.
+                  Bu satırlar güncel TCMB kuruyla çevrilmiştir; tarihî muhasebe
+                  kuru olarak değerlendirilmemelidir.
+                </Notice>:null}
+                {!expenseDetails?<p className="text-sm">Giderler yükleniyor…</p>:null}
+                {expenseDetails?.cogs!=null?(
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border-subtle py-2">
+                    <div>
+                      <strong>Satılan ürünlerin alış maliyeti</strong>
+                      <p className="text-xs text-muted">Siparişlerin maliyet kayıtlarından · ikinci kez sayılmaz</p>
+                    </div>
+                    <strong>{money(expenseDetails.cogs,"TRY")}</strong>
+                  </div>
+                ):null}
+                {expenseDetails?.rows.map((e)=>(
+                  <div key={e.id} className="flex flex-wrap items-start justify-between gap-3 border-b border-border-subtle py-2">
+                    <div className="min-w-0">
+                      <strong className="text-sm">{e.title}</strong>
+                      <p className="text-xs text-muted">{readableDate(e.occurred_on)} · {labels[e.nature]||"Gider"}</p>
+                      {e.currency!=="TRY"?<>
+                        <p className="text-xs">
+                          {money(e.originalNet,e.currency)} × 1 {e.currency} =
+                          {" "}{new Intl.NumberFormat("tr-TR",{maximumFractionDigits:6}).format(e.fxToTry)} TL
+                        </p>
+                        <p className="text-xs text-muted">
+                          TCMB döviz satış · {readableDate(e.fxPublishedOn||e.occurred_on)}
+                          {e.fxMode==="current_for_legacy"?" · Güncel kur / eski kayıt":" · Kayıtlı kur"}
+                        </p>
+                      </>:null}
+                    </div>
+                    <strong className="text-sm">{money(e.tryNet,"TRY")}</strong>
+                  </div>
+                ))}
+                {expenseDetails?.rows.length===0 ? <p className="text-sm text-muted">Bu dönemde ek gider kaydı yok.</p>:null}
+                <div className="flex justify-between border-t border-border-subtle pt-3 font-semibold">
+                  <span>Tüm giderler (TL)</span>
+                  <strong>{expenseDetails?.totalTRY==null?"Eksik maliyet kaydı":money(expenseDetails.totalTRY,"TRY")}</strong>
+                </div>
+              </div>
+            </PageSection>
+          ):null}
           <PageSection title="PayTR'den beklenen tahsilatlar"
             description="PayTR Ödeme Özeti API'sinin bildirdiği gerçek aktarım tarihleri ve tutarları">
             {payouts.error?<Notice tone="warning">
@@ -227,7 +307,7 @@ export function FinanceOverview() {
             }
           >
             <div className="flex flex-wrap gap-3">
-              {["net_sales", "operating_expenses", "operating_profit"].map(
+              {["net_sales", "operating_expenses"].map(
                 (k) => (
                   <div key={k} className="flex items-center gap-2">
                     <Checkbox
@@ -341,7 +421,7 @@ export function FinanceOverview() {
                   {[
                     "gross_sales","discounts","refunds","net_sales","cogs",
                     "gross_profit","operating_expenses","taxes",
-                    "total_expenses","operating_profit","unpaid",
+                    "total_expenses","unpaid",
                   ].map((k) => (
                     <tr key={k}>
                       <th scope="row">{k==="total_expenses"?"Toplam gider":labels[k]}</th>
@@ -353,7 +433,11 @@ export function FinanceOverview() {
                               ...monthBounds(m.date,period.dates),
                             })}
                           >
-                            {displayAmount(k,m.values)}
+                            {k==="total_expenses"
+                              ? Number.isFinite(expenseDetails?.monthly?.[m.date.slice(0,7)])
+                                ? money(expenseDetails?.monthly?.[m.date.slice(0,7)],"TRY")
+                                : "Eksik maliyet kaydı"
+                              : displayAmount(k,m.values)}
                           </a>
                         </td>
                       ))}
