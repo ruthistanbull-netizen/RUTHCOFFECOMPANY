@@ -92,9 +92,45 @@ export async function GET(request: Request, context: Context) {
     }
     if (route === "records" && !path[1]) {
       const filter = Object.fromEntries(url.searchParams);
-      const data = await financeRpc(db, "finance_list", {
-        p_filter: { ...filter, ...range },
-      });
+      const allCurrencies = url.searchParams.get("currency") === "ALL";
+      // The existing finance_list RPC already computes payment status,
+      // category and filters accurately; reuse it for each currency.
+      // Aggregate only the record LIST, never monetary totals in different
+      // currencies. Fetch enough entries per currency for stable pagination.
+      let data: { records: Record<string, unknown>[]; count: number };
+      if (allCurrencies) {
+        const offset = Math.max(0, Math.min(10000, Number.parseInt(String(filter.offset || "0"), 10) || 0));
+        const limit = Math.max(1, Math.min(100, Number.parseInt(String(filter.limit || "50"), 10) || 50));
+        const requested = offset + limit;
+        const currencies = ["TRY", "USD", "EUR"];
+        const groups = await Promise.all(currencies.map(async (currency) => {
+          const rows: Record<string, unknown>[] = [];
+          let count = 0;
+          for (let start = 0; start < requested; start += 500) {
+            const response = await financeRpc(db, "finance_list", {
+              p_filter: { ...filter, ...range, currency,
+                offset: String(start), limit: String(Math.min(500, requested - start)) },
+            }) as {records?: Record<string, unknown>[];count?:number};
+            count = Number(response.count || 0);
+            rows.push(...(response.records || []));
+            if (rows.length >= count || !(response.records || []).length) break;
+          }
+          return { count, records: rows };
+        }));
+        const combined = groups.flatMap(group => group.records);
+        combined.sort((a,b) => {
+          const date = String(b.occurred_on || "").localeCompare(String(a.occurred_on || ""));
+          return date || String(a.id || "").localeCompare(String(b.id || "")) * -1;
+        });
+        data = {
+          count: groups.reduce((sum, group) => sum + group.count, 0),
+          records: combined.slice(offset, offset + limit),
+        };
+      } else {
+        data = await financeRpc(db, "finance_list", {
+          p_filter: { ...filter, ...range },
+        }) as {records: Record<string, unknown>[];count:number};
+      }
       // Expand only the currently visible page; finance entries are not changed.
       const financeRecords = (data.records || []) as Array<{ order_id?: string | null; source?: string }>;
       const orderItems = await financeOrderItems(
