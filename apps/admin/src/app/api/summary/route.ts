@@ -274,9 +274,10 @@ export async function GET(request: Request) {
     // Net sales and the amount retained after payment-provider deductions are
     // different metrics. A missing PayTR statement must NEVER be treated as zero fee.
     const providerPaidIds = new Set(paymentIntents.map((intent) => String(intent.order_id || "")));
+    const nonProviderSources = new Set(["manual", "wholesale", "b2b", "bulk", "consulting"]);
     const paytrOrders = paidReportOrders.filter((order) =>
-      String(order.imported_source || "").toLowerCase() !== "manual" ||
-      providerPaidIds.has(String(order.id))
+      providerPaidIds.has(String(order.id)) ||
+      !nonProviderSources.has(String(order.imported_source || "").toLowerCase())
     );
     const feeByOrder = new Map<string, number>();
     let paytrFeeMissingCount = 0;
