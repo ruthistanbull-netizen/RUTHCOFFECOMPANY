@@ -136,7 +136,12 @@ export async function GET(request: Request) {
       };
     });
 
-    return NextResponse.json({ ok: true, orders, totals: { orders: orders.length, products: orders.reduce((sum, order) => sum + order.item_count, 0), collected_amount: Number(orders.reduce((sum, order) => sum + order.collected_amount, 0).toFixed(2)) }, truncated: reportOrders.length >= 250 }, { headers: { "Cache-Control": "private, no-store, max-age=0, must-revalidate" } });
+    const feeTotals = {
+      paytr_fee_amount: Number(orders.reduce((sum, order) => sum + (order.paytr_fee_amount || 0), 0).toFixed(2)),
+      known_count: orders.filter((order) => order.paytr_fee_amount != null).length,
+      missing_count: orders.filter((order) => order.paytr_fee_amount == null).length,
+    };
+    return NextResponse.json({ ok: true, orders, totals: { ...feeTotals, orders: orders.length, products: orders.reduce((sum, order) => sum + order.item_count, 0), collected_amount: Number(orders.reduce((sum, order) => sum + order.collected_amount, 0).toFixed(2)) }, truncated: reportOrders.length >= 250 }, { headers: { "Cache-Control": "private, no-store, max-age=0, must-revalidate" } });
   } catch (error) {
     return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : "Net satış siparişleri alınamadı." }, { status: 500 });
   }
