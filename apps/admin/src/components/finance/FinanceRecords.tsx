@@ -362,6 +362,7 @@ export function FinanceEntryEditor({
     [saving, setSaving] = useState(false),
     [discard, setDiscard] = useState(false),
     [frequency, setFrequency] = useState("none"),
+    [monthlyDay, setMonthlyDay] = useState(String(Number(istanbulToday().slice(-2)))),
     [end, setEnd] = useState(""),
     [interval, setInterval] = useState("30");
   const [entryId] = useState(initial.id || crypto.randomUUID());
@@ -377,12 +378,19 @@ export function FinanceEntryEditor({
     setSaving(true);
     setError("");
     try {
-      const result = await command("entry", {
+      const monthlyExpense =
+        !initial.id && form.direction === "expense" && frequency === "monthly";
+      const result = await command(monthlyExpense ? "monthly_expense" : "entry", {
         ...form,
         id: entryId,
-        ...(frequency !== "none"
-          ? { recurrence: { frequency, end_on: end, interval_days: interval } }
-          : {}),
+        ...(monthlyExpense
+          ? {
+              monthly_day: Number(monthlyDay),
+              monthly_end_on: end,
+            }
+          : frequency !== "none"
+            ? { recurrence: { frequency, end_on: end, interval_days: interval } }
+            : {}),
       });
       onSaved(result.result);
     } catch (e) {
@@ -498,18 +506,37 @@ export function FinanceEntryEditor({
           {!initial.id ? (
             <>
               <Pick
-                label="Tekrarlama"
+                label={form.direction === "expense" ? "Bu gider otomatik tekrarlansın mı?" : "Tekrarlama"}
                 value={frequency}
                 onChange={setFrequency}
                 options={[
-                  ["none", "Tek seferlik"],
+                  ["none", "Hayır, tek seferlik"],
+                  ["monthly", "Evet, her ay otomatik ekle"],
                   ["weekly", "Haftalık"],
-                  ["monthly", "Aylık"],
                   ["quarterly", "Üç aylık"],
                   ["yearly", "Yıllık"],
                   ["custom", "Özel aralık"],
                 ]}
               />
+              {frequency === "monthly" && form.direction === "expense" ? (
+                <>
+                  <Pick
+                    label="Her ayın kaçında gider oluşturulsun?"
+                    value={monthlyDay}
+                    onChange={setMonthlyDay}
+                    options={Array.from({ length: 31 }, (_, index) => {
+                      const day = String(index + 1);
+                      return [day, `Her ayın ${day}. günü`] as [string, string];
+                    })}
+                  />
+                  <Notice>
+                    Bu gider şimdi kaydedilir. Aynı tutar, kategori ve açıklamayla
+                    ilk otomatik kayıt gelecek ay seçtiğin günde oluşturulur.
+                    Seçilen gün o ay yoksa ayın son günü kullanılır.
+                    Finans → Tekrarlayan giderler bölümünden durdurabilirsin.
+                  </Notice>
+                </>
+              ) : null}
               {frequency !== "none" ? (
                 <Field label="Tekrar bitiş tarihi (isteğe bağlı)">
                   <Input
