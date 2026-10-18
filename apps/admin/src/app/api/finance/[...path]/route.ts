@@ -39,7 +39,20 @@ export async function GET(request: Request, context: Context) {
         p_currency: range.currency,
         p_group: url.searchParams.get("group") || "day",
       });
-      if (route === "overview") return financeJson({ ok: true, report });
+      if (route === "overview") {
+        // The cardholder's PayTR installment uplift is passed to the provider:
+        // disclose it with expenses, but don't charge it again to company profit.
+        const surcharge = await db.rpc("finance_paytr_installment_pass_through", {
+          p_from: range.from, p_to: range.to, p_currency: range.currency,
+        });
+        return financeJson({
+          ok: true,
+          report: {
+            ...report,
+            paytrInstallmentPassThrough: surcharge.error ? null : surcharge.data,
+          },
+        });
+      }
       const format = url.searchParams.get("format") || "csv";
       if (["xlsx", "pdf"].includes(format)) {
         const { exportFinance } = await import("@/lib/finance/export");
@@ -231,7 +244,7 @@ export async function POST(request: Request, context: Context) {
   // Historical orders must not be bulk-imported into finance without an explicit new decision.
   if (action === "backfill") return financeJson({ok:false,error:"Geçmiş sipariş toplu aktarımı kapalı."},403);
   const data = body.data || {};
-  let permission = ["paytr_sync", "bank_import", "bank_match"].includes(action)
+  let permission = ["bank_import", "bank_match"].includes(action)
     ? "settings"
     : financeActionPermission[action];
   if (action === "monthly_expense") permission = "expense_create";
@@ -279,21 +292,6 @@ export async function POST(request: Request, context: Context) {
           p_payment: data.payment_id,
           p_actor: auth.user.id,
         }),
-      });
-    }
-    if (action === "paytr_sync") {
-      const { syncFinancePaytr } = await import("@/lib/finance/provider");
-      const range = financeRange(
-        new URL(`https://finance.local/?from=${data.from}&to=${data.to}`),
-      );
-      return financeJson({
-        ok: true,
-        result: await syncFinancePaytr(
-          auth.supabase,
-          range.from,
-          range.to,
-          auth.user.id,
-        ),
       });
     }
     if (action === "permission") {
