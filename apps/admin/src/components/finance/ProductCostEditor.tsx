@@ -47,7 +47,8 @@ export function ProductCostEditor({
   const rosta = setup.data?.settings.brand === "rosta";
   const fields = rosta
     ? [
-        ["coffee_per_kg", "Kahve maliyeti / kg"],
+        ["purchase", "Bu ürünün direkt kahve alış fiyatı"],
+        ["coffee_per_kg", "Alternatif: kahve maliyeti / kg"],
         ["grams", "Paket gramajı (g)"],
         ["packaging", "Paket maliyeti"],
         ["label", "Etiket"],
@@ -55,21 +56,116 @@ export function ProductCostEditor({
         ["other", "Diğer"],
       ]
     : [
-        ["purchase", "Ürün alış maliyeti"],
+        ["purchase", "Ürün alış fiyatı (adet)"],
         ["packaging", "Paketleme"],
         ["label", "Etiket"],
         ["labor", "Üretim / işçilik"],
         ["other", "Diğer"],
       ];
+  const updateVariant = (next: string) => {
+    if (JSON.stringify(values) === JSON.stringify(original)) {
+      setError("");
+      setVariant(next);
+    } else {
+      setError("Varyant değiştirmeden önce alış fiyatını kaydet veya değişikliklerden vazgeç.");
+    }
+  };
+  const saveCost = async () => {
+    if (busy || !setup.data) return;
+    setBusy(true);
+    setError("");
+    setSaved(false);
+    try {
+      const input = String(values.purchase ?? "").trim();
+      if (input) {
+        const parsed = Number(input.replace(",", "."));
+        if (!Number.isFinite(parsed) || parsed < 0)
+          throw new Error("Alış fiyatı sıfır veya daha büyük geçerli bir sayı olmalı.");
+      } else if (
+        rosta && (!String(values.coffee_per_kg ?? "").trim() ||
+                  !String(values.grams ?? "").trim())
+      ) {
+        throw new Error("Alış fiyatını gir veya detaylardan kg fiyatı ile gramajı belirle.");
+      } else if (!rosta) {
+        throw new Error("Bu ürün veya varyant için alış fiyatını gir.");
+      }
+      const payload = Object.fromEntries(
+        Object.entries(values)
+          .filter(([key, value]) =>
+            value !== "" && value != null && ![
+              "id", "product_id", "variant_id", "created_by", "effective_at",
+            ].includes(key),
+          )
+          .map(([key, value]) => [
+            key,
+            typeof value === "string" && [
+              "purchase", "coffee_per_kg", "grams",
+              "packaging", "label", "labor", "other",
+            ].includes(key) ? value.replace(",", ".") : value,
+          ]),
+      );
+      await command("cost", {
+        ...payload,
+        product_id: productId,
+        variant_id: variant,
+        currency: String(values.currency || "TRY"),
+      });
+      setOriginal(values);
+      setSaved(true);
+      await costs.load();
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : String(caught));
+    } finally {
+      setBusy(false);
+    }
+  };
   return (
     <PageSection
-      title="Ürün maliyeti"
-      description="Yeni maliyet kaydı eklenir. Geçmiş siparişlerin maliyetleri korunur."
+      title="Ürünün alış fiyatı"
+      description="Bu ürünün kendi alış fiyatı finans ve kârlılık hesabında kullanılır. Varyantlar için ayrı alış fiyatı girebilirsin. Geçmiş siparişlerin maliyet kaydı değişmez."
     >
-      <p>{money(costs.data?.unitCost, values.currency || "TRY")}</p>
-      <Button variant="secondary" onClick={() => setOpen(true)}>
-        Maliyet düzenle
-      </Button>
+      <div className="grid gap-3 md:grid-cols-2">
+        <Pick
+          label="Fiyatın geçerli olduğu ürün / varyant"
+          value={variant}
+          onChange={updateVariant}
+          options={[
+            ["", "Bu ürünün varsayılan alış fiyatı"],
+            ...variants
+              .filter((v) => v.id)
+              .map((v) => [v.id!, v.option_summary || v.id!] as [string,string]),
+          ]}
+        />
+        <Field label={rosta ? "Kahvenin alış fiyatı (bu paket / adet)" : "Alış fiyatı (tek ürün / adet)"}>
+          <Input
+            type="number"
+            inputMode="decimal"
+            min={0}
+            step="0.01"
+            placeholder="Örn. 125,00"
+            value={values.purchase ?? ""}
+            onChange={(e) => {
+              setValues({ ...values, purchase: e.target.value });
+              setSaved(false);
+            }}
+          />
+        </Field>
+      </div>
+      <p className="text-xs text-muted">
+        {variant ? "Seçili varyantın" : "Ürünün"} hesaplanan birim maliyeti:
+        {" "}<strong>{money(costs.data?.unitCost, values.currency || "TRY")}</strong>
+        {rosta ? " · İstersen ayrıntılardan kilogram fiyatı ve gramajla da hesaplayabilirsin." : ""}
+      </p>
+      {error ? <Notice tone="danger">{error}</Notice> : null}
+      {saved ? <Notice>Alış fiyatı kaydedildi.</Notice> : null}
+      <div className="flex flex-wrap gap-2">
+        <Button disabled={busy || !setup.data} onClick={() => void saveCost()}>
+          {busy ? "Kaydediliyor…" : "Alış fiyatını kaydet"}
+        </Button>
+        <Button variant="secondary" onClick={() => setOpen(true)}>
+          Diğer maliyetler ve para birimi
+        </Button>
+      </div>
       <Drawer
         open={open}
         title="Ürün maliyeti"
@@ -87,14 +183,7 @@ export function ProductCostEditor({
           <Pick
             label="Maliyet düzeyi"
             value={variant}
-            onChange={(v) => {
-              if (JSON.stringify(values) === JSON.stringify(original))
-                setVariant(v);
-              else
-                setError(
-                  "Varyant değiştirmeden önce maliyeti kaydet veya değişikliklerden vazgeç.",
-                );
-            }}
+            onChange={updateVariant}
             options={[
               ["", "Ürün varsayılanı"],
               ...variants
@@ -132,29 +221,7 @@ export function ProductCostEditor({
           </p>
           {error ? <Notice tone="danger">{error}</Notice> : null}
           {saved ? <Notice>Maliyet kaydedildi.</Notice> : null}
-          <Button
-            disabled={busy || !setup.data}
-            onClick={async () => {
-              setBusy(true);
-              setError("");
-              try {
-                await command("cost", {
-                  ...Object.fromEntries(
-                    Object.entries(values).filter(([, v]) => v !== ""),
-                  ),
-                  product_id: productId,
-                  variant_id: variant,
-                });
-                setOriginal(values);
-                setSaved(true);
-                void costs.load();
-              } catch (e) {
-                setError(String(e));
-              } finally {
-                setBusy(false);
-              }
-            }}
-          >
+          <Button disabled={busy || !setup.data} onClick={() => void saveCost()}>
             {busy ? "Kaydediliyor…" : "Maliyeti kaydet"}
           </Button>
         </div>
