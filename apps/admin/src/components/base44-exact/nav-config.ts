@@ -71,13 +71,13 @@ export const exactNavStructure: ExactNavGroup[] = [
       { label: "Hazırlanacak Ürünler", path: "/preparing-products", icon: ListChecks, exact: true },
       { label: "Terk Edilen Sepetler", path: "/abandoned-carts", icon: History, exact: true },
       { label: "Manuel Sipariş Oluştur", path: "/orders/new", icon: ClipboardPlus },
-      { label: "Ödemeler", path: "/payments", icon: CreditCard },
+      { label: "Müşteri Ödemeleri", path: "/payments", icon: CreditCard },
       { label: "Hakedişler", path: "/settlements", icon: Landmark, exact: true },
       { label: "Kargo", path: "/shipping", icon: Truck },
       { label: "İade ve Değişim", path: "/returns", icon: RotateCcw },
     ],
   },
-  { label: "FİNANS", items: [{ label: "Genel Bakış", path: "/finance", icon: BarChart, exact: true }, { label: "Kayıtlar", path: "/finance/records", icon: FileText, exact: true }] },
+  { label: "FİNANS", items: [{ label: "Genel Bakış", path: "/finance", icon: BarChart, exact: true }, { label: "Kayıtlar", path: "/finance/records", icon: FileText, exact: true }, { label: "Ödenecekler", path: "/finance/payables", icon: CreditCard, exact: true }] },
   {
     label: "ÜRÜN VE STOK",
     items: [
