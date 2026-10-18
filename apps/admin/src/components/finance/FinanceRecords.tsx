@@ -61,7 +61,7 @@ export function FinanceRecords({
 }: {
   initialFilters?: Record<string, string>;
 }) {
-  const period = usePeriod(initialFilters);
+  const period = usePeriod({ currency: "ALL", ...initialFilters });
   const [filter, setFilter] = useState<Row>({
       direction: "all",
       status: "all",
@@ -114,7 +114,7 @@ export function FinanceRecords({
       <PageHeader
         eyebrow="Finans"
         title="Kayıtlar"
-        description="Gelirler, giderler, belgeler ve ödemeler"
+        description="TL, USD ve EUR kayıtları birlikte görünür; tutarlar kendi para birimiyle gösterilir."
         actions={
           <>
             <Button variant="secondary" onClick={() => void records.load()}>
@@ -133,7 +133,7 @@ export function FinanceRecords({
         }
       />
       <FinanceNav />
-      <PeriodFilter period={period} />
+      <PeriodFilter period={period} allCurrencies />
       <Toolbar>
         <SearchShell<Row>
           label="Kayıtlarda ara"
