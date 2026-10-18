@@ -23,6 +23,7 @@ type DashboardOrder = {
   order_no?: string | null;
   customer_name?: string | null;
   total_amount?: number | string | null;
+  refunded_total?: number | string | null;
   currency?: string | null;
   status?: string | null;
   payment_status?: string | null;
@@ -47,7 +48,7 @@ function testSource(order: Pick<DashboardOrder, "imported_source" | "customer_no
 function paid(order: Pick<DashboardOrder, "payment_status" | "status">) {
   const payment = String(order.payment_status || "").toLocaleLowerCase("tr-TR");
   const status = String(order.status || "").toLocaleLowerCase("tr-TR");
-  return ["paid", "succeeded", "success"].includes(payment) || ["paid", "completed"].includes(status);
+  return ["paid", "succeeded", "success", "partially_refunded"].includes(payment) || ["paid", "completed"].includes(status);
 }
 
 function isVisibleCartDraft(draft: DashboardCheckoutDraft) {
@@ -124,7 +125,7 @@ export async function GET(request: Request) {
   try {
     const selectedOrdersPromise = rows<DashboardOrder>(
       (applyRange(
-        supabase.from("orders").select("id,order_no,customer_name,total_amount,currency,status,payment_status,created_at,imported_source,customer_note,admin_note,shipping_status,shipping_error,basit_kargo_order_id,basit_kargo_barcode,cargo_tracking_no,purchase_session_id"),
+        supabase.from("orders").select("id,order_no,customer_name,total_amount,refunded_total,currency,status,payment_status,created_at,imported_source,customer_note,admin_note,shipping_status,shipping_error,basit_kargo_order_id,basit_kargo_barcode,cargo_tracking_no,purchase_session_id"),
         "created_at",
         range,
       ) as any).order("created_at", { ascending: false }),
@@ -259,8 +260,13 @@ export async function GET(request: Request) {
 
     const grossRevenue = Number([...grossByOrderId.values()].reduce((sum, amount) => sum + amount, 0).toFixed(2));
     let refundedTotal = 0;
-    for (const [orderId, gross] of grossByOrderId.entries()) {
-      refundedTotal += Math.min(gross, Math.max(0, refundsByOrderId.get(orderId) || 0));
+    for (const order of paidReportOrders) {
+      const orderId = String(order.id);
+      const gross = grossByOrderId.get(orderId) || 0;
+      const confirmed = Math.max(0, number(order.refunded_total));
+      const providerRefund = Math.max(0, refundsByOrderId.get(orderId) || 0);
+      const fullRefund = String(order.payment_status || "").toLowerCase() === "refunded";
+      refundedTotal += Math.min(gross, fullRefund ? gross : Math.max(confirmed, providerRefund));
     }
     refundedTotal = Number(refundedTotal.toFixed(2));
     const netRevenue = Number(Math.max(0, grossRevenue - refundedTotal).toFixed(2));
