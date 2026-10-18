@@ -170,7 +170,7 @@ export function ExactMetricCard({
       className,
     )}>
       <div className="flex items-start justify-between gap-2 mb-3">
-        <span className={exactCx("ruth-type-label", accent ? "text-white/80" : "text-muted")}>{label === "Net Satış" ? "PayTR Sonrası Net" : label}</span>
+        <span className={exactCx("ruth-type-label", accent ? "text-white/80" : "text-muted")}>{label}</span>
         {Icon ? (
           <div className={exactCx("flex items-center justify-center h-7 w-7 radius-small shrink-0", accent ? "bg-white/20" : "bg-accent-soft text-accent")}>
             <Icon className="h-3.5 w-3.5" />
@@ -183,8 +183,8 @@ export function ExactMetricCard({
           {(paytrNetAmount ?? value ?? 0) === 0 && !paytrNetProvisional
             ? "Bu dönemde satış yok"
             : paytrNetProvisional || paytrNetAmount == null
-              ? "Geçici tutar · Bekleyen PayTR kesintileri geldikçe düşülecek"
-              : "Kesintiler sonrası bize kalacak net tahsilat"}
+              ? "Finans giderleri ayrıca hesaplanır"
+              : "Sipariş geliri · PayTR giderleri Finans bölümünde"}
         </div>
       ) : null}
       {label === "Oturum" ? (
