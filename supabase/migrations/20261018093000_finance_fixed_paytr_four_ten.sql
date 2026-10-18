@@ -231,18 +231,32 @@ create or replace function public.finance_paytr_installment_pass_through(
 )
 returns numeric language sql stable security invoker
 set search_path=public as $$
-select coalesce(sum(
- greatest(((pi.metadata->>'charged_amount_kurus')::numeric-
-           (pi.metadata->>'order_amount_kurus')::numeric)/100,0)
-),0)::numeric(18,2)
+select coalesce(sum(case
+  when coalesce(pi.metadata->>'charged_amount_kurus','') ~ '^[0-9]+
+$$;
+revoke all on function public.finance_paytr_installment_pass_through(date,date,text)
+ from public,anon,authenticated;
+grant execute on function public.finance_paytr_installment_pass_through(date,date,text)
+ to service_role;
+commit;
+
+   and coalesce(pi.metadata->>'order_amount_kurus','') ~ '^[0-9]+
+$$;
+revoke all on function public.finance_paytr_installment_pass_through(date,date,text)
+ from public,anon,authenticated;
+grant execute on function public.finance_paytr_installment_pass_through(date,date,text)
+ to service_role;
+commit;
+
+  then greatest(((pi.metadata->>'charged_amount_kurus')::numeric -
+                 (pi.metadata->>'order_amount_kurus')::numeric)/100,0)
+  else 0 end),0)::numeric(18,2)
 from public.payment_intents pi
 where pi.succeeded_at is not null
   and pi.status in ('succeeded','partially_refunded','refunded')
   and (pi.succeeded_at at time zone 'Europe/Istanbul')::date
       between p_from and p_to
   and coalesce(pi.currency,'TRY')=p_currency
-  and coalesce(pi.metadata->>'charged_amount_kurus','') ~ '^[0-9]+$'
-  and coalesce(pi.metadata->>'order_amount_kurus','') ~ '^[0-9]+$'
 $$;
 revoke all on function public.finance_paytr_installment_pass_through(date,date,text)
  from public,anon,authenticated;
