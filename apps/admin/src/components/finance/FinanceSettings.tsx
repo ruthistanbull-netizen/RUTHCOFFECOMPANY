@@ -29,7 +29,7 @@ export function FinanceSettings({
   const [tab, setTab] = useState("settings"),
     [message, setMessage] = useState(""),
     [busy, setBusy] = useState(false);
-  const bank = useFinance<{ rows: Row[] }>("/api/finance/bank");
+  const bank = useFinance<{ rows: Row[]; payments: Row[] }>("/api/finance/bank");
   const [bankAccount, setBankAccount] = useState("");
   const [recognition, setRecognition] = useState(setup.settings.recognition);
   const act = async (action: string, data: Row) => {
@@ -300,7 +300,10 @@ export function FinanceSettings({
                     fields={[
                       {
                         key: "payment_id",
-                        label: "Mevcut finans ödeme kimliği (UUID)",
+                        label: "Eşleştirilecek ödeme",
+                        options: [["", "Ödeme seç"],...(bank.data?.payments || []).map((p) =>
+                          [String(p.id), `${p.paid_on} · ${p.direction === "in" ? "+" : "−"}${p.amount} · ${String(p.id).slice(0,8)}`] as [string,string]
+                        )],
                       },
                     ]}
                     onSubmit={async (v) => {
