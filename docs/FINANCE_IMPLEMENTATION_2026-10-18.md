@@ -72,3 +72,18 @@ Web kodu Ruth PR #712 ve ROSTA PR #86 taslaklarında tutulur; main merge/deploy 
 - Ruth #712: Vercel durumu `failure`; yönlendirme adresi hesap/deploy engeli bilgi sayfası. GitHub Actions çalışması listelenmedi.
 - İki PR da taslak, açık ve merge edilmedi. Zorunlu Phase 1E UI Quality kanıtı bulunmuyor.
 - Kullanıcı kararı gereği toplu geçmiş sipariş aktarımı yapılmayacak.
+
+
+## Finans güvenilirliği düzeltmeleri · 18 Ekim 2026, ikinci tur
+
+- **Self-host için yeni SQL zorunlu:** Web repolarında `supabase/migrations/20261018033000_finance_settlement_corrections.sql` eklendi. Önceki SQL uygulanmış olsa bile bu yeni SQL, Ruth ve ROSTA'nın **kendi** self-host veritabanlarına ayrı ayrı manuel uygulanmalıdır. Hosted Supabase kullanılmadı; canlı veritabanı değiştirilmedi.
+- Tahsilat tarihi `payment_intents.succeeded_at`, `payments.paid_at` ve `checkout_drafts.paid_at` ile ilişkilendirildi; teslimat tanıma döneminde teslim tarihi veya belirsizlik işaretlemesi kullanılır. Bu tahminî geçmiş tarihleri kesin gerçek veriymiş gibi sunmayın.
+- Gerçekleşen her kısmi iade kendi `payment_refunds.completed_at` tarihiyle kaydedilir; eski tekil toplulaştırılmış tarih kaydı doğrulanamazsa nakit raporuna düşürülmez. `cash_refund_unknown` uyarısı eklendi.
+- Hasılat tanıma seçeneği değiştiğinde sadece finans sisteminin zaten bildiği siparişler yeniden değerlendirilir. **Geçmiş sipariş toplu aktarımı yapılmaz.** Web ve RR HUB'dan aktarım seçeneği kaldırıldı, web endpoint'i kapatıldı.
+- Sipariş detayında ve Net Satış kartı/açılır penceresinde, yalnız **içe aktarılmış gerçek PayTR kesintileri** gösterilir. Eksik rapor hiçbir zaman sıfır komisyon gibi sunulmaz.
+- Ödeme ile banka hareketlerini eşleştirmek için web ve iOS'ta UUID yerine listeden seçim eklendi.
+- RR HUB gider formunda KDV dahil/hariç seçimi artık backend ile uyumludur.
+- Finans personel yetkileri için JWT tekrar doğrulanarak yalnız ilgili finans izinlerine izin veren sınırlı API yolu eklendi. Panel navigasyonu/oturumuna yönelik diğer roller yine ayrıca gözden geçirilmelidir.
+- Nakit toplamlarının PayTR'de bekleyen tahsilatı içerebileceği, bu rakamın bankaya yatan tutar olmadığı web ve iOS'ta açıkça belirtildi.
+- **Hâlâ yapılmamış doğrulamalar:** self-host gerçek işlem/Storage/PayTR, worker zamanlayıcısının üretim çalışması, Bitrise veya build (kullanıcı isteğiyle bu turda bakılmadı). PayTR dökümünü günlük otomatik çekme halen kurulmuş değildir; yönetici komutuyla içe aktarılır.
+- Önceki migration dosyalarına dokunulmadı, yanlışlıkla production backfill başlatılmadı. Yeni düzeltme SQL'sini canlıya uygulamadan gerçek tarihler ve nakit raporlarını doğrulanmış kabul etmeyin.
