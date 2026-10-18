@@ -740,7 +740,7 @@ export function ExactPayments() {
   return (
     <div className="space-y-4 animate-fade-in" data-exact-base44-page="payments">
       <ExactPageHeader
-        title="Ödemeler ve İadeler"
+        title="Müşteri Ödemeleri ve İadeler"
         subtitle={`${visibleRows.length} ödeme · ${rows.length} yüklenen kayıt`}
         actions={(
           <div className="flex flex-wrap items-center justify-end gap-2">
