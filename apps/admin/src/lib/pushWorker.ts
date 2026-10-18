@@ -138,6 +138,17 @@ function notificationFor(job: PushJob) {
     };
   }
 
+  if (job.kind === "reminder" && clean(payload.finance_entry_id)) {
+    const item = clean(payload.title) || "Gider";
+    const amount = amountText(payload.amount, payload.currency);
+    return {
+      title: "Ödeme günü · Giderini öde",
+      body: `${item} · ${amount} ödenmeyi bekliyor. Ödediğinde Finans → Ödenecekler'den işaretle.`,
+      url: "/finance/payables",
+      tag: `finance-payment-${clean(payload.finance_entry_id)}`,
+    };
+  }
+
   if (job.kind === "reminder") {
     const orderNo = clean(payload.order_no);
     const customerName = clean(payload.customer_name) || "Müşteri";
@@ -339,6 +350,11 @@ export async function kickAdminPushWorker(): Promise<AdminPushWorkerResult> {
   if (!subscriptions.length) return { ok: true, sent: 0, reason: "no_active_subscriptions" };
 
   await supabase.rpc("enqueue_due_admin_reminders");
+  // Single deduplicated due-date alert per finance expense, including purchase costs.
+  const dueFinance = await supabase.rpc("finance_enqueue_due_reminders");
+  if (dueFinance.error && !["42883","PGRST202"].includes(dueFinance.error.code || ""))
+    return { ok: false, error: "Finans ödeme bildirimleri: " + dueFinance.error.message };
+
 
   const { data: jobData, error: claimError } = await supabase
     .rpc("claim_admin_push_jobs", { p_limit: 25 });
