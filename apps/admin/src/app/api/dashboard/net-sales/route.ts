@@ -62,7 +62,7 @@ export async function GET(request: Request) {
     const paidOrders = reportOrders.filter(paid);
     const paidIds = paidOrders.map((order) => String(order.id || "")).filter(Boolean);
 
-    const intentsBaseQuery = supabase.from("payment_intents").select("order_id,amount_kurus,succeeded_at").eq("status", "succeeded").not("succeeded_at", "is", null).in("order_id", paidIds) as any;
+    const intentsBaseQuery = supabase.from("payment_intents").select("order_id,amount_kurus,succeeded_at").in("status", ["succeeded", "partially_refunded", "refunded"]).not("succeeded_at", "is", null).in("order_id", paidIds) as any;
     const paymentsBaseQuery = supabase.from("payments").select("order_id,amount,paid_at").in("status", ["paid", "succeeded"]).not("paid_at", "is", null).in("order_id", paidIds) as any;
     const intentsPromise = paidIds.length ? applyRange(intentsBaseQuery, "succeeded_at", range).order("succeeded_at", { ascending: false }) : Promise.resolve({ data: [], error: null });
     const paymentsPromise = paidIds.length ? applyRange(paymentsBaseQuery, "paid_at", range).order("paid_at", { ascending: false }) : Promise.resolve({ data: [], error: null });
