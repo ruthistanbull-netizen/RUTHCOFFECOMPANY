@@ -9,7 +9,7 @@ type Payable = Row & {
   order_id?:string|null; gross:number|string; paid:number; remaining:number;
   occurred_on:string; due_on?:string|null; status:"paid"|"partial"|"unpaid";
   order_items?:PurchaseItem[];
-  payments?:Array<{id:string;amount:number;paid_on:string;account_id:string}>;
+  payments?:Array<{id:string;amount:number;paid_on:string;account_id:string;source:string}>;
 };
 type Payload = { rows:Payable[];missing_cost_order_ids?:string[] };
 
@@ -38,12 +38,13 @@ export function FinancePayables(){
   const [accounts,setAccounts]=useState<Record<string,string>>({});
   const [dates,setDates]=useState<Record<string,string>>({});
   const [working,setWorking]=useState<string|null>(null);
+  const [editingPayment,setEditingPayment]=useState<string|null>(null);
+  const [correction,setCorrection]=useState("");
   const [error,setError]=useState("");
   const [success,setSuccess]=useState("");
 
   const all=payables.data?.rows||[];
   const dueCount=all.filter(x=>Number(x.remaining)>0).length;
-  const outstanding=all.filter(x=>Number(x.remaining)>0).reduce((sum,x)=>sum+Number(x.remaining),0);
   const rows=useMemo(()=>all.filter(x=>filter==="all" ||
     (filter==="paid"?x.remaining<=0:
       filter==="products"?x.source==="purchase_payable"&&x.remaining>0:
@@ -67,6 +68,27 @@ export function FinancePayables(){
       });
       setSuccess(full?"Gider ödendi olarak işaretlendi.":"Kısmi ödeme kaydedildi.");
       setAmounts(current=>({...current,[row.id]:""}));
+      await payables.load();
+    }catch(e){setError(e instanceof Error?e.message:String(e));}
+    finally{setWorking(null);}
+  };
+  const correct=async(row:Payable,paymentId:string)=>{
+    if(working)return;
+    const previous=row.payments?.find(p=>p.id===paymentId);
+    const value=Number(correction.replace(",","."));
+    if(!previous||!Number.isFinite(value)||value<=0||Math.round(value*100)!==value*100){
+      setError("Düzeltilen ödeme pozitif ve kuruş hassasiyetinde olmalı.");return;
+    }
+    setWorking(row.id);setError("");setSuccess("");
+    try{
+      await command("payable_payment_update",{
+        payment_id:paymentId,
+        account_id:previous.account_id,
+        amount:value,
+        paid_on:previous.paid_on
+      });
+      setEditingPayment(null);setCorrection("");
+      setSuccess("Ödeme tutarı düzeltildi.");
       await payables.load();
     }catch(e){setError(e instanceof Error?e.message:String(e));}
     finally{setWorking(null);}
@@ -142,9 +164,19 @@ export function FinancePayables(){
               </div>:null}
               {row.payments?.length?<div className="space-y-1">
                 <strong className="text-sm">Yapılan ödemeler</strong>
-                {row.payments.map(p=><p className="text-xs" key={p.id}>
-                  {trDate(p.paid_on)} · {money(p.amount,row.currency)}
-                </p>)}
+                {row.payments.map(p=><div className="flex flex-wrap items-center gap-2 text-xs" key={p.id}>
+                  <span>{trDate(p.paid_on)} · {money(p.amount,row.currency)}</span>
+                  {p.source==="expense_payment"?<button type="button" className="underline"
+                    onClick={()=>{setEditingPayment(editingPayment===p.id?null:p.id);
+                      setCorrection(String(p.amount));}}>Tutarı düzelt</button>:null}
+                  {editingPayment===p.id?<div className="flex w-full items-center gap-2">
+                    <input type="number" min="0.01" step="0.01"
+                      className="form-input w-32" value={correction}
+                      onChange={e=>setCorrection(e.target.value)}/>
+                    <Button disabled={working!==null}
+                      onClick={()=>void correct(row,p.id)}>Güncelle</Button>
+                  </div>:null}
+                </div>)}
               </div>:null}
               {showInput?<div className="grid gap-3 sm:grid-cols-3">
                 <label className="text-sm">Ödenen tutar
