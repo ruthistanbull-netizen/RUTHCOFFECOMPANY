@@ -28,24 +28,32 @@ export function financeError(error: unknown) {
 export async function financeAuth(request: Request, permission = "view") {
   const auth = await requireAdmin(request);
   if ("error" in auth) {
-    // Existing panel auth accepts admins only. Finance-specific staff can use the
-    // finance permission grants, but must still pass independent JWT verification.
-    if (auth.error.status !== 403) return auth;
+    // Narrow the optional error returned by requireAdmin before using its status.
+    // Keep the 403 finance-staff fallback; never bypass 401/503 authentication failures.
+    const denied = auth.error;
+    if (!denied) {
+      return { error: financeJson({ ok: false, error: "Kimlik doğrulaması başarısız." }, 403) };
+    }
+    if (denied.status !== 403) return { error: denied };
     const bearer = /^Bearer\s+(\S+)$/i.exec(request.headers.get("authorization") || "")?.[1];
-    if (!bearer) return auth;
+    if (!bearer) return { error: denied };
     const supabase = getSupabaseAdmin();
     const verified = await supabase.auth.getUser(bearer);
     const user = verified.data.user;
-    if (verified.error || !user || user.user_metadata?.panel_status === "disabled") return auth;
+    if (verified.error || !user ||
+        user.user_metadata?.panel_status === "disabled" ||
+        user.app_metadata?.panel_status === "disabled") {
+      return { error: denied };
+    }
     const grant = await supabase.from("finance_permissions")
-      .select("permission").eq("user_id",user.id).eq("permission",permission).maybeSingle();
-    if (grant.error || !grant.data) return auth;
+      .select("permission").eq("user_id", user.id).eq("permission", permission).maybeSingle();
+    if (grant.error || !grant.data) return { error: denied };
     return {
       supabase,
       user,
-      profile: {id:user.id, role:"finance_staff",email:user.email || null,full_name:null},
+      profile: { id: user.id, role: "finance_staff", email: user.email || null, full_name: null },
       internal: false as const,
-      authSource:"finance-staff" as const,
+      authSource: "finance-staff" as const,
     };
   }
   // Finance never accepts an internal worker principal on the public admin API.
