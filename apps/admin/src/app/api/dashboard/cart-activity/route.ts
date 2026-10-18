@@ -251,6 +251,20 @@ export async function GET(request: Request) {
     }
     const mergedCartDrafts = [...cartBySession.values()];
 
+    // Reuse precisely the same one-cart-per-entry grouping for home dashboard.
+    // This path avoids product media lookups and does not count item quantities.
+    if (url.searchParams.get("totals_only") === "1") {
+      return NextResponse.json({
+        ok: true,
+        totals: {
+          carts: mergedCartDrafts.length,
+          products: mergedCartDrafts.reduce((sum, cart) => sum + cart.quantity, 0),
+        },
+        truncated: events.length >= 1000 || draftRows.length >= 1000,
+      }, { headers: { "Cache-Control": "private, no-store" } });
+    }
+
+
     const slugs = [...new Set(mergedCartDrafts.flatMap((cart) => cart.items.map((item) => item.product_slug)).filter(Boolean))];
     const productRows = slugs.length
       ? await supabase
