@@ -173,7 +173,7 @@ export async function GET(request: Request, context: Context) {
       const entryIds=(expenses.data||[]).map(e=>e.id);
       const payments=entryIds.length
         ? await db.from("finance_payments")
-            .select("id,entry_id,account_id,amount,direction,paid_on,method")
+            .select("id,entry_id,account_id,amount,direction,paid_on,method,source")
             .in("entry_id",entryIds).limit(5000)
         : {data:[],error:null};
       if(payments.error) throw new Error(payments.error.message);
@@ -315,6 +315,7 @@ export async function POST(request: Request, context: Context) {
     : financeActionPermission[action];
   if (action === "monthly_expense") permission = "expense_create";
   if (action === "payable_payment") permission = "pay";
+  if (action === "payable_payment_update") permission = "pay";
   if (action === "entry")
     permission =
       data.id && data.version
@@ -330,6 +331,16 @@ export async function POST(request: Request, context: Context) {
     // Amounts arrive as decimal strings, never UI-computed totals.
     if (["entry", "payment", "budget", "transfer"].includes(action))
       data.amount = financeAmount(data.amount);
+    if (action === "payable_payment_update") {
+      if (!uuid(String(data.payment_id||"")) || !uuid(String(data.account_id||"")))
+        return financeJson({ok:false,error:"Ödeme veya hesap geçersiz."},400);
+      const amount=financeAmount(data.amount);
+      return financeJson({ok:true,result:await financeRpc(auth.supabase,
+        "finance_update_expense_payment",{
+          p_payment:data.payment_id,p_account:data.account_id,p_amount:amount,
+          p_paid_on:data.paid_on,p_actor:auth.user.id
+        })});
+    }
     if (action === "payable_payment") {
       if (!uuid(String(data.entry_id||"")) || !uuid(String(data.account_id||"")))
         return financeJson({ok:false,error:"Gider veya ödeme hesabı geçersiz."},400);
