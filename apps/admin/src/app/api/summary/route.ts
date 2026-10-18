@@ -237,9 +237,12 @@ export async function GET(request: Request) {
       if (!orderId || !paidReportIds.has(orderId) || grossByOrderId.has(orderId)) continue;
       grossByOrderId.set(orderId, Math.max(0, number(payment.amount)));
     }
+    // The order total is the merchandise/shipping sales price, NOT the
+    // amount charged to the card. PayTR may add customer-financed installment
+    // interest to payment_attempts/payment_total: that is never our revenue.
     for (const order of paidReportOrders) {
       const orderId = String(order.id);
-      if (!grossByOrderId.has(orderId)) grossByOrderId.set(orderId, Math.max(0, number(order.total_amount)));
+      grossByOrderId.set(orderId, Math.max(0, number(order.total_amount)));
     }
 
     const paidOrderIds = [...paidReportIds];
