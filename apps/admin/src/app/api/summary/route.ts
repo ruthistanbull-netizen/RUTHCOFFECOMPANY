@@ -264,6 +264,39 @@ export async function GET(request: Request) {
     }
     refundedTotal = Number(refundedTotal.toFixed(2));
     const netRevenue = Number(Math.max(0, grossRevenue - refundedTotal).toFixed(2));
+
+    // Net sales and the amount retained after payment-provider deductions are
+    // different metrics. A missing PayTR statement must NEVER be treated as zero fee.
+    const paytrOrders = paidReportOrders.filter((order) =>
+      String(order.imported_source || "").toLowerCase() !== "manual"
+    );
+    const feeByOrder = new Map<string, number>();
+    let paytrFeeMissingCount = 0;
+    let paytrFeeImportError = false;
+    for (let offset = 0; offset < paytrOrders.length; offset += 150) {
+      const ids = paytrOrders.slice(offset, offset + 150).map((order) => String(order.id));
+      const feeResult = await supabase.from("finance_entries")
+        .select("order_id,net,tax,direction")
+        .eq("source", "paytr_fee").eq("cancelled", false).in("order_id", ids);
+      if (feeResult.error) {
+        paytrFeeImportError = true;
+        warnings.push("PayTR kesintileri alınamadı: " + feeResult.error.message);
+        break;
+      }
+      for (const row of feeResult.data || []) {
+        const id = String(row.order_id || "");
+        if (!id) continue;
+        const signed = (row.direction === "income" ? -1 : 1) *
+          (number(row.net) + number(row.tax));
+        feeByOrder.set(id, (feeByOrder.get(id) || 0) + signed);
+      }
+    }
+    paytrFeeMissingCount = paytrOrders.filter((order) => !feeByOrder.has(String(order.id))).length;
+    const paytrNetReceivable: number | null =
+      paytrFeeImportError || paytrFeeMissingCount > 0
+        ? null
+        : Number((netRevenue - [...feeByOrder.values()].reduce((sum, amount) => sum + amount, 0)).toFixed(2));
+
     const paidOrdersCount = paidReportOrders.length;
 
     const purchaseSessionIds = new Set(
@@ -318,6 +351,9 @@ export async function GET(request: Request) {
         orders: paidOrdersCount,
         paidOrders: paidOrdersCount,
         revenue: netRevenue,
+        paytrNetReceivable,
+        paytrFeeMissingCount,
+        paytrFeeImportError,
         grossRevenue,
         refundedTotal,
         sessions: sessionCount,
