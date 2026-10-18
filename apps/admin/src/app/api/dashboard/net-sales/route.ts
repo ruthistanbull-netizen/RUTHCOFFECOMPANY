@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { paytrCommission, isNonPaytrOrder } from "@/lib/finance/paytrCommission";
 import { requireAdmin } from "@/lib/auth";
 import { applyRange } from "@/lib/ranges";
 import { getLocalProductImage } from "@/lib/localProductImages";
@@ -75,22 +76,7 @@ export async function GET(request: Request) {
     if (!intentsResult.error) for (const intent of intentsResult.data || []) { const orderId = String(intent.order_id || ""); if (!orderId || collectedByOrder.has(orderId)) continue; collectedByOrder.set(orderId, Math.max(0, number(intent.amount_kurus)) / 100); }
     if (!paymentsResult.error) for (const payment of paymentsResult.data || []) { const orderId = String(payment.order_id || ""); if (!orderId || collectedByOrder.has(orderId)) continue; collectedByOrder.set(orderId, Math.max(0, number(payment.amount))); }
 
-    // Real imported provider fees, never a fixed assumed commission rate.
-    // A missing fee remains unknown instead of appearing as zero.
-    const feeByOrder = new Map<string, number>();
-    if (paidIds.length) {
-      const fees = await supabase.from("finance_entries")
-        .select("order_id,net,tax,direction")
-        .eq("source", "paytr_fee").eq("cancelled",false)
-        .in("order_id",paidIds);
-      if (!fees.error) for (const fee of fees.data || []) {
-        const id = String(fee.order_id || "");
-        if (!id) continue;
-        const signed = (fee.direction === "income" ? -1 : 1) * (number(fee.net) + number(fee.tax));
-        feeByOrder.set(id, (feeByOrder.get(id) || 0) + signed);
-      }
-    }
-
+    // Provider commission is fixed at 4.10% of the order sale (not card installments).
     const productIds = [...new Set(paidOrders.flatMap((order) => order.order_items || []).map((item) => cleanImage(item.product_id)).filter(Boolean) as string[])];
     const productsResult = productIds.length ? await supabase.from("products").select("id,main_image_url,slug,name").in("id", productIds) : { data: [], error: null };
     const mainImageById = new Map<string, string>();
@@ -109,10 +95,9 @@ export async function GET(request: Request) {
       // Revenue and our retained amount start from the original order price ONLY.
       const collectedAmount = Math.max(0, number(order.total_amount));
       const amountAfterRefunds = Math.max(0,collectedAmount - Math.max(0,number(order.refunded_total)));
-      const directSources = ["manual","wholesale","b2b","bulk","consulting"];
-      const feeKnown = (directSources.includes(String(order.imported_source || "").toLowerCase()) &&
-        !providerPaidOrderIds.has(String(order.id))) || feeByOrder.has(String(order.id));
-      const fee = feeByOrder.get(String(order.id)) || 0;
+      const isPaytr = !isNonPaytrOrder(order, providerPaidOrderIds.has(String(order.id)));
+      const fee = isPaytr ? paytrCommission(amountAfterRefunds) : 0;
+      const feeKnown = true;
       return {
         id: order.id,
         order_no: order.order_no || "—",
@@ -125,7 +110,7 @@ export async function GET(request: Request) {
         collected_amount: Number(collectedAmount.toFixed(2)),
         paytr_fee_amount: feeKnown ? Number(fee.toFixed(2)) : null,
         net_after_paytr: Number((amountAfterRefunds - fee).toFixed(2)),
-        paytr_net_provisional: !feeKnown && amountAfterRefunds > 0,
+        paytr_net_provisional: false,
         item_count: (order.order_items || []).reduce((sum, item) => sum + Math.max(1, Math.trunc(number(item.quantity) || 1)), 0),
         items: (order.order_items || []).map((item) => {
           const quantity = Math.max(1, Math.trunc(number(item.quantity) || 1));
