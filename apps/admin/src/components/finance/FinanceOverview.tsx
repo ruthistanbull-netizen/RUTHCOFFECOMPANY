@@ -66,6 +66,7 @@ export function FinanceOverview() {
     cogs: number | null;
     linesTotalTRY: number;
     legacyWarning: boolean;
+    error?:string;
     monthly: Record<string,number>;
     rows: Array<{
       id: string;title: string; occurred_on:string;currency:string;
@@ -82,7 +83,8 @@ export function FinanceOverview() {
     if(key==="total_expenses") {
       // Always TL, even when the other finance charts have a USD/EUR filter.
       if (data?.current === values) return expenseDetails
-        ? expenseDetails.totalTRY == null ? "Ürün maliyeti eksik" :
+        ? expenseDetails.error ? "Kur / gider verisi alınamadı"
+          : expenseDetails.totalTRY == null ? "Ürün maliyeti eksik" :
             money(expenseDetails.totalTRY,"TRY")
         : "Hesaplanıyor…";
       return money(expenseDetails?.monthly?.[String(values?.date||"")] ?? null,"TRY");
@@ -215,6 +217,7 @@ export function FinanceOverview() {
                   eklenmez. Gider tutarları iade edilebilir KDV hariç net değerdir.
                   USD ve EUR için uygulanan kur ve TL karşılığı aşağıda yer alır.
                 </p>
+                {expenseDetails?.error?<Notice tone="danger">{expenseDetails.error}</Notice>:null}
                 {expenseDetails?.legacyWarning?<Notice tone="warning">
                   Bazı eski döviz giderlerinin kayıt tarihinde saklanmış kuru yok.
                   Bu satırlar güncel TCMB kuruyla çevrilmiştir; tarihî muhasebe
@@ -252,7 +255,7 @@ export function FinanceOverview() {
                 {expenseDetails?.rows.length===0 ? <p className="text-sm text-muted">Bu dönemde ek gider kaydı yok.</p>:null}
                 <div className="flex justify-between border-t border-border-subtle pt-3 font-semibold">
                   <span>Tüm giderler (TL)</span>
-                  <strong>{expenseDetails?.totalTRY==null?"Eksik maliyet kaydı":money(expenseDetails.totalTRY,"TRY")}</strong>
+                  <strong>{expenseDetails?.error?"Kur / gider verisi alınamadı":expenseDetails?.totalTRY==null?"Eksik maliyet kaydı":money(expenseDetails.totalTRY,"TRY")}</strong>
                 </div>
               </div>
             </PageSection>
