@@ -283,6 +283,11 @@ export async function GET(request: Request, context: Context) {
           : permissions.data?.map((r) => r.permission),
       });
     }
+    if (route === "usd-rate") {
+      const { latestUsdTry } = await import("@/lib/finance/usdRate");
+      const quote = await latestUsdTry(db);
+      return financeJson({ ok: true, ...quote });
+    }
     if (route === "costs" && uuid(url.searchParams.get("product_id"))) {
       const product = url.searchParams.get("product_id")!;
       const { data, error } = await db
@@ -296,7 +301,13 @@ export async function GET(request: Request, context: Context) {
         p_product: product,
         p_variant: url.searchParams.get("variant_id") || null,
       });
-      return financeJson({ ok: true, costs: data, unitCost });
+      const gramRate=await db.from("finance_purchase_gram_rates")
+        .select("usd_per_gram,effective_at")
+        .order("effective_at",{ascending:false}).limit(1).maybeSingle();
+      if(gramRate.error) throw new Error(gramRate.error.message);
+      return financeJson({ ok: true, costs: data, unitCost,
+        gramRateUsd: gramRate.data?.usd_per_gram ?? null,
+      });
     }
     if (route === "documents" && uuid(path[1])) {
       const { data, error } = await db
@@ -373,6 +384,10 @@ export async function POST(request: Request, context: Context) {
           p_entry:data.entry_id,p_account:data.account_id,p_amount:amount,
           p_paid_on:data.paid_on,p_key:typeof data.key === "string" && data.key.length >= 8 ? data.key : randomUUID(),p_actor:auth.user.id,
         })});
+    }
+    if (action === "cost") {
+      return financeJson({ok:true,result:await financeRpc(auth.supabase,
+        "finance_save_purchase_cost",{p_data:data,p_actor:auth.user.id})});
     }
     if (action === "monthly_expense") {
       if (data.direction !== "expense")
