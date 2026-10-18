@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { Button, Card, Notice, PageHeader, PageSection, PageShell } from "@ruth-commerce/ui";
 import { command, FinanceNav, money, useFinance, type Row, type Setup } from "./shared";
 
-type PurchaseItem = { id:string; product_name:string; variant_name?:string|null; quantity:number; image_url?:string|null };
+type PurchaseItem = { id:string; product_name:string; variant_name?:string|null; quantity:number; image_url?:string|null; unit_cost?:number|null; purchase_total?:number|null };
 type Payable = Row & {
   id:string; title:string; source:string; nature:string; currency:string;
   order_id?:string|null; gross:number|string; paid:number; remaining:number;
@@ -158,7 +158,10 @@ export function FinancePayables(){
                 {row.order_items.map(item=><div className="flex items-center gap-3" key={item.id}>
                   {item.image_url?<img src={item.image_url} alt={item.product_name}
                     className="h-12 w-10 rounded object-cover"/>:null}
-                  <span className="text-sm">{item.product_name}{item.variant_name?" · "+item.variant_name:""} ×{item.quantity}</span>
+                  <div className="flex min-w-0 flex-1 items-center justify-between gap-2">
+                    <span className="text-sm">{item.product_name}{item.variant_name?" · "+item.variant_name:""} ×{item.quantity}</span>
+                    <strong className="text-sm">{item.purchase_total == null?"Alış fiyatı eksik":money(item.purchase_total,row.currency)}</strong>
+                  </div>
                 </div>)}
                 {row.order_id?<a href={`/orders/${row.order_id}`} className="text-sm underline">Sipariş detayını aç</a>:null}
               </div>:null}
