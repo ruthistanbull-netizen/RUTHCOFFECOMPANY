@@ -159,6 +159,10 @@ begin
       'paytr','order_refund',p_order::text)
     on conflict(source,source_id) do update
       set amount=excluded.amount,paid_on=excluded.paid_on;
+  else
+    -- Old aggregate records with unknown dates must not remain as fake cash movements.
+    delete from public.finance_payments
+      where source='order_refund' and source_id=p_order::text;
   end if;
   -- Never invent a refund payment date using now().
 end $$;
