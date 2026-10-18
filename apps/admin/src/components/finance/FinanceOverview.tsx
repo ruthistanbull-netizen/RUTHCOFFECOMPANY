@@ -146,11 +146,11 @@ export function FinanceOverview() {
       {data ? (
         <>
           <Notice>
-            Kayıtlı giderlere göre tahmini kâr gösterilir. Vergi, amortisman,
-            komisyon ve fatura mutabakatları tamamlanmadan kesin net dönem kârı
-            değildir. Her para birimi ayrı raporlanır. Nakit girişleri, PayTR
-            üzerinde bekleyen tahsilatı da içerir; tamamının banka hesabına
-            aktarıldığı anlamına gelmez. Kasa ve banka hesaplarını ayrıca incele.
+            Girilen tüm satış, ürün maliyeti ve giderler hesaplanır.
+            Eksik alış fiyatı veya henüz kaydedilmemiş vergi ve gider varsa
+            kâr da eksik hesaplanır. PayTR bekleyen tahsilatlar gerçek ödeme
+            özeti API'sinden alınır; bu tutarlar henüz banka bakiyesi değildir.
+            Her para birimi ayrı raporlanır.
           </Notice>
           {Number(data.current.missing_costs) > 0 ||
           Number(data.current.refund_review) > 0 ? (
