@@ -81,6 +81,15 @@ export async function syncFinancePaytr(
       .eq("merchant_oid", String(row.siparis_no))
       .maybeSingle();
     if (payment.error) throw new Error(payment.error.message);
+    // Some manual / legacy orders use their order number as provider reference.
+    // Only accept an exact unique lookup; never infer a match from dates or amounts.
+    let orderId = payment.data?.order_id || null;
+    if (!orderId) {
+      const direct = await db.from("orders").select("id")
+        .eq("order_no",String(row.siparis_no)).maybeSingle();
+      if (direct.error) throw new Error(direct.error.message);
+      orderId = direct.data?.id || null;
+    }
     // Aggregate by order/day/type; multiple partial refunds retain all deductions, repeated reports update one aggregate.
     const key = createHash("sha256")
       .update(
@@ -95,7 +104,7 @@ export async function syncFinancePaytr(
         amount,
         date,
         currency: row.para_birimi === "TL" ? "TRY" : row.para_birimi,
-        order_id: payment.data?.order_id || null,
+        order_id: orderId,
         reference: String(row.siparis_no),
         type: row.islem_tipi,
       },
