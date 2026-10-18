@@ -51,7 +51,18 @@ export async function GET(request: Request, context: Context) {
           await financeRpc(db, "finance_report", {
             p_from: range.from,p_to: range.to,p_currency: "TRY",p_group: "month",
           });
-        const expenses = await expenseBreakdown(db,range.from,range.to,tryReport);
+        // A temporary TCMB outage must not take down unrelated finance KPIs.
+        // Never show a fabricated TL total when the rate can't be verified.
+        let expenses: Record<string,unknown>;
+        try {
+          expenses = await expenseBreakdown(db,range.from,range.to,tryReport);
+        } catch (error) {
+          expenses = {
+            currency:"TRY",totalTRY:null,cogs:null,monthly:{},rows:[],
+            legacyWarning:false,
+            error:error instanceof Error?error.message:"Giderler döviz kuru yüzünden hesaplanamadı.",
+          };
+        }
         const surcharge = await db.rpc("finance_paytr_installment_pass_through", {
           p_from: range.from, p_to: range.to, p_currency: range.currency,
         });
