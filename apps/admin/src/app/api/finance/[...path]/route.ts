@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { expenseBreakdown, getExpenseFxRates } from "@/lib/finance/expenseFx";
 import { financeOrderItems } from "@/lib/finance/orderItems";
 import {
   financeActionPermission,
@@ -32,6 +33,10 @@ export async function GET(request: Request, context: Context) {
   try {
     const url = new URL(request.url);
     const range = financeRange(url);
+    if (route === "fx-rates") {
+      const quote = await getExpenseFxRates();
+      return financeJson({ ok: true, ...quote });
+    }
     if (route === "overview" || route === "export") {
       const report = await financeRpc(db, "finance_report", {
         p_from: range.from,
@@ -42,6 +47,11 @@ export async function GET(request: Request, context: Context) {
       if (route === "overview") {
         // The cardholder's PayTR installment uplift is passed to the provider:
         // disclose it with expenses, but don't charge it again to company profit.
+        const tryReport = range.currency === "TRY" ? report :
+          await financeRpc(db, "finance_report", {
+            p_from: range.from,p_to: range.to,p_currency: "TRY",p_group: "month",
+          });
+        const expenses = await expenseBreakdown(db,range.from,range.to,tryReport);
         const surcharge = await db.rpc("finance_paytr_installment_pass_through", {
           p_from: range.from, p_to: range.to, p_currency: range.currency,
         });
@@ -49,6 +59,7 @@ export async function GET(request: Request, context: Context) {
           ok: true,
           report: {
             ...report,
+            expenseBreakdown: expenses,
             paytrInstallmentPassThrough: surcharge.error ? null : surcharge.data,
           },
         });
@@ -425,16 +436,38 @@ export async function POST(request: Request, context: Context) {
       return financeJson({ok:true,result:await financeRpc(auth.supabase,
         "finance_save_purchase_cost",{p_data:data,p_actor:auth.user.id})});
     }
+    // Snapshot the provider's quoted rate when recording a USD/EUR expense.
+    // The business's base book stays in original currency, while summary
+    // conversions use this stored quote instead of fluctuating with time.
+    const isForeignExpense = (action === "entry" || action === "monthly_expense") &&
+      data.direction === "expense" && ["USD","EUR"].includes(String(data.currency));
+    const fxQuote = isForeignExpense ? await getExpenseFxRates() : null;
+    const stampForeignExpense = async (result: Record<string, unknown>) => {
+      if (!fxQuote) return;
+      const id = String(result.id || "");
+      if (!uuid(id)) throw new Error("Giderin kur bilgisi kaydedilemedi: gider kimliği eksik.");
+      const currency = String(data.currency) as "USD" | "EUR";
+      const stored = result.metadata &&
+        typeof result.metadata === "object" && !Array.isArray(result.metadata)
+        ? result.metadata as Record<string,unknown> : {};
+      const metadata = { ...stored,
+        fx_to_try: fxQuote.rates[currency],
+        fx_published_on: fxQuote.publishedOn,
+        fx_source: fxQuote.source,
+        fx_checked_at: fxQuote.checkedAt,
+      };
+      const saved = await auth.supabase.from("finance_entries")
+        .update({metadata}).eq("id",id).select("id").single();
+      if (saved.error) throw new Error("Gider kaydedildi ancak TL kuru kaydı başarısız: " + saved.error.message);
+    };
     if (action === "monthly_expense") {
       if (data.direction !== "expense")
         return financeJson({ ok:false,error:"Aylık otomasyon yalnız giderler içindir." },400);
-      return financeJson({
-        ok: true,
-        result: await financeRpc(auth.supabase, "finance_save_monthly_expense", {
-          p_data: data,
-          p_actor: auth.user.id,
-        }),
-      });
+      const saved = await financeRpc(auth.supabase,"finance_save_monthly_expense",{
+        p_data:data,p_actor:auth.user.id,
+      }) as Record<string,unknown>;
+      if (fxQuote && saved.id) await stampForeignExpense(saved);
+      return financeJson({ok:true,result:saved});
     }
     if (action === "bank_import") {
       return financeJson({
@@ -499,6 +532,7 @@ export async function POST(request: Request, context: Context) {
               p_data: data,
               p_actor: auth.user.id,
             });
+    if (action === "entry" && fxQuote) await stampForeignExpense(result as Record<string,unknown>);
     return financeJson({ ok: true, result });
   } catch (e) {
     return financeError(e);
