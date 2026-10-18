@@ -20,7 +20,7 @@ function merchantOnlyDeduction(row: ProviderRow): bigint {
   const settled = financeMinor(String(row.net_tutar));
   const fee = original - settled;
   // If the returned values aren't comparable, retain the provider's fee.
-  return original >= 0n && settled >= 0n && fee >= 0n && fee <= original ? fee : raw;
+  return original >= BigInt(0) && settled >= BigInt(0) && fee >= BigInt(0) && fee <= original ? fee : raw;
 }
 
 function transactionRows(value: unknown): ProviderRow[] {
