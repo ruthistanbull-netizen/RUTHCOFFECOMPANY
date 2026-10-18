@@ -31,6 +31,8 @@ export function FinanceSettings({
     [busy, setBusy] = useState(false);
   const bank = useFinance<{ rows: Row[]; payments: Row[] }>("/api/finance/bank");
   const [bankAccount, setBankAccount] = useState("");
+  const [paytrRates, setPaytrRates] = useState<Array<{rate:number;date:string;installments:number}>>([]);
+  const [paytrTransactions, setPaytrTransactions] = useState<number | null>(null);
   const [recognition, setRecognition] = useState(setup.settings.recognition);
   const act = async (action: string, data: Row) => {
     await command(action, data);
@@ -246,9 +248,36 @@ export function FinanceSettings({
                 { key: "from", label: "Başlangıç", type: "date" },
                 { key: "to", label: "Bitiş", type: "date" },
               ]}
-              onSubmit={(v) => act("paytr_sync", v)}
+              onSubmit={async (v) => {
+                const response = await command("paytr_sync", v);
+                const result = response.result || {};
+                setPaytrTransactions(Number(result.imported || 0));
+                setPaytrRates(Array.isArray(result.rates) ? result.rates : []);
+                setMessage("PayTR işlem raporu sorgulandı.");
+                onSaved();
+              }}
               label="PayTR dökümünü aktar"
             />
+            {paytrTransactions !== null ? (
+              <Notice>
+                {paytrTransactions} işlem kaydı işlendi.
+                {paytrRates.length === 0
+                  ? " Seçilen tarihlerde işlem bazlı komisyon oranı bulunamadı."
+                  : " PayTR'nin bildirdiği işlem oranları aşağıda."}
+              </Notice>
+            ) : null}
+            {paytrRates.length ? (
+              <div className="space-y-2 rounded-lg border border-border-subtle p-3">
+                <strong className="text-sm">PayTR'nin bildirdiği komisyon oranları</strong>
+                <p className="text-xs text-muted">Gerçek işlem bazlı oranlardır. Kart ve taksit sayısına göre değişebilir; tüm hesap için sabit oran değildir.</p>
+                {paytrRates.map((r,index) => (
+                  <div key={index} className="flex justify-between gap-3 text-sm">
+                    <span>{r.date} · {r.installments > 1 ? `${r.installments} taksit` : "Tek çekim"}</span>
+                    <strong>%{Number(r.rate).toLocaleString("tr-TR",{maximumFractionDigits:3})}</strong>
+                  </div>
+                ))}
+              </div>
+            ) : null}
           </>
         ) : null}
         {tab === "bank" ? (
