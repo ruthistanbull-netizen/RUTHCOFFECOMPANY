@@ -795,6 +795,11 @@ export function ExactProductStudioWorkspace({
                 <ExactField label="Ürün Kodu"><input value={form.product_code} onChange={(event) => updateForm({ product_code: event.target.value })} className={exactFormInputClass} placeholder="Boş bırakırsan otomatik 4 haneli kod oluşur" /></ExactField>
                 <ExactField label="Satış fiyatı" required><input type="number" min="0" step="0.01" value={form.price} onChange={(event) => updateForm({ price: event.target.value })} className={exactFormInputClass} /></ExactField>
                 <ExactField label="Karşılaştırma fiyatı"><input type="number" min="0" step="0.01" value={form.compare_at_price} onChange={(event) => updateForm({ compare_at_price: event.target.value })} className={exactFormInputClass} /></ExactField>
+                  {selected?.id ? (
+                    <div className="md:col-span-2">
+                      <ProductCostEditor key={selected.id} productId={selected.id} variants={variants} />
+                    </div>
+                  ) : null}
                 <ExactField label="Kahve türü"><select value={form.material} onChange={(event) => updateForm({ material: event.target.value })} className={exactFormInputClass}>{materials.map((item) => <option key={item} value={item}>{item}</option>)}</select></ExactField>
                 <ExactField label="Kavrum profili"><select value={form.finish_color} onChange={(event) => updateForm({ finish_color: event.target.value })} className={exactFormInputClass}><option value="">Seçilmedi</option>{defaultFinishes.map((item) => <option key={item} value={item}>{item}</option>)}</select></ExactField>
                 <ExactField label="Yayın durumu"><select value={form.status} onChange={(event) => updateForm({ status: event.target.value })} className={exactFormInputClass}><option value="active">Aktif</option><option value="draft">Taslak</option><option value="archived">Arşiv</option></select></ExactField>
@@ -879,7 +884,7 @@ export function ExactProductStudioWorkspace({
               onPhotoUrlChange={setPhotoUrl}
             />
 
-            {selected?.id ? <ProductCostEditor key={selected.id} productId={selected.id} variants={variants} /> : null}
+            
             <ExactDataCard title="Katalog İlişkileri">
               <div className="grid gap-4 md:grid-cols-2">
                 <div><p className="ruth-type-label mb-2 text-muted">Koleksiyonlar</p><div className="flex flex-wrap gap-2">{collections.map((item) => <button key={item.id} type="button" onClick={() => toggleGroup("collection_ids", item.id)} className={`ruth-type-control rounded-full px-3 py-1.5 transition-all ${form.collection_ids.includes(item.id) ? "bg-accent text-white" : "bg-surface-secondary text-muted hover:bg-accent-soft hover:text-accent"}`}>{item.name}</button>)}</div></div>
