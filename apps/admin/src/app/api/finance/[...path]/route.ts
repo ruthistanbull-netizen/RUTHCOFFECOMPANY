@@ -234,6 +234,7 @@ export async function POST(request: Request, context: Context) {
   let permission = ["paytr_sync", "bank_import", "bank_match"].includes(action)
     ? "settings"
     : financeActionPermission[action];
+  if (action === "monthly_expense") permission = "expense_create";
   if (action === "entry")
     permission =
       data.id && data.version
@@ -249,6 +250,17 @@ export async function POST(request: Request, context: Context) {
     // Amounts arrive as decimal strings, never UI-computed totals.
     if (["entry", "payment", "budget", "transfer"].includes(action))
       data.amount = financeAmount(data.amount);
+    if (action === "monthly_expense") {
+      if (data.direction !== "expense")
+        return financeJson({ ok:false,error:"Aylık otomasyon yalnız giderler içindir." },400);
+      return financeJson({
+        ok: true,
+        result: await financeRpc(auth.supabase, "finance_save_monthly_expense", {
+          p_data: data,
+          p_actor: auth.user.id,
+        }),
+      });
+    }
     if (action === "bank_import") {
       return financeJson({
         ok: true,
