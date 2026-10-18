@@ -43,6 +43,13 @@ export async function latestUsdTry(db: Database): Promise<UsdRate> {
         fetched_at: new Date().toISOString(),
       }, { onConflict: "published_on" });
       if (saved.error) throw new Error(saved.error.message);
+    } else {
+      // A successful check on a weekend must not cause the worker to
+      // re-fetch unchanged daily TCMB data every few minutes.
+      const touch = await db.from("finance_fx_usd_try")
+        .update({ fetched_at: new Date().toISOString() })
+        .eq("published_on", publishedOn);
+      if (touch.error) throw new Error(touch.error.message);
     }
     return {
       usdTry, publishedOn, checkedAt: new Date().toISOString(),
