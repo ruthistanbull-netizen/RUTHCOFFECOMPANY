@@ -256,6 +256,9 @@ export function FinanceNav() {
       <a className="ruth-type-control underline" href="/finance/records">
         Kayıtlar
       </a>
+      <a className="ruth-type-control underline" href="/finance/payables">
+        Ödenecekler
+      </a>
     </nav>
   );
 }
