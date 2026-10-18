@@ -77,7 +77,7 @@ export const exactNavStructure: ExactNavGroup[] = [
       { label: "İade ve Değişim", path: "/returns", icon: RotateCcw },
     ],
   },
-  { label: "FİNANS", items: [{ label: "Genel Bakış", path: "/finance", icon: BarChart, exact: true }, { label: "Kayıtlar", path: "/finance/records", icon: FileText, exact: true }, { label: "Ödenecekler", path: "/finance/payables", icon: CreditCard, exact: true }] },
+  { label: "FİNANS", items: [{ label: "Genel Bakış", path: "/finance", icon: BarChart, exact: true }, { label: "Kayıtlar", path: "/finance/records", icon: FileText, exact: true }, { label: "Ödemeler", path: "/finance/payables", icon: CreditCard, exact: true }] },
   {
     label: "ÜRÜN VE STOK",
     items: [
