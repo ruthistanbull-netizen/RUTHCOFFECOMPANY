@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { paytrCommission, isNonPaytrOrder } from "@/lib/finance/paytrCommission";
 import { requireAdmin } from "@/lib/auth";
 import { applyRange, getDateRange } from "@/lib/ranges";
 import { isHistoricalImportedOrder, normalizeOrderStatus } from "@/lib/statusLabels";
@@ -274,43 +275,26 @@ export async function GET(request: Request) {
     refundedTotal = Number(refundedTotal.toFixed(2));
     const netRevenue = Number(Math.max(0, grossRevenue - refundedTotal).toFixed(2));
 
-    // Net sales and the amount retained after payment-provider deductions are
-    // different metrics. A missing PayTR statement must NEVER be treated as zero fee.
+    // Fixed 4.10% commission on the original order value after refunds.
+    // Card installment surcharges are not part of orders.total_amount.
+    // Never use PayTR statement imports or deduct the same fee twice.
     const providerPaidIds = new Set(paymentIntents.map((intent) => String(intent.order_id || "")));
-    const nonProviderSources = new Set(["manual", "wholesale", "b2b", "bulk", "consulting"]);
     const paytrOrders = paidReportOrders.filter((order) =>
-      providerPaidIds.has(String(order.id)) ||
-      !nonProviderSources.has(String(order.imported_source || "").toLowerCase())
+      !isNonPaytrOrder(order, providerPaidIds.has(String(order.id)))
     );
-    const feeByOrder = new Map<string, number>();
-    let paytrFeeMissingCount = 0;
-    let paytrFeeImportError = false;
-    for (let offset = 0; offset < paytrOrders.length; offset += 150) {
-      const ids = paytrOrders.slice(offset, offset + 150).map((order) => String(order.id));
-      const feeResult = await supabase.from("finance_entries")
-        .select("order_id,net,tax,direction")
-        .eq("source", "paytr_fee").eq("cancelled", false).in("order_id", ids);
-      if (feeResult.error) {
-        paytrFeeImportError = true;
-        warnings.push("PayTR kesintileri alınamadı: " + feeResult.error.message);
-        break;
-      }
-      for (const row of feeResult.data || []) {
-        const id = String(row.order_id || "");
-        if (!id) continue;
-        const signed = (row.direction === "income" ? -1 : 1) *
-          (number(row.net) + number(row.tax));
-        feeByOrder.set(id, (feeByOrder.get(id) || 0) + signed);
-      }
+    const paytrFeeMissingCount = 0;
+    const paytrFeeImportError = false;
+    let totalPaytrCommission = 0;
+    for (const order of paytrOrders) {
+      const gross = grossByOrderId.get(String(order.id)) || 0;
+      const confirmed = Math.max(0, number(order.refunded_total));
+      const providerRefund = Math.max(0, refundsByOrderId.get(String(order.id)) || 0);
+      const refund = String(order.payment_status || "").toLowerCase() === "refunded"
+        ? gross : Math.max(confirmed, providerRefund);
+      totalPaytrCommission += paytrCommission(Math.max(0, gross - Math.min(gross, refund)));
     }
-    paytrFeeMissingCount = paytrOrders.filter((order) => !feeByOrder.has(String(order.id))).length;
-    // Always show a usable numeric figure. Subtract only verified provider
-    // deductions; if some fees have not arrived, mark the figure provisional.
-    // 0 orders / 0 revenue must display 0, never a dash.
-    const importedPaytrFees = [...feeByOrder.values()].reduce((sum, amount) => sum + amount, 0);
-    const paytrNetReceivable = Number((netRevenue - importedPaytrFees).toFixed(2));
-    const paytrNetProvisional = netRevenue > 0 &&
-      (paytrFeeImportError || paytrFeeMissingCount > 0);
+    const paytrNetReceivable = Number((netRevenue - totalPaytrCommission).toFixed(2));
+    const paytrNetProvisional = false;
 
     const paidOrdersCount = paidReportOrders.length;
 
