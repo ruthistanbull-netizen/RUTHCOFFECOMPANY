@@ -94,7 +94,7 @@ export function FinancePayables(){
     finally{setWorking(null);}
   };
   return <PageShell density="compact">
-    <PageHeader eyebrow="Finans" title="Ödenecekler"
+    <PageHeader eyebrow="Finans" title="Ödemeler"
       description="Ürün alış maliyetleri, tekrarlayan giderler ve diğer borçlar. Ödemeyi sadece sen onaylarsın."
       actions={<Button variant="secondary" onClick={()=>{void payables.load();void setup.load();}}>Yenile</Button>}/>
     <FinanceNav/>
