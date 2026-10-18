@@ -68,6 +68,9 @@ export async function GET(request: Request) {
     const paymentsPromise = paidIds.length ? applyRange(paymentsBaseQuery, "paid_at", range).order("paid_at", { ascending: false }) : Promise.resolve({ data: [], error: null });
     const [intentsResult, paymentsResult] = await Promise.all([intentsPromise, paymentsPromise]);
 
+    const providerPaidOrderIds = new Set(
+      (intentsResult.data || []).map((intent: { order_id?: string | null }) => String(intent.order_id || "")).filter(Boolean)
+    );
     const collectedByOrder = new Map<string, number>();
     if (!intentsResult.error) for (const intent of intentsResult.data || []) { const orderId = String(intent.order_id || ""); if (!orderId || collectedByOrder.has(orderId)) continue; collectedByOrder.set(orderId, Math.max(0, number(intent.amount_kurus)) / 100); }
     if (!paymentsResult.error) for (const payment of paymentsResult.data || []) { const orderId = String(payment.order_id || ""); if (!orderId || collectedByOrder.has(orderId)) continue; collectedByOrder.set(orderId, Math.max(0, number(payment.amount))); }
@@ -104,8 +107,8 @@ export async function GET(request: Request) {
     const orders = paidOrders.map((order) => {
       const collectedAmount = collectedByOrder.has(String(order.id)) ? collectedByOrder.get(String(order.id)) || 0 : Math.max(0, number(order.total_amount));
       const amountAfterRefunds = Math.max(0,collectedAmount - Math.max(0,number(order.refunded_total)));
-      const feeKnown = String(order.imported_source || "").toLowerCase() === "manual" ||
-        feeByOrder.has(String(order.id));
+      const feeKnown = (String(order.imported_source || "").toLowerCase() === "manual" &&
+        !providerPaidOrderIds.has(String(order.id))) || feeByOrder.has(String(order.id));
       const fee = feeByOrder.get(String(order.id)) || 0;
       return {
         id: order.id,
