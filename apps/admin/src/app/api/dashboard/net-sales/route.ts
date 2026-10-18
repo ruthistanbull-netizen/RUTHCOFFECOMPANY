@@ -71,6 +71,22 @@ export async function GET(request: Request) {
     if (!intentsResult.error) for (const intent of intentsResult.data || []) { const orderId = String(intent.order_id || ""); if (!orderId || collectedByOrder.has(orderId)) continue; collectedByOrder.set(orderId, Math.max(0, number(intent.amount_kurus)) / 100); }
     if (!paymentsResult.error) for (const payment of paymentsResult.data || []) { const orderId = String(payment.order_id || ""); if (!orderId || collectedByOrder.has(orderId)) continue; collectedByOrder.set(orderId, Math.max(0, number(payment.amount))); }
 
+    // Real imported provider fees, never a fixed assumed commission rate.
+    // A missing fee remains unknown instead of appearing as zero.
+    const feeByOrder = new Map<string, number>();
+    if (paidIds.length) {
+      const fees = await supabase.from("finance_entries")
+        .select("order_id,net,tax,direction")
+        .eq("source", "paytr_fee").eq("cancelled",false)
+        .in("order_id",paidIds);
+      if (!fees.error) for (const fee of fees.data || []) {
+        const id = String(fee.order_id || "");
+        if (!id) continue;
+        const signed = (fee.direction === "income" ? -1 : 1) * (number(fee.net) + number(fee.tax));
+        feeByOrder.set(id, (feeByOrder.get(id) || 0) + signed);
+      }
+    }
+
     const productIds = [...new Set(paidOrders.flatMap((order) => order.order_items || []).map((item) => cleanImage(item.product_id)).filter(Boolean) as string[])];
     const productsResult = productIds.length ? await supabase.from("products").select("id,main_image_url,slug,name").in("id", productIds) : { data: [], error: null };
     const mainImageById = new Map<string, string>();
@@ -96,6 +112,9 @@ export async function GET(request: Request) {
         created_at: order.created_at || "",
         traffic_source: order.traffic_source || "direct",
         collected_amount: Number(collectedAmount.toFixed(2)),
+        paytr_fee_amount: feeByOrder.has(String(order.id)) ? Number((feeByOrder.get(String(order.id)) || 0).toFixed(2)) : null,
+        net_after_paytr: feeByOrder.has(String(order.id))
+          ? Number((collectedAmount - (feeByOrder.get(String(order.id)) || 0)).toFixed(2)) : null,
         item_count: (order.order_items || []).reduce((sum, item) => sum + Math.max(1, Math.trunc(number(item.quantity) || 1)), 0),
         items: (order.order_items || []).map((item) => {
           const quantity = Math.max(1, Math.trunc(number(item.quantity) || 1));
