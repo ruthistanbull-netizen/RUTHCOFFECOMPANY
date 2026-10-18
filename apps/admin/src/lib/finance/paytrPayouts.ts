@@ -23,7 +23,21 @@ function flatten(value: unknown, state: Payout["state"], parentDate?: string, pa
   if (Array.isArray(value)) return value.flatMap(v=>flatten(v,state,parentDate,parentCurrency));
   const row=value as Record<string,unknown>;
   const date=readDate(row.date_paid||row.date||row.payment_date||parentDate);
-  const currency=readCurrency(row.currency||row.TL||parentCurrency);
+  const currency=readCurrency(row.currency||parentCurrency);
+  // PayTR can group future_payments by payment date and currency;
+  // net_amounts may be a currency map instead of a scalar amount.
+  if (date && row.net_amounts && typeof row.net_amounts==="object" &&
+      !Array.isArray(row.net_amounts)) {
+    const netMap=row.net_amounts as Record<string,unknown>;
+    const salesMap=(row.sale_amounts||{}) as Record<string,unknown>;
+    const refundsMap=(row.return_amounts||{}) as Record<string,unknown>;
+    return Object.entries(netMap).filter(([currencyCode])=>
+      /^(TL|TRY|USD|EUR|GBP)$/i.test(currencyCode)).map(([currencyCode,value])=>({
+        date,currency:readCurrency(currencyCode),net:moneyNumber(value),
+        sales:moneyNumber(salesMap[currencyCode]),
+        refunds:moneyNumber(refundsMap[currencyCode]),state
+    }));
+  }
   if (date && (row.net!=null || row.net_amounts!=null)) {
     return [{date,currency,net:moneyNumber(row.net??row.net_amounts),
       sales:moneyNumber(row.sales??row.sale_amounts),
@@ -57,7 +71,10 @@ export async function paytrPayoutSummary(): Promise<{rows:Payout[];upcoming:Payo
   if(result.status==="error") throw new Error(String(result.err_msg||"PayTR ödeme özeti hatası"));
   if(result.status==="failed") return {rows:[],upcoming:[],unpaidTotal:0,checkedAt:new Date().toISOString()};
   if(result.status!=="success") throw new Error("PayTR ödeme özeti yanıtı tanınamadı.");
-  const upcoming=flatten(result.future_payments,"upcoming");
+  const data=(result.data && typeof result.data==="object")
+    ? result.data as Record<string,unknown> : {};
+  const future=result.future_payments??data.future_payments??[];
+  const upcoming=flatten(future,"upcoming");
   // Other API fields describe past/transferred payments; do not classify them as pending.
   const rows=flatten(result.payments??result.paid_payments??result.past_payments??[],"transferred");
   // A future row without a verifiable date must not be shown as confirmed upcoming money.
