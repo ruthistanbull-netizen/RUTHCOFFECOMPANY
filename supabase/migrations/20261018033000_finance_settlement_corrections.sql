@@ -94,7 +94,7 @@ begin
     coalesce(o->>'order_no',p_order::text),'income','sale',
     (select id from public.finance_categories where name='Satış'),net_total-vat,vat,
     currency_code,sale_day,channel_code,'order',p_order::text,p_order,
-    not recognized,paid_time is null or ((select recognition from public.finance_settings where id=true)='delivered' and delivery_time is null),
+    not recognized,paid_time is null or ((select recognition from public.finance_settings where id=true)='delivered' and nullif(o->>'delivered_at','') is null),
     jsonb_build_object('customer',o->>'customer_name',
       'gross_sales',coalesce((o->>'subtotal')::numeric,0),
       'discounts',coalesce((o->>'discount_total')::numeric,0),
@@ -186,4 +186,42 @@ revoke all on function public.finance_sync_order(uuid) from public,anon,authenti
 revoke all on function public.finance_recognition_changed() from public,anon,authenticated;
 grant execute on function public.finance_sync_order(uuid) to service_role;
 grant execute on function public.finance_recognition_changed() to service_role;
+-- Expose unresolved cash-refund timing instead of silently presenting an exact cash flow.
+create or replace function public.finance_totals(p_from date,p_to date,p_currency text)
+returns jsonb language sql stable security invoker set search_path=public as $$
+with e as (select * from finance_entries where occurred_on between p_from and p_to and currency=p_currency and not cancelled),
+cost as (select coalesce(sum(s.unit_cost*(s.quantity-s.returned_quantity)),0) c,
+ count(*) filter(where s.unit_cost is null) missing from finance_item_snapshots s join e on e.order_id=s.order_id and e.nature='sale' where s.item_id is not null),
+a as (select coalesce(sum(net) filter(where nature='sale'),0) sales,
+ coalesce(sum(net) filter(where direction='income' and nature='operating'),0) other_income,
+ coalesce(sum(net) filter(where direction='expense' and nature='operating'),0) expenses,
+ coalesce(sum(net) filter(where direction='expense' and nature='tax'),0) taxes,
+ coalesce(sum(case when direction='income' then net else -net end) filter(where nature='financing'),0) financing,
+ coalesce(sum(tax) filter(where direction='income'),0) output_tax,
+ coalesce(sum(tax) filter(where direction='expense'),0) input_tax,
+ coalesce(sum((metadata->>'gross_sales')::numeric) filter(where nature='sale'),0) gross_sales,
+ coalesce(sum((metadata->>'discounts')::numeric) filter(where nature='sale'),0) discounts,
+ coalesce(sum((metadata->>'refunds')::numeric) filter(where nature='sale'),0) refunds,
+ coalesce(sum((metadata->>'shipping_income')::numeric) filter(where nature='sale'),0) shipping_income from e),
+p as (select coalesce(sum(amount) filter(where direction='in'),0) cash_in,coalesce(sum(amount) filter(where direction='out'),0) cash_out from finance_payments p join finance_accounts ac on ac.id=p.account_id where p.paid_on between p_from and p_to and ac.currency=p_currency),
+u as (select coalesce(sum(greatest(e.gross-coalesce(p.paid,0),0)) filter(where e.direction='expense'),0) unpaid,
+ coalesce(sum(greatest(e.gross-coalesce(p.paid,0),0)) filter(where e.direction='income'),0) receivables
+ from e left join lateral(select sum(amount) paid from finance_payments where entry_id=e.id and paid_on<=p_to) p on true),
+v as (select a.*,p.*,u.*,cost.c,cost.missing,
+ (select count(*) from e where nature='sale' and not exists(select 1 from finance_item_snapshots s where s.order_id=e.order_id and s.item_id is not null)) missing_orders,
+ (select count(*) from e where nature='sale' and coalesce((metadata->>'refunds')::numeric,0)>0 and not exists(select 1 from finance_item_snapshots s where s.order_id=e.order_id and s.item_id is not null and (s.returned_quantity>0 or s.basis='reviewed'))) refund_review
+ from a,p,u,cost)
+select jsonb_build_object('net_sales',sales::text,'cogs',case when missing+missing_orders+refund_review=0 then c::text end,
+'gross_profit',case when missing+missing_orders+refund_review=0 then (sales-c)::text end,
+'operating_expenses',expenses::text,'operating_profit',case when missing+missing_orders+refund_review=0 then (sales-c+other_income-expenses)::text end,
+'period_result',case when missing+missing_orders+refund_review=0 then (sales-c+other_income-expenses+financing-taxes)::text end,
+'margin',case when sales>0 and missing+missing_orders+refund_review=0 then round((sales-c+other_income-expenses)/sales*100,2)::text end,
+'cash_in',cash_in::text,'cash_out',cash_out::text,'net_cash',(cash_in-cash_out)::text,'unpaid',unpaid::text,'receivables',receivables::text,
+'missing_costs',missing+missing_orders,'refund_review',refund_review,'gross_sales',gross_sales::text,'discounts',discounts::text,'refunds',refunds::text,'shipping_income',shipping_income::text,'input_tax',input_tax::text,'output_tax',output_tax::text,'taxes',taxes::text,'financing',financing::text,
+'cash_refund_unknown',(select count(*) from e where nature='sale' and metadata->>'refund_date_known'='false'),
+ 'result_label','Kayıtlı giderlere göre tahmini kâr') from v;
+$$;
+
+revoke all on function public.finance_totals(date,date,text) from public,anon,authenticated;
+grant execute on function public.finance_totals(date,date,text) to service_role;
 commit;
