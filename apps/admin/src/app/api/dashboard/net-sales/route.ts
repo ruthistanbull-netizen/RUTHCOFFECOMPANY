@@ -122,7 +122,8 @@ export async function GET(request: Request) {
         traffic_source: order.traffic_source || "direct",
         collected_amount: Number(collectedAmount.toFixed(2)),
         paytr_fee_amount: feeKnown ? Number(fee.toFixed(2)) : null,
-        net_after_paytr: feeKnown ? Number((amountAfterRefunds - fee).toFixed(2)) : null,
+        net_after_paytr: Number((amountAfterRefunds - fee).toFixed(2)),
+        paytr_net_provisional: !feeKnown && amountAfterRefunds > 0,
         item_count: (order.order_items || []).reduce((sum, item) => sum + Math.max(1, Math.trunc(number(item.quantity) || 1)), 0),
         items: (order.order_items || []).map((item) => {
           const quantity = Math.max(1, Math.trunc(number(item.quantity) || 1));
