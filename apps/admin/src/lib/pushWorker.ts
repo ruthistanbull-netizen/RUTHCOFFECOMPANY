@@ -7,7 +7,7 @@ import {
   sign as signPayload,
 } from "node:crypto";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
-import { isOptionalAIConfigurationNotice, normalizePanelNotificationTitle, panelServiceAlertTitle } from "@/lib/adminNotification";
+import { ADMIN_NOTIFICATION_BRAND, isOptionalAIConfigurationNotice, normalizePanelNotificationTitle, panelServiceAlertTitle } from "@/lib/adminNotification";
 import { appointmentNotification } from "@ruth-commerce/commerce-core/appointments";
 
 type PushConfig = {
@@ -142,7 +142,7 @@ function notificationFor(job: PushJob) {
     const item = clean(payload.title) || "Gider";
     const amount = amountText(payload.amount, payload.currency);
     return {
-      title: "Ödeme günü · Giderini öde",
+      title: `${ADMIN_NOTIFICATION_BRAND} · Ödeme günü`,
       body: `${item} · ${amount} ödenmeyi bekliyor. Ödediğinde Finans → Ödenecekler'den işaretle.`,
       url: "/finance/payables",
       tag: `finance-payment-${clean(payload.finance_entry_id)}`,
