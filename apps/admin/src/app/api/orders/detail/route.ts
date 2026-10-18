@@ -23,7 +23,7 @@ export async function GET(request: Request) {
   const [orderResult, emailResult, reviewResult, paymentResult] = await Promise.all([
     auth.supabase.from("orders").select(`
       id, state_version, profile_id, order_no, customer_name, customer_email, customer_phone,
-      total_amount, currency, status, payment_status, fulfillment_status,
+      total_amount, refunded_total, currency, status, payment_status, fulfillment_status,
       cancelled_at, delivered_at, cargo_company, cargo_tracking_no, cargo_tracking_url,
       customer_note, admin_note, imported_source, reminder_note, reminder_at,
       shipping_address_id, shipping_address_text, shipping_city, shipping_town,
@@ -82,9 +82,11 @@ export async function GET(request: Request) {
   const feeResult = await auth.supabase.from("finance_entries")
     .select("direction,net,tax").eq("order_id",orderId)
     .eq("source","paytr_fee").eq("cancelled",false);
-  const feeKnown = !feeResult.error && Boolean(feeResult.data?.length);
-  const paytrFee = feeKnown ? (feeResult.data || []).reduce((sum, row) =>
+  const isManualPayment = String(order.imported_source || "").toLowerCase() === "manual";
+  const feeKnown = isManualPayment || (!feeResult.error && Boolean(feeResult.data?.length));
+  const paytrFee = isManualPayment ? 0 : feeKnown ? (feeResult.data || []).reduce((sum, row) =>
     sum + (row.direction === "income" ? -1 : 1) * (numeric(row.net) + numeric(row.tax)),0) : null;
+  const retainedAmount = Math.max(0,numeric(order.total_amount) - numeric(order.refunded_total));
 
   return NextResponse.json({
     ok: true,
@@ -102,7 +104,8 @@ export async function GET(request: Request) {
     emailLogs: emailResult.error ? [] : emailResult.data || [],
     finance: {
       paytrFee: paytrFee == null ? null : Number(paytrFee.toFixed(2)),
-      netAfterPaytr: paytrFee == null ? null : Number((numeric(order.total_amount) - paytrFee).toFixed(2)),
+      netAfterPaytr: paytrFee == null ? null : Number((retainedAmount - paytrFee).toFixed(2)),
+      manual: isManualPayment,
       feeImported: feeKnown,
     },
     payment: payment ? {
