@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { GET as getVisibleCartActivity } from "@/app/api/dashboard/cart-activity/route";
 import { requireAdmin } from "@/lib/auth";
 import { applyRange, getDateRange } from "@/lib/ranges";
 import { isHistoricalImportedOrder, normalizeOrderStatus } from "@/lib/statusLabels";
@@ -221,6 +222,32 @@ export async function GET(request: Request) {
     // session is already present in analytics are deduplicated.
     cartCount = Math.max(0, cartCount) + untrackedVisibleCartDraftCount;
     checkoutReached = Math.max(0, checkoutReached, checkoutDrafts.length);
+
+    // Dashboard "Sepet" = one visible cart, not total product units or
+    // repeat cart_add analytics events. Exactly matches the Sepetler screen.
+    // Conversion rates continue using analytics session counts separately.
+    try {
+      const cartUrl = new URL("/api/dashboard/cart-activity", request.url);
+      cartUrl.searchParams.set("range", range);
+      cartUrl.searchParams.set("totals_only", "1");
+      const cartResponse = await getVisibleCartActivity(
+        new Request(cartUrl.toString(), { headers: request.headers })
+      );
+      if (!cartResponse.ok) throw new Error("Sepet listesi sorgulanamadı.");
+      const cartData = await cartResponse.json() as {
+        totals?: { carts?: number }; truncated?: boolean;
+      };
+      if (cartData.truncated) {
+        warnings.push("Sepet kaydı sorgulama sınırına ulaştı, tam adet doğrulanamadı.");
+      } else if (Number.isInteger(cartData.totals?.carts) && Number(cartData.totals?.carts) >= 0) {
+        cartCount = Number(cartData.totals?.carts);
+      } else {
+        throw new Error("Sepet sayısı okunamadı.");
+      }
+    } catch (error) {
+      warnings.push("Sepet sayısı canlı listeden doğrulanamadı: " +
+        (error instanceof Error ? error.message : String(error)));
+    }
 
     const reportOrders = selectedOrders.filter((order) => !testSource(order));
     const paidReportOrders = reportOrders.filter(paid);
