@@ -191,8 +191,10 @@ export function usePeriod(initial?: {
 }
 export function PeriodFilter({
   period,
+  allCurrencies = false,
 }: {
   period: ReturnType<typeof usePeriod>;
+  allCurrencies?: boolean;
 }) {
   return (
     <Toolbar>
@@ -241,9 +243,10 @@ export function PeriodFilter({
         value={period.currency}
         onChange={period.setCurrency}
         options={[
-          ["TRY", "TRY"],
-          ["USD", "USD"],
-          ["EUR", "EUR"],
+          ...(allCurrencies ? [["ALL", "Tüm para birimleri"] as [string,string]] : []),
+          ["TRY", "Türk lirası (TRY)"],
+          ["USD", "ABD doları (USD)"],
+          ["EUR", "Euro (EUR)"],
         ]}
       />
     </Toolbar>
