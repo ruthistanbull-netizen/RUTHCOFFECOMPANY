@@ -11,7 +11,6 @@ import {
   PageHeader,
   PageSection,
   PageShell,
-  SegmentedControl,
   Skeleton,
 } from "@ruth-commerce/ui";
 import { adminAuthHeaders } from "@/lib/adminApi";
@@ -28,24 +27,26 @@ import {
 } from "./shared";
 import { FinanceSettings } from "./FinanceSettings";
 const metrics = [
-  "net_sales",
-  "cogs",
-  "gross_profit",
-  "operating_expenses",
-  "operating_profit",
-  "period_result",
-  "margin",
-  "cash_in",
-  "cash_out",
-  "net_cash",
-  "unpaid",
-  "receivables",
+  "net_sales", "cogs", "gross_profit", "operating_expenses",
+  "operating_profit", "total_expenses", "unpaid", "receivables",
 ];
+function readableDate(value:string) {
+  const date=new Date(value+"T12:00:00Z");
+  return Number.isNaN(date.getTime())?value:new Intl.DateTimeFormat(
+    "tr-TR",{timeZone:"UTC",day:"2-digit",month:"long",year:"numeric"}
+  ).format(date);
+}
+function monthBounds(month:string,period:{from:string;to:string}) {
+  const end=new Date(Date.UTC(Number(month.slice(0,4)),Number(month.slice(5,7)),0))
+    .toISOString().slice(0,10);
+  return {from:month>period.from?month:period.from,
+    to:end<period.to?end:period.to};
+}
+
 export function FinanceOverview() {
   const period = usePeriod();
   const [productSort, setProductSort] = useState("revenue");
   const [group, setGroup] = useState("day"),
-    [view, setView] = useState("profit"),
     [chart, setChart] = useState("line"),
     [settings, setSettings] = useState(false),
     [exportError, setExportError] = useState("");
@@ -57,8 +58,19 @@ export function FinanceOverview() {
   const report = useFinance<{ report: Row }>(
       `/api/finance/overview?${period.query}&group=${group}`,
     ),
-    setup = useFinance<Setup>("/api/finance/setup");
+    setup = useFinance<Setup>("/api/finance/setup"),
+    payouts = useFinance<{upcoming:Array<{date:string;currency:string;net:number;sales:number;refunds:number}>;unpaidTotal:number;checkedAt:string}>("/api/finance/payouts");
   const data = report.data?.report;
+  const displayAmount=(key:string,values:Row)=>{
+    if(key==="receivables") return payouts.error?"PayTR API hatası":
+      payouts.data ? money(payouts.data.upcoming.filter(x=>x.currency===period.currency)
+        .reduce((sum,x)=>sum+Number(x.net||0),0),period.currency)
+        : "Yükleniyor…";
+    if(key==="total_expenses") return values.cogs == null?"Eksik ürün maliyeti":
+      money(Number(values.cogs||0)+Number(values.operating_expenses||0)+
+        Number(values.taxes||0),period.currency);
+    return money(values[key],period.currency);
+  };
   const records = (extra: Row = {}) =>
     `/finance/records?${period.query}&${new URLSearchParams(extra).toString()}`;
   const download = async (format = "csv") => {
@@ -92,7 +104,7 @@ export function FinanceOverview() {
       <PageHeader
         eyebrow="Finans"
         title="Genel Bakış"
-        description="Satışlar, maliyetler, giderler ve nakit hareketleri"
+        description="Satışlar, ürün maliyetleri, giderler, kâr ve ödemeler"
         actions={
           <>
             <Button variant="secondary" onClick={() => void report.load()}>
@@ -159,17 +171,34 @@ export function FinanceOverview() {
               <MetricCard
                 key={key}
                 label={labels[key]}
-                value={
-                  key === "margin"
-                    ? data.current[key] == null
-                      ? "Eksik veri"
-                      : `%${data.current[key]}`
-                    : money(data.current[key], period.currency)
-                }
-                description={delta(key)}
+                value={displayAmount(key,data.current)}
+                description={key==="receivables"?"PayTR'nin henüz hesaba aktarmadığı ödemeler":
+                  key==="total_expenses"?"Ürün maliyeti + faaliyet giderleri + vergiler":delta(key)}
               />
             ))}
           </div>
+          <PageSection title="PayTR'den beklenen tahsilatlar"
+            description="PayTR Ödeme Özeti API'sinin bildirdiği gerçek aktarım tarihleri ve tutarları">
+            {payouts.error?<Notice tone="warning">
+              PayTR bekleyen tahsilatları alınamadı: {payouts.error}
+              <Button variant="secondary" onClick={()=>void payouts.load()}>Tekrar dene</Button>
+            </Notice>:null}
+            {payouts.loading&&!payouts.data?<p>PayTR ödeme takvimi yükleniyor…</p>:null}
+            {payouts.data && !payouts.data.upcoming.length?<p className="text-sm text-muted">
+              PayTR gelecek ödeme bildirmiyor.
+            </p>:null}
+            {payouts.data?.upcoming?.length?<DataTable<Row>
+              rows={payouts.data.upcoming}
+              getRowKey={(row)=>row.date+"-"+row.currency}
+              columns={[
+                {key:"date",header:"Hesaba geçiş tarihi",
+                 cell:(row)=>readableDate(row.date)},
+                {key:"net",header:"Beklenen net aktarım",
+                 cell:(row)=>money(row.net,row.currency)},
+                {key:"currency",header:"Para birimi",cell:(row)=>row.currency},
+              ]}
+            />:null}
+          </PageSection>
           <PageSection
             title="Gelir · Gider · Kâr"
             actions={
@@ -289,15 +318,6 @@ export function FinanceOverview() {
             </PageSection>
           </div>
           <PageSection title="Finansal tablo">
-            <SegmentedControl
-              value={view}
-              onValueChange={setView}
-              items={[
-                { value: "profit", label: "Kâr-Zarar" },
-                { value: "cash", label: "Nakit Akışı" },
-              ]}
-              ariaLabel="Finansal görünüm"
-            />
             <div
               tabIndex={0}
               className="overflow-x-auto"
@@ -310,48 +330,30 @@ export function FinanceOverview() {
                     <th scope="col">Kalem</th>
                     {data.monthly.map((m: Row) => (
                       <th key={m.date} scope="col">
-                        {m.date.slice(0, 7)}
+                        {readableDate(monthBounds(m.date,period.dates).from)}
+                        {" — "}
+                        {readableDate(monthBounds(m.date,period.dates).to)}
                       </th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {(view === "cash"
-                    ? ["cash_in", "cash_out", "net_cash"]
-                    : [
-                        "gross_sales",
-                        "discounts",
-                        "refunds",
-                        "net_sales",
-                        "cogs",
-                        "gross_profit",
-                        "operating_expenses",
-                        "operating_profit",
-                        "financing",
-                        "taxes",
-                        "period_result",
-                      ]
-                  ).map((k) => (
+                  {[
+                    "gross_sales","discounts","refunds","net_sales","cogs",
+                    "gross_profit","operating_expenses","taxes",
+                    "total_expenses","operating_profit","unpaid",
+                  ].map((k) => (
                     <tr key={k}>
-                      <th scope="row">{labels[k]}</th>
+                      <th scope="row">{k==="total_expenses"?"Toplam gider":labels[k]}</th>
                       {data.monthly.map((m: Row) => (
                         <td key={m.date}>
                           <a
                             className="underline"
                             href={records({
-                              from: m.date,
-                              to: new Date(
-                                Date.UTC(
-                                  Number(m.date.slice(0, 4)),
-                                  Number(m.date.slice(5, 7)),
-                                  0,
-                                ),
-                              )
-                                .toISOString()
-                                .slice(0, 10),
+                              ...monthBounds(m.date,period.dates),
                             })}
                           >
-                            {money(m.values[k], period.currency)}
+                            {displayAmount(k,m.values)}
                           </a>
                         </td>
                       ))}
