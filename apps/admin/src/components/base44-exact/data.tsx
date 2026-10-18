@@ -111,6 +111,7 @@ export function ExactMetricCard({
 }) {
   const [cartPopupOpen, setCartPopupOpen] = useState(false);
   const [netSalesPopupOpen, setNetSalesPopupOpen] = useState(false);
+  const [paytrFeeSummary, setPaytrFeeSummary] = useState<{fee: number; missing: number; known: number; truncated: boolean} | null>(null);
   const [activeVisitors, setActiveVisitors] = useState(0);
   const displayValue = format === "currency"
     ? label === "Net Satış" ? fullCurrency(value) : compactCurrency(value)
@@ -156,6 +157,34 @@ export function ExactMetricCard({
     };
   }, [label]);
 
+  useEffect(() => {
+    if (label !== "Net Satış") return;
+    let mounted = true;
+    const refreshFeeSummary = async () => {
+      const selection = document.querySelector<HTMLElement>("[data-dashboard-range]")?.dataset.dashboardRange
+        || document.querySelector<HTMLSelectElement>('select[aria-label="Tarih aralığı"]')?.value || "today";
+      try {
+        const response = await adminRequest<{ totals?: {paytr_fee_amount?: number; known_count?: number; missing_count?: number}; truncated?: boolean }>(
+          `/api/dashboard/net-sales?range=${encodeURIComponent(selection)}`,
+          { hardRefresh: true, force: true, ttlMs: 0, staleMs: 0 }
+        );
+        if (mounted) setPaytrFeeSummary({
+          fee: Number(response.totals?.paytr_fee_amount || 0),
+          known: Number(response.totals?.known_count || 0),
+          missing: Number(response.totals?.missing_count || 0),
+          truncated: Boolean(response.truncated),
+        });
+      } catch {
+        if (mounted) setPaytrFeeSummary(null);
+      }
+    };
+    void refreshFeeSummary();
+    const timer = window.setInterval(() => { if (document.visibilityState === "visible") void refreshFeeSummary(); }, 60_000);
+    const refreshOnFocus = () => { if (document.visibilityState === "visible") void refreshFeeSummary(); };
+    window.addEventListener("focus", refreshOnFocus);
+    return () => { mounted = false;window.clearInterval(timer);window.removeEventListener("focus", refreshOnFocus); };
+  }, [label, value]);
+
   const card = (
     <article className={exactCx(
       "relative overflow-hidden radius-card p-4 transition-all duration-200 hover:shadow-card",
@@ -173,6 +202,15 @@ export function ExactMetricCard({
         ) : null}
       </div>
       <div className={exactCx("ruth-type-metric", accent ? "text-white" : "text-main")}>{displayValue}{suffix}</div>
+      {label === "Net Satış" ? (
+        <div className={exactCx("mt-2 text-[11px] font-medium", accent ? "text-white/90" : "text-muted")}>
+          {!paytrFeeSummary ? "PayTR kesintisi bilgisi alınamadı" :
+            paytrFeeSummary.truncated ? "PayTR kesintisi: liste sınırı nedeniyle detayda gösterilir" :
+            paytrFeeSummary.missing > 0 ? `PayTR kesintisi kısmi: ${fullCurrency(paytrFeeSummary.fee)} · ${paytrFeeSummary.missing} kayıt bekliyor` :
+            paytrFeeSummary.known > 0 ? `PayTR kesintisi: −${fullCurrency(paytrFeeSummary.fee)}` :
+            "PayTR kesintisi henüz aktarılmadı"}
+        </div>
+      ) : null}
       {label === "Oturum" ? (
         <div className={exactCx("mt-2 flex items-center gap-2 text-[11px] font-medium", accent ? "text-white/90" : "text-success-foreground")}>
           <span className="relative flex h-2.5 w-2.5 shrink-0">
