@@ -136,7 +136,9 @@ export function FinanceOverview() {
           <Notice>
             Kayıtlı giderlere göre tahmini kâr gösterilir. Vergi, amortisman,
             komisyon ve fatura mutabakatları tamamlanmadan kesin net dönem kârı
-            değildir. Her para birimi ayrı raporlanır.
+            değildir. Her para birimi ayrı raporlanır. Nakit girişleri, PayTR
+            üzerinde bekleyen tahsilatı da içerir; tamamının banka hesabına
+            aktarıldığı anlamına gelmez. Kasa ve banka hesaplarını ayrıca incele.
           </Notice>
           {Number(data.current.missing_costs) > 0 ||
           Number(data.current.refund_review) > 0 ? (
