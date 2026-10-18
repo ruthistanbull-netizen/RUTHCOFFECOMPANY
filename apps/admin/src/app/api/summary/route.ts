@@ -233,7 +233,7 @@ export async function GET(request: Request) {
       const cartResponse = await getVisibleCartActivity(
         new Request(cartUrl.toString(), { headers: request.headers })
       );
-      if (!cartResponse.ok) throw new Error("Sepet listesi sorgulanamadı.");
+      if (!cartResponse || !cartResponse.ok) throw new Error("Sepet listesi sorgulanamadı.");
       const cartData = await cartResponse.json() as {
         totals?: { carts?: number }; truncated?: boolean;
       };
