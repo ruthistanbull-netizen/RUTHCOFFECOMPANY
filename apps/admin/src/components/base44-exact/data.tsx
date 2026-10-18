@@ -98,6 +98,7 @@ export function ExactMetricCard({
   suffix,
   className,
   accent = false,
+  paytrNetAmount,
 }: {
   label: string;
   value: number;
@@ -108,12 +109,14 @@ export function ExactMetricCard({
   suffix?: string;
   className?: string;
   accent?: boolean;
+  paytrNetAmount?: number | null;
 }) {
   const [cartPopupOpen, setCartPopupOpen] = useState(false);
   const [netSalesPopupOpen, setNetSalesPopupOpen] = useState(false);
   const [activeVisitors, setActiveVisitors] = useState(0);
-  const displayValue = format === "currency"
-    ? label === "Net Satış" ? fullCurrency(value) : compactCurrency(value)
+  const displayValue = label === "Net Satış"
+    ? paytrNetAmount == null ? "—" : fullCurrency(paytrNetAmount)
+    : format === "currency" ? compactCurrency(value)
     : format === "percent"
       ? `${Number(value || 0).toLocaleString("tr-TR", { maximumFractionDigits: 2 })}%`
       : compactNumber(value);
@@ -165,7 +168,7 @@ export function ExactMetricCard({
       className,
     )}>
       <div className="flex items-start justify-between gap-2 mb-3">
-        <span className={exactCx("ruth-type-label", accent ? "text-white/80" : "text-muted")}>{label}</span>
+        <span className={exactCx("ruth-type-label", accent ? "text-white/80" : "text-muted")}>{label === "Net Satış" ? "PayTR Sonrası Net" : label}</span>
         {Icon ? (
           <div className={exactCx("flex items-center justify-center h-7 w-7 radius-small shrink-0", accent ? "bg-white/20" : "bg-accent-soft text-accent")}>
             <Icon className="h-3.5 w-3.5" />
@@ -173,6 +176,13 @@ export function ExactMetricCard({
         ) : null}
       </div>
       <div className={exactCx("ruth-type-metric", accent ? "text-white" : "text-main")}>{displayValue}{suffix}</div>
+      {label === "Net Satış" ? (
+        <div className={exactCx("mt-2 text-[11px] font-medium", accent ? "text-white/90" : "text-muted")}>
+          {paytrNetAmount == null
+            ? "PayTR mutabakatı bekleniyor; tutar doğrulanmadı"
+            : "Kesintiler sonrası bize kalacak net tahsilat"}
+        </div>
+      ) : null}
       {label === "Oturum" ? (
         <div className={exactCx("mt-2 flex items-center gap-2 text-[11px] font-medium", accent ? "text-white/90" : "text-success-foreground")}>
           <span className="relative flex h-2.5 w-2.5 shrink-0">

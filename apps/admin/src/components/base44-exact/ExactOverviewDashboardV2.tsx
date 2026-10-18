@@ -51,7 +51,7 @@ type DashboardPayload = {
   summary?: {
     orders?: number;
     paidOrders?: number;
-    revenue?: number;
+    revenue?: number; paytrNetReceivable?: number | null; paytrFeeMissingCount?: number;
     sessions?: number;
     carts?: number;
     checkoutReached?: number;
@@ -455,7 +455,7 @@ export function ExactOverviewDashboardV2() {
       ) : (
         <>
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-            <div className="col-span-2"><ExactMetricCard label="Net Satış" value={Number(summary.revenue || 0)} format="currency" icon={CircleDollarSign} accent /></div>
+            <div className="col-span-2"><ExactMetricCard label="Net Satış" value={Number(summary.revenue || 0)} format="currency" icon={CircleDollarSign} accent  paytrNetAmount={summary.paytrNetReceivable} /></div>
             <button type="button" onClick={() => setSessionOpen((value) => !value)} className="text-left rounded-[var(--radius-card)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"><ExactMetricCard label="Oturum" value={Number(summary.sessions || 0)} icon={UsersRound} className={sessionOpen ? "ring-2 ring-accent/40" : ""} /></button>
             <CardLink href="/orders" ariaLabel="Siparişleri aç"><ExactMetricCard label="Sipariş" value={Number(summary.orders || 0)} icon={ShoppingBag} /></CardLink>
             <ExactMetricCard label="Sepet" value={Number(summary.carts || 0)} icon={ShoppingCart} />

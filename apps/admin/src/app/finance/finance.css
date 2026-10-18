@@ -1,0 +1,7 @@
+/* Shared primitive presentation. Existing app styles keep precedence. */
+@import "@ruth-commerce/ui/styles.css" layer(finance-foundation);
+@import "@ruth-commerce/ui/core.css" layer(finance-foundation);
+@import "@ruth-commerce/ui/cards.css" layer(finance-foundation);
+@import "@ruth-commerce/ui/operations.css" layer(finance-foundation);
+@import "@ruth-commerce/ui/data-display.css" layer(finance-foundation);
+@import "@ruth-commerce/ui/search-shell.css" layer(finance-foundation);

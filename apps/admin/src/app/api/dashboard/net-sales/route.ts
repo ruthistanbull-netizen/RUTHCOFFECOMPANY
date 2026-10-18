@@ -12,6 +12,7 @@ type DashboardOrder = {
   order_no?: string | null;
   customer_name?: string | null;
   total_amount?: number | string | null;
+  refunded_total?: number | string | null;
   currency?: string | null;
   status?: string | null;
   payment_status?: string | null;
@@ -35,7 +36,7 @@ type DashboardOrder = {
 
 function number(value: unknown) { const parsed = Number(value || 0); return Number.isFinite(parsed) ? parsed : 0; }
 function testSource(order: Pick<DashboardOrder, "imported_source" | "customer_note" | "admin_note">) { const source = String(order.imported_source || "").trim().toLocaleLowerCase("tr-TR"); const note = `${String(order.customer_note || "")} ${String(order.admin_note || "")}`.toLocaleLowerCase("tr-TR"); return source === "test" || source.includes("sandbox") || source.includes("demo") || note.includes("test sipariş") || note.includes("test siparis"); }
-function paid(order: Pick<DashboardOrder, "payment_status" | "status">) { const payment = String(order.payment_status || "").toLocaleLowerCase("tr-TR"); const status = String(order.status || "").toLocaleLowerCase("tr-TR"); return ["paid", "succeeded", "success"].includes(payment) || ["paid", "completed"].includes(status); }
+function paid(order: Pick<DashboardOrder, "payment_status" | "status">) { const payment = String(order.payment_status || "").toLocaleLowerCase("tr-TR"); const status = String(order.status || "").toLocaleLowerCase("tr-TR"); return ["paid", "succeeded", "success", "partially_refunded"].includes(payment) || ["paid", "completed"].includes(status); }
 function cleanImage(value: unknown) { return typeof value === "string" && value.trim() ? value.trim() : null; }
 
 export async function GET(request: Request) {
@@ -48,7 +49,7 @@ export async function GET(request: Request) {
   try {
     const ordersResult = await (applyRange(
       supabase.from("orders").select(`
-        id, order_no, customer_name, total_amount, currency, status, payment_status, created_at,
+        id, order_no, customer_name, total_amount, refunded_total, currency, status, payment_status, created_at,
         imported_source, customer_note, admin_note, traffic_source,
         order_items (id, product_id, product_slug, product_name, variant_name, quantity, unit_price, total_price, image_url)
       `),
@@ -61,15 +62,34 @@ export async function GET(request: Request) {
     const paidOrders = reportOrders.filter(paid);
     const paidIds = paidOrders.map((order) => String(order.id || "")).filter(Boolean);
 
-    const intentsBaseQuery = supabase.from("payment_intents").select("order_id,amount_kurus,succeeded_at").eq("status", "succeeded").not("succeeded_at", "is", null).in("order_id", paidIds) as any;
+    const intentsBaseQuery = supabase.from("payment_intents").select("order_id,amount_kurus,succeeded_at").in("status", ["succeeded", "partially_refunded", "refunded"]).not("succeeded_at", "is", null).in("order_id", paidIds) as any;
     const paymentsBaseQuery = supabase.from("payments").select("order_id,amount,paid_at").in("status", ["paid", "succeeded"]).not("paid_at", "is", null).in("order_id", paidIds) as any;
     const intentsPromise = paidIds.length ? applyRange(intentsBaseQuery, "succeeded_at", range).order("succeeded_at", { ascending: false }) : Promise.resolve({ data: [], error: null });
     const paymentsPromise = paidIds.length ? applyRange(paymentsBaseQuery, "paid_at", range).order("paid_at", { ascending: false }) : Promise.resolve({ data: [], error: null });
     const [intentsResult, paymentsResult] = await Promise.all([intentsPromise, paymentsPromise]);
 
+    const providerPaidOrderIds = new Set(
+      (intentsResult.data || []).map((intent: { order_id?: string | null }) => String(intent.order_id || "")).filter(Boolean)
+    );
     const collectedByOrder = new Map<string, number>();
     if (!intentsResult.error) for (const intent of intentsResult.data || []) { const orderId = String(intent.order_id || ""); if (!orderId || collectedByOrder.has(orderId)) continue; collectedByOrder.set(orderId, Math.max(0, number(intent.amount_kurus)) / 100); }
     if (!paymentsResult.error) for (const payment of paymentsResult.data || []) { const orderId = String(payment.order_id || ""); if (!orderId || collectedByOrder.has(orderId)) continue; collectedByOrder.set(orderId, Math.max(0, number(payment.amount))); }
+
+    // Real imported provider fees, never a fixed assumed commission rate.
+    // A missing fee remains unknown instead of appearing as zero.
+    const feeByOrder = new Map<string, number>();
+    if (paidIds.length) {
+      const fees = await supabase.from("finance_entries")
+        .select("order_id,net,tax,direction")
+        .eq("source", "paytr_fee").eq("cancelled",false)
+        .in("order_id",paidIds);
+      if (!fees.error) for (const fee of fees.data || []) {
+        const id = String(fee.order_id || "");
+        if (!id) continue;
+        const signed = (fee.direction === "income" ? -1 : 1) * (number(fee.net) + number(fee.tax));
+        feeByOrder.set(id, (feeByOrder.get(id) || 0) + signed);
+      }
+    }
 
     const productIds = [...new Set(paidOrders.flatMap((order) => order.order_items || []).map((item) => cleanImage(item.product_id)).filter(Boolean) as string[])];
     const productsResult = productIds.length ? await supabase.from("products").select("id,main_image_url,slug,name").in("id", productIds) : { data: [], error: null };
@@ -86,6 +106,11 @@ export async function GET(request: Request) {
 
     const orders = paidOrders.map((order) => {
       const collectedAmount = collectedByOrder.has(String(order.id)) ? collectedByOrder.get(String(order.id)) || 0 : Math.max(0, number(order.total_amount));
+      const amountAfterRefunds = Math.max(0,collectedAmount - Math.max(0,number(order.refunded_total)));
+      const directSources = ["manual","wholesale","b2b","bulk","consulting"];
+      const feeKnown = (directSources.includes(String(order.imported_source || "").toLowerCase()) &&
+        !providerPaidOrderIds.has(String(order.id))) || feeByOrder.has(String(order.id));
+      const fee = feeByOrder.get(String(order.id)) || 0;
       return {
         id: order.id,
         order_no: order.order_no || "—",
@@ -96,6 +121,8 @@ export async function GET(request: Request) {
         created_at: order.created_at || "",
         traffic_source: order.traffic_source || "direct",
         collected_amount: Number(collectedAmount.toFixed(2)),
+        paytr_fee_amount: feeKnown ? Number(fee.toFixed(2)) : null,
+        net_after_paytr: feeKnown ? Number((amountAfterRefunds - fee).toFixed(2)) : null,
         item_count: (order.order_items || []).reduce((sum, item) => sum + Math.max(1, Math.trunc(number(item.quantity) || 1)), 0),
         items: (order.order_items || []).map((item) => {
           const quantity = Math.max(1, Math.trunc(number(item.quantity) || 1));
@@ -117,7 +144,12 @@ export async function GET(request: Request) {
       };
     });
 
-    return NextResponse.json({ ok: true, orders, totals: { orders: orders.length, products: orders.reduce((sum, order) => sum + order.item_count, 0), collected_amount: Number(orders.reduce((sum, order) => sum + order.collected_amount, 0).toFixed(2)) }, truncated: reportOrders.length >= 250 }, { headers: { "Cache-Control": "private, no-store, max-age=0, must-revalidate" } });
+    const feeTotals = {
+      paytr_fee_amount: Number(orders.reduce((sum, order) => sum + (order.paytr_fee_amount || 0), 0).toFixed(2)),
+      known_count: orders.filter((order) => order.paytr_fee_amount != null).length,
+      missing_count: orders.filter((order) => order.paytr_fee_amount == null).length,
+    };
+    return NextResponse.json({ ok: true, orders, totals: { ...feeTotals, orders: orders.length, products: orders.reduce((sum, order) => sum + order.item_count, 0), collected_amount: Number(orders.reduce((sum, order) => sum + order.collected_amount, 0).toFixed(2)) }, truncated: reportOrders.length >= 250 }, { headers: { "Cache-Control": "private, no-store, max-age=0, must-revalidate" } });
   } catch (error) {
     return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : "Net satış siparişleri alınamadı." }, { status: 500 });
   }

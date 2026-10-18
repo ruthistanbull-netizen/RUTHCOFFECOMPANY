@@ -23,6 +23,7 @@ type DashboardOrder = {
   order_no?: string | null;
   customer_name?: string | null;
   total_amount?: number | string | null;
+  refunded_total?: number | string | null;
   currency?: string | null;
   status?: string | null;
   payment_status?: string | null;
@@ -47,7 +48,7 @@ function testSource(order: Pick<DashboardOrder, "imported_source" | "customer_no
 function paid(order: Pick<DashboardOrder, "payment_status" | "status">) {
   const payment = String(order.payment_status || "").toLocaleLowerCase("tr-TR");
   const status = String(order.status || "").toLocaleLowerCase("tr-TR");
-  return ["paid", "succeeded", "success"].includes(payment) || ["paid", "completed"].includes(status);
+  return ["paid", "succeeded", "success", "partially_refunded"].includes(payment) || ["paid", "completed"].includes(status);
 }
 
 function isVisibleCartDraft(draft: DashboardCheckoutDraft) {
@@ -124,7 +125,7 @@ export async function GET(request: Request) {
   try {
     const selectedOrdersPromise = rows<DashboardOrder>(
       (applyRange(
-        supabase.from("orders").select("id,order_no,customer_name,total_amount,currency,status,payment_status,created_at,imported_source,customer_note,admin_note,shipping_status,shipping_error,basit_kargo_order_id,basit_kargo_barcode,cargo_tracking_no,purchase_session_id"),
+        supabase.from("orders").select("id,order_no,customer_name,total_amount,refunded_total,currency,status,payment_status,created_at,imported_source,customer_note,admin_note,shipping_status,shipping_error,basit_kargo_order_id,basit_kargo_barcode,cargo_tracking_no,purchase_session_id"),
         "created_at",
         range,
       ) as any).order("created_at", { ascending: false }),
@@ -162,7 +163,7 @@ export async function GET(request: Request) {
         "Sepet taslakları",
         warnings,
       ),
-      rows<{ order_id: string | null; amount_kurus: number | null }>(applyRange(supabase.from("payment_intents").select("order_id,amount_kurus").eq("status", "succeeded").not("succeeded_at", "is", null) as any, "succeeded_at", range) as any, "Başarılı ödeme niyetleri", warnings),
+      rows<{ order_id: string | null; amount_kurus: number | null }>(applyRange(supabase.from("payment_intents").select("order_id,amount_kurus").in("status", ["succeeded", "partially_refunded", "refunded"]).not("succeeded_at", "is", null) as any, "succeeded_at", range) as any, "Başarılı ödeme niyetleri", warnings),
       rows<{ order_id: string | null; amount: number | null }>(applyRange(supabase.from("payments").select("order_id,amount").in("status", ["paid", "succeeded"]).not("paid_at", "is", null) as any, "paid_at", range) as any, "Başarılı ödemeler", warnings),
       rows<{ status: string | null }>(supabase.from("shipping_webhook_inbox").select("status").in("status", ["received", "processing", "failed", "dead_letter"]).limit(1000) as any, "Kargo webhook kuyruğu", warnings),
       countRows(supabase.from("commerce_dead_letters").select("id", { count: "exact", head: true }).eq("source", "shipping_webhook").in("status", ["open", "retrying"]) as any, "Kargo dead-letter kuyruğu", warnings),
@@ -259,11 +260,52 @@ export async function GET(request: Request) {
 
     const grossRevenue = Number([...grossByOrderId.values()].reduce((sum, amount) => sum + amount, 0).toFixed(2));
     let refundedTotal = 0;
-    for (const [orderId, gross] of grossByOrderId.entries()) {
-      refundedTotal += Math.min(gross, Math.max(0, refundsByOrderId.get(orderId) || 0));
+    for (const order of paidReportOrders) {
+      const orderId = String(order.id);
+      const gross = grossByOrderId.get(orderId) || 0;
+      const confirmed = Math.max(0, number(order.refunded_total));
+      const providerRefund = Math.max(0, refundsByOrderId.get(orderId) || 0);
+      const fullRefund = String(order.payment_status || "").toLowerCase() === "refunded";
+      refundedTotal += Math.min(gross, fullRefund ? gross : Math.max(confirmed, providerRefund));
     }
     refundedTotal = Number(refundedTotal.toFixed(2));
     const netRevenue = Number(Math.max(0, grossRevenue - refundedTotal).toFixed(2));
+
+    // Net sales and the amount retained after payment-provider deductions are
+    // different metrics. A missing PayTR statement must NEVER be treated as zero fee.
+    const providerPaidIds = new Set(paymentIntents.map((intent) => String(intent.order_id || "")));
+    const nonProviderSources = new Set(["manual", "wholesale", "b2b", "bulk", "consulting"]);
+    const paytrOrders = paidReportOrders.filter((order) =>
+      providerPaidIds.has(String(order.id)) ||
+      !nonProviderSources.has(String(order.imported_source || "").toLowerCase())
+    );
+    const feeByOrder = new Map<string, number>();
+    let paytrFeeMissingCount = 0;
+    let paytrFeeImportError = false;
+    for (let offset = 0; offset < paytrOrders.length; offset += 150) {
+      const ids = paytrOrders.slice(offset, offset + 150).map((order) => String(order.id));
+      const feeResult = await supabase.from("finance_entries")
+        .select("order_id,net,tax,direction")
+        .eq("source", "paytr_fee").eq("cancelled", false).in("order_id", ids);
+      if (feeResult.error) {
+        paytrFeeImportError = true;
+        warnings.push("PayTR kesintileri alınamadı: " + feeResult.error.message);
+        break;
+      }
+      for (const row of feeResult.data || []) {
+        const id = String(row.order_id || "");
+        if (!id) continue;
+        const signed = (row.direction === "income" ? -1 : 1) *
+          (number(row.net) + number(row.tax));
+        feeByOrder.set(id, (feeByOrder.get(id) || 0) + signed);
+      }
+    }
+    paytrFeeMissingCount = paytrOrders.filter((order) => !feeByOrder.has(String(order.id))).length;
+    const paytrNetReceivable: number | null =
+      paytrFeeImportError || paytrFeeMissingCount > 0
+        ? null
+        : Number((netRevenue - [...feeByOrder.values()].reduce((sum, amount) => sum + amount, 0)).toFixed(2));
+
     const paidOrdersCount = paidReportOrders.length;
 
     const purchaseSessionIds = new Set(
@@ -318,6 +360,9 @@ export async function GET(request: Request) {
         orders: paidOrdersCount,
         paidOrders: paidOrdersCount,
         revenue: netRevenue,
+        paytrNetReceivable,
+        paytrFeeMissingCount,
+        paytrFeeImportError,
         grossRevenue,
         refundedTotal,
         sessions: sessionCount,

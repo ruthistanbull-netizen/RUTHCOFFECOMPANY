@@ -35,9 +35,11 @@
     "verify:rosta-parity": "node scripts/verify-rosta-commerce-parity.mjs",
     "verify:store-design-v2": "node scripts/verify-store-design-v2.mjs",
     "test:admin-reads": "node --test apps/admin/tests/*.test.cjs",
-    "test:admin-loading": "playwright test --config playwright.admin-loading.config.ts"
+    "test:admin-loading": "playwright test --config playwright.admin-loading.config.ts",
+    "test:finance": "node --experimental-strip-types --test packages/commerce-core/tests/finance.test.ts && node tests/finance-database.mjs && node tests/finance-export.cjs"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "0.3.14",
     "@playwright/test": "1.61.1"
   }
 }
