@@ -98,6 +98,7 @@ export function ExactMetricCard({
   suffix,
   className,
   accent = false,
+  paytrNetAmount,
 }: {
   label: string;
   value: number;
@@ -108,13 +109,14 @@ export function ExactMetricCard({
   suffix?: string;
   className?: string;
   accent?: boolean;
+  paytrNetAmount?: number | null;
 }) {
   const [cartPopupOpen, setCartPopupOpen] = useState(false);
   const [netSalesPopupOpen, setNetSalesPopupOpen] = useState(false);
-  const [paytrFeeSummary, setPaytrFeeSummary] = useState<{fee: number; missing: number; known: number; truncated: boolean} | null>(null);
   const [activeVisitors, setActiveVisitors] = useState(0);
-  const displayValue = format === "currency"
-    ? label === "Net Satış" ? fullCurrency(value) : compactCurrency(value)
+  const displayValue = label === "Net Satış"
+    ? paytrNetAmount == null ? "—" : fullCurrency(paytrNetAmount)
+    : format === "currency" ? compactCurrency(value)
     : format === "percent"
       ? `${Number(value || 0).toLocaleString("tr-TR", { maximumFractionDigits: 2 })}%`
       : compactNumber(value);
@@ -157,34 +159,6 @@ export function ExactMetricCard({
     };
   }, [label]);
 
-  useEffect(() => {
-    if (label !== "Net Satış") return;
-    let mounted = true;
-    const refreshFeeSummary = async () => {
-      const selection = document.querySelector<HTMLElement>("[data-dashboard-range]")?.dataset.dashboardRange
-        || document.querySelector<HTMLSelectElement>('select[aria-label="Tarih aralığı"]')?.value || "today";
-      try {
-        const response = await adminRequest<{ totals?: {paytr_fee_amount?: number; known_count?: number; missing_count?: number}; truncated?: boolean }>(
-          `/api/dashboard/net-sales?range=${encodeURIComponent(selection)}`,
-          { hardRefresh: true, force: true, ttlMs: 0, staleMs: 0 }
-        );
-        if (mounted) setPaytrFeeSummary({
-          fee: Number(response.totals?.paytr_fee_amount || 0),
-          known: Number(response.totals?.known_count || 0),
-          missing: Number(response.totals?.missing_count || 0),
-          truncated: Boolean(response.truncated),
-        });
-      } catch {
-        if (mounted) setPaytrFeeSummary(null);
-      }
-    };
-    void refreshFeeSummary();
-    const timer = window.setInterval(() => { if (document.visibilityState === "visible") void refreshFeeSummary(); }, 60_000);
-    const refreshOnFocus = () => { if (document.visibilityState === "visible") void refreshFeeSummary(); };
-    window.addEventListener("focus", refreshOnFocus);
-    return () => { mounted = false;window.clearInterval(timer);window.removeEventListener("focus", refreshOnFocus); };
-  }, [label, value]);
-
   const card = (
     <article className={exactCx(
       "relative overflow-hidden radius-card p-4 transition-all duration-200 hover:shadow-card",
@@ -194,7 +168,7 @@ export function ExactMetricCard({
       className,
     )}>
       <div className="flex items-start justify-between gap-2 mb-3">
-        <span className={exactCx("ruth-type-label", accent ? "text-white/80" : "text-muted")}>{label}</span>
+        <span className={exactCx("ruth-type-label", accent ? "text-white/80" : "text-muted")}>{label === "Net Satış" ? "PayTR Sonrası Net" : label}</span>
         {Icon ? (
           <div className={exactCx("flex items-center justify-center h-7 w-7 radius-small shrink-0", accent ? "bg-white/20" : "bg-accent-soft text-accent")}>
             <Icon className="h-3.5 w-3.5" />
@@ -204,11 +178,9 @@ export function ExactMetricCard({
       <div className={exactCx("ruth-type-metric", accent ? "text-white" : "text-main")}>{displayValue}{suffix}</div>
       {label === "Net Satış" ? (
         <div className={exactCx("mt-2 text-[11px] font-medium", accent ? "text-white/90" : "text-muted")}>
-          {!paytrFeeSummary ? "PayTR kesintisi bilgisi alınamadı" :
-            paytrFeeSummary.truncated ? "PayTR kesintisi: liste sınırı nedeniyle detayda gösterilir" :
-            paytrFeeSummary.missing > 0 ? `PayTR kesintisi kısmi: ${fullCurrency(paytrFeeSummary.fee)} · ${paytrFeeSummary.missing} kayıt bekliyor` :
-            paytrFeeSummary.known > 0 ? `PayTR kesintisi: −${fullCurrency(paytrFeeSummary.fee)}` :
-            "PayTR kesintisi henüz aktarılmadı"}
+          {paytrNetAmount == null
+            ? "PayTR mutabakatı bekleniyor; tutar doğrulanmadı"
+            : "Kesintiler sonrası bize kalacak net tahsilat"}
         </div>
       ) : null}
       {label === "Oturum" ? (
