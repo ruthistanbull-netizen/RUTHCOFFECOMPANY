@@ -58,7 +58,6 @@ export function FinanceSettings({
             ["permission", "Yetkiler"],
             ["paytr", "PayTR kesintileri"],
             ["bank", "Banka CSV / Mutabakat"],
-            ["history", "Geçmiş siparişler"],
           ]}
         />
         {message ? <Notice>{message}</Notice> : null}
@@ -315,38 +314,7 @@ export function FinanceSettings({
             ))}
           </div>
         ) : null}
-        {tab === "history" ? (
-          <>
-            <Notice>
-              Geçmiş siparişler tekrar oluşturulmadan içe alınır. Tarihî
-              maliyeti bilinmeyen ürünler eksik olarak işaretlenir.
-            </Notice>
-            <Button
-              disabled={busy}
-              onClick={async () => {
-                setBusy(true);
-                try {
-                  let cursor = null;
-                  let count = 0;
-                  do {
-                    const r = await command("backfill", { cursor });
-                    count += r.result.count;
-                    cursor = r.result.cursor;
-                    if (r.result.count < 200) break;
-                  } while (cursor);
-                  setMessage(`${count} sipariş işlendi.`);
-                  onSaved();
-                } catch (e) {
-                  setMessage(String(e));
-                } finally {
-                  setBusy(false);
-                }
-              }}
-            >
-              {busy ? "İşleniyor…" : "Geçmiş siparişleri aktar"}
-            </Button>
-          </>
-        ) : null}
+
       </div>
     </Drawer>
   );
