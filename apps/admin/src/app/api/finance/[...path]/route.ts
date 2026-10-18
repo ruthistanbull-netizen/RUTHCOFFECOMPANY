@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { financeOrderItems } from "@/lib/finance/orderItems";
+import { randomUUID } from "node:crypto";
 import {
   financeActionPermission,
   financeAmount,
@@ -366,12 +367,12 @@ export async function POST(request: Request, context: Context) {
       if (!uuid(String(data.entry_id||"")) || !uuid(String(data.account_id||"")))
         return financeJson({ok:false,error:"Gider veya ödeme hesabı geçersiz."},400);
       const amount=financeAmount(data.amount);
-      if (!(amount>0))
+      if (!(Number(amount) > 0))
         return financeJson({ok:false,error:"Ödeme tutarını gir."},400);
       return financeJson({ok:true,result:await financeRpc(auth.supabase,
         "finance_pay_expense",{
           p_entry:data.entry_id,p_account:data.account_id,p_amount:amount,
-          p_paid_on:data.paid_on,p_key:data.key,p_actor:auth.user.id,
+          p_paid_on:data.paid_on,p_key:typeof data.key === "string" && data.key.length >= 8 ? data.key : randomUUID(),p_actor:auth.user.id,
         })});
     }
     if (action === "monthly_expense") {
