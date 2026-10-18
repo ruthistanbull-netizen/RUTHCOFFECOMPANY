@@ -366,6 +366,23 @@ export function FinanceEntryEditor({
     [end, setEnd] = useState(""),
     [interval, setInterval] = useState("30");
   const [entryId] = useState(initial.id || crypto.randomUUID());
+  const fx = useFinance<{rates:{USD:number;EUR:number};publishedOn:string;source:string}>(
+    "/api/finance/fx-rates"
+  );
+  const foreign = form.direction==="expense" && ["USD","EUR"].includes(String(form.currency));
+  const exchangeRate = foreign
+    ? Number(initial.currency===form.currency && initial.metadata?.fx_to_try
+        ? initial.metadata.fx_to_try : fx.data?.rates?.[form.currency as "USD"|"EUR"])
+    : 1;
+  const originalAmount=Number(String(form.amount||"").replace(",","."));
+  const originalTaxRate=Number(String(form.tax_rate||"0").replace(",","."));
+  const netAmount=Number.isFinite(originalAmount)&&Number.isFinite(originalTaxRate)
+    ? String(form.tax_included)==="false"
+      ? originalAmount
+      : originalAmount/(1+originalTaxRate/100)
+    : NaN;
+  const previewTRY=Number.isFinite(netAmount)&&Number.isFinite(exchangeRate)&&exchangeRate>0
+    ? Math.round(netAmount*exchangeRate*100)/100 : null;
   const dirty =
     JSON.stringify(form) !== JSON.stringify(initialValues) ||
     frequency !== "none";
@@ -474,6 +491,29 @@ export function FinanceEntryEditor({
               ["EUR", "EUR"],
             ]}
           />
+          {foreign?<div className="space-y-2 rounded-lg border border-border-subtle p-3">
+            <strong className="text-sm">Giderin TL karşılığı · TCMB döviz satış</strong>
+            {fx.error?<Notice tone="warning">{fx.error}</Notice>:null}
+            <p className="text-sm">
+              {money(form.amount||0,form.currency)}
+              {" × "}
+              {Number.isFinite(exchangeRate)&&exchangeRate>0
+                ? new Intl.NumberFormat("tr-TR",{maximumFractionDigits:6}).format(exchangeRate)
+                : "Kur alınamadı"}
+              {" TL / "}{form.currency}
+            </p>
+            <strong className="block text-lg">
+              {previewTRY==null?"Kur veya tutar eksik":money(previewTRY,"TRY")}
+            </strong>
+            <p className="text-xs text-muted">
+              {String(form.tax_included)==="false"?"KDV hariç":"KDV hariç net gider baz alınır"}.
+              {" "}TCMB kur tarihi: {initial.currency===form.currency && initial.metadata?.fx_published_on
+                ? String(initial.metadata.fx_published_on) : fx.data?.publishedOn||"Henüz alınmadı"}.
+              Kaydederken sunucu kuru doğrular ve giderin kurunu kaydeder.
+            </p>
+            <Button variant="secondary" onClick={()=>void fx.load()}>Kuru yenile</Button>
+          </div>:null}
+
           <Pick
             label="KDV"
             value={String(form.tax_included)}
@@ -644,6 +684,18 @@ function FinanceRecordDetail({
               {money(r.net, r.currency)} + {money(r.tax, r.currency)} KDV
             </p>
             <strong>{money(r.gross, r.currency)}</strong>
+            {r.direction==="expense" && ["USD","EUR"].includes(String(r.currency)) ? (
+              <div className="mt-2 text-sm">
+                {Number(r.metadata?.fx_to_try)>0
+                  ? <p>
+                    Kayıtlı kur: 1 {r.currency} = {new Intl.NumberFormat("tr-TR",{maximumFractionDigits:6}).format(Number(r.metadata.fx_to_try))} TL
+                    {" · "}TL gider karşılığı: {money(Number(r.net)*Number(r.metadata.fx_to_try),"TRY")}
+                    {r.metadata.fx_published_on?" · "+String(r.metadata.fx_published_on):""}
+                  </p>
+                  : <p className="text-muted">Bu eski kayıtta işlem tarihi için sabit döviz kuru bulunmuyor. Genel Bakış'ta güncel kurla gösterilir.</p>}
+              </div>
+            ):null}
+
             <p>
               {r.occurred_on} · {r.supplier}
             </p>
