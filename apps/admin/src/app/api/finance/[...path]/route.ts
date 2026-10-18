@@ -202,6 +202,8 @@ export async function POST(request: Request, context: Context) {
     return financeJson({ ok: false, error: "Geçersiz istek." }, 400);
   }
   const action = body.action || "";
+  // Historical orders must not be bulk-imported into finance without an explicit new decision.
+  if (action === "backfill") return financeJson({ok:false,error:"Geçmiş sipariş toplu aktarımı kapalı."},403);
   const data = body.data || {};
   let permission = ["paytr_sync", "bank_import", "bank_match"].includes(action)
     ? "settings"
