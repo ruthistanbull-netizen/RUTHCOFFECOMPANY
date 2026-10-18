@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
+import { syncFinanceFxForPurchaseCosts } from "@/lib/financeFxSync";
 import { deliverQueuedOrderConfirmations } from "@/lib/orderEmailDelivery";
 
 export const runtime = "nodejs";
@@ -126,6 +127,15 @@ async function run(request: Request) {
   const emailDelivery = await deliverQueuedOrderConfirmations(supabase, 10);
   if (emailDelivery.failed > 0) {
     failures.push({ source: "email_queue", id: "*", error: `${emailDelivery.failed} sipariş e-postası gönderilemedi.` });
+  }
+
+  // Refresh the official USD/TRY purchasing rate for new orders, even
+  // when no admin is currently viewing the finance screen.
+  try {
+    await syncFinanceFxForPurchaseCosts(supabase);
+  } catch (error) {
+    failures.push({ source: "finance_fx", id: "USDTRY",
+      error: error instanceof Error ? error.message : String(error) });
   }
 
   // Finance recurrence shares the existing worker schedule and database connection.
