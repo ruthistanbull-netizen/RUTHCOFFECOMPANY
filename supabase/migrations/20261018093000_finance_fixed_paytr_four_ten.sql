@@ -221,7 +221,7 @@ begin
     delete from public.finance_payments
     where source='paytr_flat_fee' and source_id=p_order::text;
   end if;
-end $;
+end $$;
 
 
 -- The difference paid by the cardholder for installments passes to PayTR.
