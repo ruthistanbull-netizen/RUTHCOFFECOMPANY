@@ -12,6 +12,7 @@ type DashboardOrder = {
   order_no?: string | null;
   customer_name?: string | null;
   total_amount?: number | string | null;
+  refunded_total?: number | string | null;
   currency?: string | null;
   status?: string | null;
   payment_status?: string | null;
@@ -48,7 +49,7 @@ export async function GET(request: Request) {
   try {
     const ordersResult = await (applyRange(
       supabase.from("orders").select(`
-        id, order_no, customer_name, total_amount, currency, status, payment_status, created_at,
+        id, order_no, customer_name, total_amount, refunded_total, currency, status, payment_status, created_at,
         imported_source, customer_note, admin_note, traffic_source,
         order_items (id, product_id, product_slug, product_name, variant_name, quantity, unit_price, total_price, image_url)
       `),
@@ -102,6 +103,10 @@ export async function GET(request: Request) {
 
     const orders = paidOrders.map((order) => {
       const collectedAmount = collectedByOrder.has(String(order.id)) ? collectedByOrder.get(String(order.id)) || 0 : Math.max(0, number(order.total_amount));
+      const amountAfterRefunds = Math.max(0,collectedAmount - Math.max(0,number(order.refunded_total)));
+      const feeKnown = String(order.imported_source || "").toLowerCase() === "manual" ||
+        feeByOrder.has(String(order.id));
+      const fee = feeByOrder.get(String(order.id)) || 0;
       return {
         id: order.id,
         order_no: order.order_no || "—",
@@ -112,9 +117,8 @@ export async function GET(request: Request) {
         created_at: order.created_at || "",
         traffic_source: order.traffic_source || "direct",
         collected_amount: Number(collectedAmount.toFixed(2)),
-        paytr_fee_amount: feeByOrder.has(String(order.id)) ? Number((feeByOrder.get(String(order.id)) || 0).toFixed(2)) : null,
-        net_after_paytr: feeByOrder.has(String(order.id))
-          ? Number((collectedAmount - (feeByOrder.get(String(order.id)) || 0)).toFixed(2)) : null,
+        paytr_fee_amount: feeKnown ? Number(fee.toFixed(2)) : null,
+        net_after_paytr: feeKnown ? Number((amountAfterRefunds - fee).toFixed(2)) : null,
         item_count: (order.order_items || []).reduce((sum, item) => sum + Math.max(1, Math.trunc(number(item.quantity) || 1)), 0),
         items: (order.order_items || []).map((item) => {
           const quantity = Math.max(1, Math.trunc(number(item.quantity) || 1));
