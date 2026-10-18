@@ -148,6 +148,12 @@ export function FinanceOverview() {
               gerekiyor. Eksikler tamamlanana kadar kâr tutarları gösterilmez.
             </Notice>
           ) : null}
+          {Number(data.current.cash_refund_unknown || 0) > 0 ? (
+            <Notice tone="warning">
+              {data.current.cash_refund_unknown} siparişte iadenin gerçekleşme tarihi doğrulanamadı.
+              Nakit akışı bu kayıtlar mutabık hale gelene kadar eksik olabilir.
+            </Notice>
+          ) : null}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
             {metrics.map((key) => (
               <MetricCard
