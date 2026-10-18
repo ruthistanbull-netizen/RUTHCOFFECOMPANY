@@ -99,6 +99,7 @@ export function ExactMetricCard({
   className,
   accent = false,
   paytrNetAmount,
+  paytrNetProvisional = false,
 }: {
   label: string;
   value: number;
@@ -110,12 +111,13 @@ export function ExactMetricCard({
   className?: string;
   accent?: boolean;
   paytrNetAmount?: number | null;
+  paytrNetProvisional?: boolean;
 }) {
   const [cartPopupOpen, setCartPopupOpen] = useState(false);
   const [netSalesPopupOpen, setNetSalesPopupOpen] = useState(false);
   const [activeVisitors, setActiveVisitors] = useState(0);
   const displayValue = label === "Net Satış"
-    ? paytrNetAmount == null ? "—" : fullCurrency(paytrNetAmount)
+    ? fullCurrency(paytrNetAmount ?? value ?? 0)
     : format === "currency" ? compactCurrency(value)
     : format === "percent"
       ? `${Number(value || 0).toLocaleString("tr-TR", { maximumFractionDigits: 2 })}%`
@@ -178,9 +180,11 @@ export function ExactMetricCard({
       <div className={exactCx("ruth-type-metric", accent ? "text-white" : "text-main")}>{displayValue}{suffix}</div>
       {label === "Net Satış" ? (
         <div className={exactCx("mt-2 text-[11px] font-medium", accent ? "text-white/90" : "text-muted")}>
-          {paytrNetAmount == null
-            ? "PayTR mutabakatı bekleniyor; tutar doğrulanmadı"
-            : "Kesintiler sonrası bize kalacak net tahsilat"}
+          {(paytrNetAmount ?? value ?? 0) === 0 && !paytrNetProvisional
+            ? "Bu dönemde satış yok"
+            : paytrNetProvisional || paytrNetAmount == null
+              ? "Geçici tutar · Bekleyen PayTR kesintileri geldikçe düşülecek"
+              : "Kesintiler sonrası bize kalacak net tahsilat"}
         </div>
       ) : null}
       {label === "Oturum" ? (
