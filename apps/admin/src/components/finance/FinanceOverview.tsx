@@ -254,6 +254,20 @@ export function FinanceOverview() {
                   },
                 ]}
               />
+              <div className="mt-3 space-y-1 rounded-lg bg-surface-secondary p-3">
+                <div className="flex items-center justify-between gap-3 text-sm">
+                  <span>PayTR taksit vade farkı (PayTR'ye aktarılan)</span>
+                  <strong>{data.paytrInstallmentPassThrough == null
+                    ? "Mutabakat verisi henüz yok"
+                    : money(data.paytrInstallmentPassThrough, period.currency)}</strong>
+                </div>
+                <p className="text-xs text-muted">
+                  Bilgilendirme kalemidir. Müşteri tarafından ödenir ve
+                  işletmemizin satış geliri olmadığı için gider toplamından
+                  ve kârdan ikinci kez düşülmez. PayTR %4,10 komisyonu ise
+                  yukarıdaki gider dağılımına otomatik eklenir.
+                </p>
+              </div>
             </PageSection>
             <PageSection title="Satış kanalları">
               <DataTable<Row>
