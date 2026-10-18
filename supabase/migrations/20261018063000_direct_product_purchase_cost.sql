@@ -48,8 +48,6 @@ BEGIN
   IF c.id IS NOT NULL AND c.currency <> p_currency THEN
     RETURN NULL;
   END IF;
-  IF c.id IS NULL THEN RETURN NULL; END IF;
-
   -- Urun, paket/set veya varyant icin dogrudan alis fiyati oncelikli.
   -- Sifir gecerli bir maliyettir; NULL ise otomatik maliyet hesabina donulur.
   IF c.purchase IS NOT NULL THEN
@@ -78,6 +76,8 @@ BEGIN
       + COALESCE(c.label, 0) + COALESCE(c.labor, 0)
       + COALESCE(c.other, 0);
   END IF;
+
+  IF c.id IS NULL THEN RETURN NULL; END IF;
 
   IF (SELECT brand FROM public.finance_settings WHERE id = true) = 'rosta' THEN
     IF c.coffee_per_kg IS NULL OR c.grams IS NULL THEN
