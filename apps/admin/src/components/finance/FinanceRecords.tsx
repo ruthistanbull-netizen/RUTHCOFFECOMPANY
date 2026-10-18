@@ -495,7 +495,7 @@ export function FinanceEntryEditor({
             <strong className="text-sm">Giderin TL karşılığı · TCMB döviz satış</strong>
             {fx.error?<Notice tone="warning">{fx.error}</Notice>:null}
             <p className="text-sm">
-              {money(form.amount||0,form.currency)}
+              {Number.isFinite(netAmount)?money(netAmount,form.currency):"Tutar eksik"}
               {" × "}
               {Number.isFinite(exchangeRate)&&exchangeRate>0
                 ? new Intl.NumberFormat("tr-TR",{maximumFractionDigits:6}).format(exchangeRate)
