@@ -36,7 +36,7 @@ type DashboardOrder = {
 
 function number(value: unknown) { const parsed = Number(value || 0); return Number.isFinite(parsed) ? parsed : 0; }
 function testSource(order: Pick<DashboardOrder, "imported_source" | "customer_note" | "admin_note">) { const source = String(order.imported_source || "").trim().toLocaleLowerCase("tr-TR"); const note = `${String(order.customer_note || "")} ${String(order.admin_note || "")}`.toLocaleLowerCase("tr-TR"); return source === "test" || source.includes("sandbox") || source.includes("demo") || note.includes("test sipariş") || note.includes("test siparis"); }
-function paid(order: Pick<DashboardOrder, "payment_status" | "status">) { const payment = String(order.payment_status || "").toLocaleLowerCase("tr-TR"); const status = String(order.status || "").toLocaleLowerCase("tr-TR"); return ["paid", "succeeded", "success"].includes(payment) || ["paid", "completed"].includes(status); }
+function paid(order: Pick<DashboardOrder, "payment_status" | "status">) { const payment = String(order.payment_status || "").toLocaleLowerCase("tr-TR"); const status = String(order.status || "").toLocaleLowerCase("tr-TR"); return ["paid", "succeeded", "success", "partially_refunded"].includes(payment) || ["paid", "completed"].includes(status); }
 function cleanImage(value: unknown) { return typeof value === "string" && value.trim() ? value.trim() : null; }
 
 export async function GET(request: Request) {
