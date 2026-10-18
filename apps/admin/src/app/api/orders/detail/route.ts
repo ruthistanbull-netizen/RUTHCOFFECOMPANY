@@ -82,7 +82,7 @@ export async function GET(request: Request) {
   const feeResult = await auth.supabase.from("finance_entries")
     .select("direction,net,tax").eq("order_id",orderId)
     .eq("source","paytr_fee").eq("cancelled",false);
-  const isManualPayment = String(order.imported_source || "").toLowerCase() === "manual";
+  const isManualPayment = String(order.imported_source || "").toLowerCase() === "manual" && !payment?.succeeded_at;
   const feeKnown = isManualPayment || (!feeResult.error && Boolean(feeResult.data?.length));
   const paytrFee = isManualPayment ? 0 : feeKnown ? (feeResult.data || []).reduce((sum, row) =>
     sum + (row.direction === "income" ? -1 : 1) * (numeric(row.net) + numeric(row.tax)),0) : null;
