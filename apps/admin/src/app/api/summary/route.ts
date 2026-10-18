@@ -163,7 +163,7 @@ export async function GET(request: Request) {
         "Sepet taslakları",
         warnings,
       ),
-      rows<{ order_id: string | null; amount_kurus: number | null }>(applyRange(supabase.from("payment_intents").select("order_id,amount_kurus").eq("status", "succeeded").not("succeeded_at", "is", null) as any, "succeeded_at", range) as any, "Başarılı ödeme niyetleri", warnings),
+      rows<{ order_id: string | null; amount_kurus: number | null }>(applyRange(supabase.from("payment_intents").select("order_id,amount_kurus").in("status", ["succeeded", "partially_refunded", "refunded"]).not("succeeded_at", "is", null) as any, "succeeded_at", range) as any, "Başarılı ödeme niyetleri", warnings),
       rows<{ order_id: string | null; amount: number | null }>(applyRange(supabase.from("payments").select("order_id,amount").in("status", ["paid", "succeeded"]).not("paid_at", "is", null) as any, "paid_at", range) as any, "Başarılı ödemeler", warnings),
       rows<{ status: string | null }>(supabase.from("shipping_webhook_inbox").select("status").in("status", ["received", "processing", "failed", "dead_letter"]).limit(1000) as any, "Kargo webhook kuyruğu", warnings),
       countRows(supabase.from("commerce_dead_letters").select("id", { count: "exact", head: true }).eq("source", "shipping_webhook").in("status", ["open", "retrying"]) as any, "Kargo dead-letter kuyruğu", warnings),
