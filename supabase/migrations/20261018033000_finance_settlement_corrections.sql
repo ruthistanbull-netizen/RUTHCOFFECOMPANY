@@ -10,6 +10,7 @@ declare
   o jsonb; collected boolean; recognized boolean;
   paid_time timestamptz; delivery_time timestamptz;
   paid_day date; sale_day date; old_sale_day date;
+  old_method text; old_recognized boolean;
   currency_code text; channel_code text;
   refund_amount numeric; net_total numeric; vat numeric;
   account uuid; entry_id uuid; verified_refunds numeric;
@@ -30,7 +31,8 @@ begin
     (select min(paid_at) from public.checkout_drafts where order_id=p_order and paid_at is not null),
     nullif(o->>'paid_at','')::timestamptz
   ) into paid_time;
-  select occurred_on into old_sale_day
+  select occurred_on, metadata->>'recognition_method', not cancelled
+    into old_sale_day, old_method, old_recognized
     from public.finance_entries where source='order' and source_id=p_order::text;
   -- For old/manual paid orders without a payment timestamp, use the previously
   -- recorded date if present, otherwise order update time. Mark the estimate.
@@ -42,7 +44,12 @@ begin
     now()) at time zone 'Europe/Istanbul')::date;
   delivery_time := nullif(o->>'delivered_at','')::timestamptz;
   if delivery_time is null and o->>'status' in ('delivered','completed') then
-    delivery_time := coalesce(old_sale_day::timestamptz,nullif(o->>'updated_at','')::timestamptz);
+    -- Preserve an already-recognized delivery day, not the original order creation day.
+    delivery_time := coalesce(
+      case when old_method='delivered' and old_recognized then old_sale_day::timestamptz end,
+      nullif(o->>'updated_at','')::timestamptz,
+      old_sale_day::timestamptz
+    );
   end if;
   sale_day := case
     when (select recognition from public.finance_settings where id=true)='delivered'
@@ -75,8 +82,9 @@ begin
       *net_total/(o->>'total_amount')::numeric,2)))
     else 0 end;
   select exists(
-    select 1 from public.payment_refunds
-    where order_id=p_order and status='succeeded' and completed_at is not null
+    select 1 from public.payment_refunds pr left join public.payment_intents pi on pi.id=pr.payment_intent_id
+    where coalesce(pr.order_id,pi.order_id)=p_order
+      and pr.status='succeeded' and pr.completed_at is not null
   ) into has_refund_time;
 
   insert into public.finance_entries(
@@ -94,7 +102,13 @@ begin
       'shipping_income',coalesce((o->>'shipping_fee')::numeric,0),
       'tax_known',o?'tax_total',
       'payment_date_known',paid_time is not null,
-      'refund_date_known',refund_amount=0 or has_refund_time or nullif(o->>'refunded_at','') is not null)
+      'recognition_method',(select recognition from public.finance_settings where id=true),
+      'delivery_date_known',nullif(o->>'delivered_at','') is not null,
+      'refund_date_known',refund_amount=0 or
+        (has_refund_time and refund_amount <= (select coalesce(sum(pr.amount_kurus::numeric/100),0)
+            from public.payment_refunds pr left join public.payment_intents pi on pi.id=pr.payment_intent_id
+            where coalesce(pr.order_id,pi.order_id)=p_order and pr.status='succeeded' and pr.completed_at is not null))
+        or nullif(o->>'refunded_at','') is not null)
   )
   on conflict(source,source_id) do update set
     net=excluded.net,tax=excluded.tax,cancelled=excluded.cancelled,
@@ -119,15 +133,17 @@ begin
   end if;
 
   -- Each settled partial refund is recorded on its OWN actual completion day.
-  select coalesce(sum(amount_kurus::numeric/100),0) into verified_refunds
-    from public.payment_refunds
-    where order_id=p_order and status='succeeded' and completed_at is not null;
+  select coalesce(sum(pr.amount_kurus::numeric/100),0) into verified_refunds
+    from public.payment_refunds pr left join public.payment_intents pi on pi.id=pr.payment_intent_id
+    where coalesce(pr.order_id,pi.order_id)=p_order and pr.status='succeeded' and pr.completed_at is not null;
   if verified_refunds>0 then
     delete from public.finance_payments
       where source='order_refund' and source_id=p_order::text;
     for rf in
-      select id,amount_kurus,completed_at from public.payment_refunds
-      where order_id=p_order and status='succeeded' and completed_at is not null
+      select pr.id,pr.amount_kurus,pr.completed_at from public.payment_refunds pr
+      left join public.payment_intents pi on pi.id=pr.payment_intent_id
+      where coalesce(pr.order_id,pi.order_id)=p_order
+        and pr.status='succeeded' and pr.completed_at is not null
     loop
       insert into public.finance_payments(entry_id,account_id,direction,amount,paid_on,method,source,source_id)
       values(entry_id,account,'out',rf.amount_kurus::numeric/100,
