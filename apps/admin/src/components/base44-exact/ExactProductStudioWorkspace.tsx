@@ -1,4 +1,5 @@
 "use client";
+import { ProductCostEditor } from "@/components/finance/ProductCostEditor";
 
 import {
   Archive,
@@ -878,6 +879,7 @@ export function ExactProductStudioWorkspace({
               onPhotoUrlChange={setPhotoUrl}
             />
 
+            {selected?.id ? <ProductCostEditor key={selected.id} productId={selected.id} variants={variants} /> : null}
             <ExactDataCard title="Katalog İlişkileri">
               <div className="grid gap-4 md:grid-cols-2">
                 <div><p className="ruth-type-label mb-2 text-muted">Koleksiyonlar</p><div className="flex flex-wrap gap-2">{collections.map((item) => <button key={item.id} type="button" onClick={() => toggleGroup("collection_ids", item.id)} className={`ruth-type-control rounded-full px-3 py-1.5 transition-all ${form.collection_ids.includes(item.id) ? "bg-accent text-white" : "bg-surface-secondary text-muted hover:bg-accent-soft hover:text-accent"}`}>{item.name}</button>)}</div></div>

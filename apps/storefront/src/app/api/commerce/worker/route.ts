@@ -128,6 +128,12 @@ async function run(request: Request) {
     failures.push({ source: "email_queue", id: "*", error: `${emailDelivery.failed} sipariş e-postası gönderilemedi.` });
   }
 
+  // Finance recurrence shares the existing worker schedule and database connection.
+  const financeTick = await supabase.rpc("finance_run_recurring");
+  if (financeTick.error && !["42883", "PGRST202"].includes(financeTick.error.code || "")) {
+    failures.push({ source: "finance_recurring", id: "*", error: financeTick.error.message });
+  }
+
   const health = await healthSnapshot(supabase);
   await supabase.from("commerce_audit_logs").insert({
     action: "commerce.worker_completed",

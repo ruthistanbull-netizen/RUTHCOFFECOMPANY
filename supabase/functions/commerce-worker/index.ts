@@ -279,6 +279,12 @@ Deno.serve(async (request) => {
     }
   }
 
+  // Finance recurrence shares the existing worker schedule and database connection.
+  const financeTick = await supabase.rpc("finance_run_recurring");
+  if (financeTick.error && !["42883", "PGRST202"].includes(financeTick.error.code || "")) {
+    failures.push({ source: "finance_recurring", id: "*", error: financeTick.error.message });
+  }
+
   const [outboxPending, outboxDead, jobsPending, jobsDead] = await Promise.all([
     supabase.from("commerce_outbox").select("id", { count: "exact", head: true }).in("status", ["pending", "failed", "processing"]),
     supabase.from("commerce_outbox").select("id", { count: "exact", head: true }).eq("status", "dead_letter"),
