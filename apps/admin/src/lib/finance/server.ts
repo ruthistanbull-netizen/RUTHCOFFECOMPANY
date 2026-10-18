@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
+import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 import {
   financeDate,
   financePeriod,
@@ -26,7 +27,27 @@ export function financeError(error: unknown) {
 }
 export async function financeAuth(request: Request, permission = "view") {
   const auth = await requireAdmin(request);
-  if ("error" in auth) return auth;
+  if ("error" in auth) {
+    // Existing panel auth accepts admins only. Finance-specific staff can use the
+    // finance permission grants, but must still pass independent JWT verification.
+    if (auth.error.status !== 403) return auth;
+    const bearer = /^Bearer\s+(\S+)$/i.exec(request.headers.get("authorization") || "")?.[1];
+    if (!bearer) return auth;
+    const supabase = getSupabaseAdmin();
+    const verified = await supabase.auth.getUser(bearer);
+    const user = verified.data.user;
+    if (verified.error || !user || user.user_metadata?.panel_status === "disabled") return auth;
+    const grant = await supabase.from("finance_permissions")
+      .select("permission").eq("user_id",user.id).eq("permission",permission).maybeSingle();
+    if (grant.error || !grant.data) return auth;
+    return {
+      supabase,
+      user,
+      profile: {id:user.id, role:"finance_staff",email:user.email || null,full_name:null},
+      internal: false as const,
+      authSource:"finance-staff" as const,
+    };
+  }
   // Finance never accepts an internal worker principal on the public admin API.
   if (auth.internal)
     return {
