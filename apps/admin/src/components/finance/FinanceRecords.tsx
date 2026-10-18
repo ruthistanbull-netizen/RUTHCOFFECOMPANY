@@ -370,10 +370,10 @@ export function FinanceEntryEditor({
     "/api/finance/fx-rates"
   );
   const foreign = form.direction==="expense" && ["USD","EUR"].includes(String(form.currency));
+  // Preview the CURRENT quote; the server snapshots this quote when saved.
+  // Historic recorded rates remain visible in the entry detail, not the editor.
   const exchangeRate = foreign
-    ? Number(initial.currency===form.currency && initial.metadata?.fx_to_try
-        ? initial.metadata.fx_to_try : fx.data?.rates?.[form.currency as "USD"|"EUR"])
-    : 1;
+    ? Number(fx.data?.rates?.[form.currency as "USD"|"EUR"]) : 1;
   const originalAmount=Number(String(form.amount||"").replace(",","."));
   const originalTaxRate=Number(String(form.tax_rate||"0").replace(",","."));
   const netAmount=Number.isFinite(originalAmount)&&Number.isFinite(originalTaxRate)
@@ -507,8 +507,7 @@ export function FinanceEntryEditor({
             </strong>
             <p className="text-xs text-muted">
               {String(form.tax_included)==="false"?"KDV hariç":"KDV hariç net gider baz alınır"}.
-              {" "}TCMB kur tarihi: {initial.currency===form.currency && initial.metadata?.fx_published_on
-                ? String(initial.metadata.fx_published_on) : fx.data?.publishedOn||"Henüz alınmadı"}.
+              {" "}TCMB kur tarihi: {fx.data?.publishedOn||"Henüz alınmadı"}.
               Kaydederken sunucu kuru doğrular ve giderin kurunu kaydeder.
             </p>
             <Button variant="secondary" onClick={()=>void fx.load()}>Kuru yenile</Button>
