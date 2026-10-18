@@ -28,6 +28,8 @@ export const labels: Record<string, string> = {
   cogs: "Satılan ürünlerin maliyeti",
   gross_profit: "Brüt kâr",
   operating_expenses: "Faaliyet gideri",
+  total_expenses: "Toplam gider",
+  purchase_payable: "Ürün alış bedeli",
   operating_profit: "Faaliyet kârı",
   period_result: "Kayıtlı giderlere göre tahmini kâr",
   margin: "Faaliyet kâr marjı",
