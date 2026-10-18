@@ -8,6 +8,21 @@ import {
 import { financeRpc } from "./server";
 import type { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 type ProviderRow = Record<string, unknown>;
+/** PayTR's transaction amount is the original sale; the customer's payment
+ * amount may also contain an installment surcharge, which is never our income.
+ * For completed sales the merchant's true fee is original sale minus net payout.
+ */
+function merchantOnlyDeduction(row: ProviderRow): bigint {
+  const raw = financeMinor(String(row.kesinti_tutari));
+  if (row.islem_tipi !== "S" || row.islem_tutari == null || row.net_tutar == null)
+    return raw;
+  const original = financeMinor(String(row.islem_tutari));
+  const settled = financeMinor(String(row.net_tutar));
+  const fee = original - settled;
+  // If the returned values aren't comparable, retain the provider's fee.
+  return original >= 0n && settled >= 0n && fee >= 0n && fee <= original ? fee : raw;
+}
+
 function transactionRows(value: unknown): ProviderRow[] {
   if (Array.isArray(value)) return value.flatMap(transactionRows);
   if (!value || typeof value !== "object") return [];
@@ -42,10 +57,17 @@ export async function syncFinancePaytr(
     endDate: `${to} 23:59:59`,
     dummy: 0,
   });
-  if (result.status === "failed") return { imported: 0 };
+  if (result.status === "failed") return { imported: 0, rates: [] };
   if (result.status !== "success")
     throw new Error(String(result.err_msg || "PayTR işlem dökümü alınamadı."));
   const rows = transactionRows(result);
+  const rates = rows.flatMap((row) => {
+    if (row.islem_tipi !== "S" || row.kesinti_orani == null) return [];
+    const rate = Number(String(row.kesinti_orani).replace(",", "."));
+    return Number.isFinite(rate) && rate >= 0 && rate < 100
+      ? [{ rate, date: String(row.islem_tarihi || ""), installments: Number(row.taksit || 0) }]
+      : [];
+  }).slice(0, 25);
   let imported = 0;
   const grouped = new Map<string, ProviderRow>();
   for (const row of rows) {
@@ -63,11 +85,17 @@ export async function syncFinancePaytr(
         financeMinor(String(old?.kesinti_tutari || "0")) +
           financeMinor(String(row.kesinti_tutari)),
       ),
+      merchant_fee_tutari: financeDecimal(
+        financeMinor(String(old?.merchant_fee_tutari || "0")) +
+          merchantOnlyDeduction(row),
+      ),
     });
   }
   for (const row of grouped.values()) {
     if (row.kesinti_tutari == null) continue;
-    const amount = financeAmount(row.kesinti_tutari);
+    // Raw deduction may include customer-paid installment interest.
+    // Only the merchant-cost portion belongs in expense/net-income reports.
+    const amount = financeAmount(row.merchant_fee_tutari ?? row.kesinti_tutari);
     if (amount === "0.00") continue;
     const match = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(
       String(row.islem_tarihi || ""),
@@ -112,5 +140,5 @@ export async function syncFinancePaytr(
     });
     imported++;
   }
-  return { imported };
+  return { imported, rates };
 }
