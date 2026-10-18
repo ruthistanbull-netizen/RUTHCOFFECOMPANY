@@ -209,7 +209,7 @@ declare
   others numeric;
 begin
   select * into old_pay from public.finance_payments where id=p_payment;
-  if old_pay.id is null or old_pay.source<>'expense_payment' then
+  if old_pay.id is null or old_pay.source not in ('expense_payment','manual') then
     raise exception 'Düzenlenebilir ödeme bulunamadı';
   end if;
   select * into entry from public.finance_entries
