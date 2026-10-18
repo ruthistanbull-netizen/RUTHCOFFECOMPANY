@@ -32,12 +32,12 @@ Webde `/finance` ve `/finance/records`; RR HUB'da Finans Genel Bakış ve Finans
 - Ruth ve ROSTA admin ile storefront production build'leri ve ilgili TypeScript kontrolleri geçti. ROSTA production yapısında izole API/oturum fixture verileriyle 390/768/1440 px genel bakış, kayıtlar, drawer, kirli form koruması, taşma ve tarayıcı hata kontrolleri geçti. Bu kontrol canlı entegrasyon testi değildir. Tekrar çalıştırılabilir test: `node tests/finance-browser.cjs`.
 - Finans kodunda lint hata sayısı 0; mevcut kurallarla dört uyarı bulunuyor (dinamik JSON tipi ve React veri senkronizasyonu).
 - Swift dosyalarının sözdizimi ve Xcode proje kaynak kayıtları doğrulandı. **macOS/Xcode bu ortamda olmadığı için iOS derlemesi/IPA doğrulanmadı.**
-- Testler üretim veritabanlarında çalıştırılmadı. Bağlı hosted Supabase hesabında veya self-host veritabanlarında değişiklik yapılmadı.
+- Yazma testleri üretim veritabanlarında çalıştırılmadı. Bağlı hosted Supabase kullanılmadı. Kullanıcı 18 Ekim 2026 tarihinde iki self-host veritabanında migration SQL’ini manuel çalıştırdı; Ruth `ruth | paid | TRY`, ROSTA kurulumunun da başarılı olduğunu bildirdi. İki Studio ekran görüntüsünde `finance_report` salt okuma çağrısı JSON sonuç döndürdü. Canlı mutasyon testi yapılmadı.
 
 ## Kurulum
 
 1. Bu repodaki `supabase/migrations/20261018002431_finance_management.sql` dosyasını yalnız bu markanın self-host veritabanında uygula. Ruth dosyası `brand='ruth'`, ROSTA dosyası `brand='rosta'` içerir. Aynı sunucudaki iki veritabanı birbirinin yerine kullanılmamalı.
-2. Panelde **Finans → Genel Bakış → Ayarlar → Geçmiş siparişler** bölümünden geçmiş siparişleri aktar.
+2. **Kullanıcı kararı: geçmiş siparişler toplu aktarılmayacak.** Backfill fonksiyonu çağrılmadı. Yeni siparişler ve mevcut sipariş güncellemeleri trigger üzerinden işlenmeye devam eder; bu tercih tarihî sipariş güncellemelerini engelleyen bir filtre değildir.
 3. Ürün düzenleme ekranında bilinen maliyetleri gir. Bugünkü maliyetler eski siparişlere otomatik uygulanmaz.
 4. Tekrarlayan giderlerin otomatik çalışması için mevcut commerce worker'ın güncel kaynakla çalıştığını doğrula. Yeni, paralel cron oluşturulmadı. Mevcut Next worker ve Edge worker kaynaklarına finans adımı eklendi; Edge worker ayrı dağıtılıyorsa onun da güncellenmesi gerekir. Gerektiğinde aynı işlem Ayarlar'dan elle çalıştırılabilir.
 5. Yeni zorunlu ENV adı eklenmedi. Mevcut self-host Supabase URL/service-role, PayTR ve worker yetkilendirme ayarları kullanılmaya devam eder.
@@ -45,7 +45,7 @@ Webde `/finance` ve `/finance/records`; RR HUB'da Finans Genel Bakış ve Finans
 
 ## Açık doğrulama ve sınırlar
 
-- Self-host migration, canlı sipariş, gerçek PayTR raporu, Storage yükleme ve mevcut worker zamanlaması canlı ortamda doğrulanmadı.
+- Self-host SQL kurulumu kullanıcı tarafından uygulandı; iki ortamda rapor fonksiyonunun JSON döndürdüğü görüldü. Canlı sipariş, gerçek PayTR raporu, Storage yükleme ve mevcut worker zamanlaması henüz doğrulanmadı.
 - Basit Kargo'nun kesin fatura/mutabakat akışından otomatik gider aktarımı henüz yok; kesinleşen kargo giderleri siparişe bağlı manuel kayıtlarla yönetilir. Teklif bedeli gider olarak alınmaz.
 - PayTR kesintisinin KDV ayrıştırması raporda bulunmadığında ayrıca fatura ile doğrulanmalıdır. Kesinti aktarımı kullanıcı komutuyla yapılır; otomatik günlük PayTR rapor taraması eklenmedi.
 - Resmî muhasebe/net dönem kârı iddiası yapılmaz. Vergi, amortisman, komisyon ve gider kapsamına bağlı olarak sonuç **kayıtlı giderlere göre tahmini kâr** olarak sunulur.
@@ -64,4 +64,11 @@ Webde `/finance` ve `/finance/records`; RR HUB'da Finans Genel Bakış ve Finans
 
 ## Yayın durumu
 
-Web kodu ayrı finans PR’larında tutulur. Self-host staging migration ve canlı entegrasyon doğrulanmadığı için main merge/deploy yapılmadı. Native kod mevcut RR HUB geliştirme branch’ine kaydedilir. SQL dosyaları manuel kurulum içindir.
+Web kodu Ruth PR #712 ve ROSTA PR #86 taslaklarında tutulur; main merge/deploy yapılmadı. Self-host migration kullanıcı tarafından uygulandı; rapor smoke kontrolü geçti. Zorunlu UI kalite kapısı ve canlı işlem/deploy doğrulaması hâlâ bekliyor. Native kod `feat/native-panel-operations-20261011` branch’ine kaydedildi; tam iOS derlemesi bekliyor.
+
+## PR kontrol durumu · 18 Ekim 2026
+
+- ROSTA #86: `rosta-check` başarısız; çalışma 39085367782. İş adımları/log ayrıntısı araç çıktısında bulunmuyor; neden doğrulanmadan kod hatası veya ödeme sorunu denmez.
+- Ruth #712: Vercel durumu `failure`; yönlendirme adresi hesap/deploy engeli bilgi sayfası. GitHub Actions çalışması listelenmedi.
+- İki PR da taslak, açık ve merge edilmedi. Zorunlu Phase 1E UI Quality kanıtı bulunmuyor.
+- Kullanıcı kararı gereği toplu geçmiş sipariş aktarımı yapılmayacak.
