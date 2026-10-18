@@ -164,25 +164,63 @@ export async function GET(request: Request, context: Context) {
     if (route === "payables") {
       // Only expenses the business must explicitly mark paid. Payment processor
       // fees and automated order settlements are never payable by hand.
-      const [expenses, payments] = await Promise.all([
-        db.from("finance_entries").select(
-          "id,title,source,direction,gross,net,tax,currency,occurred_on,due_on,category_id"
-        ).eq("direction","expense").eq("cancelled",false)
-          .in("source",["manual","recurring"])
-          .order("due_on",{ascending:true,nullsFirst:false}).limit(500),
-        db.from("finance_payments").select("entry_id,amount,direction")
-          .in("source",["manual","expense_payment"]).limit(2000),
-      ]);
-      if (expenses.error) throw new Error(expenses.error.message);
-      if (payments.error) throw new Error(payments.error.message);
+      const expenses=await db.from("finance_entries").select(
+        "id,title,source,direction,nature,order_id,gross,net,tax,currency,occurred_on,due_on,category_id,supplier"
+      ).eq("direction","expense").eq("cancelled",false)
+        .in("source",["manual","recurring","purchase_payable"])
+        .order("occurred_on",{ascending:false}).limit(500);
+      if(expenses.error) throw new Error(expenses.error.message);
+      const entryIds=(expenses.data||[]).map(e=>e.id);
+      const payments=entryIds.length
+        ? await db.from("finance_payments")
+            .select("id,entry_id,account_id,amount,direction,paid_on,method")
+            .in("entry_id",entryIds).limit(5000)
+        : {data:[],error:null};
+      if(payments.error) throw new Error(payments.error.message);
       const paidByEntry=new Map<string,number>();
-      for(const p of payments.data||[]) if(p.entry_id&&p.direction==="out")
-        paidByEntry.set(String(p.entry_id),(paidByEntry.get(String(p.entry_id))||0)+Number(p.amount||0));
+      const paymentsByEntry=new Map<string,typeof payments.data>();
+      for(const p of payments.data||[]){
+        if(!p.entry_id||p.direction!=="out")continue;
+        const id=String(p.entry_id);
+        paidByEntry.set(id,(paidByEntry.get(id)||0)+Number(p.amount||0));
+        paymentsByEntry.set(id,[...(paymentsByEntry.get(id)||[]),p]);
+      }
+      const purchased=await financeOrderItems(db,
+        (expenses.data||[]).filter(e=>e.source==="purchase_payable" && e.order_id)
+          .map(e=>String(e.order_id)));
+      const missingOrders=await db.from("finance_entries")
+        .select("order_id").eq("source","order").eq("cancelled",false)
+        .not("order_id","is",null).order("occurred_on",{ascending:false}).limit(250);
+      const missing: string[]=[];
+      if(!missingOrders.error) {
+        const orderIds=[...new Set((missingOrders.data||[]).map(e=>String(e.order_id)))];
+        if(orderIds.length){
+          const snapshots=await db.from("finance_item_snapshots")
+            .select("order_id,unit_cost").in("order_id",orderIds).limit(2000);
+          if(!snapshots.error){
+            const byOrder=new Map<string,{found:number;missing:number}>();
+            for(const item of snapshots.data||[]){
+              const id=String(item.order_id);
+              const cur=byOrder.get(id)||{found:0,missing:0};
+              cur.found++;if(item.unit_cost==null)cur.missing++;
+              byOrder.set(id,cur);
+            }
+            for(const orderId of orderIds){
+              const state=byOrder.get(orderId);
+              if(!state?.found||state.missing)missing.push(orderId);
+            }
+          }
+        }
+      }
       return financeJson({ok:true,rows:(expenses.data||[]).map(e=>{
         const paid=paidByEntry.get(e.id)||0;
         const total=Number(e.gross||0),remaining=Math.max(0,total-paid);
-        return {...e,paid,remaining,status:remaining<=0?"paid":"unpaid"};
-      })});
+        return {...e,paid,remaining,
+          status:remaining<=0?"paid":paid>0?"partial":"unpaid",
+          payments:paymentsByEntry.get(e.id)||[],
+          order_items:e.order_id?purchased.get(String(e.order_id))||[]:[]
+        };
+      }),missing_cost_order_ids:missing});
     }
     if (route === "bank") {
       const { data, error } = await db
@@ -276,6 +314,7 @@ export async function POST(request: Request, context: Context) {
     ? "settings"
     : financeActionPermission[action];
   if (action === "monthly_expense") permission = "expense_create";
+  if (action === "payable_payment") permission = "pay";
   if (action === "entry")
     permission =
       data.id && data.version
@@ -291,6 +330,18 @@ export async function POST(request: Request, context: Context) {
     // Amounts arrive as decimal strings, never UI-computed totals.
     if (["entry", "payment", "budget", "transfer"].includes(action))
       data.amount = financeAmount(data.amount);
+    if (action === "payable_payment") {
+      if (!uuid(String(data.entry_id||"")) || !uuid(String(data.account_id||"")))
+        return financeJson({ok:false,error:"Gider veya ödeme hesabı geçersiz."},400);
+      const amount=financeAmount(data.amount);
+      if (!(amount>0))
+        return financeJson({ok:false,error:"Ödeme tutarını gir."},400);
+      return financeJson({ok:true,result:await financeRpc(auth.supabase,
+        "finance_pay_expense",{
+          p_entry:data.entry_id,p_account:data.account_id,p_amount:amount,
+          p_paid_on:data.paid_on,p_key:data.key,p_actor:auth.user.id,
+        })});
+    }
     if (action === "monthly_expense") {
       if (data.direction !== "expense")
         return financeJson({ ok:false,error:"Aylık otomasyon yalnız giderler içindir." },400);
