@@ -169,7 +169,7 @@ export function FinancePayables(){
                 <strong className="text-sm">Yapılan ödemeler</strong>
                 {row.payments.map(p=><div className="flex flex-wrap items-center gap-2 text-xs" key={p.id}>
                   <span>{trDate(p.paid_on)} · {money(p.amount,row.currency)}</span>
-                  {p.source==="expense_payment"?<button type="button" className="underline"
+                  {["expense_payment","manual"].includes(p.source)?<button type="button" className="underline"
                     onClick={()=>{setEditingPayment(editingPayment===p.id?null:p.id);
                       setCorrection(String(p.amount));}}>Tutarı düzelt</button>:null}
                   {editingPayment===p.id?<div className="flex w-full items-center gap-2">
