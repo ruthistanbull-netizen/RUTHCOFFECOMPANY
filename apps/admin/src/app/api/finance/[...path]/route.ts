@@ -156,6 +156,34 @@ export async function GET(request: Request, context: Context) {
         audit: audit.data,
       });
     }
+    if (route === "payouts") {
+      const { paytrPayoutSummary } = await import("@/lib/finance/paytrPayouts");
+      const payout = await paytrPayoutSummary();
+      return financeJson({ ok:true, ...payout });
+    }
+    if (route === "payables") {
+      // Only expenses the business must explicitly mark paid. Payment processor
+      // fees and automated order settlements are never payable by hand.
+      const [expenses, payments] = await Promise.all([
+        db.from("finance_entries").select(
+          "id,title,source,direction,gross,net,tax,currency,occurred_on,due_on,category_id"
+        ).eq("direction","expense").eq("cancelled",false)
+          .in("source",["manual","recurring"])
+          .order("due_on",{ascending:true,nullsFirst:false}).limit(500),
+        db.from("finance_payments").select("entry_id,amount,direction")
+          .in("source",["manual","expense_payment"]).limit(2000),
+      ]);
+      if (expenses.error) throw new Error(expenses.error.message);
+      if (payments.error) throw new Error(payments.error.message);
+      const paidByEntry=new Map<string,number>();
+      for(const p of payments.data||[]) if(p.entry_id&&p.direction==="out")
+        paidByEntry.set(String(p.entry_id),(paidByEntry.get(String(p.entry_id))||0)+Number(p.amount||0));
+      return financeJson({ok:true,rows:(expenses.data||[]).map(e=>{
+        const paid=paidByEntry.get(e.id)||0;
+        const total=Number(e.gross||0),remaining=Math.max(0,total-paid);
+        return {...e,paid,remaining,status:remaining<=0?"paid":"unpaid"};
+      })});
+    }
     if (route === "bank") {
       const { data, error } = await db
         .from("finance_bank_rows")
