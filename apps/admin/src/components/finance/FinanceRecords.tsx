@@ -32,6 +32,30 @@ import {
   type Row,
   type Setup,
 } from "./shared";
+type FinancePurchasedItem = {
+  id: string;
+  product_name: string;
+  variant_name?: string | null;
+  image_url?: string | null;
+  quantity: number;
+  unit_price: number;
+  total_price: number;
+};
+
+function purchasedItems(row: Row): FinancePurchasedItem[] {
+  return Array.isArray(row.order_items) ? row.order_items as FinancePurchasedItem[] : [];
+}
+
+function PurchasedItemThumbnail({ item }: { item: FinancePurchasedItem }) {
+  return (
+    <div className="flex h-12 w-10 shrink-0 items-center justify-center overflow-hidden rounded-md bg-surface-tertiary">
+      {item.image_url
+        ? <img src={item.image_url} alt={item.product_name} className="h-full w-full object-cover" loading="lazy" />
+        : <span className="text-[10px] text-muted">Ürün</span>}
+    </div>
+  );
+}
+
 export function FinanceRecords({
   initialFilters = {},
 }: {
@@ -202,11 +226,30 @@ export function FinanceRecords({
           {
             key: "title",
             header: "İşlem",
-            cell: (r) => (
-              <span>
-                {r.direction === "income" ? "+" : "−"} {r.title}
-              </span>
-            ),
+            cell: (r) => {
+              const items = purchasedItems(r);
+              if (r.source !== "order" || !items.length) {
+                return <span>{r.direction === "income" ? "+" : "−"} {r.title}</span>;
+              }
+              return (
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="flex shrink-0 -space-x-1">
+                    {items.slice(0, 2).map((item) =>
+                      <PurchasedItemThumbnail key={item.id} item={item} />,
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-semibold">{r.title}</p>
+                    <p className="text-xs text-muted">
+                      {items.map((item) =>
+                        `${item.product_name}${item.variant_name ? " · " + item.variant_name : ""} ×${item.quantity}`
+                      ).join(" · ")}
+                    </p>
+                    <p className="text-[11px] text-subtle">Ürünleri görmek için aç</p>
+                  </div>
+                </div>
+              );
+            },
           },
           { key: "date", header: "Tarih", cell: (r) => r.occurred_on },
           { key: "category", header: "Kategori", cell: (r) => r.category },
@@ -524,6 +567,7 @@ function FinanceRecordDetail({
       documents: Row[];
       audit: Row[];
       snapshots: Row[];
+      order_items: FinancePurchasedItem[];
     }>(`/api/finance/records/${record.id}`),
     [error, setError] = useState(""),
     [confirm, setConfirm] = useState(false),
@@ -583,6 +627,37 @@ function FinanceRecordDetail({
               </a>
             ) : null}
           </Card>
+          {r.source === "order" && r.order_id ? (
+            <PageSection
+              title="Siparişteki ürünler"
+              description="Satın alınan ürünlerin isimleri, fotoğrafları, adetleri ve satış fiyatları"
+            >
+              {(detail.data?.order_items || purchasedItems(record)).map((item) => (
+                <Card key={item.id} density="compact">
+                  <div className="flex items-center gap-3">
+                    <PurchasedItemThumbnail item={item} />
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold">{item.product_name}</p>
+                      {item.variant_name ? (
+                        <p className="text-xs text-muted">{item.variant_name}</p>
+                      ) : null}
+                      <p className="text-xs text-muted">
+                        {item.quantity} adet · Birim satış fiyatı {money(item.unit_price, r.currency)}
+                      </p>
+                    </div>
+                    <strong className="shrink-0">{money(item.total_price, r.currency)}</strong>
+                  </div>
+                </Card>
+              ))}
+              {detail.loading && !detail.data ? <p>Ürünler yükleniyor…</p> : null}
+              {!detail.loading && !(detail.data?.order_items || purchasedItems(record)).length ? (
+                <Notice>Bu siparişin ürün bilgileri bulunamadı.</Notice>
+              ) : null}
+              <a className="inline-block font-semibold underline" href={`/orders/${r.order_id}`}>
+                Siparişin tüm detaylarını aç
+              </a>
+            </PageSection>
+          ) : null}
           {canEdit ? (
             <Toolbar>
               <Button onClick={() => onEdit(r)}>Düzenle</Button>
