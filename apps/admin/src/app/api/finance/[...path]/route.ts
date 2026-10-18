@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { financeOrderItems } from "@/lib/finance/orderItems";
 import {
   financeActionPermission,
   financeAmount,
@@ -81,7 +82,22 @@ export async function GET(request: Request, context: Context) {
       const data = await financeRpc(db, "finance_list", {
         p_filter: { ...filter, ...range },
       });
-      return financeJson({ ok: true, ...data });
+      // Expand only the currently visible page; finance entries are not changed.
+      const financeRecords = (data.records || []) as Array<{ order_id?: string | null; source?: string }>;
+      const orderItems = await financeOrderItems(
+        db,
+        financeRecords.filter((r) => r.source === "order" && r.order_id)
+          .map((r) => String(r.order_id)),
+      );
+      return financeJson({
+        ok: true,
+        ...data,
+        records: financeRecords.map((r) =>
+          r.source === "order" && r.order_id
+            ? { ...r, order_items: orderItems.get(String(r.order_id)) || [] }
+            : r,
+        ),
+      });
     }
     if (route === "records" && uuid(path[1])) {
       const [entry, payments, documents, audit] = await Promise.all([
@@ -112,9 +128,15 @@ export async function GET(request: Request, context: Context) {
             .eq("order_id", entry.data.order_id)
         : { data: [], error: null };
       if (snapshots.error) throw new Error(snapshots.error.message);
+      const purchasedItems = entry.data.order_id
+        ? await financeOrderItems(db, [String(entry.data.order_id)])
+        : new Map();
       return financeJson({
         ok: true,
         snapshots: snapshots.data,
+        order_items: entry.data.order_id
+          ? purchasedItems.get(String(entry.data.order_id)) || []
+          : [],
         entry: entry.data,
         payments: payments.data,
         documents: documents.data,
