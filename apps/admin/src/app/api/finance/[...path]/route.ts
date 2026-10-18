@@ -128,7 +128,11 @@ export async function GET(request: Request, context: Context) {
         .order("occurred_on", { ascending: false })
         .limit(500);
       if (error) throw new Error(error.message);
-      return financeJson({ ok: true, rows: data });
+      const payments = await db.from("finance_payments")
+        .select("id,amount,paid_on,account_id,direction")
+        .order("paid_on",{ascending:false}).limit(300);
+      if (payments.error) throw new Error(payments.error.message);
+      return financeJson({ ok: true, rows: data, payments: payments.data || [] });
     }
     if (route === "setup") {
       const [settings, categories, accounts, recurring, permissions] =
