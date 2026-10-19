@@ -268,7 +268,7 @@ export function FinanceOverview() {
             </Notice>:null}
             {payouts.loading&&!payouts.data?<p>PayTR ödeme takvimi yükleniyor…</p>:null}
             {payouts.data && !payouts.data.upcoming.length?<p className="text-sm text-muted">
-              PayTR gelecek ödeme bildirmiyor.
+              PayTR hakediş raporunda doğrulanmış bekleyen transfer bulunmuyor.
             </p>:null}
             {payouts.data?.upcoming?.length?<DataTable<Row>
               rows={payouts.data.upcoming}
