@@ -1,4 +1,5 @@
 "use client";
+import { formatDateTime } from "@/lib/format";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -120,10 +121,7 @@ function number(value: number) {
 function percent(value: number) {
   return `${Number(value || 0).toLocaleString("tr-TR", { maximumFractionDigits: 1 })}%`;
 }
-function shortDate(value: string) {
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? "—" : new Intl.DateTimeFormat("tr-TR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }).format(date);
-}
+function shortDate(value: string) { return formatDateTime(value); }
 function orderStatus(order: Order) {
   const status = String(order.status || "").toLowerCase();
   if (["delivered", "completed", "fulfilled"].includes(status)) return { label: "Teslim edildi", tone: "success" as const };
