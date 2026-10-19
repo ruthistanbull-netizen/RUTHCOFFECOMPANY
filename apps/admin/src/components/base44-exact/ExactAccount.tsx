@@ -1,4 +1,5 @@
 "use client";
+import { formatDateTime } from "@/lib/format";
 
 import {
   BadgeCheck,
@@ -84,12 +85,7 @@ const emptyCreateDraft = (): CreateUserDraft => ({
   password: "",
 });
 
-function dateTime(value?: string | null) {
-  const date = new Date(value || "");
-  return Number.isNaN(date.getTime()) ? "—" : new Intl.DateTimeFormat("tr-TR", {
-    day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit",
-  }).format(date);
-}
+function dateTime(value?: string | null) { return formatDateTime(value); }
 
 function initials(value: string) {
   return value.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]?.toLocaleUpperCase("tr-TR")).join("") || "R";
