@@ -6,7 +6,7 @@ const { PGlite } = require('@electric-sql/pglite');
 const { NextResponse } = require('next/server');
 const root = path.resolve(__dirname, '../../..');
 const actor = '00000000-0000-0000-0000-000000000001';
-const sqlPath = path.join(root, 'supabase/migrations/20261019012412_entertainment_watch_rooms.sql');
+const sqlPath = path.join(root, 'docs/self-hosted-sql/20261019012412_entertainment_watch_rooms.sql');
 
 // Small SQL transport adapter: tests run the actual route handlers and migration
 // against Postgres, including constraints, row locks, privilege checks and CAS.

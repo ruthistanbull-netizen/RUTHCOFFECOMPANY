@@ -8,10 +8,10 @@ panel permissions. Rooms expire after 24 hours and admit eight active members.
 
 ## Deployment
 
-Run `supabase/migrations/20261019012412_entertainment_watch_rooms.sql` once in
+Run `docs/self-hosted-sql/20261019012412_entertainment_watch_rooms.sql` once in
 the **corresponding self-hosted database** for each panel. Keep Ruth and ROSTA
 databases separate. Do not run this against a connected hosted Supabase project.
-There are no new required environment variables or dependencies. Existing
+The SQL is deliberately outside Supabase's auto-deployed migrations directory, so the legacy hosted GitHub integration cannot apply this self-hosted-only setup. There are no new required environment variables or dependencies. Existing
 server-side Supabase credentials are reused, and never sent to guests.
 
 The tables have RLS enabled, no anonymous/authenticated grants, and no client
