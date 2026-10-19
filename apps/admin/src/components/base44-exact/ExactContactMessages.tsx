@@ -1,4 +1,5 @@
 "use client";
+import { formatDateTime } from "@/lib/format";
 
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2, Mail, MessageSquareText, RefreshCw, Reply, Search, Send } from "lucide-react";
@@ -36,10 +37,7 @@ type ThreadResult = {
   newReplies?: number;
 };
 
-function dateTime(value?: string | null) {
-  const date = new Date(value || "");
-  return Number.isNaN(date.getTime()) ? "—" : new Intl.DateTimeFormat("tr-TR", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }).format(date);
-}
+function dateTime(value?: string | null) { return formatDateTime(value); }
 
 function label(value: ContactStatus) {
   return value === "new" ? "Yeni" : value === "read" ? "İşlemde" : value === "resolved" ? "Çözüldü" : "Arşiv";
