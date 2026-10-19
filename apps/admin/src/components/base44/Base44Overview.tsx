@@ -1,4 +1,5 @@
 "use client";
+import { formatDateTime } from "@/lib/format";
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -94,10 +95,7 @@ function money(value: number) {
   return new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY", maximumFractionDigits: 0 }).format(Number(value || 0));
 }
 
-function shortDate(value: string) {
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? "—" : new Intl.DateTimeFormat("tr-TR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }).format(date);
-}
+function shortDate(value: string) { return formatDateTime(value); }
 
 function statusPresentation(order: Order): { label: string; tone: "success" | "warning" | "danger" | "info" | "accent" | "neutral" } {
   const status = String(order.status || "").toLowerCase();
