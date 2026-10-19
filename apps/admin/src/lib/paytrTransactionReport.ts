@@ -46,11 +46,9 @@ function transactionObjects(value: unknown, level = 0): Record<string, unknown>[
   const order = record.siparis_no;
   if (typeof order === "string" && order.trim()
     && ["S", "I"].includes(String(record.islem_tipi || "").toUpperCase())) return [record];
-  return Object.entries(record).flatMap(([name, child]) =>
-    ["data", "rows", "result", "results", "transactions", "islemler", "items",
-     "report", "rapor", "list", "sales", "refunds"].includes(name.toLowerCase())
-      || Array.isArray(child) ? transactionObjects(child, level + 1) : []
-  );
+  // PayTR can wrap rows in named arrays or keyed objects. Descend through
+  // unknown report envelopes too; only objects with transaction fields pass.
+  return Object.values(record).flatMap((child) => transactionObjects(child, level + 1));
 }
 function dayInIstanbul(date: Date) {
   const parts = new Intl.DateTimeFormat("en-CA", {
