@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { loadPaytrTransactions } from "@/lib/paytrTransactionReport";
 import { GET as getVisibleCartActivity } from "@/app/api/dashboard/cart-activity/route";
 import { requireAdmin } from "@/lib/auth";
 import { applyRange, getDateRange } from "@/lib/ranges";
@@ -301,16 +302,85 @@ export async function GET(request: Request) {
     refundedTotal = Number(refundedTotal.toFixed(2));
     const netRevenue = Number(Math.max(0, grossRevenue - refundedTotal).toFixed(2));
 
-    // Order revenue after refunds is NOT the same as PayTR cash after commission.
-    // Hakedişler reports are merchant-wide, grouped by *payout date*, so they
-    // cannot be assigned to an arbitrary dashboard order-date filter.
-    // Never claim the sales figure is a verified after-commission amount.
-    const paytrFeeMissingCount = paidReportOrders.filter((order) =>
-      !["bank", "wholesale"].includes(String(order.imported_source || "").toLowerCase())
-    ).length;
-    const paytrFeeImportError = false;
-    const paytrNetReceivable: number | null = netRevenue === 0 ? 0 : null;
-    const paytrNetProvisional = netRevenue > 0;
+    // Match official PayTR transaction-detail rows to the exact paid orders.
+    // The payout summary alone cannot determine the commission of each sale.
+    // Query the real "kesinti_tutari" and "net_tutar" values; never guess 4.10%.
+    const isDirectSale = (order: DashboardOrder) =>
+      ["bank", "wholesale", "bank_transfer", "eft"].includes(
+        String(order.imported_source || "").trim().toLowerCase()
+      );
+    let verifiedNet = 0;
+    let paytrFeeMissingCount = 0;
+    let paytrFeeImportError = false;
+    let paytrProviderWarning: string | null = null;
+    if (paidReportOrders.length) {
+      const report = await loadPaytrTransactions({
+        merchantId: process.env.PAYTR_MERCHANT_ID || "",
+        merchantKey: process.env.PAYTR_MERCHANT_KEY || "",
+        merchantSalt: process.env.PAYTR_MERCHANT_SALT || "",
+        from: bounds.from, to: bounds.to,
+      });
+      paytrFeeImportError = !report.complete;
+      paytrProviderWarning = report.warning;
+      const providerIds = paidOrderIds.length
+        ? await supabase.from("payments")
+            .select("order_id,merchant_oid")
+            .in("order_id", paidOrderIds)
+        : { data: [], error: null };
+      // If the link lookup fails, retain the public order number as the
+      // fallback; an unmatched payment remains explicitly provisional.
+      if (providerIds.error) warnings.push("PayTR sipariş referansları eşleştirilemedi.");
+      const refsByOrder = new Map<string, Set<string>>();
+      for (const order of paidReportOrders) {
+        refsByOrder.set(String(order.id), new Set([String(order.order_no || "").trim()].filter(Boolean)));
+      }
+      for (const payment of providerIds.data || []) {
+        const set = refsByOrder.get(String(payment.order_id || ""));
+        if (set && payment.merchant_oid) set.add(String(payment.merchant_oid).trim());
+      }
+      const transactions = new Map<string, {
+        gross: number; net: number; fee: number; refunds: number; hasSale: boolean;
+      }>();
+      for (const row of report.rows) {
+        if (row.currency !== "TRY") continue;
+        const existing = transactions.get(row.orderReference)
+          || { gross: 0, net: 0, fee: 0, refunds: 0, hasSale: false };
+        const sign = row.kind === "refund" ? -1 : 1;
+        existing.gross += sign * row.gross;
+        existing.net += sign * row.net;
+        existing.fee += sign * row.fee;
+        if (sign < 0) existing.refunds += row.gross;
+        if (sign > 0) existing.hasSale = true;
+        transactions.set(row.orderReference, existing);
+      }
+      for (const order of paidReportOrders) {
+        const orderId = String(order.id);
+        const gross = grossByOrderId.get(orderId) || 0;
+        const refund = Math.min(gross, String(order.payment_status || "").toLowerCase() === "refunded"
+          ? gross : Math.max(number(order.refunded_total), refundsByOrderId.get(orderId) || 0));
+        if (isDirectSale(order)) {
+          verifiedNet += Math.max(0, gross - refund);
+          continue;
+        }
+        const references = refsByOrder.get(orderId) || new Set<string>();
+        const hits = [...references].map((ref) => transactions.get(ref)).filter(
+          (row): row is NonNullable<typeof row> => Boolean(row?.hasSale)
+        );
+        // Reject ambiguous IDs, missing reporting windows and refund gaps.
+        const detail = hits.length === 1 ? hits[0] : null;
+        const grossMatches = detail && Math.abs(detail.gross - (gross - refund)) < 0.06;
+        const refundMatches = detail && Math.abs(detail.refunds - refund) < 0.06;
+        if (report.complete && detail && grossMatches && refundMatches) {
+          verifiedNet += Math.max(0, detail.net);
+        } else {
+          paytrFeeMissingCount++;
+        }
+      }
+    }
+    const paytrNetReceivable: number | null =
+      paytrFeeMissingCount === 0 && !paytrFeeImportError
+        ? Math.round(verifiedNet * 100) / 100 : null;
+    const paytrNetProvisional = paytrNetReceivable === null && netRevenue > 0;
 
     const paidOrdersCount = paidReportOrders.length;
 
@@ -370,6 +440,7 @@ export async function GET(request: Request) {
         paytrNetProvisional,
         paytrFeeMissingCount,
         paytrFeeImportError,
+        paytrProviderWarning,
         grossRevenue,
         refundedTotal,
         sessions: sessionCount,
