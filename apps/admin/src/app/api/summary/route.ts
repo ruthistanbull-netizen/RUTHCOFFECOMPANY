@@ -301,12 +301,16 @@ export async function GET(request: Request) {
     refundedTotal = Number(refundedTotal.toFixed(2));
     const netRevenue = Number(Math.max(0, grossRevenue - refundedTotal).toFixed(2));
 
-    // Sales must remain the original order revenue without PayTR deductions.
-    // The fixed commission is booked once under Finance > Expenses.
-    const paytrFeeMissingCount = 0;
+    // Order revenue after refunds is NOT the same as PayTR cash after commission.
+    // Hakedişler reports are merchant-wide, grouped by *payout date*, so they
+    // cannot be assigned to an arbitrary dashboard order-date filter.
+    // Never claim the sales figure is a verified after-commission amount.
+    const paytrFeeMissingCount = paidReportOrders.filter((order) =>
+      !["bank", "wholesale"].includes(String(order.imported_source || "").toLowerCase())
+    ).length;
     const paytrFeeImportError = false;
-    const paytrNetReceivable = netRevenue;
-    const paytrNetProvisional = false;
+    const paytrNetReceivable: number | null = netRevenue === 0 ? 0 : null;
+    const paytrNetProvisional = netRevenue > 0;
 
     const paidOrdersCount = paidReportOrders.length;
 
