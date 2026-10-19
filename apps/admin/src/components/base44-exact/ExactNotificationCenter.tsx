@@ -1,4 +1,5 @@
 "use client";
+import { formatDateTime } from "@/lib/format";
 
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -120,7 +121,7 @@ function formatRelative(timestamp: number) {
   if (hours < 24) return `${hours} sa önce`;
   const days = Math.floor(hours / 24);
   if (days < 7) return `${days} gün önce`;
-  return new Intl.DateTimeFormat("tr-TR", { day: "numeric", month: "short" }).format(timestamp);
+  return formatDateTime(timestamp.toISOString());
 }
 
 export function ExactNotificationProvider({ children }: { children: ReactNode }) {
