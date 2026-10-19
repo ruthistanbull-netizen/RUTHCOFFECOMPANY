@@ -116,6 +116,36 @@ export function ExactMetricCard({
   const [cartPopupOpen, setCartPopupOpen] = useState(false);
   const [netSalesPopupOpen, setNetSalesPopupOpen] = useState(false);
   const [activeVisitors, setActiveVisitors] = useState(0);
+
+  // Official provider payout data is a merchant-wide transfer schedule,
+  // NOT the same metric as paid-order revenue for the selected date range.
+  const [officialPayout, setOfficialPayout] = useState<{
+    net: number | null; warning: string | null;
+  } | null>(null);
+  useEffect(() => {
+    if (label !== "Net Satış") return;
+    let live = true;
+    void adminRequest<{
+      upcoming?: Array<{ currency: string; net: number }>;
+      payoutWarning?: string | null;
+      providerWarning?: string | null;
+    }>("/api/finance/payouts", { hardRefresh: true, ttlMs: 0, staleMs: 0 })
+      .then((report) => {
+        if (!live) return;
+        const rows = Array.isArray(report.upcoming) ? report.upcoming : [];
+        const net = rows.filter((r) => r.currency === "TRY")
+          .reduce((sum, r) => sum + (Number.isFinite(Number(r.net)) ? Number(r.net) : 0), 0);
+        setOfficialPayout({
+          net: Math.round(net * 100) / 100,
+          warning: report.payoutWarning || report.providerWarning || null,
+        });
+      })
+      .catch(() => {
+        if (live) setOfficialPayout({ net: null, warning: "PayTR hakediş raporu alınamadı." });
+      });
+    return () => { live = false; };
+  }, [label]);
+
   const displayValue = label === "Net Satış"
     ? fullCurrency(paytrNetAmount ?? value ?? 0)
     : format === "currency" ? compactCurrency(value)
@@ -180,11 +210,19 @@ export function ExactMetricCard({
       <div className={exactCx("ruth-type-metric", accent ? "text-white" : "text-main")}>{displayValue}{suffix}</div>
       {label === "Net Satış" ? (
         <div className={exactCx("mt-2 text-[11px] font-medium", accent ? "text-white/90" : "text-muted")}>
-          {(paytrNetAmount ?? value ?? 0) === 0 && !paytrNetProvisional
+          <div>{Number(value || 0) === 0 && !paytrNetProvisional
             ? "Bu dönemde satış yok"
             : paytrNetProvisional || paytrNetAmount == null
-              ? "Finans giderleri ayrıca hesaplanır"
-              : "Sipariş geliri · PayTR giderleri Finans bölümünde"}
+              ? "İade sonrası satış geliri · PayTR kesintisi dahil değil"
+              : "Doğrulanmış PayTR sonrası sipariş tutarı"}</div>
+          {officialPayout?.net != null ? (
+            <div className="mt-1">
+              PayTR net bekleyen hakediş (mağaza geneli): {fullCurrency(officialPayout.net)}
+            </div>
+          ) : null}
+          {officialPayout?.warning ? (
+            <div className="mt-1">{officialPayout.warning}</div>
+          ) : null}
         </div>
       ) : null}
       {label === "Oturum" ? (
