@@ -1,4 +1,5 @@
 "use client";
+import { formatDateTime } from "@/lib/format";
 
 import Link from "next/link";
 import {
@@ -106,18 +107,7 @@ function money(value: number, currency = "TRY") {
   }).format(Number(value || 0));
 }
 
-function dateTime(value?: string | null) {
-  const date = new Date(value || "");
-  return Number.isNaN(date.getTime())
-    ? "—"
-    : new Intl.DateTimeFormat("tr-TR", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      }).format(date);
-}
+function dateTime(value?: string | null) { return formatDateTime(value); }
 
 function state(cart: Cart) {
   if (cart.recovered) return { label: "Kurtarıldı", tone: "success" as const };
