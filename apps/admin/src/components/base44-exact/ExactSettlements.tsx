@@ -1,4 +1,5 @@
 "use client";
+import { formatDateTime } from "@/lib/format";
 
 import { AlertTriangle, CalendarClock, Landmark, RefreshCw, RotateCcw, WalletCards } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -57,16 +58,7 @@ function money(value: number, currency = "TL") {
   }
 }
 
-function shortDate(value: string) {
-  const date = new Date(`${value}T12:00:00Z`);
-  if (Number.isNaN(date.getTime())) return value || "—";
-  return new Intl.DateTimeFormat("tr-TR", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    timeZone: "Europe/Istanbul",
-  }).format(date);
-}
+function shortDate(value: string) { return formatDateTime(value); }
 
 function daysUntil(value: string) {
   const target = new Date(`${value}T12:00:00Z`);
