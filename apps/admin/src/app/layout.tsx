@@ -84,6 +84,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="tr">
       <body data-ruth-typography="admin" data-rosta-panel="true">
+        <AppFrame bootstrap={<>
         <AdminDocumentTitle />
         <AdminStorageQuotaGuard />
         <AdminCacheEpoch />
@@ -97,10 +98,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <AdminRuthieInsightPopupMotion />
         <AdminConfirmationProvider />
         <AdminOrderStatusNormalizer />
-        <AppFrame>
+        </>} overlays={<>
           <AdminOrdersBulkActions />
           <AdminBackupProgress />
           <AdminContactMessagePopup />
+        </>}>
           {children}
         </AppFrame>
       </body>
