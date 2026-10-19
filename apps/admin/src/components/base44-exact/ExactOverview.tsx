@@ -43,7 +43,7 @@ type DashboardPayload = {
   summary?: {
     orders?: number;
     paidOrders?: number;
-    revenue?: number; paytrNetReceivable?: number | null; paytrFeeMissingCount?: number; paytrNetProvisional?: boolean;
+    revenue?: number; paytrNetReceivable?: number | null; paytrFeeMissingCount?: number; paytrNetProvisional?: boolean; paytrProviderWarning?: string | null;
     sessions?: number;
     carts?: number;
     checkoutReached?: number;
@@ -218,7 +218,7 @@ export function ExactOverview() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-3"><ExactSkeleton className="h-[146px]" /><ExactSkeleton className="h-[146px] lg:col-span-2" /></div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
-          <ExactMetricCard accent label="Net Satış" value={Number(summary.revenue || 0)} format="currency" icon={CircleDollarSign}  paytrNetAmount={summary.paytrNetReceivable} paytrNetProvisional={summary.paytrNetProvisional ?? (Number(summary.revenue || 0) > 0 && summary.paytrNetReceivable == null)} />
+          <ExactMetricCard accent label="Net Satış" value={Number(summary.revenue || 0)} format="currency" icon={CircleDollarSign}  paytrNetAmount={summary.paytrNetReceivable} paytrNetWarning={summary.paytrProviderWarning} paytrNetProvisional={summary.paytrNetProvisional ?? (Number(summary.revenue || 0) > 0 && summary.paytrNetReceivable == null)} />
           <ExactDataCard className="lg:col-span-2">
             <div className="flex items-start gap-3 mb-3">
               <div className="relative h-11 w-11 shrink-0 rounded-full bg-gradient-to-br from-[hsl(var(--accent))] to-[hsl(var(--accent-hover))] shadow-floating flex items-center justify-center animate-orb-breathe"><Sparkles className="h-5 w-5 text-white" /><span className="absolute inset-[-4px] rounded-full border border-accent/30 animate-orb-rotate" /></div>
