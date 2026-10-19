@@ -363,9 +363,10 @@ export async function GET(request: Request) {
           continue;
         }
         const references = refsByOrder.get(orderId) || new Set<string>();
-        const hits = [...references].map((ref) => transactions.get(ref)).filter(
-          (row): row is NonNullable<typeof row> => Boolean(row?.hasSale)
-        );
+        const hits = [...references].flatMap((ref) => {
+          const row = transactions.get(ref);
+          return row?.hasSale ? [row] : [];
+        });
         // Reject ambiguous IDs, missing reporting windows and refund gaps.
         const detail = hits.length === 1 ? hits[0] : null;
         const grossMatches = detail && Math.abs(detail.gross - (gross - refund)) < 0.06;
