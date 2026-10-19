@@ -100,6 +100,7 @@ export function ExactMetricCard({
   accent = false,
   paytrNetAmount,
   paytrNetProvisional = false,
+  paytrNetWarning,
 }: {
   label: string;
   value: number;
