@@ -1,4 +1,5 @@
 "use client";
+import { formatDateTime } from "@/lib/format";
 
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, Cake, Coins, FileUp, Gift, History, MinusCircle, PlusCircle, RefreshCw, Save, Search, UsersRound } from "lucide-react";
@@ -22,7 +23,7 @@ const emptySettings: RewardSettings = { signupPoints: 2000, birthdayPoints: 0, u
 const transactionLabels: Record<string,string> = { admin_adjustment:"Panel işlemi", order_earned:"Sipariş kazancı", order_spent:"Siparişte kullanım", birthday:"Doğum günü", welcome:"Hoş geldin" };
 function nameOf(customer: Customer) { return customer.full_name || customer.email || customer.phone || "İsimsiz müşteri"; }
 function points(value: number) { return Math.max(0, Math.floor(Number(value || 0))).toLocaleString("tr-TR"); }
-function dateTime(value?: string | null) { const date = new Date(value || ""); return Number.isNaN(date.getTime()) ? "—" : new Intl.DateTimeFormat("tr-TR",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}).format(date); }
+function dateTime(value?: string | null) { return formatDateTime(value); }
 function configuredPoints(value: string) { const parsed = Number(value); if (!Number.isSafeInteger(parsed) || parsed < 0 || parsed > 10_000_000) throw new Error("Ödül puanı 0 ile 10.000.000 arasında tam sayı olmalı."); return parsed; }
 
 export function ExactRuthiePoints() {
