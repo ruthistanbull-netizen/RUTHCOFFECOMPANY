@@ -1,4 +1,5 @@
 "use client";
+import { formatDateTime } from "@/lib/format";
 
 import Link from "next/link";
 import { Banknote, Clock3, ExternalLink, Loader2, Package, RefreshCw, ShoppingBag, UserRound } from "lucide-react";
@@ -18,7 +19,7 @@ const QUICK_RANGE_OPTIONS: Array<{ value: RangeKey; label: string }> = [{ value:
 function normalizeRange(value: string | null | undefined): RangeKey { return value && Object.prototype.hasOwnProperty.call(RANGE_LABELS, value) ? value as RangeKey : "today"; }
 function selectedDashboardRange(): RangeKey { if (typeof document === "undefined") return "today"; return normalizeRange(document.querySelector<HTMLElement>("[data-dashboard-range]")?.dataset.dashboardRange || document.querySelector<HTMLSelectElement>('select[aria-label="Tarih aralığı"]')?.value); }
 function money(value: number, currency = "TRY") { return new Intl.NumberFormat("tr-TR", { style: "currency", currency: currency || "TRY", maximumFractionDigits: 2 }).format(Number(value || 0)); }
-function dateTime(value: string) { const date = new Date(value); return Number.isNaN(date.getTime()) ? "—" : new Intl.DateTimeFormat("tr-TR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }).format(date); }
+function dateTime(value: string) { return formatDateTime(value); }
 function sourceLabel(value: string) { const key = String(value || "").trim().toLocaleLowerCase("tr-TR"); const labels: Record<string, string> = { direct: "Doğrudan", instagram: "Instagram", instagram_paid: "Instagram reklam", instagram_organic: "Instagram organik", facebook: "Facebook", facebook_paid: "Facebook reklam", facebook_organic: "Facebook organik", google: "Google", google_paid: "Google reklam", google_organic: "Google organik", tiktok: "TikTok", tiktok_paid: "TikTok reklam", tiktok_organic: "TikTok organik", manual: "Manuel" }; return labels[key] || value || "Doğrudan"; }
 
 function ProductImage({ item }: { item: SaleItem }) {
