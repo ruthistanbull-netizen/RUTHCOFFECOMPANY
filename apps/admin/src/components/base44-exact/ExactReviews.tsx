@@ -1,4 +1,5 @@
 "use client";
+import { formatDateTime } from "@/lib/format";
 
 import { Check, MessageSquareText, RefreshCw, ShieldCheck, Star, Ticket, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -23,16 +24,7 @@ type Review = {
 type ReviewStatus = "pending" | "approved" | "rejected";
 type ReviewsResponse = { reviews?: Review[] };
 
-function dateTime(value?: string | null) {
-  const date = new Date(value || "");
-  return Number.isNaN(date.getTime()) ? "—" : new Intl.DateTimeFormat("tr-TR", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
-}
+function dateTime(value?: string | null) { return formatDateTime(value); }
 
 function Stars({ value }: { value: number }) {
   return <span className="inline-flex gap-0.5" aria-label={`${value} / 5 yıldız`}>
