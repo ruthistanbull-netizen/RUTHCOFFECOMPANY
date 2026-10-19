@@ -10,6 +10,7 @@ import {
   CreditCard,
   FileText,
   Filter,
+  Film,
   Handshake,
   HeartPulse,
   History,
@@ -142,6 +143,7 @@ export const exactNavStructure: ExactNavGroup[] = [
     label: "SİSTEM",
     items: [
       { label: "Hesabım", path: "/account", icon: CircleUserRound },
+      { label: "Eğlence", path: "/eglence", icon: Film },
       { label: "Ayarlar", path: "/settings", icon: Settings2, exact: true },
       { label: "Kullanıcılar ve Roller", path: "/settings/users", icon: UserCog },
       { label: "Entegrasyonlar", path: "/settings/integrations", icon: Plug },

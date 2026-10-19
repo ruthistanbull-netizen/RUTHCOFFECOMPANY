@@ -39,7 +39,15 @@ const PUBLIC_AUTH_ROUTES = new Set([
   "/auth/reset-password",
 ]);
 
-export function AppFrame({ children }: { children: ReactNode }) {
+export function AppFrame({ children, bootstrap, overlays }: { children: ReactNode; bootstrap?: ReactNode; overlays?: ReactNode }) {
+  const pathname = usePathname();
+  // Invitation holders get only the watch-room page, without admin bootstrap,
+  // notifications, navigation, auth recovery or operational API requests.
+  if (/^\/eglence\/oda\/[0-9a-f-]+$/i.test(pathname)) return <>{children}</>;
+  return <>{bootstrap}<PanelFrame>{overlays}{children}</PanelFrame></>;
+}
+
+function PanelFrame({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   if (PUBLIC_AUTH_ROUTES.has(pathname)) return <>{children}</>;
