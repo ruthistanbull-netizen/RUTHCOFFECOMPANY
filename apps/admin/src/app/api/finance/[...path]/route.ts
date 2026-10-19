@@ -215,9 +215,31 @@ export async function GET(request: Request, context: Context) {
       });
     }
     if (route === "payouts") {
-      const { paytrPayoutSummary } = await import("@/lib/finance/paytrPayouts");
-      const payout = await paytrPayoutSummary();
-      return financeJson({ ok:true, ...payout });
+      // Hakedişler and Finans use one official PayTR report/parser.
+      // Future settlements are merchant-wide; do not fake a per-order fee or
+      // match payout dates to a chosen order-created date range.
+      const { loadPaytrSettlementReport } = await import("@/lib/paytrSettlementReport");
+      const report = await loadPaytrSettlementReport({
+        merchantId: process.env.PAYTR_MERCHANT_ID || "",
+        merchantKey: process.env.PAYTR_MERCHANT_KEY || "",
+        merchantSalt: process.env.PAYTR_MERCHANT_SALT || "",
+      });
+      const rows = report.rows.map(row => ({
+        date:row.date,currency:row.currency,sales:row.sales,refunds:row.returns,
+        net:row.net,state:row.future ? "upcoming" as const : "transferred" as const,
+      }));
+      const upcoming = rows.filter(row => row.state === "upcoming" && row.net > 0);
+      const byCurrency: Record<string,number> = {};
+      for (const row of upcoming) {
+        byCurrency[row.currency] = Math.round(((byCurrency[row.currency] || 0) + row.net) * 100) / 100;
+      }
+      return financeJson({
+        ok:true,rows,upcoming,unpaidTotal:byCurrency.TRY || 0,
+        checkedAt:new Date().toISOString(),byCurrency,
+        windowsChecked:report.diagnostics.queriedWindows.length,
+        providerStatus:report.providerStatus,payoutWarning:report.providerWarning,
+        latestSaleEstimate:null,
+      });
     }
     if (route === "payables") {
       // Only expenses the business must explicitly mark paid. Payment processor
