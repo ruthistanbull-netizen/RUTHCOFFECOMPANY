@@ -1,4 +1,5 @@
 "use client";
+import { formatDateTime } from "@/lib/format";
 
 import Link from "next/link";
 import { AlertTriangle, ArrowLeft, CheckCircle2, Clock3, RefreshCw, RotateCcw, ShieldAlert } from "lucide-react";
@@ -12,7 +13,7 @@ type WebhookRow={id:string;provider:string;event_key:string;event_type?:string|n
 type TimelineRow={id:string;order_id:string;event_type:string;from_status?:string|null;to_status?:string|null;shipment_status?:string|null;source?:string|null;reason?:string|null;occurred_at:string};
 type OperationsData={counts:{orderExceptions:number;waitingWebhooks:number;failedWebhooks:number;deadLetters:number};orders:OrderException[];inbox:WebhookRow[];timeline:TimelineRow[]};
 const emptyData:OperationsData={counts:{orderExceptions:0,waitingWebhooks:0,failedWebhooks:0,deadLetters:0},orders:[],inbox:[],timeline:[]};
-function dateTime(value?:string|null){const date=new Date(value||"");return Number.isNaN(date.getTime())?"—":new Intl.DateTimeFormat("tr-TR",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}).format(date);}
+function dateTime(value?: string | null) { return formatDateTime(value); }
 function statusLabel(status:string){return status==="dead_letter"?"Müdahale gerekli":status==="failed"?"Tekrar denenecek":status==="processing"?"İşleniyor":"Kuyrukta";}
 function timelineLabel(row:TimelineRow){if(row.event_type==="shipment.status_changed")return`Kargo: ${row.shipment_status||row.to_status||"—"}`;if(row.event_type==="order.status_changed")return`Sipariş: ${row.from_status||"—"} → ${row.to_status||"—"}`;return row.event_type.replaceAll("."," ");}
 export function ExactShippingOperations(){
