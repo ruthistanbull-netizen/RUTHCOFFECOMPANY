@@ -1,4 +1,5 @@
 "use client";
+import { formatDateTime } from "@/lib/format";
 
 import Link from "next/link";
 import { KeyRound, Mail, Plus, RefreshCw, Save, ShieldCheck, UserCheck, UserMinus, UsersRound } from "lucide-react";
@@ -12,7 +13,7 @@ type AdminUser = { id: string; email: string; full_name?: string | null; role: A
 const roleLabels: Record<AdminRole, string> = { owner: "Sahip", admin: "Yönetici", operations: "Operasyon", support: "Müşteri Hizmetleri", marketing: "Pazarlama", viewer: "Görüntüleyici" };
 function nameOf(user: AdminUser) { return user.full_name || user.email || "Panel kullanıcısı"; }
 function active(user: AdminUser) { return user.is_active !== false && user.status !== "disabled" && user.status !== "inactive"; }
-function dateTime(value?: string | null) { const date = new Date(value || ""); return Number.isNaN(date.getTime()) ? "—" : new Intl.DateTimeFormat("tr-TR", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }).format(date); }
+function dateTime(value?: string | null) { return formatDateTime(value); }
 
 export function ExactUsers() {
   const toast = useExactToast();
