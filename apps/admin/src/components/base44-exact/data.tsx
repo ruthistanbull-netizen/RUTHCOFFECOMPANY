@@ -112,6 +112,7 @@ export function ExactMetricCard({
   accent?: boolean;
   paytrNetAmount?: number | null;
   paytrNetProvisional?: boolean;
+  paytrNetWarning?: string | null;
 }) {
   const [cartPopupOpen, setCartPopupOpen] = useState(false);
   const [netSalesPopupOpen, setNetSalesPopupOpen] = useState(false);
@@ -220,6 +221,7 @@ export function ExactMetricCard({
               PayTR net bekleyen hakediş (mağaza geneli): {fullCurrency(officialPayout.net)}
             </div>
           ) : null}
+          {paytrNetWarning ? <div className="mt-1">{paytrNetWarning}</div> : null}
           {officialPayout?.warning ? (
             <div className="mt-1">{officialPayout.warning}</div>
           ) : null}
