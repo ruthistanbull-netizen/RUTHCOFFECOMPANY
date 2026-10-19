@@ -1,4 +1,5 @@
 "use client";
+import { formatDateTime } from "@/lib/format";
 
 import {
   AlertTriangle,
@@ -59,18 +60,7 @@ type SelfHealPayload = {
   checkedAt?: string;
 };
 
-function dateTime(value?: string | null) {
-  const date = new Date(value || "");
-  return Number.isNaN(date.getTime())
-    ? "—"
-    : new Intl.DateTimeFormat("tr-TR", {
-        day: "2-digit",
-        month: "short",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      }).format(date);
-}
+function dateTime(value?: string | null) { return formatDateTime(value); }
 
 function ageLabel(value?: string | null) {
   const time = new Date(value || "").getTime();
