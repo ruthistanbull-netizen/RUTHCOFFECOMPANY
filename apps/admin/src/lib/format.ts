@@ -7,29 +7,44 @@ export function formatMoney(value: number | null | undefined, currency = "TRY") 
   }).format(Number(value || 0));
 }
 
-export function formatDateTime(value?: string | null) {
-  if (!value) return "—";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "—";
+/** Turkish display dates only. API payloads, HTML date inputs and SQL keys
+ * intentionally continue to use ISO dates to avoid changing persistence. */
+function parseTurkishDisplayDate(value?: string | null): Date | null {
+  const input = String(value || "").trim();
+  if (!input) return null;
+  const calendarDay = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(input);
+  // Interpret SQL date-only strings at noon UTC, never as device-local dates.
+  const date = new Date(calendarDay
+    ? `${calendarDay[1]}-${calendarDay[2].padStart(2, "0")}-${calendarDay[3].padStart(2, "0")}T12:00:00Z`
+    : input);
+  if (Number.isNaN(date.getTime())) return null;
+  if (calendarDay && (date.getUTCFullYear() !== Number(calendarDay[1])
+    || date.getUTCMonth() + 1 !== Number(calendarDay[2])
+    || date.getUTCDate() !== Number(calendarDay[3]))) return null;
+  return date;
+}
+
+export function formatLongDate(value?: string | null) {
+  const date = parseTurkishDisplayDate(value);
+  if (!date) return "—";
   return new Intl.DateTimeFormat("tr-TR", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
+    timeZone: "Europe/Istanbul", day: "numeric", month: "long", year: "numeric",
+  }).format(date);
+}
+
+export function formatDateTime(value?: string | null) {
+  const date = parseTurkishDisplayDate(value);
+  if (!date) return "—";
+  const dateOnly = /^\d{4}-\d{1,2}-\d{1,2}$/.test(String(value).trim());
+  return new Intl.DateTimeFormat("tr-TR", {
+    timeZone: "Europe/Istanbul",
+    day: "numeric", month: "long", year: "numeric",
+    ...(dateOnly ? {} : { hour: "2-digit" as const, minute: "2-digit" as const }),
   }).format(date);
 }
 
 export function formatShortDate(value?: string | null) {
-  if (!value) return "—";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "—";
-  return new Intl.DateTimeFormat("tr-TR", {
-    day: "2-digit",
-    month: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
+  return formatDateTime(value);
 }
 
 export function normalize(value?: string | null) {
