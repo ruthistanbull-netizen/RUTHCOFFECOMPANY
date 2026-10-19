@@ -1,4 +1,5 @@
 "use client";
+import { formatDateTime } from "@/lib/format";
 
 import {
   Clock3,
@@ -69,16 +70,7 @@ function money(value: number) {
   }).format(Number(value || 0));
 }
 
-function dateTime(value: string) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "—";
-  return new Intl.DateTimeFormat("tr-TR", {
-    day: "2-digit",
-    month: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
-}
+function dateTime(value?: string | null) { return formatDateTime(value); }
 
 function sourceLabel(source: string) {
   const labels: Record<string, string> = {
