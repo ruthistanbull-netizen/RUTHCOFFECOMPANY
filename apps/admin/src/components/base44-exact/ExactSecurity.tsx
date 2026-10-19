@@ -1,4 +1,5 @@
 "use client";
+import { formatDateTime } from "@/lib/format";
 
 import Link from "next/link";
 import { AlertTriangle, CheckCircle2, Clock3, FileKey2, KeyRound, RefreshCw, ShieldCheck, ShieldOff, UsersRound } from "lucide-react";
@@ -30,16 +31,7 @@ type SessionState = { email: string; userId: string; expiresAt: number | null; l
 const PRIMARY_AUDIT_PATH = "/api/audit?limit=200";
 const FALLBACK_AUDIT_PATH = "/api/admin/audit?limit=200";
 
-function dateTime(value?: string | number | null) {
-  const date = typeof value === "number" ? new Date(value * 1000) : new Date(value || "");
-  return Number.isNaN(date.getTime()) ? "—" : new Intl.DateTimeFormat("tr-TR", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
-}
+function dateTime(value?: string | null) { return formatDateTime(value); }
 
 function level(row: AuditRow): Exclude<AuditLevel, "all"> {
   const status = String(row.status || "").toLowerCase();
