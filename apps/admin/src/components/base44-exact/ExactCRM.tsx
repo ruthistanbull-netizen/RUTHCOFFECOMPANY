@@ -1,4 +1,5 @@
 "use client";
+import { formatDateTime } from "@/lib/format";
 
 import { ArrowLeft, CalendarClock, Mail, MapPin, Phone, RefreshCw, Save, ShoppingBag, StickyNote } from "lucide-react";
 import { useSaveLifecycle, useSaveLifecycleSource } from "@ruth-commerce/ui";
@@ -21,7 +22,7 @@ function upcoming(order: CrmOrder) { if (!order.reminder_at) return false; const
 function datetimeLocal(value?: string | null) { if (!value) return ""; const date = new Date(value); if (Number.isNaN(date.getTime())) return ""; return new Date(date.getTime() - date.getTimezoneOffset() * 60_000).toISOString().slice(0, 16); }
 function preset(days: number, hour: number) { const date = new Date(); date.setDate(date.getDate() + days); date.setHours(hour, 0, 0, 0); if (date.getTime() <= Date.now()) date.setDate(date.getDate() + 1); return datetimeLocal(date.toISOString()); }
 function money(value: number, currency = "TRY") { return new Intl.NumberFormat("tr-TR", { style: "currency", currency: currency || "TRY", maximumFractionDigits: 0 }).format(Number(value || 0)); }
-function dateTime(value?: string | null) { const date = new Date(value || ""); return Number.isNaN(date.getTime()) ? "—" : new Intl.DateTimeFormat("tr-TR", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }).format(date); }
+function dateTime(value?: string | null) { return formatDateTime(value); }
 function statusLabel(value: string) { const key = String(value || "").toLowerCase(); if (["delivered", "completed", "fulfilled"].includes(key)) return "Teslim edildi"; if (["shipped", "in_transit"].includes(key)) return "Gönderildi"; if (["ready", "ready_to_ship", "prepared"].includes(key)) return "Kargoya hazır"; if (["preparing", "in_production", "processing"].includes(key)) return "Hazırlanıyor"; return "Yeni"; }
 function draftFromOrder(order: CrmOrder): CrmDraft { return { note: order.admin_note || "", reminderNote: order.reminder_note || "", reminderAt: datetimeLocal(order.reminder_at) }; }
 function draftFingerprint(draft: CrmDraft) { return JSON.stringify(draft); }
