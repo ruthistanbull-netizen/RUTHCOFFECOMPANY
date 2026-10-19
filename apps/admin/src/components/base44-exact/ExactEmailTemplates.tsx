@@ -1,4 +1,5 @@
 "use client";
+import { formatDateTime } from "@/lib/format";
 
 import {
   ArrowLeft,
@@ -139,18 +140,7 @@ function editorFingerprint(editor: EditorState) {
   });
 }
 
-function dateTime(value?: string | null) {
-  const date = new Date(value || "");
-  return Number.isNaN(date.getTime())
-    ? "Hazır şablon"
-    : new Intl.DateTimeFormat("tr-TR", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      }).format(date);
-}
+function dateTime(value?: string | null) { return formatDateTime(value); }
 
 function defaultTemplate(key: string): EmailTemplate {
   const ready = getReadyEmailTemplate(key);
