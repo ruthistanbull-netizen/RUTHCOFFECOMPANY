@@ -3,7 +3,7 @@
 const { spawn } = require('node:child_process');
 const fs = require('node:fs');
 const assert = require('node:assert/strict');
-const { chromium } = require('@playwright/test');
+const { chromium, expect } = require('@playwright/test');
 const makeFixture = require('./fixtures/finance-workspace.cjs');
 const AxeBuilder = process.env.FINANCE_TEST_AXE ? require(process.env.FINANCE_TEST_AXE).default : null;
 const brand = process.env.FINANCE_TEST_BRAND || 'rosta';
@@ -90,6 +90,7 @@ const root = process.cwd();
       await settings.getByLabel('Kategori adı', { exact: true }).waitFor();
       await page.keyboard.press('Escape');
       await settings.waitFor({ state: 'hidden' });
+      await expect(page.getByRole('button', { name: 'Ayarlar', exact: true })).toBeFocused();
       await go('/finance/records');
       await page.getByRole('heading', { name: 'Finans kayıtları', exact: true }).waitFor();
       await noOverflow('records');
@@ -111,6 +112,7 @@ const root = process.cwd();
       await page.screenshot({ path: `${output}/payables-${width}.png`, fullPage: true });
       const payableTrigger = page.getByRole('button', { name: /Kutu ve paketleme/ });
       if (width < 800) {
+        await payableTrigger.scrollIntoViewIfNeeded();
         const cdp = await context.newCDPSession(page);
         const box = await payableTrigger.boundingBox();
         if (box && box.y > 0 && box.y + 80 < 1000) {
