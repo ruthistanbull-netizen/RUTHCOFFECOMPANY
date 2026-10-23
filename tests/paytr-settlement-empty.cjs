@@ -28,7 +28,14 @@ const read = async response => {
   return loadPaytrSettlementReport({ merchantId: 'fixture-' + (++merchant), merchantKey: 'fixture', merchantSalt: 'fixture' });
 };
 (async () => {
-  const emptyShapes = [[], {}, null, '', '[]', '{}', { TL: [] }, { TL: {} }];
+  const emptyShapes = [
+    [], {}, null, '', '[]', '{}', { TL: [] }, { TL: {} },
+    0, '0', '0.00', '0,00', false,
+    { net_amounts: 0, sale_amounts: '0.00', return_amounts: '0,00' },
+    { TL: { net_amounts: '0.00', sale_amounts: 0, return_amounts: 0 } },
+    { net_amounts: { TL: '0.00' }, sale_amounts: { TL: 0 }, return_amounts: { TL: 0 } },
+    JSON.stringify({ net_amounts: 0, sale_amounts: 0, return_amounts: 0 }),
+  ];
   for (const status of ['success', 'failed']) {
     for (const future of emptyShapes) {
       const report = await read({ status, future_payments: future });
@@ -41,6 +48,12 @@ const read = async response => {
       assert.equal(payout.upcoming.length, 0);
       assert.equal(payout.payoutWarning, null);
     }
+  }
+  for (const status of ['success', 'failed']) {
+    const report = await read({ status });
+    assert.equal(report.providerStatus, 'success');
+    assert.equal(report.providerWarning, null, 'no future_payments key means no scheduled payout');
+    assert.equal(financePayouts(report).unpaidTotal, 0);
   }
   for (const future of [
     { '2000-01-01': { TL: { net_amounts: '150', sale_amounts: '155', return_amounts: '5' } } },
@@ -56,6 +69,11 @@ const read = async response => {
   assert.equal(valid.providerWarning, null);
   assert.equal(financePayouts(valid).unpaidTotal, 1450.25);
   assert.equal(financePayouts(valid).upcoming[0].date, '2099-10-27');
+  for (const future of [1, '0.01', '0,01', -1, 'not-a-number', { net_amounts: '500' }]) {
+    const report = await read({ status: 'success', future_payments: future });
+    assert.equal(report.diagnostics.parserMismatch, true, JSON.stringify(future));
+    assert.ok(report.providerWarning);
+  }
   const unreadable = await read({ status: 'success', future_payments: { unsupported_payment: { net_amounts: '500' } } });
   assert.equal(unreadable.diagnostics.parserMismatch, true);
   assert.ok(unreadable.providerWarning, "unreadable data must keep its warning");
