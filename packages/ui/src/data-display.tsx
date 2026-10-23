@@ -133,6 +133,8 @@ export interface DataTableProps<Row> extends Omit<React.TableHTMLAttributes<HTML
   caption?: string;
   emptyState?: React.ReactNode;
   density?: DataTableDensity;
+  /** Fit narrow summary tables without changing the default scrollable layout. */
+  layout?: "scroll" | "fit";
   loading?: boolean;
   loadingLabel?: string;
   onRowActivate?: (row: Row, index: number) => void;
@@ -150,6 +152,7 @@ export function DataTable<Row>({
   caption,
   emptyState,
   density = "standard",
+  layout = "scroll",
   loading = false,
   loadingLabel = "Veriler yükleniyor",
   onRowActivate,
@@ -166,7 +169,7 @@ export function DataTable<Row>({
       aria-label={caption || "Veri tablosu"}
       tabIndex={0}
     >
-      <table className={`ruth-data-table ruth-data-table--${density} ${className}`.trim()} {...props}>
+      <table className={`ruth-data-table ruth-data-table--${density} ${layout === "fit" ? "ruth-data-table--fit" : ""} ${className}`.trim()} {...props}>
         {caption ? <caption>{caption}</caption> : null}
         <thead>
           <tr>

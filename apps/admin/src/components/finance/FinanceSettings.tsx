@@ -9,6 +9,7 @@ import {
 } from "@ruth-commerce/ui";
 import {
   ActionForm,
+  FinanceSegments,
   Pick,
   command,
   type Setup,
@@ -43,26 +44,14 @@ export function FinanceSettings({
     accounts = setup.accounts.map((r) => [r.id, r.name] as [string, string]);
   return (
     <Drawer open title="Finans ayarları" onClose={onClose}>
-      <div className="space-y-4">
-        <Pick
-          label="Bölüm"
-          value={tab}
-          onChange={setTab}
-          options={[
-            ["settings", "Hesaplama"],
-            ["category", "Kategoriler"],
-            ["account", "Kasa / Banka"],
-            ["transfer", "Hesaplar arası transfer"],
-            ["budget", "Bütçeler"],
-            ["recurring", "Tekrarlayan giderler"],
-            ["permission", "Yetkiler"],
-            ["paytr", "PayTR kesintileri"],
-            ["bank", "Banka CSV / Mutabakat"],
-          ]}
-        />
+      <div className="finance-settings">
+        <FinanceSegments label="Finans ayarları bölümü" value={tab} onChange={setTab}
+          options={[["settings", "Hesaplama"], ["category", "Kategoriler"], ["account", "Kasa / Banka"],
+            ["transfer", "Transfer"], ["budget", "Bütçeler"], ["recurring", "Tekrarlayan giderler"],
+            ["permission", "Yetkiler"], ["paytr", "PayTR kesintileri"], ["bank", "Banka / Mutabakat"]]} />
         {message ? <Notice>{message}</Notice> : null}
         {tab === "settings" ? (
-          <PageSection title="Hasılat tanıma">
+          <PageSection className="finance-section" title="Hasılat tanıma">
             <Pick
               label="Satışı hangi aşamada gösterelim?"
               value={recognition}
@@ -201,7 +190,7 @@ export function FinanceSettings({
           <div className="space-y-3">
             {setup.recurring.length ? (
               setup.recurring.map((r) => (
-                <PageSection
+                <PageSection className="finance-section"
                   key={r.id}
                   title={r.template.title}
                   description={`${r.next_on} · ${r.active ? "Aktif" : "Duraklatıldı"}`}
@@ -236,16 +225,16 @@ export function FinanceSettings({
           </div>
         ) : null}
         {tab === "paytr" ? (
-          <PageSection title="Sabit PayTR komisyonu">
+          <PageSection className="finance-section" title="Sabit PayTR komisyonu">
             <p className="text-lg font-semibold">%4,10</p>
             <Notice>
               PayTR ile ödenen siparişlerde, iade sonrası sipariş bedelinin
-              %4,10'u otomatik finans giderine kaydedilir.
-              Komisyon oranı PayTR API'sinden sorgulanmaz.
+              %4,10&apos;u otomatik finans giderine kaydedilir.
+              Komisyon oranı PayTR API&apos;sinden sorgulanmaz.
               Siparişlerde ve satış toplamında kesinti yapılmaz.
             </Notice>
             <Notice>
-              Müşterinin ödediği taksit vade farkı, Finans Genel Bakış'taki
+              Müşterinin ödediği taksit vade farkı, Finans Genel Bakış&apos;taki
               gider dağılımında bilgi amaçlı gösterilir. Satış geliri veya
               işletme kârından ikinci kez düşülen gider değildir.
             </Notice>
@@ -288,7 +277,7 @@ export function FinanceSettings({
               />
             </Field>
             {bank.data?.rows.map((r) => (
-              <PageSection
+              <PageSection className="finance-section"
                 key={r.id}
                 title={`${r.occurred_on} · ${r.amount} · ${r.reference}`}
                 description={
