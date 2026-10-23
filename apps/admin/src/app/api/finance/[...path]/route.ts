@@ -215,31 +215,24 @@ export async function GET(request: Request, context: Context) {
       });
     }
     if (route === "payouts") {
-      // Hakedişler and Finans use one official PayTR report/parser.
-      // Future settlements are merchant-wide; do not fake a per-order fee or
-      // match payout dates to a chosen order-created date range.
+      // The same official report/parser owns Hakedişler and Finance.
       const { loadPaytrSettlementReport } = await import("@/lib/paytrSettlementReport");
-      const report = await loadPaytrSettlementReport({
-        merchantId: process.env.PAYTR_MERCHANT_ID || "",
-        merchantKey: process.env.PAYTR_MERCHANT_KEY || "",
-        merchantSalt: process.env.PAYTR_MERCHANT_SALT || "",
-      });
-      const rows = report.rows.map(row => ({
-        date:row.date,currency:row.currency,sales:row.sales,refunds:row.returns,
-        net:row.net,state:row.future ? "upcoming" as const : "transferred" as const,
-      }));
-      const upcoming = rows.filter(row => row.state === "upcoming" && row.net > 0);
-      const byCurrency: Record<string,number> = {};
-      for (const row of upcoming) {
-        byCurrency[row.currency] = Math.round(((byCurrency[row.currency] || 0) + row.net) * 100) / 100;
+      const { financePayouts } = await import("@/lib/finance/paytrPayouts");
+      try {
+        const report = await loadPaytrSettlementReport({
+          merchantId: process.env.PAYTR_MERCHANT_ID || "",
+          merchantKey: process.env.PAYTR_MERCHANT_KEY || "",
+          merchantSalt: process.env.PAYTR_MERCHANT_SALT || "",
+        });
+        return financeJson({ ok: true, ...financePayouts(report) });
+      } catch (error) {
+        return financeJson({
+          ok: true, rows: [], upcoming: [], unpaidTotal: 0, byCurrency: {},
+          checkedAt: new Date().toISOString(), windowsChecked: 0,
+          providerStatus: "unavailable",
+          payoutWarning: error instanceof Error ? error.message : "PayTR hakedişleri alınamadı.",
+        });
       }
-      return financeJson({
-        ok:true,rows,upcoming,unpaidTotal:byCurrency.TRY || 0,
-        checkedAt:new Date().toISOString(),byCurrency,
-        windowsChecked:report.diagnostics.queriedWindows.length,
-        providerStatus:report.providerStatus,payoutWarning:report.providerWarning,
-        latestSaleEstimate:null,
-      });
     }
     if (route === "payables") {
       // Only expenses the business must explicitly mark paid. Payment processor

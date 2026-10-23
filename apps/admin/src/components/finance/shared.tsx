@@ -145,7 +145,7 @@ export function useFinance<T>(url: string) {
     setError("");
     try {
       const result = await adminRequest<T>(url, {
-        force: true,
+        hardRefresh: true,
         ttlMs: 0,
         staleMs: 0,
       });

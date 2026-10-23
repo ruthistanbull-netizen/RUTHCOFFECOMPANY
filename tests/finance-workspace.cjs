@@ -36,13 +36,33 @@ const root = process.cwd();
       }, brand);
       const { setup, entries, report } = makeFixture(brand);
       const commands = [], reads = [];
+      let payoutState = 'success', overviewUnavailable = false;
+      const payoutPayload = {
+        upcoming: [
+          { date: '2026-10-27', currency: 'TRY', net: 14500.25 },
+          { date: '2026-10-28', currency: 'USD', net: 123.45 },
+          { date: '2026-10-29', currency: 'EUR', net: 80 },
+        ],
+        byCurrency: { TRY: 14500.25, USD: 123.45, EUR: 80 },
+        unpaidTotal: 14500.25, checkedAt: '2026-10-23T12:00:00Z',
+        providerStatus: 'success', payoutWarning: null,
+      };
       await context.route('**/api/**', async route => {
         const url = new URL(route.request().url()); reads.push(url);
         let data = { ok: true, items: [], orders: [], products: [], customers: [], carts: [], categories: [], collections: [], variants: [], returns: [], total: 0, count: 0 };
         if (url.pathname === '/api/me') data = { ok: true, user: { id: 'fixture', app_metadata: { panel_role: 'owner', panel_status: 'active' } }, profile: { role: 'admin', full_name: 'Tasarım önizleme' } };
         if (url.pathname === '/api/finance/setup') data = setup;
-        if (url.pathname === '/api/finance/overview') data = { report };
-        if (url.pathname === '/api/finance/payouts') data = { upcoming: [{ date: '2026-10-27', currency: 'TRY', net: 14500 }], unpaidTotal: 14500, checkedAt: '2026-10-23T12:00:00Z' };
+        if (url.pathname === '/api/finance/overview') {
+          if (overviewUnavailable) return route.fulfill({ status: 503, json: { error: 'Finans raporu kullanılamıyor.' } });
+          data = { report };
+        }
+        if (url.pathname === '/api/finance/payouts') data = payoutState === 'unavailable'
+          ? { ...payoutPayload, upcoming: [], byCurrency: {}, providerStatus: 'unavailable', payoutWarning: 'PayTR 429: rapor bekletiliyor.' }
+          : payoutState === 'empty'
+            ? { ...payoutPayload, upcoming: [], byCurrency: {}, unpaidTotal: 0 }
+          : payoutState === 'partial'
+            ? { ...payoutPayload, providerStatus: 'partial', payoutWarning: 'Bazı günler sorgulanamadı.' }
+            : payoutPayload;
         if (url.pathname === '/api/finance/records') data = { records: entries, count: entries.length };
         if (url.pathname === '/api/finance/payables') data = { rows: entries };
         if (url.pathname === '/api/finance/bank') data = { rows: [], payments: [] };
@@ -66,6 +86,12 @@ const root = process.cwd();
       await page.getByRole('heading', { name: 'Finansal genel bakış', exact: true }).waitFor();
       await page.getByText('Net satış geliri', { exact: true }).first().waitFor();
       await noOverflow('overview');
+      const payoutsSection = page.getByRole('heading', { name: "PayTR'den beklenen tahsilatlar", exact: true }).locator('xpath=ancestor::section[1]');
+      await expect(payoutsSection.getByText('27 Ekim 2026', { exact: true })).toBeVisible();
+      assert.match(await payoutsSection.innerText(), /14\.500,25/);
+      assert.match(await payoutsSection.innerText(), /123,45/);
+      const payoutMetric = page.locator('.finance-metric').filter({ hasText: 'Beklenen tahsilatlar' });
+      await expect(payoutMetric).toContainText('14.500,25');
       const monthRequest = page.waitForRequest(request => request.url().includes('/api/finance/overview?') && new URL(request.url()).searchParams.get('from')?.endsWith('-01'));
       await page.locator('.finance-period select').first().selectOption('month');
       await monthRequest;
@@ -136,6 +162,26 @@ const root = process.cwd();
       await page.getByRole('button', { name: 'Ödendi', exact: true }).click();
       await page.getByText('Reklam hizmet bedeli', { exact: true }).waitFor();
       await noOverflow('paid state');
+      // A provider failure is not a zero balance, and an unrelated ledger
+      // failure must not hide a successfully loaded payout schedule.
+      payoutState = 'unavailable';
+      await go('/finance');
+      await expect(page.getByText('PayTR verisi alınamadı', { exact: true })).toBeVisible();
+      await expect(page.getByText(/bekleyen tutar sıfır olarak kabul edilmez/)).toBeVisible();
+      payoutState = 'partial';
+      await page.getByRole('button', { name: 'Tekrar dene', exact: true }).click();
+      await expect(page.getByText('Bazı günler sorgulanamadı.', { exact: true })).toBeVisible();
+      await expect(page.getByText('27 Ekim 2026', { exact: true })).toBeVisible();
+      payoutState = 'empty';
+      await go('/finance');
+      await expect(page.getByText('PayTR bu sorguda bekleyen aktarım bildirmedi.', { exact: true })).toBeVisible();
+      await expect(page.locator('.finance-metric').filter({ hasText: 'Beklenen tahsilatlar' })).toContainText('0,00');
+      await expect(page.getByText('27 Ekim 2026', { exact: true })).toHaveCount(0);
+      payoutState = 'success'; overviewUnavailable = true;
+      await go('/finance');
+      await expect(page.locator('.finance-workspace')).toContainText('Finans raporu kullanılamıyor.');
+      await expect(page.getByText('27 Ekim 2026', { exact: true })).toBeVisible();
+      await noOverflow('independent payouts');
       assert.deepEqual(errors, []);
       console.log(`PASS ${brand} ${width}: overview, expenses/FX, analysis, accounts, settings, editor dirty dismissal, payment filters and partial payment; no page errors/overflow`);
       await context.close(); await browser.close(); browser = undefined;

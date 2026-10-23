@@ -28,6 +28,8 @@ import {
   type Setup,
 } from "./shared";
 import { FinanceSettings } from "./FinanceSettings";
+import { FinancePayouts } from "./FinancePayouts";
+import type { FinancePayoutReport } from "@/lib/finance/paytrPayouts";
 const metrics = [
   "net_sales", "total_expenses", "unpaid", "receivables",
 ];
@@ -61,7 +63,7 @@ export function FinanceOverview() {
       `/api/finance/overview?${period.query}&group=${group}`,
     ),
     setup = useFinance<Setup>("/api/finance/setup"),
-    payouts = useFinance<{upcoming:Array<{date:string;currency:string;net:number;sales:number;refunds:number}>;unpaidTotal:number;checkedAt:string}>("/api/finance/payouts");
+    payouts = useFinance<FinancePayoutReport>("/api/finance/payouts");
   const data = report.data?.report;
   const expenseDetails = data?.expenseBreakdown as {
     totalTRY: number | null;
@@ -78,10 +80,14 @@ export function FinanceOverview() {
     }>;
   } | undefined;
   const displayAmount=(key:string,values:Row)=>{
-    if(key==="receivables") return payouts.error?"PayTR API hatası":
-      payouts.data ? money(payouts.data.upcoming.filter(x=>x.currency===period.currency)
-        .reduce((sum,x)=>sum+Number(x.net||0),0),period.currency)
-        : "Yükleniyor…";
+    if(key==="receivables") {
+      if (payouts.error || payouts.data?.providerStatus === "unavailable") return "PayTR verisi alınamadı";
+      if (!payouts.data) return "Yükleniyor…";
+      const total = payouts.data.byCurrency[period.currency];
+      if (total != null) return money(total, period.currency);
+      return payouts.data.providerStatus === "success" && !payouts.data.payoutWarning
+        ? money(0, period.currency) : "PayTR verisi eksik";
+    }
     if(key==="total_expenses") {
       // Always TL, even when the other finance charts have a USD/EUR filter.
       if (data?.current === values) return expenseDetails
@@ -129,7 +135,7 @@ export function FinanceOverview() {
         description="İşletmenin finansal durumunu tek bakışta takip et."
         actions={
           <>
-            <Button variant="secondary" onClick={() => void report.load()}>
+            <Button variant="secondary" onClick={() => { void report.load(); void payouts.load(); }}>
               Yenile
             </Button>
             <FinanceExport onDownload={(format) => void download(format)} />
@@ -309,28 +315,7 @@ export function FinanceOverview() {
               }}
             />
           </PageSection>
-          <PageSection className="finance-section" title="PayTR'den beklenen tahsilatlar"
-            description="PayTR Ödeme Özeti API'sinin bildirdiği gerçek aktarım tarihleri ve tutarları">
-            {payouts.error?<Notice tone="warning">
-              PayTR bekleyen tahsilatları alınamadı: {payouts.error}
-              <Button variant="secondary" onClick={()=>void payouts.load()}>Tekrar dene</Button>
-            </Notice>:null}
-            {payouts.loading&&!payouts.data?<p>PayTR ödeme takvimi yükleniyor…</p>:null}
-            {payouts.data && !payouts.data.upcoming.length?<p className="text-sm text-muted">
-              PayTR hakediş raporunda doğrulanmış bekleyen transfer bulunmuyor.
-            </p>:null}
-            {payouts.data?.upcoming?.length?<DataTable<Row> layout="fit" density="compact"
-              rows={payouts.data.upcoming}
-              getRowKey={(row)=>row.date+"-"+row.currency}
-              columns={[
-                {key:"date",header:"Hesaba geçiş tarihi",
-                 cell:(row)=>readableDate(row.date)},
-                {key:"net",header:"Beklenen net aktarım",
-                 cell:(row)=>money(row.net,row.currency)},
-                {key:"currency",header:"Para birimi",cell:(row)=>row.currency},
-              ]}
-            />:null}
-          </PageSection>
+          <FinancePayouts payouts={payouts} />
             </div>
           <div className="finance-columns">
             <PageSection className="finance-section" title="Gider dağılımı">
@@ -607,6 +592,7 @@ export function FinanceOverview() {
           </p></details>
         </>
       ) : null}
+      {!data ? <FinancePayouts payouts={payouts} /> : null}
       {settings && setup.data ? (
         <FinanceSettings
           setup={setup.data}
