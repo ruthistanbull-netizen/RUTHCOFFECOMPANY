@@ -56,5 +56,41 @@ const get = () => handler.GET(new Request('http://fixture.invalid/api/finance/pa
   const empty = await get();
   assert.equal(empty.providerStatus, 'success');
   assert.equal(empty.unpaidTotal, 0);
+  // Finance is the live owner: even a persisted positive balance must not
+  // replace a provider failure, a confirmed zero, or a report HTTP failure.
+  const stored = new Map([['last:/api/finance/payouts', JSON.stringify({
+    path: '/api/finance/payouts', payload: result, storedAt: Date.now(),
+  })]]);
+  let nextResponse, restores = 0;
+  global.window = {
+    location: { origin: 'http://fixture.invalid' },
+    fetch: async () => nextResponse,
+    addEventListener: () => {},
+    localStorage: {
+      get length() { return stored.size; }, key: i => [...stored.keys()][i],
+      getItem: key => stored.get(key) ?? null,
+      setItem: (key, value) => stored.set(key, value), removeItem: key => stored.delete(key),
+    },
+  };
+  const continuity = load('apps/admin/src/lib/adminDataContinuity.ts', {
+    '@/lib/adminFreshnessPolicy': {
+      adminLastGoodStorageKey: route => 'last:' + route,
+      meaningfulAdminPayload: () => true, validAdminPayload: () => true,
+      suspiciousAdminEmptyTransition: () => true,
+      shouldServeAdminContinuityFallback: () => true,
+    },
+    '@/lib/adminFreshnessTelemetry': { recordAdminFreshnessMetric: () => {} },
+    '@/lib/panelSyncRegistry': { normalizePanelRoute: route => route },
+  });
+  continuity.installAdminDataContinuityGuard({ restore: () => restores++, dropEmptySnapshot: () => {} });
+  assert.equal(restores, 0);
+  assert.equal(stored.size, 0, 'remove stale persisted Finance snapshots');
+  for (const payload of [unavailable, empty, partial]) {
+    nextResponse = Response.json(payload);
+    assert.deepEqual(await (await window.fetch('http://fixture.invalid/api/finance/payouts')).json(), payload);
+  }
+  nextResponse = Response.json({ error: 'report unavailable' }, { status: 503 });
+  assert.equal((await window.fetch('http://fixture.invalid/api/finance/overview')).status, 503);
+  delete global.window;
   console.log('Finance payouts: canonical TL/TRY totals, separate FX, real dates/net, past/paid exclusions, partial/unavailable/empty states passed.');
 })().catch(error => { console.error(error); process.exitCode = 1; });
