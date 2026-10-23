@@ -121,7 +121,7 @@ function formatRelative(timestamp: number) {
   if (hours < 24) return `${hours} sa önce`;
   const days = Math.floor(hours / 24);
   if (days < 7) return `${days} gün önce`;
-  return formatDateTime(timestamp.toISOString());
+  return formatDateTime(new Date(timestamp).toISOString());
 }
 
 export function ExactNotificationProvider({ children }: { children: ReactNode }) {

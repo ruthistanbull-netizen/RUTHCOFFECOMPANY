@@ -26,7 +26,7 @@ type AuditRow = {
   created_at: string;
 };
 type AuditResponse = { rows?: AuditRow[]; events?: AuditRow[]; audits?: AuditRow[] };
-type SessionState = { email: string; userId: string; expiresAt: number | null; lastSignInAt: string | null } | null;
+type SessionState = { email: string; userId: string; expiresAt: string | null; lastSignInAt: string | null } | null;
 
 const PRIMARY_AUDIT_PATH = "/api/audit?limit=200";
 const FALLBACK_AUDIT_PATH = "/api/admin/audit?limit=200";
@@ -85,7 +85,7 @@ export function ExactSecurity() {
       setSession(current ? {
         email: current.user.email || "",
         userId: current.user.id,
-        expiresAt: current.expires_at || null,
+        expiresAt: current.expires_at ? new Date(current.expires_at * 1000).toISOString() : null,
         lastSignInAt: current.user.last_sign_in_at || null,
       } : null);
 
