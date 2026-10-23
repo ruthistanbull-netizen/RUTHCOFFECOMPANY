@@ -163,7 +163,12 @@ function hasFutureData(value: unknown, depth = 0): boolean {
   if (Array.isArray(decoded)) return decoded.some(child => hasFutureData(child, depth + 1));
   const record = object(decoded);
   if (record) return Object.values(record).some(child => hasFutureData(child, depth + 1));
-  return decoded != null && decoded !== false && String(decoded).trim() !== "";
+  if (decoded == null || decoded === false) return false;
+  if (typeof decoded === "number") return decoded !== 0;
+  const text = String(decoded).trim();
+  // An undated numeric zero (including localized strings) contains no
+  // pending payment. Nonzero or unreadable data still requires a warning.
+  return text !== "" && !/^[+-]?0+(?:[.,]0+)*$/.test(text);
 }
 
 function collectFutureMetricLeaves(
@@ -339,7 +344,6 @@ export async function loadPaytrSettlementReport(input: PaytrCredentials & { star
 
   let providerWarning: string | null = null;
   if (parserMismatch) providerWarning = "PayTR future_payments verisi döndürdü ancak geçerli tarih/tutar satırına dönüştürülemedi.";
-  else if (!providerFutureDataSeen) providerWarning = "PayTR ödeme özeti servisi bu sorguda future_payments bloğu döndürmedi.";
   else if (errors.length) providerWarning = "PayTR rapor aralığının bir bölümü sorgulanamadı; gösterilen gelecek tutarlar eksik olabilir.";
 
   return {
