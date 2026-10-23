@@ -17,6 +17,7 @@ import {
   type SearchShellLoadContext,
 } from "@ruth-commerce/ui";
 import { adminAuthHeaders, adminRequest } from "@/lib/adminApi";
+import { formatLongDate } from "@/lib/format";
 import { istanbulToday } from "@ruth-commerce/commerce-core/finance";
 import {
   ActionForm,
@@ -110,11 +111,11 @@ export function FinanceRecords({
     setFilter({ ...filter, [key]: value });
   };
   return (
-    <PageShell density="compact">
-      <PageHeader
+    <PageShell density="compact" className="finance-workspace">
+      <PageHeader className="finance-header"
         eyebrow="Finans"
-        title="Kayıtlar"
-        description="TL, USD ve EUR kayıtları birlikte görünür; tutarlar kendi para birimiyle gösterilir."
+        title="Finans kayıtları"
+        description="Gelir ve giderlerini ara, filtrele ve ayrıntılarıyla yönet."
         actions={
           <>
             <Button variant="secondary" onClick={() => void records.load()}>
@@ -134,7 +135,7 @@ export function FinanceRecords({
       />
       <FinanceNav />
       <PeriodFilter period={period} allCurrencies />
-      <Toolbar>
+      <Toolbar className="finance-record-filters">
         <SearchShell<Row>
           label="Kayıtlarda ara"
           placeholder="İşlem adı veya tedarikçi ara"
@@ -168,6 +169,10 @@ export function FinanceRecords({
             ["cancelled", "İptal edilenler"],
           ]}
         />
+      </Toolbar>
+      <details className="finance-disclosure">
+        <summary>Kaynak, kategori ve tutar filtreleri</summary>
+        <Toolbar>
         <Pick
           label="Kaynak"
           value={filter.source}
@@ -190,10 +195,7 @@ export function FinanceRecords({
             ),
           ]}
         />
-      </Toolbar>
-      <details>
-        <summary>Diğer filtreler</summary>
-        <Toolbar>
+
           {[
             ["supplier", "Tedarikçi"],
             ["min", "En düşük tutar"],
@@ -216,6 +218,8 @@ export function FinanceRecords({
           </Button>
         </Notice>
       ) : null}
+      <PageSection className="finance-section finance-record-table" title="İşlem listesi"
+        description={records.data ? `${records.data.count} kayıt · Tutarlar kaydın kendi para birimindedir.` : "Kayıtlar yükleniyor…"}>
       <DataTable
         rows={records.data?.records || []}
         loading={records.loading && !records.data}
@@ -251,7 +255,7 @@ export function FinanceRecords({
               );
             },
           },
-          { key: "date", header: "Tarih", cell: (r) => r.occurred_on },
+          { key: "date", header: "Tarih", cell: (r) => formatLongDate(r.occurred_on) },
           { key: "category", header: "Kategori", cell: (r) => r.category },
           {
             key: "source",
@@ -291,7 +295,7 @@ export function FinanceRecords({
           Önceki
         </Button>
         <p>
-          {offset + 1}–{Math.min(offset + 50, records.data?.count || 0)} /{" "}
+          {records.data?.count ? offset + 1 : 0}–{Math.min(offset + 50, records.data?.count || 0)} /{" "}
           {records.data?.count || 0}
         </p>
         <Button
@@ -302,6 +306,7 @@ export function FinanceRecords({
           Sonraki
         </Button>
       </Toolbar>
+      </PageSection>
       {selected && setup.data ? (
         <FinanceRecordDetail
           record={selected}
@@ -452,7 +457,7 @@ export function FinanceEntryEditor({
           </>
         }
       >
-        <div className="space-y-4">
+        <div className="finance-editor">
           {error ? <Notice tone="danger">{error}</Notice> : null}
           {field("title", "İşlem adı")}
           <Pick
@@ -674,7 +679,7 @@ function FinanceRecordDetail({
   return (
     <>
       <Drawer open title={r.title} onClose={onClose}>
-        <div className="space-y-4">
+        <div className="finance-editor">
           {error || detail.error ? (
             <Notice tone="danger">{error || detail.error}</Notice>
           ) : null}
@@ -691,7 +696,7 @@ function FinanceRecordDetail({
                     {" · "}TL gider karşılığı: {money(Number(r.net)*Number(r.metadata.fx_to_try),"TRY")}
                     {r.metadata.fx_published_on?" · "+String(r.metadata.fx_published_on):""}
                   </p>
-                  : <p className="text-muted">Bu eski kayıtta işlem tarihi için sabit döviz kuru bulunmuyor. Genel Bakış'ta güncel kurla gösterilir.</p>}
+                  : <p className="text-muted">Bu eski kayıtta işlem tarihi için sabit döviz kuru bulunmuyor. Genel Bakış&apos;ta güncel kurla gösterilir.</p>}
               </div>
             ):null}
 

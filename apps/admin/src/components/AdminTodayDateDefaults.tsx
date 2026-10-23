@@ -26,6 +26,8 @@ export function AdminTodayDateDefaults() {
   const pathname = usePathname();
 
   useLayoutEffect(() => {
+    // Finance owns its date defaults and filters in usePeriod.
+    if (pathname === "/finance" || pathname.startsWith("/finance/")) return;
     let disposed = false;
     let userChangedRange = false;
     const handled = new WeakSet<HTMLSelectElement>();

@@ -1,7 +1,7 @@
 "use client";
 import { useMemo, useState } from "react";
-import { Button, Card, Notice, PageHeader, PageSection, PageShell } from "@ruth-commerce/ui";
-import { command, FinanceNav, money, useFinance, type Row, type Setup } from "./shared";
+import { Button, Card, Notice, PageHeader, PageSection, PageShell, EmptyState, Skeleton } from "@ruth-commerce/ui";
+import { command, FinanceNav, FinanceSegments, money, useFinance, type Row, type Setup } from "./shared";
 
 type PurchaseItem = { id:string; product_name:string; variant_name?:string|null; quantity:number; image_url?:string|null; unit_cost?:number|null; purchase_total?:number|null };
 type Payable = Row & {
@@ -12,6 +12,7 @@ type Payable = Row & {
   payments?:Array<{id:string;amount:number;paid_on:string;account_id:string;source:string}>;
 };
 type Payload = { rows:Payable[];missing_cost_order_ids?:string[] };
+const EMPTY_PAYABLES: Payable[] = [];
 
 function localDate(){
   return new Intl.DateTimeFormat("en-CA",{
@@ -43,7 +44,7 @@ export function FinancePayables(){
   const [error,setError]=useState("");
   const [success,setSuccess]=useState("");
 
-  const all=payables.data?.rows||[];
+  const all=payables.data?.rows||EMPTY_PAYABLES;
   const dueCount=all.filter(x=>Number(x.remaining)>0).length;
   const rows=useMemo(()=>all.filter(x=>filter==="all" ||
     (filter==="paid"?x.remaining<=0:
@@ -93,9 +94,9 @@ export function FinancePayables(){
     }catch(e){setError(e instanceof Error?e.message:String(e));}
     finally{setWorking(null);}
   };
-  return <PageShell density="compact">
-    <PageHeader eyebrow="Finans" title="Ödemeler"
-      description="Ürün alış maliyetleri, tekrarlayan giderler ve diğer borçlar. Ödemeyi sadece sen onaylarsın."
+  return <PageShell density="compact" className="finance-workspace">
+    <PageHeader className="finance-header" eyebrow="Finans" title="Ödemeler"
+      description="Yaklaşan ödemeler, kalan borçlar ve ödeme geçmişin."
       actions={<Button variant="secondary" onClick={()=>{void payables.load();void setup.load();}}>Yenile</Button>}/>
     <FinanceNav/>
     {payables.error||setup.error?<Notice tone="danger">{payables.error||setup.error}</Notice>:null}
@@ -105,21 +106,20 @@ export function FinancePayables(){
       {payables.data?.missing_cost_order_ids?.length} siparişte ürün alış maliyeti eksik.
       Eksik fiyatlar girilmeden otomatik borç tutarı tahmin edilmez. Ürün düzenlemeden alış fiyatlarını kontrol et.
     </Notice>:null}
-    <div className="grid grid-cols-2 gap-3">
-      <Card><p className="text-xs text-muted">Ödenmesi gereken kayıt</p><strong className="text-xl">{dueCount}</strong></Card>
-      <Card><p className="text-xs text-muted">Kalan borç (TRY kayıtları)</p><strong className="text-xl">
-        {money(all.filter(r=>r.currency==="TRY"&&r.remaining>0).reduce((sum,r)=>sum+Number(r.remaining),0))}
-      </strong></Card>
+    <div className="finance-payment-totals" aria-label="Ödeme özeti">
+      <Card className="finance-payment-total" density="compact"><p>Ödenmemiş kayıt</p><strong>{payables.data ? dueCount : "—"}</strong></Card>
+      {["TRY", "USD", "EUR"].map(currency => <Card key={currency} className="finance-payment-total" density="compact">
+        <p>Kalan borç · {currency === "TRY" ? "TL" : currency}</p>
+        <strong>{payables.data ? money(all.filter(row => row.currency === currency && row.remaining > 0)
+          .reduce((sum, row) => sum + Number(row.remaining), 0), currency) : "—"}</strong>
+      </Card>)}
     </div>
-    <PageSection title="Gider ve alış bedeli ödemeleri" description="Kısmi tutar ekle, geçmiş ödemeleri gör veya kalan tamamını ödendi olarak işaretle.">
-      <div className="flex flex-wrap gap-2 pb-3">
-        {([["unpaid","Ödenmemiş"],["products","Ürün alışları"],["recurring","Tekrarlayan"],["paid","Ödendi"],["all","Tümü"]] as const).map(([key,title])=>
-          <Button key={key} variant={filter===key?"primary":"secondary"} onClick={()=>setFilter(key)}>{title}</Button>
-        )}
-      </div>
-      {payables.loading&&!payables.data?<p className="text-sm text-muted">Ödeme kayıtları yükleniyor…</p>:null}
-      {!payables.loading&&!rows.length?<p className="text-sm text-muted">Bu filtrede kayıt bulunmuyor.</p>:null}
-      <div className="space-y-3">
+    <PageSection className="finance-section" title="Ödeme planı" description="Bir kaydı açarak ödeme ekle veya geçmiş ödemelerini incele.">
+      <FinanceSegments label="Ödeme kayıtlarını filtrele" value={filter} onChange={setFilter}
+        options={[["unpaid", "Ödenmemiş"], ["products", "Ürün alışları"], ["recurring", "Tekrarlayan"], ["paid", "Ödendi"], ["all", "Tümü"]]} />
+      {payables.loading&&!payables.data?<Skeleton height={120} />:null}
+      {!payables.loading&&!rows.length?<EmptyState title="Bu filtrede ödeme yok" description="Başka bir filtre seçerek diğer kayıtlarını görebilirsin." />:null}
+      <div className="finance-payment-list">
         {rows.map(row=>{
           const remaining=Number(row.remaining),paid=Number(row.paid);
           const due=row.due_on||row.occurred_on;
@@ -128,31 +128,31 @@ export function FinancePayables(){
           const options=(setup.data?.accounts||[]).filter(a=>a.currency===row.currency&&["bank","cash"].includes(a.kind));
           const currentAccount=accounts[row.id]||options[0]?.id||"";
           const showInput=remaining>0;
-          return <Card key={row.id}>
-            <button type="button" className="w-full text-left" onClick={()=>{
+          return <Card key={row.id} density="compact" className="finance-payable">
+            <button type="button" className="finance-payable-trigger" aria-expanded={isOpen}
+              aria-controls={isOpen ? `payment-details-${row.id}` : undefined} onClick={()=>{
               setExpanded(isOpen?null:row.id);
               if(!accounts[row.id]&&options.length)setAccounts(x=>({...x,[row.id]:options[0].id}));
             }}>
-              <div className="flex flex-wrap items-start justify-between gap-2">
+              <div className="finance-payable-heading">
                 <div className="min-w-0">
                   <p className="text-xs text-muted">{purchaseLabel(row)} · {trDate(due)}</p>
                   <strong className="text-base">{row.title}</strong>
                   {row.order_id?<p className="text-xs text-muted">Sipariş kaydı · ürün alış maliyeti</p>:null}
                 </div>
-                <span className={remaining<=0?"font-semibold text-green-600":
-                    "rounded-md bg-red-50 px-2 py-1 text-xs font-bold text-red-700"}>
+                <span className={remaining <= 0 ? "finance-payment-status finance-payment-status--paid" : "finance-payment-status"}>
                   {remaining<=0?"Ödendi":isLate?"Gecikti · Ödenmemiş":
                     paid>0?"Kısmi ödendi":"Ödenmemiş"}
                 </span>
               </div>
-              <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
+              <div className="finance-payment-amounts">
                 <div>Toplam<strong className="mt-1 block text-sm">{money(row.gross,row.currency)}</strong></div>
                 <div>Ödenen<strong className="mt-1 block text-sm">{money(paid,row.currency)}</strong></div>
                 <div>Kalan<strong className="mt-1 block text-sm">{money(remaining,row.currency)}</strong></div>
               </div>
-              <p className="mt-2 text-xs underline">{isOpen?"Ayrıntıları kapat":"Ödemeyi düzenle / ayrıntıları aç"}</p>
+              <p className="finance-payment-affordance"><span>{isOpen ? "Ayrıntıları kapat" : "Ödeme ayrıntıları"}</span><span aria-hidden="true">{isOpen ? "−" : "+"}</span></p>
             </button>
-            {isOpen?<div className="mt-4 space-y-4 border-t border-border-subtle pt-4">
+            {isOpen?<div id={`payment-details-${row.id}`} className="mt-4 space-y-4 border-t border-border-subtle pt-4">
               {row.order_items?.length? <div className="space-y-2">
                 <strong className="text-sm">Siparişteki ürünler</strong>
                 {row.order_items.map(item=><div className="flex items-center gap-3" key={item.id}>
@@ -181,7 +181,7 @@ export function FinancePayables(){
                   </div>:null}
                 </div>)}
               </div>:null}
-              {showInput?<div className="grid gap-3 sm:grid-cols-3">
+              {showInput?<div className="finance-payment-editor grid gap-3 sm:grid-cols-3">
                 <label className="text-sm">Ödenen tutar
                   <input className="form-input mt-1 w-full" type="number" min="0.01"
                     max={remaining} step="0.01" placeholder="Örn. 2000"

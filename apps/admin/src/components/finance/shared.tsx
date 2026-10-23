@@ -1,5 +1,8 @@
 "use client";
 import "@/app/finance/finance.css";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { ChartNoAxesCombined, ListFilter, WalletCards } from "lucide-react";
 import {
   useCallback,
   useEffect,
@@ -12,6 +15,7 @@ import {
   SelectControl as Select,
   Button,
   Toolbar,
+  SegmentedControl,
 } from "@ruth-commerce/ui";
 import { adminRequest } from "@/lib/adminApi";
 import { financePeriod } from "@ruth-commerce/commerce-core/finance";
@@ -85,7 +89,7 @@ export function Field({
   children: ReactNode;
 }) {
   return (
-    <label className="flex min-w-0 flex-col gap-2 ruth-type-body">
+    <label className="finance-field ruth-type-body">
       <span>{label}</span>
       {children}
     </label>
@@ -169,11 +173,11 @@ export function usePeriod(initial?: {
   to?: string;
   currency?: string;
 }) {
-  const [preset, setPreset] = useState(initial?.from ? "custom" : "month");
+  const [preset, setPreset] = useState(initial?.from ? "custom" : "today");
   const [dates, setDates] = useState(() =>
     initial?.from && initial?.to
       ? { from: initial.from, to: initial.to }
-      : financePeriod("month"),
+      : financePeriod("today"),
   );
   const [currency, setCurrency] = useState(initial?.currency || "TRY");
   return {
@@ -197,7 +201,7 @@ export function PeriodFilter({
   allCurrencies?: boolean;
 }) {
   return (
-    <Toolbar>
+    <Toolbar className="finance-period">
       <Pick
         label="Tarih aralığı"
         value={period.preset}
@@ -253,19 +257,40 @@ export function PeriodFilter({
   );
 }
 export function FinanceNav() {
+  const pathname = usePathname();
+  const links = [
+    { href: "/finance", label: "Genel bakış", icon: ChartNoAxesCombined },
+    { href: "/finance/records", label: "Kayıtlar", icon: ListFilter },
+    { href: "/finance/payables", label: "Ödemeler", icon: WalletCards },
+  ];
   return (
-    <nav aria-label="Finans sayfaları" className="flex flex-wrap gap-3">
-      <a className="ruth-type-control underline" href="/finance">
-        Genel Bakış
-      </a>
-      <a className="ruth-type-control underline" href="/finance/records">
-        Kayıtlar
-      </a>
-      <a className="ruth-type-control underline" href="/finance/payables">
-        Ödemeler
-      </a>
+    <nav aria-label="Finans sayfaları" className="finance-nav">
+      {links.map(({ href, label, icon: Icon }) => (
+        <Link key={href} href={href} aria-current={pathname === href ? "page" : undefined}>
+          <Icon size={18} aria-hidden="true" />
+          <span>{label}</span>
+        </Link>
+      ))}
     </nav>
   );
+}
+
+export function FinanceSegments({ label, value, onChange, options }: {
+  label: string; value: string; onChange: (value: string) => void;
+  options: Array<[string, string]>;
+}) {
+  return <SegmentedControl className="finance-segments" ariaLabel={label} value={value}
+    onValueChange={onChange} items={options.map(([value, label]) => ({ value, label }))} />;
+}
+
+export function FinanceExport({ onDownload }: { onDownload: (format: string) => void }) {
+  const [format, setFormat] = useState("csv");
+  return <div className="finance-export">
+    <Select aria-label="Dışa aktarma biçimi" value={format} onChange={event => setFormat(event.target.value)}>
+      <option value="csv">CSV</option><option value="xlsx">Excel</option><option value="pdf">PDF</option>
+    </Select>
+    <Button variant="secondary" onClick={() => onDownload(format)}>Dışa aktar</Button>
+  </div>;
 }
 export function ActionForm({
   fields,

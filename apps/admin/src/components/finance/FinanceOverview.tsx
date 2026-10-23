@@ -16,6 +16,8 @@ import {
 import { adminAuthHeaders } from "@/lib/adminApi";
 import {
   FinanceNav,
+  FinanceSegments,
+  FinanceExport,
   PeriodFilter,
   Pick,
   labels,
@@ -27,8 +29,7 @@ import {
 } from "./shared";
 import { FinanceSettings } from "./FinanceSettings";
 const metrics = [
-  "net_sales", "cogs", "gross_profit", "operating_expenses",
-  "total_expenses", "unpaid", "receivables",
+  "net_sales", "total_expenses", "unpaid", "receivables",
 ];
 function readableDate(value:string) {
   const date=new Date(value+"T12:00:00Z");
@@ -45,6 +46,7 @@ function monthBounds(month:string,period:{from:string;to:string}) {
 
 export function FinanceOverview() {
   const period = usePeriod();
+  const [view, setView] = useState("summary");
   const [productSort, setProductSort] = useState("revenue");
   const [group, setGroup] = useState("day"),
     [chart, setChart] = useState("line"),
@@ -120,25 +122,17 @@ export function FinanceOverview() {
     return `Önceki döneme göre ${change >= 0 ? "+" : ""}%${change.toFixed(1)}`;
   };
   return (
-    <PageShell density="compact">
-      <PageHeader
+    <PageShell density="compact" className="finance-workspace">
+      <PageHeader className="finance-header"
         eyebrow="Finans"
-        title="Genel Bakış"
-        description="Satışlar, ürün maliyetleri, giderler, kâr ve ödemeler"
+        title="Finansal genel bakış"
+        description="İşletmenin finansal durumunu tek bakışta takip et."
         actions={
           <>
             <Button variant="secondary" onClick={() => void report.load()}>
               Yenile
             </Button>
-            <Button variant="secondary" onClick={() => void download()}>
-              CSV
-            </Button>
-            <Button variant="secondary" onClick={() => void download("xlsx")}>
-              Excel
-            </Button>
-            <Button variant="secondary" onClick={() => void download("pdf")}>
-              PDF
-            </Button>
+            <FinanceExport onDownload={(format) => void download(format)} />
             <Button disabled={!setup.data} onClick={() => setSettings(true)}>
               Ayarlar
             </Button>
@@ -165,13 +159,6 @@ export function FinanceOverview() {
       {report.loading && !data ? <Skeleton height={160} /> : null}
       {data ? (
         <>
-          <Notice>
-            Girilen tüm satış, ürün maliyeti ve giderler hesaplanır.
-            Eksik alış fiyatı veya henüz kaydedilmemiş vergi ve gider varsa
-            kâr da eksik hesaplanır. PayTR bekleyen tahsilatlar gerçek ödeme
-            özeti API'sinden alınır; bu tutarlar henüz banka bakiyesi değildir.
-            Giderler dövizli işlemlerde kayıtlı kurla TL'ye çevrilir; satış ve diğer kayıtların para birimi değiştirilmez.
-          </Notice>
           {Number(data.current.missing_costs) > 0 ||
           Number(data.current.refund_review) > 0 ? (
             <Notice tone="warning">
@@ -186,22 +173,21 @@ export function FinanceOverview() {
               Nakit akışı bu kayıtlar mutabık hale gelene kadar eksik olabilir.
             </Notice>
           ) : null}
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="finance-view-bar">
+            <FinanceSegments label="Genel bakış bölümü" value={view} onChange={setView}
+              options={[["summary", "Özet"], ["analysis", "Ayrıntılı analiz"], ["accounts", "Kasa ve bütçe"]]} />
+            <p>Tutarlar seçilen döneme aittir.</p>
+          </div>
+          <div className="finance-metrics">
             {metrics.map((key) => key==="total_expenses" ? (
-              <button key={key} type="button"
-                className="w-full text-left rounded-[var(--radius-card)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                aria-expanded={expensesOpen} aria-controls="finance-expense-details"
-                onClick={()=>setExpensesOpen(value=>!value)}>
-                <MetricCard
-                  label="Toplam giderler (TL)"
-                  value={displayAmount(key,data.current)}
-                  description={expensesOpen ? "Gider listesini kapat ▲" :
-                    "Giderleri ve döviz kurlarını göster ▼"}
-                />
-              </button>
+              <MetricCard key={key} className="finance-metric" label="Toplam giderler (TL)"
+                value={displayAmount(key, data.current)} expanded={expensesOpen}
+                onToggle={() => setExpensesOpen(value => !value)}
+                description={expensesOpen ? "Gider ayrıntılarını kapat" : "Giderleri ve uygulanan kurları incele"} />
             ) : (
               <MetricCard
                 key={key}
+                className={key === "net_sales" ? "finance-metric finance-metric--sales" : "finance-metric"}
                 label={labels[key]}
                 value={displayAmount(key,data.current)}
                 description={key==="receivables"?"PayTR'nin henüz hesaba aktarmadığı ödemeler":
@@ -209,9 +195,14 @@ export function FinanceOverview() {
               />
             ))}
           </div>
+          <div className="finance-summary" aria-label="Satış ve maliyet özeti">
+            {["cogs", "gross_profit", "period_result"].map(key => <div key={key}>
+              <span>{key === "period_result" ? "Net kâr · kayıtlı giderlere göre tahmini" : labels[key]}</span><strong className="ruth-type-card-title">{displayAmount(key, data.current)}</strong>
+            </div>)}
+          </div>
           {expensesOpen ? (
-            <PageSection title="Toplam giderler · TL karşılıkları">
-              <div id="finance-expense-details" className="space-y-3">
+            <PageSection className="finance-section" title="Toplam giderler · TL karşılıkları">
+              <div id="finance-expense-details" className="finance-expense-list">
                 <p className="text-xs text-muted">
                   Ürün maliyeti bir kez dahil edilir. Ürün alış borçları tekrar
                   eklenmez. Gider tutarları iade edilebilir KDV hariç net değerdir.
@@ -225,7 +216,7 @@ export function FinanceOverview() {
                 </Notice>:null}
                 {!expenseDetails?<p className="text-sm">Giderler yükleniyor…</p>:null}
                 {expenseDetails?.cogs!=null?(
-                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border-subtle py-2">
+                  <div className="finance-expense-row">
                     <div>
                       <strong>Satılan ürünlerin alış maliyeti</strong>
                       <p className="text-xs text-muted">Siparişlerin maliyet kayıtlarından · ikinci kez sayılmaz</p>
@@ -234,13 +225,13 @@ export function FinanceOverview() {
                   </div>
                 ):null}
                 {expenseDetails?.rows.map((e)=>(
-                  <div key={e.id} className="flex flex-wrap items-start justify-between gap-3 border-b border-border-subtle py-2">
+                  <div key={e.id} className="finance-expense-row">
                     <div className="min-w-0">
                       <strong className="text-sm">{e.title}</strong>
                       <p className="text-xs text-muted">{readableDate(e.occurred_on)} · {labels[e.nature]||"Gider"}</p>
                       {e.currency!=="TRY"?<>
-                        <p className="text-xs">
-                          {money(e.originalNet,e.currency)} × 1 {e.currency} =
+                        <p className="finance-fx">
+                          {money(e.originalNet,e.currency)} · 1 {e.currency} =
                           {" "}{new Intl.NumberFormat("tr-TR",{maximumFractionDigits:6}).format(e.fxToTry)} TL
                         </p>
                         <p className="text-xs text-muted">
@@ -260,29 +251,9 @@ export function FinanceOverview() {
               </div>
             </PageSection>
           ):null}
-          <PageSection title="PayTR'den beklenen tahsilatlar"
-            description="PayTR Ödeme Özeti API'sinin bildirdiği gerçek aktarım tarihleri ve tutarları">
-            {payouts.error?<Notice tone="warning">
-              PayTR bekleyen tahsilatları alınamadı: {payouts.error}
-              <Button variant="secondary" onClick={()=>void payouts.load()}>Tekrar dene</Button>
-            </Notice>:null}
-            {payouts.loading&&!payouts.data?<p>PayTR ödeme takvimi yükleniyor…</p>:null}
-            {payouts.data && !payouts.data.upcoming.length?<p className="text-sm text-muted">
-              PayTR hakediş raporunda doğrulanmış bekleyen transfer bulunmuyor.
-            </p>:null}
-            {payouts.data?.upcoming?.length?<DataTable<Row>
-              rows={payouts.data.upcoming}
-              getRowKey={(row)=>row.date+"-"+row.currency}
-              columns={[
-                {key:"date",header:"Hesaba geçiş tarihi",
-                 cell:(row)=>readableDate(row.date)},
-                {key:"net",header:"Beklenen net aktarım",
-                 cell:(row)=>money(row.net,row.currency)},
-                {key:"currency",header:"Para birimi",cell:(row)=>row.currency},
-              ]}
-            />:null}
-          </PageSection>
-          <PageSection
+          {view === "summary" ? <>
+            <div className="finance-columns finance-overview-main">
+          <PageSection className="finance-section"
             title="Gelir · Gider · Kâr"
             actions={
               <>
@@ -309,7 +280,7 @@ export function FinanceOverview() {
               </>
             }
           >
-            <div className="flex flex-wrap gap-3">
+            <div className="finance-chart-legend">
               {["net_sales", "operating_expenses"].map(
                 (k) => (
                   <div key={k} className="flex items-center gap-2">
@@ -338,9 +309,32 @@ export function FinanceOverview() {
               }}
             />
           </PageSection>
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <PageSection title="Gider dağılımı">
-              <DataTable<Row>
+          <PageSection className="finance-section" title="PayTR'den beklenen tahsilatlar"
+            description="PayTR Ödeme Özeti API'sinin bildirdiği gerçek aktarım tarihleri ve tutarları">
+            {payouts.error?<Notice tone="warning">
+              PayTR bekleyen tahsilatları alınamadı: {payouts.error}
+              <Button variant="secondary" onClick={()=>void payouts.load()}>Tekrar dene</Button>
+            </Notice>:null}
+            {payouts.loading&&!payouts.data?<p>PayTR ödeme takvimi yükleniyor…</p>:null}
+            {payouts.data && !payouts.data.upcoming.length?<p className="text-sm text-muted">
+              PayTR hakediş raporunda doğrulanmış bekleyen transfer bulunmuyor.
+            </p>:null}
+            {payouts.data?.upcoming?.length?<DataTable<Row> layout="fit" density="compact"
+              rows={payouts.data.upcoming}
+              getRowKey={(row)=>row.date+"-"+row.currency}
+              columns={[
+                {key:"date",header:"Hesaba geçiş tarihi",
+                 cell:(row)=>readableDate(row.date)},
+                {key:"net",header:"Beklenen net aktarım",
+                 cell:(row)=>money(row.net,row.currency)},
+                {key:"currency",header:"Para birimi",cell:(row)=>row.currency},
+              ]}
+            />:null}
+          </PageSection>
+            </div>
+          <div className="finance-columns">
+            <PageSection className="finance-section" title="Gider dağılımı">
+              <DataTable<Row> layout="fit" density="compact"
                 rows={data.categories}
                 getRowKey={(r) => r.category_id || "other"}
                 onRowActivate={(r) => {
@@ -368,12 +362,12 @@ export function FinanceOverview() {
               />
               <div className="mt-3 space-y-1 rounded-lg bg-surface-secondary p-3">
                 <div className="flex items-center justify-between gap-3 text-sm">
-                  <span>PayTR taksit vade farkı (PayTR'ye aktarılan)</span>
+                  <span>PayTR taksit vade farkı (PayTR&apos;ye aktarılan)</span>
                   <strong>{data.paytrInstallmentPassThrough == null
                     ? "Mutabakat verisi henüz yok"
                     : money(data.paytrInstallmentPassThrough, period.currency)}</strong>
                 </div>
-                <p className="text-xs text-muted">
+                <p className="finance-note">
                   Bilgilendirme kalemidir. Müşteri tarafından ödenir ve
                   işletmemizin satış geliri olmadığı için gider toplamından
                   ve kârdan ikinci kez düşülmez. PayTR %4,10 komisyonu ise
@@ -381,8 +375,8 @@ export function FinanceOverview() {
                 </p>
               </div>
             </PageSection>
-            <PageSection title="Satış kanalları">
-              <DataTable<Row>
+            <PageSection className="finance-section" title="Satış kanalları">
+              <DataTable<Row> layout="fit" density="compact"
                 rows={data.channels}
                 getRowKey={(r) => r.name}
                 columns={[
@@ -400,14 +394,16 @@ export function FinanceOverview() {
               />
             </PageSection>
           </div>
-          <PageSection title="Finansal tablo">
+          </> : null}
+          {view === "analysis" ? <>
+          <PageSection className="finance-section" title="Finansal tablo">
             <div
               tabIndex={0}
               className="overflow-x-auto"
               role="region"
               aria-label="Aylık finansal tablo"
             >
-              <table className="w-full ruth-type-table">
+              <table className="finance-table ruth-type-table">
                 <thead>
                   <tr>
                     <th scope="col">Kalem</th>
@@ -450,7 +446,7 @@ export function FinanceOverview() {
               </table>
             </div>
           </PageSection>
-          <PageSection
+          <PageSection className="finance-section"
             title="Ürün analizi"
             actions={
               <Pick
@@ -467,7 +463,7 @@ export function FinanceOverview() {
             }
             description="Sipariş net geliri kalemlere orantılı dağıtılır. Son kalem yuvarlama farkını alır; maliyet ve iade eksiğinde kâr gösterilmez."
           >
-            <DataTable<Row>
+            <DataTable<Row> layout="fit" density="compact"
               rows={[...data.products]
                 .filter(
                   (r: Row) =>
@@ -521,11 +517,11 @@ export function FinanceOverview() {
               ]}
             />
           </PageSection>
-          <PageSection
+          <PageSection className="finance-section"
             title="Kategori ve koleksiyon kârlılığı"
             description="Bir ürün birden fazla grupta olabilir; grupların toplamı şirket toplamı değildir."
           >
-            <DataTable<Row>
+            <DataTable<Row> layout="fit" density="compact"
               rows={data.product_groups || []}
               getRowKey={(r) => r.kind + r.id}
               columns={[
@@ -553,8 +549,10 @@ export function FinanceOverview() {
               ]}
             />
           </PageSection>
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <PageSection title="Bütçe takibi">
+          </> : null}
+          {view === "accounts" ? <>
+          <div className="finance-columns">
+            <PageSection className="finance-section" title="Bütçe takibi">
               {data.budgets.length ? (
                 data.budgets.map((r: Row) => (
                   <Card key={r.id} density="compact">
@@ -586,7 +584,7 @@ export function FinanceOverview() {
                 />
               )}
             </PageSection>
-            <PageSection title="Kasa ve banka bakiyeleri">
+            <PageSection className="finance-section" title="Kasa ve banka bakiyeleri">
               {data.accounts.map((r: Row) => (
                 <Card key={r.id} density="compact">
                   <strong>{r.name}</strong>
@@ -599,6 +597,14 @@ export function FinanceOverview() {
               </Notice>
             </PageSection>
           </div>
+          </> : null}
+          <details className="finance-disclosure"><summary>Hesaplamalar ve para birimleri hakkında</summary><p>
+            Girilen tüm satış, ürün maliyeti ve giderler hesaplanır.
+            Eksik alış fiyatı veya henüz kaydedilmemiş vergi ve gider varsa
+            kâr da eksik hesaplanır. PayTR bekleyen tahsilatlar gerçek ödeme
+            özeti API&apos;sinden alınır; bu tutarlar henüz banka bakiyesi değildir.
+            Giderler dövizli işlemlerde kayıtlı kurla TL&apos;ye çevrilir; satış ve diğer kayıtların para birimi değiştirilmez.
+          </p></details>
         </>
       ) : null}
       {settings && setup.data ? (
@@ -614,108 +620,45 @@ export function FinanceOverview() {
     </PageShell>
   );
 }
-function FinanceChart({
-  series,
-  keys,
-  kind,
-  currency,
-  onSelect,
-}: {
-  series: Row[];
-  keys: string[];
-  kind: string;
-  currency: string;
-  onSelect: (d: string) => void;
+function FinanceChart({ series, keys, kind, currency, onSelect }: {
+  series: Row[]; keys: string[]; kind: string; currency: string; onSelect: (date: string) => void;
 }) {
-  const max = Math.max(
-    1,
-    ...series.flatMap((r) =>
-      keys.map((k) => Math.abs(Number(r.values[k] || 0))),
-    ),
-  );
-  const colors = [
-    "var(--ruth-color-accent)",
-    "var(--ruth-color-warning)",
-    "var(--ruth-color-success)",
-  ];
-  return (
-    <div
-      className="overflow-x-auto"
-      tabIndex={0}
-      role="region"
-      aria-label="Finans grafiği"
-    >
-      <svg
-        viewBox="0 0 720 260"
-        className="w-full min-w-72"
-        role="img"
-        aria-label="Gelir gider ve kâr grafiği"
-      >
-        <line
-          x1="30"
-          x2="700"
-          y1="130"
-          y2="130"
-          stroke="var(--ruth-color-border-subtle)"
-        />
-        {keys.map((k, index) => {
-          const pts = series
-            .map((r, i) =>
-              r.values[k] == null
-                ? null
-                : `${40 + (i * 650) / Math.max(series.length - 1, 1)},${130 - (Number(r.values[k]) / max) * 105}`,
-            )
-            .filter(Boolean)
-            .join(" ");
-          return (
-            <g key={k} stroke={colors[index % 3]} fill={colors[index % 3]}>
-              {kind === "line" ? (
-                <polyline points={pts} fill="none" strokeWidth="2" />
-              ) : null}
-              {series.map((r, i) => {
-                if (r.values[k] == null) return null;
-                const x = 40 + (i * 650) / Math.max(series.length - 1, 1),
-                  y = 130 - (Number(r.values[k] || 0) / max) * 105;
-                return (
-                  <g
-                    key={r.date}
-                    tabIndex={0}
-                    role="button"
-                    aria-label={`${r.date} ${labels[k]} ${money(r.values[k], currency)}`}
-                    onClick={() => onSelect(r.date)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        onSelect(r.date);
-                      }
-                    }}
-                  >
-                    <title>
-                      {r.date} · {labels[k]} · {money(r.values[k], currency)}
-                    </title>
-                    {kind === "bar" ? (
-                      <rect
-                        x={x + index * 5}
-                        y={Math.min(y, 130)}
-                        width="5"
-                        height={Math.abs(130 - y)}
-                      />
-                    ) : (
-                      <circle cx={x} cy={y} r="4" />
-                    )}
-                  </g>
-                );
-              })}
-            </g>
-          );
-        })}
-        <text x="30" y="250" fill="var(--ruth-color-text-muted)">
-          {series[0]?.date}
-        </text>
-        <text x="600" y="250" fill="var(--ruth-color-text-muted)">
-          {series.at(-1)?.date}
-        </text>
-      </svg>
-    </div>
-  );
+  if (!series.length) return <EmptyState title="Bu dönemde grafik verisi yok" description="Farklı bir tarih aralığı seçebilirsin." />;
+  const values = series.flatMap(row => keys.flatMap(key => row.values[key] == null ? [] : [Number(row.values[key])]));
+  const minimum = Math.min(0, ...values), maximum = Math.max(1, ...values);
+  const yFor = (value: number) => 210 - ((value - minimum) / (maximum - minimum)) * 190;
+  const xFor = (index: number) => series.length === 1 ? 360 : 30 + index * 660 / (series.length - 1);
+  const colors: Record<string, string> = { net_sales: "var(--ruth-color-text-primary)", operating_expenses: "var(--ruth-color-warning)" };
+  return <div className="finance-chart" role="region" aria-label="Finans grafiği" tabIndex={0}>
+    <div className="finance-chart-caption"><span>{money(maximum, currency)}</span><span>{keys.length ? "Bir noktayı seçerek kayıtları aç" : "Gösterilecek bir kalem seç"}</span></div>
+    <svg viewBox="0 0 720 230" role="group" aria-label="Satış ve gider grafiği">
+      {[20, 83, 147, 210].map(y => <line key={y} x1="20" x2="700" y1={y} y2={y} stroke="var(--ruth-color-border-subtle)" strokeDasharray="4 6" />)}
+      {keys.map((key, keyIndex) => {
+        const segments: string[][] = [[]];
+        series.forEach((row, index) => {
+          if (row.values[key] == null) { if (segments.at(-1)?.length) segments.push([]); }
+          else segments[segments.length - 1].push(`${xFor(index)},${yFor(Number(row.values[key]))}`);
+        });
+        const color = colors[key] || "var(--ruth-color-info)";
+        const barWidth = Math.min(24, 600 / Math.max(series.length, 1) / Math.max(keys.length, 1));
+        return <g key={key} fill={color} stroke={color}>
+          {kind === "line" ? segments.filter(points => points.length).map((points, index) => <polyline key={index} points={points.join(" ")} fill="none" strokeWidth="2.5" strokeLinejoin="round" />) : null}
+          {series.map((row, index) => {
+            if (row.values[key] == null) return null;
+            const x = xFor(index), y = yFor(Number(row.values[key])), zero = yFor(0);
+            return <g key={row.date} role="button" tabIndex={0}
+              aria-label={`${readableDate(row.date)} · ${labels[key]} · ${money(row.values[key], currency)}`}
+              onClick={() => onSelect(row.date)} onKeyDown={event => {
+                if (event.key === "Enter" || event.key === " ") { event.preventDefault(); onSelect(row.date); }
+              }}>
+              <title>{readableDate(row.date)} · {labels[key]} · {money(row.values[key], currency)}</title>
+              {kind === "bar" ? <rect x={x + (keyIndex - (keys.length - 1) / 2) * (barWidth + 2) - barWidth / 2}
+                y={Math.min(y, zero)} width={barWidth} height={Math.abs(zero - y)} rx="2" /> : <circle cx={x} cy={y} r="4" />}
+            </g>;
+          })}
+        </g>;
+      })}
+    </svg>
+    <div className="finance-chart-caption"><span>{readableDate(series[0].date)}</span><span>{readableDate(series[series.length - 1].date)}</span></div>
+  </div>;
 }
