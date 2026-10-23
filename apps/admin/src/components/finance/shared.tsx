@@ -173,11 +173,11 @@ export function usePeriod(initial?: {
   to?: string;
   currency?: string;
 }) {
-  const [preset, setPreset] = useState(initial?.from ? "custom" : "today");
+  const [preset, setPreset] = useState(initial?.from ? "custom" : "month");
   const [dates, setDates] = useState(() =>
     initial?.from && initial?.to
       ? { from: initial.from, to: initial.to }
-      : financePeriod("today"),
+      : financePeriod("month"),
   );
   const [currency, setCurrency] = useState(initial?.currency || "TRY");
   return {
