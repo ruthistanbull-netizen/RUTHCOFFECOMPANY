@@ -155,6 +155,17 @@ function findFutureBlocks(value: unknown, depth = 0): unknown[] {
   return blocks;
 }
 
+// An explicitly empty future_payments block is a confirmed empty schedule,
+// not a parser failure. Keep nonempty, unreadable provider data distinguishable.
+function hasFutureData(value: unknown, depth = 0): boolean {
+  if (depth > 16) return true;
+  const decoded = decode(value);
+  if (Array.isArray(decoded)) return decoded.some(child => hasFutureData(child, depth + 1));
+  const record = object(decoded);
+  if (record) return Object.values(record).some(child => hasFutureData(child, depth + 1));
+  return decoded != null && decoded !== false && String(decoded).trim() !== "";
+}
+
 function collectFutureMetricLeaves(
   value: unknown,
   context: MetricContext,
@@ -277,6 +288,7 @@ export async function loadPaytrSettlementReport(input: PaytrCredentials & { star
   const statuses: Array<{ startDate: string; endDate: string; status: string; futureBlocks: number }> = [];
   const errors: string[] = [];
   let providerFutureBlockCount = 0;
+  let parserMismatch = false;
   let fallbackIban: string | null = null;
 
   for (const window of windows) {
@@ -300,7 +312,11 @@ export async function loadPaytrSettlementReport(input: PaytrCredentials & { star
           paid.push(currentPaid);
           fallbackIban ||= currentPaid.ibanLast4;
         }
-        for (const block of blocks) future.push(...futureRowsFromBlock(block, fallbackIban));
+        for (const block of blocks) {
+          const parsed = futureRowsFromBlock(block, fallbackIban);
+          if (hasFutureData(block) && parsed.length === 0) parserMismatch = true;
+          future.push(...parsed);
+        }
       } else {
         const root = object(result);
         errors.push(String(root?.err_msg || `PayTR ${window.startDate}–${window.endDate} raporu hata döndürdü.`));
@@ -317,7 +333,8 @@ export async function loadPaytrSettlementReport(input: PaytrCredentials & { star
   const futureOnly = rows.filter((row) => row.future && row.date >= today && Math.abs(row.net) + Math.abs(row.sales) + Math.abs(row.returns) > 0);
   const paidOnly = rows.filter((row) => !row.future);
   const overallRange = { startDate: windows[0]?.startDate || today, endDate: windows.at(-1)?.endDate || today };
-  const parserMismatch = providerFutureBlockCount > 0 && futureOnly.length === 0;
+  // Parsed past/zero-value rows also mean there is no upcoming receivable.
+  // Only a nonempty block that could not be parsed warrants a warning.
   const providerFutureDataSeen = providerFutureBlockCount > 0;
 
   let providerWarning: string | null = null;
