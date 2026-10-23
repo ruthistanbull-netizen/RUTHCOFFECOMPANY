@@ -40,6 +40,9 @@ const EXCLUDED_PREFIXES = [
   "/api/push",
   "/api/notifications",
   "/api/paytr/status",
+  // Finance owns live balances and explicit provider availability. Persisted
+  // last-good responses must not replace a confirmed empty/error payout state.
+  "/api/finance",
   "/api/rosta-insight",
   "/api/ruthie",
   "/api/meta-ads",

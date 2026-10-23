@@ -58,6 +58,8 @@ const root = process.cwd();
         }
         if (url.pathname === '/api/finance/payouts') data = payoutState === 'unavailable'
           ? { ...payoutPayload, upcoming: [], byCurrency: {}, providerStatus: 'unavailable', payoutWarning: 'PayTR 429: rapor bekletiliyor.' }
+          : payoutState === 'empty'
+            ? { ...payoutPayload, upcoming: [], byCurrency: {}, unpaidTotal: 0 }
           : payoutState === 'partial'
             ? { ...payoutPayload, providerStatus: 'partial', payoutWarning: 'Bazı günler sorgulanamadı.' }
             : payoutPayload;
@@ -170,6 +172,11 @@ const root = process.cwd();
       await page.getByRole('button', { name: 'Tekrar dene', exact: true }).click();
       await expect(page.getByText('Bazı günler sorgulanamadı.', { exact: true })).toBeVisible();
       await expect(page.getByText('27 Ekim 2026', { exact: true })).toBeVisible();
+      payoutState = 'empty';
+      await go('/finance');
+      await expect(page.getByText('PayTR bu sorguda bekleyen aktarım bildirmedi.', { exact: true })).toBeVisible();
+      await expect(page.locator('.finance-metric').filter({ hasText: 'Beklenen tahsilatlar' })).toContainText('0,00');
+      await expect(page.getByText('27 Ekim 2026', { exact: true })).toHaveCount(0);
       payoutState = 'success'; overviewUnavailable = true;
       await go('/finance');
       await expect(page.locator('.finance-workspace')).toContainText('Finans raporu kullanılamıyor.');
