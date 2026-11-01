@@ -95,7 +95,7 @@ function assertValidServerKey(supabaseUrl: string, key: string) {
   }
 }
 
-export function getSupabaseAdmin() {
+export function createIsolatedSupabaseAdmin() {
   const supabaseUrl = assertRostaSupabaseUrl(normalizeSupabaseUrl(
     process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL,
   ));
@@ -107,12 +107,13 @@ export function getSupabaseAdmin() {
 
   assertValidServerKey(supabaseUrl, serviceRoleKey);
 
-  if (!adminClient) {
-    adminClient = createClient(supabaseUrl, serviceRoleKey, {
-      auth: { persistSession: false, autoRefreshToken: false },
-      global: { fetch: supabaseAdminFetch },
-    });
-  }
+  return createClient(supabaseUrl, serviceRoleKey, {
+    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+    global: { fetch: supabaseAdminFetch },
+  });
+}
 
+export function getSupabaseAdmin() {
+  if (!adminClient) adminClient = createIsolatedSupabaseAdmin();
   return adminClient;
 }
