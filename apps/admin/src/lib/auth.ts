@@ -1,3 +1,4 @@
+import { panelRole, panelRouteAllowed } from "@/lib/adminPanelPolicy";
 import { NextResponse } from "next/server";
 import { createHash, timingSafeEqual } from "node:crypto";
 import { readAdminContinuity } from "@/lib/adminContinuity";
@@ -351,9 +352,6 @@ async function requireAdminIdentity(request: Request) {
     return { error: NextResponse.json({ ok: false, error: "Oturum geçersiz." }, { status: 401 }) };
   }
 
-  if (String(verified.user.app_metadata?.panel_status || "active") === "disabled") {
-    return { error: NextResponse.json({ ok: false, error: "Bu panel hesabı devre dışı bırakılmış." }, { status: 403 }) };
-  }
 
   const freshProfile = cachedProfile(verified.user.id, false);
   if (freshProfile) {
@@ -435,73 +433,35 @@ async function requireAdminIdentity(request: Request) {
 }
 
 
-const PANEL_ROLES = new Set(["owner", "admin", "operations", "support", "marketing", "viewer"]);
-const ROLE_WRITE_PREFIXES: Record<string, string[]> = {
-  operations: ["/api/products", "/api/product-settings", "/api/orders", "/api/shipping", "/api/inventory", "/api/preparing-products", "/api/warehouse"],
-  support: ["/api/orders", "/api/customers", "/api/contact", "/api/returns", "/api/shipping"],
-  marketing: ["/api/theme", "/api/social-media", "/api/collections", "/api/marketing", "/api/campaigns", "/api/email", "/api/media"],
-};
 
-function matchesRoute(path: string, prefix: string) {
-  return path === prefix || path.startsWith(prefix + "/");
-}
-
-/**
- * Roles live in Supabase Auth app_metadata, never user_metadata.
- * Existing admin users must be migrated by the ROSTA owner bootstrap before deployment.
- * Unknown roles have no panel permissions (fail-closed).
- */
+// Every panel request rechecks Auth and the profile store. Signed JWTs,
+// continuity cookies and caches prove identity, not current authorization.
 export async function requireAdmin(request: Request) {
   const result = await requireAdminIdentity(request);
   if ("error" in result || result.internal) return result;
-
-  const method = request.method.toUpperCase();
-  const isRead = method === "GET" || method === "HEAD" || method === "OPTIONS";
-  // Always refresh authoritative app_metadata on mutations: JWT claims and
-  // continuity cookies may contain a stale role after an owner disables a user.
-  let metadata = result.user.app_metadata || {};
-  if (!isRead) {
-    try {
-      const live = await withTimeout(
-        result.supabase.auth.admin.getUserById(String(result.user.id)),
-        5_000,
-        "ROSTA kullanıcı yetkisi doğrulanamadı.",
-      );
-      if (live.error || !live.data.user) throw new Error("Kullanıcı yetkisi alınamadı.");
-      metadata = live.data.user.app_metadata || {};
-    } catch {
-      return { error: NextResponse.json({ ok: false, error: "Rol doğrulaması geçici olarak yapılamıyor." }, { status: 503 }) };
+  try {
+    const live = await withTimeout(
+      result.supabase.auth.admin.getUserById(String(result.user.id)),
+      5_000, "Güncel kullanıcı yetkisi doğrulanamadı.",
+    );
+    if (live.error || !live.data.user) {
+      return { error: NextResponse.json({ ok: false, error: "Oturum hesabı doğrulanamadı." }, { status: live.error?.status === 404 ? 401 : 503 }) };
     }
-  }
-  // Keep the route's owner/role checks in sync with live metadata, not a
-  // previously signed JWT whose role may now have been revoked.
-  if (!isRead) Object.assign(result.user, { app_metadata: metadata });
-  const role = String(metadata.panel_role || "").toLowerCase();
-  const status = String(metadata.panel_status || "active").toLowerCase();
-  if (!PANEL_ROLES.has(role) || status !== "active") {
-    return { error: NextResponse.json({ ok: false, error: "ROSTA panel erişim yetkin yok veya hesabın devre dışı." }, { status: 403 }) };
-  }
-
-  const path = new URL(request.url).pathname;
-  if (path.startsWith("/api/finance/")) return result;
-  if (role === "owner" || role === "admin") return result;
-  if (isRead) {
-    if (path === "/api/me" || path === "/api/account") return result;
-    if (role === "viewer") {
-      const viewerReadable = ["/api/products", "/api/categories", "/api/collections", "/api/inventory", "/api/dashboard"];
-      if (viewerReadable.some((prefix) => matchesRoute(path, prefix))) return result;
-    } else {
-      const commonReadable = ["/api/dashboard", "/api/products", "/api/categories", "/api/collections", "/api/inventory", "/api/health"];
-      if ([...commonReadable, ...(ROLE_WRITE_PREFIXES[role] || [])]
-        .some((prefix) => matchesRoute(path, prefix))) return result;
+    const user = live.data.user;
+    const role = panelRole(user);
+    if (!role) return { error: NextResponse.json({ ok: false, error: "Panel erişimin yok veya hesabın kapalı." }, { status: 403 }) };
+    const profile = await withTimeout(result.supabase.from("profiles")
+      .select("id, email, full_name, role").eq("auth_user_id", user.id).maybeSingle(),
+      5_000, "Güncel profil doğrulanamadı.");
+    if (profile.error) throw profile.error;
+    if (profile.data?.role !== "admin") {
+      return { error: NextResponse.json({ ok: false, error: "Panel profilin etkin değil." }, { status: 403 }) };
     }
-    return { error: NextResponse.json({ ok: false, error: "Bu verileri görmek için panel rolünün yetkisi yok." }, { status: 403 }) };
+    if (!panelRouteAllowed(role, request.method.toUpperCase(), new URL(request.url).pathname)) {
+      return { error: NextResponse.json({ ok: false, error: "Bu işlem için panel rolünün yetkisi yok." }, { status: 403 }) };
+    }
+    return { ...result, user, profile: profile.data };
+  } catch {
+    return { error: NextResponse.json({ ok: false, error: "Güncel yetki doğrulanamadı. Tekrar dene." }, { status: 503 }) };
   }
-
-  // Account mutations perform their own strict owner/self checks server-side.
-  if (path === "/api/account") return result;
-  if (role === "owner" || role === "admin") return result;
-  if (ROLE_WRITE_PREFIXES[role]?.some((prefix) => matchesRoute(path, prefix))) return result;
-
-  return { error: NextResponse.json({ ok: false, error: "Bu işlem için panel rolünün yetkisi yok." }, { status: 403 }) };
 }

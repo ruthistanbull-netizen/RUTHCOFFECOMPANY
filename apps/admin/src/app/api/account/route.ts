@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
+import { deleteOwnPanelAccount } from "@/lib/panelAccountDeletion";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -74,6 +75,8 @@ async function payload(auth: any) {
   if (authError) throw new Error(authError.message);
   const usersById = new Map((authData.users || []).map((user: any) => [String(user.id), user]));
 
+  usersById.set(String(auth.user.id), auth.user);
+
   const accounts: AccountRow[] = profileRows.map((profile) => {
     const user: any = usersById.get(String(profile.auth_user_id || ""));
     const metadata = user?.app_metadata || {};
@@ -108,7 +111,7 @@ async function payload(auth: any) {
     is_current: true,
   } satisfies AccountRow;
 
-  return { current, accounts };
+  return { current, accounts: current.panel_role === "owner" ? accounts : [current] };
 }
 
 async function assertEmailAvailable(supabase: any, email: string, targetId: string) {
@@ -147,6 +150,9 @@ async function updateAccountIdentity(options: {
 
   const { data: userData, error: userReadError } = await auth.supabase.auth.admin.getUserById(String(target.auth_user_id));
   if (userReadError || !userData.user) throw new Error(userReadError?.message || "Auth kullanıcısı okunamadı.");
+  if (String(target.auth_user_id) !== String(auth.user.id) && userData.user.app_metadata?.panel_role === "owner") {
+    throw new Error("Başka bir sahip hesabı bu işlemle değiştirilemez.");
+  }
 
   const oldMetadata = userData.user.user_metadata || {};
   const oldAppMetadata = userData.user.app_metadata || {};
@@ -315,4 +321,11 @@ export async function POST(request: Request) {
   } catch (error) {
     return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : "Kullanıcı oluşturulamadı." }, { status: 400 });
   }
+}
+
+
+export async function DELETE(request: Request) {
+  const auth = await requireAdmin(request);
+  if ("error" in auth) return auth.error;
+  return deleteOwnPanelAccount(request, auth);
 }
