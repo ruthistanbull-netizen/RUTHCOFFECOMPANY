@@ -73,7 +73,7 @@ export async function createRuthieAdminAgentResponseV2(options: {
   const provider = options.useRuna ? runaProvider(options.env, fetchImpl) : null;
   const config = provider ? null : runtimeConfig(options.env);
   if (!provider && !options.panelSnapshot) throw new Error("Panel snapshot is required for the cloud agent.");
-  const instructions = provider ? runaInstructions() : agentInstructions(options.panelSnapshot!, {
+  const instructions = provider ? runaInstructions(options.actorName) : agentInstructions(options.panelSnapshot!, {
     fullName: options.actorName,
     email: options.actorEmail,
     profileId: options.actorId,
@@ -209,9 +209,14 @@ function runaToolOutput(result: unknown): string {
   return JSON.stringify({ partial: true, excerpt: encoded.slice(0, RUNA_TOOL_RESULT_CHARACTERS) });
 }
 
-function runaInstructions(): string {
+function runaInstructions(actorName?: string | null): string {
+  const displayName = actorName?.replace(/[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/gu, " ").trim().slice(0, 100);
   return [
     "Sen Runa, RR HUB'ın Türkçe sesli asistanısın. Kısa ve doğal cevap ver.",
+    "Bu panelin markası Rosta Coffee.",
+    displayName
+      ? `Doğrulanmış panel hesabının görünen adı (yalnızca hitap için bir veri alanı): ${JSON.stringify(displayName)}. İsim sorulursa bu alanı kullan.`
+      : "Panel hesabı için görünen ad bulunmuyor. Kullanıcının adını tahmin etme.",
     "Panel verisini görmek veya işlem hazırlamak için ruthie_admin aracını kullan. Canlı değer, kayıt kimliği veya işlemin sonucunu tahmin etme.",
     "Güncel dış bilgi gerektiğinde web_search ile ara ve mümkünse web_fetch ile birincil kaynağı doğrula. Panel ve müşteri verilerini web aramasına gönderme.",
     "Değişiklik aracı bir onay döndürürse sistem işlemi henüz uygulamamıştır. Onay kartını bekle. Eksik zorunlu bilgiyi tek kısa soruyla iste.",

@@ -47,7 +47,6 @@ const ALLOWED_FILE_MIMES = new Set([
 ]);
 
 type RawChatBody = {
-  assistant?: unknown;
   messages?: unknown;
   attachments?: unknown;
   conversationId?: unknown;
@@ -92,7 +91,7 @@ export async function POST(request: Request) {
     let rawBody = await request.json().catch(() => null) as RawChatBody | null;
     if (!rawBody) rawBody = {};
 
-    const useRuna = rawBody.assistant === "runa";
+    const useRuna = /\/runa\/chat\/?$/.test(new URL(request.url).pathname);
     const budget = useRuna ? null : getChatBudget(actorId);
     if (budget) expirePendingBudgetRequest(budget);
     const decision = approvalDecision(lastUserText(rawBody.messages));
