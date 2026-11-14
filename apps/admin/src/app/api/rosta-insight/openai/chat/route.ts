@@ -91,11 +91,12 @@ export async function POST(request: Request) {
     let rawBody = await request.json().catch(() => null) as RawChatBody | null;
     if (!rawBody) rawBody = {};
 
-    const budget = getChatBudget(actorId);
-    expirePendingBudgetRequest(budget);
+    const useRuna = /\/runa\/chat\/?$/.test(new URL(request.url).pathname);
+    const budget = useRuna ? null : getChatBudget(actorId);
+    if (budget) expirePendingBudgetRequest(budget);
     const decision = approvalDecision(lastUserText(rawBody.messages));
 
-    if (budget.pending) {
+    if (budget?.pending) {
       if (decision === "reject") {
         budget.pending = null;
         return budgetMessage(
@@ -111,19 +112,27 @@ export async function POST(request: Request) {
       while (budget.approvedThroughUsd <= budget.spentUsd) {
         budget.approvedThroughUsd += RUTHIE_COST_CONFIRM_THRESHOLD_USD;
       }
-    } else if (budget.spentUsd >= budget.approvedThroughUsd) {
+    } else if (budget && budget.spentUsd >= budget.approvedThroughUsd) {
       budget.pending = { body: rawBody, expiresAt: Date.now() + COST_APPROVAL_TTL_MS };
       return budgetApprovalMessage(budget, correlationId);
     }
 
     const requestMessages = normalizeRuthieChatMessages(rawBody.messages);
     const attachments = normalizeAttachments(rawBody.attachments);
+    if (useRuna && attachments.length) {
+      throw new RuthieRuntimeError({
+        code: "RUNA_ATTACHMENTS_UNSUPPORTED",
+        status: 400,
+        message: "Runa yerel bağlantısı şu anda sesli komut metnini işleyebilir.",
+      });
+    }
     const requestedConversationId = normalizeConversationId(rawBody.conversationId) || crypto.randomUUID();
     const clientMessageId = normalizeClientMessageId(rawBody.clientMessageId) || crypto.randomUUID();
     const lastUserMessage = requestMessages.at(-1)!;
 
     let conversationId = requestedConversationId;
     let agentMessages: RuthieChatMessage[] = requestMessages;
+    let runaMemories: string[] = [];
     let conversationPersistence = false;
     let persistenceWarning: string | null = null;
 
@@ -159,7 +168,9 @@ export async function POST(request: Request) {
         .filter((message) => message.role === "user" || message.role === "assistant")
         .slice(-40)
         .map((message) => ({ role: message.role as "user" | "assistant", text: message.text }));
-      if (unified.memories.length) {
+      if (useRuna) {
+        runaMemories = unified.memories.map((memory) => memory.content);
+      } else if (unified.memories.length) {
         sharedMessages.unshift({
           role: "assistant",
           text: [
@@ -174,8 +185,8 @@ export async function POST(request: Request) {
       persistenceWarning = storageError instanceof Error ? storageError.message : "Ortak ROSTA Insight hafızası kullanılamadı.";
     }
 
-    const panelSnapshot = await buildRuthiePanelSnapshot(auth.supabase);
-    const meter = createRuthieUsageMeter();
+    const panelSnapshot = useRuna ? undefined : await buildRuthiePanelSnapshot(auth.supabase);
+    const meter = useRuna ? null : createRuthieUsageMeter();
     const response = await createRuthieAdminAgentResponseV2({
       request,
       messages: agentMessages,
@@ -185,14 +196,16 @@ export async function POST(request: Request) {
       actorEmail: auth.profile.email,
       correlationId,
       panelSnapshot,
-      fetchImpl: meter.fetchImpl,
+      useRuna,
+      runaMemories,
+      fetchImpl: meter?.fetchImpl,
     });
-    const exactUsage = meter.usage();
-    const resolvedModel = meter.model() || response.model;
-    const apiCost = calculateRuthieApiCost(resolvedModel, exactUsage, {
+    const exactUsage = meter ? meter.usage() : response.usage;
+    const resolvedModel = meter?.model() || response.model;
+    const apiCost = meter ? calculateRuthieApiCost(resolvedModel, meter.usage(), {
       webSearchCalls: meter.webSearchCalls(),
-    });
-    budget.spentUsd += apiCost.usd;
+    }) : null;
+    if (budget && apiCost) budget.spentUsd += apiCost.usd;
 
     let assistantMessageId = crypto.randomUUID();
     if (conversationPersistence) {
@@ -231,11 +244,11 @@ export async function POST(request: Request) {
         assistantMessageId,
         conversationPersistence,
         persistenceWarning,
-        costBudget: {
+        costBudget: budget ? {
           spentUsd: budget.spentUsd,
           approvedThroughUsd: budget.approvedThroughUsd,
           thresholdUsd: RUTHIE_COST_CONFIRM_THRESHOLD_USD,
-        },
+        } : null,
       },
       correlationId,
       panelAccess: {

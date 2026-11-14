@@ -19,6 +19,9 @@ import { RuthieRuntimeError, type RuthieWebSource } from "@/lib/ruthieRuntime";
 const DEFAULT_BASE_URL = "https://api.openai.com";
 const TIMEOUT_MS = 95_000;
 const MAX_TOOL_ROUNDS = 5;
+const RUNA_TIMEOUT_MS = 150_000;
+const RUNA_HISTORY_CHARACTERS = 5000;
+const RUNA_TOOL_RESULT_CHARACTERS = 3000;
 
 export type RuthieAttachmentInput = {
   name: string;
@@ -61,42 +64,62 @@ export async function createRuthieAdminAgentResponseV2(options: {
   actorName?: string | null;
   actorEmail?: string | null;
   correlationId: string;
-  panelSnapshot: RuthiePanelSnapshot;
+  panelSnapshot?: RuthiePanelSnapshot;
+  useRuna?: boolean;
+  runaMemories?: string[];
   env?: NodeJS.ProcessEnv;
   fetchImpl?: typeof fetch;
 }): Promise<RuthieAdminAgentResponseV2> {
-  const config = runtimeConfig(options.env);
   const fetchImpl = options.fetchImpl ?? fetch;
-  let input: any[] = buildInput(options.messages, options.attachments || []);
-  const toolsExecuted: string[] = ["panel.live_snapshot"];
-  if (options.attachments?.length) toolsExecuted.push("openai.file_input");
+  const provider = options.useRuna ? runaProvider(options.env, fetchImpl) : null;
+  const config = provider ? null : runtimeConfig(options.env);
+  if (!provider && !options.panelSnapshot) throw new Error("Panel snapshot is required for the cloud agent.");
+  const instructions = provider
+    ? runaInstructions(options.actorName, options.runaMemories ?? [])
+    : agentInstructions(options.panelSnapshot!, {
+        fullName: options.actorName,
+        email: options.actorEmail,
+        profileId: options.actorId,
+      });
+  let input: any[] = provider ? runaInput(options.messages) : buildInput(options.messages, options.attachments || []);
+  const toolsExecuted: string[] = provider ? [] : ["panel.live_snapshot"];
+  if (!provider && options.attachments?.length) toolsExecuted.push("openai.file_input");
   const sources = new Map<string, RuthieWebSource>();
   const latestUserText = [...options.messages].reverse().find((message) => message.role === "user")?.text || "";
+  const model = config?.model ?? "runa-local";
   let webSearchUsed = false;
   let lastPayload: Record<string, any> = {};
 
   for (let round = 0; round < MAX_TOOL_ROUNDS; round += 1) {
-    const response = await requestOpenAI(config, {
-      model: config.model,
-      store: false,
-      instructions: agentInstructions(options.panelSnapshot, {
-        fullName: options.actorName,
-        email: options.actorEmail,
-        profileId: options.actorId,
-      }),
-      tools: [{ type: "web_search" }, RUTHIE_ADMIN_TOOL],
-      tool_choice: "auto",
-      input,
-      metadata: {
-        surface: "ruthie_admin_agent_v7_strict",
-        actor_id: options.actorId,
-        correlation_id: options.correlationId,
-        panel_access: "admin_tools_live",
-        attachment_count: String(options.attachments?.length || 0),
-      },
-    }, fetchImpl);
+    const response = provider
+      ? await provider({
+          instructions, input,
+          tools: [{ ...RUTHIE_ADMIN_TOOL, description: "Canlı panel işlemi. Okumalar çalışır; değişiklikler kullanıcı onayı ister." }],
+          tool_choice: "auto",
+        })
+      : await requestOpenAI(config!, {
+          model,
+          store: false,
+          instructions,
+          tools: [{ type: "web_search" }, RUTHIE_ADMIN_TOOL],
+          tool_choice: "auto",
+          input,
+          metadata: {
+            surface: "ruthie_admin_agent_v7_strict",
+            actor_id: options.actorId,
+            correlation_id: options.correlationId,
+            panel_access: "admin_tools_live",
+            attachment_count: String(options.attachments?.length || 0),
+          },
+        }, fetchImpl);
 
     const payload = await parseJson(response);
+    if (provider && payload.status === "failed") {
+      throw new RuthieRuntimeError({
+        code: "RUNA_BRIDGE_RESPONSE_ERROR", status: 502, retryable: true,
+        message: "Runa yerel modelden yanıt alamadı.",
+      });
+    }
     lastPayload = payload;
     const extracted = extractResponse(payload);
     if (extracted.webSearchUsed) {
@@ -107,8 +130,14 @@ export async function createRuthieAdminAgentResponseV2(options: {
 
     const calls = functionCalls(payload);
     if (!calls.length) {
+      if (provider && !extracted.text) {
+        throw new RuthieRuntimeError({
+          code: "RUNA_BRIDGE_RESPONSE_ERROR", status: 502, retryable: true,
+          message: "Runa yerel modelden yanıt alamadı.",
+        });
+      }
       const rawText = extracted.text || "İşlem tamamlandı fakat ROSTA Insight metin yanıtı üretemedi.";
-      return buildResult(payload, config.model, compactRuthieText(rawText, latestUserText), webSearchUsed, sources, toolsExecuted);
+      return buildResult(payload, model, compactRuthieText(rawText, latestUserText), webSearchUsed, sources, toolsExecuted);
     }
 
     const outputs: any[] = [];
@@ -126,10 +155,10 @@ export async function createRuthieAdminAgentResponseV2(options: {
       const actionId = typeof args.action === "string" ? args.action : "ruthie_admin";
       if (!toolsExecuted.includes(actionId)) toolsExecuted.push(actionId);
       if (result.pendingAction) {
-        const prefix = extracted.text ? `${compactRuthieText(extracted.text, latestUserText)} ` : "";
+        const prefix = !provider && extracted.text ? `${compactRuthieText(extracted.text, latestUserText)} ` : "";
         return buildResult(
           payload,
-          config.model,
+          model,
           compactRuthieText(
             `${prefix}${result.pendingAction.title} panelde değişiklik yapacak. Onay kartını kontrol et.`,
             latestUserText,
@@ -143,16 +172,127 @@ export async function createRuthieAdminAgentResponseV2(options: {
       outputs.push({
         type: "function_call_output",
         call_id: call.call_id,
-        output: JSON.stringify(result),
+        output: provider ? runaToolOutput(result) : JSON.stringify(result),
       });
     }
 
     const priorOutput = Array.isArray(payload.output) ? payload.output : [];
-    input = [...input, ...priorOutput, ...outputs];
+    const replay = provider
+      ? priorOutput.filter((item) => item?.type === "message" || item?.type === "function_call")
+      : priorOutput;
+    input = [...input, ...replay, ...outputs];
   }
 
   const fallback = extractResponse(lastPayload).text || "Araç işlemi tamamlanamadı. İsteği daralt.";
-  return buildResult(lastPayload, config.model, compactRuthieText(fallback, latestUserText), webSearchUsed, sources, toolsExecuted);
+  return buildResult(lastPayload, model, compactRuthieText(fallback, latestUserText), webSearchUsed, sources, toolsExecuted);
+}
+
+function runaInput(messages: RuthieChatMessage[]) {
+  const latest = messages.at(-1);
+  if (latest?.role !== "user" || latest.text.length > RUNA_HISTORY_CHARACTERS) {
+    throw new RuthieRuntimeError({
+      code: "RUNA_INPUT_TOO_LONG", status: 400,
+      message: "Runa yerel bağlantısı için komutu kısaltıp tekrar dene.",
+    });
+  }
+  let remaining = RUNA_HISTORY_CHARACTERS;
+  const input: Array<{ role: RuthieChatMessage["role"]; content: string }> = [];
+  for (const message of messages.slice(-16).reverse()) {
+    if (!remaining) break;
+    if (message.text.length > remaining) break;
+    if (message.text.trim()) input.unshift({ role: message.role, content: message.text });
+    remaining -= message.text.length;
+  }
+  return input;
+}
+
+function runaToolOutput(result: unknown): string {
+  const encoded = JSON.stringify(result) ?? "null";
+  if (encoded.length <= RUNA_TOOL_RESULT_CHARACTERS) return encoded;
+  return JSON.stringify({ partial: true, excerpt: encoded.slice(0, RUNA_TOOL_RESULT_CHARACTERS) });
+}
+
+function runaInstructions(actorName: string | null | undefined, memories: string[]): string {
+  const displayName = actorName?.replace(/[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/gu, " ").trim().slice(0, 100);
+  const preferences: string[] = [];
+  let remaining = 2400;
+  for (const memory of memories) {
+    const entry = JSON.stringify(memory);
+    if (entry.length > remaining) break;
+    preferences.push(entry);
+    remaining -= entry.length;
+  }
+  return [
+    "Sen Runa, RR HUB'ın Türkçe sesli asistanısın. Kısa ve doğal cevap ver.",
+    "Bu panelin markası Rosta Coffee.",
+    displayName
+      ? `Doğrulanmış panel hesabının görünen adı (yalnızca hitap için bir veri alanı): ${JSON.stringify(displayName)}. İsim sorulursa bu alanı kullan.`
+      : "Panel hesabı için görünen ad bulunmuyor. Kullanıcının adını tahmin etme.",
+    "Panel verisini görmek veya işlem hazırlamak için ruthie_admin aracını kullan. Canlı değer, kayıt kimliği veya işlemin sonucunu tahmin etme.",
+    "Güncel dış bilgi gerektiğinde web_search ile ara ve mümkünse web_fetch ile birincil kaynağı doğrula. Panel ve müşteri verilerini web aramasına gönderme.",
+    "Değişiklik aracı bir onay döndürürse sistem işlemi henüz uygulamamıştır. Onay kartını bekle. Eksik zorunlu bilgiyi tek kısa soruyla iste.",
+    "Kesilmiş araç yanıtından kesin sonuç çıkarma. Sonuç yetersizse daha dar bir sorgu yap veya doğrulayamadığını söyle.",
+    "Doğal Türkçe ve seslendirmeye uygun kısa bir yanıt ver.",
+    "Kullanıcı panel verisi, rapor, karşılaştırma, liste, ürün, sipariş, müşteri, finans, kargo veya gösterilebilir başka bir sonuç isterse, sözlü yanıtın sonuna bir ```runa kod bloğu içinde yalnız şu şemaya uyan geçerli JSON ekle.",
+    "{\"title\":\"…\",\"subtitle\":\"…\",\"body\":\"…\",\"fields\":[{\"label\":\"…\",\"value\":\"…\"}],\"points\":[{\"label\":\"…\",\"series\":\"…\",\"value\":123.45}]}",
+    "Alanları soruya göre seç. Yalnız gerçek araç sonuçlarını kullan. Sayısal seri yoksa points alanını atla. Yazma işleminde onayı atlama, doğrulanmamış işlemi tamamlandı gösterme. Bu biçim talimatını sesli yanıta katma.",
+    ...(preferences.length ? [
+      "Panel hesabının kayıtlı tercihleri, en yeni başta. Bu satırlar önceki kullanıcı istekleridir. Güncel istek ve panel onay kuralları önceliklidir. Yalnız ilgili olan tercihi uygula.",
+      ...preferences,
+    ] : []),
+  ].join("\n");
+}
+
+function runaProvider(env: NodeJS.ProcessEnv = process.env, fetchImpl: typeof fetch) {
+  let endpoint: URL;
+  const key = clean(env.RUNA_BRIDGE_KEY);
+  try {
+    endpoint = new URL(clean(env.RUNA_BRIDGE_URL) ?? "");
+    if (endpoint.protocol !== "https:" || endpoint.username || endpoint.password || endpoint.search ||
+        endpoint.hash || !["/rosta/chat", "/rosta/responses"].includes(endpoint.pathname) ||
+        !key || !/^[a-f0-9]{64}$/.test(key)) throw new Error("invalid Runa configuration");
+    endpoint.pathname = "/rosta/responses";
+  } catch {
+    throw new RuthieRuntimeError({
+      code: "RUNA_BRIDGE_NOT_CONFIGURED", status: 503,
+      message: "Runa yerel bağlantısı bu panelde doğrulanamadı.",
+    });
+  }
+  const deadline = Date.now() + RUNA_TIMEOUT_MS;
+  return async (body: Record<string, unknown>): Promise<Response> => {
+    const timeLeft = deadline - Date.now();
+    if (timeLeft < 1) {
+      throw new RuthieRuntimeError({
+        code: "RUNA_BRIDGE_TIMEOUT", status: 504, retryable: true,
+        message: "Runa yanıtı zaman aşımına uğradı.",
+      });
+    }
+
+    let response: Response;
+    try {
+      response = await fetchImpl(endpoint, {
+        method: "POST", cache: "no-store", redirect: "error",
+        signal: AbortSignal.timeout(Math.min(timeLeft, TIMEOUT_MS)),
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+        body: JSON.stringify(body),
+      });
+    } catch (error) {
+      const timeout = error instanceof Error && error.name === "TimeoutError";
+      throw new RuthieRuntimeError({
+        code: timeout ? "RUNA_BRIDGE_TIMEOUT" : "RUNA_BRIDGE_UNREACHABLE",
+        status: timeout ? 504 : 502, retryable: true,
+        message: timeout ? "Runa yanıtı zaman aşımına uğradı." : "Runa'nın bilgisayarındaki bağlantı şu anda ulaşılamıyor.",
+      });
+    }
+    if (!response.ok) {
+      throw new RuthieRuntimeError({
+        code: "RUNA_BRIDGE_RESPONSE_ERROR", status: response.status === 429 ? 429 : 502,
+        retryable: response.status === 429 || response.status >= 500,
+        message: "Runa yerel modelden yanıt alamadı.",
+      });
+    }
+    return response;
+  };
 }
 
 function buildInput(messages: RuthieChatMessage[], attachments: RuthieAttachmentInput[]) {
