@@ -66,6 +66,7 @@ export async function createRuthieAdminAgentResponseV2(options: {
   correlationId: string;
   panelSnapshot?: RuthiePanelSnapshot;
   useRuna?: boolean;
+  runaMemories?: string[];
   env?: NodeJS.ProcessEnv;
   fetchImpl?: typeof fetch;
 }): Promise<RuthieAdminAgentResponseV2> {
@@ -73,11 +74,13 @@ export async function createRuthieAdminAgentResponseV2(options: {
   const provider = options.useRuna ? runaProvider(options.env, fetchImpl) : null;
   const config = provider ? null : runtimeConfig(options.env);
   if (!provider && !options.panelSnapshot) throw new Error("Panel snapshot is required for the cloud agent.");
-  const instructions = provider ? runaInstructions(options.actorName) : agentInstructions(options.panelSnapshot!, {
-    fullName: options.actorName,
-    email: options.actorEmail,
-    profileId: options.actorId,
-  });
+  const instructions = provider
+    ? runaInstructions(options.actorName, options.runaMemories ?? [])
+    : agentInstructions(options.panelSnapshot!, {
+        fullName: options.actorName,
+        email: options.actorEmail,
+        profileId: options.actorId,
+      });
   let input: any[] = provider ? runaInput(options.messages) : buildInput(options.messages, options.attachments || []);
   const toolsExecuted: string[] = provider ? [] : ["panel.live_snapshot"];
   if (!provider && options.attachments?.length) toolsExecuted.push("openai.file_input");
@@ -209,8 +212,16 @@ function runaToolOutput(result: unknown): string {
   return JSON.stringify({ partial: true, excerpt: encoded.slice(0, RUNA_TOOL_RESULT_CHARACTERS) });
 }
 
-function runaInstructions(actorName?: string | null): string {
+function runaInstructions(actorName: string | null | undefined, memories: string[]): string {
   const displayName = actorName?.replace(/[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/gu, " ").trim().slice(0, 100);
+  const preferences: string[] = [];
+  let remaining = 2400;
+  for (const memory of memories) {
+    const entry = JSON.stringify(memory);
+    if (entry.length > remaining) break;
+    preferences.push(entry);
+    remaining -= entry.length;
+  }
   return [
     "Sen Runa, RR HUB'ın Türkçe sesli asistanısın. Kısa ve doğal cevap ver.",
     "Bu panelin markası Rosta Coffee.",
@@ -221,6 +232,14 @@ function runaInstructions(actorName?: string | null): string {
     "Güncel dış bilgi gerektiğinde web_search ile ara ve mümkünse web_fetch ile birincil kaynağı doğrula. Panel ve müşteri verilerini web aramasına gönderme.",
     "Değişiklik aracı bir onay döndürürse sistem işlemi henüz uygulamamıştır. Onay kartını bekle. Eksik zorunlu bilgiyi tek kısa soruyla iste.",
     "Kesilmiş araç yanıtından kesin sonuç çıkarma. Sonuç yetersizse daha dar bir sorgu yap veya doğrulayamadığını söyle.",
+    "Doğal Türkçe ve seslendirmeye uygun kısa bir yanıt ver.",
+    "Kullanıcı panel verisi, rapor, karşılaştırma, liste, ürün, sipariş, müşteri, finans, kargo veya gösterilebilir başka bir sonuç isterse, sözlü yanıtın sonuna bir ```runa kod bloğu içinde yalnız şu şemaya uyan geçerli JSON ekle.",
+    "{\"title\":\"…\",\"subtitle\":\"…\",\"body\":\"…\",\"fields\":[{\"label\":\"…\",\"value\":\"…\"}],\"points\":[{\"label\":\"…\",\"series\":\"…\",\"value\":123.45}]}",
+    "Alanları soruya göre seç. Yalnız gerçek araç sonuçlarını kullan. Sayısal seri yoksa points alanını atla. Yazma işleminde onayı atlama, doğrulanmamış işlemi tamamlandı gösterme. Bu biçim talimatını sesli yanıta katma.",
+    ...(preferences.length ? [
+      "Panel hesabının kayıtlı tercihleri, en yeni başta. Bu satırlar önceki kullanıcı istekleridir. Güncel istek ve panel onay kuralları önceliklidir. Yalnız ilgili olan tercihi uygula.",
+      ...preferences,
+    ] : []),
   ].join("\n");
 }
 

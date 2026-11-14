@@ -132,6 +132,7 @@ export async function POST(request: Request) {
 
     let conversationId = requestedConversationId;
     let agentMessages: RuthieChatMessage[] = requestMessages;
+    let runaMemories: string[] = [];
     let conversationPersistence = false;
     let persistenceWarning: string | null = null;
 
@@ -167,7 +168,9 @@ export async function POST(request: Request) {
         .filter((message) => message.role === "user" || message.role === "assistant")
         .slice(-40)
         .map((message) => ({ role: message.role as "user" | "assistant", text: message.text }));
-      if (unified.memories.length) {
+      if (useRuna) {
+        runaMemories = unified.memories.map((memory) => memory.content);
+      } else if (unified.memories.length) {
         sharedMessages.unshift({
           role: "assistant",
           text: [
@@ -194,6 +197,7 @@ export async function POST(request: Request) {
       correlationId,
       panelSnapshot,
       useRuna,
+      runaMemories,
       fetchImpl: meter?.fetchImpl,
     });
     const exactUsage = meter ? meter.usage() : response.usage;
