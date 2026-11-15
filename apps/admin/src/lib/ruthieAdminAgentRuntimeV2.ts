@@ -1,3 +1,5 @@
+import { buildRunaVerifiedVisual, type RunaVisualDeck } from "@/lib/runaVerifiedVisual";
+import { createRunaGeminiPlanner, RUNA_GEMINI_PANEL_MODEL } from "@/lib/runaGeminiPlanner";
 import type { RuthieChatMessage } from "@/lib/ruthieOpenAI";
 import type { RuthiePanelSnapshot } from "@/lib/ruthiePanelContext";
 import { serializeRuthiePanelSnapshot } from "@/lib/ruthiePanelContext";
@@ -52,6 +54,7 @@ export type RuthieAdminAgentResponseV2 = {
   sources: RuthieWebSource[];
   panelAccess: "admin_tools_live";
   toolsExecuted: string[];
+  verifiedVisual?: RunaVisualDeck;
   pendingAction?: RuthiePendingAction;
   usage: unknown;
 };
@@ -86,9 +89,11 @@ export async function createRuthieAdminAgentResponseV2(options: {
   if (!provider && options.attachments?.length) toolsExecuted.push("openai.file_input");
   const sources = new Map<string, RuthieWebSource>();
   const latestUserText = [...options.messages].reverse().find((message) => message.role === "user")?.text || "";
-  const model = config?.model ?? "runa-local";
+  const geminiPlanner = options.useRuna && (options.env ?? process.env).RUNA_PANEL_PLANNER === "gemini";
+  const model = config?.model ?? (geminiPlanner ? RUNA_GEMINI_PANEL_MODEL : "runa-local");
   let webSearchUsed = false;
   let lastPayload: Record<string, any> = {};
+  let verifiedVisual: RunaVisualDeck | undefined;
 
   for (let round = 0; round < MAX_TOOL_ROUNDS; round += 1) {
     const response = provider
@@ -136,8 +141,12 @@ export async function createRuthieAdminAgentResponseV2(options: {
           message: "Runa yerel modelden yanıt alamadı.",
         });
       }
-      const rawText = extracted.text || "İşlem tamamlandı fakat ROSTA Insight metin yanıtı üretemedi.";
-      return buildResult(payload, model, compactRuthieText(rawText, latestUserText), webSearchUsed, sources, toolsExecuted);
+      const rawText = geminiPlanner
+        ? (verifiedVisual?.cards.length
+            ? "Doğrulanan ROSTA kayıtlarını kartlarda gösterdim."
+            : "Doğrulanmış bir ROSTA kartı oluşturulamadı.")
+        : extracted.text || "İşlem tamamlandı fakat ROSTA Insight metin yanıtı üretemedi.";
+      return buildResult(payload, model, compactRuthieText(rawText, latestUserText), webSearchUsed, sources, toolsExecuted, undefined, verifiedVisual);
     }
 
     const outputs: any[] = [];
@@ -153,7 +162,11 @@ export async function createRuthieAdminAgentResponseV2(options: {
         arguments: args,
       });
       const actionId = typeof args.action === "string" ? args.action : "ruthie_admin";
-      if (!toolsExecuted.includes(actionId)) toolsExecuted.push(actionId);
+      if ((!geminiPlanner || result.ok || result.pendingAction) &&
+          !toolsExecuted.includes(actionId)) toolsExecuted.push(actionId);
+      if (geminiPlanner && result.ok && !result.pendingAction) {
+        verifiedVisual = buildRunaVerifiedVisual(actionId, result.data) ?? verifiedVisual;
+      }
       if (result.pendingAction) {
         const prefix = !provider && extracted.text ? `${compactRuthieText(extracted.text, latestUserText)} ` : "";
         return buildResult(
@@ -178,13 +191,14 @@ export async function createRuthieAdminAgentResponseV2(options: {
 
     const priorOutput = Array.isArray(payload.output) ? payload.output : [];
     const replay = provider
-      ? priorOutput.filter((item) => item?.type === "message" || item?.type === "function_call")
+      ? priorOutput.filter((item) => item?.type === "function_call" ||
+          (!geminiPlanner && item?.type === "message"))
       : priorOutput;
     input = [...input, ...replay, ...outputs];
   }
 
   const fallback = extractResponse(lastPayload).text || "Araç işlemi tamamlanamadı. İsteği daralt.";
-  return buildResult(lastPayload, model, compactRuthieText(fallback, latestUserText), webSearchUsed, sources, toolsExecuted);
+  return buildResult(lastPayload, model, compactRuthieText(fallback, latestUserText), webSearchUsed, sources, toolsExecuted, undefined, verifiedVisual);
 }
 
 function runaInput(messages: RuthieChatMessage[]) {
@@ -192,7 +206,7 @@ function runaInput(messages: RuthieChatMessage[]) {
   if (latest?.role !== "user" || latest.text.length > RUNA_HISTORY_CHARACTERS) {
     throw new RuthieRuntimeError({
       code: "RUNA_INPUT_TOO_LONG", status: 400,
-      message: "Runa yerel bağlantısı için komutu kısaltıp tekrar dene.",
+      message: "Panel isteğini biraz kısaltıp tekrar dene.",
     });
   }
   let remaining = RUNA_HISTORY_CHARACTERS;
@@ -244,6 +258,41 @@ function runaInstructions(actorName: string | null | undefined, memories: string
 }
 
 function runaProvider(env: NodeJS.ProcessEnv = process.env, fetchImpl: typeof fetch) {
+  if (env.RUNA_PANEL_PLANNER === "gemini") {
+    const apiKey = clean(env.GOOGLE_API_KEY);
+    if (env.RUNA_GEMINI_PAID_DATA_MODE !== "true" || !apiKey) {
+      throw new RuthieRuntimeError({
+        code: "RUNA_GEMINI_NOT_CONFIGURED", status: 503,
+        message: "Runa paneli için ücretli Gemini projesi yapılandırılmamış.",
+      });
+    }
+    const plan = createRunaGeminiPlanner(apiKey, fetchImpl);
+    return async (body: Record<string, unknown>): Promise<Response> => {
+      let response: Response;
+      try {
+        response = await plan(body);
+      } catch (error) {
+        const timeout = error instanceof Error && error.name === "TimeoutError";
+        throw new RuthieRuntimeError({
+          code: timeout ? "RUNA_GEMINI_TIMEOUT" : "RUNA_GEMINI_RESPONSE_ERROR",
+          status: timeout ? 504 : 502, retryable: true,
+          message: timeout ? "Gemini panel isteği zaman aşımına uğradı."
+            : "Gemini panel planı alınamadı.",
+        });
+      }
+      if (!response.ok) {
+        const limited = response.status === 429;
+        throw new RuthieRuntimeError({
+          code: "RUNA_GEMINI_RESPONSE_ERROR", status: limited ? 429 : 502,
+          retryable: limited || response.status >= 500,
+          message: limited ? "Gemini kotası veya kredi bakiyesi yetersiz."
+            : "Gemini panel isteğini kabul etmedi.",
+        });
+      }
+      return response;
+    };
+  }
+
   let endpoint: URL;
   const key = clean(env.RUNA_BRIDGE_KEY);
   try {
@@ -345,6 +394,7 @@ function buildResult(
   sources: Map<string, RuthieWebSource>,
   toolsExecuted: string[],
   pendingAction?: RuthiePendingAction,
+  verifiedVisual?: RunaVisualDeck,
 ): RuthieAdminAgentResponseV2 {
   return {
     responseId: typeof payload.id === "string" ? payload.id : "",
@@ -355,6 +405,7 @@ function buildResult(
     panelAccess: "admin_tools_live",
     toolsExecuted,
     pendingAction,
+    verifiedVisual,
     usage: payload.usage ?? null,
   };
 }
